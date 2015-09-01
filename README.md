@@ -1,5 +1,3 @@
-Communication between the World Wide Charging Protocol (WWCP) and the .
-
 WWCP OCPI-Bindings
 ==================
 
