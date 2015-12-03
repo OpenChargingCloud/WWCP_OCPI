@@ -1,5 +1,5 @@
-WWCP OCPI-Bindings
-==================
+WWCP OCPI v2.0-Bindings
+=======================
 
 This software will allow the communication between World Wide Charging Protocol (WWCP) entities and entities implementing the [Open Charge Point Interface (OCPI)](https://github.com/ocpi/ocpi) which is defined and used by [eViolin et al](https://github.com/ocpi/ocpi). The focus of this protocol is a scalable, automated EV roaming setup between Charge Point Operators (EVSE Operators) and e-Mobility Service Providers.
 
