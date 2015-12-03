@@ -48,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Entities\CDR\CDR.cs" />
+    <Compile Include="Entities\CDR\CDR_Id.cs" />
     <Compile Include="Entities\Connector\Connector.cs" />
     <Compile Include="DataTypes\Hours.cs" />
     <Compile Include="Entities\Location\LocationType.cs" />
@@ -79,7 +81,11 @@
     <Compile Include="Entities\Session\Session.cs" />
     <Compile Include="Entities\Session\Auth_Id.cs" />
     <Compile Include="Entities\Session\Session_Id.cs" />
-    <Compile Include="Entities\Tariff\Connector_Id.cs" />
+    <Compile Include="Entities\Tariff\PriceComponent.cs" />
+    <Compile Include="Entities\Tariff\TariffRestrictions.cs" />
+    <Compile Include="Entities\Tariff\TariffElement.cs" />
+    <Compile Include="Entities\Tariff\Tariff_Id.cs" />
+    <Compile Include="Entities\Tariff\Tariff.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\OCPIMapper.cs" />
   </ItemGroup>
