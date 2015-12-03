@@ -70,6 +70,15 @@
     <Compile Include="Entities\Connector\Connector_Id.cs" />
     <Compile Include="Entities\Location\Location.cs" />
     <Compile Include="Entities\Location\Location_Id.cs" />
+    <Compile Include="Entities\Session\SessionStatusType.cs" />
+    <Compile Include="Entities\Session\DimensionType.cs" />
+    <Compile Include="Entities\Session\AuthMethodType.cs" />
+    <Compile Include="Entities\Session\CDRDimension.cs" />
+    <Compile Include="Entities\Session\ChargingPeriod.cs" />
+    <Compile Include="Entities\Session\Meter_Id.cs" />
+    <Compile Include="Entities\Session\Session.cs" />
+    <Compile Include="Entities\Session\Auth_Id.cs" />
+    <Compile Include="Entities\Session\Session_Id.cs" />
     <Compile Include="Entities\Tariff\Connector_Id.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\OCPIMapper.cs" />
