@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>org.GraphDefined.WWCP.OCPI_2_0</RootNamespace>
     <AssemblyName>WWCP_OCPI_2_0</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -47,12 +48,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
-    <Compile Include="DataTypes\BusinessDetails.cs" />
+    <Compile Include="Entities\Connector\Connector.cs" />
+    <Compile Include="DataTypes\Hours.cs" />
+    <Compile Include="Entities\Location\LocationType.cs" />
+    <Compile Include="Entities\Location\ParkingRestrictionType.cs" />
+    <Compile Include="Entities\EVSE\EVSEStatusSchedule .cs" />
+    <Compile Include="DataTypes\RegularHours.cs" />
+    <Compile Include="DataTypes\HourMin.cs" />
+    <Compile Include="Entities\Connector\PowerType.cs" />
+    <Compile Include="DataTypes\ExceptionalPeriod.cs" />
+    <Compile Include="Entities\Location\BusinessDetails.cs" />
+    <Compile Include="Entities\Connector\ConnectorType.cs" />
+    <Compile Include="Entities\Connector\ConnectorFormatType.cs" />
     <Compile Include="DataTypes\Image.cs" />
-    <Compile Include="DataTypes\AdditionalGeoLocation.cs" />
+    <Compile Include="Entities\Location\AdditionalGeoLocation.cs" />
+    <Compile Include="Entities\EVSE\CapabilityType.cs" />
     <Compile Include="DataTypes\ImageFileType.cs" />
     <Compile Include="DataTypes\ImageCategoryType.cs" />
-    <Compile Include="DataTypes\EVSEStatusType.cs" />
+    <Compile Include="Entities\EVSE\EVSE.cs" />
+    <Compile Include="Entities\EVSE\EVSEStatusType.cs" />
+    <Compile Include="Entities\Connector\Connector_Id.cs" />
+    <Compile Include="Entities\Location\Location.cs" />
+    <Compile Include="Entities\Location\Location_Id.cs" />
+    <Compile Include="Entities\Tariff\Connector_Id.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\OCPIMapper.cs" />
   </ItemGroup>

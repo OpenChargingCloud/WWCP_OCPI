@@ -19,30 +19,25 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// The format of the connector, whether it is a socket or a plug.
     /// </summary>
-    public enum ImageFileType
+    public enum PowerType
     {
 
         /// <summary>
-        /// GIF
+        /// AC single phase.
         /// </summary>
-        gif,
+        AC_1_PHASE  = 1,
 
         /// <summary>
-        /// JPeg
+        /// AC three phases.
         /// </summary>
-        jpeg,
+        AC_3_PHASE  = 2,
 
         /// <summary>
-        /// PNG
+        /// Direct Current.
         /// </summary>
-        png,
-
-        /// <summary>
-        /// SVG
-        /// </summary>
-        svg
+        DC          = 3
 
     }
 

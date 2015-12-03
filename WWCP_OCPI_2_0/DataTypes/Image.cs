@@ -19,9 +19,6 @@
 
 using System;
 
-using org.GraphDefined.Vanaheimr.Aegir;
-using org.GraphDefined.Vanaheimr.Illias;
-
 #endregion
 
 namespace org.GraphDefined.WWCP.OCPI_2_0

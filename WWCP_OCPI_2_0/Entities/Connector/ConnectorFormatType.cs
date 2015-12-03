@@ -19,30 +19,20 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// The format of the connector, whether it is a socket or a plug.
     /// </summary>
-    public enum ImageFileType
+    public enum ConnectorFormatType
     {
 
         /// <summary>
-        /// GIF
+        /// The connector is a socket; the EV user needs to bring a fitting plug.
         /// </summary>
-        gif,
+        SOCKET,
 
         /// <summary>
-        /// JPeg
+        /// The connector is a attached cable; the EV users car needs to have a fitting inlet.
         /// </summary>
-        jpeg,
-
-        /// <summary>
-        /// PNG
-        /// </summary>
-        png,
-
-        /// <summary>
-        /// SVG
-        /// </summary>
-        svg
+        CABLE
 
     }
 
