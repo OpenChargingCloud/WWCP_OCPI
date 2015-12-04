@@ -21,53 +21,118 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using org.GraphDefined.Vanaheimr.Illias;
+
 #endregion
 
 namespace org.GraphDefined.WWCP.OCPI_2_0
 {
 
     /// <summary>
-    /// A charging period consists of a start timestamp and a list of
-    /// possible values that influence this period, for example:
-    /// Amount of energy charged this period, maximum current during
-    /// this period etc.
+    /// A tariff restrictions class.
     /// </summary>
-    public struct TariffRestriction
+    public class TariffRestriction
     {
 
         #region Properties
 
-        #region Start
+        #region Time
 
-        private readonly DateTime _Start;
+        private readonly StartEndTime? _Time;
 
         /// <summary>
-        /// Start timestamp of the charging period.
-        /// This period ends when a next period starts,
-        /// the last period ends when the session ends.
+        /// Start/end time of day, for example "13:30 - 19:45", valid from this time of the day.
         /// </summary>
-        public DateTime Start
+        public StartEndTime? Time
         {
             get
             {
-                return _Start;
+                return _Time;
             }
         }
 
         #endregion
 
-        #region Dimensions
+        #region Date
 
-        private readonly IEnumerable<CDRDimension> _Dimensions;
+        private readonly StartEndDateTime? _Date;
 
         /// <summary>
-        /// List of relevant values for this charging period.
+        /// Start/end date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
-        public IEnumerable<CDRDimension> Dimensions
+        public StartEndDateTime? Date
         {
             get
             {
-                return _Dimensions;
+                return _Date;
+            }
+        }
+
+        #endregion
+
+        #region kWh
+
+        private readonly DecimalMinMax? _kWh;
+
+        /// <summary>
+        /// Minimum/Maximum used energy in kWh, for example 20, valid from this amount of energy is used.
+        /// </summary>
+        public DecimalMinMax? kWh
+        {
+            get
+            {
+                return _kWh;
+            }
+        }
+
+        #endregion
+
+        #region Power
+
+        private readonly DecimalMinMax? _Power;
+
+        /// <summary>
+        /// Minimum/Maximum power in kW, for example 0, valid from this charging speed.
+        /// </summary>
+        public DecimalMinMax? Power
+        {
+            get
+            {
+                return _Power;
+            }
+        }
+
+        #endregion
+
+        #region Duration
+
+        private readonly TimeSpanMinMax? _Duration;
+
+        /// <summary>
+        /// Minimum/Maximum duration in seconds, valid for a duration from x seconds.
+        /// </summary>
+        public TimeSpanMinMax? Duration
+        {
+            get
+            {
+                return _Duration;
+            }
+        }
+
+        #endregion
+
+        #region DayOfWeek
+
+        private readonly IEnumerable<DayOfWeek> _DayOfWeek;
+
+        /// <summary>
+        /// Minimum/Maximum duration in seconds, valid for a duration from x seconds.
+        /// </summary>
+        public IEnumerable<DayOfWeek> DayOfWeek
+        {
+            get
+            {
+                return _DayOfWeek;
             }
         }
 
@@ -78,27 +143,40 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         #region Constructor(s)
 
         /// <summary>
-        /// A charging period consists of a start timestamp and a
-        /// list of possible values that influence this period.
+        /// Create a new tariff restrictions class.
         /// </summary>
-        /// <param name="Start">Start timestamp of the charging period.</param>
-        /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        public TariffRestriction(DateTime                   Start,
-                              IEnumerable<CDRDimension>  Dimensions)
+        /// <param name="Time">Start/end time of day, for example "13:30 - 19:45", valid from this time of the day.</param>
+        /// <param name="Date">Start/end date, for example: 2015-12-24, valid from this day until that day (excluding that day).</param>
+        /// <param name="kWh">Minimum/Maximum used energy in kWh, for example 20, valid from this amount of energy is used.</param>
+        /// <param name="Power">Minimum/Maximum power in kW, for example 0, valid from this charging speed.</param>
+        /// <param name="Duration">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
+        /// <param name="DayOfWeek">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
+        public TariffRestriction(StartEndTime?           Time,
+                                 StartEndDateTime?       Date,
+                                 DecimalMinMax?          kWh,
+                                 DecimalMinMax?          Power,
+                                 TimeSpanMinMax?         Duration,
+                                 IEnumerable<DayOfWeek>  DayOfWeek = null)
         {
 
             #region Initial checks
 
-            if (Dimensions == null)
-                throw new ArgumentNullException("Dimensions", "The given parameter must not be null!");
-
-            if (!Dimensions.Any())
-                throw new ArgumentNullException("Dimensions", "The given enumeration must not be empty!");
+            if (!Time.   HasValue &&
+                !Date.   HasValue &&
+                !kWh.    HasValue &&
+                Power.   HasValue &&
+                Duration.HasValue &&
+                DayOfWeek == null)
+                throw new ArgumentNullException("All given parameter equals null is invalid!");
 
             #endregion
 
-            this._Start       = Start;
-            this._Dimensions  = Dimensions;
+            this._Time       = Time;
+            this._Date       = Date;
+            this._kWh        = kWh;
+            this._Power      = Power;
+            this._Duration   = Duration;
+            this._DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : null;
 
         }
 

@@ -18,34 +18,13 @@
 #region Usings
 
 using System;
-using System.Linq;
-using System.Xml.Linq;
-using System.Threading;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-using Newtonsoft.Json.Linq;
-
-using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Styx.Arrows;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
-using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
-using org.GraphDefined.Vanaheimr.Aegir;
-
-using org.GraphDefined.WWCP;
-using org.GraphDefined.WWCP.LocalService;
-using org.GraphDefined.WWCP.Importer;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPI_2_0
+namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
 {
 
-    public class Class1
+    public class OCPITests
     {
     }
 

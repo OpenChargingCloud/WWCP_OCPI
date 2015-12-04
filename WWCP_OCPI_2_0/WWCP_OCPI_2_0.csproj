@@ -47,7 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Entities\CDR\CDR.cs" />
     <Compile Include="Entities\CDR\CDR_Id.cs" />
     <Compile Include="Entities\Connector\Connector.cs" />
