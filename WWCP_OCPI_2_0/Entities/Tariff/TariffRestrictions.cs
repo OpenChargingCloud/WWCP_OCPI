@@ -21,7 +21,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -176,9 +179,69 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
             this._kWh        = kWh;
             this._Power      = Power;
             this._Duration   = Duration;
-            this._DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : null;
+            this._DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : new DayOfWeek[0];
 
         }
+
+        #endregion
+
+
+        #region ToJSON()
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        public JObject ToJSON()
+        {
+
+            return JSONObject.Create(//new JProperty("type",       _Type.    ToString()),
+                                     //new JProperty("type", _Type.ToString()),
+                                     //new JProperty("price",      _Price.   ToString()),
+
+                                     _kWh.  HasValue && _kWh. Value.Min.HasValue ? new JProperty("min_kWh",    _kWh.  Value.Min.ToString()) : null,
+                                     _kWh.  HasValue && _kWh. Value.Max.HasValue ? new JProperty("max_kWh",    _kWh.  Value.Max.ToString()) : null,
+
+                                     _Power.HasValue && Power.Value.Min.HasValue ? new JProperty("min_power",  _Power.Value.Min.ToString()) : null,
+                                     _Power.HasValue && Power.Value.Max.HasValue ? new JProperty("max_power",  _Power.Value.Max.ToString()) : null,
+
+                                     _DayOfWeek.Any() ? new JProperty("day_of_week", new JArray(_DayOfWeek.Select(day => day.ToString()))) : null);
+
+        }
+
+        #endregion
+
+
+        #region GetHashCode()
+
+        /// <summary>
+        /// Get the hashcode of this object.
+        /// </summary>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+
+                return _Time.     GetHashCode() * 41 ^
+                       _Date.     GetHashCode() * 37 ^
+                       _kWh.      GetHashCode() * 31 ^
+                       _Power.    GetHashCode() * 23 ^
+                       _Duration. GetHashCode() * 17 ^
+                       _DayOfWeek.GetHashCode();
+
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        ///// <summary>
+        ///// Get a string representation of this object.
+        ///// </summary>
+        //public override String ToString()
+        //{
+        //    return String.Concat("type: ", _Type.ToString(), ", price: ", _Price.ToString(), ", step size:", _StepSize.ToString());
+        //}
 
         #endregion
 

@@ -18,8 +18,8 @@
 #region Usings
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
+
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -108,6 +108,51 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
             this._Price     = Price;
             this._StepSize  = StepSize;
 
+        }
+
+        #endregion
+
+
+        #region ToJSON()
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        public JObject ToJSON()
+        {
+
+            return new JObject(new JProperty("type",       _Type. ToString()),
+                               new JProperty("price",      _Price.ToString()),
+                               new JProperty("step_size",  _StepSize));
+
+        }
+
+        #endregion
+
+
+        #region GetHashCode()
+
+        /// <summary>
+        /// Get the hashcode of this object.
+        /// </summary>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+                return _Type.GetHashCode() * 23 ^ _Price.GetHashCode() * 17 ^ _StepSize.GetHashCode();
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Get a string representation of this object.
+        /// </summary>
+        public override String ToString()
+        {
+            return String.Concat("type: ", _Type.ToString(), ", price: ", _Price.ToString(), ", step size:", _StepSize.ToString());
         }
 
         #endregion

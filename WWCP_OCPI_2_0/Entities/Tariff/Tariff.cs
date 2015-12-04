@@ -22,6 +22,8 @@ using System.Linq;
 using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using Newtonsoft.Json.Linq;
+using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -116,19 +118,47 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 
         #region Constructor(s)
 
+        #region Tariff(Id, ..., params TariffElements)
+
         /// <summary>
         /// Create a new tariff object.
         /// </summary>
         /// <param name="Id">Uniquely identifies the Tariff within the CPOs platform (and suboperator platforms).</param>
         /// <param name="Currency">ISO 4217 code of the currency used for this tariff.</param>
+        /// <param name="TariffElements">An enumeration of tariff elements.</param>
         /// <param name="TariffText">List of multi-language alternative tariff info text.</param>
         /// <param name="TariffUrl">Alternative URL to tariff info.</param>
+        public Tariff(Tariff_Id               Id,
+                      Currency                Currency,
+                      I18NString              TariffText,
+                      Uri                     TariffUrl,
+                      params TariffElement[]  TariffElements)
+
+            : this(Id,
+                   Currency,
+                   TariffElements,
+                   TariffText,
+                   TariffUrl)
+
+        { }
+
+        #endregion
+
+        #region Tariff(Id, Currency, TariffElements, TariffText = null, TariffUrl = null)
+
+        /// <summary>
+        /// Create a new tariff object.
+        /// </summary>
+        /// <param name="Id">Uniquely identifies the Tariff within the CPOs platform (and suboperator platforms).</param>
+        /// <param name="Currency">ISO 4217 code of the currency used for this tariff.</param>
         /// <param name="TariffElements">An enumeration of tariff elements.</param>
+        /// <param name="TariffText">List of multi-language alternative tariff info text.</param>
+        /// <param name="TariffUrl">Alternative URL to tariff info.</param>
         public Tariff(Tariff_Id                   Id,
                       Currency                    Currency,
-                      I18NString                  TariffText,
-                      Uri                         TariffUrl,
-                      IEnumerable<TariffElement>  TariffElements)
+                      IEnumerable<TariffElement>  TariffElements,
+                      I18NString                  TariffText = null,
+                      Uri                         TariffUrl  = null)
 
             : base(Id)
 
@@ -147,11 +177,34 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
             #region Init data and properties
 
             this._Currency        = Currency;
+            this._TariffElements  = TariffElements;
             this._TariffText      = TariffText != null ? TariffText : new I18NString();
             this._TariffUrl       = TariffUrl;
-            this._TariffElements  = TariffElements;
 
             #endregion
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region ToJSON()
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        public JObject ToJSON()
+        {
+
+            return JSONObject.Create(new JProperty("id",        _Id.ToString()),
+                                     new JProperty("currency",  _Currency.ISOCode),
+                                     TariffText != null && TariffText.Any() ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
+                                     TariffUrl  != null                     ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
+                                     _TariffElements.Any()
+                                         ? new JProperty("elements", new JArray(_TariffElements.Select(TariffElement => TariffElement.ToJSON())))
+                                         : null);
 
         }
 

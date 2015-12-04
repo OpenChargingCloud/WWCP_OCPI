@@ -21,6 +21,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Newtonsoft.Json.Linq;
+
+using org.GraphDefined.Vanaheimr.Hermod;
+
 #endregion
 
 namespace org.GraphDefined.WWCP.OCPI_2_0
@@ -72,13 +76,29 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 
         #region Constructor(s)
 
+        #region TariffElement(params PriceComponents)
+
+        /// <summary>
+        /// Create a new charging tariff element.
+        /// </summary>
+        /// <param name="PriceComponents">Enumeration of price components that make up the pricing of this tariff.</param>
+        public TariffElement(params PriceComponent[]  PriceComponents)
+
+            : this(PriceComponents, new TariffRestriction[0])
+
+        { }
+
+        #endregion
+
+        #region TariffElement(PriceComponents, TariffRestrictions = null)
+
         /// <summary>
         /// Create a new charging tariff element.
         /// </summary>
         /// <param name="PriceComponents">Enumeration of price components that make up the pricing of this tariff.</param>
         /// <param name="TariffRestrictions">Enumeration of tariff restrictions.</param>
         public TariffElement(IEnumerable<PriceComponent>     PriceComponents,
-                             IEnumerable<TariffRestriction>  TariffRestrictions)
+                             IEnumerable<TariffRestriction>  TariffRestrictions = null)
         {
 
             #region Initial checks
@@ -93,6 +113,28 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 
             this._PriceComponents     = PriceComponents;
             this._TariffRestrictions  = TariffRestrictions;
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+
+        #region ToJSON()
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        public JObject ToJSON()
+        {
+
+            return JSONObject.Create(new JProperty("price_components", new JArray(_PriceComponents.Select(PriceComponent => PriceComponent.ToJSON()))),
+
+                                     (_TariffRestrictions != null && _TariffRestrictions.Any())
+                                         ? new JProperty("restrictions", new JArray(_TariffRestrictions.Select(TariffRestriction => TariffRestriction.ToJSON())))
+                                         : null);
 
         }
 
