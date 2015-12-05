@@ -118,6 +118,31 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 
         #endregion
 
+        #region TariffElement(PriceComponent, TariffRestriction)
+
+        /// <summary>
+        /// Create a new charging tariff element.
+        /// </summary>
+        /// <param name="PriceComponent">A price component that makes up the pricing of this tariff.</param>
+        /// <param name="TariffRestriction">A tariff restriction.</param>
+        public TariffElement(PriceComponent     PriceComponent,
+                             TariffRestriction  TariffRestriction)
+        {
+
+            #region Initial checks
+
+            if (TariffRestriction == null)
+                throw new ArgumentNullException("TariffRestriction", "The given enumeration must not be empty!");
+
+            #endregion
+
+            this._PriceComponents     = new PriceComponent[]    { PriceComponent };
+            this._TariffRestrictions  = new TariffRestriction[] { TariffRestriction };
+
+        }
+
+        #endregion
+
         #endregion
 
 

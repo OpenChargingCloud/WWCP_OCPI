@@ -41,12 +41,12 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 
         #region Time
 
-        private readonly StartEndTime? _Time;
+        private readonly TimeRange? _Time;
 
         /// <summary>
         /// Start/end time of day, for example "13:30 - 19:45", valid from this time of the day.
         /// </summary>
-        public StartEndTime? Time
+        public TimeRange? Time
         {
             get
             {
@@ -154,12 +154,12 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         /// <param name="Power">Minimum/Maximum power in kW, for example 0, valid from this charging speed.</param>
         /// <param name="Duration">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
         /// <param name="DayOfWeek">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
-        public TariffRestriction(StartEndTime?           Time,
-                                 StartEndDateTime?       Date,
-                                 DecimalMinMax?          kWh,
-                                 DecimalMinMax?          Power,
-                                 TimeSpanMinMax?         Duration,
-                                 IEnumerable<DayOfWeek>  DayOfWeek = null)
+        public TariffRestriction(TimeRange?              Time       = null,
+                                 StartEndDateTime?       Date       = null,
+                                 DecimalMinMax?          kWh        = null,
+                                 DecimalMinMax?          Power      = null,
+                                 TimeSpanMinMax?         Duration   = null,
+                                 IEnumerable<DayOfWeek>  DayOfWeek  = null)
         {
 
             #region Initial checks
@@ -181,6 +181,85 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
             this._Duration   = Duration;
             this._DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : new DayOfWeek[0];
 
+        }
+
+        #endregion
+
+
+        #region (static) MinkWh(MinkWh)
+
+        /// <summary>
+        /// Create a new MinkWh tariff restriction.
+        /// </summary>
+        /// <param name="MinkWh">The minimum kWh value.</param>
+        public static TariffRestriction MinkWh(Decimal MinkWh)
+        {
+            return new TariffRestriction(kWh: DecimalMinMax.FromMin(MinkWh));
+        }
+
+        #endregion
+
+        #region (static) MinkWh(MaxkWh)
+
+        /// <summary>
+        /// Create a new MaxkWh tariff restriction.
+        /// </summary>
+        /// <param name="MaxkWh">The maximum kWh value.</param>
+        public static TariffRestriction MaxkWh(Decimal MaxkWh)
+        {
+            return new TariffRestriction(kWh: DecimalMinMax.FromMax(MaxkWh));
+        }
+
+        #endregion
+
+        #region (static) MinPower(MinPower)
+
+        /// <summary>
+        /// Create a new MinPower tariff restriction.
+        /// </summary>
+        /// <param name="MinPower">The minimum power value.</param>
+        public static TariffRestriction MinPower(Decimal MinPower)
+        {
+            return new TariffRestriction(Power: DecimalMinMax.FromMin(MinPower));
+        }
+
+        #endregion
+
+        #region (static) MinPower(MaxPower)
+
+        /// <summary>
+        /// Create a new MaxPower tariff restriction.
+        /// </summary>
+        /// <param name="MaxPower">The maximum power value.</param>
+        public static TariffRestriction MaxPower(Decimal MaxPower)
+        {
+            return new TariffRestriction(Power: DecimalMinMax.FromMax(MaxPower));
+        }
+
+        #endregion
+
+        #region (static) MinDuration(MinDuration)
+
+        /// <summary>
+        /// Create a new MinDuration tariff restriction.
+        /// </summary>
+        /// <param name="MinDuration">The minimum Duration value.</param>
+        public static TariffRestriction MinDuration(TimeSpan MinDuration)
+        {
+            return new TariffRestriction(Duration: TimeSpanMinMax.FromMin(MinDuration));
+        }
+
+        #endregion
+
+        #region (static) MinDuration(MaxDuration)
+
+        /// <summary>
+        /// Create a new MaxDuration tariff restriction.
+        /// </summary>
+        /// <param name="MaxDuration">The maximum Duration value.</param>
+        public static TariffRestriction MaxDuration(TimeSpan MaxDuration)
+        {
+            return new TariffRestriction(Duration: TimeSpanMinMax.FromMax(MaxDuration));
         }
 
         #endregion

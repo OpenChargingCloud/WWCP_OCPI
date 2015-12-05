@@ -101,12 +101,68 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
         public PriceComponent(DimensionType  Type,
                               Decimal        Price,
-                              UInt32         StepSize)
+                              UInt32         StepSize = 1)
         {
 
             this._Type      = Type;
             this._Price     = Price;
             this._StepSize  = StepSize;
+
+        }
+
+        #endregion
+
+
+        #region Flat(Price, BillingIncrement)
+
+        /// <summary>
+        /// Create a new flat rate price component.
+        /// </summary>
+        /// <param name="Price">Flat rate price.</param>
+        public static PriceComponent FlatRate(Decimal  Price)
+        {
+
+            return new PriceComponent(DimensionType.FLAT,
+                                      Price,
+                                      1);
+
+        }
+
+        #endregion
+
+        #region ChargingTime(Price, BillingIncrement)
+
+        /// <summary>
+        /// Create a new time-based charging price component.
+        /// </summary>
+        /// <param name="Price">Price per time span.</param>
+        /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
+        public static PriceComponent ChargingTime(Decimal   Price,
+                                                  TimeSpan  BillingIncrement)
+        {
+
+            return new PriceComponent(DimensionType.TIME,
+                                      Price,
+                                      (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
+
+        }
+
+        #endregion
+
+        #region ParkingTime(Price, BillingIncrement)
+
+        /// <summary>
+        /// Create a new time-based parking price component.
+        /// </summary>
+        /// <param name="Price">Price per time span.</param>
+        /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
+        public static PriceComponent ParkingTime(Decimal   Price,
+                                                 TimeSpan  BillingIncrement)
+        {
+
+            return new PriceComponent(DimensionType.PARKING_TIME,
+                                      Price,
+                                      (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         }
 
