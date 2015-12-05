@@ -32,6 +32,9 @@ using NUnit.Framework;
 namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
 {
 
+#if __MonoCS__
+#else
+
     /// <summary>
     /// Unit tests for OCPI v2.0 tariffs.
     /// https://github.com/ocpi/ocpi/blob/master/mod_tariffs.md#54-tariffrestrictions-class
@@ -352,5 +355,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
         #endregion
 
     }
+
+#endif
 
 }
