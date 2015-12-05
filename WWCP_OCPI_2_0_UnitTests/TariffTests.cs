@@ -54,22 +54,24 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
 
             var tariff    = new Tariff(Tariff_Id.Parse("12"),
                                        Currency.EUR,
-                                       TariffElements: new List<TariffElement>() {
+                                       TariffElements: Enumeration.Create(
                                                            new TariffElement(
                                                                new PriceComponent(DimensionType.TIME, 2.00M, 300)
                                                            )
-                                                       }
+                                                       )
                                       );
 
             var expected  = new JObject(new JProperty("id",        "12"),
                                         new JProperty("currency",  "EUR"),
                                         new JProperty("elements",  new JArray(
-                                            new JObject(new JProperty("price_components", new JArray(
-                                                new JObject(
-                                                    new JProperty("type",      "TIME"),
-                                                    new JProperty("price",     "2.00"),
-                                                    new JProperty("step_size", 300)
-                                            ))))
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                    new JObject(
+                                                        new JProperty("type",      "TIME"),
+                                                        new JProperty("price",     "2.00"),
+                                                        new JProperty("step_size", 300)
+                                                )))
+                                            )
                                        )));
 
             Assert.AreEqual(expected.ToString(), tariff.ToJSON().ToString());
@@ -91,11 +93,11 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
                                        Currency.EUR,
                                        TariffText: I18NString.Create(Languages.en, "2 euro p/hour").
                                                                  Add(Languages.nl, "2 euro p/uur"),
-                                       TariffElements: new List<TariffElement>() {
+                                       TariffElements: Enumeration.Create(
                                                            new TariffElement(
                                                                new PriceComponent(DimensionType.TIME, 2.00M, 300)
                                                            )
-                                                       }
+                                                       )
                                       );
 
             var expected  = new JObject(new JProperty("id",        "12"),
@@ -105,12 +107,14 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
                                             new JObject(new JProperty("language", "nl"), new JProperty("text", "2 euro p/uur"))
                                             )),
                                         new JProperty("elements",  new JArray(
-                                            new JObject(new JProperty("price_components", new JArray(
-                                                new JObject(
-                                                    new JProperty("type",      "TIME"),
-                                                    new JProperty("price",     "2.00"),
-                                                    new JProperty("step_size", 300)
-                                            ))))
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                    new JObject(
+                                                        new JProperty("type",      "TIME"),
+                                                        new JProperty("price",     "2.00"),
+                                                        new JProperty("step_size", 300)
+                                                )))
+                                            )
                                        )));
 
             Assert.AreEqual(expected.ToString(), tariff.ToJSON().ToString());
@@ -131,23 +135,25 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
             var tariff    = new Tariff(Tariff_Id.Parse("12"),
                                        Currency.EUR,
                                        TariffUrl:      new Uri("https://company.com/tariffs/12"),
-                                       TariffElements: new List<TariffElement>() {
+                                       TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(DimensionType.TIME, 2.00M, 300)
+                                                               PriceComponent.ChargingTime(2.00M, TimeSpan.FromSeconds(300))
                                                            )
-                                                       }
+                                                       )
                                       );
 
             var expected  = new JObject(new JProperty("id",             "12"),
                                         new JProperty("currency",       "EUR"),
                                         new JProperty("tariff_alt_url", "https://company.com/tariffs/12"),
                                         new JProperty("elements",  new JArray(
-                                            new JObject(new JProperty("price_components", new JArray(
-                                                new JObject(
-                                                    new JProperty("type",      "TIME"),
-                                                    new JProperty("price",     "2.00"),
-                                                    new JProperty("step_size", 300)
-                                            ))))
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                    new JObject(
+                                                        new JProperty("type",      "TIME"),
+                                                        new JProperty("price",     "2.00"),
+                                                        new JProperty("step_size", 300)
+                                                )))
+                                            )
                                        )));
 
             Assert.AreEqual(expected.ToString(), tariff.ToJSON().ToString());
@@ -187,7 +193,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
 
                                                            // 1.00 euro per hour charging tariff for less than 32A (paid per 15 minutes)
                                                            new TariffElement(
-                                                               PriceComponent.ChargingTime(1.00M, TimeSpan.FromSeconds(90)),
+                                                               PriceComponent.ChargingTime(1.00M, TimeSpan.FromSeconds(900)),
                                                                TariffRestriction.MaxPower(32M)
                                                            ),
 
@@ -244,12 +250,99 @@ namespace org.GraphDefined.WWCP.OCPI_2_0_UnitTests
                                         new JProperty("currency",       "EUR"),
                                         new JProperty("tariff_alt_url", "https://company.com/tariffs/11"),
                                         new JProperty("elements",  new JArray(
-                                            new JObject(new JProperty("price_components", new JArray(
+
+                                            // 2.50 euro start tariff
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                    new JObject(
+                                                        new JProperty("type",      "FLAT"),
+                                                        new JProperty("price",     "2.50"),
+                                                        new JProperty("step_size", 1)
+                                                    )))
+                                            ),
+
+
+                                            // 1.00 euro per hour charging tariff for less than 32A (paid per 15 minutes)
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                new JObject(
+                                                    new JProperty("type",      "TIME"),
+                                                    new JProperty("price",     "1.00"),
+                                                    new JProperty("step_size", 900)
+                                                ))),
+                                                new JProperty("restrictions", new JArray(
+                                                    new JObject(
+                                                        new JProperty("max_power", "32.00")
+                                                    )
+                                                ))
+                                            ),
+
+                                            // 2.00 euro per hour charging tariff for more than 32A on weekdays (paid per 10 minutes)
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
                                                 new JObject(
                                                     new JProperty("type",      "TIME"),
                                                     new JProperty("price",     "2.00"),
-                                                    new JProperty("step_size", 300)
-                                            ))))
+                                                    new JProperty("step_size", 600)
+                                                ))),
+                                                new JProperty("restrictions", new JArray(
+                                                    new JObject(
+                                                        new JProperty("min_power",   "32.00"),
+                                                        new JProperty("day_of_week", new JArray("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"))
+                                                    )
+                                                ))
+                                            ),
+
+                                            // 1.25 euro per hour charging tariff for more then 32A during the weekend (paid per 10 minutes)
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                new JObject(
+                                                    new JProperty("type",      "TIME"),
+                                                    new JProperty("price",     "1.25"),
+                                                    new JProperty("step_size", 600)
+                                                ))),
+                                                new JProperty("restrictions", new JArray(
+                                                    new JObject(
+                                                        new JProperty("min_power",   "32.00"),
+                                                        new JProperty("day_of_week", new JArray("SATURDAY", "SUNDAY"))
+                                                    )
+                                                ))
+                                            ),
+
+                                            // Parking on weekdays: between 09:00 and 18:00: 5 euro(paid per 5 minutes)
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                new JObject(
+                                                    new JProperty("type",       "PARKING_TIME"),
+                                                    new JProperty("price",      "5.00"),
+                                                    new JProperty("step_size",  300)
+                                                ))),
+                                                new JProperty("restrictions", new JArray(
+                                                    new JObject(
+                                                        new JProperty("start_time",   "09:00"),
+                                                        new JProperty("end_time",     "18:00"),
+                                                        new JProperty("day_of_week",  new JArray("MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"))
+                                                    )
+                                                ))
+                                            ),
+
+                                            // Parking on saturday: between 10:00 and 17:00: 6 euro (paid per 5 minutes)
+                                            new JObject(
+                                                new JProperty("price_components", new JArray(
+                                                new JObject(
+                                                    new JProperty("type",       "PARKING_TIME"),
+                                                    new JProperty("price",      "6.00"),
+                                                    new JProperty("step_size",  300)
+                                                ))),
+                                                new JProperty("restrictions", new JArray(
+                                                    new JObject(
+                                                        new JProperty("start_time",   "10:00"),
+                                                        new JProperty("end_time",     "17:00"),
+                                                        new JProperty("day_of_week",  new JArray("SATURDAY"))
+                                                    )
+                                                ))
+                                            )
+
                                        )));
 
             Assert.AreEqual(expected.ToString(), tariff.ToJSON().ToString());

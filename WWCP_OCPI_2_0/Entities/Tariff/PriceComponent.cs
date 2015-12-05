@@ -178,7 +178,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         {
 
             return new JObject(new JProperty("type",       _Type. ToString()),
-                               new JProperty("price",      _Price.ToString()),
+                               new JProperty("price",      _Price.ToString("0.00")),
                                new JProperty("step_size",  _StepSize));
 
         }

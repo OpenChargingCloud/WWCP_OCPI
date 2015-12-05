@@ -277,13 +277,16 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
                                      //new JProperty("type", _Type.ToString()),
                                      //new JProperty("price",      _Price.   ToString()),
 
-                                     _kWh.  HasValue && _kWh. Value.Min.HasValue ? new JProperty("min_kWh",    _kWh.  Value.Min.ToString()) : null,
-                                     _kWh.  HasValue && _kWh. Value.Max.HasValue ? new JProperty("max_kWh",    _kWh.  Value.Max.ToString()) : null,
+                                     _Time.HasValue && _Time.Value.StartTime.HasValue ? new JProperty("start_time", _Time.Value.StartTime.Value.ToString()) : null,
+                                     _Time.HasValue && _Time.Value.EndTime.  HasValue ? new JProperty("end_time",   _Time.Value.EndTime.  Value.ToString()) : null,
 
-                                     _Power.HasValue && Power.Value.Min.HasValue ? new JProperty("min_power",  _Power.Value.Min.ToString()) : null,
-                                     _Power.HasValue && Power.Value.Max.HasValue ? new JProperty("max_power",  _Power.Value.Max.ToString()) : null,
+                                     _kWh.  HasValue && _kWh. Value.Min.HasValue ? new JProperty("min_kWh",    _kWh.  Value.Min.Value.ToString("0.00")) : null,
+                                     _kWh.  HasValue && _kWh. Value.Max.HasValue ? new JProperty("max_kWh",    _kWh.  Value.Max.Value.ToString("0.00")) : null,
 
-                                     _DayOfWeek.Any() ? new JProperty("day_of_week", new JArray(_DayOfWeek.Select(day => day.ToString()))) : null);
+                                     _Power.HasValue && Power.Value.Min.HasValue ? new JProperty("min_power",  _Power.Value.Min.Value.ToString("0.00")) : null,
+                                     _Power.HasValue && Power.Value.Max.HasValue ? new JProperty("max_power",  _Power.Value.Max.Value.ToString("0.00")) : null,
+
+                                     _DayOfWeek.Any() ? new JProperty("day_of_week", new JArray(_DayOfWeek.Select(day => day.ToString().ToUpper()))) : null);
 
         }
 
