@@ -1,0 +1,247 @@
+﻿/*
+ * Copyright (c) 2015 GraphDefined GmbH
+ * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
+ *
+ * Licensed under the Affero GPL license, Version 3.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.gnu.org/licenses/agpl.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#region Usings
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+
+using Newtonsoft.Json.Linq;
+
+using Org.BouncyCastle.Bcpg.OpenPgp;
+
+using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.SMTP;
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
+using org.GraphDefined.Vanaheimr.Hermod.Mail;
+using org.GraphDefined.Vanaheimr.BouncyCastle;
+using org.GraphDefined.WWCP;
+
+#endregion
+
+namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
+{
+
+    /// <summary>
+    /// The OCPI HTTP API for Charge Point Operators.
+    /// </summary>
+    public class CPOAPI : GenericAPI
+    {
+
+        #region Data
+
+        private static readonly Random  _Random                = new Random();
+
+        public  const           String  DefaultHTTPServerName  = "GraphDefined OCPI CPO HTTP API v0.1";
+        public  static readonly IPPort  DefaultHTTPServerPort  = new IPPort(8080);
+
+        public  const           String  LogfileName            = "OICP_CPO_HTTPAPI.log";
+
+        #endregion
+
+        #region Constructor(s)
+
+        #region CPOAPI(HTTPServerName, ...)
+
+        /// <summary>
+        /// Create an instance of the OCPI HTTP API for Charge Point Operators
+        /// using a newly created HTTP server.
+        /// </summary>
+        public CPOAPI(RoamingNetwork    RoamingNetwork,
+                      String            HTTPServerName    = DefaultHTTPServerName,
+                      IPPort            HTTPServerPort    = null,
+                      String            URIPrefix         = "",
+
+                      String            ServiceName       = DefaultHTTPServerName,
+                      EMailAddress      APIEMailAddress   = null,
+                      PgpSecretKeyRing  APISecretKeyRing  = null,
+                      String            APIPassphrase     = null,
+                      EMailAddressList  APIAdminEMail     = null,
+                      SMTPClient        APISMTPClient     = null,
+
+                      DNSClient         DNSClient         = null,
+                      String            LogfileName       = DefaultLogfileName)
+
+            : base(RoamingNetwork,
+                   HTTPServerName,
+                   HTTPServerPort != null ? HTTPServerPort : DefaultHTTPServerPort,
+                   URIPrefix,
+                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
+
+                   ServiceName,
+                   APIEMailAddress,
+                   null,//OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
+                   APISecretKeyRing,
+                   APIPassphrase,
+                   APIAdminEMail,
+                   APISMTPClient,
+
+                   DNSClient,
+                   LogfileName)
+
+        {
+
+            RegisterCPOURITemplates();
+
+        }
+
+        #endregion
+
+        #region CPOAPI(HTTPServer, ...)
+
+        /// <summary>
+        /// Create an instance of the OCPI HTTP API for Charge Point Operators
+        /// using the given HTTP server.
+        /// </summary>
+        public CPOAPI(RoamingNetwork    RoamingNetwork,
+                      HTTPServer        HTTPServer,
+                      String            URIPrefix         = "/ext/OCPI",
+
+                      String            ServiceName       = DefaultHTTPServerName,
+                      EMailAddress      APIEMailAddress   = null,
+                      PgpSecretKeyRing  APISecretKeyRing  = null,
+                      String            APIPassphrase     = null,
+                      EMailAddressList  APIAdminEMail     = null,
+                      SMTPClient        APISMTPClient     = null,
+
+                      DNSClient         DNSClient         = null)
+
+            : base(RoamingNetwork,
+                   HTTPServer,
+                   URIPrefix,
+                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
+
+                   ServiceName,
+                   APIEMailAddress,
+                   null, //OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.CPOAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
+                   APISecretKeyRing,
+                   APIPassphrase,
+                   APIAdminEMail,
+                   APISMTPClient,
+
+                   DNSClient,
+                   LogfileName)
+
+        {
+
+            RegisterCPOURITemplates();
+
+        }
+
+        #endregion
+
+        #endregion
+
+
+        #region (private) RegisterCPOURITemplates()
+
+        private void RegisterCPOURITemplates()
+        {
+
+            #region /cpo
+
+            _HTTPServer.RegisterResourcesFolder(URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.CPOAPI.HTTPRoot", Assembly.GetCallingAssembly());
+
+            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+                                          new String[] { URIPrefix + "/cpo/index.html",
+                                                         URIPrefix + "/cpo/" },
+                                          HTTPContentType.HTML_UTF8,
+                                          HTTPDelegate: HTTPRequest => {
+
+                                              var _MemoryStream = new MemoryStream();
+                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPI_2_0.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+
+                                              return new HTTPResponseBuilder() {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = _MemoryStream.ToArray(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
+            #region /cpo/versions
+
+            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+                                          URIPrefix + "/cpo/versions",
+                                          HTTPContentType.JSON_UTF8,
+                                          HTTPDelegate: HTTPRequest => {
+
+                                              return new HTTPResponseBuilder() {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = new JArray(new JObject(
+                                                                                   new JProperty("version",  "2.0"),
+                                                                                   new JProperty("url",      "http://" + HTTPRequest.Host + "/cpo/versions/2.0/")
+                                                                    )).ToString().ToUTF8Bytes(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
+            #region /cpo/versions/2.0/
+
+            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+                                          URIPrefix + "/cpo/versions/2.0/",
+                                          HTTPContentType.JSON_UTF8,
+                                          HTTPDelegate: HTTPRequest => {
+
+                                              return new HTTPResponseBuilder() {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = new JObject(
+                                                                        new JProperty("version",  "2.0"),
+                                                                        new JProperty("endpoints", new JArray(
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "credentials"),
+                                                                                new JProperty("url",        "http://" + HTTPRequest.Host + "/cpo/versions/2.0/credentials/")
+                                                                            ),
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "locations"),
+                                                                                new JProperty("url",        "http://" + HTTPRequest.Host + "/cpo/versions/2.0/locations/")
+                                                                            )
+                                                                    ))).ToString().ToUTF8Bytes(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
+        }
+
+        #endregion
+
+
+    }
+
+}
