@@ -45,7 +45,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0.Tools
                     return WWCP.EVSEStatusType.OutOfService;
 
                 case OCPI_2_0.EVSEStatusType.Charging:
-                    return WWCP.EVSEStatusType.Occupied;
+                    return WWCP.EVSEStatusType.Charging;
 
                 case OCPI_2_0.EVSEStatusType.Inoperative:
                     return WWCP.EVSEStatusType.OutOfService;
@@ -57,7 +57,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0.Tools
                     return WWCP.EVSEStatusType.Planned;
 
                 case OCPI_2_0.EVSEStatusType.Removed:
-                    return WWCP.EVSEStatusType.EvseNotFound;
+                    return WWCP.EVSEStatusType.UnknownEVSE;
 
                 case OCPI_2_0.EVSEStatusType.Reserved:
                     return WWCP.EVSEStatusType.Reserved;
@@ -93,7 +93,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0.Tools
                 case WWCP.EVSEStatusType.Available:
                     return OCPI_2_0.EVSEStatusType.Available;
 
-                case WWCP.EVSEStatusType.Occupied:
+                case WWCP.EVSEStatusType.Charging:
                     return OCPI_2_0.EVSEStatusType.Charging;
 
                 case WWCP.EVSEStatusType.Faulted:
@@ -111,7 +111,7 @@ namespace org.GraphDefined.WWCP.OCPI_2_0.Tools
                 case WWCP.EVSEStatusType.Other:
                     return OCPI_2_0.EVSEStatusType.Unknown;
 
-                case WWCP.EVSEStatusType.EvseNotFound:
+                case WWCP.EVSEStatusType.UnknownEVSE:
                     return OCPI_2_0.EVSEStatusType.Removed;
 
                 default:
