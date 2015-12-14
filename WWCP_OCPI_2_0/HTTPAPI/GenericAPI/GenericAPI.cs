@@ -368,18 +368,18 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
             //_HTTPServer.AccessLog           += (Sender, Timestamp, Request, Response)  => Console.WriteLine("[" + Timestamp + "] " + Request.HTTPMethod + " " + Request.URI + " => " + Response.HTTPStatusCode.SimpleString);
 
 
-            _HTTPServer.AccessLog += (_HTTPServer, ServerTimestamp, Request, Response) => {
-
-                Console.WriteLine("[" + ServerTimestamp.ToString() + "] " +
-                                  (Request.X_Forwarded_For != null
-                                     ? Request.X_Forwarded_For + "(" +  Request.RemoteSocket + ") - "
-                                     : Request.RemoteSocket + " - ") +
-                                  Request.HTTPMethod   + " " +
-                                  Request.URI          + " " +
-                                  Response.HTTPStatusCode + " " +
-                                  Response.ContentLength + " bytes");
-
-            };
+            //_HTTPServer.AccessLog += (_HTTPServer, ServerTimestamp, Request, Response) => {
+            //
+            //    Console.WriteLine("[" + ServerTimestamp.ToString() + "] " +
+            //                      (Request.X_Forwarded_For != null
+            //                         ? Request.X_Forwarded_For + "(" +  Request.RemoteSocket + ") - "
+            //                         : Request.RemoteSocket + " - ") +
+            //                      Request.HTTPMethod   + " " +
+            //                      Request.URI          + " " +
+            //                      Response.HTTPStatusCode + " " +
+            //                      Response.ContentLength + " bytes");
+            //
+            //};
 
             _HTTPServer.ErrorLog += (_HTTPServer, ServerTimestamp, Request, Response, Error, LastException) => {
 
