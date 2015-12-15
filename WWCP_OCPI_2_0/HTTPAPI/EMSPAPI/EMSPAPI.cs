@@ -137,7 +137,6 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
                    APIAdminEMail,
                    APISMTPClient,
 
-                   DNSClient,
                    LogfileName)
 
         {

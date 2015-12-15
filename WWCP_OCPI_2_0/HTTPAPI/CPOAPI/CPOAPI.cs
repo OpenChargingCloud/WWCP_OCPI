@@ -120,9 +120,7 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
                       PgpSecretKeyRing  APISecretKeyRing  = null,
                       String            APIPassphrase     = null,
                       EMailAddressList  APIAdminEMail     = null,
-                      SMTPClient        APISMTPClient     = null,
-
-                      DNSClient         DNSClient         = null)
+                      SMTPClient        APISMTPClient     = null)
 
             : base(RoamingNetwork,
                    HTTPServer,
@@ -137,7 +135,6 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
                    APIAdminEMail,
                    APISMTPClient,
 
-                   DNSClient,
                    LogfileName)
 
         {

@@ -286,7 +286,6 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
                    APIAdminEMail,
                    APISMTPClient,
 
-                   DNSClient,
                    LogfileName)
 
         {
@@ -313,7 +312,6 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
                             EMailAddressList      APIAdminEMail           = null,
                             SMTPClient            APISMTPClient           = null,
 
-                            DNSClient             DNSClient               = null,
                             String                LogfileName             = DefaultLogfileName)
 
         {
@@ -348,7 +346,7 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
             this._APIAdminEMail           = APIAdminEMail;
             this._APISMTPClient           = APISMTPClient;
 
-            this._DNSClient               = (DNSClient                != null) ? DNSClient               : new DNSClient(SearchForIPv6DNSServers: false);
+            this._DNSClient               = HTTPServer.DNSClient;
 
             #endregion
 
@@ -483,25 +481,6 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
 
         #endregion
 
-        #region Start(Delay, InBackground = true)
-
-        public void Start(TimeSpan Delay, Boolean InBackground = true)
-        {
-
-            lock (_HTTPServer)
-            {
-
-                _HTTPServer.Start();
-
-                //SendStarted(this, DateTime.Now);
-
-            }
-
-        }
-
-        #endregion
-
-
         #region Shutdown(Message = null, Wait = true)
 
         public void Shutdown(String Message = null, Boolean Wait = true)
@@ -520,19 +499,6 @@ namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
 
         #endregion
 
-        #region Dispose()
-
-        public void Dispose()
-        {
-
-            lock (_HTTPServer)
-            {
-                _HTTPServer.Dispose();
-            }
-
-        }
-
-        #endregion
 
     }
 
