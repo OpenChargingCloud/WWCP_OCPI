@@ -38,7 +38,7 @@ using org.GraphDefined.WWCP;
 
 #endregion
 
-namespace org.GraphDefined.WsWCP.OCPI_2_0.HTTP
+namespace org.GraphDefined.WWCP.OCPI_2_0.HTTP
 {
 
     /// <summary>
