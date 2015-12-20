@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WWCP_OCPI_2_0_UnitTests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("WWCP OCPI v2.0 Unit Tests")]
+[assembly: AssemblyDescription("Unit Tests for the communication between the World Wide Charging Protocol (WWCP) and the Open ChargePoint Interface v2.0 (OCPI v2.0).")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("WWCP_OCPI_2_0_UnitTests")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("GraphDefined GmbH")]
+[assembly: AssemblyProduct("WWCP OCPI v2.0 Unit Tests")]
+[assembly: AssemblyCopyright("Copyright © 2015 GraphDefined GmbH")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

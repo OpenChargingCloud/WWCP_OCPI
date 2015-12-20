@@ -7,8 +7,8 @@
     <ProjectGuid>{31DE6B43-1F5B-483B-B42C-22D745A167CD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.GraphDefined.WWCP.WWCP_OCPI_2_0_UnitTests</RootNamespace>
-    <AssemblyName>WWCP_OCPI_2_0_UnitTests</AssemblyName>
+    <RootNamespace>org.GraphDefined.WWCP.WWCP_OCPI_2_0.UnitTests</RootNamespace>
+    <AssemblyName>org.GraphDefined.WWCP.OCPI_2_0.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\WWCP_OCPI_2_0_UnitTests.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\org.GraphDefined.WWCP.OCPI_2_0.UnitTests.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
