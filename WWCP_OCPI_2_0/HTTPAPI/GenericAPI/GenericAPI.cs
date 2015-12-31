@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015 GraphDefined GmbH
+ * Copyright (c) 2015-2016 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
  *
  * Licensed under the Affero GPL license, Version 3.0 (the "License");
@@ -20,9 +20,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Reflection;
-using System.Collections.Generic;
 
 using Org.BouncyCastle.Bcpg.OpenPgp;
 
@@ -30,11 +28,8 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
-using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -246,6 +241,76 @@ namespace org.GraphDefined.WWCP.OCPI_2_0.HTTP
             {
                 return _DNSClient;
             }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Events
+
+        #region RequestLog
+
+        /// <summary>
+        /// An event called whenever a request came in.
+        /// </summary>
+        public event Vanaheimr.Hermod.HTTP.RequestLogHandler RequestLog
+        {
+
+            add
+            {
+                HTTPServer.RequestLog += value;
+            }
+
+            remove
+            {
+                HTTPServer.RequestLog -= value;
+            }
+
+        }
+
+        #endregion
+
+        #region AccessLog
+
+        /// <summary>
+        /// An event called whenever a request could successfully be processed.
+        /// </summary>
+        public event Vanaheimr.Hermod.HTTP.AccessLogHandler AccessLog
+        {
+
+            add
+            {
+                HTTPServer.AccessLog += value;
+            }
+
+            remove
+            {
+                HTTPServer.AccessLog -= value;
+            }
+
+        }
+
+        #endregion
+
+        #region ErrorLog
+
+        /// <summary>
+        /// An event called whenever a request resulted in an error.
+        /// </summary>
+        public event Vanaheimr.Hermod.HTTP.ErrorLogHandler ErrorLog
+        {
+
+            add
+            {
+                HTTPServer.ErrorLog += value;
+            }
+
+            remove
+            {
+                HTTPServer.ErrorLog -= value;
+            }
+
         }
 
         #endregion
