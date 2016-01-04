@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014-2015 GraphDefined GmbH
+ * Copyright (c) 2014-2016 GraphDefined GmbH
  * This file is part of WWCP Core <https://github.com/GraphDefined/WWCP_Core>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
