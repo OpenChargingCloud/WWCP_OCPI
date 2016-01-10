@@ -18,6 +18,7 @@
 #region Usings
 
 using System;
+using System.Collections.Generic;
 
 #endregion
 
@@ -29,6 +30,8 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
     /// </summary>
     public class Hours
     {
+
+        private readonly RegularHours[] _RegularHours;
 
         #region Properties
 
@@ -51,18 +54,18 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
 
         #region RegularHours
 
-        private readonly RegularHours _RegularHours;
+        //private readonly RegularHours _RegularHours;
 
-        /// <summary>
-        /// Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.
-        /// </summary>
-        public RegularHours RegularHours
-        {
-            get
-            {
-                return _RegularHours;
-            }
-        }
+        ///// <summary>
+        ///// Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.
+        ///// </summary>
+        //public RegularHours RegularHours
+        //{
+        //    get
+        //    {
+        //        return _RegularHours;
+        //    }
+        //}
 
         #endregion
 
@@ -137,13 +140,13 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         /// <param name="RegularHours">Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.</param>
         /// <param name="ExceptionalOpenings">Exceptions for specified calendar dates, time-range based. Periods the station is operating/accessible. Additional to regular hours. May overlap regular rules.</param>
         /// <param name="ExceptionalClosings">Exceptions for specified calendar dates, time-range based. Periods the station is not operating/accessible. Overwriting regularHours and exceptionalOpenings. Should not overlap exceptionalOpenings.</param>
-        public Hours(RegularHours       RegularHours,
-                     ExceptionalPeriod  ExceptionalOpenings = null,
-                     ExceptionalPeriod  ExceptionalClosings = null)
+        public Hours()//RegularHours       RegularHours,
+                     //ExceptionalPeriod  ExceptionalOpenings = null,
+                     //ExceptionalPeriod  ExceptionalClosings = null)
         {
 
             this._IsTwentyFourSevenOpen  = false;
-            this._RegularHours           = RegularHours;
+            this._RegularHours           = new RegularHours[7];
             this._ExceptionalOpenings    = ExceptionalOpenings;
             this._ExceptionalClosings    = ExceptionalClosings;
 
@@ -152,6 +155,18 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         #endregion
 
         #endregion
+
+        public Hours Set(DayOfWeek  Weekday,
+                         HourMin    Begin,
+                         HourMin    End)
+        {
+
+            _RegularHours[(int) Weekday] = new RegularHours(Weekday, Begin, End);
+
+            return this;
+
+        }
+
 
 
         #region (static) TwentyFourSevenOpen(ExceptionalOpenings = null, ExceptionalClosings = null)
@@ -170,6 +185,12 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         }
 
         #endregion
+
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
 
 
     }

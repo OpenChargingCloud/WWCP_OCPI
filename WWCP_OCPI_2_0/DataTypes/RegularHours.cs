@@ -185,7 +185,12 @@ namespace org.GraphDefined.WWCP.OCPI_2_0
         /// </summary>
         public override String ToString()
         {
+
+            if (_Weekday == DayOfWeek.Sunday && _Begin.Hour == 0 && _Begin.Minute == 0 && _End.Hour == 0 && _End.Minute == 0)
+                return "";
+
             return String.Concat(_Weekday.ToString(), "s from ", _Begin.ToString(), " to ", _End.ToString());
+
         }
 
         #endregion
