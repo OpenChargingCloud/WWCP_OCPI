@@ -485,13 +485,13 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           new String[] { URIPrefix + "/index.html",
                                                          URIPrefix + "/" },
                                           HTTPContentType.HTML_UTF8,
-                                          HTTPDelegate: HTTPRequest => {
+                                          HTTPDelegate: Request => {
 
                                               var _MemoryStream = new MemoryStream();
                                               typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
                                               typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-                                              return new HTTPResponseBuilder() {
+                                              return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   ContentType     = HTTPContentType.HTML_UTF8,
                                                   Content         = _MemoryStream.ToArray(),

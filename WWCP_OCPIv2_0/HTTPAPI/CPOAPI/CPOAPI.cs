@@ -161,13 +161,13 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           new String[] { URIPrefix + "/cpo/index.html",
                                                          URIPrefix + "/cpo/" },
                                           HTTPContentType.HTML_UTF8,
-                                          HTTPDelegate: HTTPRequest => {
+                                          HTTPDelegate: Request => {
 
                                               var _MemoryStream = new MemoryStream();
                                               typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
                                               typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-                                              return new HTTPResponseBuilder() {
+                                              return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
@@ -185,17 +185,17 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
             _HTTPServer.AddMethodCallback(HTTPMethod.GET,
                                           URIPrefix + "/cpo/versions",
                                           HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: HTTPRequest => {
+                                          HTTPDelegate: Request => {
 
-                                              return new HTTPResponseBuilder() {
+                                              return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
                                                   ContentType     = HTTPContentType.HTML_UTF8,
                                                   Content         = new JArray(new JObject(
                                                                                    new JProperty("version",  "2.0"),
-                                                                                   new JProperty("url",      "http://" + HTTPRequest.Host + "/cpo/versions/2.0/")
-                                                                    )).ToString().ToUTF8Bytes(),
+                                                                                   new JProperty("url",      "http://" + Request.Host + "/cpo/versions/2.0/")
+                                                                    )).ToUTF8Bytes(),
                                                   Connection      = "close"
                                               };
 
@@ -208,9 +208,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
             _HTTPServer.AddMethodCallback(HTTPMethod.GET,
                                           URIPrefix + "/cpo/versions/2.0/",
                                           HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: HTTPRequest => {
+                                          HTTPDelegate: Request => {
 
-                                              return new HTTPResponseBuilder() {
+                                              return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
@@ -220,13 +220,13 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                                                         new JProperty("endpoints", new JArray(
                                                                             new JObject(
                                                                                 new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + HTTPRequest.Host + "/cpo/versions/2.0/credentials/")
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.0/credentials/")
                                                                             ),
                                                                             new JObject(
                                                                                 new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + HTTPRequest.Host + "/cpo/versions/2.0/locations/")
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.0/locations/")
                                                                             )
-                                                                    ))).ToString().ToUTF8Bytes(),
+                                                                    ))).ToUTF8Bytes(),
                                                   Connection      = "close"
                                               };
 
