@@ -37,22 +37,34 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 {
 
     /// <summary>
-    /// The generic OCPI HTTP API.
+    /// The generic OCPI v2.0 HTTP API.
     /// </summary>
     public class GenericAPI
     {
 
         #region Data
 
-        private static readonly Random          _Random                         = new Random();
+        private static readonly Random         _Random                         = new Random();
 
-        private const           String          DefaultHTTPServerName           = "GraphDefined OCPI HTTP API v0.1";
-        protected internal const String         __DefaultHTTPRoot               = "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot";
-        private static readonly IPPort          DefaultHTTPServerPort           = new IPPort(8080);
+        protected internal const String        __DefaultHTTPRoot               = "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot";
 
-        private readonly Func<String, Stream> _GetRessources;
+        private readonly Func<String, Stream>  _GetRessources;
 
-        public  const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
+
+        /// <summary>
+        /// The default HTTP server name.
+        /// </summary>
+        public const           String          DefaultHTTPServerName           = "GraphDefined OCPI HTTP API v0.1";
+
+        /// <summary>
+        /// The default HTTP server TCP port.
+        /// </summary>
+        public static readonly IPPort          DefaultHTTPServerPort           = new IPPort(8080);
+
+        /// <summary>
+        /// The default HTTP logfile.
+        /// </summary>
+        public const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
 
         #endregion
 
@@ -417,54 +429,6 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             RegisterURITemplates();
 
-            #region Configure HTTP Server events
-
-            // Server events...
-            _HTTPServer.OnStarted           += (Sender,    Timestamp, Message)                                    => Console.WriteLine("[" + Timestamp + "] '" + (Sender as HTTPServer).DefaultServerName + "' started on port(s) " + (Sender as HTTPServer).Select(tcpserver => tcpserver.Port).AggregateWith(", ") + (Message.IsNotNullOrEmpty() ? "; msg: '" + Message + "'..." : ""));
-            //_HTTPServer.OnNewConnection     += (TCPServer, Timestamp, RemoteSocket, ConnectionId, TCPConnection)  => Console.WriteLine("[" + Timestamp + "] New TCP/HTTP connection from " + TCPConnection.RemoteSocket.ToString());
-            _HTTPServer.OnExceptionOccured  += (Sender,    Timestamp, Exception)                                  => Console.WriteLine("[" + Timestamp + "] HTTP exception occured: '" + Exception.Message + "'");
-            //_HTTPServer.OnConnectionClosed  += (Sender,    Timestamp, RemoteSocket, ConnectionId, ClosedBy)       => Console.WriteLine("[" + Timestamp + "] TCP/HTTP connection from " + RemoteSocket.ToString() + " closed by " + ClosedBy.ToString().ToLower() + "!");
-            _HTTPServer.OnCompleted         += (Sender,    Timestamp, Message)                                    => Console.WriteLine("[" + Timestamp + "] '" + (Sender as HTTPServer).DefaultServerName + "' shutdown" + (Message.IsNotNullOrEmpty() ? "; msg: '" + Message + "'..." : "..."));
-
-            // HTTP events...
-            //_HTTPServer.RequestLog          += (Sender, Timestamp, Request)            => Console.WriteLine("[" + Timestamp + "] " + Request.HTTPMethod + " " + Request.URI);
-            //_HTTPServer.AccessLog           += (Sender, Timestamp, Request, Response)  => Console.WriteLine("[" + Timestamp + "] " + Request.HTTPMethod + " " + Request.URI + " => " + Response.HTTPStatusCode.SimpleString);
-
-
-            //_HTTPServer.AccessLog += (_HTTPServer, ServerTimestamp, Request, Response) => {
-            //
-            //    Console.WriteLine("[" + ServerTimestamp.ToString() + "] " +
-            //                      (Request.X_Forwarded_For != null
-            //                         ? Request.X_Forwarded_For + "(" +  Request.RemoteSocket + ") - "
-            //                         : Request.RemoteSocket + " - ") +
-            //                      Request.HTTPMethod   + " " +
-            //                      Request.URI          + " " +
-            //                      Response.HTTPStatusCode + " " +
-            //                      Response.ContentLength + " bytes");
-            //
-            //};
-
-            _HTTPServer.ErrorLog += (_HTTPServer, ServerTimestamp, Request, Response, Error, LastException) => {
-
-                var _error            = (Error         == null) ? "" : Error;
-                var _exceptionMessage = (LastException == null) ? "" : Environment.NewLine + LastException.Message;
-
-                Console.Write("[" + ServerTimestamp.ToString() + "] " +
-                              (Request.X_Forwarded_For != null
-                                  ? Request.X_Forwarded_For + "(" + Request.RemoteSocket + ") - "
-                                  : Request.RemoteSocket + " - ") +
-                              Request.HTTPMethod + " " +
-                              Request.URI        + " => ");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("[" + Response.HTTPStatusCode + "] ");
-                Console.ResetColor();
-                Console.WriteLine((_error.           IsNotNullOrEmpty() ? _error  + "/"     : "" ) +
-                                  (_exceptionMessage.IsNotNullOrEmpty() ? _exceptionMessage : ""));
-
-            };
-
-            #endregion
-
         }
 
         #endregion
@@ -505,8 +469,6 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
         }
 
         #endregion
-
-
 
 
         #region Start()
@@ -563,7 +525,6 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
         }
 
         #endregion
-
 
     }
 
