@@ -155,7 +155,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region /cpo
 
-            _HTTPServer.RegisterResourcesFolder(URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.CPOAPI.HTTPRoot", Assembly.GetCallingAssembly());
+            _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+                                                URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.CPOAPI.HTTPRoot",
+                                                Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,

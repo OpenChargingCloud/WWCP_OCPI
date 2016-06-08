@@ -157,7 +157,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region /emsp
 
-            _HTTPServer.RegisterResourcesFolder(URIPrefix + "/emsp", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.EMSPAPI.HTTPRoot", Assembly.GetCallingAssembly());
+            _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+                                                URIPrefix + "/emsp", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.EMSPAPI.HTTPRoot",
+                                                Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,

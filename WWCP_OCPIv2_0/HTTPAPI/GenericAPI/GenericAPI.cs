@@ -443,7 +443,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region / (HTTPRoot)
 
-            _HTTPServer.RegisterResourcesFolder(URIPrefix + "/", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot", Assembly.GetCallingAssembly());
+            _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+                                                URIPrefix + "/", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot",
+                                                Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
