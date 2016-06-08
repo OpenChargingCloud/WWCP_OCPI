@@ -445,7 +445,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             _HTTPServer.RegisterResourcesFolder(URIPrefix + "/", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot", Assembly.GetCallingAssembly());
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           new String[] { URIPrefix + "/index.html",
                                                          URIPrefix + "/" },
                                           HTTPContentType.HTML_UTF8,

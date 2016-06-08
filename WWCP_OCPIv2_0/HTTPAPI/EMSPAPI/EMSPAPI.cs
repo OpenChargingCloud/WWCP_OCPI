@@ -159,7 +159,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             _HTTPServer.RegisterResourcesFolder(URIPrefix + "/emsp", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.EMSPAPI.HTTPRoot", Assembly.GetCallingAssembly());
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           new String[] { URIPrefix + "/emsp/index.html",
                                                          URIPrefix + "/emsp/" },
                                           HTTPContentType.HTML_UTF8,
@@ -184,7 +185,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region /emsp/versions
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           URIPrefix + "/emsp/versions",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: Request => {
@@ -207,7 +209,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region /emsp/versions/2.0/
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           URIPrefix + "/emsp/versions/2.0/",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: Request => {

@@ -157,7 +157,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             _HTTPServer.RegisterResourcesFolder(URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.CPOAPI.HTTPRoot", Assembly.GetCallingAssembly());
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           new String[] { URIPrefix + "/cpo/index.html",
                                                          URIPrefix + "/cpo/" },
                                           HTTPContentType.HTML_UTF8,
@@ -182,7 +183,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region /cpo/versions
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           URIPrefix + "/cpo/versions",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: Request => {
@@ -205,7 +207,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
 
             #region /cpo/versions/2.0/
 
-            _HTTPServer.AddMethodCallback(HTTPMethod.GET,
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
                                           URIPrefix + "/cpo/versions/2.0/",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: Request => {
