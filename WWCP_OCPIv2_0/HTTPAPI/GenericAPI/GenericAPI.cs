@@ -452,7 +452,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           new String[] { URIPrefix + "/index.html",
                                                          URIPrefix + "/" },
                                           HTTPContentType.HTML_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
                                               typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);

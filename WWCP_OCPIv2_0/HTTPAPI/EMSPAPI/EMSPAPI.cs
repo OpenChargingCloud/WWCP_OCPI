@@ -166,7 +166,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           new String[] { URIPrefix + "/emsp/index.html",
                                                          URIPrefix + "/emsp/" },
                                           HTTPContentType.HTML_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
                                               typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
@@ -191,7 +191,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           HTTPMethod.GET,
                                           URIPrefix + "/emsp/versions",
                                           HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
@@ -215,7 +215,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           HTTPMethod.GET,
                                           URIPrefix + "/emsp/versions/2.0/",
                                           HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,

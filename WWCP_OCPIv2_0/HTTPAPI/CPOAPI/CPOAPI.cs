@@ -164,7 +164,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           new String[] { URIPrefix + "/cpo/index.html",
                                                          URIPrefix + "/cpo/" },
                                           HTTPContentType.HTML_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
                                               typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_0.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
@@ -189,7 +189,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           HTTPMethod.GET,
                                           URIPrefix + "/cpo/versions",
                                           HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
@@ -213,7 +213,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0.HTTP
                                           HTTPMethod.GET,
                                           URIPrefix + "/cpo/versions/2.0/",
                                           HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: Request => {
+                                          HTTPDelegate: async Request => {
 
                                               return new HTTPResponseBuilder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
