@@ -426,9 +426,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         {
 
             if ((Object) Session == null)
-                throw new ArgumentNullException("The given Session must not be null!");
+                throw new ArgumentNullException(nameof(Session),  "The given session must not be null!");
 
-            return _Id.CompareTo(Session._Id);
+            return Id.CompareTo(Session.Id);
 
         }
 
@@ -475,7 +475,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
             if ((Object) Session == null)
                 return false;
 
-            return _Id.Equals(Session._Id);
+            return Id.Equals(Session.Id);
 
         }
 
@@ -489,9 +489,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            return _Id.GetHashCode();
-        }
+
+            => Id.GetHashCode();
 
         #endregion
 
@@ -501,9 +500,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get a string representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return _Id.ToString();
-        }
+
+            => Id.ToString();
 
         #endregion
 

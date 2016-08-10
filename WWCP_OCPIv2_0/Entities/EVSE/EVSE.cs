@@ -419,9 +419,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         {
 
             if ((Object) EVSE == null)
-                throw new ArgumentNullException("The given EVSE must not be null!");
+                throw new ArgumentNullException(nameof(EVSE),  "The given EVSE must not be null!");
 
-            return _Id.CompareTo(EVSE._Id);
+            return Id.CompareTo(EVSE.Id);
 
         }
 
@@ -468,7 +468,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
             if ((Object) EVSE == null)
                 return false;
 
-            return _Id.Equals(EVSE._Id);
+            return Id.Equals(EVSE.Id);
 
         }
 
@@ -482,9 +482,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            return _Id.GetHashCode();
-        }
+
+            => Id.GetHashCode();
 
         #endregion
 
@@ -494,9 +493,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get a string representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return _Id.ToString();
-        }
+
+            => Id.ToString();
 
         #endregion
 

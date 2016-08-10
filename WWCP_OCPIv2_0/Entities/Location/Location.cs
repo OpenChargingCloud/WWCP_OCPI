@@ -465,9 +465,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         {
 
             if ((Object) Location == null)
-                throw new ArgumentNullException("The given Location must not be null!");
+                throw new ArgumentNullException(nameof(Location),  "The given Location must not be null!");
 
-            return _Id.CompareTo(Location._Id);
+            return Id.CompareTo(Location.Id);
 
         }
 
@@ -514,7 +514,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
             if ((Object) Location == null)
                 return false;
 
-            return _Id.Equals(Location._Id);
+            return Id.Equals(Location.Id);
 
         }
 
@@ -528,9 +528,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            return _Id.GetHashCode();
-        }
+
+            => Id.GetHashCode();
 
         #endregion
 
@@ -540,9 +539,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get a string representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return _Id.ToString();
-        }
+
+            => Id.ToString();
 
         #endregion
 

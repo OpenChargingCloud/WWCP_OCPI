@@ -458,9 +458,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         {
 
             if ((Object) CDR == null)
-                throw new ArgumentNullException("The given CDR must not be null!");
+                throw new ArgumentNullException(nameof(CDR),  "The given CDR must not be null!");
 
-            return _Id.CompareTo(CDR._Id);
+            return Id.CompareTo(CDR.Id);
 
         }
 
@@ -507,7 +507,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
             if ((Object) CDR == null)
                 return false;
 
-            return _Id.Equals(CDR._Id);
+            return Id.Equals(CDR.Id);
 
         }
 
@@ -521,9 +521,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            return _Id.GetHashCode();
-        }
+
+            => Id.GetHashCode();
 
         #endregion
 
@@ -533,9 +532,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get a string representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return _Id.ToString();
-        }
+
+            => Id.ToString();
 
         #endregion
 

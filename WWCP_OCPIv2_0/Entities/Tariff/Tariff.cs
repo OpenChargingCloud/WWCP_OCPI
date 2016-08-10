@@ -196,17 +196,14 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Return a JSON representation of this object.
         /// </summary>
         public JObject ToJSON()
-        {
 
-            return JSONObject.Create(new JProperty("id",        _Id.ToString()),
-                                     new JProperty("currency",  _Currency.ISOCode),
-                                     TariffText != null && TariffText.Any() ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
-                                     TariffUrl  != null                     ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
-                                     _TariffElements.Any()
-                                         ? new JProperty("elements", new JArray(_TariffElements.Select(TariffElement => TariffElement.ToJSON())))
-                                         : null);
-
-        }
+            => JSONObject.Create(new JProperty("id",        Id.ToString()),
+                                 new JProperty("currency",  _Currency.ISOCode),
+                                 TariffText != null && TariffText.Any() ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
+                                 TariffUrl  != null                     ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
+                                 _TariffElements.Any()
+                                     ? new JProperty("elements", new JArray(_TariffElements.Select(TariffElement => TariffElement.ToJSON())))
+                                     : null);
 
         #endregion
 
@@ -246,9 +243,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         {
 
             if ((Object) Tariff == null)
-                throw new ArgumentNullException("The given Tariff must not be null!");
+                throw new ArgumentNullException(nameof(Tariff),  "The given tariff must not be null!");
 
-            return _Id.CompareTo(Tariff._Id);
+            return Id.CompareTo(Tariff.Id);
 
         }
 
@@ -295,7 +292,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
             if ((Object) Tariff == null)
                 return false;
 
-            return _Id.Equals(Tariff._Id);
+            return Id.Equals(Tariff.Id);
 
         }
 
@@ -309,9 +306,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            return _Id.GetHashCode();
-        }
+
+            => Id.GetHashCode();
 
         #endregion
 
@@ -321,9 +317,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         /// Get a string representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return _Id.ToString();
-        }
+
+            => Id.ToString();
 
         #endregion
 
