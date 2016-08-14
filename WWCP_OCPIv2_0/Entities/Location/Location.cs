@@ -198,7 +198,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         private readonly BusinessDetails _Operator;
 
         /// <summary>
-        /// Information of the EVSE operator.
+        /// Information of the Charging Station Operator.
         /// </summary>
         [Optional]
         public BusinessDetails Operator
@@ -234,7 +234,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         private Hours _OpeningTimes;
 
         /// <summary>
-        /// Information of the EVSE operator. When not specified,
+        /// Information of the Charging Station Operator. When not specified,
         /// the information retreived from the api_info endpoint
         /// should be used instead.
         /// </summary>

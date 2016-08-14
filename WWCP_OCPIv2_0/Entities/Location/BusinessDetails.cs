@@ -27,7 +27,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
 {
 
     /// <summary>
-    /// This class references business details of EVSE operators.
+    /// This class references business details of Charging Station Operators.
     /// </summary>
     public class BusinessDetails
     {
@@ -90,7 +90,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_0
         #region Constructor(s)
 
         /// <summary>
-        /// Create new business details for an EVSE operator.
+        /// Create new business details for an Charging Station Operator.
         /// </summary>
         /// <param name="Name">Name of the operator.</param>
         /// <param name="Website">Link to the operator's website.</param>
