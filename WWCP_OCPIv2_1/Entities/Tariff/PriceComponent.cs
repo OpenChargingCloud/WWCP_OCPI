@@ -34,43 +34,15 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #region Properties
 
-        #region Type
-
-        private readonly DimensionType _Type;
-
         /// <summary>
         /// Type of tariff dimension.
         /// </summary>
-        public DimensionType Type
-        {
-            get
-            {
-                return _Type;
-            }
-        }
-
-        #endregion
-
-        #region Price
-
-        private readonly Decimal _Price;
+        public DimensionType  Type      { get; }
 
         /// <summary>
         /// Price per unit for this tariff dimension.
         /// </summary>
-        public Decimal Price
-        {
-            get
-            {
-                return _Price;
-            }
-        }
-
-        #endregion
-
-        #region StepSize
-
-        private readonly UInt32 _StepSize;
+        public Decimal        Price     { get; }
 
         /// <summary>
         /// Minimum amount to be billed. This unit will be billed in this step_size blocks.
@@ -79,15 +51,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// If type is time and step_size is 300, then time will be billed in blocks of 5 minutes,
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
-        public UInt32 StepSize
-        {
-            get
-            {
-                return _StepSize;
-            }
-        }
-
-        #endregion
+        public UInt32         StepSize  { get; }
 
         #endregion
 
@@ -104,9 +68,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
                               UInt32         StepSize = 1)
         {
 
-            this._Type      = Type;
-            this._Price     = Price;
-            this._StepSize  = StepSize;
+            this.Type      = Type;
+            this.Price     = Price;
+            this.StepSize  = StepSize;
 
         }
 
@@ -177,9 +141,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         public JObject ToJSON()
         {
 
-            return new JObject(new JProperty("type",       _Type. ToString()),
-                               new JProperty("price",      _Price.ToString("0.00")),
-                               new JProperty("step_size",  _StepSize));
+            return new JObject(new JProperty("type",       Type. ToString()),
+                               new JProperty("price",      Price.ToString("0.00")),
+                               new JProperty("step_size",  StepSize));
 
         }
 
@@ -195,7 +159,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         {
             unchecked
             {
-                return _Type.GetHashCode() * 23 ^ _Price.GetHashCode() * 17 ^ _StepSize.GetHashCode();
+                return Type.GetHashCode() * 23 ^ Price.GetHashCode() * 17 ^ StepSize.GetHashCode();
             }
         }
 
@@ -208,7 +172,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// </summary>
         public override String ToString()
         {
-            return String.Concat("type: ", _Type.ToString(), ", price: ", _Price.ToString(), ", step size:", _StepSize.ToString());
+            return String.Concat("type: ", Type.ToString(), ", price: ", Price.ToString(), ", step size:", StepSize.ToString());
         }
 
         #endregion

@@ -80,7 +80,12 @@
     <Compile Include="Entities\Session\Session.cs" />
     <Compile Include="Entities\Session\Auth_Id.cs" />
     <Compile Include="Entities\Session\Session_Id.cs" />
+    <Compile Include="Entities\Tariff\EnvironmentalImpact.cs" />
+    <Compile Include="Entities\Tariff\EnvironmentalImpactType.cs" />
+    <Compile Include="Entities\Tariff\EnergySourceCategory.cs" />
+    <Compile Include="Entities\Tariff\EnergySource.cs" />
     <Compile Include="Entities\Tariff\PriceComponent.cs" />
+    <Compile Include="Entities\Tariff\EnergyMix.cs" />
     <Compile Include="Entities\Tariff\TariffRestrictions.cs" />
     <Compile Include="Entities\Tariff\TariffElement.cs" />
     <Compile Include="Entities\Tariff\Tariff_Id.cs" />

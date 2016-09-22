@@ -39,107 +39,35 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #region Properties
 
-        #region Time
-
-        private readonly TimeRange? _Time;
-
         /// <summary>
         /// Start/end time of day, for example "13:30 - 19:45", valid from this time of the day.
         /// </summary>
-        public TimeRange? Time
-        {
-            get
-            {
-                return _Time;
-            }
-        }
-
-        #endregion
-
-        #region Date
-
-        private readonly StartEndDateTime? _Date;
+        public TimeRange?              Time         { get; }
 
         /// <summary>
         /// Start/end date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
-        public StartEndDateTime? Date
-        {
-            get
-            {
-                return _Date;
-            }
-        }
-
-        #endregion
-
-        #region kWh
-
-        private readonly DecimalMinMax? _kWh;
+        public StartEndDateTime?       Date         { get; }
 
         /// <summary>
         /// Minimum/Maximum used energy in kWh, for example 20, valid from this amount of energy is used.
         /// </summary>
-        public DecimalMinMax? kWh
-        {
-            get
-            {
-                return _kWh;
-            }
-        }
-
-        #endregion
-
-        #region Power
-
-        private readonly DecimalMinMax? _Power;
+        public DecimalMinMax?          kWh          { get; }
 
         /// <summary>
         /// Minimum/Maximum power in kW, for example 0, valid from this charging speed.
         /// </summary>
-        public DecimalMinMax? Power
-        {
-            get
-            {
-                return _Power;
-            }
-        }
-
-        #endregion
-
-        #region Duration
-
-        private readonly TimeSpanMinMax? _Duration;
+        public DecimalMinMax?          Power        { get; }
 
         /// <summary>
         /// Minimum/Maximum duration in seconds, valid for a duration from x seconds.
         /// </summary>
-        public TimeSpanMinMax? Duration
-        {
-            get
-            {
-                return _Duration;
-            }
-        }
-
-        #endregion
-
-        #region DayOfWeek
-
-        private readonly IEnumerable<DayOfWeek> _DayOfWeek;
+        public TimeSpanMinMax?         Duration     { get; }
 
         /// <summary>
         /// Minimum/Maximum duration in seconds, valid for a duration from x seconds.
         /// </summary>
-        public IEnumerable<DayOfWeek> DayOfWeek
-        {
-            get
-            {
-                return _DayOfWeek;
-            }
-        }
-
-        #endregion
+        public IEnumerable<DayOfWeek>  DayOfWeek    { get; }
 
         #endregion
 
@@ -174,12 +102,12 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
             #endregion
 
-            this._Time       = Time;
-            this._Date       = Date;
-            this._kWh        = kWh;
-            this._Power      = Power;
-            this._Duration   = Duration;
-            this._DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : new DayOfWeek[0];
+            this.Time       = Time;
+            this.Date       = Date;
+            this.kWh        = kWh;
+            this.Power      = Power;
+            this.Duration   = Duration;
+            this.DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : new DayOfWeek[0];
 
         }
 
@@ -277,16 +205,16 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
                                      //new JProperty("type", _Type.ToString()),
                                      //new JProperty("price",      _Price.   ToString()),
 
-                                     _Time.HasValue && _Time.Value.StartTime.HasValue ? new JProperty("start_time", _Time.Value.StartTime.Value.ToString()) : null,
-                                     _Time.HasValue && _Time.Value.EndTime.  HasValue ? new JProperty("end_time",   _Time.Value.EndTime.  Value.ToString()) : null,
+                                     Time. HasValue && Time. Value.StartTime.HasValue ? new JProperty("start_time",   Time.Value.StartTime.Value.ToString())       : null,
+                                     Time. HasValue && Time. Value.EndTime.  HasValue ? new JProperty("end_time",     Time.Value.EndTime.  Value.ToString())       : null,
 
-                                     _kWh.  HasValue && _kWh. Value.Min.HasValue ? new JProperty("min_kWh",    _kWh.  Value.Min.Value.ToString("0.00")) : null,
-                                     _kWh.  HasValue && _kWh. Value.Max.HasValue ? new JProperty("max_kWh",    _kWh.  Value.Max.Value.ToString("0.00")) : null,
+                                     kWh.  HasValue && kWh.  Value.Min.      HasValue  ? new JProperty("min_kWh",      kWh.Value.Min.      Value.ToString("0.00")) : null,
+                                     kWh.  HasValue && kWh.  Value.Max.      HasValue  ? new JProperty("max_kWh",      kWh.Value.Max.      Value.ToString("0.00")) : null,
 
-                                     _Power.HasValue && Power.Value.Min.HasValue ? new JProperty("min_power",  _Power.Value.Min.Value.ToString("0.00")) : null,
-                                     _Power.HasValue && Power.Value.Max.HasValue ? new JProperty("max_power",  _Power.Value.Max.Value.ToString("0.00")) : null,
+                                     Power.HasValue && Power.Value.Min.      HasValue ? new JProperty("min_power",   Power.Value.Min.      Value.ToString("0.00")) : null,
+                                     Power.HasValue && Power.Value.Max.      HasValue ? new JProperty("max_power",   Power.Value.Max.      Value.ToString("0.00")) : null,
 
-                                     _DayOfWeek.Any() ? new JProperty("day_of_week", new JArray(_DayOfWeek.Select(day => day.ToString().ToUpper()))) : null);
+                                     DayOfWeek.Any()                                  ? new JProperty("day_of_week", new JArray(DayOfWeek.Select(day => day.ToString().ToUpper()))) : null);
 
         }
 
@@ -303,12 +231,12 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
             unchecked
             {
 
-                return _Time.     GetHashCode() * 41 ^
-                       _Date.     GetHashCode() * 37 ^
-                       _kWh.      GetHashCode() * 31 ^
-                       _Power.    GetHashCode() * 23 ^
-                       _Duration. GetHashCode() * 17 ^
-                       _DayOfWeek.GetHashCode();
+                return Time.     GetHashCode() * 41 ^
+                       Date.     GetHashCode() * 37 ^
+                       kWh.      GetHashCode() * 31 ^
+                       Power.    GetHashCode() * 23 ^
+                       Duration. GetHashCode() * 17 ^
+                       DayOfWeek.GetHashCode();
 
             }
         }

@@ -42,77 +42,35 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #region Properties
 
-        #region Currency
-
-        private readonly Currency _Currency;
-
         /// <summary>
         /// ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public Currency Currency
-        {
-            get
-            {
-                return _Currency;
-            }
-        }
-
-        #endregion
-
-        #region TariffText
-
-        private readonly I18NString _TariffText;
+        public Currency                    Currency         { get; }
 
         /// <summary>
         /// List of multi-language alternative tariff info text.
         /// </summary>
         [Mandatory]
-        public I18NString TariffText
-        {
-            get
-            {
-                return _TariffText;
-            }
-        }
-
-        #endregion
-
-        #region TariffUrl
-
-        private readonly Uri _TariffUrl;
+        public I18NString                  TariffText       { get; }
 
         /// <summary>
         /// Alternative URL to tariff info.
         /// </summary>
         [Optional]
-        public Uri TariffUrl
-        {
-            get
-            {
-                return _TariffUrl;
-            }
-        }
-
-        #endregion
-
-        #region TariffElements
-
-        private readonly IEnumerable<TariffElement> _TariffElements;
+        public Uri                         TariffUrl        { get; }
 
         /// <summary>
         /// An enumeration of tariff elements.
         /// </summary>
         [Mandatory]
-        public IEnumerable<TariffElement> TariffElements
-        {
-            get
-            {
-                return _TariffElements;
-            }
-        }
+        public IEnumerable<TariffElement>  TariffElements   { get; }
 
-        #endregion
+        /// <summary>
+        /// The energy mix.
+        /// </summary>
+        [Optional]
+        public EnergyMix                   EnergyMix        { get;  }
 
         #endregion
 
@@ -144,7 +102,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #endregion
 
-        #region Tariff(Id, Currency, TariffElements, TariffText = null, TariffUrl = null)
+        #region Tariff(Id, Currency, TariffElements, TariffText = null, TariffUrl = null, EnergyMix = null)
 
         /// <summary>
         /// Create a new tariff object.
@@ -154,11 +112,13 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// <param name="TariffElements">An enumeration of tariff elements.</param>
         /// <param name="TariffText">List of multi-language alternative tariff info text.</param>
         /// <param name="TariffUrl">Alternative URL to tariff info.</param>
+        /// <param name="EnergyMix">The energy mix.</param>
         public Tariff(Tariff_Id                   Id,
                       Currency                    Currency,
                       IEnumerable<TariffElement>  TariffElements,
-                      I18NString                  TariffText = null,
-                      Uri                         TariffUrl  = null)
+                      I18NString                  TariffText  = null,
+                      Uri                         TariffUrl   = null,
+                      EnergyMix                   EnergyMix   = null)
 
             : base(Id)
 
@@ -167,19 +127,20 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
             #region Initial checks
 
             if (TariffElements == null)
-                throw new ArgumentNullException("TariffElements", "The given parameter must not be null!");
+                throw new ArgumentNullException(nameof(TariffElements),  "The given parameter must not be null!");
 
             if (!TariffElements.Any())
-                throw new ArgumentNullException("TariffElements", "The given enumeration must not be empty!");
+                throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration must not be empty!");
 
             #endregion
 
             #region Init data and properties
 
-            this._Currency        = Currency;
-            this._TariffElements  = TariffElements;
-            this._TariffText      = TariffText != null ? TariffText : new I18NString();
-            this._TariffUrl       = TariffUrl;
+            this.Currency        = Currency;
+            this.TariffElements  = TariffElements;
+            this.TariffText      = TariffText != null ? TariffText : new I18NString();
+            this.TariffUrl       = TariffUrl;
+            this.EnergyMix       = EnergyMix;
 
             #endregion
 
@@ -198,11 +159,14 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         public JObject ToJSON()
 
             => JSONObject.Create(new JProperty("id",        Id.ToString()),
-                                 new JProperty("currency",  _Currency.ISOCode),
+                                 new JProperty("currency",  Currency.ISOCode),
                                  TariffText != null && TariffText.Any() ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
                                  TariffUrl  != null                     ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
-                                 _TariffElements.Any()
-                                     ? new JProperty("elements", new JArray(_TariffElements.Select(TariffElement => TariffElement.ToJSON())))
+                                 TariffElements.Any()
+                                     ? new JProperty("elements",    new JArray(TariffElements.Select(TariffElement => TariffElement.ToJSON())))
+                                     : null,
+                                 EnergyMix != null
+                                     ? new JProperty("energy_mix",  EnergyMix.ToJSON())
                                      : null);
 
         #endregion

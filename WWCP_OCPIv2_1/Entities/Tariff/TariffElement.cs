@@ -38,39 +38,15 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #region Properties
 
-        #region PriceComponents
-
-        private readonly IEnumerable<PriceComponent> _PriceComponents;
-
         /// <summary>
         /// Enumeration of price components that make up the pricing of this tariff.
         /// </summary>
-        public IEnumerable<PriceComponent> PriceComponents
-        {
-            get
-            {
-                return _PriceComponents;
-            }
-        }
-
-        #endregion
-
-        #region TariffRestrictions
-
-        private readonly IEnumerable<TariffRestriction> _TariffRestrictions;
+        public IEnumerable<PriceComponent>     PriceComponents     { get; }
 
         /// <summary>
         /// Enumeration of tariff restrictions.
         /// </summary>
-        public IEnumerable<TariffRestriction> TariffRestrictions
-        {
-            get
-            {
-                return _TariffRestrictions;
-            }
-        }
-
-        #endregion
+        public IEnumerable<TariffRestriction>  TariffRestrictions  { get;  }
 
         #endregion
 
@@ -104,15 +80,15 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
             #region Initial checks
 
             if (PriceComponents == null)
-                throw new ArgumentNullException("PriceComponents", "The given parameter must not be null!");
+                throw new ArgumentNullException(nameof(PriceComponents),  "The given parameter must not be null!");
 
             if (!PriceComponents.Any())
-                throw new ArgumentNullException("PriceComponents", "The given enumeration must not be empty!");
+                throw new ArgumentNullException(nameof(PriceComponents),  "The given enumeration must not be empty!");
 
             #endregion
 
-            this._PriceComponents     = PriceComponents;
-            this._TariffRestrictions  = TariffRestrictions;
+            this.PriceComponents     = PriceComponents;
+            this.TariffRestrictions  = TariffRestrictions;
 
         }
 
@@ -132,19 +108,18 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
             #region Initial checks
 
             if (TariffRestriction == null)
-                throw new ArgumentNullException("TariffRestriction", "The given enumeration must not be empty!");
+                throw new ArgumentNullException(nameof(TariffRestriction),  "The given enumeration must not be empty!");
 
             #endregion
 
-            this._PriceComponents     = new PriceComponent[]    { PriceComponent };
-            this._TariffRestrictions  = new TariffRestriction[] { TariffRestriction };
+            this.PriceComponents     = new PriceComponent[]    { PriceComponent };
+            this.TariffRestrictions  = new TariffRestriction[] { TariffRestriction };
 
         }
 
         #endregion
 
         #endregion
-
 
 
         #region ToJSON()
@@ -155,10 +130,10 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         public JObject ToJSON()
         {
 
-            return JSONObject.Create(new JProperty("price_components", new JArray(_PriceComponents.Select(PriceComponent => PriceComponent.ToJSON()))),
+            return JSONObject.Create(new JProperty("price_components", new JArray(PriceComponents.Select(PriceComponent => PriceComponent.ToJSON()))),
 
-                                     (_TariffRestrictions != null && _TariffRestrictions.Any())
-                                         ? new JProperty("restrictions", new JArray(_TariffRestrictions.Select(TariffRestriction => TariffRestriction.ToJSON())))
+                                     (TariffRestrictions != null && TariffRestrictions.Any())
+                                         ? new JProperty("restrictions", new JArray(TariffRestrictions.Select(TariffRestriction => TariffRestriction.ToJSON())))
                                          : null);
 
         }
