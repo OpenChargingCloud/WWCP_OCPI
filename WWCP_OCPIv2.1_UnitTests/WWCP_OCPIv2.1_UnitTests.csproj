@@ -80,7 +80,7 @@
       <Project>{33836742-af1d-4aa4-963f-b0a8e60e6480}</Project>
       <Name>WWCP_Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WWCP_OCPIv2_1\WWCP_OCPIv2_1.csproj">
+    <ProjectReference Include="..\WWCP_OCPIv2.1\WWCP_OCPIv2.1.csproj">
       <Project>{820584ca-46a2-4eb7-8b26-ef43025d042a}</Project>
       <Name>WWCP_OCPIv2_1</Name>
     </ProjectReference>
