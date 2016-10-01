@@ -82,7 +82,7 @@
     </ProjectReference>
     <ProjectReference Include="..\WWCP_OCPIv2.1\WWCP_OCPIv2.1.csproj">
       <Project>{820584ca-46a2-4eb7-8b26-ef43025d042a}</Project>
-      <Name>WWCP_OCPIv2_1</Name>
+      <Name>WWCP_OCPIv2.1</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
