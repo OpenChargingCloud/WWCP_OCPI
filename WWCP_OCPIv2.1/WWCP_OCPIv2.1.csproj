@@ -55,7 +55,6 @@
     <Compile Include="Entities\Location\ParkingRestrictionType.cs" />
     <Compile Include="Entities\EVSE\EVSEStatusSchedule .cs" />
     <Compile Include="DataTypes\RegularHours.cs" />
-    <Compile Include="DataTypes\HourMin.cs" />
     <Compile Include="Entities\Connector\PowerType.cs" />
     <Compile Include="DataTypes\ExceptionalPeriod.cs" />
     <Compile Include="Entities\Location\BusinessDetails.cs" />
