@@ -30,28 +30,19 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
     /// <summary>
     /// This class defines a geo location. The geodetic system to be used is WGS 84.
     /// </summary>
-    public class AdditionalGeoLocation : GeoCoordinate
+    public class AdditionalGeoLocation
     {
 
         #region Properties
-
-        #region Name
-
-        private readonly I18NString _Name;
 
         /// <summary>
         /// An optional name for this geo location.
         /// </summary>
         /// <example>The street name of a parking lot entrance or it's number.</example>
-        public I18NString Name
-        {
-            get
-            {
-                return _Name;
-            }
-        }
+        public I18NString     Name            { get; }
 
-        #endregion
+
+        public GeoCoordinate  GeoCoordinate   { get; }
 
         #endregion
 
@@ -68,12 +59,9 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
                                      Longitude   Longitude,
                                      Altitude?   Altitude  = null,
                                      I18NString  Name      = null)
-
-            : base(Latitude, Longitude, Altitude)
-
         {
 
-            this._Name = Name != null ? Name : new I18NString();
+            this.Name = Name != null ? Name : new I18NString();
 
         }
 

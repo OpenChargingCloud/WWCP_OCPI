@@ -194,19 +194,19 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #region GeoCoordinates
 
-        internal GeoCoordinate _GeoCoordinates;
+        internal GeoCoordinate? _GeoCoordinates;
 
         /// <summary>
         /// The geographical location of this charging station.
         /// </summary>
         [Optional]
-        public GeoCoordinate GeoCoordinates
+        public GeoCoordinate? GeoCoordinates
         {
 
             get
             {
 
-                return _GeoCoordinates.IsValid()
+                return _GeoCoordinates.HasValue
                     ? _GeoCoordinates
                     : Location.GeoCoordinates;
 

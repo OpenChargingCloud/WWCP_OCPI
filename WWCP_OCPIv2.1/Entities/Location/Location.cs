@@ -74,23 +74,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
         #endregion
 
-        #region Name
-
-        private readonly I18NString _Name;
-
         /// <summary>
         /// Display name of the location.
         /// </summary>
         [Optional]
-        public I18NString Name
-        {
-            get
-            {
-                return _Name;
-            }
-        }
-
-        #endregion
+        public I18NString Name { get; }
 
         #region Address
 
