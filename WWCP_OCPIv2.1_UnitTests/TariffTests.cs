@@ -94,8 +94,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.UnitTests
 
             var tariff    = new Tariff(Tariff_Id.Parse("12"),
                                        Currency.EUR,
-                                       TariffText: I18NString.Create(Languages.en, "2 euro p/hour").
-                                                                 Add(Languages.nl, "2 euro p/uur"),
+                                       TariffText: I18NString.Create(Languages.eng, "2 euro p/hour").
+                                                                 Add(Languages.nld, "2 euro p/uur"),
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
                                                                new PriceComponent(DimensionType.TIME, 2.00M, 300)
