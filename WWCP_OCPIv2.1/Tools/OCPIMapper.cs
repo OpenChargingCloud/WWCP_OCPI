@@ -108,7 +108,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
                 case WWCP.EVSEStatusType.Reserved:
                     return OCPIv2_1.EVSEStatusType.Reserved;
 
-                case WWCP.EVSEStatusType.Other:
+                case WWCP.EVSEStatusType.Private:
                     return OCPIv2_1.EVSEStatusType.Unknown;
 
                 case WWCP.EVSEStatusType.UnknownEVSE:
