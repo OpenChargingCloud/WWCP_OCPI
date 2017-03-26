@@ -87,12 +87,12 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
         #region HTTPServer
 
-        protected readonly HTTPServer _HTTPServer;
+        protected readonly HTTPServer<RoamingNetworks, RoamingNetwork> _HTTPServer;
 
         /// <summary>
-        /// The HTTP server of the Open Data API.
+        /// The HTTP server of the OCPI API.
         /// </summary>
-        public HTTPServer HTTPServer
+        public HTTPServer<RoamingNetworks, RoamingNetwork> HTTPServer
         {
             get
             {
@@ -351,7 +351,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                             String                LogfileName             = DefaultLogfileName)
 
             : this(RoamingNetwork,
-                   new HTTPServer(DefaultServerName: DefaultHTTPServerName).AttachTCPPorts(HTTPServerPort != null ? HTTPServerPort : DefaultHTTPServerPort),
+                   new HTTPServer<RoamingNetworks, RoamingNetwork>(DefaultServerName: DefaultHTTPServerName),
                    URIPrefix,
                    GetRessources,
 
@@ -367,6 +367,10 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
         {
 
+            HTTPServer.AttachTCPPorts(HTTPServerPort != null
+                                          ? HTTPServerPort
+                                          : DefaultHTTPServerPort);
+
         }
 
         #endregion
@@ -376,20 +380,20 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// <summary>
         /// Initialize the OCPI HTTP server using IPAddress.Any, http port 8080 and maybe start the server.
         /// </summary>
-        internal GenericAPI(RoamingNetwork        RoamingNetwork,
-                            HTTPServer            HTTPServer,
-                            String                URIPrefix               = "/ext/OCPI",
-                            Func<String, Stream>  GetRessources           = null,
+        internal GenericAPI(RoamingNetwork                               RoamingNetwork,
+                            HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
+                            String                                       URIPrefix               = "/ext/OCPI",
+                            Func<String, Stream>                         GetRessources           = null,
 
-                            String                ServiceName             = DefaultHTTPServerName,
-                            EMailAddress          APIEMailAddress         = null,
-                            PgpPublicKeyRing      APIPublicKeyRing        = null,
-                            PgpSecretKeyRing      APISecretKeyRing        = null,
-                            String                APIPassphrase           = null,
-                            EMailAddressList      APIAdminEMail           = null,
-                            SMTPClient            APISMTPClient           = null,
+                            String                                       ServiceName             = DefaultHTTPServerName,
+                            EMailAddress                                 APIEMailAddress         = null,
+                            PgpPublicKeyRing                             APIPublicKeyRing        = null,
+                            PgpSecretKeyRing                             APISecretKeyRing        = null,
+                            String                                       APIPassphrase           = null,
+                            EMailAddressList                             APIAdminEMail           = null,
+                            SMTPClient                                   APISMTPClient           = null,
 
-                            String                LogfileName             = DefaultLogfileName)
+                            String                                       LogfileName             = DefaultLogfileName)
 
         {
 

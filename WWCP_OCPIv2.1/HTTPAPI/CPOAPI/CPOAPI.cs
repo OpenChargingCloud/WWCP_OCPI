@@ -111,16 +111,16 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// Create an instance of the OCPI HTTP API for Charge Point Operators
         /// using the given HTTP server.
         /// </summary>
-        public CPOAPI(RoamingNetwork    RoamingNetwork,
-                      HTTPServer        HTTPServer,
-                      String            URIPrefix         = "/ext/OCPI",
+        public CPOAPI(RoamingNetwork                               RoamingNetwork,
+                      HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
+                      String                                       URIPrefix         = "/ext/OCPI",
 
-                      String            ServiceName       = DefaultHTTPServerName,
-                      EMailAddress      APIEMailAddress   = null,
-                      PgpSecretKeyRing  APISecretKeyRing  = null,
-                      String            APIPassphrase     = null,
-                      EMailAddressList  APIAdminEMail     = null,
-                      SMTPClient        APISMTPClient     = null)
+                      String                                       ServiceName       = DefaultHTTPServerName,
+                      EMailAddress                                 APIEMailAddress   = null,
+                      PgpSecretKeyRing                             APISecretKeyRing  = null,
+                      String                                       APIPassphrase     = null,
+                      EMailAddressList                             APIAdminEMail     = null,
+                      SMTPClient                                   APISMTPClient     = null)
 
             : base(RoamingNetwork,
                    HTTPServer,
