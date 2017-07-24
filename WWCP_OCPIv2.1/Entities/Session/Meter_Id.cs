@@ -19,6 +19,8 @@
 
 using System;
 
+using org.GraphDefined.Vanaheimr.Illias;
+
 #endregion
 
 namespace org.GraphDefined.WWCP
@@ -28,8 +30,8 @@ namespace org.GraphDefined.WWCP
     /// The unique identification of a energy meter.
     /// </summary>
     public class Meter_Id : IId,
-                           IEquatable<Meter_Id>,
-                           IComparable<Meter_Id>
+                            IEquatable<Meter_Id>,
+                            IComparable<Meter_Id>
 
     {
 
