@@ -46,31 +46,31 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public Currency                    Currency         { get; }
+        public Currency                    Currency          { get; }
 
         /// <summary>
         /// List of multi-language alternative tariff info text.
         /// </summary>
         [Mandatory]
-        public I18NString                  TariffText       { get; }
+        public I18NString                  TariffText        { get; }
 
         /// <summary>
         /// Alternative URL to tariff info.
         /// </summary>
         [Optional]
-        public Uri                         TariffUrl        { get; }
+        public Uri                         TariffUrl         { get; }
 
         /// <summary>
         /// An enumeration of tariff elements.
         /// </summary>
         [Mandatory]
-        public IEnumerable<TariffElement>  TariffElements   { get; }
+        public IEnumerable<TariffElement>  TariffElements    { get; }
 
         /// <summary>
         /// The energy mix.
         /// </summary>
         [Optional]
-        public EnergyMix                   EnergyMix        { get;  }
+        public EnergyMix                   EnergyMix         { get;  }
 
         #endregion
 
@@ -160,8 +160,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
 
             => JSONObject.Create(new JProperty("id",        Id.ToString()),
                                  new JProperty("currency",  Currency.ISOCode),
-                                 TariffText != null && TariffText.Any() ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
-                                 TariffUrl  != null                     ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
+                                 TariffText?.Any() == true ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
+                                 TariffUrl         != null ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
                                  TariffElements.Any()
                                      ? new JProperty("elements",    new JArray(TariffElements.Select(TariffElement => TariffElement.ToJSON())))
                                      : null,
