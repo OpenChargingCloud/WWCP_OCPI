@@ -101,24 +101,23 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// Return a JSON representation of this object.
         /// </summary>
         public JObject ToJSON()
-        {
 
-            return JSONObject.Create(new JProperty("is_green_energy", this.IsGreenEnergy),
+            => JSONObject.Create(
 
-                                     new JProperty("energy_sources",  new JArray(
-                                         EnergySources.SafeSelect(energysource => energysource.ToJSON())
-                                     )),
+                   new JProperty("is_green_energy", IsGreenEnergy),
 
-                                     new JProperty("environ_impact", new JArray(
-                                         EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())
-                                     )),
+                   new JProperty("energy_sources",  new JArray(
+                       EnergySources.SafeSelect(energysource => energysource.ToJSON())
+                   )),
 
-                                     new JProperty("supplier_name",        SupplierName),
-                                     new JProperty("energy_product_name",  EnergyProductName)
+                   new JProperty("environ_impact",  new JArray(
+                       EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())
+                   )),
 
-                                    );
+                   new JProperty("supplier_name",        SupplierName),
+                   new JProperty("energy_product_name",  EnergyProductName)
 
-        }
+               );
 
         #endregion
 
