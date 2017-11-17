@@ -53,8 +53,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
                 case OCPIv2_1.EVSEStatusType.OutOfOrder:
                     return WWCP.EVSEStatusTypes.Faulted;
 
-                case OCPIv2_1.EVSEStatusType.Planned:
-                    return WWCP.EVSEStatusTypes.Planned;
+                //case OCPIv2_1.EVSEStatusType.Planned:
+                //    return WWCP.EVSEStatusTypes.Planned;
 
                 case OCPIv2_1.EVSEStatusType.Removed:
                     return WWCP.EVSEStatusTypes.UnknownEVSE;
@@ -84,11 +84,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
             switch (EVSEStatus)
             {
 
-                case WWCP.EVSEStatusTypes.Planned:
-                    return OCPIv2_1.EVSEStatusType.Planned;
+                //case WWCP.EVSEStatusTypes.Planned:
+                //    return OCPIv2_1.EVSEStatusType.Planned;
 
-                case WWCP.EVSEStatusTypes.InDeployment:
-                    return OCPIv2_1.EVSEStatusType.Planned;
+                //case WWCP.EVSEStatusTypes.InDeployment:
+                //    return OCPIv2_1.EVSEStatusType.Planned;
 
                 case WWCP.EVSEStatusTypes.Available:
                     return OCPIv2_1.EVSEStatusType.Available;
@@ -108,8 +108,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
                 case WWCP.EVSEStatusTypes.Reserved:
                     return OCPIv2_1.EVSEStatusType.Reserved;
 
-                case WWCP.EVSEStatusTypes.Private:
-                    return OCPIv2_1.EVSEStatusType.Unknown;
+                //case WWCP.EVSEStatusTypes.Private:
+                //    return OCPIv2_1.EVSEStatusType.Unknown;
 
                 case WWCP.EVSEStatusTypes.UnknownEVSE:
                     return OCPIv2_1.EVSEStatusType.Removed;
