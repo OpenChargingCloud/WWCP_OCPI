@@ -129,7 +129,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
             {
 
                 if (value == null)
-                    value = new GeoCoordinate(new Latitude(0), new Longitude(0));
+                    value = new GeoCoordinate(Latitude.Parse(0), Longitude.Parse(0));
 
                 if (_GeoCoordinates != value)
                 {
