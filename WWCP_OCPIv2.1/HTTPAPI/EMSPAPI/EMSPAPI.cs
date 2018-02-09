@@ -51,7 +51,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         private static readonly Random  _Random                = new Random();
 
         public  const           String  DefaultHTTPServerName  = "GraphDefined OCPI EMSP HTTP API v0.1";
-        public  static readonly IPPort  DefaultHTTPServerPort  = new IPPort(8080);
+        public  static readonly IPPort  DefaultHTTPServerPort  = IPPort.Parse(8080);
 
         public  const           String  LogfileName            = "OICP_EMSP_HTTPAPI.log";
 
@@ -67,8 +67,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         public EMSPAPI(RoamingNetwork    RoamingNetwork,
                        String            HTTPServerName    = DefaultHTTPServerName,
-                       IPPort            HTTPServerPort    = null,
-                       String            URIPrefix         = "",
+                       IPPort?           HTTPServerPort    = null,
+                       HTTPURI?          URIPrefix         = null,
 
                        String            ServiceName       = DefaultHTTPServerName,
                        EMailAddress      APIEMailAddress   = null,
@@ -113,7 +113,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         public EMSPAPI(RoamingNetwork                               RoamingNetwork,
                        HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                       String                                       URIPrefix         = "",
+                       HTTPURI?                                     URIPrefix         = null,
 
                        String                                       ServiceName       = DefaultHTTPServerName,
                        EMailAddress                                 APIEMailAddress   = null,
@@ -163,8 +163,10 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          new String[] { URIPrefix + "/emsp/index.html",
-                                                         URIPrefix + "/emsp/" },
+                                          new HTTPURI[] {
+                                              URIPrefix + "/emsp/index.html",
+                                              URIPrefix + "/emsp/"
+                                          },
                                           HTTPContentType.HTML_UTF8,
                                           HTTPDelegate: async Request => {
 

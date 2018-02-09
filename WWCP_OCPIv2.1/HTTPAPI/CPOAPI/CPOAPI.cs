@@ -51,7 +51,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         private static readonly Random  _Random                = new Random();
 
         public  const           String  DefaultHTTPServerName  = "GraphDefined OCPI CPO HTTP API v0.1";
-        public  static readonly IPPort  DefaultHTTPServerPort  = new IPPort(8080);
+        public  static readonly IPPort  DefaultHTTPServerPort  = IPPort.Parse(8080);
 
         public  const           String  LogfileName            = "OICP_CPO_HTTPAPI.log";
 
@@ -67,8 +67,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         public CPOAPI(RoamingNetwork    RoamingNetwork,
                       String            HTTPServerName    = DefaultHTTPServerName,
-                      IPPort            HTTPServerPort    = null,
-                      String            URIPrefix         = "",
+                      IPPort?           HTTPServerPort    = null,
+                      HTTPURI?          URIPrefix         = null,
 
                       String            ServiceName       = DefaultHTTPServerName,
                       EMailAddress      APIEMailAddress   = null,
@@ -82,8 +82,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             : base(RoamingNetwork,
                    HTTPServerName,
-                   HTTPServerPort != null ? HTTPServerPort : DefaultHTTPServerPort,
-                   URIPrefix,
+                   HTTPServerPort ?? DefaultHTTPServerPort,
+                   URIPrefix      ?? DefaultURIPrefix,
                    ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
@@ -113,7 +113,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         public CPOAPI(RoamingNetwork                               RoamingNetwork,
                       HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                      String                                       URIPrefix         = "/ext/OCPI",
+                      HTTPURI?                                     URIPrefix         = null,
 
                       String                                       ServiceName       = DefaultHTTPServerName,
                       EMailAddress                                 APIEMailAddress   = null,
@@ -124,7 +124,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             : base(RoamingNetwork,
                    HTTPServer,
-                   URIPrefix,
+                   URIPrefix ?? DefaultURIPrefix,
                    ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
@@ -161,8 +161,10 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          new String[] { URIPrefix + "/cpo/index.html",
-                                                         URIPrefix + "/cpo/" },
+                                          new HTTPURI[] {
+                                              URIPrefix + "/cpo/index.html",
+                                              URIPrefix + "/cpo/"
+                                          },
                                           HTTPContentType.HTML_UTF8,
                                           HTTPDelegate: async Request => {
 

@@ -59,12 +59,14 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// <summary>
         /// The default HTTP server TCP port.
         /// </summary>
-        public static readonly IPPort          DefaultHTTPServerPort           = new IPPort(8080);
+        public static readonly IPPort          DefaultHTTPServerPort           = IPPort.Parse(8080);
 
         /// <summary>
         /// The default HTTP logfile.
         /// </summary>
         public const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
+
+        public static readonly HTTPURI         DefaultURIPrefix                = HTTPURI.Parse("/ext/OCPI");
 
         #endregion
 
@@ -104,18 +106,10 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
         #region URIPrefix
 
-        private readonly String _URIPrefix;
-
         /// <summary>
         /// A common URI prefix for all URIs within this API.
         /// </summary>
-        public String URIPrefix
-        {
-            get
-            {
-                return _URIPrefix;
-            }
-        }
+        public HTTPURI URIPrefix { get; }
 
         #endregion
 
@@ -335,8 +329,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
         internal GenericAPI(RoamingNetwork        RoamingNetwork,
                             String                HTTPServerName          = DefaultHTTPServerName,
-                            IPPort                HTTPServerPort          = null,
-                            String                URIPrefix               = "",
+                            IPPort?               HTTPServerPort          = null,
+                            HTTPURI?              URIPrefix               = null,
                             Func<String, Stream>  GetRessources           = null,
 
                             String                ServiceName             = DefaultHTTPServerName,
@@ -367,9 +361,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
         {
 
-            HTTPServer.AttachTCPPorts(HTTPServerPort != null
-                                          ? HTTPServerPort
-                                          : DefaultHTTPServerPort);
+            HTTPServer.AttachTCPPorts(HTTPServerPort ?? DefaultHTTPServerPort);
 
         }
 
@@ -382,7 +374,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         internal GenericAPI(RoamingNetwork                               RoamingNetwork,
                             HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                            String                                       URIPrefix               = "/ext/OCPI",
+                            HTTPURI?                                     URIPrefix               = null,
                             Func<String, Stream>                         GetRessources           = null,
 
                             String                                       ServiceName             = DefaultHTTPServerName,
@@ -405,19 +397,13 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
             if (HTTPServer == null)
                 throw new ArgumentNullException("HTTPServer", "The given parameter must not be null!");
 
-            if (URIPrefix.IsNullOrEmpty())
-                throw new ArgumentNullException("URIPrefix", "The given parameter must not be null or empty!");
-
-            if (!URIPrefix.StartsWith("/"))
-                URIPrefix = "/" + URIPrefix;
-
             #endregion
 
             #region Init data
 
             this._HTTPServer              = HTTPServer;
             this._GetRessources           = GetRessources;
-            this._URIPrefix               = URIPrefix;
+            this.URIPrefix                = URIPrefix ?? DefaultURIPrefix;
 
             this._ServiceName             = ServiceName;
             this._APIEMailAddress         = APIEMailAddress;
@@ -453,8 +439,10 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          new String[] { URIPrefix + "/index.html",
-                                                         URIPrefix + "/" },
+                                          new HTTPURI[] {
+                                              URIPrefix + "/index.html",
+                                              URIPrefix + "/"
+                                          },
                                           HTTPContentType.HTML_UTF8,
                                           HTTPDelegate: async Request => {
 
