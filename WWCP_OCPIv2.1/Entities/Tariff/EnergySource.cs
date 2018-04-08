@@ -22,6 +22,7 @@ using System;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -73,12 +74,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// Return a JSON representation of this object.
         /// </summary>
         public JObject ToJSON()
-        {
 
-            return JSONObject.Create(new JProperty("source",      Source.    ToString()),
-                                     new JProperty("percentage",  Percentage.ToString()));
-
-        }
+            => JSONObject.Create(
+                   new JProperty("source",      Source.    ToString()),
+                   new JProperty("percentage",  Percentage.ToString())
+               );
 
         #endregion
 

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
-using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -128,15 +128,12 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// Return a JSON representation of this object.
         /// </summary>
         public JObject ToJSON()
-        {
 
-            return JSONObject.Create(new JProperty("price_components", new JArray(PriceComponents.Select(PriceComponent => PriceComponent.ToJSON()))),
+            => JSONObject.Create(new JProperty("price_components", new JArray(PriceComponents.Select(PriceComponent => PriceComponent.ToJSON()))),
 
-                                     (TariffRestrictions != null && TariffRestrictions.Any())
-                                         ? new JProperty("restrictions", new JArray(TariffRestrictions.Select(TariffRestriction => TariffRestriction.ToJSON())))
-                                         : null);
-
-        }
+                   (TariffRestrictions != null && TariffRestrictions.Any())
+                       ? new JProperty("restrictions", new JArray(TariffRestrictions.Select(TariffRestriction => TariffRestriction.ToJSON())))
+                       : null);
 
         #endregion
 
