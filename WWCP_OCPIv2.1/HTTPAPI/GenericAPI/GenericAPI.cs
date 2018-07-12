@@ -408,7 +408,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                                               typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
                                               typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-                                              return new HTTPResponseBuilder(Request) {
+                                              return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   ContentType     = HTTPContentType.HTML_UTF8,
                                                   Content         = _MemoryStream.ToArray(),

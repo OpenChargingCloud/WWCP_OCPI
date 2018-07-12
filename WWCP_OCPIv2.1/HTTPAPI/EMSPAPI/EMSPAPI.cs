@@ -174,7 +174,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                                               typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
                                               typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-                                              return new HTTPResponseBuilder(Request) {
+                                              return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
@@ -195,7 +195,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: async Request => {
 
-                                              return new HTTPResponseBuilder(Request) {
+                                              return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
@@ -219,7 +219,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: async Request => {
 
-                                              return new HTTPResponseBuilder(Request) {
+                                              return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
