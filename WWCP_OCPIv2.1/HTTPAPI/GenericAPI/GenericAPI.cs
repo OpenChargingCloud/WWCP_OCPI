@@ -66,7 +66,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         public const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
 
-        public static readonly HTTPURI         DefaultURIPrefix                = HTTPURI.Parse("/ext/OCPI");
+        public static readonly HTTPPath         DefaultURIPrefix                = HTTPPath.Parse("/ext/OCPI");
 
         #endregion
 
@@ -109,7 +109,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// <summary>
         /// A common URI prefix for all URIs within this API.
         /// </summary>
-        public HTTPURI URIPrefix { get; }
+        public HTTPPath URIPrefix { get; }
 
         #endregion
 
@@ -283,7 +283,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         internal GenericAPI(RoamingNetwork        RoamingNetwork,
                             String                HTTPServerName          = DefaultHTTPServerName,
                             IPPort?               HTTPServerPort          = null,
-                            HTTPURI?              URIPrefix               = null,
+                            HTTPPath?              URIPrefix               = null,
                             Func<String, Stream>  GetRessources           = null,
 
                             String                ServiceName             = DefaultHTTPServerName,
@@ -327,7 +327,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         internal GenericAPI(RoamingNetwork                               RoamingNetwork,
                             HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                            HTTPURI?                                     URIPrefix               = null,
+                            HTTPPath?                                     URIPrefix               = null,
                             Func<String, Stream>                         GetRessources           = null,
 
                             String                                       ServiceName             = DefaultHTTPServerName,
@@ -397,7 +397,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          new HTTPURI[] {
+                                          new HTTPPath[] {
                                               URIPrefix + "/index.html",
                                               URIPrefix + "/"
                                           },

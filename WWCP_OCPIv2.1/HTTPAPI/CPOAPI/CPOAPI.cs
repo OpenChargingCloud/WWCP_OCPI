@@ -68,7 +68,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         public CPOAPI(RoamingNetwork    RoamingNetwork,
                       String            HTTPServerName    = DefaultHTTPServerName,
                       IPPort?           HTTPServerPort    = null,
-                      HTTPURI?          URIPrefix         = null,
+                      HTTPPath?          URIPrefix         = null,
 
                       String            ServiceName       = DefaultHTTPServerName,
                       EMailAddress      APIEMailAddress   = null,
@@ -113,7 +113,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
         /// </summary>
         public CPOAPI(RoamingNetwork                               RoamingNetwork,
                       HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                      HTTPURI?                                     URIPrefix         = null,
+                      HTTPPath?                                     URIPrefix         = null,
 
                       String                                       ServiceName       = DefaultHTTPServerName,
                       EMailAddress                                 APIEMailAddress   = null,
@@ -161,7 +161,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          new HTTPURI[] {
+                                          new HTTPPath[] {
                                               URIPrefix + "/cpo/index.html",
                                               URIPrefix + "/cpo/"
                                           },
