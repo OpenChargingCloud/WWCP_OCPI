@@ -40,11 +40,38 @@ namespace org.GraphDefined.WWCP
         /// <summary>
         /// The internal identification.
         /// </summary>
-        protected readonly String _Id;
+        protected readonly String InternalId;
 
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Indicates whether this identification is null or empty.
+        /// </summary>
+        public Boolean IsNullOrEmpty
+            => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Returns the length of the identification.
+        /// </summary>
+        public UInt64 Length
+            => (UInt64) InternalId.Length;
+
+        #endregion
+
+        #region Constructor(s)
+
+        /// <summary>
+        /// Generate a new charge detail record identification based on the given string.
+        /// </summary>
+        private CDR_Id(String String)
+        {
+            InternalId = String.Trim();
+        }
+
+        #endregion
+
 
         #region New
 
@@ -60,36 +87,6 @@ namespace org.GraphDefined.WWCP
         }
 
         #endregion
-
-        #region Length
-
-        /// <summary>
-        /// Returns the length of the identification.
-        /// </summary>
-        public UInt64 Length
-        {
-            get
-            {
-                return (UInt64) _Id.Length;
-            }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Generate a new charge detail record identification based on the given string.
-        /// </summary>
-        private CDR_Id(String String)
-        {
-            _Id = String.Trim();
-        }
-
-        #endregion
-
 
         #region Parse(Text)
 
@@ -136,7 +133,7 @@ namespace org.GraphDefined.WWCP
         {
             get
             {
-                return new CDR_Id(_Id);
+                return new CDR_Id(InternalId);
             }
         }
 
@@ -268,12 +265,10 @@ namespace org.GraphDefined.WWCP
         public Int32 CompareTo(Object Object)
         {
 
-            if (Object == null)
+            if (Object is null)
                 throw new ArgumentNullException("The given object must not be null!");
 
-            // Check if the given object is an CDRId.
-            var CDRId = Object as CDR_Id;
-            if ((Object) CDRId == null)
+            if (!(Object is CDR_Id CDRId))
                 throw new ArgumentException("The given object is not a CDRId!");
 
             return CompareTo(CDRId);
@@ -294,14 +289,7 @@ namespace org.GraphDefined.WWCP
             if ((Object) CDRId == null)
                 throw new ArgumentNullException("The given CDRId must not be null!");
 
-            // Compare the length of the CDRIds
-            var _Result = this.Length.CompareTo(CDRId.Length);
-
-            // If equal: Compare Ids
-            if (_Result == 0)
-                _Result = _Id.CompareTo(CDRId._Id);
-
-            return _Result;
+            return InternalId.ToLower().CompareTo(CDRId.InternalId.ToLower());
 
         }
 
@@ -321,15 +309,13 @@ namespace org.GraphDefined.WWCP
         public override Boolean Equals(Object Object)
         {
 
-            if (Object == null)
+            if (Object is null)
                 return false;
 
-            // Check if the given object is an CDRId.
-            var CDRId = Object as CDR_Id;
-            if ((Object) CDRId == null)
+            if (!(Object is CDR_Id CDRId))
                 return false;
 
-            return this.Equals(CDRId);
+            return Equals(CDRId);
 
         }
 
@@ -348,7 +334,7 @@ namespace org.GraphDefined.WWCP
             if ((Object) CDRId == null)
                 return false;
 
-            return _Id.Equals(CDRId._Id);
+            return InternalId.Equals(CDRId.InternalId, StringComparison.OrdinalIgnoreCase);
 
         }
 
@@ -363,9 +349,7 @@ namespace org.GraphDefined.WWCP
         /// </summary>
         /// <returns>The HashCode of this object.</returns>
         public override Int32 GetHashCode()
-        {
-            return _Id.GetHashCode();
-        }
+            => InternalId.GetHashCode();
 
         #endregion
 
@@ -375,9 +359,7 @@ namespace org.GraphDefined.WWCP
         /// Return a text representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return _Id.ToString();
-        }
+            => InternalId.ToString();
 
         #endregion
 

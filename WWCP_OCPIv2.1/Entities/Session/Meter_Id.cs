@@ -27,7 +27,7 @@ namespace org.GraphDefined.WWCP
 {
 
     /// <summary>
-    /// The unique identification of a energy meter.
+    /// The unique identification of a meter and/or energy meter.
     /// </summary>
     public class Meter_Id : IId,
                             IEquatable<Meter_Id>,
@@ -40,11 +40,43 @@ namespace org.GraphDefined.WWCP
         /// <summary>
         /// The internal identification.
         /// </summary>
-        protected readonly String _Id;
+        protected readonly String InternalId;
 
         #endregion
 
         #region Properties
+
+        /// <summary>
+        /// Indicates whether this identification is null or empty.
+        /// </summary>
+        public Boolean IsNullOrEmpty
+            => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Returns the length of the identification.
+        /// </summary>
+        public UInt64 Length
+        {
+            get
+            {
+                return (UInt64) InternalId.Length;
+            }
+        }
+
+        #endregion
+
+        #region Constructor(s)
+
+        /// <summary>
+        /// Generate a new energy meter identification based on the given string.
+        /// </summary>
+        private Meter_Id(String String)
+        {
+            InternalId = String.Trim();
+        }
+
+        #endregion
+
 
         #region New
 
@@ -60,36 +92,6 @@ namespace org.GraphDefined.WWCP
         }
 
         #endregion
-
-        #region Length
-
-        /// <summary>
-        /// Returns the length of the identification.
-        /// </summary>
-        public UInt64 Length
-        {
-            get
-            {
-                return (UInt64) _Id.Length;
-            }
-        }
-
-        #endregion
-
-        #endregion
-
-        #region Constructor(s)
-
-        /// <summary>
-        /// Generate a new energy meter identification based on the given string.
-        /// </summary>
-        private Meter_Id(String String)
-        {
-            _Id = String.Trim();
-        }
-
-        #endregion
-
 
         #region Parse(Text)
 
@@ -136,7 +138,7 @@ namespace org.GraphDefined.WWCP
         {
             get
             {
-                return new Meter_Id(_Id);
+                return new Meter_Id(InternalId);
             }
         }
 
@@ -299,7 +301,7 @@ namespace org.GraphDefined.WWCP
 
             // If equal: Compare Ids
             if (_Result == 0)
-                _Result = _Id.CompareTo(MeterId._Id);
+                _Result = InternalId.CompareTo(MeterId.InternalId);
 
             return _Result;
 
@@ -348,7 +350,7 @@ namespace org.GraphDefined.WWCP
             if ((Object) MeterId == null)
                 return false;
 
-            return _Id.Equals(MeterId._Id);
+            return InternalId.Equals(MeterId.InternalId);
 
         }
 
@@ -364,7 +366,7 @@ namespace org.GraphDefined.WWCP
         /// <returns>The HashCode of this object.</returns>
         public override Int32 GetHashCode()
         {
-            return _Id.GetHashCode();
+            return InternalId.GetHashCode();
         }
 
         #endregion
@@ -376,7 +378,7 @@ namespace org.GraphDefined.WWCP
         /// </summary>
         public override String ToString()
         {
-            return _Id.ToString();
+            return InternalId.ToString();
         }
 
         #endregion
