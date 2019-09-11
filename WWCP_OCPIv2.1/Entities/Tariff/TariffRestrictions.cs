@@ -47,7 +47,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// <summary>
         /// Start/end date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
-        public StartEndDateTime?       Date         { get; }
+        public StartEndDateTime        Date         { get; }
 
         /// <summary>
         /// Minimum/Maximum used energy in kWh, for example 20, valid from this amount of energy is used.
@@ -83,7 +83,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
         /// <param name="Duration">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
         /// <param name="DayOfWeek">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
         public TariffRestriction(TimeRange?              Time       = null,
-                                 StartEndDateTime?       Date       = null,
+                                 StartEndDateTime        Date       = null,
                                  DecimalMinMax?          kWh        = null,
                                  DecimalMinMax?          Power      = null,
                                  TimeSpanMinMax?         Duration   = null,
@@ -93,12 +93,14 @@ namespace org.GraphDefined.WWCP.OCPIv2_1
             #region Initial checks
 
             if (!Time.   HasValue &&
-                !Date.   HasValue &&
+                 Date    != null  &&
                 !kWh.    HasValue &&
                 Power.   HasValue &&
                 Duration.HasValue &&
                 DayOfWeek == null)
+            {
                 throw new ArgumentNullException("All given parameter equals null is invalid!");
+            }
 
             #endregion
 
