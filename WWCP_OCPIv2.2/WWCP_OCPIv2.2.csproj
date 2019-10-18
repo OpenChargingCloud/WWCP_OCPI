@@ -7,8 +7,8 @@
     <ProjectGuid>{820584CA-46A2-4EB7-8B26-EF43025D042A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.GraphDefined.WWCP.OCPIv2_1</RootNamespace>
-    <AssemblyName>org.GraphDefined.WWCP.OCPIv2_1</AssemblyName>
+    <RootNamespace>org.GraphDefined.WWCP.OCPIv2_2</RootNamespace>
+    <AssemblyName>org.GraphDefined.WWCP.OCPIv2_2</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>..\..\WWCP_Core\WWCP.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\org.GraphDefined.WWCP.OCPIv2_1.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\org.GraphDefined.WWCP.OCPIv2_2.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

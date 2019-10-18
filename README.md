@@ -1,4 +1,4 @@
-WWCP OCPI v2.1
+WWCP OCPI v2.2
 ==============
 
 This software will allow the communication between World Wide Charging

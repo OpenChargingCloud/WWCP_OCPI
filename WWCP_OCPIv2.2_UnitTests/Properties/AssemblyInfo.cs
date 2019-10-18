@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WWCP OCPI v2.1 Unit Tests")]
-[assembly: AssemblyDescription("Unit Tests for the communication between the World Wide Charging Protocol (WWCP) and the Open ChargePoint Interface v2.1 (OCPI v2.1).")]
+[assembly: AssemblyTitle("WWCP OCPI v2.2 Unit Tests")]
+[assembly: AssemblyDescription("Unit Tests for the communication between the World Wide Charging Protocol (WWCP) and the Open ChargePoint Interface v2.2 (OCPI v2.2).")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GraphDefined GmbH")]
-[assembly: AssemblyProduct("WWCP OCPI v2.1 Unit Tests")]
-[assembly: AssemblyCopyright("Copyright © 2015-2016 GraphDefined GmbH")]
+[assembly: AssemblyProduct("WWCP OCPI v2.2 Unit Tests")]
+[assembly: AssemblyCopyright("Copyright © 2015-2019 GraphDefined GmbH")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
