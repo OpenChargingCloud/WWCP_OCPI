@@ -22,14 +22,14 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
-using org.GraphDefined.WWCP.OCPIv2_1;
+using org.GraphDefined.WWCP.OCPIv2_2;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using NUnit.Framework;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_1.UnitTests
+namespace org.GraphDefined.WWCP.OCPIv2_2.UnitTests
 {
 
 #if __MonoCS__

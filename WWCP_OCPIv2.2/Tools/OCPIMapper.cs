@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
+namespace org.GraphDefined.WWCP.OCPIv2_2.Tools
 {
 
     /// <summary>
@@ -32,34 +32,34 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
         /// </summary>
         /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
         /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this OCPIv2_1.EVSEStatusType EVSEStatus)
+        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this OCPIv2_2.EVSEStatusType EVSEStatus)
         {
 
             switch (EVSEStatus)
             {
 
-                case OCPIv2_1.EVSEStatusType.Available:
+                case OCPIv2_2.EVSEStatusType.Available:
                     return WWCP.EVSEStatusTypes.Available;
 
-                case OCPIv2_1.EVSEStatusType.Blocked:
+                case OCPIv2_2.EVSEStatusType.Blocked:
                     return WWCP.EVSEStatusTypes.OutOfService;
 
-                case OCPIv2_1.EVSEStatusType.Charging:
+                case OCPIv2_2.EVSEStatusType.Charging:
                     return WWCP.EVSEStatusTypes.Charging;
 
-                case OCPIv2_1.EVSEStatusType.Inoperative:
+                case OCPIv2_2.EVSEStatusType.Inoperative:
                     return WWCP.EVSEStatusTypes.OutOfService;
 
-                case OCPIv2_1.EVSEStatusType.OutOfOrder:
+                case OCPIv2_2.EVSEStatusType.OutOfOrder:
                     return WWCP.EVSEStatusTypes.Faulted;
 
-                //case OCPIv2_1.EVSEStatusType.Planned:
+                //case OCPIv2_2.EVSEStatusType.Planned:
                 //    return WWCP.EVSEStatusTypes.Planned;
 
-                case OCPIv2_1.EVSEStatusType.Removed:
+                case OCPIv2_2.EVSEStatusType.Removed:
                     return WWCP.EVSEStatusTypes.UnknownEVSE;
 
-                case OCPIv2_1.EVSEStatusType.Reserved:
+                case OCPIv2_2.EVSEStatusType.Reserved:
                     return WWCP.EVSEStatusTypes.Reserved;
 
                 default:
@@ -78,44 +78,44 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.Tools
         /// </summary>
         /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
         /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static OCPIv2_1.EVSEStatusType AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
+        public static OCPIv2_2.EVSEStatusType AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
         {
 
             switch (EVSEStatus)
             {
 
                 //case WWCP.EVSEStatusTypes.Planned:
-                //    return OCPIv2_1.EVSEStatusType.Planned;
+                //    return OCPIv2_2.EVSEStatusType.Planned;
 
                 //case WWCP.EVSEStatusTypes.InDeployment:
-                //    return OCPIv2_1.EVSEStatusType.Planned;
+                //    return OCPIv2_2.EVSEStatusType.Planned;
 
                 case WWCP.EVSEStatusTypes.Available:
-                    return OCPIv2_1.EVSEStatusType.Available;
+                    return OCPIv2_2.EVSEStatusType.Available;
 
                 case WWCP.EVSEStatusTypes.Charging:
-                    return OCPIv2_1.EVSEStatusType.Charging;
+                    return OCPIv2_2.EVSEStatusType.Charging;
 
                 case WWCP.EVSEStatusTypes.Faulted:
-                    return OCPIv2_1.EVSEStatusType.OutOfOrder;
+                    return OCPIv2_2.EVSEStatusType.OutOfOrder;
 
                 case WWCP.EVSEStatusTypes.OutOfService:
-                    return OCPIv2_1.EVSEStatusType.Inoperative;
+                    return OCPIv2_2.EVSEStatusType.Inoperative;
 
                 case WWCP.EVSEStatusTypes.Offline:
-                    return OCPIv2_1.EVSEStatusType.Unknown;
+                    return OCPIv2_2.EVSEStatusType.Unknown;
 
                 case WWCP.EVSEStatusTypes.Reserved:
-                    return OCPIv2_1.EVSEStatusType.Reserved;
+                    return OCPIv2_2.EVSEStatusType.Reserved;
 
                 //case WWCP.EVSEStatusTypes.Private:
-                //    return OCPIv2_1.EVSEStatusType.Unknown;
+                //    return OCPIv2_2.EVSEStatusType.Unknown;
 
                 case WWCP.EVSEStatusTypes.UnknownEVSE:
-                    return OCPIv2_1.EVSEStatusType.Removed;
+                    return OCPIv2_2.EVSEStatusType.Removed;
 
                 default:
-                    return OCPIv2_1.EVSEStatusType.Unknown;
+                    return OCPIv2_2.EVSEStatusType.Unknown;
 
             }
 

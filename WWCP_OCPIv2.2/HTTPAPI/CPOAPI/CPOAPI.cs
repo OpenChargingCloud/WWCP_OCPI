@@ -37,7 +37,7 @@ using org.GraphDefined.WWCP;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
+namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
 {
 
     /// <summary>
@@ -84,11 +84,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                    HTTPServerName,
                    HTTPServerPort ?? DefaultHTTPServerPort,
                    URIPrefix      ?? DefaultURIPrefix,
-                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
+                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
                    APIEMailAddress,
-                   null,//OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
+                   null,//OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
                    APISecretKeyRing,
                    APIPassphrase,
                    APIAdminEMail,
@@ -125,11 +125,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
             : base(RoamingNetwork,
                    HTTPServer,
                    URIPrefix ?? DefaultURIPrefix,
-                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
+                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
                    APIEMailAddress,
-                   null, //OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
+                   null, //OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
                    APISecretKeyRing,
                    APIPassphrase,
                    APIAdminEMail,
@@ -156,7 +156,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
             #region /cpo
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot",
+                                                URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -169,8 +169,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                                           HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
-                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
                                               return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,

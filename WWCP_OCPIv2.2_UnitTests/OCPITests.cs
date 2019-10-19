@@ -21,7 +21,7 @@ using System;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_1.UnitTests
+namespace org.GraphDefined.WWCP.OCPIv2_2.UnitTests
 {
 
     public class OCPITests

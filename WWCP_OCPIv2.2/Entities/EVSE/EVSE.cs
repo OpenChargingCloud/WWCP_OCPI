@@ -25,7 +25,7 @@ using org.GraphDefined.Vanaheimr.Aegir;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_1
+namespace org.GraphDefined.WWCP.OCPIv2_2
 {
 
     /// <summary>

@@ -33,7 +33,7 @@ using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
+namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
 {
 
     /// <summary>
@@ -46,7 +46,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
 
         private static readonly Random         _Random                         = new Random();
 
-        protected internal const String        __DefaultHTTPRoot               = "org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot";
+        protected internal const String        __DefaultHTTPRoot               = "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot";
 
         private readonly Func<String, Stream>  _GetRessources;
 
@@ -392,7 +392,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
             #region / (HTTPRoot)
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/", "org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot",
+                                                URIPrefix + "/", "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -405,8 +405,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_1.HTTP
                                           HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
-                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_1.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
                                               return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
