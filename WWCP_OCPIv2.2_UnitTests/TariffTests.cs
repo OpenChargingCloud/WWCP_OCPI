@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2016 GraphDefined GmbH
+ * Copyright (c) 2015-2020 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
  *
  * Licensed under the Affero GPL license, Version 3.0 (the "License");
