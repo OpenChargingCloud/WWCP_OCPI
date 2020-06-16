@@ -154,7 +154,7 @@ namespace org.GraphDefined.WWCP
         {
 
             // If both are null, or both are same instance, return true.
-            if (Object.ReferenceEquals(CDRId1, CDRId2))
+            if (ReferenceEquals(CDRId1, CDRId2))
                 return true;
 
             // If one is null, but not both, return false.

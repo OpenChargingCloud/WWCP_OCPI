@@ -159,7 +159,7 @@ namespace org.GraphDefined.WWCP
         {
 
             // If both are null, or both are same instance, return true.
-            if (Object.ReferenceEquals(TariffId1, TariffId2))
+            if (ReferenceEquals(TariffId1, TariffId2))
                 return true;
 
             // If one is null, but not both, return false.
