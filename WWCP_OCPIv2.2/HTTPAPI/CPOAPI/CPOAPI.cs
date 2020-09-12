@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (c) 2015-2020 GraphDefined GmbH
- * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
+ * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,12 @@ using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.BouncyCastle;
+using cloud.charging.open.protocols;
 using org.GraphDefined.WWCP;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
@@ -84,11 +85,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
                    HTTPServerName,
                    HTTPServerPort ?? DefaultHTTPServerPort,
                    URIPrefix      ?? DefaultURIPrefix,
-                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
+                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
                    APIEMailAddress,
-                   null,//OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
+                   null,//OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
                    APISecretKeyRing,
                    APIPassphrase,
                    APIAdminEMail,
@@ -125,11 +126,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
             : base(RoamingNetwork,
                    HTTPServer,
                    URIPrefix ?? DefaultURIPrefix,
-                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
+                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
                    APIEMailAddress,
-                   null, //OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
+                   null, //OpenPGP.ReadPublicKeyRing(typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
                    APISecretKeyRing,
                    APIPassphrase,
                    APIAdminEMail,
@@ -156,7 +157,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
             #region /cpo
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/cpo", "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
+                                                URIPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -169,8 +170,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
                                           HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
-                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
                                               return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
@@ -209,11 +210,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
 
             #endregion
 
-            #region /cpo/versions/2.0/
+            #region /cpo/versions/2.2/
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          URIPrefix + "/cpo/versions/2.0/",
+                                          URIPrefix + "/cpo/versions/2.2/",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: async Request => {
 
@@ -222,16 +223,16 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
                                                   Server          = DefaultHTTPServerName,
                                                   Date            = DateTime.Now,
                                                   ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = new JObject(
-                                                                        new JProperty("version",  "2.0"),
+                                                  Content         = JSONObject.Create(
+                                                                        new JProperty("version",  "2.2"),
                                                                         new JProperty("endpoints", new JArray(
                                                                             new JObject(
                                                                                 new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.0/credentials/")
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
                                                                             ),
                                                                             new JObject(
                                                                                 new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.0/locations/")
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
                                                                             )
                                                                     ))).ToUTF8Bytes(),
                                                   Connection      = "close"

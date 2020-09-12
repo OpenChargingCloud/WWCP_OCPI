@@ -19,30 +19,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// The capabilities of an EVSE.
     /// </summary>
-    public enum ImageFileType
+    public enum CapabilityTypes
     {
 
         /// <summary>
-        /// GIF
+        /// Unspecified capabilities.
         /// </summary>
-        gif,
+        Unspecified                 = 0,
 
         /// <summary>
-        /// JPeg
+        /// The EVSE supports charging profiles. Sending Charging Profiles is not yet supported by OCPI.
         /// </summary>
-        jpeg,
+        CHARGING_PROFILE_CAPABLE    = 1,
 
         /// <summary>
-        /// PNG
+        /// Charging at this EVSE can be payed with credit card.
         /// </summary>
-        png,
+        CREDIT_CARD_PAYABLE         = 2,
 
         /// <summary>
-        /// SVG
+        /// The EVSE can be reserved.
         /// </summary>
-        svg
+        RESERVABLE                  = 3,
+
+        /// <summary>
+        /// Charging at this EVSE can be authorized with a RFID token
+        /// </summary>
+        RFID_READER                 = 4
 
     }
 

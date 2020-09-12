@@ -19,30 +19,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// Categories of energy sources.
     /// </summary>
-    public enum ImageFileType
+    public enum EnergySourceCategories
     {
 
         /// <summary>
-        /// GIF
+        /// Nuclear power sources.
         /// </summary>
-        gif,
+        NUCLEAR,
 
         /// <summary>
-        /// JPeg
+        /// All kinds of fossil power sources.
         /// </summary>
-        jpeg,
+        GENERAL_FOSSIL,
 
         /// <summary>
-        /// PNG
+        /// Fossil power from coal.
         /// </summary>
-        png,
+        COAL,
 
         /// <summary>
-        /// SVG
+        /// Fossil power from gas.
         /// </summary>
-        svg
+        GAS,
+
+        /// <summary>
+        /// All kinds of regenerative power sources.
+        /// </summary>
+        GENERAL_GREEN,
+
+        /// <summary>
+        /// Regenerative power from PV.
+        /// </summary>
+        SOLAR,
+
+        /// <summary>
+        /// Regenerative power from wind turbines.
+        /// </summary>
+        WIND,
+
+        /// <summary>
+        /// Regenerative power from water turbines.
+        /// </summary>
+        WATER
 
     }
 

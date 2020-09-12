@@ -15,17 +15,25 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
-namespace cloud.charging.open.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public class OCPITests
+    /// <summary>
+    /// The format of the connector, whether it is a socket or a plug.
+    /// </summary>
+    public enum ConnectorFormatTypes
     {
+
+        /// <summary>
+        /// The connector is a socket; the EV user needs to bring a fitting plug.
+        /// </summary>
+        SOCKET,
+
+        /// <summary>
+        /// The connector is a attached cable; the EV users car needs to have a fitting inlet.
+        /// </summary>
+        CABLE
+
     }
 
 }

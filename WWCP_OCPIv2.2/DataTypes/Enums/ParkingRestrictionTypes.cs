@@ -19,30 +19,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// This value, if provided, represents the restriction to the parking spot for different purposes.
     /// </summary>
-    public enum ImageFileType
+    public enum ParkingRestrictionTypes
     {
 
         /// <summary>
-        /// GIF
+        /// Reserved parking spot for electric vehicles.
         /// </summary>
-        gif,
+        EV_ONLY,
 
         /// <summary>
-        /// JPeg
+        /// Parking allowed only while plugged in (charging).
         /// </summary>
-        jpeg,
+        PLUGGED,
 
         /// <summary>
-        /// PNG
+        /// Reserved parking spot for disabled people with valid ID.
         /// </summary>
-        png,
+        DISABLED,
 
         /// <summary>
-        /// SVG
+        /// Parking spot for customers/guests only, for example in case of a hotel or shop.
         /// </summary>
-        svg
+        CUSTOMERS,
+
+        /// <summary>
+        /// Parking spot only suitable for (electric) motorcycles or scooters.
+        /// </summary>
+        MOTORCYCLES
 
     }
 

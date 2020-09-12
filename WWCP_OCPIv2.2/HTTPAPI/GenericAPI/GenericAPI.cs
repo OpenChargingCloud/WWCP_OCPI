@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (c) 2015-2020 GraphDefined GmbH
- * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
+ * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,11 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
+using org.GraphDefined.WWCP;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
@@ -46,7 +47,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
 
         private static readonly Random         _Random                         = new Random();
 
-        protected internal const String        __DefaultHTTPRoot               = "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot";
+        protected internal const String        __DefaultHTTPRoot               = "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot";
 
         private readonly Func<String, Stream>  _GetRessources;
 
@@ -392,7 +393,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
             #region / (HTTPRoot)
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/", "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot",
+                                                URIPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -405,8 +406,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
                                           HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
-                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
                                               return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,

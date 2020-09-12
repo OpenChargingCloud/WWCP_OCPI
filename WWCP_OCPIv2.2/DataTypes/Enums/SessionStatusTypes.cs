@@ -15,17 +15,35 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
-namespace cloud.charging.open.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public class OCPITests
+    /// <summary>
+    /// The status of a charging session.
+    /// </summary>
+    public enum SessionStatusTypes
     {
+
+        /// <summary>
+        /// The session is pending and has not yet started. This is the initial state.
+        /// </summary>
+        PENDING,
+
+        /// <summary>
+        /// The session is accepted and active.
+        /// </summary>
+        ACTIVE,
+
+        /// <summary>
+        /// The session has finished succesfully.
+        /// </summary>
+        COMPLETED,
+
+        /// <summary>
+        /// The session is declared invalid and will not be billed.
+        /// </summary>
+        INVALID
+
     }
 
 }

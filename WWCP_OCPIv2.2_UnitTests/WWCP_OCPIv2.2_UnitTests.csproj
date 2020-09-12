@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LocationIdTests.cs" />
     <Compile Include="TariffTests.cs" />
     <Compile Include="OCPITests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

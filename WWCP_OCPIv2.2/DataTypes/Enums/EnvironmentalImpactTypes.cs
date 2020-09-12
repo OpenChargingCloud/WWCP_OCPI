@@ -15,17 +15,25 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
-namespace cloud.charging.open.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public class OCPITests
+    /// <summary>
+    /// Categories of environmental impact values.
+    /// </summary>
+    public enum EnvironmentalImpactTypes
     {
+
+        /// <summary>
+        /// Produced nuclear waste in gramms per kilowatthour.
+        /// </summary>
+        NUCLEAR_WASTE,
+
+        /// <summary>
+        /// Exhausted carbon dioxide in gramms per kilowarrhour.
+        /// </summary>
+        CARBON_DIOXIDE
+
     }
 
 }

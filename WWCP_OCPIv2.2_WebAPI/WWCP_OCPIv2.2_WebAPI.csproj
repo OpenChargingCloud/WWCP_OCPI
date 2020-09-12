@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Styx\libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,8 +48,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="OCPIWebAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BouncyCastle\crypto\crypto.csproj">
+      <Project>{38872a5f-e87e-4fad-b109-8eb7b2e6a4a0}</Project>
+      <Name>crypto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
+      <Project>{477efd16-3627-4473-957d-44ca9a9dfb79}</Project>
+      <Name>Hermod</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
+      <Project>{af76ecc0-2ca5-4cff-9e1e-ff5478c4b6e4}</Project>
+      <Name>Styx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj">
+      <Project>{33836742-af1d-4aa4-963f-b0a8e60e6480}</Project>
+      <Name>WWCP_Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WWCP_OCPIv2.2\WWCP_OCPIv2.2.csproj">
+      <Project>{820584ca-46a2-4eb7-8b26-ef43025d042a}</Project>
+      <Name>WWCP_OCPIv2.2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WWCP_OCPIv2.2_Adapter\WWCP_OCPIv2.2_Adapter.csproj">
+      <Project>{688b9ebc-81a4-4aa3-a663-2bd357de1100}</Project>
+      <Name>WWCP_OCPIv2.2_Adapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

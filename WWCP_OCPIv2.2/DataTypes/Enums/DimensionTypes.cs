@@ -19,30 +19,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// The authentication method used.
     /// </summary>
-    public enum ImageFileType
+    public enum DimensionTypes
     {
 
         /// <summary>
-        /// GIF
+        /// defined in kWh, default division is 1 Wh
         /// </summary>
-        gif,
+        ENERGY,
 
         /// <summary>
-        /// JPeg
+        /// flat fee, no unit
         /// </summary>
-        jpeg,
+        FLAT,
 
         /// <summary>
-        /// PNG
+        /// defined in A (Ampere), Maximum current
         /// </summary>
-        png,
+        MAX_CURRENT,
 
         /// <summary>
-        /// SVG
+        /// defined in A (Ampere), Minimum current
         /// </summary>
-        svg
+        MIN_CURRENT,
+
+        /// <summary>
+        /// time not charging: defined in hours, default division is 1 second
+        /// </summary>
+        PARKING_TIME,
+
+        /// <summary>
+        /// time charging: defined in hours, default division is 1 second
+        /// </summary>
+        TIME
 
     }
 

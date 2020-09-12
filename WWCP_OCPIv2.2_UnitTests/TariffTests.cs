@@ -1,12 +1,12 @@
 ﻿/*
  * Copyright (c) 2015-2020 GraphDefined GmbH
- * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
+ * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Affero GPL license, Version 3.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.gnu.org/licenses/agpl.html
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,14 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
-using org.GraphDefined.WWCP.OCPIv2_2;
+using cloud.charging.open.protocols.OCPIv2_2;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using NUnit.Framework;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 {
 
 #if __MonoCS__
@@ -59,7 +59,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.UnitTests
                                        Currency.EUR,
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(DimensionType.TIME, 2.00M, 300)
+                                                               new PriceComponent(DimensionTypes.TIME, 2.00M, 300)
                                                            )
                                                        )
                                       );
@@ -98,7 +98,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.UnitTests
                                                                  Add(Languages.nld, "2 euro p/uur"),
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(DimensionType.TIME, 2.00M, 300)
+                                                               new PriceComponent(DimensionTypes.TIME, 2.00M, 300)
                                                            )
                                                        )
                                       );

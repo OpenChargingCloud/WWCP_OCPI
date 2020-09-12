@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (c) 2015-2020 GraphDefined GmbH
- * This file is part of WWCP OCPI <https://github.com/GraphDefined/WWCP_OCPI>
+ * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,11 +33,12 @@ using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.BouncyCastle;
+using cloud.charging.open.protocols;
 using org.GraphDefined.WWCP;
 
 #endregion
 
-namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
@@ -84,11 +85,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
                    HTTPServerName,
                    HTTPServerPort != null ? HTTPServerPort : DefaultHTTPServerPort,
                    URIPrefix,
-                   ResourceName => typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot." + ResourceName),
+                   ResourceName => typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
                    APIEMailAddress,
-                   null,//OpenPGP.ReadPublicKeyRing(typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
+                   null,//OpenPGP.ReadPublicKeyRing(typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
                    APISecretKeyRing,
                    APIPassphrase,
                    APIAdminEMail,
@@ -127,11 +128,11 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
             : base(RoamingNetwork,
                    HTTPServer,
                    URIPrefix,
-                   ResourceName => typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot." + ResourceName),
+                   ResourceName => typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
                    APIEMailAddress,
-                   OpenPGP.ReadPublicKeyRing(typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
+                   OpenPGP.ReadPublicKeyRing(typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
                    APISecretKeyRing,
                    APIPassphrase,
                    APIAdminEMail,
@@ -158,7 +159,7 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
             #region /emsp
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/emsp", "org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot",
+                                                URIPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -171,8 +172,8 @@ namespace org.GraphDefined.WWCP.OCPIv2_2.HTTP
                                           HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
-                                              typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(EMSPAPI).Assembly.GetManifestResourceStream("org.GraphDefined.WWCP.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
                                               return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,

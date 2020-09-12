@@ -19,30 +19,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// Reflects the general type of the charge points location. May be used for user information.
     /// </summary>
-    public enum ImageFileType
+    public enum LocationTypes
     {
 
         /// <summary>
-        /// GIF
+        /// Parking location type is not known by the operator (default).
         /// </summary>
-        gif,
+        UNKNOWN,
 
         /// <summary>
-        /// JPeg
+        /// Parking in public space.
         /// </summary>
-        jpeg,
+        ON_STREET,
 
         /// <summary>
-        /// PNG
+        /// Multistorey car park.
         /// </summary>
-        png,
+        PARKING_GARAGE,
 
         /// <summary>
-        /// SVG
+        /// Multistorey car park, mainly underground.
         /// </summary>
-        svg
+        UNDERGROUND_GARAGE,
+
+        /// <summary>
+        /// A cleared area that is intended for parking vehicles, i.e.at super markets, bars, etc.
+        /// </summary>
+        PARKING_LOT,
+
+        /// <summary>
+        /// None of the given possibilities.
+        /// </summary>
+        OTHER
 
     }
 

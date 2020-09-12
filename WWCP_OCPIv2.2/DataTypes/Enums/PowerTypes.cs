@@ -15,17 +15,30 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
-namespace cloud.charging.open.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public class OCPITests
+    /// <summary>
+    /// The format of the connector, whether it is a socket or a plug.
+    /// </summary>
+    public enum PowerTypes
     {
+
+        /// <summary>
+        /// AC single phase.
+        /// </summary>
+        AC_1_PHASE  = 1,
+
+        /// <summary>
+        /// AC three phases.
+        /// </summary>
+        AC_3_PHASE  = 2,
+
+        /// <summary>
+        /// Direct Current.
+        /// </summary>
+        DC          = 3
+
     }
 
 }

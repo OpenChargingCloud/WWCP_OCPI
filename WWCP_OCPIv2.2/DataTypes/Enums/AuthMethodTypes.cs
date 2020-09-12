@@ -15,17 +15,25 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
-namespace cloud.charging.open.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public class OCPITests
+    /// <summary>
+    /// The authentication method used.
+    /// </summary>
+    public enum AuthMethodTypes
     {
+
+        /// <summary>
+        /// Authentication request from the eMSP.
+        /// </summary>
+        AUTH_REQUEST,
+
+        /// <summary>
+        /// Whitelist used to authenticate, no request done to the eMSP.
+        /// </summary>
+        WHITELIST
+
     }
 
 }
