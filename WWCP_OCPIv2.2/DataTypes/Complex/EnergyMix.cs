@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
 
 #endregion
 
@@ -34,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The energy mix.
     /// </summary>
-    public class EnergyMix
+    public class EnergyMix : IEquatable<EnergyMix>
     {
 
         #region Properties
@@ -42,27 +41,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The energy is green.
         /// </summary>
-        public Boolean                           IsGreenEnergy          { get; }
+        public Boolean                           IsGreenEnergy           { get; }
 
         /// <summary>
-        /// The energy sources.
+        /// The energy mixs.
         /// </summary>
-        public IEnumerable<EnergySource>         EnergySources          { get; }
+        public IEnumerable<EnergySource>         EnergySources           { get; }
 
         /// <summary>
         /// The environmental impacts.
         /// </summary>
-        public IEnumerable<EnvironmentalImpact>  EnvironmentalImpacts   { get; }
+        public IEnumerable<EnvironmentalImpact>  EnvironmentalImpacts    { get; }
 
         /// <summary>
         /// The name of the energy supplier.
         /// </summary>
-        public String                            SupplierName           { get; }
+        public String                            SupplierName            { get; }
 
         /// <summary>
         /// The name of the energy product.
         /// </summary>
-        public String                            EnergyProductName      { get; }
+        public String                            EnergyProductName       { get; }
 
         #endregion
 
@@ -72,21 +71,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The energy mix.
         /// </summary>
         /// <param name="IsGreenEnergy">The energy is green.</param>
-        /// <param name="EnergySources">The energy sources.</param>
-        /// <param name="EnvironmentalImpacts">The environmental impacts.</param>
-        /// <param name="SupplierName">The name of the energy supplier.</param>
-        /// <param name="EnergyProductName">The name of the energy product.</param>
+        /// <param name="EnergySources">The optional energy sources.</param>
+        /// <param name="EnvironmentalImpacts">The optional environmental impacts.</param>
+        /// <param name="SupplierName">The optional name of the energy supplier.</param>
+        /// <param name="EnergyProductName">The optional name of the energy product.</param>
         public EnergyMix(Boolean                           IsGreenEnergy,
-                         IEnumerable<EnergySource>         EnergySources,
-                         IEnumerable<EnvironmentalImpact>  EnvironmentalImpacts,
-                         String                            SupplierName,
-                         String                            EnergyProductName)
+                         IEnumerable<EnergySource>         EnergySources          = null,
+                         IEnumerable<EnvironmentalImpact>  EnvironmentalImpacts   = null,
+                         String                            SupplierName           = null,
+                         String                            EnergyProductName      = null)
 
         {
 
             this.IsGreenEnergy         = IsGreenEnergy;
-            this.EnergySources         = EnergySources;
-            this.EnvironmentalImpacts  = EnvironmentalImpacts;
+            this.EnergySources         = EnergySources?.       Distinct() ?? new EnergySource[0];
+            this.EnvironmentalImpacts  = EnvironmentalImpacts?.Distinct() ?? new EnvironmentalImpact[0];
             this.SupplierName          = SupplierName;
             this.EnergyProductName     = EnergyProductName;
 
@@ -104,20 +103,150 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => JSONObject.Create(
 
-                   new JProperty("is_green_energy", IsGreenEnergy),
+                   new JProperty("is_green_energy",            IsGreenEnergy),
 
-                   new JProperty("energy_sources",  new JArray(
-                       EnergySources.SafeSelect(energysource => energysource.ToJSON())
-                   )),
+                   EnergySources.       SafeAny()
+                       ? new JProperty("energy_sources",       new JArray(EnergySources.       SafeSelect(energysource        => energysource.       ToJSON())))
+                       : null,
 
-                   new JProperty("environ_impact",  new JArray(
-                       EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())
-                   )),
+                   EnvironmentalImpacts.SafeAny()
+                       ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.SafeSelect(environmentalimpact => environmentalimpact.ToJSON())))
+                       : null,
 
-                   new JProperty("supplier_name",        SupplierName),
-                   new JProperty("energy_product_name",  EnergyProductName)
+                   SupplierName.IsNotNullOrEmpty()
+                       ? new JProperty("supplier_name",        SupplierName)
+                       : null,
+
+                   EnergyProductName.IsNotNullOrEmpty()
+                       ? new JProperty("energy_product_name",  EnergyProductName)
+                       : null
 
                );
+
+        #endregion
+
+
+        #region Operator overloading
+
+        #region Operator == (EnergyMix1, EnergyMix2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EnergyMix1">An energy mix.</param>
+        /// <param name="EnergyMix2">Another energy mix.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (EnergyMix EnergyMix1,
+                                           EnergyMix EnergyMix2)
+
+            => EnergyMix1.Equals(EnergyMix2);
+
+        #endregion
+
+        #region Operator != (EnergyMix1, EnergyMix2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EnergyMix1">An energy mix.</param>
+        /// <param name="EnergyMix2">Another energy mix.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (EnergyMix EnergyMix1,
+                                           EnergyMix EnergyMix2)
+
+            => !(EnergyMix1 == EnergyMix2);
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<EnergyMix> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        /// <returns>true|false</returns>
+        public override Boolean Equals(Object Object)
+
+            => Object is EnergyMix energyMix &&
+                   Equals(energyMix);
+
+        #endregion
+
+        #region Equals(EnergyMix)
+
+        /// <summary>
+        /// Compares two energy mixs for equality.
+        /// </summary>
+        /// <param name="EnergyMix">A energy mix to compare with.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public Boolean Equals(EnergyMix EnergyMix)
+
+            => IsGreenEnergy.Equals(EnergyMix.IsGreenEnergy) &&
+
+               EnergySources.       Count().Equals(EnergyMix.EnergySources.Count())                &&
+               EnvironmentalImpacts.Count().Equals(EnergyMix.EnvironmentalImpacts.Count())         &&
+               EnergySources.       All(source => EnergyMix.EnergySources.       Contains(source)) &&
+               EnvironmentalImpacts.All(impact => EnergyMix.EnvironmentalImpacts.Contains(impact)) &&
+
+               ((SupplierName.     IsNullOrEmpty()         && EnergyMix.SupplierName.     IsNullOrEmpty()) ||
+                (SupplierName.     IsNeitherNullNorEmpty() && EnergyMix.SupplierName.     IsNeitherNullNorEmpty() && SupplierName.     Equals(EnergyMix.SupplierName))) &&
+
+               ((EnergyProductName.IsNullOrEmpty()         && EnergyMix.EnergyProductName.IsNullOrEmpty()) ||
+                (EnergyProductName.IsNeitherNullNorEmpty() && EnergyMix.EnergyProductName.IsNeitherNullNorEmpty() && EnergyProductName.Equals(EnergyMix.EnergyProductName)));
+
+        #endregion
+
+        #endregion
+
+        #region GetHashCode()
+
+        /// <summary>
+        /// Return the HashCode of this object.
+        /// </summary>
+        /// <returns>The HashCode of this object.</returns>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+
+                return IsGreenEnergy.           GetHashCode() * 5 ^
+
+                       EnergySources.       Aggregate(0, (hashCode, source) => hashCode ^ source.GetHashCode()) ^
+                       EnvironmentalImpacts.Aggregate(0, (hashCode, impact) => hashCode ^ impact.GetHashCode()) ^
+
+                       (SupplierName.     IsNotNullOrEmpty()
+                            ? SupplierName.     GetHashCode() * 3
+                            : 0) ^
+
+                       (EnergyProductName.IsNotNullOrEmpty()
+                            ? EnergyProductName.GetHashCode()
+                            : 0);
+
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => String.Concat(IsGreenEnergy
+                                 ? "Green energy"
+                                 : "No green energy",
+                             EnergyProductName.IsNotNullOrEmpty()
+                                 ? " (" + EnergyProductName + ")"
+                                 : "",
+                             SupplierName.IsNotNullOrEmpty()
+                                 ? " from " + SupplierName
+                                 : "");
 
         #endregion
 

@@ -29,7 +29,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A price component defines the pricing of a tariff.
     /// </summary>
-    public struct PriceComponent
+    public readonly struct PriceComponent : IEquatable<PriceComponent>,
+                                            IComparable<PriceComponent>,
+                                            IComparable
     {
 
         #region Properties
@@ -64,8 +66,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Price">Price per unit for this tariff dimension.</param>
         /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
         public PriceComponent(DimensionTypes  Type,
-                              Decimal        Price,
-                              UInt32         StepSize = 1)
+                              Decimal         Price,
+                              UInt32          StepSize = 1)
         {
 
             this.Type      = Type;
@@ -77,20 +79,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Flat(Price, BillingIncrement)
+        #region Flat        (Price)
 
         /// <summary>
         /// Create a new flat rate price component.
         /// </summary>
         /// <param name="Price">Flat rate price.</param>
         public static PriceComponent FlatRate(Decimal  Price)
-        {
 
-            return new PriceComponent(DimensionTypes.FLAT,
-                                      Price,
-                                      1);
-
-        }
+            => new PriceComponent(DimensionTypes.FLAT,
+                                  Price,
+                                  1);
 
         #endregion
 
@@ -103,17 +102,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
         public static PriceComponent ChargingTime(Decimal   Price,
                                                   TimeSpan  BillingIncrement)
-        {
 
-            return new PriceComponent(DimensionTypes.TIME,
-                                      Price,
-                                      (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
-
-        }
+            => new PriceComponent(DimensionTypes.TIME,
+                                  Price,
+                                  (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         #endregion
 
-        #region ParkingTime(Price, BillingIncrement)
+        #region ParkingTime (Price, BillingIncrement)
 
         /// <summary>
         /// Create a new time-based parking price component.
@@ -122,13 +118,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
         public static PriceComponent ParkingTime(Decimal   Price,
                                                  TimeSpan  BillingIncrement)
-        {
 
-            return new PriceComponent(DimensionTypes.PARKING_TIME,
-                                      Price,
-                                      (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
-
-        }
+            => new PriceComponent(DimensionTypes.PARKING_TIME,
+                                  Price,
+                                  (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         #endregion
 
@@ -150,16 +143,190 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (PriceComponent1, PriceComponent2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent1">A price component.</param>
+        /// <param name="PriceComponent2">Another price component.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (PriceComponent PriceComponent1,
+                                           PriceComponent PriceComponent2)
+
+            => PriceComponent1.Equals(PriceComponent2);
+
+        #endregion
+
+        #region Operator != (PriceComponent1, PriceComponent2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent1">A price component.</param>
+        /// <param name="PriceComponent2">Another price component.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (PriceComponent PriceComponent1,
+                                           PriceComponent PriceComponent2)
+
+            => !(PriceComponent1 == PriceComponent2);
+
+        #endregion
+
+        #region Operator <  (PriceComponent1, PriceComponent2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent1">A price component.</param>
+        /// <param name="PriceComponent2">Another price component.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (PriceComponent PriceComponent1,
+                                          PriceComponent PriceComponent2)
+
+            => PriceComponent1.CompareTo(PriceComponent2) < 0;
+
+        #endregion
+
+        #region Operator <= (PriceComponent1, PriceComponent2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent1">A price component.</param>
+        /// <param name="PriceComponent2">Another price component.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (PriceComponent PriceComponent1,
+                                           PriceComponent PriceComponent2)
+
+            => !(PriceComponent1 > PriceComponent2);
+
+        #endregion
+
+        #region Operator >  (PriceComponent1, PriceComponent2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent1">A price component.</param>
+        /// <param name="PriceComponent2">Another price component.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (PriceComponent PriceComponent1,
+                                          PriceComponent PriceComponent2)
+
+            => PriceComponent1.CompareTo(PriceComponent2) > 0;
+
+        #endregion
+
+        #region Operator >= (PriceComponent1, PriceComponent2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent1">A price component.</param>
+        /// <param name="PriceComponent2">Another price component.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (PriceComponent PriceComponent1,
+                                           PriceComponent PriceComponent2)
+
+            => !(PriceComponent1 < PriceComponent2);
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<PriceComponent> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        public Int32 CompareTo(Object Object)
+
+            => Object is PriceComponent priceComponent
+                   ? CompareTo(priceComponent)
+                   : throw new ArgumentException("The given object is not a price component!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(PriceComponent)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="PriceComponent">An object to compare with.</param>
+        public Int32 CompareTo(PriceComponent PriceComponent)
+        {
+
+            var c = Type.    CompareTo(PriceComponent.Type);
+
+            if (c == 0)
+                c = Price.   CompareTo(PriceComponent.Price);
+
+            if (c == 0)
+                c = StepSize.CompareTo(PriceComponent.StepSize);
+
+            return c;
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<PriceComponent> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        /// <returns>true|false</returns>
+        public override Boolean Equals(Object Object)
+
+            => Object is PriceComponent priceComponent &&
+                   Equals(priceComponent);
+
+        #endregion
+
+        #region Equals(PriceComponent)
+
+        /// <summary>
+        /// Compares two price components for equality.
+        /// </summary>
+        /// <param name="PriceComponent">A price component to compare with.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public Boolean Equals(PriceComponent PriceComponent)
+
+            => Type.    Equals(PriceComponent.Type) &&
+               Price.   Equals(PriceComponent.Price) &&
+               StepSize.Equals(PriceComponent.StepSize);
+
+        #endregion
+
+        #endregion
+
         #region GetHashCode()
 
         /// <summary>
-        /// Get the hashcode of this object.
+        /// Return the HashCode of this object.
         /// </summary>
+        /// <returns>The HashCode of this object.</returns>
         public override Int32 GetHashCode()
         {
             unchecked
             {
-                return Type.GetHashCode() * 23 ^ Price.GetHashCode() * 17 ^ StepSize.GetHashCode();
+
+                return Type.    GetHashCode() * 5 ^
+                       Price.   GetHashCode() * 3 ^
+                       StepSize.GetHashCode();
+
             }
         }
 
@@ -168,12 +335,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (override) ToString()
 
         /// <summary>
-        /// Get a string representation of this object.
+        /// Return a text representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return String.Concat("type: ", Type.ToString(), ", price: ", Price.ToString(), ", step size:", StepSize.ToString());
-        }
+
+            => String.Concat(Type,  "; ",
+                             Price, "; ",
+                             StepSize);
 
         #endregion
 

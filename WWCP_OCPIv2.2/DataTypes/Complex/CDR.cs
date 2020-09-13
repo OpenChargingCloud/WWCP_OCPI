@@ -39,23 +39,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-        #region Start
-
-        private readonly DateTime _Start;
-
         /// <summary>
         /// The time when the CDR became active.
         /// </summary>
         [Mandatory]
-        public DateTime Start
-        {
-            get
-            {
-                return _Start;
-            }
-        }
-
-        #endregion
+        public DateTime Start { get; }
 
         #region End
 
@@ -85,184 +73,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region AuthId
-
-        private readonly Auth_Id _AuthId;
-
         /// <summary>
         /// An id provided by the authentication used so that the eMSP knows to which driver the CDR belongs.
         /// </summary>
         [Mandatory]
-        public Auth_Id AuthId
-        {
-            get
-            {
-                return _AuthId;
-            }
-        }
-
-        #endregion
-
-        #region AuthMethod
-
-        private readonly AuthMethodTypes _AuthMethod;
+        public Auth_Id AuthId { get; }
 
         /// <summary>
         /// Method used for authentication.
         /// </summary>
         [Mandatory]
-        public AuthMethodTypes AuthMethod
-        {
-            get
-            {
-                return _AuthMethod;
-            }
-        }
-
-        #endregion
-
-        #region Dimensions
-
-        private readonly IEnumerable<CDRDimension> _Dimensions;
+        public AuthMethodTypes AuthMethod { get; }
 
         /// <summary>
         /// List of relevant values for this charging period.
         /// </summary>
-        public IEnumerable<CDRDimension> Dimensions
-        {
-            get
-            {
-                return _Dimensions;
-            }
-        }
-
-        #endregion
-
-        #region Location
-
-        private readonly Location _Location;
+        public IEnumerable<CDRDimension> Dimensions { get; }
 
         /// <summary>
         /// The location where this CDR took place.
         /// </summary>
         [Mandatory]
-        public Location Location
-        {
-            get
-            {
-                return _Location;
-            }
-        }
-
-        #endregion
-
-        #region EVSE
-
-        private readonly EVSE _EVSE;
+        public Location Location { get; }
 
         /// <summary>
         /// The EVSE that was used for this CDR.
         /// </summary>
         [Mandatory]
-        public EVSE EVSE
-        {
-            get
-            {
-                return _EVSE;
-            }
-        }
-
-        #endregion
-
-        #region ConnectorId
-
-        private readonly Connector_Id _ConnectorId;
+        public EVSE EVSE { get; }
 
         /// <summary>
         /// Connector ID of the connector used at the EVSE.
         /// </summary>
         [Mandatory]
-        public Connector_Id ConnectorId
-        {
-            get
-            {
-                return _ConnectorId;
-            }
-        }
-
-        #endregion
-
-        #region MeterId
-
-        private readonly Meter_Id _MeterId;
+        public Connector_Id ConnectorId { get; }
 
         /// <summary>
         /// Optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id MeterId
-        {
-            get
-            {
-                return _MeterId;
-            }
-        }
-
-        #endregion
-
-        #region Currency
-
-        private readonly Currency _Currency;
+        public Meter_Id MeterId { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this CDR.
         /// </summary>
         [Mandatory]
-        public Currency Currency
-        {
-            get
-            {
-                return _Currency;
-            }
-        }
-
-        #endregion
-
-        #region Tariffs
-
-        private readonly IEnumerable<Tariff> _Tariffs;
+        public Currency Currency { get; }
 
         /// <summary>
         /// Enumeration of relevant tariffs.
         /// </summary>
-        public IEnumerable<Tariff> Tariffs
-        {
-            get
-            {
-                return _Tariffs;
-            }
-        }
-
-        #endregion
-
-        #region ChargingPeriods
-
-        private readonly IEnumerable<ChargingPeriod> _ChargingPeriods;
+        public IEnumerable<Tariff> Tariffs { get; }
 
         /// <summary>
         /// Enumeration of charging periods that make up this charging session.
         /// A session consist of 1 or more periodes with, each period has a
         /// different relevant Tariff.
         /// </summary>
-        public IEnumerable<ChargingPeriod> ChargingPeriods
-        {
-            get
-            {
-                return _ChargingPeriods;
-            }
-        }
-
-        #endregion
+        public IEnumerable<ChargingPeriod> ChargingPeriods { get; }
 
         #region TotalCosts
 
@@ -368,56 +236,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Initial checks
 
-            if (AuthId      == null)
-                throw new ArgumentNullException("AuthId",           "The given parameter must not be null!");
+            if (!Dimensions.SafeAny())
+                throw new ArgumentNullException(nameof(Dimensions),       "The given enumeration must not be null or empty!");
 
-            if (Dimensions == null)
-                throw new ArgumentNullException("Dimensions",       "The given parameter must not be null!");
-
-            if (!Dimensions.Any())
-                throw new ArgumentNullException("Dimensions",       "The given enumeration must not be empty!");
-
-            if (Location    == null)
-                throw new ArgumentNullException("Location",         "The given parameter must not be null!");
-
-            if (EVSE        == null)
-                throw new ArgumentNullException("EVSE",             "The given parameter must not be null!");
-
-            if (ConnectorId == null)
-                throw new ArgumentNullException("ConnectorId",      "The given parameter must not be null!");
-
-            if (MeterId     == null)
-                throw new ArgumentNullException("MeterId",          "The given parameter must not be null!");
-
-            if (Currency    == null)
-                throw new ArgumentNullException("Currency",         "The given parameter must not be null!");
-
-            if (ChargingPeriods == null)
-                throw new ArgumentNullException("ChargingPeriods",  "The given parameter must not be null!");
-
-            if (!ChargingPeriods.Any())
-                throw new ArgumentNullException("ChargingPeriods",  "The given enumeration must not be empty!");
+            if (!ChargingPeriods.SafeAny())
+                throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration must not be null or empty!");
 
             #endregion
 
-            #region Init data and properties
-
-            this._Start            = Start;
+            this.Start            = Start;
             this._End              = End;
-            this._AuthId           = AuthId;
-            this._AuthMethod       = AuthMethod;
-            this._Dimensions       = Dimensions;
-            this._Location         = Location;
-            this._EVSE             = EVSE;
-            this._ConnectorId      = ConnectorId;
-            this._MeterId          = MeterId;
-            this._Currency         = Currency;
-            this._Tariffs          = Tariffs;
-            this._ChargingPeriods  = ChargingPeriods;
+            this.AuthId           = AuthId;
+            this.AuthMethod       = AuthMethod;
+            this.Dimensions       = Dimensions;
+            this.Location         = Location ?? throw new ArgumentNullException(nameof(Location),  "The given parameter must not be null!");
+            this.EVSE             = EVSE     ?? throw new ArgumentNullException(nameof(EVSE),      "The given parameter must not be null!");
+            this.ConnectorId      = ConnectorId;
+            this.MeterId          = MeterId;
+            this.Currency         = Currency ?? throw new ArgumentNullException(nameof(Currency),  "The given parameter must not be null!");
+            this.Tariffs          = Tariffs;
+            this.ChargingPeriods  = ChargingPeriods;
             this._TotalCosts       = TotalCosts;
-            this._Remark           = Remark != null ? Remark : new I18NString();
-
-            #endregion
+            this._Remark           = Remark ?? new I18NString();
 
         }
 
@@ -433,19 +273,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
-        {
 
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is an CDR.
-            var CDR = Object as CDR;
-            if ((Object) CDR == null)
-                throw new ArgumentException("The given object is not an CDR!");
-
-            return CompareTo(CDR);
-
-        }
+            => Object is CDR cdr
+                   ? CompareTo(cdr)
+                   : throw new ArgumentException("The given object is not a charge detail record!",
+                                                 nameof(Object));
 
         #endregion
 
@@ -458,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(CDR CDR)
         {
 
-            if ((Object) CDR == null)
+            if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR),  "The given CDR must not be null!");
 
             return Id.CompareTo(CDR.Id);
@@ -479,19 +311,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
-        {
 
-            if (Object == null)
-                return false;
-
-            // Check if the given object is an CDR.
-            var CDR = Object as CDR;
-            if ((Object) CDR == null)
-                return false;
-
-            return this.Equals(CDR);
-
-        }
+            => Object is CDR cdr &&
+                   Equals(cdr);
 
         #endregion
 
@@ -505,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(CDR CDR)
         {
 
-            if ((Object) CDR == null)
+            if (CDR is null)
                 return false;
 
             return Id.Equals(CDR.Id);

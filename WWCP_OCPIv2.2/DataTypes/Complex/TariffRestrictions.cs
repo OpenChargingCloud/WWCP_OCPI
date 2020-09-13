@@ -32,9 +32,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// A tariff restrictions class.
+    /// Charging tariff restrictions.
     /// </summary>
-    public class TariffRestriction
+    public class TariffRestrictions : IEquatable<TariffRestrictions>
     {
 
         #region Properties
@@ -74,7 +74,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new tariff restrictions class.
+        /// Create a new charging tariff restrictions.
         /// </summary>
         /// <param name="Time">Start/end time of day, for example "13:30 - 19:45", valid from this time of the day.</param>
         /// <param name="Date">Start/end date, for example: 2015-12-24, valid from this day until that day (excluding that day).</param>
@@ -82,12 +82,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Power">Minimum/Maximum power in kW, for example 0, valid from this charging speed.</param>
         /// <param name="Duration">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
         /// <param name="DayOfWeek">Minimum/Maximum duration in seconds, valid for a duration from x seconds.</param>
-        public TariffRestriction(TimeRange?              Time        = null,
-                                 StartEndDateTime        Date        = null,
-                                 DecimalMinMax?          kWh         = null,
-                                 DecimalMinMax?          Power       = null,
-                                 TimeSpanMinMax?         Duration    = null,
-                                 IEnumerable<DayOfWeek>  DayOfWeek   = null)
+        public TariffRestrictions(TimeRange?              Time        = null,
+                                  StartEndDateTime        Date        = null,
+                                  DecimalMinMax?          kWh         = null,
+                                  DecimalMinMax?          Power       = null,
+                                  TimeSpanMinMax?         Duration    = null,
+                                  IEnumerable<DayOfWeek>  DayOfWeek   = null)
         {
 
             #region Initial checks
@@ -109,7 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.kWh        = kWh;
             this.Power      = Power;
             this.Duration   = Duration;
-            this.DayOfWeek  = DayOfWeek != null ? DayOfWeek.Distinct() : new DayOfWeek[0];
+            this.DayOfWeek  = DayOfWeek?.Distinct() ?? new DayOfWeek[0];
 
         }
 
@@ -122,9 +122,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new MinkWh tariff restriction.
         /// </summary>
         /// <param name="MinkWh">The minimum kWh value.</param>
-        public static TariffRestriction MinkWh(Decimal MinkWh)
+        public static TariffRestrictions MinkWh(Decimal MinkWh)
         {
-            return new TariffRestriction(kWh: DecimalMinMax.FromMin(MinkWh));
+            return new TariffRestrictions(kWh: DecimalMinMax.FromMin(MinkWh));
         }
 
         #endregion
@@ -135,9 +135,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new MaxkWh tariff restriction.
         /// </summary>
         /// <param name="MaxkWh">The maximum kWh value.</param>
-        public static TariffRestriction MaxkWh(Decimal MaxkWh)
+        public static TariffRestrictions MaxkWh(Decimal MaxkWh)
         {
-            return new TariffRestriction(kWh: DecimalMinMax.FromMax(MaxkWh));
+            return new TariffRestrictions(kWh: DecimalMinMax.FromMax(MaxkWh));
         }
 
         #endregion
@@ -148,9 +148,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new MinPower tariff restriction.
         /// </summary>
         /// <param name="MinPower">The minimum power value.</param>
-        public static TariffRestriction MinPower(Decimal MinPower)
+        public static TariffRestrictions MinPower(Decimal MinPower)
         {
-            return new TariffRestriction(Power: DecimalMinMax.FromMin(MinPower));
+            return new TariffRestrictions(Power: DecimalMinMax.FromMin(MinPower));
         }
 
         #endregion
@@ -161,9 +161,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new MaxPower tariff restriction.
         /// </summary>
         /// <param name="MaxPower">The maximum power value.</param>
-        public static TariffRestriction MaxPower(Decimal MaxPower)
+        public static TariffRestrictions MaxPower(Decimal MaxPower)
         {
-            return new TariffRestriction(Power: DecimalMinMax.FromMax(MaxPower));
+            return new TariffRestrictions(Power: DecimalMinMax.FromMax(MaxPower));
         }
 
         #endregion
@@ -174,9 +174,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new MinDuration tariff restriction.
         /// </summary>
         /// <param name="MinDuration">The minimum Duration value.</param>
-        public static TariffRestriction MinDuration(TimeSpan MinDuration)
+        public static TariffRestrictions MinDuration(TimeSpan MinDuration)
         {
-            return new TariffRestriction(Duration: TimeSpanMinMax.FromMin(MinDuration));
+            return new TariffRestrictions(Duration: TimeSpanMinMax.FromMin(MinDuration));
         }
 
         #endregion
@@ -187,9 +187,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new MaxDuration tariff restriction.
         /// </summary>
         /// <param name="MaxDuration">The maximum Duration value.</param>
-        public static TariffRestriction MaxDuration(TimeSpan MaxDuration)
+        public static TariffRestrictions MaxDuration(TimeSpan MaxDuration)
         {
-            return new TariffRestriction(Duration: TimeSpanMinMax.FromMax(MaxDuration));
+            return new TariffRestrictions(Duration: TimeSpanMinMax.FromMax(MaxDuration));
         }
 
         #endregion
@@ -223,6 +223,89 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (TariffRestriction1, TariffRestriction2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="TariffRestriction1">A specification of charging tariff restrictions.</param>
+        /// <param name="TariffRestriction2">Another specification of charging tariff restrictions.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (TariffRestrictions TariffRestriction1,
+                                           TariffRestrictions TariffRestriction2)
+
+            => TariffRestriction1.Equals(TariffRestriction2);
+
+        #endregion
+
+        #region Operator != (TariffRestriction1, TariffRestriction2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="TariffRestriction1">A specification of charging tariff restrictions.</param>
+        /// <param name="TariffRestriction2">Another specification of charging tariff restrictions.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (TariffRestrictions TariffRestriction1,
+                                           TariffRestrictions TariffRestriction2)
+
+            => !(TariffRestriction1 == TariffRestriction2);
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<TariffRestriction> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        /// <returns>true|false</returns>
+        public override Boolean Equals(Object Object)
+
+            => Object is TariffRestrictions tariffRestrictions &&
+                   Equals(tariffRestrictions);
+
+        #endregion
+
+        #region Equals(TariffRestriction)
+
+        /// <summary>
+        /// Compares two charging tariff restrictions for equality.
+        /// </summary>
+        /// <param name="TariffRestrictions">A charging tariff restriction to compare with.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public Boolean Equals(TariffRestrictions TariffRestrictions)
+
+            => !(TariffRestrictions is null)                                                                                                &&
+
+                ((!Time.    HasValue && !TariffRestrictions.Time.    HasValue) ||
+                  (Time.    HasValue &&  TariffRestrictions.Time.    HasValue && Time.    Value.Equals(TariffRestrictions.Time.    Value))) &&
+
+                (( Date     == null  &&  TariffRestrictions.Date     == null) ||
+                 ( Date     != null  &&  TariffRestrictions.Date     != null  && Date.          Equals(TariffRestrictions.Date)))           &&
+
+                ((!kWh.     HasValue && !TariffRestrictions.kWh.     HasValue) ||
+                  (kWh.     HasValue &&  TariffRestrictions.kWh.     HasValue && kWh.     Value.Equals(TariffRestrictions.kWh.     Value))) &&
+
+                ((!Power.   HasValue && !TariffRestrictions.Power.   HasValue) ||
+                  (Power.   HasValue &&  TariffRestrictions.Power.   HasValue && Power.   Value.Equals(TariffRestrictions.Power.   Value))) &&
+
+                ((!Duration.HasValue && !TariffRestrictions.Duration.HasValue) ||
+                  (Duration.HasValue &&  TariffRestrictions.Duration.HasValue && Duration.Value.Equals(TariffRestrictions.Duration.Value))) &&
+
+                DayOfWeek.Count().Equals(TariffRestrictions.DayOfWeek.Count()) &&
+                DayOfWeek.All(day => TariffRestrictions.DayOfWeek.Contains(day));
+
+        #endregion
+
+        #endregion
+
         #region GetHashCode()
 
         /// <summary>
@@ -233,12 +316,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Time.     GetHashCode() * 41 ^
-                       Date.     GetHashCode() * 37 ^
-                       kWh.      GetHashCode() * 31 ^
-                       Power.    GetHashCode() * 23 ^
-                       Duration. GetHashCode() * 17 ^
-                       DayOfWeek.GetHashCode();
+                return (Time.HasValue
+                            ? Time.    GetHashCode() * 13
+                            : 0) ^
+
+                       (Date != null
+                            ? Date.    GetHashCode() * 11
+                            : 0) ^
+
+                       (kWh.HasValue
+                            ? kWh.     GetHashCode() *  7
+                            : 0) ^
+
+                       (Power.HasValue
+                            ? Power.   GetHashCode() *  5
+                            : 0) ^
+
+                       (Duration.HasValue
+                            ? Duration.GetHashCode() *  3
+                            : 0) ^
+
+                       (DayOfWeek.SafeAny()
+                            ? DayOfWeek.Aggregate(0, (hashCode, day) => hashCode ^ day.GetHashCode())
+                            : 0);
 
             }
         }
@@ -247,13 +347,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region (override) ToString()
 
-        ///// <summary>
-        ///// Get a string representation of this object.
-        ///// </summary>
-        //public override String ToString()
-        //{
-        //    return String.Concat("type: ", _Type.ToString(), ", price: ", _Price.ToString(), ", step size:", _StepSize.ToString());
-        //}
+        /// <summary>
+        /// Get a string representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => String.Concat(Time.HasValue
+                                 ? Time.           Value.ToString()
+                                 : "",
+
+                             Date != null
+                                 ? "; " + Date.          ToString()
+                                 : "",
+
+                             kWh.HasValue
+                                 ? "; " + kWh.     Value.ToString()
+                                 : "",
+
+                             Power.HasValue
+                                 ? "; " + Power.   Value.ToString()
+                                 : "",
+
+                             Duration.HasValue
+                                 ? "; " + Duration.Value.ToString()
+                                 : "",
+
+                             DayOfWeek.SafeAny()
+                                 ? "; " + DayOfWeek.AggregateWith(", ")
+                                 : "");
 
         #endregion
 

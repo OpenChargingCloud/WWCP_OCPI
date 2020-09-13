@@ -34,14 +34,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public class Hours : IEquatable<Hours>
     {
 
-        #region Data
-
-        private readonly HashSet<RegularHours>       _RegularHours;
-        private readonly HashSet<ExceptionalPeriod>  _ExceptionalOpenings;
-        private readonly HashSet<ExceptionalPeriod>  _ExceptionalClosings;
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -52,16 +44,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.
         /// </summary>
-        public IEnumerable<RegularHours>       RegularHours
-            => _RegularHours;
+        public IEnumerable<RegularHours>       RegularHours             { get; }
 
         /// <summary>
         /// Exceptions for specified calendar dates, time-range based.
         /// Periods the station is operating/accessible.
         /// Additional to regular hours. May overlap regular rules.
         /// </summary>
-        public IEnumerable<ExceptionalPeriod>  ExceptionalOpenings
-            => _ExceptionalOpenings;
+        public IEnumerable<ExceptionalPeriod>  ExceptionalOpenings      { get; }
 
         /// <summary>
         /// Exceptions for specified calendar dates, time-range based.
@@ -69,8 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Overwriting regularHours and exceptionalOpenings.
         /// Should not overlap exceptionalOpenings.
         /// </summary>
-        public IEnumerable<ExceptionalPeriod>  ExceptionalClosings
-            => _ExceptionalClosings;
+        public IEnumerable<ExceptionalPeriod>  ExceptionalClosings      { get; }
 
         #endregion
 
@@ -89,9 +78,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             this.IsTwentyFourSevenOpen  = false;
-            this._RegularHours          = RegularHours.       SafeAny() ? new HashSet<RegularHours>     (RegularHours)        : new HashSet<RegularHours>();
-            this._ExceptionalOpenings   = ExceptionalOpenings.SafeAny() ? new HashSet<ExceptionalPeriod>(ExceptionalOpenings) : new HashSet<ExceptionalPeriod>();
-            this._ExceptionalClosings   = ExceptionalClosings.SafeAny() ? new HashSet<ExceptionalPeriod>(ExceptionalClosings) : new HashSet<ExceptionalPeriod>();
+            this.RegularHours           = RegularHours?.       Distinct() ?? new RegularHours[0];
+            this.ExceptionalOpenings    = ExceptionalOpenings?.Distinct() ?? new ExceptionalPeriod[0];
+            this.ExceptionalClosings    = ExceptionalClosings?.Distinct() ?? new ExceptionalPeriod[0];
 
         }
 
@@ -174,14 +163,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Hours Hours)
 
-            => !(Hours is null)                                                                          &&
-               IsTwentyFourSevenOpen.     Equals(Hours.IsTwentyFourSevenOpen)                            &&
-               _RegularHours.       Count.Equals(Hours._RegularHours)                                    &&
-               _ExceptionalOpenings.Count.Equals(Hours._ExceptionalOpenings)                             &&
-               _ExceptionalClosings.Count.Equals(Hours._ExceptionalClosings)                             &&
-               _RegularHours.       Any(regularHour => Hours._RegularHours.Contains(regularHour))        &&
-               _ExceptionalOpenings.All(regularHour => Hours._ExceptionalOpenings.Contains(regularHour)) &&
-               _ExceptionalClosings.All(regularHour => Hours._ExceptionalClosings.Contains(regularHour));
+            => !(Hours is null)                                                                        &&
+               IsTwentyFourSevenOpen.    Equals(Hours.IsTwentyFourSevenOpen)                           &&
+               RegularHours.       Equals(Hours.RegularHours.Count())                                  &&
+               ExceptionalOpenings.Equals(Hours.ExceptionalOpenings.Count())                           &&
+               ExceptionalClosings.Equals(Hours.ExceptionalClosings.Count())                           &&
+               RegularHours.       All(regularHour => Hours.RegularHours.Contains(regularHour))        &&
+               ExceptionalOpenings.All(regularHour => Hours.ExceptionalOpenings.Contains(regularHour)) &&
+               ExceptionalClosings.All(regularHour => Hours.ExceptionalClosings.Contains(regularHour));
 
         #endregion
 
@@ -197,10 +186,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
+
                 return IsTwentyFourSevenOpen.GetHashCode() * 3 ^
-                       _RegularHours.       Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode()) ^
-                       _ExceptionalOpenings.Aggregate(0, (hashCode, period)    => hashCode ^ period.   GetHashCode()) ^
-                       _ExceptionalClosings.Aggregate(0, (hashCode, period)    => hashCode ^ period.   GetHashCode());
+                       RegularHours.       Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode()) ^
+                       ExceptionalOpenings.Aggregate(0, (hashCode, period)    => hashCode ^ period.   GetHashCode()) ^
+                       ExceptionalClosings.Aggregate(0, (hashCode, period)    => hashCode ^ period.   GetHashCode());
+
             }
         }
 

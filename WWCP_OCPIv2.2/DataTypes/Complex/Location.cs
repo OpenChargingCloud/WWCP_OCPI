@@ -48,33 +48,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-        #region LocationType
-
-        private LocationTypes _LocationType;
-
         /// <summary>
         /// The general type of the charge point location.
         /// </summary>
         [Mandatory]
-        public LocationTypes LocationType
-        {
-
-            get
-            {
-                return _LocationType;
-            }
-
-            set
-            {
-
-                if (_LocationType != value)
-                    SetProperty(ref _LocationType, value);
-
-            }
-
-        }
-
-        #endregion
+        public LocationTypes LocationType { get; }
 
         /// <summary>
         /// Display name of the location.
@@ -82,146 +60,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Optional]
         public I18NString Name { get; }
 
-        #region Address
-
-        private Address _Address;
-
         /// <summary>
         /// Address of the location.
         /// </summary>
         [Mandatory]
-        public Address Address
-        {
-
-            get
-            {
-                return _Address;
-            }
-
-            set
-            {
-
-                if (_Address != value)
-                    SetProperty(ref _Address, value);
-
-            }
-
-        }
-
-        #endregion
-
-        #region GeoLocation
-
-        private GeoCoordinate _GeoCoordinates;
+        public Address Address { get; }
 
         /// <summary>
         /// The geographical location of this location.
         /// </summary>
         [Mandatory]
-        public GeoCoordinate GeoCoordinates
-        {
-
-            get
-            {
-                return _GeoCoordinates;
-            }
-
-            set
-            {
-
-                if (value == null)
-                    value = new GeoCoordinate(Latitude.Parse(0), Longitude.Parse(0));
-
-                if (_GeoCoordinates != value)
-                {
-
-                    SetProperty(ref _GeoCoordinates, value);
-
-                    _EVSEs.Values.ForEach(station => station._GeoCoordinates = null);
-
-                }
-
-            }
-
-        }
-
-        #endregion
-
-        #region RelatedLocations
-
-        private readonly ReactiveSet<AdditionalGeoLocation> _RelatedLocations;
+        public GeoCoordinate GeoCoordinates { get; }
 
         /// <summary>
         /// Geographical location of related geo coordinates relevant to the ev customer.
         /// </summary>
         [Optional]
-        public ReactiveSet<AdditionalGeoLocation> RelatedLocations
-        {
-            get
-            {
-                return _RelatedLocations;
-            }
-        }
-
-        #endregion
-
-        #region Directions
-
-        private I18NString _Directions;
+        public ReactiveSet<AdditionalGeoLocation> RelatedLocations { get; }
 
         /// <summary>
         /// Human-readable directions on how to reach the location.
         /// </summary>
         [Optional]
-        public I18NString Directions
-        {
-            get
-            {
-                return _Directions;
-            }
-        }
-
-        #endregion
-
-        #region Operator
-
-        private readonly BusinessDetails _Operator;
+        public I18NString Directions { get; }
 
         /// <summary>
         /// Information of the Charging Station Operator.
         /// </summary>
         [Optional]
-        public BusinessDetails Operator
-        {
-            get
-            {
-                return _Operator;
-            }
-        }
-
-        #endregion
-
-        #region SubOperator
-
-        private readonly BusinessDetails _SubOperator;
+        public BusinessDetails Operator { get; }
 
         /// <summary>
         /// Information of the suboperator if available.
         /// </summary>
         [Optional]
-        public BusinessDetails SubOperator
-        {
-            get
-            {
-                return _SubOperator;
-            }
-        }
-
-        #endregion
-
-        #region OpeningTimes
-
-        private Hours _OpeningTimes;
+        public BusinessDetails SubOperator { get; }
 
         /// <summary>
         /// Information of the Charging Station Operator. When not specified,
@@ -229,29 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// should be used instead.
         /// </summary>
         [Optional]
-        public Hours OpeningTimes
-        {
-
-            get
-            {
-                return _OpeningTimes;
-            }
-
-            set
-            {
-
-                if (_OpeningTimes != value)
-                    SetProperty(ref _OpeningTimes, value);
-
-            }
-
-        }
-
-        #endregion
-
-        #region ChargingWhenClosed
-
-        private Boolean _ChargingWhenClosed;
+        public Hours OpeningTimes { get; }
 
         /// <summary>
         /// Indicates if the EVSEs are still charging outside the opening
@@ -260,78 +111,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// morning? [Default: true]
         /// </summary>
         [Optional]
-        public Boolean ChargingWhenClosed
-        {
-
-            get
-            {
-                return _ChargingWhenClosed;
-            }
-
-            set
-            {
-
-                if (_ChargingWhenClosed != value)
-                    SetProperty(ref _ChargingWhenClosed, value);
-
-            }
-
-        }
-
-        #endregion
-
-        #region Images
-
-        private readonly ReactiveSet<Image> _Images;
+        public Boolean ChargingWhenClosed { get; }
 
         /// <summary>
         /// Links to images related to the location such as photos or logos.
         /// </summary>
         [Optional]
-        public ReactiveSet<Image> Images
-        {
-            get
-            {
-                return _Images;
-            }
-        }
-
-        #endregion
-
-
-        #region EVSEs
-
-        private readonly ConcurrentDictionary<EVSE_Id, EVSE> _EVSEs;
+        public ReactiveSet<Image> Images { get; }
 
         /// <summary>
         /// All Electric Vehicle Supply Equipments (EVSE) present
         /// within this charging station.
         /// </summary>
-        public IEnumerable<EVSE> EVSEs
-        {
-            get
-            {
-                return _EVSEs.Select(KVP => KVP.Value);
-            }
-        }
-
-        #endregion
-
-        #region EVSEIds
+        public IEnumerable<EVSE> EVSEs { get; }
 
         /// <summary>
         /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
         /// present within this charging station.
         /// </summary>
         public IEnumerable<EVSE_Id> EVSEIds
-        {
-            get
-            {
-                return _EVSEs.Values.Select(v => v.Id);
-            }
-        }
-
-        #endregion
+            => EVSEs.SafeSelect(evse => evse.Id);
 
         #endregion
 
@@ -352,53 +151,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            #region Initial checks
+            this.Operator            = Operator ?? throw new ArgumentNullException("Operator", "The given parameter must not be null!");
+            this.SubOperator         = SubOperator;
 
-            if (Operator == null)
-                throw new ArgumentNullException("Operator", "The given parameter must not be null!");
-
-            #endregion
-
-            #region Init data and properties
-
-            this._Operator            = Operator;
-            this._SubOperator         = SubOperator;
-
-            this._OpeningTimes        = Hours.TwentyFourSevenOpen();
-            this._ChargingWhenClosed  = true;
-            this._Images              = new ReactiveSet<Image>();
-
-            #endregion
-
-            #region Init events
-
-            //// ChargingStation events
-            //this.EVSEAddition             = new VotingNotificator<DateTime, ChargingStation, EVSE, Boolean>(() => new VetoVote(), true);
-            //this.EVSERemoval              = new VotingNotificator<DateTime, ChargingStation, EVSE, Boolean>(() => new VetoVote(), true);
-            //
-            //// EVSE events
-            //this.SocketOutletAddition     = new VotingNotificator<DateTime, EVSE, SocketOutlet, Boolean>(() => new VetoVote(), true);
-            //this.SocketOutletRemoval      = new VotingNotificator<DateTime, EVSE, SocketOutlet, Boolean>(() => new VetoVote(), true);
-
-            #endregion
-
-            #region Link events
-
-            //// ChargingStation events
-            //this.OnEVSEAddition.           OnVoting       += (timestamp, station, evse, vote)      => ChargingPool.EVSEAddition.           SendVoting      (timestamp, station, evse, vote);
-            //this.OnEVSEAddition.           OnNotification += (timestamp, station, evse)            => ChargingPool.EVSEAddition.           SendNotification(timestamp, station, evse);
-            //
-            //this.OnEVSERemoval.            OnVoting       += (timestamp, station, evse, vote)      => ChargingPool.EVSERemoval .           SendVoting      (timestamp, station, evse, vote);
-            //this.OnEVSERemoval.            OnNotification += (timestamp, station, evse)            => ChargingPool.EVSERemoval .           SendNotification(timestamp, station, evse);
-            //
-            //// EVSE events
-            //this.SocketOutletAddition.     OnVoting       += (timestamp, evse, outlet, vote)       => ChargingPool.SocketOutletAddition.   SendVoting      (timestamp, evse, outlet, vote);
-            //this.SocketOutletAddition.     OnNotification += (timestamp, evse, outlet)             => ChargingPool.SocketOutletAddition.   SendNotification(timestamp, evse, outlet);
-            //
-            //this.SocketOutletRemoval.      OnVoting       += (timestamp, evse, outlet, vote)       => ChargingPool.SocketOutletRemoval.    SendVoting      (timestamp, evse, outlet, vote);
-            //this.SocketOutletRemoval.      OnNotification += (timestamp, evse, outlet)             => ChargingPool.SocketOutletRemoval.    SendNotification(timestamp, evse, outlet);
-
-            #endregion
+            //this._OpeningTimes        = Hours.TwentyFourSevenOpen();
+            //this._ChargingWhenClosed  = true;
+            this.Images              = new ReactiveSet<Image>();
 
         }
 
@@ -429,19 +187,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
-        {
 
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is an Location.
-            var Location = Object as Location;
-            if ((Object) Location == null)
-                throw new ArgumentException("The given object is not an Location!");
-
-            return CompareTo(Location);
-
-        }
+            => Object is Location location
+                   ? CompareTo(location)
+                   : throw new ArgumentException("The given object is not a charging location!",
+                                                 nameof(Object));
 
         #endregion
 
@@ -454,8 +204,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Location Location)
         {
 
-            if ((Object) Location == null)
-                throw new ArgumentNullException(nameof(Location),  "The given Location must not be null!");
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location),  "The given chargiong location must not be null!");
 
             return Id.CompareTo(Location.Id);
 
@@ -475,38 +225,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
-        {
 
-            if (Object == null)
-                return false;
-
-            // Check if the given object is an Location.
-            var Location = Object as Location;
-            if ((Object) Location == null)
-                return false;
-
-            return this.Equals(Location);
-
-        }
+            => Object is Location location &&
+                   Equals(location);
 
         #endregion
 
         #region Equals(Location)
 
         /// <summary>
-        /// Compares two Locations for equality.
+        /// Compares two locations for equality.
         /// </summary>
-        /// <param name="Location">An Location to compare with.</param>
+        /// <param name="Location">A location to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Location Location)
-        {
 
-            if ((Object) Location == null)
-                return false;
-
-            return Id.Equals(Location.Id);
-
-        }
+            => (!(Location is null)) &&
+                   Id.Equals(Location.Id);
 
         #endregion
 

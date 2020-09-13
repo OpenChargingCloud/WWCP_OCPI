@@ -19,6 +19,8 @@
 
 using System;
 
+using org.GraphDefined.Vanaheimr.Illias;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2
@@ -27,112 +29,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// This class references images related to a EVSE in terms of a file name or uri.
     /// </summary>
-    public class Image
+    public class Image : IEquatable<Image>,
+                         IComparable<Image>,
+                         IComparable
     {
 
         #region Properties
 
-        #region Url
-
-        private readonly Uri _Url;
-
         /// <summary>
         /// URL from where the image data can be fetched through a web browser (about 512 pixels).
         /// </summary>
-        public Uri Url
-        {
-            get
-            {
-                return _Url;
-            }
-        }
-
-        #endregion
-
-        #region Thumbnail
-
-        private readonly Uri _Thumbnail;
-
-        /// <summary>
-        /// URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).
-        /// </summary>
-        public Uri Thumbnail
-        {
-            get
-            {
-                return _Thumbnail;
-            }
-        }
-
-        #endregion
-
-        #region Category
-
-        private readonly ImageCategoryType _Category;
-
-        /// <summary>
-        /// Describes what the image is used for.
-        /// </summary>
-        public ImageCategoryType Category
-        {
-            get
-            {
-                return _Category;
-            }
-        }
-
-        #endregion
-
-        #region Type
-
-        private readonly ImageFileType _Type;
+        public String              Url          { get; }
 
         /// <summary>
         /// Image type like: gif, jpeg, png, svg.
         /// </summary>
-        public ImageFileType Type
-        {
-            get
-            {
-                return _Type;
-            }
-        }
-
-        #endregion
-
-        #region Width
-
-        private readonly UInt32 _Width;
+        public ImageFileTypes      Type         { get; }
 
         /// <summary>
-        /// Width of the full scale image.
+        /// Describes what the image is used for.
         /// </summary>
-        public UInt32 Width
-        {
-            get
-            {
-                return _Width;
-            }
-        }
-
-        #endregion
-
-        #region Height
-
-        private readonly UInt32 _Height;
+        public ImageCategoryTypes  Category     { get; }
 
         /// <summary>
-        /// Height of the full scale image.
+        /// The optional width of the full scale image.
         /// </summary>
-        public UInt32 Height
-        {
-            get
-            {
-                return _Height;
-            }
-        }
+        public UInt32?             Width        { get; }
 
-        #endregion
+        /// <summary>
+        /// The optional height of the full scale image.
+        /// </summary>
+        public UInt32?             Height       { get; }
+
+        /// <summary>
+        /// An optional URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).
+        /// </summary>
+        public String              Thumbnail    { get; }
 
         #endregion
 
@@ -142,36 +74,280 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new image.
         /// </summary>
         /// <param name="Url">URL from where the image data can be fetched through a web browser (about 512 pixels).</param>
-        /// <param name="Thumbnail">URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).</param>
-        /// <param name="Category">Describes what the image is used for.</param>
         /// <param name="Type">Image type like: gif, jpeg, png, svg.</param>
-        /// <param name="Width">Width of the full scale image.</param>
-        /// <param name="Height">Height of the full scale image.</param>
-        public Image(Uri                Url,
-                     Uri                Thumbnail,
-                     ImageCategoryType  Category,
-                     ImageFileType      Type,
-                     UInt32             Width,
-                     UInt32             Height)
+        /// <param name="Category">Describes what the image is used for.</param>
+        /// <param name="Width">The optional width of the full scale image.</param>
+        /// <param name="Height">The optional height of the full scale image.</param>
+        /// <param name="Thumbnail">An optional URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).</param>
+        public Image(String              Url,
+                     ImageFileTypes      Type,
+                     ImageCategoryTypes  Category,
+                     UInt32?             Width       = null,
+                     UInt32?             Height      = null,
+                     String              Thumbnail   = null)
         {
 
             #region Initial checks
 
             if (Url == null)
-                throw new ArgumentNullException("Url", "The given parameter must not be null!");
+                throw new ArgumentNullException(nameof(Url), "The given parameter must not be null nur empty!");
 
             #endregion
 
-            this._Url        = Url;
-            this._Thumbnail  = Thumbnail;
-            this._Category   = Category;
-            this._Type       = Type;
-            this._Width      = Width;
-            this._Height     = Height;
+            this.Url        = Url;
+            this.Type       = Type;
+            this.Category   = Category;
+            this.Width      = Width;
+            this.Height     = Height;
+            this.Thumbnail  = Thumbnail;
 
         }
 
         #endregion
+
+
+        #region Operator overloading
+
+        #region Operator == (Image1, Image2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image1">An image.</param>
+        /// <param name="Image2">Another image.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (Image Image1,
+                                           Image Image2)
+
+            => Image1.Equals(Image2);
+
+        #endregion
+
+        #region Operator != (Image1, Image2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image1">An image.</param>
+        /// <param name="Image2">Another image.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (Image Image1,
+                                           Image Image2)
+
+            => !(Image1 == Image2);
+
+        #endregion
+
+        #region Operator <  (Image1, Image2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image1">A image.</param>
+        /// <param name="Image2">Another image.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Image Image1,
+                                          Image Image2)
+
+            => Image1.CompareTo(Image2) < 0;
+
+        #endregion
+
+        #region Operator <= (Image1, Image2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image1">A image.</param>
+        /// <param name="Image2">Another image.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Image Image1,
+                                           Image Image2)
+
+            => !(Image1 > Image2);
+
+        #endregion
+
+        #region Operator >  (Image1, Image2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image1">A image.</param>
+        /// <param name="Image2">Another image.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Image Image1,
+                                          Image Image2)
+
+            => Image1.CompareTo(Image2) > 0;
+
+        #endregion
+
+        #region Operator >= (Image1, Image2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image1">A image.</param>
+        /// <param name="Image2">Another image.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Image Image1,
+                                           Image Image2)
+
+            => !(Image1 < Image2);
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<Image> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        public Int32 CompareTo(Object Object)
+
+            => Object is Image chargingPeriod
+                   ? CompareTo(chargingPeriod)
+                   : throw new ArgumentException("The given object is not an image!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(Image)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Image">An object to compare with.</param>
+        public Int32 CompareTo(Image Image)
+        {
+
+            var c = Url.     CompareTo(Image.Url);
+
+            if (c == 0)
+                c = Type.    CompareTo(Image.Type);
+
+            if (c == 0)
+                c = Category.CompareTo(Image.Category);
+
+            if (c == 0)
+                c = Width. HasValue && Image.Width. HasValue
+                        ? Width. Value.CompareTo(Image.Width. Value)
+                        : 0;
+
+            if (c == 0)
+                c = Height.HasValue && Image.Height.HasValue
+                        ? Height.Value.CompareTo(Image.Height.Value)
+                        : 0;
+
+            if (c == 0)
+                c = Thumbnail.IsNotNullOrEmpty() && Image.Thumbnail.IsNotNullOrEmpty()
+                        ? Thumbnail.CompareTo(Image.Thumbnail)
+                        : 0;
+
+            return c;
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<Image> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        /// <returns>true|false</returns>
+        public override Boolean Equals(Object Object)
+
+            => Object is Image Image &&
+                   Equals(Image);
+
+        #endregion
+
+        #region Equals(Image)
+
+        /// <summary>
+        /// Compares two images for equality.
+        /// </summary>
+        /// <param name="Image">A image to compare with.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public Boolean Equals(Image Image)
+
+            =>   Url.     Equals(Image.Url)      &&
+                 Type.    Equals(Image.Type)     &&
+                 Category.Equals(Image.Category) &&
+
+               ((!Width. HasValue             && !Image.Width. HasValue) ||
+                 (Width. HasValue             &&  Image.Width. HasValue && Width. Value.Equals(Image.Width. Value))) &&
+
+               ((!Height.HasValue             && !Image.Height.HasValue) ||
+                 (Height.HasValue             &&  Image.Height.HasValue && Height.Value.Equals(Image.Height.Value))) &&
+
+               ((Thumbnail.IsNullOrEmpty()    && Image.Thumbnail.IsNullOrEmpty()) ||
+                (Thumbnail.IsNotNullOrEmpty() && Image.Thumbnail.IsNotNullOrEmpty() && Thumbnail.Equals(Image.Thumbnail)));
+
+        #endregion
+
+        #endregion
+
+        #region GetHashCode()
+
+        /// <summary>
+        /// Return the HashCode of this object.
+        /// </summary>
+        /// <returns>The HashCode of this object.</returns>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+
+                return Url.     GetHashCode() * 13 ^
+                       Type.    GetHashCode() * 11 ^
+                       Category.GetHashCode() *  7 ^
+
+                      (Width.HasValue
+                           ? Width. GetHashCode() * 5
+                           : 0) ^
+
+                      (Height.HasValue
+                           ? Height.GetHashCode() * 3
+                           : 0) ^
+
+                      (Thumbnail.IsNotNullOrEmpty()
+                           ? Thumbnail.GetHashCode()
+                           : 0);
+
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => String.Concat(Url, "; ", Type, "; ", Category, "; ",
+                             Width.HasValue && Height.HasValue
+                                 ? "; " + Width + " x " + Height + " px"
+                                 : "",
+                             Thumbnail.IsNotNullOrEmpty()
+                                 ? "; " + Thumbnail
+                                 : "");
+
+        #endregion
+
 
     }
 

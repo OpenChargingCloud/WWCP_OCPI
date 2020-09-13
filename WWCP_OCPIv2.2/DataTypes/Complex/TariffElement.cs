@@ -33,7 +33,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A charging tariff element.
     /// </summary>
-    public struct TariffElement
+    public readonly struct TariffElement : IEquatable<TariffElement>
     {
 
         #region Properties
@@ -41,12 +41,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Enumeration of price components that make up the pricing of this tariff.
         /// </summary>
-        public IEnumerable<PriceComponent>     PriceComponents     { get; }
+        public IEnumerable<PriceComponent>      PriceComponents       { get; }
 
         /// <summary>
         /// Enumeration of tariff restrictions.
         /// </summary>
-        public IEnumerable<TariffRestriction>  TariffRestrictions  { get;  }
+        public IEnumerable<TariffRestrictions>  TariffRestrictions    { get;  }
 
         #endregion
 
@@ -57,10 +57,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new charging tariff element.
         /// </summary>
-        /// <param name="PriceComponents">Enumeration of price components that make up the pricing of this tariff.</param>
+        /// <param name="PriceComponents">An enumeration of price components that make up the pricing of this tariff.</param>
         public TariffElement(params PriceComponent[]  PriceComponents)
 
-            : this(PriceComponents, new TariffRestriction[0])
+            : this(PriceComponents,
+                   new TariffRestrictions[0])
 
         { }
 
@@ -71,49 +72,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new charging tariff element.
         /// </summary>
-        /// <param name="PriceComponents">Enumeration of price components that make up the pricing of this tariff.</param>
-        /// <param name="TariffRestrictions">Enumeration of tariff restrictions.</param>
-        public TariffElement(IEnumerable<PriceComponent>     PriceComponents,
-                             IEnumerable<TariffRestriction>  TariffRestrictions = null)
+        /// <param name="PriceComponents">An enumeration of price components that make up the pricing of this tariff.</param>
+        /// <param name="TariffRestrictions">An enumeration of tariff restrictions.</param>
+        public TariffElement(IEnumerable<PriceComponent>      PriceComponents,
+                             IEnumerable<TariffRestrictions>  TariffRestrictions = null)
         {
 
             #region Initial checks
 
-            if (PriceComponents == null)
-                throw new ArgumentNullException(nameof(PriceComponents),  "The given parameter must not be null!");
-
-            if (!PriceComponents.Any())
-                throw new ArgumentNullException(nameof(PriceComponents),  "The given enumeration must not be empty!");
+            if (!PriceComponents.SafeAny())
+                throw new ArgumentNullException(nameof(PriceComponents),  "The given enumeration of price components must not be null or empty!");
 
             #endregion
 
-            this.PriceComponents     = PriceComponents;
-            this.TariffRestrictions  = TariffRestrictions;
+            this.PriceComponents     = PriceComponents.    Distinct();
+            this.TariffRestrictions  = TariffRestrictions?.Distinct() ?? new TariffRestrictions[0];
 
         }
 
         #endregion
 
-        #region TariffElement(PriceComponent, TariffRestriction)
+        #region TariffElement(PriceComponent,  TariffRestriction)
 
         /// <summary>
         /// Create a new charging tariff element.
         /// </summary>
         /// <param name="PriceComponent">A price component that makes up the pricing of this tariff.</param>
-        /// <param name="TariffRestriction">A tariff restriction.</param>
-        public TariffElement(PriceComponent     PriceComponent,
-                             TariffRestriction  TariffRestriction)
+        /// <param name="TariffRestriction">A charging tariff restriction.</param>
+        public TariffElement(PriceComponent      PriceComponent,
+                             TariffRestrictions  TariffRestriction)
         {
 
             #region Initial checks
 
+            if (PriceComponent    == null)
+                throw new ArgumentNullException(nameof(PriceComponent),     "The given price component must not be null!");
+
             if (TariffRestriction == null)
-                throw new ArgumentNullException(nameof(TariffRestriction),  "The given enumeration must not be empty!");
+                throw new ArgumentNullException(nameof(TariffRestriction),  "The given charging tariff restriction must not be null!");
 
             #endregion
 
-            this.PriceComponents     = new PriceComponent[]    { PriceComponent };
-            this.TariffRestrictions  = new TariffRestriction[] { TariffRestriction };
+            this.PriceComponents     = new PriceComponent[]     { PriceComponent };
+            this.TariffRestrictions  = new TariffRestrictions[] { TariffRestriction };
 
         }
 
@@ -129,11 +130,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public JObject ToJSON()
 
-            => JSONObject.Create(new JProperty("price_components", new JArray(PriceComponents.Select(PriceComponent => PriceComponent.ToJSON()))),
+            => JSONObject.Create(
 
-                   (TariffRestrictions != null && TariffRestrictions.Any())
-                       ? new JProperty("restrictions", new JArray(TariffRestrictions.Select(TariffRestriction => TariffRestriction.ToJSON())))
+                   new JProperty("price_components",    new JArray(PriceComponents.   SafeSelect(PriceComponent    => PriceComponent.   ToJSON()))),
+
+                   TariffRestrictions.SafeAny()
+                       ? new JProperty("restrictions",  new JArray(TariffRestrictions.SafeSelect(TariffRestriction => TariffRestriction.ToJSON())))
                        : null);
+
+        #endregion
+
+
+        #region Operator overloading
+
+        #region Operator == (TariffElement1, TariffElement2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="TariffElement1">A charging tariff element.</param>
+        /// <param name="TariffElement2">Another charging tariff element.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (TariffElement TariffElement1,
+                                           TariffElement TariffElement2)
+
+            => TariffElement1.Equals(TariffElement2);
+
+        #endregion
+
+        #region Operator != (TariffElement1, TariffElement2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="TariffElement1">A charging tariff element.</param>
+        /// <param name="TariffElement2">Another charging tariff element.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (TariffElement TariffElement1,
+                                           TariffElement TariffElement2)
+
+            => !(TariffElement1 == TariffElement2);
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<TariffElement> Members
+
+        #region Equals(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        /// <returns>true|false</returns>
+        public override Boolean Equals(Object Object)
+
+            => Object is TariffElement tariffElement &&
+                   Equals(tariffElement);
+
+        #endregion
+
+        #region Equals(TariffElement)
+
+        /// <summary>
+        /// Compares two TariffElements for equality.
+        /// </summary>
+        /// <param name="TariffElement">A TariffElement to compare with.</param>
+        /// <returns>True if both match; False otherwise.</returns>
+        public Boolean Equals(TariffElement TariffElement)
+
+            => PriceComponents.   Count().Equals(TariffElement.PriceComponents.   Count())        &&
+               TariffRestrictions.Count().Equals(TariffElement.TariffRestrictions.Count())        &&
+               PriceComponents.   All(price  => TariffElement.PriceComponents.   Contains(price)) &&
+               TariffRestrictions.All(tariff => TariffElement.TariffRestrictions.Contains(tariff));
+
+        #endregion
+
+        #endregion
+
+        #region GetHashCode()
+
+        /// <summary>
+        /// Return the HashCode of this object.
+        /// </summary>
+        /// <returns>The HashCode of this object.</returns>
+        public override Int32 GetHashCode()
+        {
+            unchecked
+            {
+
+                return PriceComponents.   Aggregate(0, (hashCode, price)  => hashCode ^ price. GetHashCode()) ^
+                       TariffRestrictions.Aggregate(0, (hashCode, tariff) => hashCode ^ tariff.GetHashCode());
+
+            }
+        }
+
+        #endregion
+
+        #region (override) ToString()
+
+        /// <summary>
+        /// Return a text representation of this object.
+        /// </summary>
+        public override String ToString()
+
+            => String.Concat(PriceComponents?.   Count() ?? 0, " price components, ",
+                             TariffRestrictions?.Count() ?? 0, " tariff restrictions");
 
         #endregion
 

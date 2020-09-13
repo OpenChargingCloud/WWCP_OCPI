@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Optional identifier of the current charging tariff structure.
         /// </summary>
-        public Tariff_Id             TariffId              { get; }
+        public Tariff_Id?            TariffId              { get; }
 
         /// <summary>
         /// Optional URL to the operator's terms and conditions.
@@ -96,8 +96,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          PowerTypes            PowerType,
                          UInt16                Voltage,
                          UInt16                Amperage,
-                         Tariff_Id             TariffId            = null,
-                         Uri                   TermsAndConditions  = null)
+                         Tariff_Id?            TariffId             = null,
+                         Uri                   TermsAndConditions   = null)
         {
 
             this.Id                  = Id;
@@ -123,19 +123,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
-        {
 
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is an Connector.
-            var Connector = Object as Connector;
-            if ((Object) Connector == null)
-                throw new ArgumentException("The given object is not an Connector!");
-
-            return CompareTo(Connector);
-
-        }
+            => Object is Connector connector
+                   ? CompareTo(connector)
+                   : throw new ArgumentException("The given object is not a connector!",
+                                                 nameof(Object));
 
         #endregion
 
@@ -148,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Connector Connector)
         {
 
-            if ((Object) Connector == null)
+            if (Connector is null)
                 throw new ArgumentNullException("The given Connector must not be null!");
 
             return Id.CompareTo(Connector.Id);
@@ -169,19 +161,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
-        {
 
-            if (Object == null)
-                return false;
-
-            // Check if the given object is an Connector.
-            var Connector = Object as Connector;
-            if ((Object) Connector == null)
-                return false;
-
-            return this.Equals(Connector);
-
-        }
+            => Object is Connector connector &&
+                   Equals(connector);
 
         #endregion
 
@@ -193,14 +175,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Connector">An Connector to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Connector Connector)
-        {
 
-            if ((Object) Connector == null)
-                return false;
-
-            return Id.Equals(Connector.Id);
-
-        }
+            => (!(Connector is null)) &&
+                   Id.Equals(Connector.Id);
 
         #endregion
 
@@ -212,9 +189,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
+
+            => Id.GetHashCode();
 
         #endregion
 
@@ -224,9 +200,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Get a string representation of this object.
         /// </summary>
         public override String ToString()
-        {
-            return Id.ToString();
-        }
+
+            => Id.ToString();
 
         #endregion
 

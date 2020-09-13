@@ -21,7 +21,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The category of an image to obtain the correct usage in an user presentation. Has to be set accordingly to the image content in order to guaranty the right usage.
     /// </summary>
-    public enum ImageCategoryType
+    public enum ImageCategoryTypes
     {
 
         /// <summary>

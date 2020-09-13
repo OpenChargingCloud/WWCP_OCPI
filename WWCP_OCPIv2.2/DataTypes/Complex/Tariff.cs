@@ -38,7 +38,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// first tariff in the list with matching restrictions will be used.
     /// </summary>
     public class Tariff : AEMobilityEntity<Tariff_Id>,
-                          IEquatable<Tariff>, IComparable<Tariff>, IComparable
+                          IEquatable<Tariff>,
+                          IComparable<Tariff>,
+                          IComparable
     {
 
         #region Properties
@@ -59,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Alternative URL to tariff info.
         /// </summary>
         [Optional]
-        public Uri                         TariffUrl         { get; }
+        public String                      TariffUrl         { get; }
 
         /// <summary>
         /// An enumeration of tariff elements.
@@ -90,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Tariff(Tariff_Id               Id,
                       Currency                Currency,
                       I18NString              TariffText,
-                      Uri                     TariffUrl,
+                      String                  TariffUrl,
                       params TariffElement[]  TariffElements)
 
             : this(Id,
@@ -117,9 +119,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Tariff(Tariff_Id                   Id,
                       Currency                    Currency,
                       IEnumerable<TariffElement>  TariffElements,
-                      I18NString                  TariffText  = null,
-                      Uri                         TariffUrl   = null,
-                      EnergyMix                   EnergyMix   = null)
+                      I18NString                  TariffText   = null,
+                      String                      TariffUrl    = null,
+                      EnergyMix                   EnergyMix    = null)
 
             : base(Id)
 
@@ -127,23 +129,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Initial checks
 
-            if (TariffElements == null)
-                throw new ArgumentNullException(nameof(TariffElements),  "The given parameter must not be null!");
-
-            if (!TariffElements.Any())
-                throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration must not be empty!");
+            if (!TariffElements.SafeAny())
+                throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration must not be null or empty!");
 
             #endregion
-
-            #region Init data and properties
 
             this.Currency        = Currency;
             this.TariffElements  = TariffElements;
-            this.TariffText      = TariffText != null ? TariffText : new I18NString();
+            this.TariffText      = TariffText ?? new I18NString();
             this.TariffUrl       = TariffUrl;
             this.EnergyMix       = EnergyMix;
-
-            #endregion
 
         }
 
@@ -182,19 +177,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
-        {
 
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is an Tariff.
-            var Tariff = Object as Tariff;
-            if ((Object) Tariff == null)
-                throw new ArgumentException("The given object is not an Tariff!");
-
-            return CompareTo(Tariff);
-
-        }
+            => Object is Tariff tariff
+                   ? CompareTo(tariff)
+                   : throw new ArgumentException("The given object is not a charging tariff!",
+                                                 nameof(Object));
 
         #endregion
 
@@ -207,8 +194,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Tariff Tariff)
         {
 
-            if ((Object) Tariff == null)
-                throw new ArgumentNullException(nameof(Tariff),  "The given tariff must not be null!");
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
             return Id.CompareTo(Tariff.Id);
 
@@ -228,19 +215,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
-        {
 
-            if (Object == null)
-                return false;
-
-            // Check if the given object is an Tariff.
-            var Tariff = Object as Tariff;
-            if ((Object) Tariff == null)
-                return false;
-
-            return this.Equals(Tariff);
-
-        }
+            => Object is Tariff tariff &&
+                   Equals(tariff);
 
         #endregion
 
@@ -252,14 +229,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Tariff">An Tariff to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Tariff Tariff)
-        {
 
-            if ((Object) Tariff == null)
-                return false;
-
-            return Id.Equals(Tariff.Id);
-
-        }
+            => (!(Tariff is null)) &&
+                   Id.Equals(Tariff.Id);
 
         #endregion
 

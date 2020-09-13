@@ -38,12 +38,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             IComparable
     {
 
-        #region Data
-
-        private readonly HashSet<CDRDimension> _Dimensions;
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -56,8 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// List of relevant values for this charging period.
         /// </summary>
-        public IEnumerable<CDRDimension>  Dimensions
-            => _Dimensions;
+        public IEnumerable<CDRDimension>  Dimensions    { get; }
 
         #endregion
 
@@ -76,12 +69,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             #region Initial checks
 
             if (!Dimensions.SafeAny())
-                throw new ArgumentNullException("Dimensions", "The given enumeration must not be empty!");
+                throw new ArgumentNullException(nameof(Dimensions), "The given enumeration of relevant values for this charging period must not be null or empty!");
 
             #endregion
 
-            this.Start        = Start;
-            this._Dimensions  = new HashSet<CDRDimension>(Dimensions);
+            this.Start       = Start;
+            this.Dimensions  = Dimensions.Distinct();
 
         }
 
@@ -184,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region IComparable<ChargingPeriod> Members
 
-        #region CompareTo(Object)d
+        #region CompareTo(Object)
 
         /// <summary>
         /// Compares two instances of this object.
@@ -238,9 +231,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(ChargingPeriod ChargingPeriod)
 
-            => Start.            Equals(ChargingPeriod.Start)             &&
-               _Dimensions.Count.Equals(ChargingPeriod._Dimensions.Count) &&
-               _Dimensions.All(dimension => ChargingPeriod._Dimensions.Contains(dimension));
+            => Start.             Equals(ChargingPeriod.Start)              &&
+               Dimensions.Count().Equals(ChargingPeriod.Dimensions.Count()) &&
+               Dimensions.All(dimension => ChargingPeriod.Dimensions.Contains(dimension));
 
         #endregion
 
@@ -257,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
                 return Start.GetHashCode() * 3 ^
-                       _Dimensions.Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode());
+                       Dimensions.Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode());
             }
         }
 
@@ -272,8 +265,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(Start,
                              " -> ",
-                             _Dimensions.OrderBy(dimension => dimension.Type).
-                                         AggregateWith(", "));
+                             Dimensions.OrderBy(dimension => dimension.Type).
+                                        AggregateWith(", "));
 
         #endregion
 

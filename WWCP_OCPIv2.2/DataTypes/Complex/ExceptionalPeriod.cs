@@ -27,7 +27,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// Specifies one exceptional period for opening or access hours.
     /// </summary>
-    public readonly struct ExceptionalPeriod : IEquatable<ExceptionalPeriod>
+    public readonly struct ExceptionalPeriod : IEquatable<ExceptionalPeriod>,
+                                               IComparable<ExceptionalPeriod>,
+                                               IComparable
     {
 
         #region Properties
@@ -95,6 +97,105 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Operator <  (ExceptionalPeriod1, ExceptionalPeriod2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="ExceptionalPeriod1">An exceptional period for opening or access hours.</param>
+        /// <param name="ExceptionalPeriod2">Another exceptional period for opening or access hours.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (ExceptionalPeriod ExceptionalPeriod1,
+                                          ExceptionalPeriod ExceptionalPeriod2)
+
+            => ExceptionalPeriod1.CompareTo(ExceptionalPeriod2) < 0;
+
+        #endregion
+
+        #region Operator <= (ExceptionalPeriod1, ExceptionalPeriod2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="ExceptionalPeriod1">An exceptional period for opening or access hours.</param>
+        /// <param name="ExceptionalPeriod2">Another exceptional period for opening or access hours.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (ExceptionalPeriod ExceptionalPeriod1,
+                                           ExceptionalPeriod ExceptionalPeriod2)
+
+            => !(ExceptionalPeriod1 > ExceptionalPeriod2);
+
+        #endregion
+
+        #region Operator >  (ExceptionalPeriod1, ExceptionalPeriod2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="ExceptionalPeriod1">An exceptional period for opening or access hours.</param>
+        /// <param name="ExceptionalPeriod2">Another exceptional period for opening or access hours.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (ExceptionalPeriod ExceptionalPeriod1,
+                                          ExceptionalPeriod ExceptionalPeriod2)
+
+            => ExceptionalPeriod1.CompareTo(ExceptionalPeriod2) > 0;
+
+        #endregion
+
+        #region Operator >= (ExceptionalPeriod1, ExceptionalPeriod2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="ExceptionalPeriod1">An exceptional period for opening or access hours.</param>
+        /// <param name="ExceptionalPeriod2">Another exceptional period for opening or access hours.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (ExceptionalPeriod ExceptionalPeriod1,
+                                           ExceptionalPeriod ExceptionalPeriod2)
+
+            => !(ExceptionalPeriod1 < ExceptionalPeriod2);
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<ExceptionalPeriod> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Object">An object to compare with.</param>
+        public Int32 CompareTo(Object Object)
+
+            => Object is ExceptionalPeriod exceptionalPeriod
+                   ? CompareTo(exceptionalPeriod)
+                   : throw new ArgumentException("The given object is not an exceptional period!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(ExceptionalPeriod)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="ExceptionalPeriod">An object to compare with.</param>
+        public Int32 CompareTo(ExceptionalPeriod ExceptionalPeriod)
+        {
+
+            var c = Begin.CompareTo(ExceptionalPeriod.Begin);
+
+            if (c == 0)
+                c = End.CompareTo(ExceptionalPeriod.End);
+
+            return c;
+
+        }
+
+        #endregion
+
         #endregion
 
         #region IEquatable<ExceptionalPeriod> Members
@@ -108,8 +209,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is ExceptionalPeriod ExceptionalPeriod &&
-                   Equals(ExceptionalPeriod);
+            => Object is ExceptionalPeriod exceptionalPeriod &&
+                   Equals(exceptionalPeriod);
 
         #endregion
 
@@ -139,8 +240,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
+
                 return Begin.GetHashCode() * 3 ^
                        End.  GetHashCode();
+
             }
         }
 
@@ -154,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(Begin,
-                             " -> ",
+                             " - ",
                              End);
 
         #endregion

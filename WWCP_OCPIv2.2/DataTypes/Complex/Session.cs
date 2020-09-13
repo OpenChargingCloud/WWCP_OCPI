@@ -40,271 +40,85 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-        #region Start
-
-        private readonly DateTime _Start;
-
         /// <summary>
         /// The time when the session became active.
         /// </summary>
         [Mandatory]
-        public DateTime Start
-        {
-            get
-            {
-                return _Start;
-            }
-        }
-
-        #endregion
-
-        #region End
-
-        private DateTime? _End;
+        public DateTime Start { get; }
 
         /// <summary>
         /// The time when the session is completed.
         /// </summary>
         [Optional]
-        public DateTime? End
-        {
-
-            get
-            {
-                return _End;
-            }
-
-            set
-            {
-
-                if (_End != value)
-                    SetProperty(ref _End, value);
-
-            }
-
-        }
-
-        #endregion
-
-        #region kWh
-
-        private readonly Decimal _kWh;
+        public DateTime? End { get; }
 
         /// <summary>
         /// How many kWh are charged.
         /// </summary>
         [Mandatory]
-        public decimal kWh
-        {
-            get
-            {
-                return _kWh;
-            }
-        }
-
-        #endregion
-
-        #region AuthId
-
-        private readonly Auth_Id _AuthId;
+        public Decimal kWh { get; }
 
         /// <summary>
         /// An id provided by the authentication used so that the eMSP knows to which driver the session belongs.
         /// </summary>
         [Mandatory]
-        public Auth_Id AuthId
-        {
-            get
-            {
-                return _AuthId;
-            }
-        }
-
-        #endregion
-
-        #region AuthMethod
-
-        private readonly AuthMethodTypes _AuthMethod;
+        public Auth_Id AuthId { get; }
 
         /// <summary>
         /// Method used for authentication.
         /// </summary>
         [Mandatory]
-        public AuthMethodTypes AuthMethod
-        {
-            get
-            {
-                return _AuthMethod;
-            }
-        }
-
-        #endregion
-
-        #region Location
-
-        private readonly Location _Location;
+        public AuthMethodTypes AuthMethod { get; }
 
         /// <summary>
         /// The location where this session took place.
         /// </summary>
         [Mandatory]
-        public Location Location
-        {
-            get
-            {
-                return _Location;
-            }
-        }
-
-        #endregion
-
-        #region EVSE
-
-        private readonly EVSE _EVSE;
+        public Location Location { get; }
 
         /// <summary>
         /// The EVSE that was used for this session.
         /// </summary>
         [Mandatory]
-        public EVSE EVSE
-        {
-            get
-            {
-                return _EVSE;
-            }
-        }
-
-        #endregion
-
-        #region ConnectorId
-
-        private readonly Connector_Id _ConnectorId;
+        public EVSE EVSE { get; }
 
         /// <summary>
         /// Connector ID of the connector used at the EVSE.
         /// </summary>
         [Mandatory]
-        public Connector_Id ConnectorId
-        {
-            get
-            {
-                return _ConnectorId;
-            }
-        }
-
-        #endregion
-
-        #region MeterId
-
-        private readonly Meter_Id _MeterId;
+        public Connector_Id ConnectorId { get; }
 
         /// <summary>
         /// Optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id MeterId
-        {
-            get
-            {
-                return _MeterId;
-            }
-        }
-
-        #endregion
-
-        #region Currency
-
-        private readonly Currency _Currency;
+        public Meter_Id MeterId { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public Currency Currency
-        {
-            get
-            {
-                return _Currency;
-            }
-        }
-
-        #endregion
-
-        #region ChargingPeriods
-
-        private readonly IEnumerable<ChargingPeriod> _ChargingPeriods;
+        public Currency Currency { get; }
 
         /// <summary>
         /// An optional enumeration of charging periods that can be used to calculate and verify the total cost.
         /// </summary>
         [Optional]
-        public IEnumerable<ChargingPeriod> ChargingPeriods
-        {
-            get
-            {
-                return _ChargingPeriods;
-            }
-        }
-
-        #endregion
-
-        #region TotalCosts
-
-        private Decimal _TotalCosts;
+        public IEnumerable<ChargingPeriod> ChargingPeriods { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of the session in the specified currency.
         /// This is the price that the eMSP will have to pay to the CPO.
         /// </summary>
         [Mandatory]
-        public Decimal TotalCosts
-        {
-
-            get
-            {
-                return _TotalCosts;
-            }
-
-            set
-            {
-
-                if (_TotalCosts != value)
-                    SetProperty(ref _TotalCosts, value);
-
-            }
-
-        }
-
-        #endregion
-
-        #region Status
-
-        private SessionStatusTypes _Status;
+        public Decimal TotalCosts { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of the session in the specified currency.
         /// This is the price that the eMSP will have to pay to the CPO.
         /// </summary>
         [Mandatory]
-        public SessionStatusTypes Status
-        {
-
-            get
-            {
-                return _Status;
-            }
-
-            set
-            {
-
-                if (_Status != value)
-                    SetProperty(ref _Status, value);
-
-            }
-
-        }
-
-        #endregion
+        public SessionStatusTypes Status { get; }
 
         #endregion
 
@@ -333,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        DateTime?                    End,
                        Decimal                      kWh,
                        Auth_Id                      AuthId,
-                       AuthMethodTypes               AuthMethod,
+                       AuthMethodTypes              AuthMethod,
                        Location                     Location,
                        EVSE                         EVSE,
                        Connector_Id                 ConnectorId,
@@ -341,51 +155,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        Currency                     Currency,
                        IEnumerable<ChargingPeriod>  ChargingPeriods,
                        Decimal                      TotalCosts,
-                       SessionStatusTypes            Status)
+                       SessionStatusTypes           Status)
 
             : base(Id)
 
         {
 
-            #region Initial checks
-
-            if (AuthId      == null)
-                throw new ArgumentNullException("AuthId",       "The given parameter must not be null!");
-
-            if (Location    == null)
-                throw new ArgumentNullException("Location",     "The given parameter must not be null!");
-
-            if (EVSE        == null)
-                throw new ArgumentNullException("EVSE",         "The given parameter must not be null!");
-
-            if (ConnectorId == null)
-                throw new ArgumentNullException("ConnectorId",  "The given parameter must not be null!");
-
-            if (MeterId     == null)
-                throw new ArgumentNullException("MeterId",      "The given parameter must not be null!");
-
-            if (Currency    == null)
-                throw new ArgumentNullException("Currency",     "The given parameter must not be null!");
-
-            #endregion
-
-            #region Init data and properties
-
-            this._Start            = Start;
-            this._End              = End;
-            this._kWh              = kWh;
-            this._AuthId           = AuthId;
-            this._AuthMethod       = AuthMethod;
-            this._Location         = Location;
-            this._EVSE             = EVSE;
-            this._ConnectorId      = ConnectorId;
-            this._MeterId          = MeterId;
-            this._Currency         = Currency;
-            this._ChargingPeriods  = ChargingPeriods;
-            this._TotalCosts       = TotalCosts;
-            this._Status           = Status;
-
-            #endregion
+            this.Start            = Start;
+            this.End              = End;
+            this.kWh              = kWh;
+            this.AuthId           = AuthId;
+            this.AuthMethod       = AuthMethod;
+            this.Location         = Location ?? throw new ArgumentNullException(nameof(Location),  "The given parameter must not be null!");
+            this.EVSE             = EVSE     ?? throw new ArgumentNullException(nameof(EVSE),      "The given parameter must not be null!");
+            this.ConnectorId      = ConnectorId;
+            this.MeterId          = MeterId;
+            this.Currency         = Currency ?? throw new ArgumentNullException(nameof(Currency),  "The given parameter must not be null!");
+            this.ChargingPeriods  = ChargingPeriods;
+            this.TotalCosts       = TotalCosts;
+            this.Status           = Status;
 
         }
 
@@ -401,19 +189,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
-        {
 
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is an Session.
-            var Session = Object as Session;
-            if ((Object) Session == null)
-                throw new ArgumentException("The given object is not an Session!");
-
-            return CompareTo(Session);
-
-        }
+            => Object is Session session
+                   ? CompareTo(session)
+                   : throw new ArgumentException("The given object is not a charging session!",
+                                                 nameof(Object));
 
         #endregion
 
@@ -426,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Session Session)
         {
 
-            if ((Object) Session == null)
+            if (Session is null)
                 throw new ArgumentNullException(nameof(Session),  "The given session must not be null!");
 
             return Id.CompareTo(Session.Id);
@@ -447,19 +227,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
-        {
 
-            if (Object == null)
-                return false;
-
-            // Check if the given object is an Session.
-            var Session = Object as Session;
-            if ((Object) Session == null)
-                return false;
-
-            return this.Equals(Session);
-
-        }
+            => Object is Session session &&
+                   Equals(session);
 
         #endregion
 
@@ -473,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(Session Session)
         {
 
-            if ((Object) Session == null)
+            if (Session is null)
                 return false;
 
             return Id.Equals(Session.Id);

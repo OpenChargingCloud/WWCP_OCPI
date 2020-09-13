@@ -22,6 +22,7 @@ using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Aegir;
+using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -38,39 +39,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-        #region Location
-
-        private readonly Location _Location;
-
         /// <summary>
         /// The location object that contains this EVSE.
         /// </summary>
         [Mandatory]
-        public Location Location
-        {
-            get
-            {
-                return _Location;
-            }
-        }
-
-        #endregion
-
-        #region LocationId
+        public Location Location { get; }
 
         /// <summary>
         /// The id of the Location object that contains this EVSE.
         /// If the Location object does not exist, this EVSE may be discarded (and it should not have been sent in the first place).
         /// </summary>
-        public Location_Id LocationId
-        {
-            get
-            {
-                return _Location != null ? Location.Id : null;
-            }
-        }
-
-        #endregion
+        public Location_Id? LocationId
+            => Location?.Id;
 
         #region Status
 
@@ -235,42 +215,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region PhysicalNumber
-
-        private String _PhysicalNumber;
-
         /// <summary>
         /// A number on the EVSE for visual identification.
         /// </summary>
         [Optional]
-        public String PhysicalNumber
-        {
-            get
-            {
-                return _PhysicalNumber;
-            }
-        }
-
-        #endregion
-
-        #region Directions
-
-        private I18NString _Directions;
+        public String PhysicalNumber { get; }
 
         /// <summary>
         /// Multi-language human-readable directions when more detailed
         /// information on how to reach the EVSE from the Location is required.
         /// </summary>
         [Optional]
-        public I18NString Directions
-        {
-            get
-            {
-                return _Directions;
-            }
-        }
-
-        #endregion
+        public I18NString Directions { get; }
 
         #region ParkingRestriction
 
@@ -333,13 +289,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Init data and properties
 
-            this._Location            = Location;
+            this.Location            = Location;
 
             this._Status              = EVSEStatusTypes.Unknown;
             this._StatusSchedule      = new ReactiveSet<EVSEStatusSchedule>();
             this._Capabilities        = new ReactiveSet<CapabilityTypes>();
             this._Connectors          = new ReactiveSet<Connector>();
-            this._Directions          = new I18NString();
+            this.Directions          = new I18NString();
             this._ParkingRestriction  = new ReactiveSet<ParkingRestrictionTypes>();
             this._Images              = new ReactiveSet<Image>();
 
@@ -393,19 +349,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
-        {
 
-            if (Object == null)
-                throw new ArgumentNullException("The given object must not be null!");
-
-            // Check if the given object is an EVSE.
-            var EVSE = Object as EVSE;
-            if ((Object) EVSE == null)
-                throw new ArgumentException("The given object is not an EVSE!");
-
-            return CompareTo(EVSE);
-
-        }
+            => Object is EVSE evse
+                   ? CompareTo(evse)
+                   : throw new ArgumentException("The given object is not an EVSE!",
+                                                 nameof(Object));
 
         #endregion
 
@@ -418,8 +366,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(EVSE EVSE)
         {
 
-            if ((Object) EVSE == null)
-                throw new ArgumentNullException(nameof(EVSE),  "The given EVSE must not be null!");
+            if (EVSE is null)
+                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
 
             return Id.CompareTo(EVSE.Id);
 
@@ -439,19 +387,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
-        {
 
-            if (Object == null)
-                return false;
-
-            // Check if the given object is an EVSE.
-            var EVSE = Object as EVSE;
-            if ((Object) EVSE == null)
-                return false;
-
-            return this.Equals(EVSE);
-
-        }
+            => Object is EVSE evse &&
+                   Equals(evse);
 
         #endregion
 
@@ -463,14 +401,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="EVSE">An EVSE to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(EVSE EVSE)
-        {
 
-            if ((Object) EVSE == null)
-                return false;
-
-            return Id.Equals(EVSE.Id);
-
-        }
+            => (!(EVSE is null)) &&
+                   Id.Equals(EVSE.Id);
 
         #endregion
 

@@ -21,7 +21,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The file type of an image.
     /// </summary>
-    public enum ImageFileType
+    public enum ImageFileTypes
     {
 
         /// <summary>

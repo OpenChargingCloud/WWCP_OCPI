@@ -63,8 +63,8 @@
     <Compile Include="DataTypes\Image.cs" />
     <Compile Include="DataTypes\Complex\AdditionalGeoLocation.cs" />
     <Compile Include="DataTypes\Enums\CapabilityTypes.cs" />
-    <Compile Include="DataTypes\ImageFileType.cs" />
-    <Compile Include="DataTypes\ImageCategoryType.cs" />
+    <Compile Include="DataTypes\Enums\ImageFileTypes.cs" />
+    <Compile Include="DataTypes\Enums\ImageCategoryTypes.cs" />
     <Compile Include="DataTypes\Complex\EVSE.cs" />
     <Compile Include="DataTypes\Enums\EVSEStatusTypes.cs" />
     <Compile Include="DataTypes\Simple\Connector_Id.cs" />
