@@ -18,11 +18,9 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -30,150 +28,177 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The session object describes one charging session in a roaming scenario.
-    /// The object is virtual and lives between the operator's and provider's systems.
-    /// Each of the two parties hold a inheritance of this virtual object.
+    /// The charging session.
     /// </summary>
-    public class Session : AEMobilityEntity<Session_Id>,
-                           IEquatable<Session>, IComparable<Session>, IComparable
+    public class Session : IHasId<Session_Id>,
+                           IEquatable<Session>,
+                           IComparable<Session>,
+                           IComparable
     {
 
         #region Properties
 
         /// <summary>
+        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this session.
+        /// </summary>
+        [Optional]
+        public CountryCode                         CountryCode                  { get; }
+
+        /// <summary>
+        /// The Id of the CPO that 'owns' this session (following the ISO-15118 standard).
+        /// </summary>
+        [Optional]
+        public Party_Id                            PartyId                      { get; }
+
+        /// <summary>
+        /// The identification of the session within the CPOs platform (and suboperator platforms). 
+        /// </summary>
+        [Mandatory]
+        public Session_Id                          Id                           { get; }
+
+        /// <summary>
         /// The time when the session became active.
         /// </summary>
         [Mandatory]
-        public DateTime Start { get; }
+        public DateTime                            Start                        { get; }
 
         /// <summary>
         /// The time when the session is completed.
         /// </summary>
         [Optional]
-        public DateTime? End { get; }
+        public DateTime?                           End                          { get; }
 
         /// <summary>
         /// How many kWh are charged.
         /// </summary>
         [Mandatory]
-        public Decimal kWh { get; }
+        public Decimal                             kWh                          { get; }
 
         /// <summary>
-        /// An id provided by the authentication used so that the eMSP knows to which driver the session belongs.
+        /// 
         /// </summary>
         [Mandatory]
-        public Auth_Id AuthId { get; }
+        public CDRToken                            CDRToken                     { get; }
 
         /// <summary>
         /// Method used for authentication.
         /// </summary>
         [Mandatory]
-        public AuthMethodTypes AuthMethod { get; }
+        public AuthMethods                         AuthMethod                   { get; }
 
         /// <summary>
-        /// The location where this session took place.
+        /// Reference to the authorization given by the eMSP. When the eMSP provided an
+        /// authorization_reference in either: real-time authorization or StartSession,
+        /// this field SHALL contain the same value. 
         /// </summary>
-        [Mandatory]
-        public Location Location { get; }
+        [Optional]
+        public AuthorizationReference?             AuthorizationReference       { get; }
 
         /// <summary>
-        /// The EVSE that was used for this session.
+        /// Identification of the location of this CPO, on which the charging session is/was happening.
         /// </summary>
         [Mandatory]
-        public EVSE EVSE { get; }
+        public Location_Id                         LocationId                   { get; }
 
         /// <summary>
-        /// Connector ID of the connector used at the EVSE.
+        /// The UID of the EVSE of this Location on which the charging session is/was happening.
         /// </summary>
         [Mandatory]
-        public Connector_Id ConnectorId { get; }
+        public EVSE_UId                            EVSEUId                      { get; }
+
+        /// <summary>
+        /// Identification of the connector of this location the charging session is/was happening.
+        /// </summary>
+        [Mandatory]
+        public Connector_Id                        ConnectorId                  { get; }
 
         /// <summary>
         /// Optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id MeterId { get; }
+        public Meter_Id                            MeterId                      { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
-        public Currency Currency { get; }
+        public Currency                            Currency                     { get; }
 
         /// <summary>
-        /// An optional enumeration of charging periods that can be used to calculate and verify the total cost.
+        /// An optional enumeration of charging periods that can be used to calculate and verify
+        /// the total cost.
         /// </summary>
         [Optional]
-        public IEnumerable<ChargingPeriod> ChargingPeriods { get; }
+        public IEnumerable<ChargingPeriod>         ChargingPeriods              { get; }
+
+        /// <summary>
+        /// The total cost (excluding VAT) of the session in the specified currency.
+        /// This is the price that the eMSP will have to pay to the CPO.
+        /// </summary>
+        [Optional]
+        public Decimal?                            TotalCosts                   { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of the session in the specified currency.
         /// This is the price that the eMSP will have to pay to the CPO.
         /// </summary>
         [Mandatory]
-        public Decimal TotalCosts { get; }
+        public SessionStatusTypes                  Status                       { get; }
 
         /// <summary>
-        /// The total cost (excluding VAT) of the session in the specified currency.
-        /// This is the price that the eMSP will have to pay to the CPO.
+        /// Timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
-        public SessionStatusTypes Status { get; }
+        public DateTime                            LastUpdated                  { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// The Session object describes the Session and its properties
-        /// where a group of EVSEs that belong together are installed.
+        /// Create a new charging session.
         /// </summary>
-        /// <param name="Id">Uniquely identifies the Session within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Start">The time when the session became active.</param>
-        /// <param name="End">The time when the session is completed.</param>
-        /// <param name="kWh">How many kWh are charged.</param>
-        /// <param name="AuthId">An id provided by the authentication used so that the eMSP knows to which driver the session belongs.</param>
-        /// <param name="AuthMethod">Method used for authentication.</param>
-        /// <param name="Location">The location where this session took place.</param>
-        /// <param name="EVSE">The EVSE that was used for this session.</param>
-        /// <param name="ConnectorId">Connector ID of the connector used at the EVSE.</param>
-        /// <param name="MeterId">Optional identification of the kWh meter.</param>
-        /// <param name="Currency">ISO 4217 code of the currency used for this session.</param>
-        /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
-        /// <param name="TotalCosts">The total cost (excluding VAT) of the session in the specified currency. This is the price that the eMSP will have to pay to the CPO.</param>
-        /// <param name="Status">The status of the session.</param>
-        public Session(Session_Id                   Id,
-                       DateTime                     Start,
-                       DateTime?                    End,
-                       Decimal                      kWh,
-                       Auth_Id                      AuthId,
-                       AuthMethodTypes              AuthMethod,
-                       Location                     Location,
-                       EVSE                         EVSE,
-                       Connector_Id                 ConnectorId,
-                       Meter_Id                     MeterId,
-                       Currency                     Currency,
-                       IEnumerable<ChargingPeriod>  ChargingPeriods,
-                       Decimal                      TotalCosts,
-                       SessionStatusTypes           Status)
+        public Session(CountryCode              CountryCode,
+                       Party_Id                 PartyId,
+                       Session_Id               Id,
+                       DateTime                 Start,
+                       Decimal                  kWh,
+                       CDRToken                 CDRToken,
+                       AuthMethods              AuthMethod,
+                       Location_Id              LocationId,
+                       EVSE_UId                 EVSEUId,
+                       Connector_Id             ConnectorId,
+                       Meter_Id                 MeterId,
+                       Currency                 Currency,
+                       SessionStatusTypes       Status,
 
-            : base(Id)
+                       DateTime?                End                      = null,
+                       AuthorizationReference?  AuthorizationReference   = null,
+                       Decimal?                 TotalCosts               = null,
+
+                       DateTime?                LastUpdated              = null)
 
         {
 
-            this.Start            = Start;
-            this.End              = End;
-            this.kWh              = kWh;
-            this.AuthId           = AuthId;
-            this.AuthMethod       = AuthMethod;
-            this.Location         = Location ?? throw new ArgumentNullException(nameof(Location),  "The given parameter must not be null!");
-            this.EVSE             = EVSE     ?? throw new ArgumentNullException(nameof(EVSE),      "The given parameter must not be null!");
-            this.ConnectorId      = ConnectorId;
-            this.MeterId          = MeterId;
-            this.Currency         = Currency ?? throw new ArgumentNullException(nameof(Currency),  "The given parameter must not be null!");
-            this.ChargingPeriods  = ChargingPeriods;
-            this.TotalCosts       = TotalCosts;
-            this.Status           = Status;
+            this.CountryCode              = CountryCode;
+            this.PartyId                  = PartyId;
+            this.Id                       = Id;
+            this.Start                    = Start;
+            this.kWh                      = kWh;
+            this.CDRToken                 = CDRToken;
+            this.AuthMethod               = AuthMethod;
+            this.LocationId               = LocationId;
+            this.EVSEUId                  = EVSEUId;
+            this.ConnectorId              = ConnectorId;
+            this.MeterId                  = MeterId;
+            this.Currency                 = Currency;
+            this.Status                   = Status;
+
+            this.End                      = End;
+            this.AuthorizationReference   = AuthorizationReference;
+            this.TotalCosts               = TotalCosts;
+
+            this.LastUpdated              = LastUpdated ?? DateTime.Now;
 
         }
 
@@ -207,7 +232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (Session is null)
-                throw new ArgumentNullException(nameof(Session),  "The given session must not be null!");
+                throw new ArgumentNullException(nameof(Session),  "The given charging session must not be null!");
 
             return Id.CompareTo(Session.Id);
 

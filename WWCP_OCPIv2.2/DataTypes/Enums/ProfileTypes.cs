@@ -19,25 +19,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The power type of the connector.
+    /// Different smart charging profile types.
     /// </summary>
-    public enum PowerTypes
+    public enum ProfileTypes
     {
 
         /// <summary>
-        /// AC single phase.
+        /// Driver wants to use the cheapest charging profile possible.
         /// </summary>
-        AC_1_PHASE,
+        CHEAP,
 
         /// <summary>
-        /// AC three phases.
+        /// Driver wants his EV charged as quickly as possible and is willing
+        /// to pay a premium for this, if needed.
         /// </summary>
-        AC_3_PHASE,
+        FAST,
 
         /// <summary>
-        /// Direct Current.
+        /// Driver wants his EV charged with as much regenerative (green) energy as possible.
         /// </summary>
-        DC
+        GREEN,
+
+        /// <summary>
+        /// Driver does not have special preferences.
+        /// </summary>
+        REGULAR
 
     }
 

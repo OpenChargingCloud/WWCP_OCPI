@@ -17,9 +17,10 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Illias;
 using System;
 using System.Collections.Generic;
+
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -122,6 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          String                  TermsAndConditions   = null,
 
                          DateTime?               LastUpdated          = null)
+
         {
 
             this.Id                   = Id;

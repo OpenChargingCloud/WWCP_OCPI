@@ -25,24 +25,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     {
 
         /// <summary>
-        /// The session is pending and has not yet started. This is the initial state.
-        /// </summary>
-        PENDING,
-
-        /// <summary>
         /// The session is accepted and active.
         /// </summary>
         ACTIVE,
 
         /// <summary>
-        /// The session has finished succesfully.
+        /// The session has been finished successfully.
+        /// No more modifications will be made to the session using this state.
         /// </summary>
         COMPLETED,
 
         /// <summary>
-        /// The session is declared invalid and will not be billed.
+        /// The session using this state is declared invalid and will not be billed.
         /// </summary>
-        INVALID
+        INVALID,
+
+        /// <summary>
+        /// The session is pending, it has not yet started. Not all pre-conditions are met.
+        /// This is the initial state. The session might never become an active session.
+        /// </summary>
+        PENDING,
+
+        /// <summary>
+        /// The session is started due to a reservation, charging has not yet started.
+        /// The session might never become an active session.
+        /// </summary>
+        RESERVATION
 
     }
 

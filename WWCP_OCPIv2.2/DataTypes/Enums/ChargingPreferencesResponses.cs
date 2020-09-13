@@ -19,25 +19,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The power type of the connector.
+    /// Different smart charging response types.
     /// </summary>
-    public enum PowerTypes
+    public enum ChargingPreferencesResponses
     {
 
         /// <summary>
-        /// AC single phase.
+        /// Charging Preferences accepted, EVSE will try to accomplish them, although this is no guarantee that they will be fulfilled.
         /// </summary>
-        AC_1_PHASE,
+        ACCEPTED,
 
         /// <summary>
-        /// AC three phases.
+        /// CPO requires departure_time to be able to perform Charging Preference based Smart Charging.
         /// </summary>
-        AC_3_PHASE,
+        DEPARTURE_REQUIRED,
 
         /// <summary>
-        /// Direct Current.
+        /// CPO requires energy_need to be able to perform Charging Preference based Smart Charging.
         /// </summary>
-        DC
+        ENERGY_NEED_REQUIRED,
+
+        /// <summary>
+        /// Charging Preferences contain a demand that the EVSE knows it cannot fulfill.
+        /// </summary>
+        NOT_POSSIBLE,
+
+        /// <summary>
+        /// profile_type contains a value that is not supported by the EVSE.
+        /// </summary>
+        PROFILE_TYPE_NOT_SUPPORTED
 
     }
 

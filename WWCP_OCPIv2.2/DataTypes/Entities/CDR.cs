@@ -18,11 +18,9 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -30,234 +28,297 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The CDR object describes the Charging Session and its costs.
-    /// How these costs are build up etc.
+    /// The CDR object describes the charging session and its costs,
+    /// how these costs are composed, etc.
     /// </summary>
-    public class CDR : AEMobilityEntity<CDR_Id>,
-                       IEquatable<CDR>, IComparable<CDR>, IComparable
+    public class CDR : IHasId<CDR_Id>,
+                       IEquatable<CDR>,
+                       IComparable<CDR>,
+                       IComparable
     {
 
         #region Properties
 
         /// <summary>
-        /// The time when the CDR became active.
-        /// </summary>
-        [Mandatory]
-        public DateTime Start { get; }
-
-        #region End
-
-        private DateTime? _End;
-
-        /// <summary>
-        /// The time when the CDR is completed.
+        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this charge detail record.
         /// </summary>
         [Optional]
-        public DateTime? End
-        {
-
-            get
-            {
-                return _End;
-            }
-
-            set
-            {
-
-                if (_End != value)
-                    SetProperty(ref _End, value);
-
-            }
-
-        }
-
-        #endregion
+        public CountryCode                  CountryCode                 { get; }
 
         /// <summary>
-        /// An id provided by the authentication used so that the eMSP knows to which driver the CDR belongs.
+        /// The Id of the CPO that 'owns' this charge detail record (following the ISO-15118 standard).
+        /// </summary>
+        [Optional]
+        public Party_Id                     PartyId                     { get; }
+
+        /// <summary>
+        /// The identification of the charge detail record within the CPOs platform (and suboperator platforms). 
         /// </summary>
         [Mandatory]
-        public Auth_Id AuthId { get; }
+        public CDR_Id                       Id                          { get; }
+
+
+        /// <summary>
+        /// Start timestamp of the charging session, or in-case of a reservation
+        /// (before the start of a session) the start of the reservation.
+        /// </summary>
+        [Mandatory]
+        public DateTime                     Start                       { get; }
+
+        /// <summary>
+        /// The timestamp when the session was completed/finished, charging might
+        /// have finished before the session ends, for example:
+        /// EV is full, but parking cost also has to be paid.
+        /// </summary>
+        [Mandatory]
+        public DateTime                     End                         { get; }
+
+        /// <summary>
+        /// Unique ID of the Session for which this CDR is sent. Is only allowed to be omitted
+        /// when the CPO has not implemented the sessions module or this charge detail record
+        /// is the result of a reservation that never became a charging session, thus no OCPI session.
+        /// </summary>
+        [Optional]
+        public Session_Id?                  SessionId                   { get; }
+
+        /// <summary>
+        /// Token used to start this charging session, includes all the relevant information
+        /// to identify the unique token.
+        /// </summary>
+        [Mandatory]
+        public CDRToken                     CDRToken                    { get; }
 
         /// <summary>
         /// Method used for authentication.
         /// </summary>
         [Mandatory]
-        public AuthMethodTypes AuthMethod { get; }
+        public AuthMethods                  AuthMethod                  { get; }
 
         /// <summary>
-        /// List of relevant values for this charging period.
+        /// Reference to the authorization given by the eMSP. When the eMSP provided an
+        /// authorization_reference in either: real-time authorization or StartSession,
+        /// this field SHALL contain the same value. When different authorization_reference
+        /// values have been given by the eMSP that are relevant to this Session, the last
+        /// given value SHALL be used here.
         /// </summary>
-        public IEnumerable<CDRDimension> Dimensions { get; }
+        public AuthorizationReference?      AuthorizationReference      { get; }
 
         /// <summary>
-        /// The location where this CDR took place.
-        /// </summary>
-        [Mandatory]
-        public Location Location { get; }
-
-        /// <summary>
-        /// The EVSE that was used for this CDR.
-        /// </summary>
-        [Mandatory]
-        public EVSE EVSE { get; }
-
-        /// <summary>
-        /// Connector ID of the connector used at the EVSE.
+        /// Location where the charging session took place, including only the relevant
+        /// EVSE and connector.
         /// </summary>
         [Mandatory]
-        public Connector_Id ConnectorId { get; }
+        public CDRLocation                  Location                    { get; }
 
         /// <summary>
         /// Optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id MeterId { get; }
+        public Meter_Id?                    MeterId                     { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this CDR.
         /// </summary>
         [Mandatory]
-        public Currency Currency { get; }
+        public Currency                     Currency                    { get; }
 
         /// <summary>
         /// Enumeration of relevant tariffs.
         /// </summary>
-        public IEnumerable<Tariff> Tariffs { get; }
+        [Optional]
+        public IEnumerable<Tariff>          Tariffs                     { get; }
 
         /// <summary>
         /// Enumeration of charging periods that make up this charging session.
         /// A session consist of 1 or more periodes with, each period has a
         /// different relevant Tariff.
         /// </summary>
-        public IEnumerable<ChargingPeriod> ChargingPeriods { get; }
-
-        #region TotalCosts
-
-        private Decimal _TotalCosts;
+        [Mandatory]
+        public IEnumerable<ChargingPeriod>  ChargingPeriods             { get; }
 
         /// <summary>
-        /// The total cost (excluding VAT) of the CDR in the specified currency.
-        /// This is the price that the eMSP will have to pay to the CPO.
+        /// Signed data that belongs to this charging session.
+        /// </summary>
+        [Optional]
+        public SignedData?                  SignedData                  { get; }
+
+        /// <summary>
+        /// Total sum of all the costs of this transaction in the specified currency.
         /// </summary>
         [Mandatory]
-        public Decimal TotalCosts
-        {
+        public Price                        TotalCosts                  { get; }
 
-            get
-            {
-                return _TotalCosts;
-            }
+        /// <summary>
+        /// Total sum of all the costs of this transaction in the specified currency.
+        /// </summary>
+        [Optional]
+        public Price?                       TotalFixedCosts             { get; }
 
-            set
-            {
+        /// <summary>
+        /// Total energy charged, in kWh.
+        /// </summary>
+        [Mandatory]
+        public Decimal                      TotalEnergy                 { get; }
 
-                if (_TotalCosts != value)
-                    SetProperty(ref _TotalCosts, value);
+        /// <summary>
+        /// Total sum of all the cost of all the energy used, in the specified currency.
+        /// </summary>
+        [Optional]
+        public Price?                       TotalEnergyCost             { get; }
 
-            }
 
-        }
+        /// <summary>
+        /// Total duration of the charging session (including the duration of charging and not charging), in hours.
+        /// </summary>
+        [Mandatory]
+        public Decimal                      TotalTime                   { get; }
 
-        #endregion
+        /// <summary>
+        /// Total sum of all the cost related to duration of charging during this transaction, in the specified currency.
+        /// </summary>
+        [Optional]
+        public Price?                       TotalTimeCost               { get; }
 
-        #region Remark
 
-        private I18NString _Remark;
+        /// <summary>
+        /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
+        /// </summary>
+        [Optional]
+        public Decimal?                     TotalParkingTime            { get; }
+
+        /// <summary>
+        /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
+        /// </summary>
+        [Optional]
+        public Decimal                      TotalChargingTime
+            => TotalTime - (TotalParkingTime ?? 0);
+
+        /// <summary>
+        /// Total sum of all the cost related to parking of this transaction, including fixed price components, in the specified currency.
+        /// </summary>
+        [Optional]
+        public Price?                       TotalParkingCost            { get; }
+
+        /// <summary>
+        /// Total sum of all the cost related to a reservation of a Charge Point, including fixed price components, in the specified currency.
+        /// </summary>
+        [Optional]
+        public Price?                       TotalReservationCost        { get; }
 
         /// <summary>
         /// Optional remark, can be used to provide addition human
-        /// readable information to the CDR, for example:
+        /// readable information to the charge detail record, for example:
         /// reason why a transaction was stopped.
         /// </summary>
         [Optional]
-        public I18NString Remark
-        {
+        public String                       Remark                      { get; }
 
-            get
-            {
-                return _Remark;
-            }
+        /// <summary>
+        /// This field can be used to reference an invoice, that will later be send for this CDR. Making it easier to link a CDR to a given invoice. Maybe even group CDRs that will be on the same invoice.
+        /// </summary>
+        [Optional]
+        public InvoiceReference_Id?         InvoiceReferenceId          { get; }
 
-            set
-            {
 
-                if (_Remark != value)
-                    SetProperty(ref _Remark, value);
+        /// <summary>
+        /// When set to true, this is a Credit CDR, and the field credit_reference_id needs to be set as well.
+        /// </summary>
+        [Optional]
+        public Boolean?                     Credit                      { get; }
 
-            }
+        /// <summary>
+        /// Is required to be set for a Credit CDR. This SHALL contain the id of the CDR for which this is a Credit CDR.
+        /// </summary>
+        [Optional]
+        public CreditReference_Id?          CreditReferenceId           { get; }
 
-        }
 
-        #endregion
+        /// <summary>
+        /// Timestamp when this charge detail record was last updated (or created).
+        /// </summary>
+        [Mandatory]
+        public DateTime                     LastUpdated                 { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// The CDR object describes the Charging Session and its costs.
-        /// How these costs are build up etc.
+        /// Create a new charge detail record describing the charging session and its costs,
+        /// how these costs are composed, etc.
         /// </summary>
-        /// <param name="Id">Uniquely identifies the CDR within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Start">The time when the CDR became active.</param>
-        /// <param name="End">The time when the CDR is completed.</param>
-        /// <param name="AuthId">An id provided by the authentication used so that the eMSP knows to which driver the CDR belongs.</param>
-        /// <param name="AuthMethod">Method used for authentication.</param>
-        /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        /// <param name="Location">The location where this CDR took place.</param>
-        /// <param name="EVSE">The EVSE that was used for this CDR.</param>
-        /// <param name="ConnectorId">Connector ID of the connector used at the EVSE.</param>
-        /// <param name="MeterId">Optional identification of the kWh meter.</param>
-        /// <param name="Currency">ISO 4217 code of the currency used for this CDR.</param>
-        /// <param name="Tariffs">Enumeration of relevant tariffs.</param>
-        /// <param name="ChargingPeriods">Enumeration of charging periods that make up this charging session. A session consist of 1 or more periodes with, each period has a different relevant Tariff.</param>
-        /// <param name="TotalCosts">The total cost (excluding VAT) of the CDR in the specified currency. This is the price that the eMSP will have to pay to the CPO.</param>
-        /// <param name="Remark">Optional remark, can be used to provide addition human readable information to the CDR, for example: reason why a transaction was stopped.</param>
-        public CDR(CDR_Id                       Id,
+        public CDR(CountryCode                  CountryCode,
+                   Party_Id                     PartyId,
+                   CDR_Id                       Id,
                    DateTime                     Start,
-                   DateTime?                    End,
-                   Auth_Id                      AuthId,
-                   AuthMethodTypes               AuthMethod,
-                   IEnumerable<CDRDimension>    Dimensions,
-                   Location                     Location,
-                   EVSE                         EVSE,
-                   Connector_Id                 ConnectorId,
-                   Meter_Id                     MeterId,
+                   DateTime                     End,
+                   CDRToken                     CDRToken,
+                   AuthMethods                  AuthMethod,
+                   CDRLocation                  Location,
                    Currency                     Currency,
-                   IEnumerable<Tariff>          Tariffs,
                    IEnumerable<ChargingPeriod>  ChargingPeriods,
-                   Decimal                      TotalCosts,
-                   I18NString                   Remark)
+                   Price                        TotalCosts,
+                   Decimal                      TotalEnergy,
+                   Decimal                      TotalTime,
 
-            : base(Id)
+                   Session_Id?                  SessionId                = null,
+                   AuthorizationReference?      AuthorizationReference   = null,
+                   Meter_Id?                    MeterId                  = null,
+                   IEnumerable<Tariff>          Tariffs                  = null,
+                   SignedData?                  SignedData               = null,
+                   Price?                       TotalFixedCosts          = null,
+                   Price?                       TotalEnergyCost          = null,
+                   Price?                       TotalTimeCost            = null,
+                   Decimal?                     TotalParkingTime         = null,
+                   Price?                       TotalParkingCost         = null,
+                   Price?                       TotalReservationCost     = null,
+                   String                       Remark                   = null,
+                   InvoiceReference_Id?         InvoiceReferenceId       = null,
+                   Boolean?                     Credit                   = null,
+                   CreditReference_Id?          CreditReferenceId        = null,
+
+                   DateTime?                    LastUpdated              = null)
 
         {
 
             #region Initial checks
 
-            if (!Dimensions.SafeAny())
-                throw new ArgumentNullException(nameof(Dimensions),       "The given enumeration must not be null or empty!");
-
             if (!ChargingPeriods.SafeAny())
-                throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration must not be null or empty!");
+                throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration of charging periods must not be null or empty!");
 
             #endregion
 
-            this.Start            = Start;
-            this._End              = End;
-            this.AuthId           = AuthId;
-            this.AuthMethod       = AuthMethod;
-            this.Dimensions       = Dimensions;
-            this.Location         = Location ?? throw new ArgumentNullException(nameof(Location),  "The given parameter must not be null!");
-            this.EVSE             = EVSE     ?? throw new ArgumentNullException(nameof(EVSE),      "The given parameter must not be null!");
-            this.ConnectorId      = ConnectorId;
-            this.MeterId          = MeterId;
-            this.Currency         = Currency ?? throw new ArgumentNullException(nameof(Currency),  "The given parameter must not be null!");
-            this.Tariffs          = Tariffs;
-            this.ChargingPeriods  = ChargingPeriods;
-            this._TotalCosts       = TotalCosts;
-            this._Remark           = Remark ?? new I18NString();
+            this.CountryCode              = CountryCode;
+            this.PartyId                  = PartyId;
+            this.Id                       = Id;
+            this.Start                    = Start;
+            this.End                      = End;
+            this.CDRToken                 = CDRToken;
+            this.AuthMethod               = AuthMethod;
+            this.Location                 = Location ?? throw new ArgumentNullException(nameof(Location),  "The given charging location must not be null!");
+            this.Currency                 = Currency;
+            this.ChargingPeriods          = ChargingPeriods;
+            this.TotalCosts               = TotalCosts;
+            this.TotalEnergy              = TotalEnergy;
+            this.TotalTime                = TotalTime;
+
+            this.SessionId                = SessionId;
+            this.AuthorizationReference   = AuthorizationReference;
+            this.MeterId                  = MeterId;
+            this.Tariffs                  = Tariffs;
+            this.SignedData               = SignedData;
+            this.TotalFixedCosts          = TotalFixedCosts;
+            this.TotalEnergyCost          = TotalEnergyCost;
+            this.TotalTimeCost            = TotalTimeCost;
+            this.TotalParkingTime         = TotalParkingTime;
+            this.TotalParkingCost         = TotalParkingCost;
+            this.TotalReservationCost     = TotalReservationCost;
+            this.Remark                   = Remark;
+            this.InvoiceReferenceId       = InvoiceReferenceId;
+            this.Credit                   = Credit;
+            this.CreditReferenceId        = CreditReferenceId;
+
+            this.LastUpdated              = LastUpdated ?? DateTime.Now;
 
         }
 

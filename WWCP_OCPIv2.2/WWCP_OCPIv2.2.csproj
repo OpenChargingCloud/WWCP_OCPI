@@ -47,13 +47,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Complex\CDRToken.cs" />
+    <Compile Include="DataTypes\Complex\Price.cs" />
+    <Compile Include="DataTypes\Complex\SignedValue.cs" />
+    <Compile Include="DataTypes\Complex\SignedData.cs" />
+    <Compile Include="DataTypes\Complex\ChargingPreference.cs" />
     <Compile Include="DataTypes\Complex\LocationReference.cs" />
     <Compile Include="DataTypes\Complex\PublishTokenType.cs" />
     <Compile Include="DataTypes\Entities\CDR.cs" />
+    <Compile Include="DataTypes\Entities\CDRLocation.cs" />
+    <Compile Include="DataTypes\Enums\SignedValueTypes.cs" />
+    <Compile Include="DataTypes\Enums\ChargingPreferencesResponses.cs" />
+    <Compile Include="DataTypes\Enums\ProfileTypes.cs" />
     <Compile Include="DataTypes\Enums\AllowedTypes.cs" />
     <Compile Include="DataTypes\Enums\Facilities.cs" />
     <Compile Include="DataTypes\Enums\WhitelistTypes.cs" />
     <Compile Include="DataTypes\Enums\TokenTypes.cs" />
+    <Compile Include="DataTypes\Simple\AuthorizationReference.cs" />
+    <Compile Include="DataTypes\Simple\Currency.cs" />
+    <Compile Include="DataTypes\Simple\CreditReference_Id.cs" />
+    <Compile Include="DataTypes\Simple\InvoiceReference_Id.cs" />
+    <Compile Include="DataTypes\Simple\PublicKey.cs" />
+    <Compile Include="DataTypes\Simple\EncodingMethod.cs" />
     <Compile Include="DataTypes\Simple\Contract_Id.cs" />
     <Compile Include="DataTypes\Simple\EVSE_UId.cs" />
     <Compile Include="DataTypes\Simple\EVSE_Id.cs" />
@@ -85,7 +100,7 @@
     <Compile Include="DataTypes\Simple\Location_Id.cs" />
     <Compile Include="DataTypes\Enums\SessionStatusTypes.cs" />
     <Compile Include="DataTypes\Enums\DimensionTypes.cs" />
-    <Compile Include="DataTypes\Enums\AuthMethodTypes.cs" />
+    <Compile Include="DataTypes\Enums\AuthMethods.cs" />
     <Compile Include="DataTypes\Complex\CDRDimension.cs" />
     <Compile Include="DataTypes\Complex\ChargingPeriod.cs" />
     <Compile Include="DataTypes\Simple\Meter_Id.cs" />

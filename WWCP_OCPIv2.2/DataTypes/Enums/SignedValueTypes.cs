@@ -19,25 +19,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The power type of the connector.
+    /// Signed value types.
     /// </summary>
-    public enum PowerTypes
+    public enum SignedValueTypes
     {
 
         /// <summary>
-        /// AC single phase.
+        /// Signed value at the start of the charging session.
         /// </summary>
-        AC_1_PHASE,
+        START,
 
         /// <summary>
-        /// AC three phases.
+        /// Signed values take during the charging session, after start, before end.
         /// </summary>
-        AC_3_PHASE,
+        INTERMEDIATE,
 
         /// <summary>
-        /// Direct Current.
+        /// Signed value at the end of the charging session.
         /// </summary>
-        DC
+        END
 
     }
 

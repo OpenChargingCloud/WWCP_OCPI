@@ -18,14 +18,10 @@
 #region Usings
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -51,13 +47,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this Location.
+        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this location.
         /// </summary>
         [Optional]
         public CountryCode                         CountryCode              { get; }
 
         /// <summary>
-        /// The Id of the CPO that 'owns' this Location (following the ISO-15118 standard).
+        /// The Id of the CPO that 'owns' this location (following the ISO-15118 standard).
         /// </summary>
         [Optional]
         public Party_Id                            PartyId                  { get; }

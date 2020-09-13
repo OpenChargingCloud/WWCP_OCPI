@@ -21,7 +21,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The authentication method used.
     /// </summary>
-    public enum AuthMethodTypes
+    public enum AuthMethods
     {
 
         /// <summary>

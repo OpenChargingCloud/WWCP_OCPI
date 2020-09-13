@@ -21,10 +21,10 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using org.GraphDefined.Vanaheimr.Illias;
 using Newtonsoft.Json.Linq;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.WWCP;
+
+//using org.GraphDefined.WWCP;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -37,13 +37,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// When the list of elements contains more then 1 element, then the
     /// first tariff in the list with matching restrictions will be used.
     /// </summary>
-    public class Tariff : AEMobilityEntity<Tariff_Id>,
+    public class Tariff : IHasId<Tariff_Id>,
                           IEquatable<Tariff>,
                           IComparable<Tariff>,
                           IComparable
     {
 
         #region Properties
+
+        public Tariff_Id Id { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this tariff.
@@ -123,8 +125,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                       String                      TariffUrl    = null,
                       EnergyMix                   EnergyMix    = null)
 
-            : base(Id)
-
         {
 
             #region Initial checks
@@ -155,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public JObject ToJSON()
 
             => JSONObject.Create(new JProperty("id",        Id.ToString()),
-                                 new JProperty("currency",  Currency.ISOCode),
+                                 new JProperty("currency",  Currency.ToString()),
                                  TariffText?.Any() == true ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
                                  TariffUrl         != null ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
                                  TariffElements.Any()
