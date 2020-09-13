@@ -30,7 +30,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The environmental impact.
+    /// The amount of waste produced/emitted per kWh.
     /// </summary>
     public readonly struct EnvironmentalImpact : IEquatable<EnvironmentalImpact>,
                                                  IComparable<EnvironmentalImpact>,
@@ -42,28 +42,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The environmental impact.
         /// </summary>
-        public EnergySourceCategories  Source    { get; }
+        [Mandatory]
+        public EnvironmentalImpactCategories  Category    { get; }
 
         /// <summary>
         /// The amount of this environmental impact.
         /// </summary>
-        public Double                  Amount    { get; }
+        [Mandatory]
+        public Double                         Amount      { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// The environmental impact.
+        /// Amount of waste produced/emitted per kWh.
         /// </summary>
-        /// <param name="Source">The environmental impact.</param>
+        /// <param name="Category">The environmental impact category.</param>
         /// <param name="Amount">The amount of this environmental impact.</param>
-        public EnvironmentalImpact(EnergySourceCategories  Source,
-                                   Double                Amount)
+        public EnvironmentalImpact(EnvironmentalImpactCategories  Category,
+                                   Double                         Amount)
         {
 
-            this.Source  = Source;
-            this.Amount  = Amount;
+            this.Category  = Category;
+            this.Amount    = Amount;
 
         }
 
@@ -78,8 +80,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public JObject ToJSON()
 
             => JSONObject.Create(
-                   new JProperty("source",  Source.ToString()),
-                   new JProperty("amount",  Amount.ToString())
+                   new JProperty("category",  Category.ToString()),
+                   new JProperty("amount",    Amount.  ToString())
                );
 
         #endregion
@@ -205,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(EnvironmentalImpact EnvironmentalImpact)
         {
 
-            var c = Source.CompareTo(EnvironmentalImpact.Source);
+            var c = Category.CompareTo(EnvironmentalImpact.Category);
 
             if (c == 0)
                 c = Amount.CompareTo(EnvironmentalImpact.Amount);
@@ -243,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(EnvironmentalImpact EnvironmentalImpact)
 
-            => Source.Equals(EnvironmentalImpact.Source) &&
+            => Category.Equals(EnvironmentalImpact.Category) &&
                Amount.Equals(EnvironmentalImpact.Amount);
 
         #endregion
@@ -261,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Source.GetHashCode() * 3 ^
+                return Category.GetHashCode() * 3 ^
                        Amount.GetHashCode();
 
             }
@@ -276,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Source,
+            => String.Concat(Category,
                              " - ",
                              Amount);
 

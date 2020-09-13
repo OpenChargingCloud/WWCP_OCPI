@@ -19,25 +19,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The format of the connector, whether it is a socket or a plug.
+    /// This value, if provided, represents the restriction to the parking spot for different purposes.
     /// </summary>
-    public enum PowerTypes
+    public enum ParkingRestrictions
     {
 
         /// <summary>
-        /// AC single phase.
+        /// Reserved parking spot for electric vehicles.
         /// </summary>
-        AC_1_PHASE,
+        EV_ONLY,
 
         /// <summary>
-        /// AC three phases.
+        /// Parking allowed only while plugged in (charging).
         /// </summary>
-        AC_3_PHASE,
+        PLUGGED,
 
         /// <summary>
-        /// Direct Current.
+        /// Reserved parking spot for disabled people with valid ID.
         /// </summary>
-        DC
+        DISABLED,
+
+        /// <summary>
+        /// Parking spot for customers/guests only, for example in case of a hotel or shop.
+        /// </summary>
+        CUSTOMERS,
+
+        /// <summary>
+        /// Parking spot only suitable for (electric) motorcycles or scooters.
+        /// </summary>
+        MOTORCYCLES
 
     }
 

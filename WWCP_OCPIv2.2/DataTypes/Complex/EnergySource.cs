@@ -41,11 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The energy source.
         /// </summary>
+        [Mandatory]
         public EnergySourceCategories  Source        { get; }
 
         /// <summary>
         /// The percentage of this energy source.
         /// </summary>
+        [Mandatory]
         public Single                  Percentage    { get; }
 
         #endregion

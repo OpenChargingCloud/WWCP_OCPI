@@ -19,25 +19,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The format of the connector, whether it is a socket or a plug.
+    /// Categories of environmental impact values.
     /// </summary>
-    public enum PowerTypes
+    public enum EnvironmentalImpactCategories
     {
 
         /// <summary>
-        /// AC single phase.
+        /// Produced nuclear waste in gramms per kilowatthour.
         /// </summary>
-        AC_1_PHASE,
+        NUCLEAR_WASTE,
 
         /// <summary>
-        /// AC three phases.
+        /// Exhausted carbon dioxide in gramms per kilowarrhour.
         /// </summary>
-        AC_3_PHASE,
-
-        /// <summary>
-        /// Direct Current.
-        /// </summary>
-        DC
+        CARBON_DIOXIDE
 
     }
 

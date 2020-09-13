@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// A common URI prefix for all URIs within this API.
         /// </summary>
-        public HTTPPath URIPrefix { get; }
+        public HTTPPath URLPrefix { get; }
 
         #endregion
 
@@ -357,7 +357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this._HTTPServer              = HTTPServer;
             this._GetRessources           = GetRessources;
-            this.URIPrefix                = URIPrefix ?? DefaultURIPrefix;
+            this.URLPrefix                = URIPrefix ?? DefaultURIPrefix;
 
             this._ServiceName             = ServiceName;
             this._APIEMailAddress         = APIEMailAddress;
@@ -393,14 +393,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region / (HTTPRoot)
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot",
+                                                URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
                                           new HTTPPath[] {
-                                              URIPrefix + "/index.html",
-                                              URIPrefix + "/"
+                                              URLPrefix + "/index.html",
+                                              URLPrefix + "/"
                                           },
                                           HTTPContentType.HTML_UTF8,
                                           HTTPDelegate: async Request => {

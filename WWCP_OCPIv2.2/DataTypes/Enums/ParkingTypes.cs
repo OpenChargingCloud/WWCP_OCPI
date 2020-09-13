@@ -19,35 +19,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// This value, if provided, represents the restriction to the parking spot for different purposes.
+    /// Reflects the general type of the charge points location. May be used for user information.
     /// </summary>
-    public enum ParkingRestrictionTypes
+    public enum ParkingTypes
     {
 
         /// <summary>
-        /// Reserved parking spot for electric vehicles.
+        /// Parking location type is not known by the operator (default).
         /// </summary>
-        EV_ONLY,
+        UNKNOWN,
 
         /// <summary>
-        /// Parking allowed only while plugged in (charging).
+        /// Location on a parking facility/rest area along a motorway, freeway, interstate, highway etc.
         /// </summary>
-        PLUGGED,
+        ALONG_MOTORWAY,
 
         /// <summary>
-        /// Reserved parking spot for disabled people with valid ID.
+        /// Multistorey car park.
         /// </summary>
-        DISABLED,
+        PARKING_GARAGE,
 
         /// <summary>
-        /// Parking spot for customers/guests only, for example in case of a hotel or shop.
+        /// A cleared area that is intended for parking vehicles, i.e.at super markets, bars, etc.
         /// </summary>
-        CUSTOMERS,
+        PARKING_LOT,
 
         /// <summary>
-        /// Parking spot only suitable for (electric) motorcycles or scooters.
+        /// Location is on the driveway of a house/building.
         /// </summary>
-        MOTORCYCLES
+        ON_DRIVEWAY,
+
+        /// <summary>
+        /// Parking in public space.
+        /// </summary>
+        ON_STREET,
+
+        /// <summary>
+        /// Multistorey car park, mainly underground.
+        /// </summary>
+        UNDERGROUND_GARAGE
 
     }
 

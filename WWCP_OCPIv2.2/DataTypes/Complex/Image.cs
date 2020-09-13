@@ -39,32 +39,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// URL from where the image data can be fetched through a web browser (about 512 pixels).
         /// </summary>
-        public String              Url          { get; }
+        [Mandatory]
+        public String           Url          { get; }
 
         /// <summary>
         /// Image type like: gif, jpeg, png, svg.
         /// </summary>
-        public ImageFileTypes      Type         { get; }
+        [Mandatory]
+        public ImageFileTypes   Type         { get; }
 
         /// <summary>
         /// Describes what the image is used for.
         /// </summary>
-        public ImageCategoryTypes  Category     { get; }
+        [Mandatory]
+        public ImageCategories  Category     { get; }
 
         /// <summary>
         /// The optional width of the full scale image.
         /// </summary>
-        public UInt32?             Width        { get; }
+        [Optional]
+        public UInt32?          Width        { get; }
 
         /// <summary>
         /// The optional height of the full scale image.
         /// </summary>
-        public UInt32?             Height       { get; }
+        [Optional]
+        public UInt32?          Height       { get; }
 
         /// <summary>
         /// An optional URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).
         /// </summary>
-        public String              Thumbnail    { get; }
+        [Optional]
+        public String           Thumbnail    { get; }
 
         #endregion
 
@@ -79,24 +85,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Width">The optional width of the full scale image.</param>
         /// <param name="Height">The optional height of the full scale image.</param>
         /// <param name="Thumbnail">An optional URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).</param>
-        public Image(String              Url,
-                     ImageFileTypes      Type,
-                     ImageCategoryTypes  Category,
-                     UInt32?             Width       = null,
-                     UInt32?             Height      = null,
-                     String              Thumbnail   = null)
+        public Image(String           Url,
+                     ImageFileTypes   Type,
+                     ImageCategories  Category,
+
+                     UInt32?          Width       = null,
+                     UInt32?          Height      = null,
+                     String           Thumbnail   = null)
         {
 
             #region Initial checks
 
-            if (Url == null)
-                throw new ArgumentNullException(nameof(Url), "The given parameter must not be null nur empty!");
+            if (Url.IsNullOrEmpty())
+                throw new ArgumentNullException(nameof(Url), "The given URL of the image must not be null or empty!");
 
             #endregion
 
-            this.Url        = Url;
+            this.Url        = Url.Trim();
             this.Type       = Type;
             this.Category   = Category;
+
             this.Width      = Width;
             this.Height     = Height;
             this.Thumbnail  = Thumbnail;
@@ -347,7 +355,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                  : "");
 
         #endregion
-
 
     }
 

@@ -17,7 +17,9 @@
 
 #region Usings
 
+using org.GraphDefined.Vanaheimr.Illias;
 using System;
+using System.Collections.Generic;
 
 #endregion
 
@@ -27,7 +29,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A connector is the socket or cable available for the EV to make use of.
     /// </summary>
-    public class Connector : IEquatable<Connector>,
+    public class Connector : IHasId<Connector_Id>,
+                             IEquatable<Connector>,
                              IComparable<Connector>,
                              IComparable
     {
@@ -38,42 +41,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Identifier of the connector within the EVSE.
         /// Two connectors may have the same id as long as they do not belong to the same EVSE object.
         /// </summary>
-        public Connector_Id          Id                    { get; }
+        [Mandatory]
+        public Connector_Id            Id                    { get; }
 
         /// <summary>
         /// The standard of the installed connector.
         /// </summary>
-        public ConnectorTypes        Standard              { get; }
+        [Mandatory]
+        public ConnectorTypes          Standard              { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
         /// </summary>
-        public ConnectorFormatTypes  Format                { get; }
+        [Mandatory]
+        public ConnectorFormats        Format                { get; }
 
         /// <summary>
         /// The type of powert at the connector.
         /// </summary>
-        public PowerTypes            PowerType             { get; }
+        [Mandatory]
+        public PowerTypes              PowerType             { get; }
 
         /// <summary>
         /// Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].
         /// </summary>
-        public UInt16                Voltage               { get; }
+        [Mandatory]
+        public UInt16                  MaxVoltage            { get; }
 
         /// <summary>
         /// Maximum amperage of the connector, in ampere [A].
         /// </summary>
-        public UInt16                Amperage              { get; }
+        [Mandatory]
+        public UInt16                  MaxAmperage           { get; }
 
         /// <summary>
-        /// Optional identifier of the current charging tariff structure.
+        /// Maximum electric power that can be delivered by this connector, in Watts (W).
+        /// When the maximum electric power is lower than the calculated value from voltage
+        /// and amperage, this value should be set.
         /// </summary>
-        public Tariff_Id?            TariffId              { get; }
+        [Optional]
+        public UInt16?                 MaxElectricPower      { get; }
+
+        /// <summary>
+        /// Identifiers of the currently valid charging tariffs. Multiple tariffs are possible,
+        /// but only one of each Tariff.type can be active at the same time. Tariffs with the
+        /// same type are only allowed if they are not active at the same time: start_date_time
+        /// and end_date_time period not overlapping.
+        /// </summary>
+        [Optional]
+        public IEnumerable<Tariff_Id>  TariffIds             { get; }
 
         /// <summary>
         /// Optional URL to the operator's terms and conditions.
         /// </summary>
-        public Uri                   TermsAndConditions    { get; }
+        [Optional]
+        public String                  TermsAndConditions    { get; }
+
+        /// <summary>
+        /// Timestamp when this connector was last updated (or created).
+        /// </summary>
+        [Mandatory]
+        public DateTime                LastUpdated           { get; }
 
         #endregion
 
@@ -82,32 +110,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// A connector is the socket or cable available for the EV to make use of.
         /// </summary>
-        /// <param name="Id">Identifier of the connector within the EVSE. Two connectors may have the same id as long as they do not belong to the same EVSE object.</param>
-        /// <param name="Standard">The standard of the installed connector.</param>
-        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
-        /// <param name="PowerType">The type of powert at the connector.</param>
-        /// <param name="Voltage">Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
-        /// <param name="Amperage">Maximum amperage of the connector, in ampere [A].</param>
-        /// <param name="TariffId">Optional identifier of the current charging tariff structure.</param>
-        /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
-        public Connector(Connector_Id          Id,
-                         ConnectorTypes        Standard,
-                         ConnectorFormatTypes  Format,
-                         PowerTypes            PowerType,
-                         UInt16                Voltage,
-                         UInt16                Amperage,
-                         Tariff_Id?            TariffId             = null,
-                         Uri                   TermsAndConditions   = null)
+        public Connector(Connector_Id            Id,
+                         ConnectorTypes          Standard,
+                         ConnectorFormats        Format,
+                         PowerTypes              PowerType,
+                         UInt16                  MaxVoltage,
+                         UInt16                  MaxAmperage,
+
+                         UInt16?                 MaxElectricPower     = null,
+                         IEnumerable<Tariff_Id>  TariffIds            = null,
+                         String                  TermsAndConditions   = null,
+
+                         DateTime?               LastUpdated          = null)
         {
 
-            this.Id                  = Id;
-            this.Standard            = Standard;
-            this.Format              = Format;
-            this.PowerType           = PowerType;
-            this.Voltage             = Voltage;
-            this.Amperage            = Amperage;
-            this.TariffId            = TariffId;
-            this.TermsAndConditions  = TermsAndConditions;
+            this.Id                   = Id;
+            this.Standard             = Standard;
+            this.Format               = Format;
+            this.PowerType            = PowerType;
+            this.MaxVoltage           = MaxVoltage;
+            this.MaxAmperage          = MaxAmperage;
+
+            this.MaxElectricPower     = MaxElectricPower;
+            this.TariffIds            = TariffIds   ?? new Tariff_Id[0];
+            this.TermsAndConditions   = TermsAndConditions;
+
+            this.LastUpdated          = LastUpdated ?? DateTime.Now;
 
         }
 

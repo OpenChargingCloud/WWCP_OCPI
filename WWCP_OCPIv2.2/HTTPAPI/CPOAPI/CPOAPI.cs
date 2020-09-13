@@ -157,14 +157,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region /cpo
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URIPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
+                                                URLPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
                                           new HTTPPath[] {
-                                              URIPrefix + "/cpo/index.html",
-                                              URIPrefix + "/cpo/"
+                                              URLPrefix + "/cpo/index.html",
+                                              URLPrefix + "/cpo/"
                                           },
                                           HTTPContentType.HTML_UTF8,
                                           HTTPDelegate: async Request => {
@@ -190,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          URIPrefix + "/cpo/versions",
+                                          URLPrefix + "/cpo/versions",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: async Request => {
 
@@ -214,7 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                           HTTPMethod.GET,
-                                          URIPrefix + "/cpo/versions/2.2/",
+                                          URLPrefix + "/cpo/versions/2.2/",
                                           HTTPContentType.JSON_UTF8,
                                           HTTPDelegate: async Request => {
 
@@ -241,6 +241,149 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                           });
 
             #endregion
+
+
+
+            #region /cpo/versions/2.2/locations
+
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
+                                          URLPrefix + "/cpo/versions/2.2/locations",
+                                          HTTPContentType.JSON_UTF8,
+                                          HTTPDelegate: async Request => {
+
+                                              var from                         = Request.QueryString.GetDateTime("date_from");
+                                              var to                           = Request.QueryString.GetDateTime("date_to");
+                                              var offset                       = Request.QueryString.GetUInt64("offset");
+                                              var limit                        = Request.QueryString.GetUInt64("limit");
+
+
+
+                                              // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
+                                              // X-Limit          The maximum number of objects that the server WILL return.
+
+                                              return new HTTPResponse.Builder(Request) {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = JSONObject.Create(
+                                                                        new JProperty("version",  "2.2"),
+                                                                        new JProperty("endpoints", new JArray(
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "credentials"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                            ),
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "locations"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                            )
+                                                                    ))).ToUTF8Bytes(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
+            #region /cpo/versions/2.2/locations/{locationId}
+
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
+                                          URLPrefix + "/cpo/versions/2.2/locations/{locationId}",
+                                          HTTPContentType.JSON_UTF8,
+                                          HTTPDelegate: async Request => {
+
+                                              return new HTTPResponse.Builder(Request) {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = JSONObject.Create(
+                                                                        new JProperty("version",  "2.2"),
+                                                                        new JProperty("endpoints", new JArray(
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "credentials"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                            ),
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "locations"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                            )
+                                                                    ))).ToUTF8Bytes(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
+            #region /cpo/versions/2.2/locations/{locationId}/{evseId}
+
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
+                                          URLPrefix + "/cpo/versions/2.2/locations/{locationId}/{evseId}",
+                                          HTTPContentType.JSON_UTF8,
+                                          HTTPDelegate: async Request => {
+
+
+                                              return new HTTPResponse.Builder(Request) {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = JSONObject.Create(
+                                                                        new JProperty("version",  "2.2"),
+                                                                        new JProperty("endpoints", new JArray(
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "credentials"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                            ),
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "locations"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                            )
+                                                                    ))).ToUTF8Bytes(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
+            #region /cpo/versions/2.2/locations/{locationId}/{evseId}/{connectorId}
+
+            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                          HTTPMethod.GET,
+                                          URLPrefix + "/cpo/versions/2.2/locations/{locationId}/{evseId}/{connectorId}",
+                                          HTTPContentType.JSON_UTF8,
+                                          HTTPDelegate: async Request => {
+
+
+                                              return new HTTPResponse.Builder(Request) {
+                                                  HTTPStatusCode  = HTTPStatusCode.OK,
+                                                  Server          = DefaultHTTPServerName,
+                                                  Date            = DateTime.Now,
+                                                  ContentType     = HTTPContentType.HTML_UTF8,
+                                                  Content         = JSONObject.Create(
+                                                                        new JProperty("version",  "2.2"),
+                                                                        new JProperty("endpoints", new JArray(
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "credentials"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                            ),
+                                                                            new JObject(
+                                                                                new JProperty("identifier", "locations"),
+                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                            )
+                                                                    ))).ToUTF8Bytes(),
+                                                  Connection      = "close"
+                                              };
+
+                                          });
+
+            #endregion
+
 
         }
 

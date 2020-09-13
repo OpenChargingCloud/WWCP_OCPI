@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var tariff    = new Tariff(Tariff_Id.Parse("11"),
                                        Currency.EUR,
-                                       TariffUrl:      new Uri("https://company.com/tariffs/11"),
+                                       TariffUrl:      "https://company.com/tariffs/11",
                                        TariffElements: new List<TariffElement>() {
 
                                                            // 2.50 euro start tariff

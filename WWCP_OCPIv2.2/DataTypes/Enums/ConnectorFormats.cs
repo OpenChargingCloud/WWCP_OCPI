@@ -21,7 +21,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The format of the connector, whether it is a socket or a plug.
     /// </summary>
-    public enum ConnectorFormatTypes
+    public enum ConnectorFormats
     {
 
         /// <summary>

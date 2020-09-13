@@ -27,14 +27,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a charging location.
+    /// The unique identification of a token.
     /// </summary>
-    public struct Location_Id : IId<Location_Id>
+    public struct Token_Id : IId<Token_Id>
     {
 
         #region Data
 
-        // CiString(36)
+        // CiString(3)
 
         /// <summary>
         /// The internal identification.
@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the charging location identification.
+        /// The length of the token identification.
         /// </summary>
         public UInt64 Length
 
@@ -64,10 +64,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging location identification based on the given string.
+        /// Create a new token identification based on the given string.
         /// </summary>
-        /// <param name="String">The string representation of the charging location identification.</param>
-        private Location_Id(String String)
+        /// <param name="String">The string representation of the token identification.</param>
+        private Token_Id(String String)
         {
             this.InternalId  = String;
         }
@@ -78,19 +78,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a charging location identification.
+        /// Parse the given string as a token identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        public static Location_Id Parse(String Text)
+        /// <param name="Text">A text representation of a token identification.</param>
+        public static Token_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out Token_Id locationId))
                 return locationId;
 
             if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a charging location identification must not be null or empty!");
+                throw new ArgumentNullException(nameof(Text), "The given text representation of a token identification must not be null or empty!");
 
-            throw new ArgumentException("The given text representation of a charging location identification is invalid!", nameof(Text));
+            throw new ArgumentException("The given text representation of a token identification is invalid!", nameof(Text));
 
         }
 
@@ -99,13 +99,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a token identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        public static Location_Id? TryParse(String Text)
+        /// <param name="Text">A text representation of a token identification.</param>
+        public static Token_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out Token_Id locationId))
                 return locationId;
 
             return null;
@@ -114,28 +114,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out LocationId)
+        #region (static) TryParse(Text, out TokenId)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a token identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        /// <param name="LocationId">The parsed charging location identification.</param>
-        public static Boolean TryParse(String Text, out Location_Id LocationId)
+        /// <param name="Text">A text representation of a token identification.</param>
+        /// <param name="TokenId">The parsed token identification.</param>
+        public static Boolean TryParse(String Text, out Token_Id TokenId)
         {
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    LocationId = new Location_Id(Text.Trim());
+                    TokenId = new Token_Id(Text.Trim());
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            LocationId = default;
+            TokenId = default;
             return false;
 
         }
@@ -145,11 +145,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this charging location identification.
+        /// Clone this token identification.
         /// </summary>
-        public Location_Id Clone
+        public Token_Id Clone
 
-            => new Location_Id(
+            => new Token_Id(
                    new String(InternalId?.ToCharArray())
                );
 
@@ -158,99 +158,99 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (LocationId1, LocationId2)
+        #region Operator == (TokenId1, TokenId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="TokenId1">A token identification.</param>
+        /// <param name="TokenId2">Another token identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator == (Token_Id TokenId1,
+                                           Token_Id TokenId2)
 
-            => LocationId1.Equals(LocationId2);
+            => TokenId1.Equals(TokenId2);
 
         #endregion
 
-        #region Operator != (LocationId1, LocationId2)
+        #region Operator != (TokenId1, TokenId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="TokenId1">A token identification.</param>
+        /// <param name="TokenId2">Another token identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator != (Token_Id TokenId1,
+                                           Token_Id TokenId2)
 
-            => !(LocationId1 == LocationId2);
+            => !(TokenId1 == TokenId2);
 
         #endregion
 
-        #region Operator <  (LocationId1, LocationId2)
+        #region Operator <  (TokenId1, TokenId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="TokenId1">A token identification.</param>
+        /// <param name="TokenId2">Another token identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Location_Id LocationId1,
-                                          Location_Id LocationId2)
+        public static Boolean operator < (Token_Id TokenId1,
+                                          Token_Id TokenId2)
 
-            => LocationId1.CompareTo(LocationId2) < 0;
+            => TokenId1.CompareTo(TokenId2) < 0;
 
         #endregion
 
-        #region Operator <= (LocationId1, LocationId2)
+        #region Operator <= (TokenId1, TokenId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="TokenId1">A token identification.</param>
+        /// <param name="TokenId2">Another token identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator <= (Token_Id TokenId1,
+                                           Token_Id TokenId2)
 
-            => !(LocationId1 > LocationId2);
+            => !(TokenId1 > TokenId2);
 
         #endregion
 
-        #region Operator >  (LocationId1, LocationId2)
+        #region Operator >  (TokenId1, TokenId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="TokenId1">A token identification.</param>
+        /// <param name="TokenId2">Another token identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Location_Id LocationId1,
-                                          Location_Id LocationId2)
+        public static Boolean operator > (Token_Id TokenId1,
+                                          Token_Id TokenId2)
 
-            => LocationId1.CompareTo(LocationId2) > 0;
+            => TokenId1.CompareTo(TokenId2) > 0;
 
         #endregion
 
-        #region Operator >= (LocationId1, LocationId2)
+        #region Operator >= (TokenId1, TokenId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="TokenId1">A token identification.</param>
+        /// <param name="TokenId2">Another token identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator >= (Token_Id TokenId1,
+                                           Token_Id TokenId2)
 
-            => !(LocationId1 < LocationId2);
-
-        #endregion
+            => !(TokenId1 < TokenId2);
 
         #endregion
 
-        #region IComparable<LocationId> Members
+        #endregion
+
+        #region IComparable<TokenId> Members
 
         #region CompareTo(Object)
 
@@ -260,30 +260,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is Location_Id locationId
+            => Object is Token_Id locationId
                    ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not a charging location identification!",
+                   : throw new ArgumentException("The given object is not a token identification!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(LocationId)
+        #region CompareTo(TokenId)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId">An object to compare with.</param>
-        public Int32 CompareTo(Location_Id LocationId)
+        /// <param name="TokenId">An object to compare with.</param>
+        public Int32 CompareTo(Token_Id TokenId)
 
             => String.Compare(InternalId,
-                              LocationId.InternalId,
+                              TokenId.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<LocationId> Members
+        #region IEquatable<TokenId> Members
 
         #region Equals(Object)
 
@@ -294,22 +294,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is Location_Id locationId &&
+            => Object is Token_Id locationId &&
                    Equals(locationId);
 
         #endregion
 
-        #region Equals(LocationId)
+        #region Equals(TokenId)
 
         /// <summary>
-        /// Compares two charging location identifications for equality.
+        /// Compares two token identifications for equality.
         /// </summary>
-        /// <param name="LocationId">An charging location identification to compare with.</param>
+        /// <param name="TokenId">An token identification to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Location_Id LocationId)
+        public Boolean Equals(Token_Id TokenId)
 
             => String.Equals(InternalId,
-                             LocationId.InternalId,
+                             TokenId.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

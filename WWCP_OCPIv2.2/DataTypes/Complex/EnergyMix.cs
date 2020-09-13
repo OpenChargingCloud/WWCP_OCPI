@@ -41,26 +41,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The energy is green.
         /// </summary>
+        [Mandatory]
         public Boolean                           IsGreenEnergy           { get; }
 
         /// <summary>
         /// The energy mixs.
         /// </summary>
+        [Optional]
         public IEnumerable<EnergySource>         EnergySources           { get; }
 
         /// <summary>
         /// The environmental impacts.
         /// </summary>
+        [Optional]
         public IEnumerable<EnvironmentalImpact>  EnvironmentalImpacts    { get; }
 
         /// <summary>
         /// The name of the energy supplier.
         /// </summary>
+        [Optional]
         public String                            SupplierName            { get; }
 
         /// <summary>
         /// The name of the energy product.
         /// </summary>
+        [Optional]
         public String                            EnergyProductName       { get; }
 
         #endregion

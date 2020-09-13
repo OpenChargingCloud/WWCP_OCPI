@@ -19,20 +19,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Categories of environmental impact values.
+    /// Allowed types of tokens.
     /// </summary>
-    public enum EnvironmentalImpactTypes
+    public enum AllowedTypes
     {
 
         /// <summary>
-        /// Produced nuclear waste in gramms per kilowatthour.
+        /// This Token is allowed to charge (at this location).
         /// </summary>
-        NUCLEAR_WASTE,
+        ALLOWED,
 
         /// <summary>
-        /// Exhausted carbon dioxide in gramms per kilowarrhour.
+        /// This Token is blocked.
         /// </summary>
-        CARBON_DIOXIDE
+        BLOCKED,
+
+        /// <summary>
+        /// This Token has expired.
+        /// </summary>
+        EXPIRED,
+
+        /// <summary>
+        /// This Token belongs to an account that has not enough credits to charge (at the given location).
+        /// </summary>
+        NO_CREDIT,
+
+        /// <summary>
+        /// Token is valid, but is not allowed to charge at the given location.
+        /// </summary>
+        NOT_ALLOWED
 
     }
 

@@ -39,11 +39,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// True to represent 24 hours per day and 7 days per week, except the given exceptions.
         /// </summary>
+        [Mandatory]
         public Boolean                         IsTwentyFourSevenOpen    { get; }
 
         /// <summary>
         /// Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.
         /// </summary>
+        [Optional]
         public IEnumerable<RegularHours>       RegularHours             { get; }
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Periods the station is operating/accessible.
         /// Additional to regular hours. May overlap regular rules.
         /// </summary>
+        [Optional]
         public IEnumerable<ExceptionalPeriod>  ExceptionalOpenings      { get; }
 
         /// <summary>
@@ -59,6 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Overwriting regularHours and exceptionalOpenings.
         /// Should not overlap exceptionalOpenings.
         /// </summary>
+        [Optional]
         public IEnumerable<ExceptionalPeriod>  ExceptionalClosings      { get; }
 
         #endregion

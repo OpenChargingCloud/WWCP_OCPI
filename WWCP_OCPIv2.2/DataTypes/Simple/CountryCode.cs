@@ -27,14 +27,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a charging location.
+    /// The unique identification of a country code.
     /// </summary>
-    public struct Location_Id : IId<Location_Id>
+    public struct CountryCode : IId<CountryCode>
     {
 
         #region Data
 
-        // CiString(36)
+        // CiString(2)
 
         /// <summary>
         /// The internal identification.
@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the charging location identification.
+        /// The length of the country code identification.
         /// </summary>
         public UInt64 Length
 
@@ -64,10 +64,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging location identification based on the given string.
+        /// Create a new country code identification based on the given string.
         /// </summary>
-        /// <param name="String">The string representation of the charging location identification.</param>
-        private Location_Id(String String)
+        /// <param name="String">The string representation of the country code identification.</param>
+        private CountryCode(String String)
         {
             this.InternalId  = String;
         }
@@ -78,19 +78,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a charging location identification.
+        /// Parse the given string as a country code identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        public static Location_Id Parse(String Text)
+        /// <param name="Text">A text representation of a country code identification.</param>
+        public static CountryCode Parse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out CountryCode locationId))
                 return locationId;
 
             if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a charging location identification must not be null or empty!");
+                throw new ArgumentNullException(nameof(Text), "The given text representation of a country code identification must not be null or empty!");
 
-            throw new ArgumentException("The given text representation of a charging location identification is invalid!", nameof(Text));
+            throw new ArgumentException("The given text representation of a country code identification is invalid!", nameof(Text));
 
         }
 
@@ -99,13 +99,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a country code identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        public static Location_Id? TryParse(String Text)
+        /// <param name="Text">A text representation of a country code identification.</param>
+        public static CountryCode? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out CountryCode locationId))
                 return locationId;
 
             return null;
@@ -117,18 +117,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, out LocationId)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a country code identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        /// <param name="LocationId">The parsed charging location identification.</param>
-        public static Boolean TryParse(String Text, out Location_Id LocationId)
+        /// <param name="Text">A text representation of a country code identification.</param>
+        /// <param name="LocationId">The parsed country code identification.</param>
+        public static Boolean TryParse(String Text, out CountryCode LocationId)
         {
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    LocationId = new Location_Id(Text.Trim());
+                    LocationId = new CountryCode(Text.Trim());
                     return true;
                 }
                 catch (Exception)
@@ -145,11 +145,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this charging location identification.
+        /// Clone this country code identification.
         /// </summary>
-        public Location_Id Clone
+        public CountryCode Clone
 
-            => new Location_Id(
+            => new CountryCode(
                    new String(InternalId?.ToCharArray())
                );
 
@@ -163,11 +163,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A country code identification.</param>
+        /// <param name="LocationId2">Another country code identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator == (CountryCode LocationId1,
+                                           CountryCode LocationId2)
 
             => LocationId1.Equals(LocationId2);
 
@@ -178,11 +178,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A country code identification.</param>
+        /// <param name="LocationId2">Another country code identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator != (CountryCode LocationId1,
+                                           CountryCode LocationId2)
 
             => !(LocationId1 == LocationId2);
 
@@ -193,11 +193,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A country code identification.</param>
+        /// <param name="LocationId2">Another country code identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Location_Id LocationId1,
-                                          Location_Id LocationId2)
+        public static Boolean operator < (CountryCode LocationId1,
+                                          CountryCode LocationId2)
 
             => LocationId1.CompareTo(LocationId2) < 0;
 
@@ -208,11 +208,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A country code identification.</param>
+        /// <param name="LocationId2">Another country code identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator <= (CountryCode LocationId1,
+                                           CountryCode LocationId2)
 
             => !(LocationId1 > LocationId2);
 
@@ -223,11 +223,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A country code identification.</param>
+        /// <param name="LocationId2">Another country code identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Location_Id LocationId1,
-                                          Location_Id LocationId2)
+        public static Boolean operator > (CountryCode LocationId1,
+                                          CountryCode LocationId2)
 
             => LocationId1.CompareTo(LocationId2) > 0;
 
@@ -238,11 +238,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A country code identification.</param>
+        /// <param name="LocationId2">Another country code identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator >= (CountryCode LocationId1,
+                                           CountryCode LocationId2)
 
             => !(LocationId1 < LocationId2);
 
@@ -260,9 +260,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is Location_Id locationId
+            => Object is CountryCode locationId
                    ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not a charging location identification!",
+                   : throw new ArgumentException("The given object is not a country code identification!",
                                                  nameof(Object));
 
         #endregion
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="LocationId">An object to compare with.</param>
-        public Int32 CompareTo(Location_Id LocationId)
+        public Int32 CompareTo(CountryCode LocationId)
 
             => String.Compare(InternalId,
                               LocationId.InternalId,
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is Location_Id locationId &&
+            => Object is CountryCode locationId &&
                    Equals(locationId);
 
         #endregion
@@ -302,11 +302,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(LocationId)
 
         /// <summary>
-        /// Compares two charging location identifications for equality.
+        /// Compares two country code identifications for equality.
         /// </summary>
-        /// <param name="LocationId">An charging location identification to compare with.</param>
+        /// <param name="LocationId">An country code identification to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Location_Id LocationId)
+        public Boolean Equals(CountryCode LocationId)
 
             => String.Equals(InternalId,
                              LocationId.InternalId,

@@ -19,40 +19,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Reflects the general type of the charge points location. May be used for user information.
+    /// The category of an image to obtain the correct usage in an user presentation. Has to be set accordingly to the image content in order to guaranty the right usage.
     /// </summary>
-    public enum LocationTypes
+    public enum ImageCategories
     {
 
         /// <summary>
-        /// Parking location type is not known by the operator (default).
+        /// Photo of the physical device that contains one or more EVSEs.
         /// </summary>
-        UNKNOWN,
+        CHARGER,
 
         /// <summary>
-        /// Parking in public space.
+        /// Location entrance photo. Should show the car entrance to the location from street side.
         /// </summary>
-        ON_STREET,
+        ENTRANCE,
 
         /// <summary>
-        /// Multistorey car park.
+        /// Location overview photo.
         /// </summary>
-        PARKING_GARAGE,
+        LOCATION,
 
         /// <summary>
-        /// Multistorey car park, mainly underground.
+        /// Logo of a associated roaming network to be displayed with the EVSE for example in lists, maps and detailed information view.
         /// </summary>
-        UNDERGROUND_GARAGE,
+        NETWORK,
 
         /// <summary>
-        /// A cleared area that is intended for parking vehicles, i.e.at super markets, bars, etc.
+        /// Logo of the charge points operator, for example a municipal, to be displayed with the EVSEs detailed information view or in lists and maps, if no networkLogo is present.
         /// </summary>
-        PARKING_LOT,
+        OPERATOR,
 
         /// <summary>
-        /// None of the given possibilities.
+        /// Other.
         /// </summary>
-        OTHER
+        OTHER,
+
+        /// <summary>
+        /// Logo of the charge points owner, for example a local store, to be displayed with the EVSEs detailed information view.
+        /// </summary>
+        OWNER
 
     }
 

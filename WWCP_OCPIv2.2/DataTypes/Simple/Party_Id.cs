@@ -27,14 +27,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a charging location.
+    /// The unique identification of a party.
     /// </summary>
-    public struct Location_Id : IId<Location_Id>
+    public struct Party_Id : IId<Party_Id>
     {
 
         #region Data
 
-        // CiString(36)
+        // CiString(3)
 
         /// <summary>
         /// The internal identification.
@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the charging location identification.
+        /// The length of the party identification.
         /// </summary>
         public UInt64 Length
 
@@ -64,10 +64,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging location identification based on the given string.
+        /// Create a new party identification based on the given string.
         /// </summary>
-        /// <param name="String">The string representation of the charging location identification.</param>
-        private Location_Id(String String)
+        /// <param name="String">The string representation of the party identification.</param>
+        private Party_Id(String String)
         {
             this.InternalId  = String;
         }
@@ -78,19 +78,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a charging location identification.
+        /// Parse the given string as a party identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        public static Location_Id Parse(String Text)
+        /// <param name="Text">A text representation of a party identification.</param>
+        public static Party_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out Party_Id locationId))
                 return locationId;
 
             if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a charging location identification must not be null or empty!");
+                throw new ArgumentNullException(nameof(Text), "The given text representation of a party identification must not be null or empty!");
 
-            throw new ArgumentException("The given text representation of a charging location identification is invalid!", nameof(Text));
+            throw new ArgumentException("The given text representation of a party identification is invalid!", nameof(Text));
 
         }
 
@@ -99,13 +99,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a party identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        public static Location_Id? TryParse(String Text)
+        /// <param name="Text">A text representation of a party identification.</param>
+        public static Party_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out Party_Id locationId))
                 return locationId;
 
             return null;
@@ -114,28 +114,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out LocationId)
+        #region (static) TryParse(Text, out PartyId)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a party identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        /// <param name="LocationId">The parsed charging location identification.</param>
-        public static Boolean TryParse(String Text, out Location_Id LocationId)
+        /// <param name="Text">A text representation of a party identification.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        public static Boolean TryParse(String Text, out Party_Id PartyId)
         {
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    LocationId = new Location_Id(Text.Trim());
+                    PartyId = new Party_Id(Text.Trim());
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            LocationId = default;
+            PartyId = default;
             return false;
 
         }
@@ -145,11 +145,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this charging location identification.
+        /// Clone this party identification.
         /// </summary>
-        public Location_Id Clone
+        public Party_Id Clone
 
-            => new Location_Id(
+            => new Party_Id(
                    new String(InternalId?.ToCharArray())
                );
 
@@ -158,99 +158,99 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (LocationId1, LocationId2)
+        #region Operator == (PartyId1, PartyId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="PartyId1">A party identification.</param>
+        /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator == (Party_Id PartyId1,
+                                           Party_Id PartyId2)
 
-            => LocationId1.Equals(LocationId2);
+            => PartyId1.Equals(PartyId2);
 
         #endregion
 
-        #region Operator != (LocationId1, LocationId2)
+        #region Operator != (PartyId1, PartyId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="PartyId1">A party identification.</param>
+        /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator != (Party_Id PartyId1,
+                                           Party_Id PartyId2)
 
-            => !(LocationId1 == LocationId2);
+            => !(PartyId1 == PartyId2);
 
         #endregion
 
-        #region Operator <  (LocationId1, LocationId2)
+        #region Operator <  (PartyId1, PartyId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="PartyId1">A party identification.</param>
+        /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Location_Id LocationId1,
-                                          Location_Id LocationId2)
+        public static Boolean operator < (Party_Id PartyId1,
+                                          Party_Id PartyId2)
 
-            => LocationId1.CompareTo(LocationId2) < 0;
+            => PartyId1.CompareTo(PartyId2) < 0;
 
         #endregion
 
-        #region Operator <= (LocationId1, LocationId2)
+        #region Operator <= (PartyId1, PartyId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="PartyId1">A party identification.</param>
+        /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator <= (Party_Id PartyId1,
+                                           Party_Id PartyId2)
 
-            => !(LocationId1 > LocationId2);
+            => !(PartyId1 > PartyId2);
 
         #endregion
 
-        #region Operator >  (LocationId1, LocationId2)
+        #region Operator >  (PartyId1, PartyId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="PartyId1">A party identification.</param>
+        /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Location_Id LocationId1,
-                                          Location_Id LocationId2)
+        public static Boolean operator > (Party_Id PartyId1,
+                                          Party_Id PartyId2)
 
-            => LocationId1.CompareTo(LocationId2) > 0;
+            => PartyId1.CompareTo(PartyId2) > 0;
 
         #endregion
 
-        #region Operator >= (LocationId1, LocationId2)
+        #region Operator >= (PartyId1, PartyId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="PartyId1">A party identification.</param>
+        /// <param name="PartyId2">Another party identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Location_Id LocationId1,
-                                           Location_Id LocationId2)
+        public static Boolean operator >= (Party_Id PartyId1,
+                                           Party_Id PartyId2)
 
-            => !(LocationId1 < LocationId2);
-
-        #endregion
+            => !(PartyId1 < PartyId2);
 
         #endregion
 
-        #region IComparable<LocationId> Members
+        #endregion
+
+        #region IComparable<PartyId> Members
 
         #region CompareTo(Object)
 
@@ -260,30 +260,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is Location_Id locationId
+            => Object is Party_Id locationId
                    ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not a charging location identification!",
+                   : throw new ArgumentException("The given object is not a party identification!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(LocationId)
+        #region CompareTo(PartyId)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId">An object to compare with.</param>
-        public Int32 CompareTo(Location_Id LocationId)
+        /// <param name="PartyId">An object to compare with.</param>
+        public Int32 CompareTo(Party_Id PartyId)
 
             => String.Compare(InternalId,
-                              LocationId.InternalId,
+                              PartyId.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<LocationId> Members
+        #region IEquatable<PartyId> Members
 
         #region Equals(Object)
 
@@ -294,22 +294,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is Location_Id locationId &&
+            => Object is Party_Id locationId &&
                    Equals(locationId);
 
         #endregion
 
-        #region Equals(LocationId)
+        #region Equals(PartyId)
 
         /// <summary>
-        /// Compares two charging location identifications for equality.
+        /// Compares two party identifications for equality.
         /// </summary>
-        /// <param name="LocationId">An charging location identification to compare with.</param>
+        /// <param name="PartyId">An party identification to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Location_Id LocationId)
+        public Boolean Equals(Party_Id PartyId)
 
             => String.Equals(InternalId,
-                             LocationId.InternalId,
+                             PartyId.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

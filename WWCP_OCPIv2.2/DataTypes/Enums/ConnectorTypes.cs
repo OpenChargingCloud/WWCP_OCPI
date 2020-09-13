@@ -27,37 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The connector type is CHAdeMO, DC.
         /// </summary>
-        Chademo,
-
-        /// <summary>
-        /// IEC 62196 Type 1 "SAE J1772".
-        /// </summary>
-        IEC_62196_T1,
-
-        /// <summary>
-        /// Combo Type 1 based, DC
-        /// </summary>
-        IEC_62196_T1_COMBO,
-
-        /// <summary>
-        /// IEC 62196 Type 2 "Mennekes"
-        /// </summary>
-        IEC_62196_T2,
-
-        /// <summary>
-        /// Combo Type 2 based, DC
-        /// </summary>
-        IEC_62196_T2_COMBO,
-
-        /// <summary>
-        /// IEC 62196 Type 3A
-        /// </summary>
-        IEC_62196_T3A,
-
-        /// <summary>
-        /// IEC 62196 Type 3C "Scame"
-        /// </summary>
-        IEC_62196_T3C,
+        CHADEMO,
 
         /// <summary>
         /// Standard/Domestic household, type "A", NEMA 1-15, 2 pins
@@ -120,16 +90,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         DOMESTIC_L,
 
         /// <summary>
-        /// Tesla Connector "Roadster"-type (round, 4 pin)
-        /// </summary>
-        TESLA_R,
-
-        /// <summary>
-        /// Tesla Connector "Model-S"-type (oval, 5 pin)
-        /// </summary>
-        TESLA_S,
-
-        /// <summary>
         /// IEC 60309-2 Industrial Connector single phase 16 Amperes (usually blue)
         /// </summary>
         IEC_60309_2_single_16,
@@ -147,7 +107,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// IEC 60309-2 Industrial Connector three phase 64 Amperes (usually red)
         /// </summary>
-        IEC_60309_2_three_64
+        IEC_60309_2_three_64,
+
+        /// <summary>
+        /// IEC 62196 Type 1 "SAE J1772".
+        /// </summary>
+        IEC_62196_T1,
+
+        /// <summary>
+        /// Combo Type 1 based, DC
+        /// </summary>
+        IEC_62196_T1_COMBO,
+
+        /// <summary>
+        /// IEC 62196 Type 2 "Mennekes"
+        /// </summary>
+        IEC_62196_T2,
+
+        /// <summary>
+        /// Combo Type 2 based, DC
+        /// </summary>
+        IEC_62196_T2_COMBO,
+
+        /// <summary>
+        /// IEC 62196 Type 3A
+        /// </summary>
+        IEC_62196_T3A,
+
+        /// <summary>
+        /// IEC 62196 Type 3C "Scame"
+        /// </summary>
+        IEC_62196_T3C,
+
+        /// <summary>
+        /// On-board Bottom-up-Pantograph typically for bus charging.
+        /// </summary>
+        PANTOGRAPH_BOTTOM_UP,
+
+        /// <summary>
+        /// Off-board Top-down-Pantograph typically for bus charging.
+        /// </summary>
+        PANTOGRAPH_TOP_DOWN,
+
+        /// <summary>
+        /// Tesla Connector "Roadster"-type (round, 4 pin)
+        /// </summary>
+        TESLA_R,
+
+        /// <summary>
+        /// Tesla Connector "Model-S"-type (oval, 5 pin)
+        /// </summary>
+        TESLA_S
 
     }
 

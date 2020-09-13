@@ -217,8 +217,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is ChargingPeriod ChargingPeriod &&
-                   Equals(ChargingPeriod);
+            => Object is ChargingPeriod chargingPeriod &&
+                   Equals(chargingPeriod);
 
         #endregion
 

@@ -19,45 +19,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The category of an image to obtain the correct usage in an user presentation. Has to be set accordingly to the image content in order to guaranty the right usage.
+    /// The status of an EVSE/connector.
     /// </summary>
-    public enum ImageCategoryTypes
+    public enum StatusTypes
     {
 
         /// <summary>
-        /// Photo of the physical device that contains one or more EVSEs.
+        /// No status information available (also used when offline).
         /// </summary>
-        Charger     = 0,
+        UNKNOWN,
 
         /// <summary>
-        /// Location entrance photo. Should show the car entrance to the location from street side.
+        /// The EVSE/Connector is able to start a new charging session.
         /// </summary>
-        Entrance    = 1,
+        AVAILABLE,
 
         /// <summary>
-        /// Location overview photo.
+        /// The EVSE/Connector is not accessible because of a physical barrier, i.e. a car.
         /// </summary>
-        Location    = 2,
+        BLOCKED,
 
         /// <summary>
-        /// Logo of a associated roaming network to be displayed with the EVSE for example in lists, maps and detailed information view.
+        /// The EVSE/Connector is in use.
         /// </summary>
-        Network     = 3,
+        CHARGING,
 
         /// <summary>
-        /// Logo of the charge points operator, for example a municipal, to be displayed with the EVSEs detailed information view or in lists and maps, if no networkLogo is present.
+        /// The EVSE/Connector is not yet active or it is no longer available (deleted).
         /// </summary>
-        Operator    = 4,
+        INOPERATIVE,
 
         /// <summary>
-        /// Other.
+        /// The EVSE/Connector is currently out of order.
         /// </summary>
-        Other       = 5,
+        OUTOFORDER,
 
         /// <summary>
-        /// Logo of the charge points owner, for example a local store, to be displayed with the EVSEs detailed information view.
+        /// The EVSE/Connector is planned, will be operating soon.
         /// </summary>
-        Owner       = 6
+        PLANNED,
+
+        /// <summary>
+        /// The EVSE/Connector was discontinued/removed.
+        /// </summary>
+        REMOVED,
+
+        /// <summary>
+        /// The EVSE/Connector is reserved for a particular EV driver and is unavailable for other drivers.
+        /// </summary>
+        RESERVED
 
     }
 
