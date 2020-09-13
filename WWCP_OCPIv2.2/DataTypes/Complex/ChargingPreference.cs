@@ -90,99 +90,99 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (ChargingPreferences1, ChargingPreferences2)
+        #region Operator == (ChargingPreference1, ChargingPreference2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences1">A charging preference.</param>
-        /// <param name="ChargingPreferences2">Another charging preference.</param>
+        /// <param name="ChargingPreference1">A charging preference.</param>
+        /// <param name="ChargingPreference2">Another charging preference.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (ChargingPreference ChargingPreferences1,
-                                           ChargingPreference ChargingPreferences2)
+        public static Boolean operator == (ChargingPreference ChargingPreference1,
+                                           ChargingPreference ChargingPreference2)
 
-            => ChargingPreferences1.Equals(ChargingPreferences2);
+            => ChargingPreference1.Equals(ChargingPreference2);
 
         #endregion
 
-        #region Operator != (ChargingPreferences1, ChargingPreferences2)
+        #region Operator != (ChargingPreference1, ChargingPreference2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences1">A charging preference.</param>
-        /// <param name="ChargingPreferences2">Another charging preference.</param>
+        /// <param name="ChargingPreference1">A charging preference.</param>
+        /// <param name="ChargingPreference2">Another charging preference.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (ChargingPreference ChargingPreferences1,
-                                           ChargingPreference ChargingPreferences2)
+        public static Boolean operator != (ChargingPreference ChargingPreference1,
+                                           ChargingPreference ChargingPreference2)
 
-            => !(ChargingPreferences1 == ChargingPreferences2);
+            => !(ChargingPreference1 == ChargingPreference2);
 
         #endregion
 
-        #region Operator <  (ChargingPreferences1, ChargingPreferences2)
+        #region Operator <  (ChargingPreference1, ChargingPreference2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences1">A charging preference.</param>
-        /// <param name="ChargingPreferences2">Another charging preference.</param>
+        /// <param name="ChargingPreference1">A charging preference.</param>
+        /// <param name="ChargingPreference2">Another charging preference.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (ChargingPreference ChargingPreferences1,
-                                          ChargingPreference ChargingPreferences2)
+        public static Boolean operator < (ChargingPreference ChargingPreference1,
+                                          ChargingPreference ChargingPreference2)
 
-            => ChargingPreferences1.CompareTo(ChargingPreferences2) < 0;
+            => ChargingPreference1.CompareTo(ChargingPreference2) < 0;
 
         #endregion
 
-        #region Operator <= (ChargingPreferences1, ChargingPreferences2)
+        #region Operator <= (ChargingPreference1, ChargingPreference2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences1">A charging preference.</param>
-        /// <param name="ChargingPreferences2">Another charging preference.</param>
+        /// <param name="ChargingPreference1">A charging preference.</param>
+        /// <param name="ChargingPreference2">Another charging preference.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (ChargingPreference ChargingPreferences1,
-                                           ChargingPreference ChargingPreferences2)
+        public static Boolean operator <= (ChargingPreference ChargingPreference1,
+                                           ChargingPreference ChargingPreference2)
 
-            => !(ChargingPreferences1 > ChargingPreferences2);
+            => !(ChargingPreference1 > ChargingPreference2);
 
         #endregion
 
-        #region Operator >  (ChargingPreferences1, ChargingPreferences2)
+        #region Operator >  (ChargingPreference1, ChargingPreference2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences1">A charging preference.</param>
-        /// <param name="ChargingPreferences2">Another charging preference.</param>
+        /// <param name="ChargingPreference1">A charging preference.</param>
+        /// <param name="ChargingPreference2">Another charging preference.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (ChargingPreference ChargingPreferences1,
-                                          ChargingPreference ChargingPreferences2)
+        public static Boolean operator > (ChargingPreference ChargingPreference1,
+                                          ChargingPreference ChargingPreference2)
 
-            => ChargingPreferences1.CompareTo(ChargingPreferences2) > 0;
+            => ChargingPreference1.CompareTo(ChargingPreference2) > 0;
 
         #endregion
 
-        #region Operator >= (ChargingPreferences1, ChargingPreferences2)
+        #region Operator >= (ChargingPreference1, ChargingPreference2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences1">A charging preference.</param>
-        /// <param name="ChargingPreferences2">Another charging preference.</param>
+        /// <param name="ChargingPreference1">A charging preference.</param>
+        /// <param name="ChargingPreference2">Another charging preference.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (ChargingPreference ChargingPreferences1,
-                                           ChargingPreference ChargingPreferences2)
+        public static Boolean operator >= (ChargingPreference ChargingPreference1,
+                                           ChargingPreference ChargingPreference2)
 
-            => !(ChargingPreferences1 < ChargingPreferences2);
-
-        #endregion
+            => !(ChargingPreference1 < ChargingPreference2);
 
         #endregion
 
-        #region IComparable<ChargingPreferences> Members
+        #endregion
+
+        #region IComparable<ChargingPreference> Members
 
         #region CompareTo(Object)
 
@@ -199,21 +199,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region CompareTo(ChargingPreferences)
+        #region CompareTo(ChargingPreference)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ChargingPreferences">An object to compare with.</param>
-        public Int32 CompareTo(ChargingPreference ChargingPreferences)
+        /// <param name="ChargingPreference">An object to compare with.</param>
+        public Int32 CompareTo(ChargingPreference ChargingPreference)
 
-            => ProfileType.CompareTo(ChargingPreferences.ProfileType);
-
-        #endregion
+            => ProfileType.CompareTo(ChargingPreference.ProfileType);
 
         #endregion
 
-        #region IEquatable<ChargingPreferences> Members
+        #endregion
+
+        #region IEquatable<ChargingPreference> Members
 
         #region Equals(Object)
 
@@ -229,16 +229,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region Equals(ChargingPreferences)
+        #region Equals(ChargingPreference)
 
         /// <summary>
         /// Compares two charging preferences for equality.
         /// </summary>
-        /// <param name="ChargingPreferences">A charging preference to compare with.</param>
+        /// <param name="ChargingPreference">A charging preference to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(ChargingPreference ChargingPreferences)
+        public Boolean Equals(ChargingPreference ChargingPreference)
 
-            => ProfileType.Equals(ChargingPreferences.ProfileType);
+            => ProfileType.Equals(ChargingPreference.ProfileType);
 
         #endregion
 

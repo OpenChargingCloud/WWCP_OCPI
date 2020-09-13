@@ -55,11 +55,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         public static void Tariff0001()
         {
 
-            var tariff    = new Tariff(Tariff_Id.Parse("12"),
+            var tariff    = new Tariff(CountryCode.Parse("DE"),
+                                       Party_Id.Parse("GEF"),
+                                       Tariff_Id.Parse("12"),
                                        Currency.EUR,
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(DimensionTypes.TIME, 2.00M, 300)
+                                                               new PriceComponent(TariffDimensionTypes.TIME, 2.00M, 300)
                                                            )
                                                        )
                                       );
@@ -92,13 +94,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         public static void Tariff0002()
         {
 
-            var tariff    = new Tariff(Tariff_Id.Parse("12"),
+            var tariff    = new Tariff(CountryCode.Parse("DE"),
+                                       Party_Id.Parse("GEF"),
+                                       Tariff_Id.Parse("12"),
                                        Currency.EUR,
-                                       TariffText: I18NString.Create(Languages.eng, "2 euro p/hour").
-                                                                 Add(Languages.nld, "2 euro p/uur"),
+                                       TariffAltText: I18NString.Create(Languages.eng, "2 euro p/hour").
+                                                                    Add(Languages.nld, "2 euro p/uur"),
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(DimensionTypes.TIME, 2.00M, 300)
+                                                               new PriceComponent(TariffDimensionTypes.TIME, 2.00M, 300)
                                                            )
                                                        )
                                       );
@@ -135,12 +139,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         public static void Tariff0003()
         {
 
-            var tariff    = new Tariff(Tariff_Id.Parse("12"),
+            var tariff    = new Tariff(CountryCode.Parse("DE"),
+                                       Party_Id.Parse("GEF"),
+                                       Tariff_Id.Parse("12"),
                                        Currency.EUR,
-                                       TariffUrl:      "https://company.com/tariffs/12",
+                                       TariffAltUrl:   "https://company.com/tariffs/12",
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               PriceComponent.ChargingTime(2.00M, TimeSpan.FromSeconds(300))
+                                                               PriceComponent.ChargingTime(TimeSpan.FromSeconds(300),
+                                                                                           2.00M)
                                                            )
                                                        )
                                       );
@@ -184,9 +191,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         public static void Tariff0004()
         {
 
-            var tariff    = new Tariff(Tariff_Id.Parse("11"),
+            var tariff    = new Tariff(CountryCode.Parse("DE"),
+                                       Party_Id.Parse("GEF"),
+                                       Tariff_Id.Parse("11"),
                                        Currency.EUR,
-                                       TariffUrl:      "https://company.com/tariffs/11",
+                                       TariffAltUrl:   "https://company.com/tariffs/11",
                                        TariffElements: new List<TariffElement>() {
 
                                                            // 2.50 euro start tariff
@@ -196,54 +205,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
                                                            // 1.00 euro per hour charging tariff for less than 32A (paid per 15 minutes)
                                                            new TariffElement(
-                                                               PriceComponent.ChargingTime(1.00M, TimeSpan.FromSeconds(900)),
-                                                               TariffRestrictions.MaxPower(32M)
+                                                               PriceComponent.ChargingTime(TimeSpan.FromSeconds(900), 1.00M),
+                                                               new TariffRestrictions(MaxPower: 32M)
                                                            ),
 
                                                            // 2.00 euro per hour charging tariff for more than 32A on weekdays (paid per 10 minutes)
                                                            new TariffElement(
-                                                               PriceComponent.ChargingTime(2.00M, TimeSpan.FromSeconds(600)),
-                                                               new TariffRestrictions(Power:      DecimalMinMax.FromMin(32M),
-                                                                                     DayOfWeek:  Enumeration.Create(
-                                                                                                     DayOfWeek.Monday,
-                                                                                                     DayOfWeek.Tuesday,
-                                                                                                     DayOfWeek.Wednesday,
-                                                                                                     DayOfWeek.Thursday,
-                                                                                                     DayOfWeek.Friday
-                                                                                                 ))
+                                                               PriceComponent.ChargingTime(TimeSpan.FromSeconds(600), 2.00M),
+                                                               new TariffRestrictions(MinPower:   32M,
+                                                                                      DayOfWeek:  Enumeration.Create(
+                                                                                                      DayOfWeek.Monday,
+                                                                                                      DayOfWeek.Tuesday,
+                                                                                                      DayOfWeek.Wednesday,
+                                                                                                      DayOfWeek.Thursday,
+                                                                                                      DayOfWeek.Friday
+                                                                                                  ))
                                                            ),
 
                                                            // 1.25 euro per hour charging tariff for more then 32A during the weekend (paid per 10 minutes)
                                                            new TariffElement(
-                                                               PriceComponent.ChargingTime(1.25M, TimeSpan.FromSeconds(600)),
-                                                               new TariffRestrictions(Power:      DecimalMinMax.FromMin(32M),
-                                                                                     DayOfWeek:  Enumeration.Create(
-                                                                                                     DayOfWeek.Saturday,
-                                                                                                     DayOfWeek.Sunday
-                                                                                                 ))
+                                                               PriceComponent.ChargingTime(TimeSpan.FromSeconds(600), 1.25M),
+                                                               new TariffRestrictions(MinPower:   32M,
+                                                                                      DayOfWeek:  Enumeration.Create(
+                                                                                                      DayOfWeek.Saturday,
+                                                                                                      DayOfWeek.Sunday
+                                                                                                  ))
                                                            ),
 
 
                                                            // Parking on weekdays: between 09:00 and 18:00: 5 euro(paid per 5 minutes)
                                                            new TariffElement(
-                                                               PriceComponent.ParkingTime(5M, TimeSpan.FromSeconds(300)),
-                                                               new TariffRestrictions(Time:       TimeRange.From(9).To(18),
-                                                                                     DayOfWeek:  Enumeration.Create(
-                                                                                                     DayOfWeek.Monday,
-                                                                                                     DayOfWeek.Tuesday,
-                                                                                                     DayOfWeek.Wednesday,
-                                                                                                     DayOfWeek.Thursday,
-                                                                                                     DayOfWeek.Friday
-                                                                                                 ))
+                                                               PriceComponent.ParkingTime(TimeSpan.FromSeconds(300), 5M),
+                                                               new TariffRestrictions(StartTime:  Time.FromHour(9),
+                                                                                      EndTime:    Time.FromHour(18),
+                                                                                      DayOfWeek:  Enumeration.Create(
+                                                                                                      DayOfWeek.Monday,
+                                                                                                      DayOfWeek.Tuesday,
+                                                                                                      DayOfWeek.Wednesday,
+                                                                                                      DayOfWeek.Thursday,
+                                                                                                      DayOfWeek.Friday
+                                                                                                  ))
                                                            ),
 
                                                            // Parking on saturday: between 10:00 and 17:00: 6 euro (paid per 5 minutes)
                                                            new TariffElement(
-                                                               PriceComponent.ParkingTime(6M, TimeSpan.FromSeconds(300)),
-                                                               new TariffRestrictions(Time:       TimeRange.From(10).To(17),
-                                                                                     DayOfWeek:  new DayOfWeek[] {
-                                                                                                     DayOfWeek.Saturday
-                                                                                                 })
+                                                               PriceComponent.ParkingTime(TimeSpan.FromSeconds(300), 6M),
+                                                               new TariffRestrictions(StartTime:  Time.FromHour(10),
+                                                                                      EndTime:    Time.FromHour(17),
+                                                                                      DayOfWeek:  new DayOfWeek[] {
+                                                                                                      DayOfWeek.Saturday
+                                                                                                  })
                                                            )
 
                                                        }

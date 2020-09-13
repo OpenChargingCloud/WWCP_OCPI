@@ -23,7 +23,6 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
-//using org.GraphDefined.WWCP;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -45,104 +44,153 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-        public Tariff_Id Id { get; }
+        /// <summary>
+        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this session.
+        /// </summary>
+        [Optional]
+        public CountryCode                      CountryCode             { get; }
+
+        /// <summary>
+        /// The Id of the CPO that 'owns' this session (following the ISO-15118 standard).
+        /// </summary>
+        [Optional]
+        public Party_Id                         PartyId                 { get; }
+
+        /// <summary>
+        /// The identification of the tariff within the CPOs platform (and suboperator platforms). 
+        /// </summary>
+        [Mandatory]
+        public Tariff_Id                        Id                      { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public Currency                    Currency          { get; }
+        public Currency                         Currency                { get; }
 
         /// <summary>
-        /// List of multi-language alternative tariff info text.
-        /// </summary>
-        [Mandatory]
-        public I18NString                  TariffText        { get; }
-
-        /// <summary>
-        /// Alternative URL to tariff info.
+        /// Defines the type of the tariff. This allows for distinction in case of given
+        /// charging preferences. When omitted, this tariff is valid for all charging sessions.
         /// </summary>
         [Optional]
-        public String                      TariffUrl         { get; }
+        public TariffTypes?                     TariffType              { get; }
+
+        /// <summary>
+        /// Multi-language alternative tariff info text.
+        /// </summary>
+        [Mandatory]
+        public I18NString                       TariffAltText           { get; }
+
+        /// <summary>
+        /// URL to a web page that contains an explanation of the tariff information
+        /// in human readable form.
+        /// </summary>
+        [Optional]
+        public String                           TariffAltUrl            { get; }
+
+        /// <summary>
+        /// When this field is set, a Charging Session with this tariff will at least cost
+        /// this amount. This is different from a FLAT fee (Start Tariff, Transaction Fee),
+        /// as a FLAT fee is a fixed amount that has to be paid for any Charging Session.
+        /// A minimum price indicates that when the cost of a charging session is lower
+        /// than this amount, the cost of the charging session will be equal to this amount.
+        /// </summary>
+        [Optional]
+        public Price?                           MinPrice                { get; }
+
+        /// <summary>
+        /// When this field is set, a charging session with this tariff will NOT cost more
+        /// than this amount.
+        /// </summary>
+        [Optional]
+        public Price?                           MaxPrice                { get; }
 
         /// <summary>
         /// An enumeration of tariff elements.
         /// </summary>
         [Mandatory]
-        public IEnumerable<TariffElement>  TariffElements    { get; }
+        public IEnumerable<TariffElement>       TariffElements          { get; }
 
         /// <summary>
-        /// The energy mix.
+        /// The time when this tariff becomes active, in UTC, time_zone field of the
+        /// charging location can be used to convert to local time. Typically used for
+        /// a new tariff that is already given with the charging location, before it
+        /// becomes active.
         /// </summary>
         [Optional]
-        public EnergyMix                   EnergyMix         { get;  }
+        public DateTime?                        Start                   { get; }
+
+        /// <summary>
+        /// The time after which this tariff is no longer valid, in UTC, time_zone field
+        /// if the charging location can be used to convert to local time. Typically used
+        /// when this tariff is going to be replaced with a different tariff in the near
+        /// future.
+        /// </summary>
+        [Optional]
+        public DateTime?                        End                     { get; }
+
+        /// <summary>
+        /// Details on the energy supplied with this tariff.
+        /// </summary>
+        [Optional]
+        public EnergyMix                        EnergyMix               { get;  }
+
+        /// <summary>
+        /// Timestamp when this tariff was last updated (or created).
+        /// </summary>
+        [Mandatory]
+        public DateTime                         LastUpdated             { get; }
 
         #endregion
 
         #region Constructor(s)
 
-        #region Tariff(Id, ..., params TariffElements)
-
         /// <summary>
-        /// Create a new tariff object.
+        /// Create a new chrging tariff.
         /// </summary>
-        /// <param name="Id">Uniquely identifies the Tariff within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Currency">ISO 4217 code of the currency used for this tariff.</param>
-        /// <param name="TariffElements">An enumeration of tariff elements.</param>
-        /// <param name="TariffText">List of multi-language alternative tariff info text.</param>
-        /// <param name="TariffUrl">Alternative URL to tariff info.</param>
-        public Tariff(Tariff_Id               Id,
-                      Currency                Currency,
-                      I18NString              TariffText,
-                      String                  TariffUrl,
-                      params TariffElement[]  TariffElements)
-
-            : this(Id,
-                   Currency,
-                   TariffElements,
-                   TariffText,
-                   TariffUrl)
-
-        { }
-
-        #endregion
-
-        #region Tariff(Id, Currency, TariffElements, TariffText = null, TariffUrl = null, EnergyMix = null)
-
-        /// <summary>
-        /// Create a new tariff object.
-        /// </summary>
-        /// <param name="Id">Uniquely identifies the Tariff within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Currency">ISO 4217 code of the currency used for this tariff.</param>
-        /// <param name="TariffElements">An enumeration of tariff elements.</param>
-        /// <param name="TariffText">List of multi-language alternative tariff info text.</param>
-        /// <param name="TariffUrl">Alternative URL to tariff info.</param>
-        /// <param name="EnergyMix">The energy mix.</param>
-        public Tariff(Tariff_Id                   Id,
+        public Tariff(CountryCode                 CountryCode,
+                      Party_Id                    PartyId,
+                      Tariff_Id                   Id ,
                       Currency                    Currency,
                       IEnumerable<TariffElement>  TariffElements,
-                      I18NString                  TariffText   = null,
-                      String                      TariffUrl    = null,
-                      EnergyMix                   EnergyMix    = null)
+
+                      TariffTypes?                TariffType      = null,
+                      I18NString                  TariffAltText   = null,
+                      String                      TariffAltUrl    = null,
+                      Price?                      MinPrice        = null,
+                      Price?                      MaxPrice        = null,
+                      DateTime?                   Start           = null,
+                      DateTime?                   End             = null,
+                      EnergyMix                   EnergyMix       = null,
+                      DateTime?                   LastUpdated     = null)
 
         {
 
             #region Initial checks
 
             if (!TariffElements.SafeAny())
-                throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration must not be null or empty!");
+                throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration of tariff elements must not be null or empty!");
 
             #endregion
 
-            this.Currency        = Currency;
-            this.TariffElements  = TariffElements;
-            this.TariffText      = TariffText ?? new I18NString();
-            this.TariffUrl       = TariffUrl;
-            this.EnergyMix       = EnergyMix;
+            this.CountryCode      = CountryCode;
+            this.PartyId          = PartyId;
+            this.Id               = Id;
+            this.Currency         = Currency;
+            this.TariffElements   = TariffElements.Distinct();
+
+            this.TariffType       = TariffType;
+            this.TariffAltText    = TariffAltText;
+            this.TariffAltUrl     = TariffAltUrl;
+            this.MinPrice         = MinPrice;
+            this.MaxPrice         = MaxPrice;
+            this.Start            = Start;
+            this.End              = End;
+            this.EnergyMix        = EnergyMix;
+
+            this.LastUpdated      = LastUpdated ?? DateTime.Now;
 
         }
-
-        #endregion
 
         #endregion
 
@@ -156,8 +204,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => JSONObject.Create(new JProperty("id",        Id.ToString()),
                                  new JProperty("currency",  Currency.ToString()),
-                                 TariffText?.Any() == true ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
-                                 TariffUrl         != null ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
+                                 //TariffText?.Any() == true ? JSONHelper.ToJSON("tariff_alt_text", TariffText)      : null,
+                                 //TariffUrl         != null ? new JProperty("tariff_alt_url", TariffUrl.ToString()) : null,
                                  TariffElements.Any()
                                      ? new JProperty("elements",    new JArray(TariffElements.Select(TariffElement => TariffElement.ToJSON())))
                                      : null,
@@ -195,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!");
 
             return Id.CompareTo(Tariff.Id);
 

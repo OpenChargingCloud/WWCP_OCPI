@@ -154,6 +154,16 @@ namespace cloud.charging.open.protocols
         #endregion
 
 
+        #region Static defaults
+
+        /// <summary>
+        /// EUR, €.
+        /// </summary>
+        public static Currency EUR = Currency.Parse("EUR");
+
+        #endregion
+
+
         #region Operator overloading
 
         #region Operator == (AuthId1, AuthId2)

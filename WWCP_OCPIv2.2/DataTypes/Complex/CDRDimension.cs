@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Type of cdr dimension.
         /// </summary>
-        public DimensionTypes  Type      { get; }
+        public TariffDimensionTypes  Type      { get; }
 
         /// <summary>
         /// Volume of the dimension consumed, measured according to the dimension type.
@@ -53,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Type">Type of charge detail record dimension.</param>
         /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
-        public CDRDimension(DimensionTypes  Type,
+        public CDRDimension(TariffDimensionTypes  Type,
                             Decimal         Volume)
         {
 

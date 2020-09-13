@@ -41,11 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Enumeration of price components that make up the pricing of this tariff.
         /// </summary>
+        [Mandatory]
         public IEnumerable<PriceComponent>      PriceComponents       { get; }
 
         /// <summary>
         /// Enumeration of tariff restrictions.
         /// </summary>
+        [Optional]
         public IEnumerable<TariffRestrictions>  TariffRestrictions    { get;  }
 
         #endregion

@@ -19,40 +19,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The authentication method used.
+    /// Reservation restriction types.
     /// </summary>
-    public enum DimensionTypes
+    public enum ReservationRestrictionTypes
     {
 
         /// <summary>
-        /// defined in kWh, default division is 1 Wh
+        /// Used in TariffElements to describe costs for a reservation.
         /// </summary>
-        ENERGY,
+        RESERVATION,
 
         /// <summary>
-        /// flat fee, no unit
+        /// Used in TariffElements to describe costs for a reservation that expires
+        /// (i.e. driver does not start a charging session before expiry_date of the reservation).
         /// </summary>
-        FLAT,
-
-        /// <summary>
-        /// defined in A (Ampere), Maximum current
-        /// </summary>
-        MAX_CURRENT,
-
-        /// <summary>
-        /// defined in A (Ampere), Minimum current
-        /// </summary>
-        MIN_CURRENT,
-
-        /// <summary>
-        /// time not charging: defined in hours, default division is 1 second
-        /// </summary>
-        PARKING_TIME,
-
-        /// <summary>
-        /// time charging: defined in hours, default division is 1 second
-        /// </summary>
-        TIME
+        RESERVATION_EXPIRES
 
     }
 
