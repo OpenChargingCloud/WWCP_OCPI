@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTypes\Complex\CDRToken.cs" />
+    <Compile Include="DataTypes\Complex\AuthorizationInfo.cs" />
     <Compile Include="DataTypes\Complex\EnergyContract.cs" />
     <Compile Include="DataTypes\Complex\Price.cs" />
     <Compile Include="DataTypes\Complex\SignedValue.cs" />
@@ -55,8 +56,11 @@
     <Compile Include="DataTypes\Complex\ChargingPreference.cs" />
     <Compile Include="DataTypes\Complex\LocationReference.cs" />
     <Compile Include="DataTypes\Complex\PublishTokenType.cs" />
+    <Compile Include="DataTypes\Entities\Token.cs" />
     <Compile Include="DataTypes\Entities\CDR.cs" />
     <Compile Include="DataTypes\Entities\CDRLocation.cs" />
+    <Compile Include="DataTypes\Enums\Roles.cs" />
+    <Compile Include="DataTypes\Enums\ConnectionStatus.cs" />
     <Compile Include="DataTypes\Enums\ReservationRestrictionTypes.cs" />
     <Compile Include="DataTypes\Enums\TariffTypes.cs" />
     <Compile Include="DataTypes\Enums\SignedValueTypes.cs" />
