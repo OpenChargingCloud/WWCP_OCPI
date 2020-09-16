@@ -211,16 +211,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
 
 
-        private readonly List<WWCPCPOAdapter> _CPOAdapters;
+        //private readonly List<WWCPCPOAdapter> _CPOAdapters;
 
-        public IEnumerable<WWCPCPOAdapter> CPOAdapters
-            => _CPOAdapters;
+        //public IEnumerable<WWCPCPOAdapter> CPOAdapters
+        //    => _CPOAdapters;
 
 
-        private readonly List<WWCPEMPAdapter> _EMPAdapters;
+        //private readonly List<WWCPEMPAdapter> _EMPAdapters;
 
-        public IEnumerable<WWCPEMPAdapter> EMPAdapters
-            => _EMPAdapters;
+        //public IEnumerable<WWCPEMPAdapter> EMPAdapters
+        //    => _EMPAdapters;
 
         #endregion
 
@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             //this.EVSEStatusRecord2XML               = EVSEStatusRecord2XML;
             this.XMLPostProcessing                  = XMLPostProcessing;
 
-            this._CPOAdapters                       = new List<WWCPCPOAdapter>();
+            //this._CPOAdapters                       = new List<WWCPCPOAdapter>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -331,20 +331,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
 
 
-        public void Add(WWCPCPOAdapter CPOAdapter)
-        {
+        //public void Add(WWCPCPOAdapter CPOAdapter)
+        //{
 
-            _CPOAdapters.Add(CPOAdapter);
+        //    _CPOAdapters.Add(CPOAdapter);
 
-        }
+        //}
 
 
-        public void Add(WWCPEMPAdapter EMPAdapter)
-        {
+        //public void Add(WWCPEMPAdapter EMPAdapter)
+        //{
 
-            _EMPAdapters.Add(EMPAdapter);
+        //    _EMPAdapters.Add(EMPAdapter);
 
-        }
+        //}
 
     }
 
