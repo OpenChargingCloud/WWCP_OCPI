@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse UId                [mandatory]
+                #region Parse UId                  [mandatory]
 
                 if (!JSON.ParseMandatory("uid",
                                          "internal EVSE identification",
@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Id                 [mandatory]
+                #region Parse Id                   [mandatory]
 
                 if (!JSON.ParseMandatory("id",
                                          "offical EVSE identification",
@@ -293,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Status             [mandatory]
+                #region Parse Status               [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("status",
                                              "EVSE status",
@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Connectors         [mandatory]
+                #region Parse Connectors           [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("connectors",
                                              "connectors",
@@ -318,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse StatusSchedule     [mandatory]
+                #region Parse StatusSchedule       [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("status_schedule",
                                              "status schedule",
@@ -331,31 +331,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MaxVoltage          [mandatory]
+                #region Parse MaxVoltage           [mandatory]
 
                 if (!JSON.ParseMandatory("max_voltage",
-                                                  "max voltage",
-                                                  out UInt16 MaxVoltage,
-                                                  out ErrorResponse))
+                                         "max voltage",
+                                         out UInt16 MaxVoltage,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse MaxAmperage         [mandatory]
+                #region Parse FloorLevel           [optional]
 
-                if (!JSON.ParseMandatory("max_amperage",
-                                                  "max amperage",
-                                                  out UInt16 MaxAmperage,
-                                                  out ErrorResponse))
-                {
-                    return false;
-                }
+                var FloorLevel = JSON.GetString("floor_level");
 
                 #endregion
 
-                #region Parse MaxElectricPower    [optional]
+                #region Parse MaxElectricPower     [optional]
 
                 if (JSON.ParseOptional("max_electric_power",
                                                 "max voltage",
@@ -370,13 +364,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MaxElectricPower    [optional]
+                #region Parse PhysicalReference    [optional]
 
-                if (JSON.ParseOptionalHashSet("tariff_ids",
-                                                       "tariff identifications",
-                                                       Tariff_Id.TryParse,
-                                                       out HashSet <Tariff_Id> TariffIds,
-                                                       out ErrorResponse))
+                var PhysicalReference = JSON.GetString("physical_reference");
+
+                #endregion
+
+                #region Parse MaxElectricPower     [optional]
+
+                if (JSON.ParseOptional("max_electric_power",
+                                                "max voltage",
+                                                out UInt16? MaxElectricPower,
+                                                out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -386,14 +385,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                var TermsAndConditions = JSON.GetString("terms_and_conditions");
+                #region Parse MaxElectricPower     [optional]
 
-                #region Parse LastUpdated         [mandatory]
+                if (JSON.ParseOptional("max_electric_power",
+                                                "max voltage",
+                                                out UInt16? MaxElectricPower,
+                                                out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse MaxElectricPower     [optional]
+
+                if (JSON.ParseOptional("max_electric_power",
+                                                "max voltage",
+                                                out UInt16? MaxElectricPower,
+                                                out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse LastUpdated          [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
-                                                  "last updated",
-                                                  out DateTime LastUpdated,
-                                                  out ErrorResponse))
+                                         "last updated",
+                                         out DateTime LastUpdated,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -420,15 +447,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (CustomEVSEParser != null)
                     EVSE = CustomEVSEParser(JSON,
-                                                      EVSE);
+                                            EVSE);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                EVSE          = default;
-                ErrorResponse = "The given JSON representation of an EVSE is invalid: " + e.Message;
+                EVSE           = default;
+                ErrorResponse  = "The given JSON representation of an EVSE is invalid: " + e.Message;
                 return false;
             }
 
@@ -471,13 +498,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomEVSESerializer = null)
+        #region ToJSON(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, CustomConnectorSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE> CustomEVSESerializer = null)
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom StatusSchedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom Connector JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>            CustomEVSESerializer             = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>  CustomStatusScheduleSerializer   = null,
+                              CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null)
         {
 
             var JSON = JSONObject.Create(
@@ -487,7 +518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("status",                      Status.ToString()),
 
                            StatusSchedule.SafeAny()
-                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.Select(status     => status.    ToJSON())))
+                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.Select(status     => status.    ToJSON(CustomStatusScheduleSerializer))))
                                : null,
 
                            Capabilities.SafeAny()
@@ -495,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            Connectors.SafeAny()
-                               ? new JProperty("connectors",            new JArray(Connectors.    Select(connector  => connector. ToJSON())))
+                               ? new JProperty("connectors",            new JArray(Connectors.    Select(connector  => connector. ToJSON(CustomConnectorSerializer))))
                                : null,
 
                            FloorLevel.IsNotNullOrEmpty()

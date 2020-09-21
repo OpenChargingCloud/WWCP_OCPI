@@ -380,8 +380,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Connector     = default;
-                ErrorResponse = "The given JSON representation of a connector is invalid: " + e.Message;
+                Connector      = default;
+                ErrorResponse  = "The given JSON representation of a connector is invalid: " + e.Message;
                 return false;
             }
 

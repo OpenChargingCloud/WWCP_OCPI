@@ -210,8 +210,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                StatusSchedule = default;
-                ErrorResponse  = "The given JSON representation of a status schedule is invalid: " + e.Message;
+                StatusSchedule  = default;
+                ErrorResponse   = "The given JSON representation of a status schedule is invalid: " + e.Message;
                 return false;
             }
 
@@ -275,7 +275,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomStatusScheduleSerializer != null
+                       ? CustomStatusScheduleSerializer(this, JSON)
+                       : JSON;
 
         }
 
