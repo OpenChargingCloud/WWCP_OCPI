@@ -22,6 +22,8 @@ using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Aegir;
+using Newtonsoft.Json.Linq;
+using System.Linq;
 
 #endregion
 
@@ -113,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The restrictions that apply to the parking spot.
         /// </summary>
         [Optional]
-        public IEnumerable<ParkingRestrictions>  ParkingRestriction         { get; }
+        public IEnumerable<ParkingRestrictions>  ParkingRestrictions        { get; }
 
         /// <summary>
         /// Links to images related to the EVSE such as photos or logos.
@@ -139,16 +141,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     StatusTypes                       Status,
                     IEnumerable<Connector>            Connectors,
 
-                    IEnumerable<StatusSchedule>       StatusSchedule       = null,
-                    IEnumerable<CapabilityTypes>      Capabilities         = null,
-                    String                            FloorLevel           = null,
-                    GeoCoordinate?                    Coordinates          = null,
-                    String                            PhysicalReference    = null,
-                    I18NString                        Directions           = null,
-                    IEnumerable<ParkingRestrictions>  ParkingRestriction   = null,
-                    IEnumerable<Image>                Images               = null,
+                    IEnumerable<StatusSchedule>       StatusSchedule        = null,
+                    IEnumerable<CapabilityTypes>      Capabilities          = null,
+                    String                            FloorLevel            = null,
+                    GeoCoordinate?                    Coordinates           = null,
+                    String                            PhysicalReference     = null,
+                    I18NString                        Directions            = null,
+                    IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
+                    IEnumerable<Image>                Images                = null,
 
-                    DateTime?                         LastUpdated          = null)
+                    DateTime?                         LastUpdated           = null)
 
         {
 
@@ -163,7 +165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Coordinates          = Coordinates;
             this.PhysicalReference    = PhysicalReference;
             this.Directions           = Directions;
-            this.ParkingRestriction   = ParkingRestriction;
+            this.ParkingRestrictions   = ParkingRestrictions;
             this.Images               = Images;
 
             this.LastUpdated          = LastUpdated ?? DateTime.Now;
@@ -171,6 +173,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
         #endregion
+
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("uid",                         UId.   ToString()),
+                           new JProperty("evse_id",                     Id.    ToString()),
+                           new JProperty("status",                      Status.ToString()),
+
+                           StatusSchedule.SafeAny()
+                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.Select(status     => status.    ToJSON())))
+                               : null,
+
+                           Capabilities.SafeAny()
+                               ? new JProperty("capabilities",          new JArray(Capabilities.  Select(capability => capability.ToString())))
+                               : null,
+
+                           Connectors.SafeAny()
+                               ? new JProperty("connectors",            new JArray(Connectors.    Select(connector  => connector. ToJSON())))
+                               : null,
+
+                           FloorLevel.IsNotNullOrEmpty()
+                               ? new JProperty("floor_level",           FloorLevel)
+                               : null,
+
+                           Coordinates.HasValue
+                               ? new JProperty("coordinates",           new JObject(
+                                                                            new JProperty("latitude",  Coordinates.Value.Latitude. Value.ToString()),
+                                                                            new JProperty("longitude", Coordinates.Value.Longitude.Value.ToString())
+                                                                        ))
+                               : null,
+
+                           PhysicalReference.IsNotNullOrEmpty()
+                               ? new JProperty("physical_reference",    PhysicalReference)
+                               : null,
+
+                           Directions.IsNeitherNullNorEmpty()
+                               ? new JProperty("directions",            Directions.ToJSON())
+                               : null,
+
+                           ParkingRestrictions.SafeAny()
+                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select(parking => parking.ToString())))
+                               : null,
+
+                           Images.SafeAny()
+                               ? new JProperty("images",                new JArray(Images.Select(image => image.ToJSON())))
+                               : null,
+
+                           new JProperty("last_updated",                LastUpdated.ToIso8601())
+
+                       );
+
+            return JSON;
+
+        }
 
 
         #region IEnumerable<Connectors> Members

@@ -59,6 +59,7 @@
     <Compile Include="DataTypes\Entities\Token.cs" />
     <Compile Include="DataTypes\Entities\CDR.cs" />
     <Compile Include="DataTypes\Entities\CDRLocation.cs" />
+    <Compile Include="DataTypes\Enums\InterfaceRoles.cs" />
     <Compile Include="DataTypes\Enums\Roles.cs" />
     <Compile Include="DataTypes\Enums\ConnectionStatus.cs" />
     <Compile Include="DataTypes\Enums\ReservationRestrictionTypes.cs" />

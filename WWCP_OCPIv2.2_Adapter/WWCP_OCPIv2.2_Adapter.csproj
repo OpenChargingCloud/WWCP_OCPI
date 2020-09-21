@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OICPMapper.cs" />
     <Compile Include="OICPCSOAdapter.cs" />
     <Compile Include="OICPEMPAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

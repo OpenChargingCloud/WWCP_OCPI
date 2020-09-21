@@ -19,6 +19,8 @@
 
 using System;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -80,6 +82,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
         #endregion
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("name",            Name),
+
+                           Website.IsNotNullOrEmpty()
+                               ? new JProperty("website",   Website)
+                               : null,
+
+                           Logo != null
+                               ? new JProperty("logo",      Logo.ToJSON())
+                               : null
+
+                       );
+
+            return JSON;
+
+        }
 
 
         #region Operator overloading

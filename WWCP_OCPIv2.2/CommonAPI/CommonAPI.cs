@@ -31,6 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Mail;
 using org.GraphDefined.Vanaheimr.Hermod.SMTP;
 using org.GraphDefined.WWCP;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -76,11 +77,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
-        /// <summary>
-        /// The attached roaming network.
-        /// </summary>
-        public RoamingNetwork  RoamingNetwork    { get; }
-
         #endregion
 
         #region Events
@@ -94,7 +90,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Create a new common HTTP API.
         /// </summary>
-        /// <param name="RoamingNetwork">The attached roaming network.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
         /// <param name="HTTPServerName">An optional HTTP server name.</param>
@@ -102,8 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
         /// <param name="ServiceName">An optional HTTP service name.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
-        public CommonAPI(RoamingNetwork  RoamingNetwork,
-                         HTTPHostname?   HTTPHostname      = null,
+        public CommonAPI(HTTPHostname?   HTTPHostname      = null,
                          IPPort?         HTTPServerPort    = null,
                          String          HTTPServerName    = DefaultHTTPServerName,
                          String          ExternalDNSName   = null,
@@ -121,8 +115,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.RoamingNetwork = RoamingNetwork ?? throw new ArgumentNullException(nameof(RoamingNetwork), "The given roaming network must not be null!");
-
         }
 
         #endregion
@@ -132,14 +124,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Create a new common HTTP API.
         /// </summary>
-        /// <param name="RoamingNetwork">The attached roaming network.</param>
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public CommonAPI(RoamingNetwork  RoamingNetwork,
-                         HTTPServer      HTTPServer,
+        public CommonAPI(HTTPServer      HTTPServer,
                          HTTPHostname?   HTTPHostname      = null,
                          String          ExternalDNSName   = null,
                          HTTPPath?       URLPathPrefix     = null,
@@ -152,8 +142,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    ServiceName)
 
         {
-
-            this.RoamingNetwork = RoamingNetwork ?? throw new ArgumentNullException(nameof(RoamingNetwork), "The given roaming network must not be null!");
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -174,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private void RegisterURLTemplates()
         {
 
-            #region / (HTTPRoot)
+            #region GET    /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
             //                                   URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot",
@@ -202,7 +190,110 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             //                             });
 
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix,
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.UtcNow,
+                                                 ContentType     = HTTPContentType.TEXT_UTF8,
+                                                 Content         = ("This is an Open Charge Point Interface HTTP service!\nPlease check /versions!").ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
+
+                                         });
+
             #endregion
+
+
+            #region GET    /versions
+
+            // https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/version_information_endpoint.asciidoc#versions_module
+            // [
+            //   {
+            //     "version":  "2.1.1",
+            //     "url":      "https://example.com/ocpi/2.1.1/"
+            //   },
+            //   {
+            //     "version":  "2.2",
+            //     "url":      "https://example.com/ocpi/2.2/"
+            //   }
+            // ]
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "versions",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.UtcNow,
+                                                 ContentType     = HTTPContentType.JSON_UTF8,
+                                                 Content         = new JArray(
+                                                                       new JObject(
+                                                                           new JProperty("version",  "2.2"),
+                                                                           new JProperty("url",      "https://" + Request.Host + URLPathPrefix)
+                                                                       )
+                                                                   ).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
+
+                                         });
+
+            #endregion
+
+            #region GET    /versions/2.2/
+
+            // {
+            //   "version": "2.2",
+            //   "endpoints": [
+            //     {
+            //       "identifier":  "credentials",
+            //       "role":        "SENDER",
+            //       "url":         "https://example.com/ocpi/2.2/credentials/"
+            //     },
+            //     {
+            //       "identifier":  "locations",
+            //       "role":        "SENDER",
+            //       "url":         "https://example.com/ocpi/cpo/2.2/locations/"
+            //     }
+            //   ]
+            // }
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "versions/2.2/",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.UtcNow,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = new JObject(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + (URLPathPrefix + "credentials"))
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + (URLPathPrefix + "locations"))
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
+
+                                         });
+
+            #endregion
+
 
         }
 
@@ -256,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 HTTPServer.Shutdown(Message, Wait);
 
-                //SendCompleted(this, DateTime.Now, Message);
+                //SendCompleted(this, DateTime.UtcNow, Message);
 
             }
 

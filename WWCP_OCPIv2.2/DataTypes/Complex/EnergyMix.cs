@@ -111,11 +111,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    new JProperty("is_green_energy",            IsGreenEnergy),
 
                    EnergySources.       SafeAny()
-                       ? new JProperty("energy_sources",       new JArray(EnergySources.       SafeSelect(energysource        => energysource.       ToJSON())))
+                       ? new JProperty("energy_sources",       new JArray(EnergySources.       Select(energysource        => energysource.       ToJSON())))
                        : null,
 
                    EnvironmentalImpacts.SafeAny()
-                       ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.SafeSelect(environmentalimpact => environmentalimpact.ToJSON())))
+                       ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())))
                        : null,
 
                    SupplierName.IsNotNullOrEmpty()

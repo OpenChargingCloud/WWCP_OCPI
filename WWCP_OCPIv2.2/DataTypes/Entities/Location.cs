@@ -19,7 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -301,6 +302,98 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
         #endregion
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("country_code",                    CountryCode.ToString()),
+                           new JProperty("party_id",                        PartyId.    ToString()),
+                           new JProperty("id",                              Id.         ToString()),
+                           new JProperty("publish",                         Publish),
+
+                           Publish == false && PublishAllowedTo.SafeAny()
+                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(pub => pub.ToJSON())))
+                               : null,
+
+                           Name.IsNotNullOrEmpty()
+                               ? new JProperty("name",                      Name)
+                               : null,
+
+                           new JProperty("address",                         Address),
+                           new JProperty("city",                            City),
+
+                           PostalCode.IsNotNullOrEmpty()
+                               ? new JProperty("postal_code",               PostalCode)
+                               : null,
+
+                           State.IsNotNullOrEmpty()
+                               ? new JProperty("state",                     State)
+                               : null,
+
+                           new JProperty("country",                         Country),
+                           new JProperty("coordinates",                     new JObject(
+                                                                                new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
+                                                                                new JProperty("longitude", Coordinates.Longitude.Value.ToString())
+                                                                            )),
+
+                           RelatedLocations.SafeAny()
+                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(loc => loc.ToJSON())))
+                               : null,
+
+                           ParkingType.HasValue
+                               ? new JProperty("parking_type",              ParkingType.Value.ToString())
+                               : null,
+
+                           EVSEs.SafeAny()
+                               ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON())))
+                               : null,
+
+                           Directions.IsNeitherNullNorEmpty()
+                               ? new JProperty("directions",                Directions. ToJSON())
+                               : null,
+
+                           Operator != null
+                               ? new JProperty("operator",                  Operator.   ToJSON())
+                               : null,
+
+                           SubOperator != null
+                               ? new JProperty("suboperator",               SubOperator.ToJSON())
+                               : null,
+
+                           Owner != null
+                               ? new JProperty("owner",                     Owner.      ToJSON())
+                               : null,
+
+                           Facilities.SafeAny()
+                               ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
+                               : null,
+
+                           new JProperty("time_zone",                       Timezone),
+
+                           new JProperty("opening_times",                   OpeningTimes.ToJSON()),
+
+                           ChargingWhenClosed.HasValue
+                               ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
+                               : null,
+
+                           Images.SafeAny()
+                               ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON())))
+                               : null,
+
+                           EnergyMix != null
+                               ? new JProperty("energy_mix",                EnergyMix.ToJSON())
+                               : null,
+
+                           new JProperty("last_updated",                    LastUpdated.ToIso8601())
+
+                       );
+
+            return JSON;
+
+        }
 
 
         #region IEnumerable<EVSE> Members

@@ -19,6 +19,8 @@
 
 using System;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -84,6 +86,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         { }
 
         #endregion
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("latitude",  GeoLocation.Latitude. Value.ToString()),
+                           new JProperty("longitude", GeoLocation.Longitude.Value.ToString()),
+
+                           Name.IsNeitherNullNorEmpty()
+                               ? new JProperty("name", Name.ToJSON())
+                               : null
+
+                       );
+
+            return JSON;
+
+        }
 
 
         #region Operator overloading

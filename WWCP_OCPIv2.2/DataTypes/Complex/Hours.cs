@@ -21,6 +21,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -106,6 +108,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          ExceptionalClosings);
 
         #endregion
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("twentyfourseven",             IsTwentyFourSevenOpen),
+
+                           RegularHours.SafeAny()
+                               ? new JProperty("regular_hours",         new JArray(RegularHours.       Select(hours   => hours.  ToJSON())))
+                               : null,
+
+                           ExceptionalOpenings.SafeAny()
+                               ? new JProperty("exceptional_openings",  new JArray(ExceptionalOpenings.Select(opening => opening.ToJSON())))
+                               : null,
+
+                           ExceptionalClosings.SafeAny()
+                               ? new JProperty("exceptional_closings",  new JArray(ExceptionalClosings.Select(closing => closing.ToJSON())))
+                               : null
+
+                       );
+
+            return JSON;
+
+        }
+
 
 
         #region Operator overloading

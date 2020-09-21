@@ -73,13 +73,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Constructor(s)
 
-        #region EMSPAPI(RoamingNetwork, HTTPServerName = default, ...)
+        #region EMSPAPI(HTTPServerName = default, ...)
 
         /// <summary>
         /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
         /// using a newly created HTTP server.
         /// </summary>
-        /// <param name="RoamingNetwork">The attached roaming network.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
         /// <param name="HTTPServerName">An optional HTTP server name.</param>
@@ -87,8 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
         /// <param name="ServiceName">An optional HTTP service name.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
-        public EMSPAPI(RoamingNetwork  RoamingNetwork,
-                       String          HTTPServerName    = DefaultHTTPServerName,
+        public EMSPAPI(String          HTTPServerName    = DefaultHTTPServerName,
                        HTTPHostname?   HTTPHostname      = null,
                        IPPort?         HTTPServerPort    = null,
                        String          ExternalDNSName   = null,
@@ -96,8 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        String          ServiceName       = DefaultHTTPServerName,
                        DNSClient       DNSClient         = null)
 
-            : base(RoamingNetwork,
-                   HTTPHostname   ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPHostname.Any,
+            : base(HTTPHostname   ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPHostname.Any,
                    HTTPServerPort ?? DefaultHTTPServerPort,
                    HTTPServerName ?? DefaultHTTPServerName,
                    ExternalDNSName,
@@ -113,27 +110,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region EMSPAPI(RoamingNetwork, HTTPServer, ...)
+        #region EMSPAPI(HTTPServer, ...)
 
         /// <summary>
         /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
         /// using the given HTTP server.
         /// </summary>
-        /// <param name="RoamingNetwork">The attached roaming network.</param>
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public EMSPAPI(RoamingNetwork  RoamingNetwork,
-                       HTTPServer      HTTPServer,
+        public EMSPAPI(HTTPServer      HTTPServer,
                        HTTPHostname?   HTTPHostname      = null,
                        String          ExternalDNSName   = null,
                        HTTPPath?       URLPathPrefix     = null,
                        String          ServiceName       = DefaultHTTPServerName)
 
-            : base(RoamingNetwork,
-                   HTTPServer,
+            : base(HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
                    URLPathPrefix ?? DefaultURLPathPrefix,
@@ -177,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                                 return new HTTPResponse.Builder(Request) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
             //                                     Server          = DefaultHTTPServerName,
-            //                                     Date            = DateTime.Now,
+            //                                     Date            = DateTime.UtcNow,
             //                                     ContentType     = HTTPContentType.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
             //                                     Connection      = "close"
@@ -198,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = new JArray(new JObject(
                                                                                   new JProperty("version",  "2.2"),
@@ -222,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = new JObject(
                                                                        new JProperty("version",  "2.2"),
@@ -244,6 +238,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            // Receiver Interface for eMSPs and NSPs
+
             #region [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}
 
             #region GET    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}
@@ -257,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -289,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -321,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -358,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -391,7 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -424,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -461,7 +457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -494,7 +490,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
@@ -527,7 +523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
+                                                 Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),

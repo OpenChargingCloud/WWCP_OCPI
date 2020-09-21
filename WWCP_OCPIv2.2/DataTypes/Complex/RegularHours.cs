@@ -19,6 +19,8 @@
 
 using System;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -78,6 +80,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
         #endregion
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+                           new JProperty("weekday",       (UInt32) Weekday),
+                           new JProperty("period_begin",  Begin.ToString()),
+                           new JProperty("period_end",    End.  ToString())
+                       );
+
+            return JSON;
+
+        }
+
 
 
         #region Operator overloading

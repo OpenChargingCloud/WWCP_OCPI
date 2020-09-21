@@ -18,9 +18,13 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.JSON;
 
 #endregion
 
@@ -138,6 +142,311 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.TermsAndConditions   = TermsAndConditions;
 
             this.LastUpdated          = LastUpdated ?? DateTime.Now;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (ConnectorJSON, CustomConnectorParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a connector.
+        /// </summary>
+        /// <param name="ConnectorJSON">The JSON to parse.</param>
+        /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
+        public static Connector Parse(JObject                                 ConnectorJSON,
+                                      CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
+        {
+
+            if (TryParse(ConnectorJSON,
+                         out Connector connector,
+                         out String    ErrorResponse,
+                         CustomConnectorParser))
+            {
+                return connector;
+            }
+
+            throw new ArgumentException("The given JSON representation of a connector is invalid: " + ErrorResponse, nameof(ConnectorJSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (ConnectorText, CustomConnectorParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a connector.
+        /// </summary>
+        /// <param name="ConnectorText">The text to parse.</param>
+        /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
+        public static Connector Parse(String                                  ConnectorText,
+                                      CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
+        {
+
+            if (TryParse(ConnectorText,
+                         out Connector connector,
+                         out String    ErrorResponse,
+                         CustomConnectorParser))
+            {
+                return connector;
+            }
+
+            throw new ArgumentException("The given text representation of a connector is invalid: " + ErrorResponse, nameof(ConnectorText));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(ConnectorJSON, out Connector, out ErrorResponse, CustomConnectorParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a connector.
+        /// </summary>
+        /// <param name="ConnectorJSON">The JSON to parse.</param>
+        /// <param name="Connector">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
+        public static Boolean TryParse(JObject                                 ConnectorJSON,
+                                       out Connector                           Connector,
+                                       out String                              ErrorResponse,
+                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
+        {
+
+            try
+            {
+
+                Connector = null;
+
+                if (ConnectorJSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Id                  [mandatory]
+
+                if (!ConnectorJSON.ParseMandatory("id",
+                                                  "connector identification",
+                                                  Connector_Id.TryParse,
+                                                  out Connector_Id Id,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Standard            [mandatory]
+
+                if (!ConnectorJSON.ParseMandatoryEnum("standard",
+                                                      "connector standard",
+                                                      out ConnectorTypes Standard,
+                                                      out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Format              [mandatory]
+
+                if (!ConnectorJSON.ParseMandatoryEnum("format",
+                                                      "connector format",
+                                                      out ConnectorFormats Format,
+                                                      out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PowerType           [mandatory]
+
+                if (!ConnectorJSON.ParseMandatoryEnum("power_type",
+                                                      "power type",
+                                                      out PowerTypes PowerType,
+                                                      out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxVoltage          [mandatory]
+
+                if (!ConnectorJSON.ParseMandatory("max_voltage",
+                                                  "max voltage",
+                                                  out UInt16 MaxVoltage,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxAmperage         [mandatory]
+
+                if (!ConnectorJSON.ParseMandatory("max_amperage",
+                                                  "max amperage",
+                                                  out UInt16 MaxAmperage,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxElectricPower    [optional]
+
+                if (ConnectorJSON.ParseOptional("max_electric_power",
+                                                "max voltage",
+                                                out UInt16? MaxElectricPower,
+                                                out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse MaxElectricPower    [optional]
+
+                if (ConnectorJSON.ParseOptionalHashSet("tariff_ids",
+                                                       "tariff identifications",
+                                                       Tariff_Id.TryParse,
+                                                       out HashSet <Tariff_Id> TariffIds,
+                                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                var TermsAndConditions = ConnectorJSON.GetString("terms_and_conditions");
+
+                #region Parse LastUpdated         [mandatory]
+
+                if (!ConnectorJSON.ParseMandatory("last_updated",
+                                                  "last updated",
+                                                  out DateTime LastUpdated,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                Connector = new Connector(Id,
+                                          Standard,
+                                          Format,
+                                          PowerType,
+                                          MaxVoltage,
+                                          MaxAmperage,
+
+                                          MaxElectricPower,
+                                          TariffIds,
+                                          TermsAndConditions,
+
+                                          LastUpdated);
+
+
+                if (CustomConnectorParser != null)
+                    Connector = CustomConnectorParser(ConnectorJSON,
+                                                      Connector);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Connector = null;
+                ErrorResponse = "The given JSON representation of a connector is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(ConnectorText, out Connector, out ErrorResponse, CustomConnectorParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a connector.
+        /// </summary>
+        /// <param name="ConnectorText">The text to parse.</param>
+        /// <param name="Connector">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
+        public static Boolean TryParse(String                                  ConnectorText,
+                                       out Connector                           Connector,
+                                       out String                              ErrorResponse,
+                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(ConnectorText),
+                                out Connector,
+                                out ErrorResponse,
+                                CustomConnectorParser);
+
+            }
+            catch (Exception e)
+            {
+                Connector      = null;
+                ErrorResponse  = "The given text representation of a connector is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomConnectorSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom Connector JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Connector> CustomConnectorSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("id",                          Id.       ToString()),
+                           new JProperty("standard",                    Standard. ToString()),
+                           new JProperty("format",                      Format.   ToString()),
+                           new JProperty("power_type",                  PowerType.ToString()),
+                           new JProperty("max_voltage",                 MaxVoltage),
+                           new JProperty("max_amperage",                MaxAmperage),
+
+                           MaxElectricPower.HasValue
+                               ? new JProperty("max_electric_power",    MaxElectricPower.Value)
+                               : null,
+
+                           TariffIds.SafeAny()
+                               ? new JProperty("tariff_ids",            new JArray(TariffIds.Select(tarifId => tarifId.ToString())))
+                               : null,
+
+                           TermsAndConditions.IsNotNullOrEmpty()
+                               ? new JProperty("terms_and_conditions",  TermsAndConditions)
+                               : null,
+
+                           new JProperty("last_updated",                LastUpdated.ToIso8601())
+
+                       );
+
+            return CustomConnectorSerializer != null
+                       ? CustomConnectorSerializer(this, JSON)
+                       : JSON;
 
         }
 
