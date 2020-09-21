@@ -72,11 +72,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        HTTPPath?          URIPrefix         = null,
 
                        String            ServiceName       = DefaultHTTPServerName,
-                       EMailAddress      APIEMailAddress   = null,
-                       PgpSecretKeyRing  APISecretKeyRing  = null,
-                       String            APIPassphrase     = null,
-                       EMailAddressList  APIAdminEMail     = null,
-                       SMTPClient        APISMTPClient     = null,
 
                        DNSClient         DNSClient         = null,
                        String            LogfileName       = DefaultLogfileName)
@@ -88,12 +83,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    ResourceName => typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
-                   APIEMailAddress,
-                   null,//OpenPGP.ReadPublicKeyRing(typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot.robot@offenes-jena_pubring.gpg")),
-                   APISecretKeyRing,
-                   APIPassphrase,
-                   APIAdminEMail,
-                   APISMTPClient,
 
                    DNSClient,
                    LogfileName)
@@ -112,31 +101,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
         /// using the given HTTP server.
         /// </summary>
-        public EMSPAPI(RoamingNetwork                               RoamingNetwork,
-                       HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                       HTTPPath?                                     URIPrefix         = null,
+        public EMSPAPI(RoamingNetwork     RoamingNetwork,
+                       HTTPServer         HTTPServer,
+                       HTTPPath?          URLPathPrefix     = null,
 
-                       String                                       ServiceName       = DefaultHTTPServerName,
-                       EMailAddress                                 APIEMailAddress   = null,
-                       PgpSecretKeyRing                             APISecretKeyRing  = null,
-                       String                                       APIPassphrase     = null,
-                       EMailAddressList                             APIAdminEMail     = null,
-                       SMTPClient                                   APISMTPClient     = null,
-
-                       DNSClient                                    DNSClient         = null)
+                       String             ServiceName       = DefaultHTTPServerName)
 
             : base(RoamingNetwork,
                    HTTPServer,
-                   URIPrefix,
+                   URLPathPrefix,
                    ResourceName => typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
-                   APIEMailAddress,
-                   OpenPGP.ReadPublicKeyRing(typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot.About.robot@offenes-jena_pubring.gpg")),
-                   APISecretKeyRing,
-                   APIPassphrase,
-                   APIAdminEMail,
-                   APISMTPClient,
 
                    LogfileName)
 
@@ -158,190 +134,188 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region /emsp
 
-            _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URLPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot",
-                                                Assembly.GetCallingAssembly());
+            HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+                                               URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot",
+                                               Assembly.GetCallingAssembly());
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.GET,
-                                          new HTTPPath[] {
-                                              URLPrefix + "/emsp/index.html",
-                                              URLPrefix + "/emsp/"
-                                          },
-                                          HTTPContentType.HTML_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         new HTTPPath[] {
+                                             URLPathPrefix + "/emsp/index.html",
+                                             URLPathPrefix + "/emsp/"
+                                         },
+                                         HTTPContentType.HTML_UTF8,
+                                         HTTPDelegate: async Request => {
 
-                                              var _MemoryStream = new MemoryStream();
-                                              typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                             var _MemoryStream = new MemoryStream();
+                                             typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                             typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = _MemoryStream.ToArray(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = _MemoryStream.ToArray(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region /emsp/versions
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.GET,
-                                          URLPrefix + "/emsp/versions",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "/emsp/versions",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = new JArray(new JObject(
-                                                                                   new JProperty("version",  "2.0"),
-                                                                                   new JProperty("url",      "http://" + Request.Host + "/emsp/versions/2.0/")
-                                                                    )).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = new JArray(new JObject(
+                                                                                  new JProperty("version",  "2.0"),
+                                                                                  new JProperty("url",      "http://" + Request.Host + "/emsp/versions/2.0/")
+                                                                   )).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region /emsp/versions/2.2/
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.GET,
-                                          URLPrefix + "/emsp/versions/2.2/",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "/emsp/versions/2.2/",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = new JObject(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/emsp/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/emsp/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = new JObject(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/emsp/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/emsp/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
-
-
 
 
             #region /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}
 
             #region GET    /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.GET,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region PUT    /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.PUT,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PUT,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region PATCH  /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.PATCH,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PATCH,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
@@ -351,100 +325,100 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET    /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.GET,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region PUT    /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.PUT,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PUT,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region PATCH  /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.PATCH,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PATCH,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
@@ -454,100 +428,100 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET    /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.GET,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region PUT    /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.PUT,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PUT,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
             #region PATCH  /emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            _HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                          HTTPMethod.PATCH,
-                                          URLPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
-                                          HTTPContentType.JSON_UTF8,
-                                          HTTPDelegate: async Request => {
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PATCH,
+                                         URLPathPrefix + "/emsp/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
 
 
-                                              return new HTTPResponse.Builder(Request) {
-                                                  HTTPStatusCode  = HTTPStatusCode.OK,
-                                                  Server          = DefaultHTTPServerName,
-                                                  Date            = DateTime.Now,
-                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                  Content         = JSONObject.Create(
-                                                                        new JProperty("version",  "2.2"),
-                                                                        new JProperty("endpoints", new JArray(
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "credentials"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
-                                                                            ),
-                                                                            new JObject(
-                                                                                new JProperty("identifier", "locations"),
-                                                                                new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
-                                                                            )
-                                                                    ))).ToUTF8Bytes(),
-                                                  Connection      = "close"
-                                              };
+                                             return new HTTPResponse.Builder(Request) {
+                                                 HTTPStatusCode  = HTTPStatusCode.OK,
+                                                 Server          = DefaultHTTPServerName,
+                                                 Date            = DateTime.Now,
+                                                 ContentType     = HTTPContentType.HTML_UTF8,
+                                                 Content         = JSONObject.Create(
+                                                                       new JProperty("version",  "2.2"),
+                                                                       new JProperty("endpoints", new JArray(
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "credentials"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                           ),
+                                                                           new JObject(
+                                                                               new JProperty("identifier", "locations"),
+                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                           )
+                                                                   ))).ToUTF8Bytes(),
+                                                 Connection      = "close"
+                                             };
 
-                                          });
+                                         });
 
             #endregion
 
