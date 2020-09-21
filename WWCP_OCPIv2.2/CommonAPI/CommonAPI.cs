@@ -45,76 +45,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Data
 
-        private static readonly Random         _Random                         = new Random();
+        private static readonly    Random    _Random                   = new Random();
 
-        protected internal const String        __DefaultHTTPRoot               = "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot";
+        protected internal const   String    __DefaultHTTPRoot         = "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot";
 
-        private readonly Func<String, Stream>  _GetRessources;
+        //private readonly Func<String, Stream>  _GetRessources;
 
 
         /// <summary>
         /// The default HTTP server name.
         /// </summary>
-        public const           String          DefaultHTTPServerName           = "GraphDefined OCPI HTTP API v0.1";
+        public new const           String    DefaultHTTPServerName     = "GraphDefined OCPI HTTP API v0.1";
+
+        /// <summary>
+        /// The default HTTP server name.
+        /// </summary>
+        public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI HTTP API v0.1";
 
         /// <summary>
         /// The default HTTP server TCP port.
         /// </summary>
-        public static readonly IPPort          DefaultHTTPServerPort           = IPPort.Parse(8080);
+        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
 
         /// <summary>
-        /// The default HTTP logfile.
+        /// The default HTTP URL path prefix.
         /// </summary>
-        public const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
-
-        public static readonly HTTPPath        DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
+        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
 
         #endregion
 
         #region Properties
 
-        public RoamingNetwork RoamingNetwork { get; }
-
-
-        #region ServiceName
-
-        private readonly String _ServiceName;
-
         /// <summary>
-        /// The name of the Open Data API service.
+        /// The attached roaming network.
         /// </summary>
-        public String ServiceName
-        {
-            get
-            {
-                return _ServiceName;
-            }
-        }
-
-        #endregion
+        public RoamingNetwork  RoamingNetwork    { get; }
 
         #endregion
 
         #region Events
-
-        #region Generic HTTP server logging
-
-        /// <summary>
-        /// An event called whenever a HTTP request came in.
-        /// </summary>
-        public HTTPRequestLogEvent   RequestLog    = new HTTPRequestLogEvent();
-
-        /// <summary>
-        /// An event called whenever a HTTP request could successfully be processed.
-        /// </summary>
-        public HTTPResponseLogEvent  ResponseLog   = new HTTPResponseLogEvent();
-
-        /// <summary>
-        /// An event called whenever a HTTP request resulted in an error.
-        /// </summary>
-        public HTTPErrorLogEvent     ErrorLog      = new HTTPErrorLogEvent();
-
-        #endregion
 
         #endregion
 
@@ -122,30 +91,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region CommonAPI(HTTPServerName, ...)
 
-        public CommonAPI(RoamingNetwork        RoamingNetwork,
-                         String                HTTPServerName          = DefaultHTTPServerName,
-                         IPPort?               HTTPServerPort          = null,
-                         HTTPPath?             URLPathPrefix           = null,
-                         Func<String, Stream>  GetRessources           = null,
+        /// <summary>
+        /// Create a new common HTTP API.
+        /// </summary>
+        /// <param name="RoamingNetwork">The attached roaming network.</param>
+        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
+        /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
+        /// <param name="HTTPServerName">An optional HTTP server name.</param>
+        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
+        /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
+        /// <param name="ServiceName">An optional HTTP service name.</param>
+        /// <param name="DNSClient">An optional DNS client.</param>
+        public CommonAPI(RoamingNetwork  RoamingNetwork,
+                         HTTPHostname?   HTTPHostname      = null,
+                         IPPort?         HTTPServerPort    = null,
+                         String          HTTPServerName    = DefaultHTTPServerName,
+                         String          ExternalDNSName   = null,
+                         HTTPPath?       URLPathPrefix     = null,
+                         String          ServiceName       = DefaultHTTPServiceName,
+                         DNSClient       DNSClient         = null)
 
-                         String                ServiceName             = DefaultHTTPServerName,
-
-                         DNSClient             DNSClient               = null,
-                         String                LogfileName             = DefaultLogfileName)
-
-            : this(RoamingNetwork,
-                   new HTTPServer(DefaultServerName: DefaultHTTPServerName,
-                                  DNSClient:         DNSClient),
-                   URLPathPrefix,
-                   GetRessources,
-
-                   ServiceName,
-
-                   LogfileName)
+            : base(HTTPHostname,
+                   HTTPServerPort ?? DefaultHTTPServerPort,
+                   HTTPServerName ?? DefaultHTTPServerName,
+                   ExternalDNSName,
+                   URLPathPrefix  ?? DefaultURLPathPrefix,
+                   ServiceName    ?? DefaultHTTPServiceName,
+                   DNSClient)
 
         {
 
-            HTTPServer.AttachTCPPorts(HTTPServerPort ?? DefaultHTTPServerPort);
+            this.RoamingNetwork = RoamingNetwork ?? throw new ArgumentNullException(nameof(RoamingNetwork), "The given roaming network must not be null!");
 
         }
 
@@ -154,48 +130,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region CommonAPI(HTTPServer, ...)
 
         /// <summary>
-        /// Initialize the OCPI HTTP server using IPAddress.Any, http port 8080 and maybe start the server.
+        /// Create a new common HTTP API.
         /// </summary>
-        public CommonAPI(RoamingNetwork        RoamingNetwork,
-                         HTTPServer            HTTPServer,
-                         HTTPPath?             URLPathPrefix           = null,
-                         Func<String, Stream>  GetRessources           = null,
-
-                         String                ServiceName             = DefaultHTTPServerName,
-
-                         String                LogfileName             = DefaultLogfileName)
+        /// <param name="RoamingNetwork">The attached roaming network.</param>
+        /// <param name="HTTPServer">A HTTP server.</param>
+        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
+        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
+        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
+        /// <param name="ServiceName">An optional name of the HTTP API service.</param>
+        public CommonAPI(RoamingNetwork  RoamingNetwork,
+                         HTTPServer      HTTPServer,
+                         HTTPHostname?   HTTPHostname      = null,
+                         String          ExternalDNSName   = null,
+                         HTTPPath?       URLPathPrefix     = null,
+                         String          ServiceName       = DefaultHTTPServerName)
 
             : base(HTTPServer,
-                   HTTPHostname.Any,
-                   ServiceName,
-                   null, //BaseURL
-                   URLPathPrefix
-                   //HTMLTemplate
-                   )
+                   HTTPHostname,
+                   ExternalDNSName,
+                   URLPathPrefix,
+                   ServiceName)
 
         {
 
-            #region Initial checks
-
-            if (RoamingNetwork == null)
-                throw new ArgumentNullException(nameof(RoamingNetwork), "The given roaming network must not be null!");
-
-            #endregion
-
-            #region Init data
-
-            this._GetRessources           = GetRessources;
-
-            this._ServiceName             = ServiceName;
-
-            #endregion
+            this.RoamingNetwork = RoamingNetwork ?? throw new ArgumentNullException(nameof(RoamingNetwork), "The given roaming network must not be null!");
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
             HTTPServer.ResponseLog  += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             HTTPServer.ErrorLog     += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            RegisterURITemplates();
+            RegisterURLTemplates();
 
         }
 
@@ -204,9 +169,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region (private) RegisterURITemplates()
+        #region (private) RegisterURLTemplates()
 
-        private void RegisterURITemplates()
+        private void RegisterURLTemplates()
         {
 
             #region / (HTTPRoot)

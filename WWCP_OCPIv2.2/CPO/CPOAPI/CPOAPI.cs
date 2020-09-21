@@ -49,77 +49,99 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Data
 
-        private static readonly Random    _Random                 = new Random();
+        /// <summary>
+        /// The default HTTP server name.
+        /// </summary>
+        public new const           String    DefaultHTTPServerName     = "GraphDefined OCPI CPO HTTP API v0.1";
 
-        public  const           String    DefaultHTTPServerName   = "GraphDefined OCPI CPO HTTP API v0.1";
-        public  static readonly IPPort    DefaultHTTPServerPort   = IPPort.Parse(8080);
-        public  static readonly HTTPPath  DefaultURLPathPrefix    = HTTPPath.Parse("/");
+        /// <summary>
+        /// The default HTTP server name.
+        /// </summary>
+        public new const           String    DefaultHTTPServiceName    = "GraphDefined OCPI CPO HTTP API v0.1";
 
-        public  const           String    LogfileName             = "OICP_CPO_HTTPAPI.log";
+        /// <summary>
+        /// The default HTTP server TCP port.
+        /// </summary>
+        public new static readonly IPPort    DefaultHTTPServerPort     = IPPort.Parse(8080);
+
+        /// <summary>
+        /// The default HTTP URL path prefix.
+        /// </summary>
+        public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("cpo/");
 
         #endregion
 
         #region Constructor(s)
 
-        #region CPOAPI(HTTPServerName, ...)
+        #region CPOAPI(RoamingNetwork, HTTPServerName = default, ...)
 
         /// <summary>
         /// Create an instance of the OCPI HTTP API for Charge Point Operators
         /// using a newly created HTTP server.
         /// </summary>
-        public CPOAPI(RoamingNetwork    RoamingNetwork,
-                      String            HTTPServerName    = DefaultHTTPServerName,
-                      IPPort?           HTTPServerPort    = null,
-                      HTTPPath?         URLPathPrefix     = null,
-
-                      String            ServiceName       = DefaultHTTPServerName,
-
-                      DNSClient         DNSClient         = null,
-                      String            LogfileName       = DefaultLogfileName)
+        /// <param name="RoamingNetwork">The attached roaming network.</param>
+        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
+        /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
+        /// <param name="HTTPServerName">An optional HTTP server name.</param>
+        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
+        /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
+        /// <param name="ServiceName">An optional HTTP service name.</param>
+        /// <param name="DNSClient">An optional DNS client.</param>
+        public CPOAPI(RoamingNetwork  RoamingNetwork,
+                      String          HTTPServerName    = DefaultHTTPServerName,
+                      HTTPHostname?   HTTPHostname      = null,
+                      IPPort?         HTTPServerPort    = null,
+                      String          ExternalDNSName   = null,
+                      HTTPPath?       URLPathPrefix     = null,
+                      String          ServiceName       = DefaultHTTPServerName,
+                      DNSClient       DNSClient         = null)
 
             : base(RoamingNetwork,
-                   HTTPServerName,
+                   HTTPHostname   ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPHostname.Any,
                    HTTPServerPort ?? DefaultHTTPServerPort,
+                   HTTPServerName ?? DefaultHTTPServerName,
+                   ExternalDNSName,
                    URLPathPrefix  ?? DefaultURLPathPrefix,
-                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
-
                    ServiceName,
-
-                   DNSClient,
-                   LogfileName)
+                   DNSClient)
 
         {
 
-            RegisterCPOURITemplates();
+            RegisterURLTemplates();
 
         }
 
         #endregion
 
-        #region CPOAPI(HTTPServer, ...)
+        #region CPOAPI(RoamingNetwork, HTTPServer, ...)
 
         /// <summary>
         /// Create an instance of the OCPI HTTP API for Charge Point Operators
         /// using the given HTTP server.
         /// </summary>
-        public CPOAPI(RoamingNetwork    RoamingNetwork,
-                      HTTPServer        HTTPServer,
-                      HTTPPath?         URLPathPrefix      = null,
-
-                      String            ServiceName        = DefaultHTTPServerName)
+        /// <param name="RoamingNetwork">The attached roaming network.</param>
+        /// <param name="HTTPServer">A HTTP server.</param>
+        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
+        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
+        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
+        /// <param name="ServiceName">An optional name of the HTTP API service.</param>
+        public CPOAPI(RoamingNetwork  RoamingNetwork,
+                      HTTPServer      HTTPServer,
+                      HTTPHostname?   HTTPHostname      = null,
+                      String          ExternalDNSName   = null,
+                      HTTPPath?       URLPathPrefix     = null,
+                      String          ServiceName       = DefaultHTTPServerName)
 
             : base(RoamingNetwork,
                    HTTPServer,
+                   HTTPHostname,
+                   ExternalDNSName,
                    URLPathPrefix ?? DefaultURLPathPrefix,
-                   ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
-
-                   ServiceName,
-
-                   LogfileName)
+                   ServiceName)
 
         {
 
-            RegisterCPOURITemplates();
+            RegisterURLTemplates();
 
         }
 
@@ -128,48 +150,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region (private) RegisterCPOURITemplates()
+        #region (private) RegisterURLTemplates()
 
-        private void RegisterCPOURITemplates()
+        private void RegisterURLTemplates()
         {
 
-            #region /cpo
+            #region GET    [/cpo] == /
 
-            HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                               URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
-                                               Assembly.GetCallingAssembly());
+            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
+            //                                   Assembly.GetCallingAssembly());
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         new HTTPPath[] {
-                                             URLPathPrefix + "/cpo/index.html",
-                                             URLPathPrefix + "/cpo/"
-                                         },
-                                         HTTPContentType.HTML_UTF8,
-                                         HTTPDelegate: async Request => {
+            //HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            //                             HTTPMethod.GET,
+            //                             new HTTPPath[] {
+            //                                 URLPathPrefix + "/cpo/index.html",
+            //                                 URLPathPrefix + "/cpo/"
+            //                             },
+            //                             HTTPContentType.HTML_UTF8,
+            //                             HTTPDelegate: async Request => {
 
-                                             var _MemoryStream = new MemoryStream();
-                                             typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                             typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 var _MemoryStream = new MemoryStream();
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.Now,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = _MemoryStream.ToArray(),
-                                                 Connection      = "close"
-                                             };
+            //                                 return new HTTPResponse.Builder(Request) {
+            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
+            //                                     Server          = DefaultHTTPServerName,
+            //                                     Date            = DateTime.Now,
+            //                                     ContentType     = HTTPContentType.HTML_UTF8,
+            //                                     Content         = _MemoryStream.ToArray(),
+            //                                     Connection      = "close"
+            //                                 };
 
-                                         });
+            //                             });
 
             #endregion
 
-            #region /cpo/versions
+            #region GET    [/cpo]/versions
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "/cpo/versions",
+                                         URLPathPrefix + "versions",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -179,8 +201,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  Date            = DateTime.Now,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
                                                  Content         = new JArray(new JObject(
-                                                                                  new JProperty("version",  "2.0"),
-                                                                                  new JProperty("url",      "http://" + Request.Host + "/cpo/versions/2.0/")
+                                                                                  new JProperty("version",  "2.2"),
+                                                                                  new JProperty("url",      "http://" + Request.Host + URLPathPrefix + "/versions/2.2/")
                                                                    )).ToUTF8Bytes(),
                                                  Connection      = "close"
                                              };
@@ -189,11 +211,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region /cpo/versions/2.2/
+            #region GET    [/cpo]/versions/2.2/
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "/cpo/versions/2.2/",
+                                         URLPathPrefix + "versions/2.2",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -207,11 +229,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                        new JProperty("endpoints", new JArray(
                                                                            new JObject(
                                                                                new JProperty("identifier", "credentials"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/credentials/")
+                                                                               new JProperty("url",        "http://" + Request.Host + URLPathPrefix + "/versions/2.2/credentials/")
                                                                            ),
                                                                            new JObject(
                                                                                new JProperty("identifier", "locations"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/versions/2.2/locations/")
+                                                                               new JProperty("url",        "http://" + Request.Host + URLPathPrefix + "/versions/2.2/locations/")
                                                                            )
                                                                    ))).ToUTF8Bytes(),
                                                  Connection      = "close"
@@ -223,11 +245,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region /cpo/versions/2.2/locations
+            #region GET    [/cpo]/versions/2.2/locations
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "/cpo/versions/2.2/locations",
+                                         URLPathPrefix + "versions/2.2/locations",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -265,11 +287,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region /cpo/versions/2.2/locations/{locationId}
+            #region GET    [/cpo]/versions/2.2/locations/{locationId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "/cpo/versions/2.2/locations/{locationId}",
+                                         URLPathPrefix + "versions/2.2/locations/{locationId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -297,11 +319,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region /cpo/versions/2.2/locations/{locationId}/{evseId}
+            #region GET    [/cpo]/versions/2.2/locations/{locationId}/{evseId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "/cpo/versions/2.2/locations/{locationId}/{evseId}",
+                                         URLPathPrefix + "versions/2.2/locations/{locationId}/{evseId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -330,11 +352,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region /cpo/versions/2.2/locations/{locationId}/{evseId}/{connectorId}
+            #region GET    [/cpo]/versions/2.2/locations/{locationId}/{evseId}/{connectorId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "/cpo/versions/2.2/locations/{locationId}/{evseId}/{connectorId}",
+                                         URLPathPrefix + "versions/2.2/locations/{locationId}/{evseId}/{connectorId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
