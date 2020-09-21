@@ -125,9 +125,9 @@
     <Compile Include="DataTypes\Complex\TariffElement.cs" />
     <Compile Include="DataTypes\Simple\Tariff_Id.cs" />
     <Compile Include="DataTypes\Entities\Tariff.cs" />
-    <Compile Include="HTTPAPI\CPOAPI\CPOAPI.cs" />
-    <Compile Include="HTTPAPI\EMSPAPI\EMSPAPI.cs" />
-    <Compile Include="HTTPAPI\GenericAPI\GenericAPI.cs" />
+    <Compile Include="CPO\CPOAPI\CPOAPI.cs" />
+    <Compile Include="EMSP\EMSPAPI\EMSPAPI.cs" />
+    <Compile Include="CommonAPI\CommonAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\JSONHelper.cs" />
     <Compile Include="Tools\OCPIMapper.cs" />
@@ -151,21 +151,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPAPI\GenericAPI\HTTPRoot\robots.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="HTTPAPI\GenericAPI\HTTPRoot\humans.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="HTTPAPI\GenericAPI\HTTPRoot\robot%40offenes-jena_pubring.gpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="HTTPAPI\CPOAPI\HTTPRoot\_footer.html" />
-    <EmbeddedResource Include="HTTPAPI\CPOAPI\HTTPRoot\_header.html" />
-    <EmbeddedResource Include="HTTPAPI\EMSPAPI\HTTPRoot\_footer.html" />
-    <EmbeddedResource Include="HTTPAPI\EMSPAPI\HTTPRoot\_header.html" />
-    <EmbeddedResource Include="HTTPAPI\GenericAPI\HTTPRoot\_footer.html" />
-    <EmbeddedResource Include="HTTPAPI\GenericAPI\HTTPRoot\_header.html" />
+    <EmbeddedResource Include="CPO\CPOAPI\HTTPRoot\_footer.html" />
+    <EmbeddedResource Include="CPO\CPOAPI\HTTPRoot\_header.html" />
+    <EmbeddedResource Include="EMSP\EMSPAPI\HTTPRoot\_footer.html" />
+    <EmbeddedResource Include="EMSP\EMSPAPI\HTTPRoot\_header.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\" />

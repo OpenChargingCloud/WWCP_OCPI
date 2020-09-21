@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The OCPI HTTP API for Charge Point Operators.
     /// </summary>
-    public class CPOAPI : GenericAPI
+    public class CPOAPI : CommonAPI
     {
 
         #region Data

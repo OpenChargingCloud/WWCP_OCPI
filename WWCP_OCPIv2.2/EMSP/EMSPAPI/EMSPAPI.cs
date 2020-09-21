@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The OCPI HTTP API for e-Mobility Service Providers.
     /// </summary>
-    public class EMSPAPI : GenericAPI
+    public class EMSPAPI : CommonAPI
     {
 
         #region Data

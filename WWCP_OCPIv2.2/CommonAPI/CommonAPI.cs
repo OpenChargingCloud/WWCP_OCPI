@@ -38,16 +38,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// The generic OCPI v2.0 HTTP API.
+    /// The common HTTP API.
     /// </summary>
-    public class GenericAPI
+    public abstract class CommonAPI : HTTPAPI
     {
 
         #region Data
 
         private static readonly Random         _Random                         = new Random();
 
-        protected internal const String        __DefaultHTTPRoot               = "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot";
+        protected internal const String        __DefaultHTTPRoot               = "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot";
 
         private readonly Func<String, Stream>  _GetRessources;
 
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
 
-        public static readonly HTTPPath         DefaultURIPrefix                = HTTPPath.Parse("/ext/OCPI");
+        public static readonly HTTPPath         DefaultURLPathPrefix                = HTTPPath.Parse("/ext/OCPI");
 
         #endregion
 
@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region URIPrefix
+        #region URLPathPrefix
 
         /// <summary>
         /// A common URI prefix for all URIs within this API.
@@ -256,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Events
 
-        #region Generic HTTP/SOAP server logging
+        #region Generic HTTP server logging
 
         /// <summary>
         /// An event called whenever a HTTP request came in.
@@ -279,28 +279,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Constructor(s)
 
-        #region GenericAPI(HTTPServerName, ...)
+        #region CommonAPI(HTTPServerName, ...)
 
-        internal GenericAPI(RoamingNetwork        RoamingNetwork,
-                            String                HTTPServerName          = DefaultHTTPServerName,
-                            IPPort?               HTTPServerPort          = null,
-                            HTTPPath?              URIPrefix               = null,
-                            Func<String, Stream>  GetRessources           = null,
+        public CommonAPI(RoamingNetwork        RoamingNetwork,
+                         String                HTTPServerName          = DefaultHTTPServerName,
+                         IPPort?               HTTPServerPort          = null,
+                         HTTPPath?             URLPathPrefix           = null,
+                         Func<String, Stream>  GetRessources           = null,
 
-                            String                ServiceName             = DefaultHTTPServerName,
-                            EMailAddress          APIEMailAddress         = null,
-                            PgpPublicKeyRing      APIPublicKeyRing        = null,
-                            PgpSecretKeyRing      APISecretKeyRing        = null,
-                            String                APIPassphrase           = null,
-                            EMailAddressList      APIAdminEMail           = null,
-                            SMTPClient            APISMTPClient           = null,
+                         String                ServiceName             = DefaultHTTPServerName,
+                         EMailAddress          APIEMailAddress         = null,
+                         PgpPublicKeyRing      APIPublicKeyRing        = null,
+                         PgpSecretKeyRing      APISecretKeyRing        = null,
+                         String                APIPassphrase           = null,
+                         EMailAddressList      APIAdminEMail           = null,
+                         SMTPClient            APISMTPClient           = null,
 
-                            DNSClient             DNSClient               = null,
-                            String                LogfileName             = DefaultLogfileName)
+                         DNSClient             DNSClient               = null,
+                         String                LogfileName             = DefaultLogfileName)
 
             : this(RoamingNetwork,
                    new HTTPServer<RoamingNetworks, RoamingNetwork>(DefaultServerName: DefaultHTTPServerName),
-                   URIPrefix,
+                   URLPathPrefix,
                    GetRessources,
 
                    ServiceName,
@@ -321,25 +321,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GenericAPI(HTTPServer, ...)
+        #region CommonAPI(HTTPServer, ...)
 
         /// <summary>
         /// Initialize the OCPI HTTP server using IPAddress.Any, http port 8080 and maybe start the server.
         /// </summary>
-        internal GenericAPI(RoamingNetwork                               RoamingNetwork,
-                            HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                            HTTPPath?                                     URIPrefix               = null,
-                            Func<String, Stream>                         GetRessources           = null,
+        public CommonAPI(RoamingNetwork                               RoamingNetwork,
+                         HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
+                         HTTPPath?                                    URLPathPrefix           = null,
+                         Func<String, Stream>                         GetRessources           = null,
 
-                            String                                       ServiceName             = DefaultHTTPServerName,
-                            EMailAddress                                 APIEMailAddress         = null,
-                            PgpPublicKeyRing                             APIPublicKeyRing        = null,
-                            PgpSecretKeyRing                             APISecretKeyRing        = null,
-                            String                                       APIPassphrase           = null,
-                            EMailAddressList                             APIAdminEMail           = null,
-                            SMTPClient                                   APISMTPClient           = null,
+                         String                                       ServiceName             = DefaultHTTPServerName,
+                         EMailAddress                                 APIEMailAddress         = null,
+                         PgpPublicKeyRing                             APIPublicKeyRing        = null,
+                         PgpSecretKeyRing                             APISecretKeyRing        = null,
+                         String                                       APIPassphrase           = null,
+                         EMailAddressList                             APIAdminEMail           = null,
+                         SMTPClient                                   APISMTPClient           = null,
 
-                            String                                       LogfileName             = DefaultLogfileName)
+                         String                                       LogfileName             = DefaultLogfileName)
+
+            : base(HTTPServer,
+                   HTTPHostname.Any,
+                   ServiceName
+                   //BaseURL,
+                   //URLPathPrefix,
+                   //HTMLTemplate
+                   )
 
         {
 
@@ -348,16 +356,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (RoamingNetwork == null)
                 throw new ArgumentNullException("RoamingNetwork", "The given parameter must not be null!");
 
-            if (HTTPServer == null)
-                throw new ArgumentNullException("HTTPServer", "The given parameter must not be null!");
-
             #endregion
 
             #region Init data
 
-            this._HTTPServer              = HTTPServer;
+            this._HTTPServer              = HTTPServer ?? throw new ArgumentNullException("HTTPServer", "The given parameter must not be null!");
             this._GetRessources           = GetRessources;
-            this.URLPrefix                = URIPrefix ?? DefaultURIPrefix;
+            this.URLPrefix                = URLPathPrefix ?? DefaultURLPathPrefix;
 
             this._ServiceName             = ServiceName;
             this._APIEMailAddress         = APIEMailAddress;
@@ -393,7 +398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region / (HTTPRoot)
 
             _HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                                URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot",
+                                                URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot",
                                                 Assembly.GetCallingAssembly());
 
             _HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -406,8 +411,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                           HTTPDelegate: async Request => {
 
                                               var _MemoryStream = new MemoryStream();
-                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-                                              typeof(GenericAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.GenericAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+                                              typeof(CommonAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
                                               return new HTTPResponse.Builder(Request) {
                                                   HTTPStatusCode  = HTTPStatusCode.OK,
