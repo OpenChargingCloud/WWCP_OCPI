@@ -38,7 +38,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public class OICPCSOAdapter : ACryptoEMobilityEntity<CSORoamingProvider_Id>,
                                   ICSORoamingProvider,
                                   //ISendAuthenticationData,
-
+                                  
                                   IEquatable<OICPCSOAdapter>,
                                   IComparable<OICPCSOAdapter>,
                                   IComparable
@@ -51,11 +51,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Events
 
+        // from OCPI partner
         public event OnAuthorizeStartRequestDelegate      OnAuthorizeStartRequest;
         public event OnAuthorizeStartResponseDelegate     OnAuthorizeStartResponse;
+
         public event OnAuthorizeStopRequestDelegate       OnAuthorizeStopRequest;
         public event OnAuthorizeStopResponseDelegate      OnAuthorizeStopResponse;
 
+        public event OnNewChargingSessionDelegate         OnNewChargingSession;
+
+        public event OnSendCDRsRequestDelegate            OnChargeDetailRecordRequest;
+        public event OnSendCDRsResponseDelegate           OnChargeDetailRecordResponse;
+        public event OnNewChargeDetailRecordDelegate      OnNewChargeDetailRecord;
+
+
+
+        // from roaming network
         public event OnReserveRequestDelegate             OnReserveRequest;
         public event OnReserveResponseDelegate            OnReserveResponse;
         public event OnNewReservationDelegate             OnNewReservation;
@@ -66,14 +77,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public event OnRemoteStartRequestDelegate         OnRemoteStartRequest;
         public event OnRemoteStartResponseDelegate        OnRemoteStartResponse;
+
         public event OnRemoteStopRequestDelegate          OnRemoteStopRequest;
         public event OnRemoteStopResponseDelegate         OnRemoteStopResponse;
 
-        public event OnNewChargingSessionDelegate         OnNewChargingSession;
 
-        public event OnSendCDRsRequestDelegate            OnChargeDetailRecordRequest;
-        public event OnSendCDRsResponseDelegate           OnChargeDetailRecordResponse;
-        public event OnNewChargeDetailRecordDelegate      OnNewChargeDetailRecord;
+
+
+
 
         public event OnGetCDRsRequestDelegate             OnGetChargeDetailRecordsRequest;
         public event OnGetCDRsResponseDelegate            OnGetChargeDetailRecordsResponse;
