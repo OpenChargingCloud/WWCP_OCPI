@@ -38,7 +38,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public class OICPCSOAdapter : ACryptoEMobilityEntity<CSORoamingProvider_Id>,
                                   ICSORoamingProvider,
                                   //ISendAuthenticationData,
-                                  
                                   IEquatable<OICPCSOAdapter>,
                                   IComparable<OICPCSOAdapter>,
                                   IComparable
@@ -46,6 +45,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     {
 
         #region Properties
+
+        public Boolean DisablePullPOIData { get; set; }
 
         #endregion
 
@@ -105,16 +106,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
 
-        #region Data/Status
+        #region POIData
 
-        public bool DisablePullData { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public Task<EVSEDataPull> PullEVSEData(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, eMobilityProvider_Id? ProviderId = null, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter = null, IEnumerable<Country> CountryCodeFilter = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<POIDataPull<org.GraphDefined.WWCP.EVSE>> PullEVSEData(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, eMobilityProvider_Id? ProviderId = null, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter = null, IEnumerable<Country> CountryCodeFilter = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<EVSEStatusPull> PullEVSEStatus(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, EVSEStatusTypes? EVSEStatusFilter = null, eMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        #endregion
+
+        #region Status
+
+        public Task<StatusPull<EVSEStatus>> PullEVSEStatus(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, EVSEStatusTypes? EVSEStatusFilter = null, eMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
