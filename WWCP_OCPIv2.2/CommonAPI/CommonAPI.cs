@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public const           String          DefaultLogfileName              = "OCPI_HTTPAPI.log";
 
-        public static readonly HTTPPath         DefaultURLPathPrefix                = HTTPPath.Parse("/ext/OCPI");
+        public static readonly HTTPPath        DefaultURLPathPrefix            = HTTPPath.Parse("io/OCPI/");
 
         #endregion
 
