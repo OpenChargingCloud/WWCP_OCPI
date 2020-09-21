@@ -42,19 +42,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// The OCPI HTTP API for Charge Point Operators.
+    /// The HTTP API for charge point operators.
     /// </summary>
     public class CPOAPI : CommonAPI
     {
 
         #region Data
 
-        private static readonly Random  _Random                = new Random();
+        private static readonly Random    _Random                 = new Random();
 
-        public  const           String  DefaultHTTPServerName  = "GraphDefined OCPI CPO HTTP API v0.1";
-        public  static readonly IPPort  DefaultHTTPServerPort  = IPPort.Parse(8080);
+        public  const           String    DefaultHTTPServerName   = "GraphDefined OCPI CPO HTTP API v0.1";
+        public  static readonly IPPort    DefaultHTTPServerPort   = IPPort.Parse(8080);
+        public  static readonly HTTPPath  DefaultURLPathPrefix    = HTTPPath.Parse("/");
 
-        public  const           String  LogfileName            = "OICP_CPO_HTTPAPI.log";
+        public  const           String    LogfileName             = "OICP_CPO_HTTPAPI.log";
 
         #endregion
 
@@ -69,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CPOAPI(RoamingNetwork    RoamingNetwork,
                       String            HTTPServerName    = DefaultHTTPServerName,
                       IPPort?           HTTPServerPort    = null,
-                      HTTPPath?          URIPrefix         = null,
+                      HTTPPath?         URLPathPrefix     = null,
 
                       String            ServiceName       = DefaultHTTPServerName,
                       EMailAddress      APIEMailAddress   = null,
@@ -84,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             : base(RoamingNetwork,
                    HTTPServerName,
                    HTTPServerPort ?? DefaultHTTPServerPort,
-                   URIPrefix      ?? DefaultURIPrefix,
+                   URLPathPrefix  ?? DefaultURLPathPrefix,
                    ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
@@ -114,18 +115,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public CPOAPI(RoamingNetwork                               RoamingNetwork,
                       HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
-                      HTTPPath?                                     URIPrefix         = null,
+                      HTTPPath?                                    URLPathPrefix      = null,
 
-                      String                                       ServiceName       = DefaultHTTPServerName,
-                      EMailAddress                                 APIEMailAddress   = null,
-                      PgpSecretKeyRing                             APISecretKeyRing  = null,
-                      String                                       APIPassphrase     = null,
-                      EMailAddressList                             APIAdminEMail     = null,
-                      SMTPClient                                   APISMTPClient     = null)
+                      String                                       ServiceName        = DefaultHTTPServerName,
+                      EMailAddress                                 APIEMailAddress    = null,
+                      PgpSecretKeyRing                             APISecretKeyRing   = null,
+                      String                                       APIPassphrase      = null,
+                      EMailAddressList                             APIAdminEMail      = null,
+                      SMTPClient                                   APISMTPClient      = null)
 
             : base(RoamingNetwork,
                    HTTPServer,
-                   URIPrefix ?? DefaultURIPrefix,
+                   URLPathPrefix ?? DefaultURLPathPrefix,
                    ResourceName => typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot." + ResourceName),
 
                    ServiceName,
