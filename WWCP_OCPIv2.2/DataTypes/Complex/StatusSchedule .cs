@@ -80,7 +80,187 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region (static) Parse   (JSON, CustomStatusScheduleParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a status schedule.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
+        public static StatusSchedule Parse(JObject                                      JSON,
+                                           CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out StatusSchedule statusSchedule,
+                         out String         ErrorResponse,
+                         CustomStatusScheduleParser))
+            {
+                return statusSchedule;
+            }
+
+            throw new ArgumentException("The given JSON representation of a status schedule is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomStatusScheduleParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a status schedule.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
+        public static StatusSchedule Parse(String                                       Text,
+                                           CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out StatusSchedule statusSchedule,
+                         out String         ErrorResponse,
+                         CustomStatusScheduleParser))
+            {
+                return statusSchedule;
+            }
+
+            throw new ArgumentException("The given text representation of a status schedule is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out StatusSchedule, out ErrorResponse, CustomStatusScheduleParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a status schedule.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="StatusSchedule">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
+        public static Boolean TryParse(JObject                                      JSON,
+                                       out StatusSchedule                           StatusSchedule,
+                                       out String                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
+        {
+
+            try
+            {
+
+                StatusSchedule = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Status    [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("status",
+                                             "status",
+                                             out StatusTypes Status,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Begin     [mandatory]
+
+                if (!JSON.ParseMandatory("period_begin",
+                                         "period begin",
+                                         out DateTime Begin,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse End       [optional]
+
+                if (JSON.ParseOptional("period_end",
+                                       "period end",
+                                       out DateTime? End,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+
+                StatusSchedule = new StatusSchedule(Status,
+                                                    Begin,
+                                                    End);
+
+
+                if (CustomStatusScheduleParser != null)
+                    StatusSchedule = CustomStatusScheduleParser(JSON,
+                                                                StatusSchedule);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                StatusSchedule = default;
+                ErrorResponse  = "The given JSON representation of a status schedule is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out StatusSchedule, out ErrorResponse, CustomStatusScheduleParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a status schedule.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="StatusSchedule">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
+        public static Boolean TryParse(String                                       Text,
+                                       out StatusSchedule                           StatusSchedule,
+                                       out String                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out StatusSchedule,
+                                out ErrorResponse,
+                                CustomStatusScheduleParser);
+
+            }
+            catch (Exception e)
+            {
+                StatusSchedule = default;
+                ErrorResponse  = "The given text representation of a status schedule is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomStatusScheduleSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom StatusSchedule JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<StatusSchedule> CustomStatusScheduleSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -98,6 +278,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             return JSON;
 
         }
+
+        #endregion
 
 
         #region Operator overloading

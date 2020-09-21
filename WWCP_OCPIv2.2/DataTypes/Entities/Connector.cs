@@ -115,6 +115,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// A connector is the socket or cable available for the EV to make use of.
         /// </summary>
+        /// <param name="Id">Identifier of the connector within the EVSE.</param>
+        /// <param name="Standard">The standard of the installed connector.</param>
+        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
+        /// <param name="PowerType">The type of powert at the connector.</param>
+        /// <param name="MaxVoltage">Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
+        /// <param name="MaxAmperage">Maximum amperage of the connector, in ampere [A].</param>
+        /// <param name="MaxElectricPower">Maximum electric power that can be delivered by this connector, in Watts (W).</param>
+        /// <param name="TariffIds">Identifiers of the currently valid charging tariffs.</param>
+        /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
+        /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
         public Connector(Connector_Id            Id,
                          ConnectorTypes          Standard,
                          ConnectorFormats        Format,
@@ -130,36 +140,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            this.Id                   = Id;
-            this.Standard             = Standard;
-            this.Format               = Format;
-            this.PowerType            = PowerType;
-            this.MaxVoltage           = MaxVoltage;
-            this.MaxAmperage          = MaxAmperage;
+            this.Id                  = Id;
+            this.Standard            = Standard;
+            this.Format              = Format;
+            this.PowerType           = PowerType;
+            this.MaxVoltage          = MaxVoltage;
+            this.MaxAmperage         = MaxAmperage;
 
-            this.MaxElectricPower     = MaxElectricPower;
-            this.TariffIds            = TariffIds   ?? new Tariff_Id[0];
-            this.TermsAndConditions   = TermsAndConditions;
+            this.MaxElectricPower    = MaxElectricPower;
+            this.TariffIds           = TariffIds?.Distinct() ?? new Tariff_Id[0];
+            this.TermsAndConditions  = TermsAndConditions?.Trim();
 
-            this.LastUpdated          = LastUpdated ?? DateTime.Now;
+            this.LastUpdated         = LastUpdated ?? DateTime.Now;
 
         }
 
         #endregion
 
 
-        #region (static) Parse   (ConnectorJSON, CustomConnectorParser = null)
+        #region (static) Parse   (JSON, CustomConnectorParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a connector.
         /// </summary>
-        /// <param name="ConnectorJSON">The JSON to parse.</param>
+        /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
-        public static Connector Parse(JObject                                 ConnectorJSON,
+        public static Connector Parse(JObject                                 JSON,
                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
         {
 
-            if (TryParse(ConnectorJSON,
+            if (TryParse(JSON,
                          out Connector connector,
                          out String    ErrorResponse,
                          CustomConnectorParser))
@@ -167,24 +177,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return connector;
             }
 
-            throw new ArgumentException("The given JSON representation of a connector is invalid: " + ErrorResponse, nameof(ConnectorJSON));
+            throw new ArgumentException("The given JSON representation of a connector is invalid: " + ErrorResponse, nameof(JSON));
 
         }
 
         #endregion
 
-        #region (static) Parse   (ConnectorText, CustomConnectorParser = null)
+        #region (static) Parse   (Text, CustomConnectorParser = null)
 
         /// <summary>
         /// Parse the given text representation of a connector.
         /// </summary>
-        /// <param name="ConnectorText">The text to parse.</param>
+        /// <param name="Text">The text to parse.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
-        public static Connector Parse(String                                  ConnectorText,
+        public static Connector Parse(String                                  Text,
                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
         {
 
-            if (TryParse(ConnectorText,
+            if (TryParse(Text,
                          out Connector connector,
                          out String    ErrorResponse,
                          CustomConnectorParser))
@@ -192,22 +202,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return connector;
             }
 
-            throw new ArgumentException("The given text representation of a connector is invalid: " + ErrorResponse, nameof(ConnectorText));
+            throw new ArgumentException("The given text representation of a connector is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
         #endregion
 
-        #region (static) TryParse(ConnectorJSON, out Connector, out ErrorResponse, CustomConnectorParser = null)
+        #region (static) TryParse(JSON, out Connector, out ErrorResponse, CustomConnectorParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a connector.
         /// </summary>
-        /// <param name="ConnectorJSON">The JSON to parse.</param>
+        /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Connector">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
-        public static Boolean TryParse(JObject                                 ConnectorJSON,
+        public static Boolean TryParse(JObject                                 JSON,
                                        out Connector                           Connector,
                                        out String                              ErrorResponse,
                                        CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
@@ -216,9 +226,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                Connector = null;
+                Connector = default;
 
-                if (ConnectorJSON?.HasValues != true)
+                if (JSON?.HasValues != true)
                 {
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
@@ -226,11 +236,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                  [mandatory]
 
-                if (!ConnectorJSON.ParseMandatory("id",
-                                                  "connector identification",
-                                                  Connector_Id.TryParse,
-                                                  out Connector_Id Id,
-                                                  out ErrorResponse))
+                if (!JSON.ParseMandatory("id",
+                                         "connector identification",
+                                         Connector_Id.TryParse,
+                                         out Connector_Id Id,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -239,10 +249,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Standard            [mandatory]
 
-                if (!ConnectorJSON.ParseMandatoryEnum("standard",
-                                                      "connector standard",
-                                                      out ConnectorTypes Standard,
-                                                      out ErrorResponse))
+                if (!JSON.ParseMandatoryEnum("standard",
+                                             "connector standard",
+                                             out ConnectorTypes Standard,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
@@ -251,10 +261,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Format              [mandatory]
 
-                if (!ConnectorJSON.ParseMandatoryEnum("format",
-                                                      "connector format",
-                                                      out ConnectorFormats Format,
-                                                      out ErrorResponse))
+                if (!JSON.ParseMandatoryEnum("format",
+                                             "connector format",
+                                             out ConnectorFormats Format,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
@@ -263,10 +273,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PowerType           [mandatory]
 
-                if (!ConnectorJSON.ParseMandatoryEnum("power_type",
-                                                      "power type",
-                                                      out PowerTypes PowerType,
-                                                      out ErrorResponse))
+                if (!JSON.ParseMandatoryEnum("power_type",
+                                             "power type",
+                                             out PowerTypes PowerType,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
@@ -275,10 +285,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse MaxVoltage          [mandatory]
 
-                if (!ConnectorJSON.ParseMandatory("max_voltage",
-                                                  "max voltage",
-                                                  out UInt16 MaxVoltage,
-                                                  out ErrorResponse))
+                if (!JSON.ParseMandatory("max_voltage",
+                                         "max voltage",
+                                         out UInt16 MaxVoltage,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -287,10 +297,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse MaxAmperage         [mandatory]
 
-                if (!ConnectorJSON.ParseMandatory("max_amperage",
-                                                  "max amperage",
-                                                  out UInt16 MaxAmperage,
-                                                  out ErrorResponse))
+                if (!JSON.ParseMandatory("max_amperage",
+                                         "max amperage",
+                                         out UInt16 MaxAmperage,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -299,10 +309,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse MaxElectricPower    [optional]
 
-                if (ConnectorJSON.ParseOptional("max_electric_power",
-                                                "max voltage",
-                                                out UInt16? MaxElectricPower,
-                                                out ErrorResponse))
+                if (JSON.ParseOptional("max_electric_power",
+                                       "max voltage",
+                                       out UInt16? MaxElectricPower,
+                                       out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -312,13 +322,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MaxElectricPower    [optional]
+                #region Parse TariffIds           [optional]
 
-                if (ConnectorJSON.ParseOptionalHashSet("tariff_ids",
-                                                       "tariff identifications",
-                                                       Tariff_Id.TryParse,
-                                                       out HashSet <Tariff_Id> TariffIds,
-                                                       out ErrorResponse))
+                if (JSON.ParseOptionalJSON("tariff_ids",
+                                           "tariff identifications",
+                                           Tariff_Id.TryParse,
+                                           out IEnumerable<Tariff_Id> TariffIds,
+                                           out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -328,14 +338,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                var TermsAndConditions = ConnectorJSON.GetString("terms_and_conditions");
+                #region TermsAndConditions        [optional]
+
+                var TermsAndConditions = JSON.GetString("terms_and_conditions");
+
+                #endregion
 
                 #region Parse LastUpdated         [mandatory]
 
-                if (!ConnectorJSON.ParseMandatory("last_updated",
-                                                  "last updated",
-                                                  out DateTime LastUpdated,
-                                                  out ErrorResponse))
+                if (!JSON.ParseMandatory("last_updated",
+                                         "last updated",
+                                         out DateTime LastUpdated,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -351,14 +365,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                           MaxAmperage,
 
                                           MaxElectricPower,
-                                          TariffIds,
+                                          TariffIds?.Distinct(),
                                           TermsAndConditions,
 
                                           LastUpdated);
 
 
                 if (CustomConnectorParser != null)
-                    Connector = CustomConnectorParser(ConnectorJSON,
+                    Connector = CustomConnectorParser(JSON,
                                                       Connector);
 
                 return true;
@@ -366,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Connector = null;
+                Connector     = default;
                 ErrorResponse = "The given JSON representation of a connector is invalid: " + e.Message;
                 return false;
             }
@@ -375,16 +389,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(ConnectorText, out Connector, out ErrorResponse, CustomConnectorParser = null)
+        #region (static) TryParse(Text, out Connector, out ErrorResponse, CustomConnectorParser = null)
 
         /// <summary>
         /// Try to parse the given text representation of a connector.
         /// </summary>
-        /// <param name="ConnectorText">The text to parse.</param>
+        /// <param name="Text">The text to parse.</param>
         /// <param name="Connector">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
-        public static Boolean TryParse(String                                  ConnectorText,
+        public static Boolean TryParse(String                                  Text,
                                        out Connector                           Connector,
                                        out String                              ErrorResponse,
                                        CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
@@ -393,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                return TryParse(JObject.Parse(ConnectorText),
+                return TryParse(JObject.Parse(Text),
                                 out Connector,
                                 out ErrorResponse,
                                 CustomConnectorParser);

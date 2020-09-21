@@ -18,12 +18,14 @@
 #region Usings
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
-using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Aegir;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+
+using org.GraphDefined.Vanaheimr.Aegir;
+using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.JSON;
 
 #endregion
 
@@ -43,13 +45,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The location object that contains this EVSE.
+        /// Uniquely identifies the EVSE within the CPOs platform.
         /// </summary>
         [Mandatory]
         public EVSE_UId                          UId                        { get; }
 
         /// <summary>
-        /// The location object that contains this EVSE.
+        /// Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".
         /// </summary>
         /// <remarks>Mandatory within this implementation.</remarks>
         [Mandatory]
@@ -68,13 +70,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public IEnumerable<StatusSchedule>       StatusSchedule             { get; }
 
         /// <summary>
-        /// List of functionalities that the EVSE is capable of.
+        /// Enumeration of functionalities that the EVSE is capable of.
         /// </summary>
         [Optional]
         public IEnumerable<CapabilityTypes>      Capabilities               { get; }
 
         /// <summary>
-        /// List of available connectors at this EVSE.
+        /// Enumeration of available connectors at this EVSE.
         /// </summary>
         [Mandatory]
         public IEnumerable<Connector>            Connectors                 { get; }
@@ -93,32 +95,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public String                            FloorLevel                 { get; }
 
         /// <summary>
-        /// The geographical location of this EVSE.
+        /// An optional geographical location of this EVSE.
         /// </summary>
         [Optional]
         public GeoCoordinate?                    Coordinates                { get; }
 
         /// <summary>
-        /// A number/string printed on the outside of the EVSE for visual identification. // 16
+        /// An optional number/string printed on the outside of the EVSE for visual identification. // 16
         /// </summary>
         [Optional]
         public String                            PhysicalReference          { get; }
 
         /// <summary>
-        /// Multi-language human-readable directions when more detailed
+        /// Optional multi-language human-readable directions when more detailed
         /// information on how to reach the EVSE from the location is required.
         /// </summary>
         [Optional]
         public I18NString                        Directions                 { get; }
 
         /// <summary>
-        /// The restrictions that apply to the parking spot.
+        /// Optional restrictions that apply to the parking spot.
         /// </summary>
         [Optional]
         public IEnumerable<ParkingRestrictions>  ParkingRestrictions        { get; }
 
         /// <summary>
-        /// Links to images related to the EVSE such as photos or logos.
+        /// Optional links to images related to the EVSE such as photos or logos.
         /// </summary>
         [Optional]
         public IEnumerable<Image>                Images                     { get; }
@@ -136,6 +138,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The EVSE object describes the part that controls the power supply to a single EV in a single session.
         /// </summary>
+        /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
+        /// <param name="Id">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
+        /// <param name="Status">Indicates the current status of the EVSE.</param>
+        /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
+        /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
+        /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
+        /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
+        /// <param name="Coordinates">An optional geographical location of this EVSE.</param>
+        /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
+        /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
+        /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
+        /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+        /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
         public EVSE(EVSE_UId                          UId,
                     EVSE_Id                           Id,
                     StatusTypes                       Status,
@@ -176,7 +191,293 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
 
-        public JObject ToJSON()
+        #region (static) Parse   (JSON, CustomEVSEParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an EVSE.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
+        public static EVSE Parse(JObject                            JSON,
+                                 CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out EVSE   evse,
+                         out String ErrorResponse,
+                         CustomEVSEParser))
+            {
+                return evse;
+            }
+
+            throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomEVSEParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an EVSE.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
+        public static EVSE Parse(String                             Text,
+                                 CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out EVSE   evse,
+                         out String ErrorResponse,
+                         CustomEVSEParser))
+            {
+                return evse;
+            }
+
+            throw new ArgumentException("The given text representation of an EVSE is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out EVSE, out ErrorResponse, CustomEVSEParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an EVSE.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EVSE">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
+        public static Boolean TryParse(JObject                            JSON,
+                                       out EVSE                           EVSE,
+                                       out String                         ErrorResponse,
+                                       CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        {
+
+            try
+            {
+
+                EVSE = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse UId                [mandatory]
+
+                if (!JSON.ParseMandatory("uid",
+                                         "internal EVSE identification",
+                                         EVSE_UId.TryParse,
+                                         out EVSE_UId UId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Id                 [mandatory]
+
+                if (!JSON.ParseMandatory("id",
+                                         "offical EVSE identification",
+                                         EVSE_Id.TryParse,
+                                         out EVSE_Id Id,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Status             [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("status",
+                                             "EVSE status",
+                                             out StatusTypes Status,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Connectors         [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("connectors",
+                                             "connectors",
+                                             Connector.TryParse,
+                                             out IEnumerable<Connector> Connectors,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse StatusSchedule     [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("status_schedule",
+                                             "status schedule",
+                                             OCPIv2_2.StatusSchedule.TryParse,
+                                             out IEnumerable<StatusSchedule> StatusSchedule,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxVoltage          [mandatory]
+
+                if (!JSON.ParseMandatory("max_voltage",
+                                                  "max voltage",
+                                                  out UInt16 MaxVoltage,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxAmperage         [mandatory]
+
+                if (!JSON.ParseMandatory("max_amperage",
+                                                  "max amperage",
+                                                  out UInt16 MaxAmperage,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxElectricPower    [optional]
+
+                if (JSON.ParseOptional("max_electric_power",
+                                                "max voltage",
+                                                out UInt16? MaxElectricPower,
+                                                out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse MaxElectricPower    [optional]
+
+                if (JSON.ParseOptionalHashSet("tariff_ids",
+                                                       "tariff identifications",
+                                                       Tariff_Id.TryParse,
+                                                       out HashSet <Tariff_Id> TariffIds,
+                                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                var TermsAndConditions = JSON.GetString("terms_and_conditions");
+
+                #region Parse LastUpdated         [mandatory]
+
+                if (!JSON.ParseMandatory("last_updated",
+                                                  "last updated",
+                                                  out DateTime LastUpdated,
+                                                  out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                EVSE = new EVSE(UId,
+                                Id,
+                                Status,
+                                Connectors,
+
+                                StatusSchedule?.Distinct(),
+                                Capabilities,
+                                FloorLevel,
+                                Coordinates,
+                                PhysicalReference,
+                                Directions,
+                                ParkingRestrictions,
+                                Images,
+
+                                LastUpdated);
+
+
+                if (CustomEVSEParser != null)
+                    EVSE = CustomEVSEParser(JSON,
+                                                      EVSE);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                EVSE          = default;
+                ErrorResponse = "The given JSON representation of an EVSE is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out EVSE, out ErrorResponse, CustomEVSEParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an EVSE.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="EVSE">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
+        public static Boolean TryParse(String                             Text,
+                                       out EVSE                           EVSE,
+                                       out String                         ErrorResponse,
+                                       CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out EVSE,
+                                out ErrorResponse,
+                                CustomEVSEParser);
+
+            }
+            catch (Exception e)
+            {
+                EVSE      = null;
+                ErrorResponse  = "The given text representation of an EVSE is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomEVSESerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE> CustomEVSESerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -228,9 +529,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomEVSESerializer != null
+                       ? CustomEVSESerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region IEnumerable<Connectors> Members
