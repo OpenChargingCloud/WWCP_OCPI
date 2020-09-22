@@ -190,20 +190,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
 
-        #region (static) Parse   (JSON, CustomEVSEParser = null)
+        #region (static) Parse   (JSON, EVSEUIdURL = null, CustomEVSEParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of an EVSE.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
         public static EVSE Parse(JObject                            JSON,
+                                 EVSE_UId?                          EVSEUIdURL         = null,
                                  CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
         {
 
             if (TryParse(JSON,
                          out EVSE   evse,
                          out String ErrorResponse,
+                         EVSEUIdURL,
                          CustomEVSEParser))
             {
                 return evse;
@@ -215,20 +218,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Parse   (Text, CustomEVSEParser = null)
+        #region (static) Parse   (Text, EVSEUIdURL = null, CustomEVSEParser = null)
 
         /// <summary>
         /// Parse the given text representation of an EVSE.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
+        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
         public static EVSE Parse(String                             Text,
+                                 EVSE_UId?                          EVSEUIdURL         = null,
                                  CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
         {
 
             if (TryParse(Text,
                          out EVSE   evse,
                          out String ErrorResponse,
+                         EVSEUIdURL,
                          CustomEVSEParser))
             {
                 return evse;
@@ -240,18 +246,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(JSON, out EVSE, out ErrorResponse, CustomEVSEParser = null)
+        #region (static) TryParse(JSON, out EVSE, out ErrorResponse, EVSEUIdURL = null, CustomEVSEParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of an EVSE.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="EVSE">The parsed connector.</param>
+        /// <param name="EVSE">The parsed EVSE.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
         public static Boolean TryParse(JObject                            JSON,
                                        out EVSE                           EVSE,
                                        out String                         ErrorResponse,
+                                       EVSE_UId?                          EVSEUIdURL         = null,
                                        CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
         {
 
@@ -266,14 +274,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse UId                  [mandatory]
+                #region Parse UId                  [optional]
 
-                if (!JSON.ParseMandatory("uid",
-                                         "internal EVSE identification",
-                                         EVSE_UId.TryParse,
-                                         out EVSE_UId UId,
-                                         out ErrorResponse))
+                if (JSON.ParseOptionalStruct("uid",
+                                             "internal EVSE identification",
+                                             EVSE_UId.TryParse,
+                                             out EVSE_UId? EVSEUIdBody,
+                                             out ErrorResponse))
                 {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                if (!EVSEUIdURL.HasValue && !EVSEUIdBody.HasValue)
+                {
+                    ErrorResponse = "The EVSE identification is missing!";
+                    return false;
+                }
+
+                if (EVSEUIdURL.HasValue && EVSEUIdBody.HasValue && EVSEUIdURL.Value != EVSEUIdBody.Value)
+                {
+                    ErrorResponse = "The optional EVSE identification given within the JSON body does not match the one given in the URL!";
                     return false;
                 }
 
@@ -306,11 +329,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Connectors           [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("connectors",
-                                             "connectors",
-                                             Connector.TryParse,
-                                             out IEnumerable<Connector> Connectors,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON<Connector, Connector_Id>("connectors",
+                                                                      "connectors",
+                                                                      Connector.TryParse,
+                                                                      out IEnumerable<Connector> Connectors,
+                                                                      out ErrorResponse))
                 {
                     return false;
                 }
@@ -427,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                EVSE = new EVSE(UId,
+                EVSE = new EVSE(EVSEUIdBody ?? EVSEUIdURL.Value,
                                 Id,
                                 Status,
                                 Connectors,
@@ -462,18 +485,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out EVSE, out ErrorResponse, CustomEVSEParser = null)
+        #region (static) TryParse(Text, out EVSE, out ErrorResponse, EVSEUIdURL = null, CustomEVSEParser = null)
 
         /// <summary>
         /// Try to parse the given text representation of an EVSE.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
-        /// <param name="EVSE">The parsed connector.</param>
+        /// <param name="EVSE">The parsed EVSE.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
         public static Boolean TryParse(String                             Text,
                                        out EVSE                           EVSE,
                                        out String                         ErrorResponse,
+                                       EVSE_UId?                          EVSEUIdURL         = null,
                                        CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
         {
 
@@ -483,6 +508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return TryParse(JObject.Parse(Text),
                                 out EVSE,
                                 out ErrorResponse,
+                                EVSEUIdURL,
                                 CustomEVSEParser);
 
             }
@@ -569,6 +595,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+
+        public Boolean TryGetConnector(Connector_Id   ConnectorId,
+                                       out Connector  Connector)
+        {
+
+            Connector = null;
+            return false;
+
+        }
 
         #region IEnumerable<Connectors> Members
 

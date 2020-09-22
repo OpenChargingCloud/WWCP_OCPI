@@ -306,6 +306,180 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Parse   (JSON, LocationIdURL = null, CustomLocationParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an Location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static Location Parse(JObject                                JSON,
+                                     Location_Id?                           LocationIdURL          = null,
+                                     CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out Location location,
+                         out String   ErrorResponse,
+                         LocationIdURL,
+                         CustomLocationParser))
+            {
+                return location;
+            }
+
+            throw new ArgumentException("The given JSON representation of a location is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, LocationIdURL = null, CustomLocationParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an Location.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static Location Parse(String                                 Text,
+                                     Location_Id?                           LocationIdURL          = null,
+                                     CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out Location location,
+                         out String   ErrorResponse,
+                         LocationIdURL,
+                         CustomLocationParser))
+            {
+                return location;
+            }
+
+            throw new ArgumentException("The given text representation of a location is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out Location, out ErrorResponse, LocationIdURL = null, CustomLocationParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an Location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="Location">The parsed location.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static Boolean TryParse(JObject                                JSON,
+                                       out Location                           Location,
+                                       out String                             ErrorResponse,
+                                       Location_Id?                           LocationIdURL          = null,
+                                       CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        {
+
+            try
+            {
+
+                Location = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Id                  [optional]
+
+                if (JSON.ParseOptionalStruct("id",
+                                             "location identification",
+                                             Location_Id.TryParse,
+                                             out Location_Id? LocationIdBody,
+                                             out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                if (!LocationIdURL.HasValue && !LocationIdBody.HasValue)
+                {
+                    ErrorResponse = "The location identification is missing!";
+                    return false;
+                }
+
+                if (LocationIdURL.HasValue && LocationIdBody.HasValue && LocationIdURL.Value != LocationIdBody.Value)
+                {
+                    ErrorResponse = "The optional location identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+
+
+
+
+                ErrorResponse = null;
+
+                if (CustomLocationParser != null)
+                    Location = CustomLocationParser(JSON,
+                                            Location);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Location           = default;
+                ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out Location, out ErrorResponse, LocationIdURL = null, CustomLocationParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an Location.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="Location">The parsed location.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static Boolean TryParse(String                                 Text,
+                                       out Location                           Location,
+                                       out String                             ErrorResponse,
+                                       Location_Id?                           LocationIdURL          = null,
+                                       CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out Location,
+                                out ErrorResponse,
+                                LocationIdURL,
+                                CustomLocationParser);
+
+            }
+            catch (Exception e)
+            {
+                Location      = null;
+                ErrorResponse  = "The given text representation of a location is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
         #region ToJSON(CustomLocationSerializer = null, CustomEVSESerializer = null, ...)
 
         /// <summary>
@@ -423,6 +597,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        public Boolean TryGetEVSE(EVSE_UId  EVSEId,
+                                  out EVSE  EVSE)
+        {
+
+            EVSE = null;
+            return false;
+
+        }
 
         #region IEnumerable<EVSE> Members
 

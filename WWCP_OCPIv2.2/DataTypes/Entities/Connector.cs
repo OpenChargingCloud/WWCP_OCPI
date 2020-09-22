@@ -157,20 +157,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomConnectorParser = null)
+        #region (static) Parse   (JSON, ConnectorIdURL = null, CustomConnectorParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a connector.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Connector Parse(JObject                                 JSON,
+                                      Connector_Id?                           ConnectorIdURL          = null,
                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
         {
 
             if (TryParse(JSON,
                          out Connector connector,
                          out String    ErrorResponse,
+                         ConnectorIdURL,
                          CustomConnectorParser))
             {
                 return connector;
@@ -182,20 +185,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Parse   (Text, CustomConnectorParser = null)
+        #region (static) Parse   (Text, ConnectorIdURL = null, CustomConnectorParser = null)
 
         /// <summary>
         /// Parse the given text representation of a connector.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
+        /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Connector Parse(String                                  Text,
+                                      Connector_Id?                           ConnectorIdURL          = null,
                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
         {
 
             if (TryParse(Text,
                          out Connector connector,
                          out String    ErrorResponse,
+                         ConnectorIdURL,
                          CustomConnectorParser))
             {
                 return connector;
@@ -207,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(JSON, out Connector, out ErrorResponse, CustomConnectorParser = null)
+        #region (static) TryParse(JSON, out Connector, out ErrorResponse, ConnectorIdURL = null, CustomConnectorParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a connector.
@@ -215,10 +221,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Connector">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
                                        out Connector                           Connector,
                                        out String                              ErrorResponse,
+                                       Connector_Id?                           ConnectorIdURL          = null,
                                        CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
         {
 
@@ -235,12 +243,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                  [mandatory]
 
-                if (!JSON.ParseMandatory("id",
-                                         "connector identification",
-                                         Connector_Id.TryParse,
-                                         out Connector_Id Id,
-                                         out ErrorResponse))
+                if (JSON.ParseOptionalStruct("id",
+                                             "connector identification",
+                                             Connector_Id.TryParse,
+                                             out Connector_Id? ConnectorIdBody,
+                                             out ErrorResponse))
                 {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                if (!ConnectorIdURL.HasValue && !ConnectorIdBody.HasValue)
+                {
+                    ErrorResponse = "The connector identification is missing!";
+                    return false;
+                }
+
+                if (ConnectorIdURL.HasValue && ConnectorIdBody.HasValue && ConnectorIdURL.Value != ConnectorIdBody.Value)
+                {
+                    ErrorResponse = "The optional connector identification given within the JSON body does not match the one given in the URL!";
                     return false;
                 }
 
@@ -356,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                Connector = new Connector(Id,
+                Connector = new Connector(ConnectorIdBody ?? ConnectorIdURL.Value,
                                           Standard,
                                           Format,
                                           PowerType,
@@ -388,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out Connector, out ErrorResponse, CustomConnectorParser = null)
+        #region (static) TryParse(Text, out Connector, out ErrorResponse, ConnectorIdURL = null, CustomConnectorParser = null)
 
         /// <summary>
         /// Try to parse the given text representation of a connector.
@@ -396,10 +419,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="Connector">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
         public static Boolean TryParse(String                                  Text,
                                        out Connector                           Connector,
                                        out String                              ErrorResponse,
+                                       Connector_Id?                           ConnectorIdURL          = null,
                                        CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
         {
 
@@ -409,6 +434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return TryParse(JObject.Parse(Text),
                                 out Connector,
                                 out ErrorResponse,
+                                ConnectorIdURL,
                                 CustomConnectorParser);
 
             }

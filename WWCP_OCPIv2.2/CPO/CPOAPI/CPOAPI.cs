@@ -74,8 +74,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
-        public Func<IEnumerable<Location>>  LocationsProvider    { get; set; }
-
         #endregion
 
         #region Constructor(s)
@@ -269,25 +267,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
-                                             var from                         = Request.QueryString.GetDateTime("date_from");
-                                             var to                           = Request.QueryString.GetDateTime("date_to");
-                                             var offset                       = Request.QueryString.GetUInt64("offset");
-                                             var limit                        = Request.QueryString.GetUInt64("limit");
+                                             var from       = Request.QueryString.GetDateTime("date_from");
+                                             var to         = Request.QueryString.GetDateTime("date_to");
+                                             var offset     = Request.QueryString.GetUInt64  ("offset");
+                                             var limit      = Request.QueryString.GetUInt64  ("limit");
 
 
-
+                                             // Link             Link to the 'next' page should be provided when this is NOT the last page.
                                              // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
                                              // X-Limit          The maximum number of objects that the server WILL return.
 
+                                             var locations  = GetLocations().
+                                                                  Where(location => !from.HasValue || location.LastUpdated >  from.Value).
+                                                                  Where(location => !to.  HasValue || location.LastUpdated <= to.  Value).
+                                                                  SkipTakeFilter(offset, limit).
+                                                                  ToArray();
+
+                                             var JSON       = new JArray(locations);
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
                                                  Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = JSONArray.Create(
-                                                                       LocationsProvider().Select(location => location.ToJSON())
-                                                                   ).ToUTF8Bytes(),
+                                                 ContentType     = HTTPContentType.JSON_UTF8,
+                                                 Content         = JSON.ToUTF8Bytes(),
                                                  Connection      = "close"
                                              };
 
@@ -303,23 +306,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
+                                             #region Check LocationId URI parameter
+
+                                             if (!Request.ParseLocation(this,
+                                                                        out Location_Id?  LocationId,
+                                                                        out Location      Location,
+                                                                        out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+                                             var JSON = Location.ToJSON();
+
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
                                                  Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = JSONObject.Create(
-                                                                       new JProperty("version",  "2.2"),
-                                                                       new JProperty("endpoints", new JArray(
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "credentials"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/credentials/")
-                                                                           ),
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "locations"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/locations/")
-                                                                           )
-                                                                   ))).ToUTF8Bytes(),
+                                                 ContentType     = HTTPContentType.JSON_UTF8,
+                                                 Content         = JSON.ToUTF8Bytes(),
                                                  Connection      = "close"
                                              };
 
@@ -335,24 +341,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
+                                             #region Check LocationId & EVSEUId URI parameter
+
+                                             if (!Request.ParseLocationEVSE(this,
+                                                                            out Location_Id?  LocationId,
+                                                                            out Location      Location,
+                                                                            out EVSE_UId?     EVSEId,
+                                                                            out EVSE          EVSE,
+                                                                            out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             var JSON = EVSE.ToJSON();
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
                                                  Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = JSONObject.Create(
-                                                                       new JProperty("version",  "2.2"),
-                                                                       new JProperty("endpoints", new JArray(
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "credentials"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/credentials/")
-                                                                           ),
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "locations"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/locations/")
-                                                                           )
-                                                                   ))).ToUTF8Bytes(),
+                                                 ContentType     = HTTPContentType.JSON_UTF8,
+                                                 Content         = JSON.ToUTF8Bytes(),
                                                  Connection      = "close"
                                              };
 
@@ -368,24 +379,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
+                                             #region Check LocationId & EVSEUId URI parameter
+
+                                             if (!Request.ParseLocationEVSEConnector(this,
+                                                                                     out Location_Id?   LocationId,
+                                                                                     out Location       Location,
+                                                                                     out EVSE_UId?      EVSEId,
+                                                                                     out EVSE           EVSE,
+                                                                                     out Connector_Id?  ConnectorId,
+                                                                                     out Connector      Connector,
+                                                                                     out HTTPResponse   HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             var JSON = Connector.ToJSON();
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
                                                  Server          = DefaultHTTPServerName,
                                                  Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = JSONObject.Create(
-                                                                       new JProperty("version",  "2.2"),
-                                                                       new JProperty("endpoints", new JArray(
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "credentials"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/credentials/")
-                                                                           ),
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "locations"),
-                                                                               new JProperty("url",        "http://" + Request.Host + "/cpo/locations/")
-                                                                           )
-                                                                   ))).ToUTF8Bytes(),
+                                                 ContentType     = HTTPContentType.JSON_UTF8,
+                                                 Content         = JSON.ToUTF8Bytes(),
                                                  Connection      = "close"
                                              };
 
