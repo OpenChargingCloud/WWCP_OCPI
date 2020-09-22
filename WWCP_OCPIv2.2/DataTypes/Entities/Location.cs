@@ -315,6 +315,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Location Parse(JObject                                JSON,
+                                     CountryCode?                           CountryCodeURL         = null,
+                                     Party_Id?                              PartyIdURL             = null,
                                      Location_Id?                           LocationIdURL          = null,
                                      CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
         {
@@ -322,6 +324,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (TryParse(JSON,
                          out Location location,
                          out String   ErrorResponse,
+                         CountryCodeURL,
+                         PartyIdURL,
                          LocationIdURL,
                          CustomLocationParser))
             {
@@ -343,6 +347,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Location Parse(String                                 Text,
+                                     CountryCode?                           CountryCodeURL         = null,
+                                     Party_Id?                              PartyIdURL             = null,
                                      Location_Id?                           LocationIdURL          = null,
                                      CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
         {
@@ -350,6 +356,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (TryParse(Text,
                          out Location location,
                          out String   ErrorResponse,
+                         CountryCodeURL,
+                         PartyIdURL,
                          LocationIdURL,
                          CustomLocationParser))
             {
@@ -375,6 +383,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(JObject                                JSON,
                                        out Location                           Location,
                                        out String                             ErrorResponse,
+                                       CountryCode?                           CountryCodeURL         = null,
+                                       Party_Id?                              PartyIdURL             = null,
                                        Location_Id?                           LocationIdURL          = null,
                                        CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
         {
@@ -389,6 +399,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
                 }
+
+                #region Parse CountryCode                  [optional]
+
+                if (JSON.ParseOptionalStruct("country_code",
+                                             "country code",
+                                             CountryCode.TryParse,
+                                             out CountryCode? CountryCodeBody,
+                                             out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
+                {
+                    ErrorResponse = "The country code is missing!";
+                    return false;
+                }
+
+                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
+                {
+                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyIdURL                  [optional]
+
+                if (JSON.ParseOptionalStruct("party_id",
+                                             "party identification",
+                                             Party_Id.TryParse,
+                                             out Party_Id? PartyIdBody,
+                                             out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
+                {
+                    ErrorResponse = "The party identification is missing!";
+                    return false;
+                }
+
+                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
+                {
+                    ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
 
                 #region Parse Id                  [optional]
 
@@ -418,22 +484,158 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse Publish           [mandatory]
+
+                if (!JSON.ParseMandatory("publish",
+                                         "publish",
+                                         out Boolean Publish,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Address           [mandatory]
+
+                if (!JSON.ParseMandatoryText("address",
+                                             "address",
+                                             out String Address,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse City           [mandatory]
+
+                if (!JSON.ParseMandatoryText("city",
+                                             "city",
+                                             out String City,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Country           [mandatory]
+
+                if (!JSON.ParseMandatoryText("country",
+                                             "country",
+                                             out String Country,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Timezone           [mandatory]
+
+                if (!JSON.ParseMandatoryText("timezone",
+                                             "timezone",
+                                             out String Timezone,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                //PlublishAllowTo
+
+                #region Parse Name           [mandatory]
+
+                if (!JSON.ParseMandatoryText("name",
+                                             "name",
+                                             out String Name,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PostalCode           [mandatory]
+
+                if (!JSON.ParseMandatoryText("postal_code",
+                                             "postal code",
+                                             out String PostalCode,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse State           [mandatory]
+
+                if (!JSON.ParseMandatoryText("state",
+                                             "state",
+                                             out String State,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
 
 
 
 
-                ErrorResponse = null;
+
+                #region Parse LastUpdated          [mandatory]
+
+                if (!JSON.ParseMandatory("last_updated",
+                                         "last updated",
+                                         out DateTime LastUpdated,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                Location = new Location(CountryCodeBody ?? CountryCodeURL.Value,
+                                        PartyIdBody     ?? PartyIdURL.Value,
+                                        LocationIdBody  ?? LocationIdURL.Value,
+                                        Publish,
+                                        Address,
+                                        City,
+                                        Country,
+                                        default,
+                                        Timezone,
+                                        null,
+                                        Name,
+                                        PostalCode,
+                                        State,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        LastUpdated);
 
                 if (CustomLocationParser != null)
                     Location = CustomLocationParser(JSON,
-                                            Location);
+                                                    Location);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                Location           = default;
+                Location       = default;
                 ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
                 return false;
             }
@@ -455,6 +657,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String                                 Text,
                                        out Location                           Location,
                                        out String                             ErrorResponse,
+                                       CountryCode?                           CountryCodeURL         = null,
+                                       Party_Id?                              PartyIdURL             = null,
                                        Location_Id?                           LocationIdURL          = null,
                                        CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
         {
@@ -465,6 +669,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return TryParse(JObject.Parse(Text),
                                 out Location,
                                 out ErrorResponse,
+                                CountryCodeURL,
+                                PartyIdURL,
                                 LocationIdURL,
                                 CustomLocationParser);
 

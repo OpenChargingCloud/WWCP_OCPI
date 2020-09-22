@@ -1679,6 +1679,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+
+        public static JObject CreateResponse(this JObject  Data,
+                                             UInt32        ErrorCode,
+                                             String        StatusMessage,
+                                             DateTime      Timestamp)
+
+            => new JObject(
+                   new JProperty("data",            Data),
+                   new JProperty("status_code",     ErrorCode),
+                   new JProperty("status_message",  StatusMessage),
+                   new JProperty("timestamp",       Timestamp.ToIso8601())
+               );
+
+        public static JObject CreateResponse(this JArray  Data,
+                                             UInt32       ErrorCode,
+                                             String       StatusMessage,
+                                             DateTime     Timestamp)
+
+            => new JObject(
+                   new JProperty("data",            Data),
+                   new JProperty("status_code",     ErrorCode),
+                   new JProperty("status_message",  StatusMessage),
+                   new JProperty("timestamp",       Timestamp.ToIso8601())
+               );
+
     }
 
 

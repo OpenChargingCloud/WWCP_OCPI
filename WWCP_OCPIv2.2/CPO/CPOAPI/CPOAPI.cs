@@ -283,7 +283,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                   SkipTakeFilter(offset, limit).
                                                                   ToArray();
 
-                                             var JSON       = new JArray(locations);
+                                             var JSON       = new JArray(locations).
+                                                                  CreateResponse(1000,
+                                                                                 "",
+                                                                                 DateTime.UtcNow);
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
@@ -318,7 +321,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              #endregion
 
-                                             var JSON = Location.ToJSON();
+                                             var JSON = Location.ToJSON().
+                                                                 CreateResponse(1000,
+                                                                                "",
+                                                                                DateTime.UtcNow);
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
@@ -356,7 +362,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             var JSON = EVSE.ToJSON();
+                                             var JSON = EVSE.ToJSON().
+                                                             CreateResponse(1000,
+                                                                            "",
+                                                                            DateTime.UtcNow);
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
@@ -396,7 +405,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             var JSON = Connector.ToJSON();
+                                             var JSON = Connector.ToJSON().
+                                                                  CreateResponse(1000,
+                                                                                 "",
+                                                                                 DateTime.UtcNow);
 
                                              return new HTTPResponse.Builder(Request) {
                                                  HTTPStatusCode  = HTTPStatusCode.OK,
