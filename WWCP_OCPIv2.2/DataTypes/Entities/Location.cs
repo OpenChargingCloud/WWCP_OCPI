@@ -18,9 +18,11 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -304,7 +306,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region ToJSON(CustomLocationSerializer = null, CustomEVSESerializer = null, ...)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom Connector JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
+                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
+                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
+                              CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
+                              CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
+                              CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
         {
 
             var JSON = JSONObject.Create(
@@ -315,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("publish",                         Publish),
 
                            Publish == false && PublishAllowedTo.SafeAny()
-                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(pub => pub.ToJSON())))
+                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
                                : null,
 
                            Name.IsNotNullOrEmpty()
@@ -340,7 +362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                             )),
 
                            RelatedLocations.SafeAny()
-                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(loc => loc.ToJSON())))
+                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(location => location.ToJSON(CustomAdditionalGeoLocationSerializer))))
                                : null,
 
                            ParkingType.HasValue
@@ -348,7 +370,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            EVSEs.SafeAny()
-                               ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON())))
+                               ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
+                                                                                                                        CustomStatusScheduleSerializer,
+                                                                                                                        CustomConnectorSerializer))))
                                : null,
 
                            Directions.IsNeitherNullNorEmpty()
@@ -356,15 +380,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            Operator != null
-                               ? new JProperty("operator",                  Operator.   ToJSON())
+                               ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            SubOperator != null
-                               ? new JProperty("suboperator",               SubOperator.ToJSON())
+                               ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            Owner != null
-                               ? new JProperty("owner",                     Owner.      ToJSON())
+                               ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            Facilities.SafeAny()
@@ -380,7 +404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            Images.SafeAny()
-                               ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON())))
+                               ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
                                : null,
 
                            EnergyMix != null
@@ -391,9 +415,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomLocationSerializer != null
+                       ? CustomLocationSerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region IEnumerable<EVSE> Members
@@ -431,14 +459,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Location">An Location to compare with.</param>
         public Int32 CompareTo(Location Location)
-        {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location),  "The given chargiong location must not be null!");
-
-            return Id.CompareTo(Location.Id);
-
-        }
+            => !(Location is null)
+                   ? Id.CompareTo(Location.Id)
+                   : throw new ArgumentNullException(nameof(Location),
+                                                     "The given charging location must not be null!");
 
         #endregion
 

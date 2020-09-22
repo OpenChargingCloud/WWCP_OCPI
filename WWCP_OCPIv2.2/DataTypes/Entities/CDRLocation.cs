@@ -186,7 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (CDRLocation is null)
-                throw new ArgumentNullException(nameof(CDRLocation),  "The given chargiong location must not be null!");
+                throw new ArgumentNullException(nameof(CDRLocation),  "The given charging location must not be null!");
 
             return Id.CompareTo(CDRLocation.Id);
 

@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.JSON;
 
 #endregion
 
@@ -32,7 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// A connector is the socket or cable available for the EV to make use of.
+    /// A connector is the socket or cable available for the electric vehicle to make use of.
     /// </summary>
     public class Connector : IHasId<Connector_Id>,
                              IEquatable<Connector>,
@@ -113,7 +112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// A connector is the socket or cable available for the EV to make use of.
+        /// A connector is the socket or cable available for the electric vehicle to make use of.
         /// </summary>
         /// <param name="Id">Identifier of the connector within the EVSE.</param>
         /// <param name="Standard">The standard of the installed connector.</param>
@@ -429,7 +428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom Connector JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Connector> CustomConnectorSerializer = null)
         {
 
@@ -491,14 +490,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Connector">An Connector to compare with.</param>
         public Int32 CompareTo(Connector Connector)
-        {
 
-            if (Connector is null)
-                throw new ArgumentNullException("The given Connector must not be null!");
-
-            return Id.CompareTo(Connector.Id);
-
-        }
+            => !(Connector is null)
+                   ? Id.CompareTo(Connector.Id)
+                   : throw new ArgumentNullException(nameof(Connector),
+                                                     "The given connector must not be null!");
 
         #endregion
 

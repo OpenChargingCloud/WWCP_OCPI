@@ -189,31 +189,70 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON()
+        #region ToJSON(CustomTariffRestrictionsSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        public JObject ToJSON()
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffRestrictions> CustomTariffRestrictionsSerializer = null)
         {
 
             var JSON = JSONObject.Create(
-                           //new JProperty("type",       _Type.    ToString()),
-                           //new JProperty("type", _Type.ToString()),
-                           //new JProperty("price",      _Price.   ToString()),
 
-                           StartTime.HasValue ? new JProperty("start_time",  StartTime.Value.ToString())       : null,
-                           EndTime.  HasValue ? new JProperty("end_time",    EndTime.  Value.ToString())       : null,
+                           StartTime.HasValue
+                               ? new JProperty("start_time",    StartTime.  Value.ToString())
+                               : null,
 
-                           MinkWh.   HasValue ? new JProperty("min_kWh",     MinkWh.   Value.ToString("0.00")) : null,
-                           MaxkWh.   HasValue ? new JProperty("max_kWh",     MaxkWh.   Value.ToString("0.00")) : null,
+                           EndTime.  HasValue
+                               ? new JProperty("end_time",      EndTime.    Value.ToString())
+                               : null,
 
-                           MinPower. HasValue ? new JProperty("min_power",   MinPower. Value.ToString("0.00")) : null,
-                           MaxPower. HasValue ? new JProperty("max_power",   MaxPower. Value.ToString("0.00")) : null,
+                           StartDate.HasValue
+                               ? new JProperty("start_date",    StartDate.  Value.ToString("yyyy-MM-dd"))
+                               : null,
 
-                           DayOfWeek.Any() ? new JProperty("day_of_week", new JArray(DayOfWeek.Select(day => day.ToString().ToUpper()))) : null);
+                           EndDate.HasValue
+                               ? new JProperty("end_date",      EndDate.    Value.ToString("yyyy-MM-dd"))
+                               : null,
 
-            return JSON;
+                           MinkWh.   HasValue
+                               ? new JProperty("min_kWh",       MinkWh.     Value)
+                               : null,
+
+                           MaxkWh.   HasValue
+                               ? new JProperty("max_kWh",       MaxkWh.     Value)
+                               : null,
+
+                           MinPower. HasValue
+                               ? new JProperty("min_power",     MinPower.   Value)
+                               : null,
+
+                           MaxPower. HasValue
+                               ? new JProperty("max_power",     MaxPower.   Value)
+                               : null,
+
+                           MinDuration.HasValue
+                               ? new JProperty("min_duration",  MinDuration.Value.TotalSeconds)
+                               : null,
+
+                           MaxDuration.HasValue
+                               ? new JProperty("max_duration",  MaxDuration.Value.TotalSeconds)
+                               : null,
+
+                           DayOfWeek.SafeAny()
+                               ? new JProperty("day_of_week",   new JArray(DayOfWeek.Select(day => day.ToString().ToUpper())))
+                               : null,
+
+                           Reservation.HasValue
+                               ? new JProperty("reservation",   Reservation.ToString())
+                               : null
+
+                       );
+
+            return CustomTariffRestrictionsSerializer != null
+                       ? CustomTariffRestrictionsSerializer(this, JSON)
+                       : JSON;
 
         }
 

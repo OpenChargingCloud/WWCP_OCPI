@@ -95,7 +95,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region ToJSON(CustomPublishTokenTypeSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<PublishTokenType> CustomPublishTokenTypeSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -120,9 +126,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomPublishTokenTypeSerializer != null
+                       ? CustomPublishTokenTypeSerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region Operator overloading

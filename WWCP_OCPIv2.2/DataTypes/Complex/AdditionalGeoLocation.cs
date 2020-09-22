@@ -88,7 +88,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region ToJSON(CustomAdditionalGeoLocationSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<AdditionalGeoLocation> CustomAdditionalGeoLocationSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -102,9 +108,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomAdditionalGeoLocationSerializer != null
+                       ? CustomAdditionalGeoLocationSerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region Operator overloading

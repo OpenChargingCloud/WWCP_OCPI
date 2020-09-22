@@ -116,7 +116,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region ToJSON(CustomImageSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Image> CustomImageSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -140,9 +146,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomImageSerializer != null
+                       ? CustomImageSerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region Operator overloading

@@ -150,15 +150,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON()
+        #region ToJSON(CustomPriceComponentSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        public JObject ToJSON()
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<PriceComponent> CustomPriceComponentSerializer = null)
         {
 
-            var JSON = new JObject(
+            var JSON = JSONObject.Create(
+
                            new JProperty("type",         Type.     ToString()),
                            new JProperty("price",        Price.    ToString("0.00")),
 
@@ -166,9 +168,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("price",  VAT.Value.ToString("0.00"))
                                : null,
 
-                           new JProperty("step_size",    StepSize));
+                           new JProperty("step_size",    StepSize)
 
-            return JSON;
+                       );
+
+            return CustomPriceComponentSerializer != null
+                       ? CustomPriceComponentSerializer(this, JSON)
+                       : JSON;
 
         }
 

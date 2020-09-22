@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom StatusSchedule JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<StatusSchedule> CustomStatusScheduleSerializer = null)
         {
 

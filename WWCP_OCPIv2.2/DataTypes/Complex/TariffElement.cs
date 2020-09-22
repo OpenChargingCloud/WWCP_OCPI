@@ -125,20 +125,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON()
+        #region ToJSON(CustomTariffElementSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        public JObject ToJSON()
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffElement> CustomTariffElementSerializer = null)
+        {
 
-            => JSONObject.Create(
+            var JSON = JSONObject.Create(
 
-                   new JProperty("price_components",    new JArray(PriceComponents.   SafeSelect(PriceComponent    => PriceComponent.   ToJSON()))),
+                           new JProperty("price_components",    new JArray(PriceComponents.   SafeSelect(PriceComponent    => PriceComponent.   ToJSON()))),
 
-                   TariffRestrictions.SafeAny()
-                       ? new JProperty("restrictions",  new JArray(TariffRestrictions.SafeSelect(TariffRestriction => TariffRestriction.ToJSON())))
-                       : null);
+                           TariffRestrictions.SafeAny()
+                               ? new JProperty("restrictions",  new JArray(TariffRestrictions.SafeSelect(TariffRestriction => TariffRestriction.ToJSON())))
+                               : null
+
+                       );
+
+            return CustomTariffElementSerializer != null
+                       ? CustomTariffElementSerializer(this, JSON)
+                       : JSON;
+
+        }
 
         #endregion
 

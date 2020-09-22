@@ -84,7 +84,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region ToJSON(BusinessDetails = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails> CustomBusinessDetailsSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -101,9 +107,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return JSON;
+            return CustomBusinessDetailsSerializer != null
+                       ? CustomBusinessDetailsSerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region Operator overloading

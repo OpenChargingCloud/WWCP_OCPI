@@ -25,7 +25,6 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.JSON;
 
 #endregion
 
@@ -331,17 +330,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MaxVoltage           [mandatory]
+                //#region Parse MaxVoltage           [mandatory]
 
-                if (!JSON.ParseMandatory("max_voltage",
-                                         "max voltage",
-                                         out UInt16 MaxVoltage,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
+                //if (!JSON.ParseMandatory("max_voltage",
+                //                         "max voltage",
+                //                         out UInt16 MaxVoltage,
+                //                         out ErrorResponse))
+                //{
+                //    return false;
+                //}
 
-                #endregion
+                //#endregion
 
                 #region Parse FloorLevel           [optional]
 
@@ -370,50 +369,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MaxElectricPower     [optional]
+                //#region Parse MaxElectricPower     [optional]
 
-                if (JSON.ParseOptional("max_electric_power",
-                                                "max voltage",
-                                                out UInt16? MaxElectricPower,
-                                                out ErrorResponse))
-                {
+                //if (JSON.ParseOptional("max_electric_power",
+                //                                "max voltage",
+                //                                out UInt16? MaxElectricPower,
+                //                                out ErrorResponse))
+                //{
 
-                    if (ErrorResponse != null)
-                        return false;
+                //    if (ErrorResponse != null)
+                //        return false;
 
-                }
+                //}
 
-                #endregion
+                //#endregion
 
-                #region Parse MaxElectricPower     [optional]
+                //#region Parse MaxElectricPower     [optional]
 
-                if (JSON.ParseOptional("max_electric_power",
-                                                "max voltage",
-                                                out UInt16? MaxElectricPower,
-                                                out ErrorResponse))
-                {
+                //if (JSON.ParseOptional("max_electric_power",
+                //                                "max voltage",
+                //                                out UInt16? MaxElectricPower,
+                //                                out ErrorResponse))
+                //{
 
-                    if (ErrorResponse != null)
-                        return false;
+                //    if (ErrorResponse != null)
+                //        return false;
 
-                }
+                //}
 
-                #endregion
+                //#endregion
 
-                #region Parse MaxElectricPower     [optional]
+                //#region Parse MaxElectricPower     [optional]
 
-                if (JSON.ParseOptional("max_electric_power",
-                                                "max voltage",
-                                                out UInt16? MaxElectricPower,
-                                                out ErrorResponse))
-                {
+                //if (JSON.ParseOptional("max_electric_power",
+                //                                "max voltage",
+                //                                out UInt16? MaxElectricPower,
+                //                                out ErrorResponse))
+                //{
 
-                    if (ErrorResponse != null)
-                        return false;
+                //    if (ErrorResponse != null)
+                //        return false;
 
-                }
+                //}
 
-                #endregion
+                //#endregion
 
                 #region Parse LastUpdated          [mandatory]
 
@@ -434,13 +433,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                 Connectors,
 
                                 StatusSchedule?.Distinct(),
-                                Capabilities,
+                                null,//Capabilities,
                                 FloorLevel,
-                                Coordinates,
+                                null,//Coordinates,
                                 PhysicalReference,
-                                Directions,
-                                ParkingRestrictions,
-                                Images,
+                                null,//Directions,
+                                null,//ParkingRestrictions,
+                                null,//Images,
 
                                 LastUpdated);
 
@@ -498,17 +497,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, CustomConnectorSerializer = null)
+        #region ToJSON(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom StatusSchedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom Connector JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>            CustomEVSESerializer             = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>  CustomStatusScheduleSerializer   = null,
-                              CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null)
+                              CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null,
+                              CustomJObjectSerializerDelegate<Image>           CustomImageSerializer            = null)
         {
 
             var JSON = JSONObject.Create(
@@ -553,7 +554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            Images.SafeAny()
-                               ? new JProperty("images",                new JArray(Images.Select(image => image.ToJSON())))
+                               ? new JProperty("images",                new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
                                : null,
 
                            new JProperty("last_updated",                LastUpdated.ToIso8601())
@@ -604,14 +605,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="EVSE">An EVSE to compare with.</param>
         public Int32 CompareTo(EVSE EVSE)
-        {
 
-            if (EVSE is null)
-                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
+            => !(EVSE is null)
+                   ? Id.CompareTo(EVSE.Id)
+                   : throw new ArgumentNullException(nameof(EVSE),
+                                                     "The given EVSE must not be null!");
 
-            return Id.CompareTo(EVSE.Id);
-
-        }
 
         #endregion
 
