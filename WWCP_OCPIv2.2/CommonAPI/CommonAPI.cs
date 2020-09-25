@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Linq;
 
 #endregion
 
@@ -128,6 +129,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
+
+
+
 
 
         #region ParseLocationId             (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,                                                                      out HTTPResponse)
@@ -633,7 +637,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
 
-            if (!CommonAPI.TryGetLocation(LocationId.Value, out Location)) {
+            if (!CommonAPI.TryGetLocation(CountryCode.Value,
+                                          PartyId.    Value,
+                                          LocationId. Value, out Location)) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
@@ -1032,652 +1038,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        #region ParseLocationId             (this HTTPRequest, CommonAPI, out LocationId,                                                                      out HTTPResponse)
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
-                                              CommonAPI         CommonAPI,
-                                              out Location_Id?  LocationId,
-                                              out HTTPResponse  HTTPResponse)
-        {
 
-            #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            LocationId    = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURIParameters.Length < 1)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocation               (this HTTPRequest, CommonAPI, out LocationId, out Location,                                                        out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
-                                            CommonAPI         CommonAPI,
-                                            out Location_Id?  LocationId,
-                                            out Location      Location,
-                                            out HTTPResponse  HTTPResponse)
-        {
-
-            #region Initial checks
-
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            LocationId    = null;
-            Location      = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURIParameters.Length < 1) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
-
-            if (!LocationId.HasValue) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-
-            if (!CommonAPI.TryGetLocation(LocationId.Value, out Location)) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
-        #region ParseLocationEVSEId         (this HTTPRequest, CommonAPI, out LocationId,               out EVSEUId,                                           out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
-                                                  CommonAPI         CommonAPI,
-                                                  out Location_Id?  LocationId,
-                                                  out EVSE_UId?     EVSEUId,
-                                                  out HTTPResponse  HTTPResponse)
-        {
-
-            #region Initial checks
-
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            LocationId    = null;
-            EVSEUId       = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURIParameters.Length < 2)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSE           (this HTTPRequest, CommonAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
-                                                CommonAPI         CommonAPI,
-                                                out Location_Id?  LocationId,
-                                                out Location      Location,
-                                                out EVSE_UId?     EVSEUId,
-                                                out EVSE          EVSE,
-                                                out HTTPResponse  HTTPResponse)
-        {
-
-            #region Initial checks
-
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            LocationId    = null;
-            Location      = null;
-            EVSEUId       = null;
-            EVSE          = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURIParameters.Length < 2) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
-
-            if (!LocationId.HasValue) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-
-            if (!CommonAPI.TryGetLocation(LocationId.Value, out Location)) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
-        #region ParseLocationEVSEConnectorId(this HTTPRequest, CommonAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
-                                                           CommonAPI          CommonAPI,
-                                                           out Location_Id?   LocationId,
-                                                           out EVSE_UId?      EVSEUId,
-                                                           out Connector_Id?  ConnectorId,
-                                                           out HTTPResponse   HTTPResponse)
-        {
-
-            #region Initial checks
-
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            LocationId    = null;
-            EVSEUId       = null;
-            ConnectorId   = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURIParameters.Length < 3)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSEConnector  (this HTTPRequest, CommonAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="Connector">The resolved connector.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
-                                                         CommonAPI          CommonAPI,
-                                                         out Location_Id?   LocationId,
-                                                         out Location       Location,
-                                                         out EVSE_UId?      EVSEUId,
-                                                         out EVSE           EVSE,
-                                                         out Connector_Id?  ConnectorId,
-                                                         out Connector      Connector,
-                                                         out HTTPResponse   HTTPResponse)
-        {
-
-            #region Initial checks
-
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            LocationId    = null;
-            Location      = null;
-            EVSEUId       = null;
-            EVSE          = null;
-            ConnectorId   = null;
-            Connector     = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURIParameters.Length < 3) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
-
-            if (!LocationId.HasValue) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-
-            if (!CommonAPI.TryGetLocation(LocationId.Value, out Location)) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
 
 
 
@@ -1785,6 +1148,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            this._Locations = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+
         }
 
         #endregion
@@ -1812,6 +1177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    ServiceName)
 
         {
+
+            this._Locations = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -1936,7 +1303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // }
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2/",
+                                         URLPathPrefix + "versions/2.2",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -1945,16 +1312,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  Server          = DefaultHTTPServerName,
                                                  Date            = DateTime.UtcNow,
                                                  ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = new JObject(
+                                                 Content         = JSONObject.Create(
                                                                        new JProperty("version",  "2.2"),
                                                                        new JProperty("endpoints", new JArray(
                                                                            new JObject(
-                                                                               new JProperty("identifier", "credentials"),
-                                                                               new JProperty("url",        "http://" + Request.Host + (URLPathPrefix + "credentials"))
+                                                                               new JProperty("identifier",  "credentials"),
+                                                                               new JProperty("role",         InterfaceRoles.SENDER.ToString()),
+                                                                               new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "credentials/")
                                                                            ),
                                                                            new JObject(
-                                                                               new JProperty("identifier", "locations"),
-                                                                               new JProperty("url",        "http://" + Request.Host + (URLPathPrefix + "locations"))
+                                                                               new JProperty("identifier",  "locations"),
+                                                                               new JProperty("role",         InterfaceRoles.SENDER.ToString()),
+                                                                               new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "locations/")
+
+                                                                           // cdrs
+                                                                           // chargingprofiles
+                                                                           // commands
+                                                                           // credentials
+                                                                           // hubclientinfo
+                                                                           // locations
+                                                                           // sessions
+                                                                           // tariffs
+                                                                           // tokens
+
                                                                            )
                                                                    ))).ToUTF8Bytes(),
                                                  Connection      = "close"
@@ -1971,14 +1351,122 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public Boolean TryGetLocation(Location_Id   LocationId,
-                                      out Location  Location)
+
+        #region Locations
+
+        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> _Locations;
+
+
+        #region AddLocation(Location)
+
+        public Location AddLocation(Location Location)
         {
 
-            Location = null;
-            return false;
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+
+            lock (_Locations)
+            {
+
+                if (!_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
+                    _Locations.Add(Location.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                {
+                    locations = new Dictionary<Location_Id, Location>();
+                    parties.Add(Location.PartyId, locations);
+                }
+
+                if (!locations.ContainsKey(Location.Id))
+                {
+                    locations.Add(Location.Id, Location);
+                    return Location;
+                }
+
+                throw new ArgumentException("The given location already exists!");
+
+            }
 
         }
+
+        #endregion
+
+        #region AddLocationIfNotExists(Location)
+
+        public Location AddLocationIfNotExists(Location Location)
+        {
+
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+
+            lock (_Locations)
+            {
+
+                if (!_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
+                    _Locations.Add(Location.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                {
+                    locations = new Dictionary<Location_Id, Location>();
+                    parties.Add(Location.PartyId, locations);
+                }
+
+                if (!locations.ContainsKey(Location.Id))
+                    locations.Add(Location.Id, Location);
+
+                return Location;
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddLocationOrUpdate(Location)
+
+        public Location AddLocationOrUpdate(Location Location)
+        {
+
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+
+            lock (_Locations)
+            {
+
+                if (!_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
+                    _Locations.Add(Location.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                {
+                    locations = new Dictionary<Location_Id, Location>();
+                    parties.Add(Location.PartyId, locations);
+                }
+
+                if (locations.ContainsKey(Location.Id))
+                {
+                    locations.Remove(Location.Id);
+                }
+
+                locations.Add(Location.Id, Location);
+                return Location;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region TryGetLocation(CountryCode, PartyId, LocationId,, out Location)
 
         public Boolean TryGetLocation(CountryCode   CountryCode,
                                       Party_Id      PartyId,
@@ -1986,17 +1474,148 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       out Location  Location)
         {
 
-            Location = null;
-            return false;
+            lock (_Locations)
+            {
+
+                if (_Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
+                    {
+                        if (locations.TryGetValue(LocationId, out Location))
+                            return true;
+                    }
+                }
+
+                Location = null;
+                return false;
+
+            }
 
         }
 
-        public IEnumerable<Location> GetLocations(CountryCode? LocationId  = null,
-                                                  Party_Id?    PartyId     = null)
+        #endregion
+
+        #region GetLocations(CountryCode = null, PartyId = null)
+
+        public IEnumerable<Location> GetLocations(CountryCode? CountryCode  = null,
+                                                  Party_Id?    PartyId      = null)
         {
-            return null;
+
+            lock (_Locations)
+            {
+
+                if (CountryCode.HasValue && PartyId.HasValue)
+                {
+                    if (_Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                    {
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
+                        {
+                            return locations.Values.ToArray();
+                        }
+                    }
+                }
+
+                else if (!CountryCode.HasValue && PartyId.HasValue)
+                {
+
+                    var allLocations = new List<Location>();
+
+                    foreach (var party in _Locations.Values)
+                    {
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
+                        {
+                            allLocations.AddRange(locations.Values);
+                        }
+                    }
+
+                    return allLocations;
+
+                }
+
+                else if (CountryCode.HasValue && !PartyId.HasValue)
+                {
+                    if (_Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                    {
+
+                        var allLocations = new List<Location>();
+
+                        foreach (var locations in parties.Values)
+                        {
+                            allLocations.AddRange(locations.Values);
+                        }
+
+                        return allLocations;
+
+                    }
+                }
+
+                else
+                {
+
+                    var allLocations = new List<Location>();
+
+                    foreach (var party in _Locations.Values)
+                    {
+                        foreach (var locations in party.Values)
+                        {
+                            allLocations.AddRange(locations.Values);
+                        }
+                    }
+
+                    return allLocations;
+
+                }
+
+                return new Location[0];
+
+            }
+
         }
 
+        #endregion
+
+
+        #region RemoveLocation(Location)
+
+        public Location RemoveLocation(Location Location)
+        {
+
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+
+            lock (_Locations)
+            {
+
+                if (_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+
+                    if (parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                    {
+
+                        if (locations.ContainsKey(Location.Id))
+                        {
+                            locations.Remove(Location.Id);
+                        }
+
+                        if (!locations.Any())
+                            parties.Remove(Location.PartyId);
+
+                    }
+
+                    if (!parties.Any())
+                        _Locations.Remove(Location.CountryCode);
+
+                }
+
+                return Location;
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
 
 
         #region Start()

@@ -132,6 +132,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region (static) TryParse(JSON, out StatusSchedule, out ErrorResponse, CustomStatusScheduleParser = null)
 
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a status schedule.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="StatusSchedule">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject             JSON,
+                                       out StatusSchedule  StatusSchedule,
+                                       out String          ErrorResponse)
+
+            => TryParse(JSON,
+                        out StatusSchedule,
+                        out ErrorResponse);
+
+
         /// <summary>
         /// Try to parse the given JSON representation of a status schedule.
         /// </summary>

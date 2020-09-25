@@ -405,8 +405,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (Hours Hours1,
                                            Hours Hours2)
+        {
 
-            => Hours1.Equals(Hours2);
+            if (Object.ReferenceEquals(Hours1, Hours2))
+                return true;
+
+            if (Hours1 is null || Hours2 is null)
+                return false;
+
+            return Hours1.Equals(Hours2);
+
+        }
 
         #endregion
 
@@ -452,12 +461,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Hours Hours)
 
-            => !(Hours is null)                                                                        &&
-               IsTwentyFourSevenOpen.    Equals(Hours.IsTwentyFourSevenOpen)                           &&
-               RegularHours.       Equals(Hours.RegularHours.Count())                                  &&
-               ExceptionalOpenings.Equals(Hours.ExceptionalOpenings.Count())                           &&
-               ExceptionalClosings.Equals(Hours.ExceptionalClosings.Count())                           &&
-               RegularHours.All(regularHour => Hours.RegularHours.Contains(regularHour))        &&
+            => !(Hours is null) &&
+
+               IsTwentyFourSevenOpen.Equals(Hours.IsTwentyFourSevenOpen)                               &&
+               RegularHours.         Equals(Hours.RegularHours.       Count())                         &&
+               ExceptionalOpenings.  Equals(Hours.ExceptionalOpenings.Count())                         &&
+               ExceptionalClosings.  Equals(Hours.ExceptionalClosings.Count())                         &&
+
+               RegularHours.       All(regularHour => Hours.RegularHours.Contains(regularHour))        &&
                ExceptionalOpenings.All(regularHour => Hours.ExceptionalOpenings.Contains(regularHour)) &&
                ExceptionalClosings.All(regularHour => Hours.ExceptionalClosings.Contains(regularHour));
 

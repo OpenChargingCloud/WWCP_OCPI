@@ -492,6 +492,114 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+
+        #region Operator overloading
+
+        #region Operator == (Connector1, Connector2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Connector1">A connector.</param>
+        /// <param name="Connector2">Another connector.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (Connector Connector1,
+                                           Connector Connector2)
+        {
+
+            if (Object.ReferenceEquals(Connector1, Connector2))
+                return true;
+
+            if (Connector1 is null || Connector2 is null)
+                return false;
+
+            return Connector1.Equals(Connector2);
+
+        }
+
+        #endregion
+
+        #region Operator != (Connector1, Connector2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Connector1">A connector.</param>
+        /// <param name="Connector2">Another connector.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (Connector Connector1,
+                                           Connector Connector2)
+
+            => !(Connector1 == Connector2);
+
+        #endregion
+
+        #region Operator <  (Connector1, Connector2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Connector1">A connector.</param>
+        /// <param name="Connector2">Another connector.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Connector Connector1,
+                                          Connector Connector2)
+
+            => Connector1 is null
+                   ? throw new ArgumentNullException(nameof(Connector1), "The given connector must not be null!")
+                   : Connector1.CompareTo(Connector2) < 0;
+
+        #endregion
+
+        #region Operator <= (Connector1, Connector2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Connector1">A connector.</param>
+        /// <param name="Connector2">Another connector.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Connector Connector1,
+                                           Connector Connector2)
+
+            => !(Connector1 > Connector2);
+
+        #endregion
+
+        #region Operator >  (Connector1, Connector2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Connector1">A connector.</param>
+        /// <param name="Connector2">Another connector.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Connector Connector1,
+                                          Connector Connector2)
+
+            => Connector1 is null
+                   ? throw new ArgumentNullException(nameof(Connector1), "The given connector must not be null!")
+                   : Connector1.CompareTo(Connector2) > 0;
+
+        #endregion
+
+        #region Operator >= (Connector1, Connector2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Connector1">A connector.</param>
+        /// <param name="Connector2">Another connector.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Connector Connector1,
+                                           Connector Connector2)
+
+            => !(Connector1 < Connector2);
+
+        #endregion
+
+        #endregion
+
         #region IComparable<Connector> Members
 
         #region CompareTo(Object)
@@ -517,10 +625,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Connector">An Connector to compare with.</param>
         public Int32 CompareTo(Connector Connector)
 
-            => !(Connector is null)
-                   ? Id.CompareTo(Connector.Id)
-                   : throw new ArgumentNullException(nameof(Connector),
-                                                     "The given connector must not be null!");
+            => Connector is null
+                   ? throw new ArgumentNullException(nameof(Connector), "The given connector must not be null!")
+                   : Id.CompareTo(Connector.Id);
 
         #endregion
 
@@ -551,7 +658,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Connector Connector)
 
-            => (!(Connector is null)) &&
+            => !(Connector is null) &&
                    Id.Equals(Connector.Id);
 
         #endregion

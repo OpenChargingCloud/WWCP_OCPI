@@ -42,6 +42,669 @@ using System.Collections.Generic;
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
+    public static class CPOAPIExtentions
+    {
+
+        #region ParseLocationId             (this HTTPRequest, CPOAPI, out LocationId,                                                                      out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
+                                              CPOAPI            CPOAPI,
+                                              out Location_Id?  LocationId,
+                                              out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),    "The given CPO API must not be null!");
+
+            #endregion
+
+            LocationId    = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURIParameters.Length < 1)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocation               (this HTTPRequest, CPOAPI, out LocationId, out Location,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
+                                            CPOAPI            CPOAPI,
+                                            out Location_Id?  LocationId,
+                                            out Location      Location,
+                                            out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+
+            #endregion
+
+            LocationId    = null;
+            Location      = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURIParameters.Length < 1) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+
+            if (!LocationId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!CPOAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
+                                       CPOAPI.DefaultPartyId,
+                                       LocationId.Value,
+                                       out Location)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseLocationEVSEId         (this HTTPRequest, CPOAPI, out LocationId,               out EVSEUId,                                           out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
+                                                  CPOAPI            CPOAPI,
+                                                  out Location_Id?  LocationId,
+                                                  out EVSE_UId?     EVSEUId,
+                                                  out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),    "The given CPO API must not be null!");
+
+            #endregion
+
+            LocationId    = null;
+            EVSEUId       = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURIParameters.Length < 2)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocationEVSE           (this HTTPRequest, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="EVSE">The resolved EVSE.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
+                                                CPOAPI            CPOAPI,
+                                                out Location_Id?  LocationId,
+                                                out Location      Location,
+                                                out EVSE_UId?     EVSEUId,
+                                                out EVSE          EVSE,
+                                                out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+
+            #endregion
+
+            LocationId    = null;
+            Location      = null;
+            EVSEUId       = null;
+            EVSE          = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURIParameters.Length < 2) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+
+            if (!LocationId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!CPOAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
+                                       CPOAPI.DefaultPartyId,
+                                       LocationId.Value,
+                                       out Location))
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseLocationEVSEConnectorId(this HTTPRequest, CPOAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="ConnectorId">The parsed unique connector identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
+                                                           CPOAPI             CPOAPI,
+                                                           out Location_Id?   LocationId,
+                                                           out EVSE_UId?      EVSEUId,
+                                                           out Connector_Id?  ConnectorId,
+                                                           out HTTPResponse   HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),    "The given CPO API must not be null!");
+
+            #endregion
+
+            LocationId    = null;
+            EVSEUId       = null;
+            ConnectorId   = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURIParameters.Length < 3)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocationEVSEConnector  (this HTTPRequest, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="EVSE">The resolved EVSE.</param>
+        /// <param name="ConnectorId">The parsed unique connector identification.</param>
+        /// <param name="Connector">The resolved connector.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
+                                                         CPOAPI             CPOAPI,
+                                                         out Location_Id?   LocationId,
+                                                         out Location       Location,
+                                                         out EVSE_UId?      EVSEUId,
+                                                         out EVSE           EVSE,
+                                                         out Connector_Id?  ConnectorId,
+                                                         out Connector      Connector,
+                                                         out HTTPResponse   HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+
+            #endregion
+
+            LocationId    = null;
+            Location      = null;
+            EVSEUId       = null;
+            EVSE          = null;
+            ConnectorId   = null;
+            Connector     = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURIParameters.Length < 3) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+
+            if (!LocationId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!CPOAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
+                                       CPOAPI.DefaultPartyId,
+                                       LocationId.Value,
+                                       out Location))
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+    }
+
     /// <summary>
     /// The HTTP API for charge point operators.
     /// </summary>
@@ -73,6 +736,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
         #region Properties
+
+        public CountryCode DefaultCountryCode    { get; }
+
+        public Party_Id    DefaultPartyId        { get; }
 
         #endregion
 
@@ -188,70 +855,70 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET    [/cpo]/versions
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "versions",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+            //HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            //                             HTTPMethod.GET,
+            //                             URLPathPrefix + "versions",
+            //                             HTTPContentType.JSON_UTF8,
+            //                             HTTPDelegate: async Request => {
 
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = new JArray(new JObject(
-                                                                                  new JProperty("version",  "2.2"),
-                                                                                  new JProperty("url",      "http://" + Request.Host + URLPathPrefix + "/versions/2.2/")
-                                                                   )).ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+            //                                 return new HTTPResponse.Builder(Request) {
+            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
+            //                                     Server          = DefaultHTTPServerName,
+            //                                     Date            = DateTime.UtcNow,
+            //                                     ContentType     = HTTPContentType.HTML_UTF8,
+            //                                     Content         = new JArray(new JObject(
+            //                                                                      new JProperty("version",  "2.2"),
+            //                                                                      new JProperty("url",      "http://" + Request.Host + URLPathPrefix + "/versions/2.2/")
+            //                                                       )).ToUTF8Bytes(),
+            //                                     Connection      = "close"
+            //                                 };
 
-                                         });
+            //                             });
 
             #endregion
 
             #region GET    [/cpo]/versions/2.2/
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+            //HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            //                             HTTPMethod.GET,
+            //                             URLPathPrefix + "versions/2.2",
+            //                             HTTPContentType.JSON_UTF8,
+            //                             HTTPDelegate: async Request => {
 
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = JSONObject.Create(
-                                                                       new JProperty("version",  "2.2"),
-                                                                       new JProperty("endpoints", new JArray(
-                                                                           new JObject(
-                                                                               new JProperty("identifier",  "credentials"),
-                                                                               new JProperty("role",         InterfaceRoles.SENDER.ToString()),
-                                                                               new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "credentials/")
-                                                                           ),
-                                                                           new JObject(
-                                                                               new JProperty("identifier",  "locations"),
-                                                                               new JProperty("role",         InterfaceRoles.SENDER.ToString()),
-                                                                               new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "locations/")
+            //                                 return new HTTPResponse.Builder(Request) {
+            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
+            //                                     Server          = DefaultHTTPServerName,
+            //                                     Date            = DateTime.UtcNow,
+            //                                     ContentType     = HTTPContentType.HTML_UTF8,
+            //                                     Content         = JSONObject.Create(
+            //                                                           new JProperty("version",  "2.2"),
+            //                                                           new JProperty("endpoints", new JArray(
+            //                                                               new JObject(
+            //                                                                   new JProperty("identifier",  "credentials"),
+            //                                                                   new JProperty("role",         InterfaceRoles.SENDER.ToString()),
+            //                                                                   new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "credentials/")
+            //                                                               ),
+            //                                                               new JObject(
+            //                                                                   new JProperty("identifier",  "locations"),
+            //                                                                   new JProperty("role",         InterfaceRoles.SENDER.ToString()),
+            //                                                                   new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "locations/")
 
-                                                                           // cdrs
-                                                                           // chargingprofiles
-                                                                           // commands
-                                                                           // credentials
-                                                                           // hubclientinfo
-                                                                           // locations
-                                                                           // sessions
-                                                                           // tariffs
-                                                                           // tokens
+            //                                                               // cdrs
+            //                                                               // chargingprofiles
+            //                                                               // commands
+            //                                                               // credentials
+            //                                                               // hubclientinfo
+            //                                                               // locations
+            //                                                               // sessions
+            //                                                               // tariffs
+            //                                                               // tokens
 
-                                                                           )
-                                                                   ))).ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+            //                                                               )
+            //                                                       ))).ToUTF8Bytes(),
+            //                                     Connection      = "close"
+            //                                 };
 
-                                         });
+            //                             });
 
             #endregion
 
@@ -283,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                   SkipTakeFilter(offset, limit).
                                                                   ToArray();
 
-                                             var JSON       = new JArray(locations).
+                                             var JSON       = new JArray(locations.Select(location => location.ToJSON())).
                                                                   CreateResponse(1000,
                                                                                  "",
                                                                                  DateTime.UtcNow);

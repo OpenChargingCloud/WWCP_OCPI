@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The percentage of this energy source.
         /// </summary>
         [Mandatory]
-        public Single                  Percentage    { get; }
+        public Double                  Percentage    { get; }
 
         #endregion
 
@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Source">The energy source.</param>
         /// <param name="Percentage">The percentage of this energy source.</param>
         public EnergySource(EnergySourceCategories  Source,
-                            Single                  Percentage)
+                            Double                  Percentage)
         {
 
             this.Source      = Source;
@@ -179,10 +179,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Percentage              [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("percentage",
-                                             "percentage",
-                                             out Single Percentage,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("percentage",
+                                         "percentage",
+                                         out Double Percentage,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

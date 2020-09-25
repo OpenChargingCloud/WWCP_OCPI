@@ -190,6 +190,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (Token1, Token2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Token1">A token.</param>
+        /// <param name="Token2">Another token.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (Token Token1,
+                                           Token Token2)
+        {
+
+            if (Object.ReferenceEquals(Token1, Token2))
+                return true;
+
+            if (Token1 is null || Token2 is null)
+                return false;
+
+            return Token1.Equals(Token2);
+
+        }
+
+        #endregion
+
+        #region Operator != (Token1, Token2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Token1">A token.</param>
+        /// <param name="Token2">Another token.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (Token Token1,
+                                           Token Token2)
+
+            => !(Token1 == Token2);
+
+        #endregion
+
+        #region Operator <  (Token1, Token2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Token1">A token.</param>
+        /// <param name="Token2">Another token.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Token Token1,
+                                          Token Token2)
+
+            => Token1 is null
+                   ? throw new ArgumentNullException(nameof(Token1), "The given token must not be null!")
+                   : Token1.CompareTo(Token2) < 0;
+
+        #endregion
+
+        #region Operator <= (Token1, Token2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Token1">A token.</param>
+        /// <param name="Token2">Another token.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Token Token1,
+                                           Token Token2)
+
+            => !(Token1 > Token2);
+
+        #endregion
+
+        #region Operator >  (Token1, Token2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Token1">A token.</param>
+        /// <param name="Token2">Another token.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Token Token1,
+                                          Token Token2)
+
+            => Token1 is null
+                   ? throw new ArgumentNullException(nameof(Token1), "The given token must not be null!")
+                   : Token1.CompareTo(Token2) > 0;
+
+        #endregion
+
+        #region Operator >= (Token1, Token2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Token1">A token.</param>
+        /// <param name="Token2">Another token.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Token Token1,
+                                           Token Token2)
+
+            => !(Token1 < Token2);
+
+        #endregion
+
+        #endregion
+
         #region IComparable<Token> Members
 
         #region CompareTo(Object)
@@ -214,14 +321,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Token">An Token to compare with.</param>
         public Int32 CompareTo(Token Token)
-        {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token),  "The given token must not be null!");
-
-            return Id.CompareTo(Token.Id);
-
-        }
+            => Token is null
+                   ? throw new ArgumentNullException(nameof(Token), "The given token must not be null!")
+                   : Id.CompareTo(Token.Id);
 
         #endregion
 
@@ -251,14 +354,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Token">An Token to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Token Token)
-        {
 
-            if (Token is null)
-                return false;
-
-            return Id.Equals(Token.Id);
-
-        }
+            => !(Token is null) &&
+                   Id.Equals(Token.Id);
 
         #endregion
 

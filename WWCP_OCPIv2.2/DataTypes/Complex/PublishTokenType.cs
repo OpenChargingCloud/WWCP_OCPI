@@ -353,13 +353,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PublishTokenType1">An publish token for opening or access hours.</param>
+        /// <param name="PublishTokenType1">A publish token for opening or access hours.</param>
         /// <param name="PublishTokenType2">Another publish token for opening or access hours.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (PublishTokenType PublishTokenType1,
                                            PublishTokenType PublishTokenType2)
+        {
 
-            => PublishTokenType1.Equals(PublishTokenType2);
+            if (Object.ReferenceEquals(PublishTokenType1, PublishTokenType2))
+                return true;
+
+            if (PublishTokenType1 is null || PublishTokenType2 is null)
+                return false;
+
+            return PublishTokenType1.Equals(PublishTokenType2);
+
+        }
 
         #endregion
 
@@ -368,7 +377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PublishTokenType1">An publish token for opening or access hours.</param>
+        /// <param name="PublishTokenType1">A publish token for opening or access hours.</param>
         /// <param name="PublishTokenType2">Another publish token for opening or access hours.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (PublishTokenType PublishTokenType1,
@@ -383,13 +392,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PublishTokenType1">An publish token for opening or access hours.</param>
+        /// <param name="PublishTokenType1">A publish token for opening or access hours.</param>
         /// <param name="PublishTokenType2">Another publish token for opening or access hours.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (PublishTokenType PublishTokenType1,
                                           PublishTokenType PublishTokenType2)
 
-            => PublishTokenType1.CompareTo(PublishTokenType2) < 0;
+            => PublishTokenType1 is null
+                   ? throw new ArgumentNullException(nameof(PublishTokenType1), "The given publish token must not be null!")
+                   : PublishTokenType1.CompareTo(PublishTokenType2) < 0;
 
         #endregion
 
@@ -398,7 +409,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PublishTokenType1">An publish token for opening or access hours.</param>
+        /// <param name="PublishTokenType1">A publish token for opening or access hours.</param>
         /// <param name="PublishTokenType2">Another publish token for opening or access hours.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (PublishTokenType PublishTokenType1,
@@ -413,13 +424,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PublishTokenType1">An publish token for opening or access hours.</param>
+        /// <param name="PublishTokenType1">A publish token for opening or access hours.</param>
         /// <param name="PublishTokenType2">Another publish token for opening or access hours.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (PublishTokenType PublishTokenType1,
                                           PublishTokenType PublishTokenType2)
 
-            => PublishTokenType1.CompareTo(PublishTokenType2) > 0;
+            => PublishTokenType1 is null
+                   ? throw new ArgumentNullException(nameof(PublishTokenType1), "The given publish token must not be null!")
+                   : PublishTokenType1.CompareTo(PublishTokenType2) > 0;
 
         #endregion
 
@@ -428,7 +441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="PublishTokenType1">An publish token for opening or access hours.</param>
+        /// <param name="PublishTokenType1">A publish token for opening or access hours.</param>
         /// <param name="PublishTokenType2">Another publish token for opening or access hours.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (PublishTokenType PublishTokenType1,
@@ -465,7 +478,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="PublishTokenType">An object to compare with.</param>
         public Int32 CompareTo(PublishTokenType PublishTokenType)
 
-            => Id.CompareTo(PublishTokenType.Id);
+            => PublishTokenType is null
+                   ? throw new ArgumentNullException(nameof(PublishTokenType), "The given publish token must not be null!")
+                   : Id.CompareTo(PublishTokenType.Id);
 
         #endregion
 
@@ -496,7 +511,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(PublishTokenType PublishTokenType)
 
-            => Id.Equals(PublishTokenType.Id);
+            => !(PublishTokenType is null) &&
+                   Id.Equals(PublishTokenType.Id);
 
         #endregion
 

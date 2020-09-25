@@ -180,10 +180,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Amount                         [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("amount",
-                                             "amount",
-                                             out Single Amount,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("amount",
+                                         "amount",
+                                         out Double Amount,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

@@ -159,6 +159,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (CDRLocation1, CDRLocation2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDRLocation1">A charge detail record location.</param>
+        /// <param name="CDRLocation2">Another charge detail record location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (CDRLocation CDRLocation1,
+                                           CDRLocation CDRLocation2)
+        {
+
+            if (Object.ReferenceEquals(CDRLocation1, CDRLocation2))
+                return true;
+
+            if (CDRLocation1 is null || CDRLocation2 is null)
+                return false;
+
+            return CDRLocation1.Equals(CDRLocation2);
+
+        }
+
+        #endregion
+
+        #region Operator != (CDRLocation1, CDRLocation2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDRLocation1">A charge detail record location.</param>
+        /// <param name="CDRLocation2">Another charge detail record location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (CDRLocation CDRLocation1,
+                                           CDRLocation CDRLocation2)
+
+            => !(CDRLocation1 == CDRLocation2);
+
+        #endregion
+
+        #region Operator <  (CDRLocation1, CDRLocation2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDRLocation1">A charge detail record location.</param>
+        /// <param name="CDRLocation2">Another charge detail record location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (CDRLocation CDRLocation1,
+                                          CDRLocation CDRLocation2)
+
+            => CDRLocation1 is null
+                   ? throw new ArgumentNullException(nameof(CDRLocation1), "The given charge detail record location must not be null!")
+                   : CDRLocation1.CompareTo(CDRLocation2) < 0;
+
+        #endregion
+
+        #region Operator <= (CDRLocation1, CDRLocation2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDRLocation1">A charge detail record location.</param>
+        /// <param name="CDRLocation2">Another charge detail record location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (CDRLocation CDRLocation1,
+                                           CDRLocation CDRLocation2)
+
+            => !(CDRLocation1 > CDRLocation2);
+
+        #endregion
+
+        #region Operator >  (CDRLocation1, CDRLocation2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDRLocation1">A charge detail record location.</param>
+        /// <param name="CDRLocation2">Another charge detail record location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (CDRLocation CDRLocation1,
+                                          CDRLocation CDRLocation2)
+
+            => CDRLocation1 is null
+                   ? throw new ArgumentNullException(nameof(CDRLocation1), "The given charge detail record location must not be null!")
+                   : CDRLocation1.CompareTo(CDRLocation2) > 0;
+
+        #endregion
+
+        #region Operator >= (CDRLocation1, CDRLocation2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDRLocation1">A charge detail record location.</param>
+        /// <param name="CDRLocation2">Another charge detail record location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (CDRLocation CDRLocation1,
+                                           CDRLocation CDRLocation2)
+
+            => !(CDRLocation1 < CDRLocation2);
+
+        #endregion
+
+        #endregion
+
         #region IComparable<CDRLocation> Members
 
         #region CompareTo(Object)
@@ -183,14 +290,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CDRLocation">An CDRLocation to compare with.</param>
         public Int32 CompareTo(CDRLocation CDRLocation)
-        {
 
-            if (CDRLocation is null)
-                throw new ArgumentNullException(nameof(CDRLocation),  "The given charging location must not be null!");
-
-            return Id.CompareTo(CDRLocation.Id);
-
-        }
+            => CDRLocation is null
+                   ? throw new ArgumentNullException(nameof(CDRLocation), "The given charging location must not be null!")
+                   : Id.CompareTo(CDRLocation.Id);
 
         #endregion
 
@@ -221,7 +324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(CDRLocation CDRLocation)
 
-            => (!(CDRLocation is null)) &&
+            => !(CDRLocation is null) &&
                    Id.Equals(CDRLocation.Id);
 
         #endregion

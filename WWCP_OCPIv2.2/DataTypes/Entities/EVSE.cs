@@ -32,9 +32,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The EVSE object describes the part that controls the power supply to a single EV in a single session.
+    /// An Electric Vehicle Supply Equipment (EVSE) is the part that controls
+    /// the power supply to a single electric vehicle.
     /// </summary>
-    public class EVSE : IHasId<EVSE_Id>,
+    public class EVSE : //IHasId<EVSE_Id>,
                         IEquatable<EVSE>,
                         IComparable<EVSE>,
                         IComparable,
@@ -52,9 +53,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".
         /// </summary>
-        /// <remarks>Mandatory within this implementation.</remarks>
-        [Mandatory]
-        public EVSE_Id                           Id                         { get; }
+        [Optional]
+        public EVSE_Id?                          EVSEId                     { get; }
 
         /// <summary>
         /// Indicates the current status of the EVSE.
@@ -135,12 +135,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// The EVSE object describes the part that controls the power supply to a single EV in a single session.
+        /// Create a new EVSE.
         /// </summary>
         /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
-        /// <param name="Id">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
         /// <param name="Status">Indicates the current status of the EVSE.</param>
         /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
+        /// 
+        /// <param name="EVSEId">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
         /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
         /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
         /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
@@ -151,10 +152,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
         /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
         public EVSE(EVSE_UId                          UId,
-                    EVSE_Id                           Id,
                     StatusTypes                       Status,
                     IEnumerable<Connector>            Connectors,
 
+                    EVSE_Id?                          EVSEId                = null,
                     IEnumerable<StatusSchedule>       StatusSchedule        = null,
                     IEnumerable<CapabilityTypes>      Capabilities          = null,
                     String                            FloorLevel            = null,
@@ -168,26 +169,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            this.UId                  = UId;
-            this.Id                   = Id;
-            this.Status               = Status;
-            this.Connectors           = Connectors;
+            this.UId                   = UId;
+            this.Status                = Status;
+            this.Connectors            = Connectors?.         Distinct() ?? new Connector[0];
 
-            this.StatusSchedule       = StatusSchedule;
-            this.Capabilities         = Capabilities;
-            this.FloorLevel           = FloorLevel;
-            this.Coordinates          = Coordinates;
-            this.PhysicalReference    = PhysicalReference;
-            this.Directions           = Directions;
-            this.ParkingRestrictions   = ParkingRestrictions;
-            this.Images               = Images;
+            this.EVSEId                = EVSEId;
+            this.StatusSchedule        = StatusSchedule?.     Distinct() ?? new StatusSchedule[0];
+            this.Capabilities          = Capabilities?.       Distinct() ?? new CapabilityTypes[0];
+            this.FloorLevel            = FloorLevel;
+            this.Coordinates           = Coordinates;
+            this.PhysicalReference     = PhysicalReference;
+            this.Directions            = Directions;
+            this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? new ParkingRestrictions[0];
+            this.Images                = Images?.             Distinct() ?? new Image[0];
 
-            this.LastUpdated          = LastUpdated ?? DateTime.Now;
+            this.LastUpdated           = LastUpdated ?? DateTime.Now;
 
         }
 
         #endregion
-
 
 
         #region (static) Parse   (JSON, EVSEUIdURL = null, CustomEVSEParser = null)
@@ -292,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse UId                  [optional]
+                #region Parse UId                       [optional]
 
                 if (JSON.ParseOptionalStruct("uid",
                                              "internal EVSE identification",
@@ -320,20 +320,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Id                   [mandatory]
-
-                if (!JSON.ParseMandatory("id",
-                                         "offical EVSE identification",
-                                         EVSE_Id.TryParse,
-                                         out EVSE_Id Id,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse Status               [mandatory]
+                #region Parse Status                    [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("status",
                                              "EVSE status",
@@ -345,7 +332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Connectors           [mandatory]
+                #region Parse Connectors                [mandatory]
 
                 if (!JSON.ParseMandatoryJSON<Connector, Connector_Id>("connectors",
                                                                       "connectors",
@@ -358,43 +345,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse StatusSchedule       [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("status_schedule",
-                                             "status schedule",
-                                             OCPIv2_2.StatusSchedule.TryParse,
-                                             out IEnumerable<StatusSchedule> StatusSchedule,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
+                #region Parse EVSEId                    [optional]
 
-                #endregion
-
-                //#region Parse MaxVoltage           [mandatory]
-
-                //if (!JSON.ParseMandatory("max_voltage",
-                //                         "max voltage",
-                //                         out UInt16 MaxVoltage,
-                //                         out ErrorResponse))
-                //{
-                //    return false;
-                //}
-
-                //#endregion
-
-                #region Parse FloorLevel           [optional]
-
-                var FloorLevel = JSON.GetString("floor_level");
-
-                #endregion
-
-                #region Parse MaxElectricPower     [optional]
-
-                if (JSON.ParseOptional("max_electric_power",
-                                                "max voltage",
-                                                out UInt16? MaxElectricPower,
-                                                out ErrorResponse))
+                if (JSON.ParseOptional("evse_id",
+                                       "offical EVSE identification",
+                                       EVSE_Id.TryParse,
+                                       out EVSE_Id EVSEId,
+                                       out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -404,58 +362,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PhysicalReference    [optional]
+                #region Parse StatusSchedule            [optional]
+
+                if (JSON.ParseOptionalJSON("status_schedule",
+                                           "status schedule",
+                                           OCPIv2_2.StatusSchedule.TryParse,
+                                           out IEnumerable<StatusSchedule> StatusSchedule,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Capabilities              [optional]
+
+                if (JSON.ParseOptionalEnums("capabilities",
+                                            "capabilities",
+                                            out IEnumerable<CapabilityTypes> Capabilities,
+                                            out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse FloorLevel                [optional]
+
+                var FloorLevel = JSON.GetString("floor_level");
+
+                #endregion
+
+                #region Parse Coordinates               [optional]
+
+                if (JSON.ParseOptionalJSON("coordinates",
+                                           "geo coordinates",
+                                           GeoCoordinate.TryParse,
+                                           out GeoCoordinate? Coordinates,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse PhysicalReference         [optional]
 
                 var PhysicalReference = JSON.GetString("physical_reference");
 
                 #endregion
 
-                //#region Parse MaxElectricPower     [optional]
+                #region Parse Directions                [optional]
 
-                //if (JSON.ParseOptional("max_electric_power",
-                //                                "max voltage",
-                //                                out UInt16? MaxElectricPower,
-                //                                out ErrorResponse))
-                //{
+                if (JSON.ParseOptional("directions",
+                                       "directions",
+                                       out I18NString Directions,
+                                       out ErrorResponse))
+                {
 
-                //    if (ErrorResponse != null)
-                //        return false;
+                    if (ErrorResponse != null)
+                        return false;
 
-                //}
+                }
 
-                //#endregion
+                #endregion
 
-                //#region Parse MaxElectricPower     [optional]
+                #region Parse ParkingRestrictions       [optional]
 
-                //if (JSON.ParseOptional("max_electric_power",
-                //                                "max voltage",
-                //                                out UInt16? MaxElectricPower,
-                //                                out ErrorResponse))
-                //{
+                if (JSON.ParseOptionalEnums("parking_restrictions",
+                                            "parking restrictions",
+                                            out IEnumerable<ParkingRestrictions> ParkingRestrictions,
+                                            out ErrorResponse))
+                {
 
-                //    if (ErrorResponse != null)
-                //        return false;
+                    if (ErrorResponse != null)
+                        return false;
 
-                //}
+                }
 
-                //#endregion
+                #endregion
 
-                //#region Parse MaxElectricPower     [optional]
+                #region Parse Images                    [optional]
 
-                //if (JSON.ParseOptional("max_electric_power",
-                //                                "max voltage",
-                //                                out UInt16? MaxElectricPower,
-                //                                out ErrorResponse))
-                //{
+                if (JSON.ParseOptionalJSON("images",
+                                           "images",
+                                           Image.TryParse,
+                                           out IEnumerable<Image> Images,
+                                           out ErrorResponse))
+                {
 
-                //    if (ErrorResponse != null)
-                //        return false;
+                    if (ErrorResponse != null)
+                        return false;
 
-                //}
+                }
 
-                //#endregion
+                #endregion
 
-                #region Parse LastUpdated          [mandatory]
+
+                #region Parse LastUpdated               [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -469,18 +482,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
                 EVSE = new EVSE(EVSEUIdBody ?? EVSEUIdURL.Value,
-                                Id,
                                 Status,
-                                Connectors,
+                                Connectors?.         Distinct(),
 
-                                StatusSchedule?.Distinct(),
-                                null,//Capabilities,
-                                FloorLevel,
-                                null,//Coordinates,
-                                PhysicalReference,
-                                null,//Directions,
-                                null,//ParkingRestrictions,
-                                null,//Images,
+                                EVSEId,
+                                StatusSchedule?.     Distinct(),
+                                Capabilities?.       Distinct(),
+                                FloorLevel?.       Trim(),
+                                Coordinates,
+                                PhysicalReference?.Trim(),
+                                Directions,
+                                ParkingRestrictions?.Distinct(),
+                                Images?.             Distinct(),
 
                                 LastUpdated);
 
@@ -559,7 +572,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var JSON = JSONObject.Create(
 
                            new JProperty("uid",                         UId.   ToString()),
-                           new JProperty("evse_id",                     Id.    ToString()),
+                           new JProperty("evse_id",                     EVSEId.    ToString()),
                            new JProperty("status",                      Status.ToString()),
 
                            StatusSchedule.SafeAny()
@@ -614,15 +627,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region TryGetConnector(ConnectorId, out Connector)
 
+        /// <summary>
+        /// Try to return the connector having the given connector identification.
+        /// </summary>
+        /// <param name="ConnectorId">A connector identification.</param>
+        /// <param name="Connector">The connector having the given connector identification.</param>
         public Boolean TryGetConnector(Connector_Id   ConnectorId,
                                        out Connector  Connector)
         {
+
+            foreach (var connector in Connectors)
+            {
+                if (connector.Id == ConnectorId)
+                {
+                    Connector = connector;
+                    return true;
+                }
+            }
 
             Connector = null;
             return false;
 
         }
+
+        #endregion
 
         #region IEnumerable<Connectors> Members
 
@@ -634,6 +664,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region Operator overloading
+
+        #region Operator == (EVSE1, EVSE2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EVSE1">An EVSE.</param>
+        /// <param name="EVSE2">Another EVSE.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (EVSE EVSE1,
+                                           EVSE EVSE2)
+        {
+
+            if (Object.ReferenceEquals(EVSE1, EVSE2))
+                return true;
+
+            if (EVSE1 is null || EVSE2 is null)
+                return false;
+
+            return EVSE1.Equals(EVSE2);
+
+        }
+
+        #endregion
+
+        #region Operator != (EVSE1, EVSE2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EVSE1">An EVSE.</param>
+        /// <param name="EVSE2">Another EVSE.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (EVSE EVSE1,
+                                           EVSE EVSE2)
+
+            => !(EVSE1 == EVSE2);
+
+        #endregion
+
+        #region Operator <  (EVSE1, EVSE2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EVSE1">An EVSE.</param>
+        /// <param name="EVSE2">Another EVSE.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (EVSE EVSE1,
+                                          EVSE EVSE2)
+
+            => EVSE1 is null
+                   ? throw new ArgumentNullException(nameof(EVSE1), "The given EVSE must not be null!")
+                   : EVSE1.CompareTo(EVSE2) < 0;
+
+        #endregion
+
+        #region Operator <= (EVSE1, EVSE2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EVSE1">An EVSE.</param>
+        /// <param name="EVSE2">Another EVSE.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (EVSE EVSE1,
+                                           EVSE EVSE2)
+
+            => !(EVSE1 > EVSE2);
+
+        #endregion
+
+        #region Operator >  (EVSE1, EVSE2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EVSE1">An EVSE.</param>
+        /// <param name="EVSE2">Another EVSE.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (EVSE EVSE1,
+                                          EVSE EVSE2)
+
+            => EVSE1 is null
+                   ? throw new ArgumentNullException(nameof(EVSE1), "The given EVSE must not be null!")
+                   : EVSE1.CompareTo(EVSE2) > 0;
+
+        #endregion
+
+        #region Operator >= (EVSE1, EVSE2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="EVSE1">An EVSE.</param>
+        /// <param name="EVSE2">Another EVSE.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (EVSE EVSE1,
+                                           EVSE EVSE2)
+
+            => !(EVSE1 < EVSE2);
+
+        #endregion
+
+        #endregion
 
         #region IComparable<EVSE> Members
 
@@ -660,11 +797,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="EVSE">An EVSE to compare with.</param>
         public Int32 CompareTo(EVSE EVSE)
 
-            => !(EVSE is null)
-                   ? Id.CompareTo(EVSE.Id)
-                   : throw new ArgumentNullException(nameof(EVSE),
-                                                     "The given EVSE must not be null!");
-
+            => EVSE is null
+                   ? throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!")
+                   : UId.CompareTo(EVSE.UId);
 
         #endregion
 
@@ -695,8 +830,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(EVSE EVSE)
 
-            => (!(EVSE is null)) &&
-                   Id.Equals(EVSE.Id);
+            => !(EVSE is null) &&
+                   UId.Equals(EVSE.UId);
 
         #endregion
 
@@ -709,7 +844,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override Int32 GetHashCode()
 
-            => Id.GetHashCode();
+            => EVSEId.GetHashCode();
 
         #endregion
 
@@ -720,7 +855,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => EVSEId.ToString();
 
         #endregion
 

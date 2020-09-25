@@ -325,6 +325,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (CDR1, CDR2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDR1">A charge detail record.</param>
+        /// <param name="CDR2">Another charge detail record.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (CDR CDR1,
+                                           CDR CDR2)
+        {
+
+            if (Object.ReferenceEquals(CDR1, CDR2))
+                return true;
+
+            if (CDR1 is null || CDR2 is null)
+                return false;
+
+            return CDR1.Equals(CDR2);
+
+        }
+
+        #endregion
+
+        #region Operator != (CDR1, CDR2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDR1">A charge detail record.</param>
+        /// <param name="CDR2">Another charge detail record.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (CDR CDR1,
+                                           CDR CDR2)
+
+            => !(CDR1 == CDR2);
+
+        #endregion
+
+        #region Operator <  (CDR1, CDR2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDR1">A charge detail record.</param>
+        /// <param name="CDR2">Another charge detail record.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (CDR CDR1,
+                                          CDR CDR2)
+
+            => CDR1 is null
+                   ? throw new ArgumentNullException(nameof(CDR1), "The given charge detail record must not be null!")
+                   : CDR1.CompareTo(CDR2) < 0;
+
+        #endregion
+
+        #region Operator <= (CDR1, CDR2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDR1">A charge detail record.</param>
+        /// <param name="CDR2">Another charge detail record.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (CDR CDR1,
+                                           CDR CDR2)
+
+            => !(CDR1 > CDR2);
+
+        #endregion
+
+        #region Operator >  (CDR1, CDR2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDR1">A charge detail record.</param>
+        /// <param name="CDR2">Another charge detail record.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (CDR CDR1,
+                                          CDR CDR2)
+
+            => CDR1 is null
+                   ? throw new ArgumentNullException(nameof(CDR1), "The given charge detail record must not be null!")
+                   : CDR1.CompareTo(CDR2) > 0;
+
+        #endregion
+
+        #region Operator >= (CDR1, CDR2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="CDR1">A charge detail record.</param>
+        /// <param name="CDR2">Another charge detail record.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (CDR CDR1,
+                                           CDR CDR2)
+
+            => !(CDR1 < CDR2);
+
+        #endregion
+
+        #endregion
+
         #region IComparable<CDR> Members
 
         #region CompareTo(Object)
@@ -349,14 +456,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CDR">An CDR to compare with.</param>
         public Int32 CompareTo(CDR CDR)
-        {
 
-            if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR),  "The given CDR must not be null!");
-
-            return Id.CompareTo(CDR.Id);
-
-        }
+            => CDR is null
+                   ? throw new ArgumentNullException(nameof(CDR), "The given CDR must not be null!")
+                   : Id.CompareTo(CDR.Id);
 
         #endregion
 
@@ -386,14 +489,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CDR">An CDR to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(CDR CDR)
-        {
 
-            if (CDR is null)
-                return false;
-
-            return Id.Equals(CDR.Id);
-
-        }
+            => !(CDR is null) &&
+                   Id.Equals(CDR.Id);
 
         #endregion
 

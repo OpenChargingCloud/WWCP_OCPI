@@ -216,6 +216,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Operator overloading
+
+        #region Operator == (Tariff1, Tariff2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Tariff1">A tariff.</param>
+        /// <param name="Tariff2">Another tariff.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (Tariff Tariff1,
+                                           Tariff Tariff2)
+        {
+
+            if (Object.ReferenceEquals(Tariff1, Tariff2))
+                return true;
+
+            if (Tariff1 is null || Tariff2 is null)
+                return false;
+
+            return Tariff1.Equals(Tariff2);
+
+        }
+
+        #endregion
+
+        #region Operator != (Tariff1, Tariff2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Tariff1">A tariff.</param>
+        /// <param name="Tariff2">Another tariff.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (Tariff Tariff1,
+                                           Tariff Tariff2)
+
+            => !(Tariff1 == Tariff2);
+
+        #endregion
+
+        #region Operator <  (Tariff1, Tariff2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Tariff1">A tariff.</param>
+        /// <param name="Tariff2">Another tariff.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Tariff Tariff1,
+                                          Tariff Tariff2)
+
+            => Tariff1 is null
+                   ? throw new ArgumentNullException(nameof(Tariff1), "The given tariff must not be null!")
+                   : Tariff1.CompareTo(Tariff2) < 0;
+
+        #endregion
+
+        #region Operator <= (Tariff1, Tariff2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Tariff1">A tariff.</param>
+        /// <param name="Tariff2">Another tariff.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Tariff Tariff1,
+                                           Tariff Tariff2)
+
+            => !(Tariff1 > Tariff2);
+
+        #endregion
+
+        #region Operator >  (Tariff1, Tariff2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Tariff1">A tariff.</param>
+        /// <param name="Tariff2">Another tariff.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Tariff Tariff1,
+                                          Tariff Tariff2)
+
+            => Tariff1 is null
+                   ? throw new ArgumentNullException(nameof(Tariff1), "The given tariff must not be null!")
+                   : Tariff1.CompareTo(Tariff2) > 0;
+
+        #endregion
+
+        #region Operator >= (Tariff1, Tariff2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Tariff1">A tariff.</param>
+        /// <param name="Tariff2">Another tariff.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Tariff Tariff1,
+                                           Tariff Tariff2)
+
+            => !(Tariff1 < Tariff2);
+
+        #endregion
+
+        #endregion
+
         #region IComparable<Tariff> Members
 
         #region CompareTo(Object)
@@ -240,14 +347,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Tariff">An Tariff to compare with.</param>
         public Int32 CompareTo(Tariff Tariff)
-        {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!");
-
-            return Id.CompareTo(Tariff.Id);
-
-        }
+            => Tariff is null
+                   ? throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!")
+                   : Id.CompareTo(Tariff.Id);
 
         #endregion
 
@@ -278,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Tariff Tariff)
 
-            => (!(Tariff is null)) &&
+            => !(Tariff is null) &&
                    Id.Equals(Tariff.Id);
 
         #endregion

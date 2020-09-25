@@ -315,8 +315,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (BusinessDetails BusinessDetails1,
                                            BusinessDetails BusinessDetails2)
+        {
 
-            => BusinessDetails1.Equals(BusinessDetails2);
+            if (Object.ReferenceEquals(BusinessDetails1, BusinessDetails2))
+                return true;
+
+            if (BusinessDetails1 is null || BusinessDetails2 is null)
+                return false;
+
+            return BusinessDetails1.Equals(BusinessDetails2);
+
+        }
 
         #endregion
 
@@ -346,7 +355,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (BusinessDetails BusinessDetails1,
                                           BusinessDetails BusinessDetails2)
 
-            => BusinessDetails1.CompareTo(BusinessDetails2) < 0;
+            => BusinessDetails1 is null
+                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business detail must not be null!")
+                   : BusinessDetails1.CompareTo(BusinessDetails2) < 0;
 
         #endregion
 
@@ -376,7 +387,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (BusinessDetails BusinessDetails1,
                                           BusinessDetails BusinessDetails2)
 
-            => BusinessDetails1.CompareTo(BusinessDetails2) > 0;
+            => BusinessDetails1 is null
+                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business detail must not be null!")
+                   : BusinessDetails1.CompareTo(BusinessDetails2) > 0;
 
         #endregion
 
@@ -422,6 +435,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="BusinessDetails">An object to compare with.</param>
         public Int32 CompareTo(BusinessDetails BusinessDetails)
         {
+
+            if (BusinessDetails == null)
+                throw new ArgumentNullException(nameof(BusinessDetails), "The given business details must not be null!");
 
             var c = Name.   CompareTo(BusinessDetails.Name);
 
@@ -472,7 +488,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(BusinessDetails BusinessDetails)
 
-            =>   Name.Equals(BusinessDetails.Name) &&
+            => !(BusinessDetails is null) &&
+
+                 Name.Equals(BusinessDetails.Name) &&
 
                ((Website.IsNullOrEmpty()         && BusinessDetails.Website.IsNullOrEmpty()) ||
                 (Website.IsNeitherNullNorEmpty() && BusinessDetails.Website.IsNeitherNullNorEmpty() && Website.Equals(BusinessDetails.Website))) &&

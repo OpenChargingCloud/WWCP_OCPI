@@ -395,8 +395,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (Image Image1,
                                            Image Image2)
+        {
 
-            => Image1.Equals(Image2);
+            if (Object.ReferenceEquals(Image1, Image2))
+                return true;
+
+            if (Image1 is null || Image2 is null)
+                return false;
+
+            return Image1.Equals(Image2);
+
+        }
 
         #endregion
 
@@ -426,7 +435,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (Image Image1,
                                           Image Image2)
 
-            => Image1.CompareTo(Image2) < 0;
+            => Image1 is null
+                   ? throw new ArgumentNullException(nameof(Image1), "The given image must not be null!")
+                   : Image1.CompareTo(Image2) < 0;
 
         #endregion
 
@@ -456,7 +467,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (Image Image1,
                                           Image Image2)
 
-            => Image1.CompareTo(Image2) > 0;
+            => Image1 is null
+                   ? throw new ArgumentNullException(nameof(Image1), "The given image must not be null!")
+                   : Image1.CompareTo(Image2) > 0;
 
         #endregion
 
@@ -502,6 +515,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Image">An object to compare with.</param>
         public Int32 CompareTo(Image Image)
         {
+
+            if (Image is null)
+                throw new ArgumentNullException(nameof(Image),
+                                                "The given image must not be null!");
 
             var c = Url.     CompareTo(Image.Url);
 
@@ -559,7 +576,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Image Image)
 
-            =>   Url.     Equals(Image.Url)      &&
+            => !(Image is null) &&
+
+                 Url.     Equals(Image.Url)      &&
                  Type.    Equals(Image.Type)     &&
                  Category.Equals(Image.Category) &&
 

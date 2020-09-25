@@ -362,8 +362,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (EnergyMix EnergyMix1,
                                            EnergyMix EnergyMix2)
+        {
 
-            => EnergyMix1.Equals(EnergyMix2);
+            if (Object.ReferenceEquals(EnergyMix1, EnergyMix2))
+                return true;
+
+            if (EnergyMix1 is null || EnergyMix2 is null)
+                return false;
+
+            return EnergyMix1.Equals(EnergyMix2);
+
+        }
 
         #endregion
 
@@ -409,7 +418,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(EnergyMix EnergyMix)
 
-            => IsGreenEnergy.Equals(EnergyMix.IsGreenEnergy) &&
+            => !(EnergyMix is null) &&
+
+               IsGreenEnergy.Equals(EnergyMix.IsGreenEnergy) &&
 
                EnergySources.       Count().Equals(EnergyMix.EnergySources.Count())                &&
                EnvironmentalImpacts.Count().Equals(EnergyMix.EnvironmentalImpacts.Count())         &&

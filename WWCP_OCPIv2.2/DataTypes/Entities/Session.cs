@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The charging session.
+    /// A charging session.
     /// </summary>
     public class Session : IHasId<Session_Id>,
                            IEquatable<Session>,
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Identification of the connector of this location the charging session is/was happening.
         /// </summary>
         [Mandatory]
-        public Connector_Id                        ConnectorId                  { get; }
+        public Session_Id                        SessionId                  { get; }
 
         /// <summary>
         /// Optional identification of the kWh energy meter.
@@ -167,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        AuthMethods              AuthMethod,
                        Location_Id              LocationId,
                        EVSE_UId                 EVSEUId,
-                       Connector_Id             ConnectorId,
+                       Session_Id             SessionId,
                        Meter_Id                 MeterId,
                        Currency                 Currency,
                        SessionStatusTypes       Status,
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.AuthMethod               = AuthMethod;
             this.LocationId               = LocationId;
             this.EVSEUId                  = EVSEUId;
-            this.ConnectorId              = ConnectorId;
+            this.SessionId              = SessionId;
             this.MeterId                  = MeterId;
             this.Currency                 = Currency;
             this.Status                   = Status;
@@ -204,6 +204,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region Operator overloading
+
+        #region Operator == (Session1, Session2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Session1">A charging session.</param>
+        /// <param name="Session2">Another charging session.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (Session Session1,
+                                           Session Session2)
+        {
+
+            if (Object.ReferenceEquals(Session1, Session2))
+                return true;
+
+            if (Session1 is null || Session2 is null)
+                return false;
+
+            return Session1.Equals(Session2);
+
+        }
+
+        #endregion
+
+        #region Operator != (Session1, Session2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Session1">A charging session.</param>
+        /// <param name="Session2">Another charging session.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (Session Session1,
+                                           Session Session2)
+
+            => !(Session1 == Session2);
+
+        #endregion
+
+        #region Operator <  (Session1, Session2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Session1">A charging session.</param>
+        /// <param name="Session2">Another charging session.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Session Session1,
+                                          Session Session2)
+
+            => Session1 is null
+                   ? throw new ArgumentNullException(nameof(Session1), "The given charging session must not be null!")
+                   : Session1.CompareTo(Session2) < 0;
+
+        #endregion
+
+        #region Operator <= (Session1, Session2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Session1">A charging session.</param>
+        /// <param name="Session2">Another charging session.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Session Session1,
+                                           Session Session2)
+
+            => !(Session1 > Session2);
+
+        #endregion
+
+        #region Operator >  (Session1, Session2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Session1">A charging session.</param>
+        /// <param name="Session2">Another charging session.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Session Session1,
+                                          Session Session2)
+
+            => Session1 is null
+                   ? throw new ArgumentNullException(nameof(Session1), "The given charging session must not be null!")
+                   : Session1.CompareTo(Session2) > 0;
+
+        #endregion
+
+        #region Operator >= (Session1, Session2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Session1">A charging session.</param>
+        /// <param name="Session2">Another charging session.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Session Session1,
+                                           Session Session2)
+
+            => !(Session1 < Session2);
+
+        #endregion
+
+        #endregion
 
         #region IComparable<Session> Members
 
@@ -229,14 +336,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Session">An Session to compare with.</param>
         public Int32 CompareTo(Session Session)
-        {
 
-            if (Session is null)
-                throw new ArgumentNullException(nameof(Session),  "The given charging session must not be null!");
-
-            return Id.CompareTo(Session.Id);
-
-        }
+            => Session is null
+                   ? throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!")
+                   : Id.CompareTo(Session.Id);
 
         #endregion
 
@@ -266,14 +369,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Session">An Session to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Session Session)
-        {
 
-            if (Session is null)
-                return false;
-
-            return Id.Equals(Session.Id);
-
-        }
+            => !(Session is null) &&
+                   Id.Equals(Session.Id);
 
         #endregion
 

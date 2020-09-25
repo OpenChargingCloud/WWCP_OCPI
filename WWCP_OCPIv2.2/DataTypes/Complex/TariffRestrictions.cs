@@ -271,8 +271,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (TariffRestrictions TariffRestriction1,
                                            TariffRestrictions TariffRestriction2)
+        {
 
-            => TariffRestriction1.Equals(TariffRestriction2);
+            if (Object.ReferenceEquals(TariffRestriction1, TariffRestriction2))
+                return true;
+
+            if (TariffRestriction1 is null || TariffRestriction2 is null)
+                return false;
+
+            return TariffRestriction1.Equals(TariffRestriction2);
+
+        }
 
         #endregion
 
@@ -318,7 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(TariffRestrictions TariffRestrictions)
 
-            => !(TariffRestrictions is null)                                                                                                            &&
+            => !(TariffRestrictions is null) &&
 
                 ((!StartTime.  HasValue && !TariffRestrictions.StartTime.  HasValue) ||
                   (StartTime.  HasValue &&  TariffRestrictions.StartTime.  HasValue && StartTime.  Value.Equals(TariffRestrictions.StartTime.  Value))) &&

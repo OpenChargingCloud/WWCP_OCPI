@@ -141,13 +141,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Optional]
         public IEnumerable<EVSE>                   EVSEs                    { get; }
 
-        /// <summary>
-        /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
-        /// present within this charging station.
-        /// </summary>
-        [Optional]
-        public IEnumerable<EVSE_Id>                EVSEIds
-            => EVSEs.SafeSelect(evse => evse.Id);
+        ///// <summary>
+        ///// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
+        ///// present within this charging station.
+        ///// </summary>
+        //[Optional]
+        //public IEnumerable<EVSE_Id>                EVSEIds
+        //    => EVSEs.SafeSelect(evse => evse.EVSEId);
 
         /// <summary>
         /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
@@ -567,11 +567,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Timezone              [mandatory]
+                #region Parse TimeZone              [mandatory]
 
-                if (!JSON.ParseMandatoryText("timezone",
-                                             "timezone",
-                                             out String Timezone,
+                if (!JSON.ParseMandatoryText("time_zone",
+                                             "time zone",
+                                             out String TimeZone,
                                              out ErrorResponse))
                 {
                     return false;
@@ -645,7 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse RelatedLocations      [optional]
+                #region Parse EVSEs                 [optional]
 
                 if (JSON.ParseOptionalJSON("evses",
                                            "evses",
@@ -820,26 +820,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         PartyIdBody     ?? PartyIdURL.Value,
                                         LocationIdBody  ?? LocationIdURL.Value,
                                         Publish,
-                                        Address,
-                                        City,
-                                        Country,
+                                        Address?.   Trim(),
+                                        City?.      Trim(),
+                                        Country?.   Trim(),
                                         Coordinates,
-                                        Timezone,
+                                        TimeZone?.  Trim(),
+
                                         PublishTokenTypes,
-                                        Name,
-                                        PostalCode,
-                                        State,
-                                        RelatedLocations,
+                                        Name?.      Trim(),
+                                        PostalCode?.Trim(),
+                                        State?.     Trim(),
+                                        RelatedLocations?.Distinct(),
                                         ParkingType,
-                                        EVSEs,
+                                        EVSEs?.           Distinct(),
                                         Directions,
                                         Operator,
                                         Suboperator,
                                         Owner,
-                                        Facilities,
+                                        Facilities?.      Distinct(),
                                         OpeningTimes,
                                         ChargingWhenClosed,
-                                        Images,
+                                        Images?.          Distinct(),
                                         EnergyMix,
                                         LastUpdated);
 
@@ -913,7 +914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom Connector JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
@@ -1021,14 +1022,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public Boolean TryGetEVSE(EVSE_UId  EVSEId,
+        #region TryGetEVSE(EVSEUId, out EVSE)
+
+        /// <summary>
+        /// Try to return the EVSE having the given EVSE identification.
+        /// </summary>
+        /// <param name="EVSEUId">An EVSE identification.</param>
+        /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
+        public Boolean TryGetEVSE(EVSE_UId  EVSEUId,
                                   out EVSE  EVSE)
         {
+
+            foreach (var evse in EVSEs)
+            {
+                if (evse.UId == EVSEUId)
+                {
+                    EVSE = evse;
+                    return true;
+                }
+            }
 
             EVSE = null;
             return false;
 
         }
+
+        #endregion
+
+        #region TryGetEVSE(EVSEId, out EVSE)
+
+        /// <summary>
+        /// Try to return the EVSE having the given EVSE identification.
+        /// </summary>
+        /// <param name="EVSEId">An EVSE identification.</param>
+        /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
+        public Boolean TryGetEVSE(EVSE_Id   EVSEId,
+                                  out EVSE  EVSE)
+        {
+
+            foreach (var evse in EVSEs)
+            {
+                if (evse.EVSEId == EVSEId)
+                {
+                    EVSE = evse;
+                    return true;
+                }
+            }
+
+            EVSE = null;
+            return false;
+
+        }
+
+        #endregion
 
         #region IEnumerable<EVSE> Members
 
@@ -1040,6 +1086,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region Operator overloading
+
+        #region Operator == (Location1, Location2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Location1">A location.</param>
+        /// <param name="Location2">Another location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator == (Location Location1,
+                                           Location Location2)
+        {
+
+            if (Object.ReferenceEquals(Location1, Location2))
+                return true;
+
+            if (Location1 is null || Location2 is null)
+                return false;
+
+            return Location1.Equals(Location2);
+
+        }
+
+        #endregion
+
+        #region Operator != (Location1, Location2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Location1">A location.</param>
+        /// <param name="Location2">Another location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator != (Location Location1,
+                                           Location Location2)
+
+            => !(Location1 == Location2);
+
+        #endregion
+
+        #region Operator <  (Location1, Location2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Location1">A location.</param>
+        /// <param name="Location2">Another location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (Location Location1,
+                                          Location Location2)
+
+            => Location1 is null
+                   ? throw new ArgumentNullException(nameof(Location1), "The given location must not be null!")
+                   : Location1.CompareTo(Location2) < 0;
+
+        #endregion
+
+        #region Operator <= (Location1, Location2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Location1">A location.</param>
+        /// <param name="Location2">Another location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (Location Location1,
+                                           Location Location2)
+
+            => !(Location1 > Location2);
+
+        #endregion
+
+        #region Operator >  (Location1, Location2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Location1">A location.</param>
+        /// <param name="Location2">Another location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (Location Location1,
+                                          Location Location2)
+
+            => Location1 is null
+                   ? throw new ArgumentNullException(nameof(Location1), "The given location must not be null!")
+                   : Location1.CompareTo(Location2) > 0;
+
+        #endregion
+
+        #region Operator >= (Location1, Location2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="Location1">A location.</param>
+        /// <param name="Location2">Another location.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (Location Location1,
+                                           Location Location2)
+
+            => !(Location1 < Location2);
+
+        #endregion
+
+        #endregion
 
         #region IComparable<Location> Members
 
@@ -1066,10 +1219,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Location">An Location to compare with.</param>
         public Int32 CompareTo(Location Location)
 
-            => !(Location is null)
-                   ? Id.CompareTo(Location.Id)
-                   : throw new ArgumentNullException(nameof(Location),
-                                                     "The given charging location must not be null!");
+            => Location is null
+                   ? throw new ArgumentNullException(nameof(Location), "The given charging location must not be null!")
+                   : Id.CompareTo(Location.Id);
 
         #endregion
 
@@ -1100,7 +1252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Location Location)
 
-            => (!(Location is null)) &&
+            => !(Location is null) &&
                    Id.Equals(Location.Id);
 
         #endregion
