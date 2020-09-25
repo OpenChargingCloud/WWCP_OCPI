@@ -88,6 +88,200 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Parse   (JSON, CustomAdditionalGeoLocationParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an additional geo location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static AdditionalGeoLocation Parse(JObject                                             JSON,
+                                                  CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out AdditionalGeoLocation additionalGeoLocation,
+                         out String                ErrorResponse,
+                         CustomAdditionalGeoLocationParser))
+            {
+                return additionalGeoLocation;
+            }
+
+            throw new ArgumentException("The given JSON representation of an additional geo location is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomAdditionalGeoLocationParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an additional geo location.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static AdditionalGeoLocation Parse(String                                         Text,
+                                             CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out AdditionalGeoLocation additionalGeoLocation,
+                         out String                ErrorResponse,
+                         CustomAdditionalGeoLocationParser))
+            {
+                return additionalGeoLocation;
+            }
+
+            throw new ArgumentException("The given text representation of an additional geo location is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out AdditionalGeoLocation, out ErrorResponse, CustomAdditionalGeoLocationParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an additional geo location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="AdditionalGeoLocation">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject                    JSON,
+                                       out AdditionalGeoLocation  AdditionalGeoLocation,
+                                       out String                 ErrorResponse)
+
+            => TryParse(JSON,
+                        out AdditionalGeoLocation,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an additional geo location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="AdditionalGeoLocation">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Boolean TryParse(JObject                                             JSON,
+                                       out AdditionalGeoLocation                           AdditionalGeoLocation,
+                                       out String                                          ErrorResponse,
+                                       CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser)
+        {
+
+            try
+            {
+
+                AdditionalGeoLocation = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Latitude     [mandatory]
+
+                if (!JSON.ParseMandatory("latitude",
+                                         "latitude",
+                                         org.GraphDefined.Vanaheimr.Aegir.Latitude.TryParse,
+                                         out Latitude Latitude,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Longitude    [mandatory]
+
+                if (!JSON.ParseMandatory("longitude",
+                                         "longitude",
+                                         org.GraphDefined.Vanaheimr.Aegir.Longitude.TryParse,
+                                         out Longitude Longitude,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Name         [optional]
+
+                if (JSON.ParseOptional("name",
+                                       "name id",
+                                       out I18NString Name,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+
+                AdditionalGeoLocation = new AdditionalGeoLocation(new GeoCoordinate(Latitude,
+                                                                                    Longitude),
+                                                                  Name);
+
+
+                if (CustomAdditionalGeoLocationParser != null)
+                    AdditionalGeoLocation = CustomAdditionalGeoLocationParser(JSON,
+                                                                              AdditionalGeoLocation);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                AdditionalGeoLocation  = default;
+                ErrorResponse     = "The given JSON representation of an additional geo location is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out AdditionalGeoLocation, out ErrorResponse, CustomAdditionalGeoLocationParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an additional geo location.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="AdditionalGeoLocation">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Boolean TryParse(String                                              Text,
+                                       out AdditionalGeoLocation                           AdditionalGeoLocation,
+                                       out String                                          ErrorResponse,
+                                       CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out AdditionalGeoLocation,
+                                out ErrorResponse,
+                                CustomAdditionalGeoLocationParser);
+
+            }
+            catch (Exception e)
+            {
+                AdditionalGeoLocation = default;
+                ErrorResponse  = "The given text representation of an additional geo location is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
         #region ToJSON(CustomAdditionalGeoLocationSerializer = null)
 
         /// <summary>

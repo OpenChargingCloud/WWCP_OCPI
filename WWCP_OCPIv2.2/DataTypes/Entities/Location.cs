@@ -372,12 +372,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region (static) TryParse(JSON, out Location, out ErrorResponse, LocationIdURL = null, CustomLocationParser = null)
 
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
         /// <summary>
         /// Try to parse the given JSON representation of an Location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject       JSON,
+                                       out Location  Location,
+                                       out String    ErrorResponse)
+
+            => TryParse(JSON,
+                        out Location,
+                        out ErrorResponse,
+                        null,
+                        null,
+                        null,
+                        null);
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an Location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="Location">The parsed location.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                JSON,
@@ -400,7 +422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse CountryCode                  [optional]
+                #region Parse CountryCode           [optional]
 
                 if (JSON.ParseOptionalStruct("country_code",
                                              "country code",
@@ -428,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PartyIdURL                  [optional]
+                #region Parse PartyIdURL            [optional]
 
                 if (JSON.ParseOptionalStruct("party_id",
                                              "party identification",
@@ -456,7 +478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Id                  [optional]
+                #region Parse Id                    [optional]
 
                 if (JSON.ParseOptionalStruct("id",
                                              "location identification",
@@ -484,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Publish           [mandatory]
+                #region Parse Publish               [mandatory]
 
                 if (!JSON.ParseMandatory("publish",
                                          "publish",
@@ -496,7 +518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Address           [mandatory]
+                #region Parse Address               [mandatory]
 
                 if (!JSON.ParseMandatoryText("address",
                                              "address",
@@ -508,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse City           [mandatory]
+                #region Parse City                  [mandatory]
 
                 if (!JSON.ParseMandatoryText("city",
                                              "city",
@@ -520,7 +542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Country           [mandatory]
+                #region Parse Country               [mandatory]
 
                 if (!JSON.ParseMandatoryText("country",
                                              "country",
@@ -532,7 +554,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Timezone           [mandatory]
+                #region Parse Coordinates           [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("coordinates",
+                                             "geo coordinates",
+                                             GeoCoordinate.TryParse,
+                                             out GeoCoordinate Coordinates,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Timezone              [mandatory]
 
                 if (!JSON.ParseMandatoryText("timezone",
                                              "timezone",
@@ -544,49 +579,231 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                //PlublishAllowTo
 
-                #region Parse Name           [mandatory]
+                #region Parse PublishTokenTypes     [optional]
 
-                if (!JSON.ParseMandatoryText("name",
-                                             "name",
-                                             out String Name,
-                                             out ErrorResponse))
+                if (JSON.ParseOptionalJSON("publish_allowed_to",
+                                           "publish allowed to",
+                                           PublishTokenType.TryParse,
+                                           out IEnumerable<PublishTokenType> PublishTokenTypes,
+                                           out ErrorResponse))
                 {
-                    return false;
+
+                    if (ErrorResponse != null)
+                        return false;
+
                 }
 
                 #endregion
 
-                #region Parse PostalCode           [mandatory]
+                #region Parse Name                  [optional]
 
-                if (!JSON.ParseMandatoryText("postal_code",
-                                             "postal code",
-                                             out String PostalCode,
-                                             out ErrorResponse))
+                var Name = JSON.GetString("name");
+
+                #endregion
+
+                #region Parse PostalCode            [optional]
+
+                var PostalCode = JSON.GetString("postal_code");
+
+                #endregion
+
+                #region Parse State                 [optional]
+
+                var State = JSON.GetString("state");
+
+                #endregion
+
+                #region Parse RelatedLocations      [optional]
+
+                if (JSON.ParseOptionalJSON("related_locations",
+                                           "related locations",
+                                           AdditionalGeoLocation.TryParse,
+                                           out IEnumerable<AdditionalGeoLocation> RelatedLocations,
+                                           out ErrorResponse))
                 {
-                    return false;
+
+                    if (ErrorResponse != null)
+                        return false;
+
                 }
 
                 #endregion
 
-                #region Parse State           [mandatory]
+                #region Parse ParkingType           [optional]
 
-                if (!JSON.ParseMandatoryText("state",
-                                             "state",
-                                             out String State,
-                                             out ErrorResponse))
+                if (JSON.ParseOptionalEnum("parking_type",
+                                           "parking type",
+                                           out ParkingTypes? ParkingType,
+                                           out ErrorResponse))
                 {
-                    return false;
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse RelatedLocations      [optional]
+
+                if (JSON.ParseOptionalJSON("evses",
+                                           "evses",
+                                           EVSE.TryParse,
+                                           out IEnumerable<EVSE> EVSEs,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Directions            [optional]
+
+                if (JSON.ParseOptional("directions",
+                                       "directions",
+                                       out I18NString Directions,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Operator              [optional]
+
+                if (JSON.ParseOptionalJSON("operator",
+                                           "operator",
+                                           BusinessDetails.TryParse,
+                                           out BusinessDetails Operator,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Suboperator           [optional]
+
+                if (JSON.ParseOptionalJSON("suboperator",
+                                           "suboperator",
+                                           BusinessDetails.TryParse,
+                                           out BusinessDetails Suboperator,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Owner                 [optional]
+
+                if (JSON.ParseOptionalJSON("owner",
+                                           "owner",
+                                           BusinessDetails.TryParse,
+                                           out BusinessDetails Owner,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Facilities            [optional]
+
+                if (JSON.ParseOptionalEnums("facilities",
+                                            "facilities",
+                                            out IEnumerable<Facilities> Facilities,
+                                            out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse OpeningTimes          [optional]
+
+                if (JSON.ParseOptionalJSON("opening_times",
+                                           "opening times",
+                                           Hours.TryParse,
+                                           out Hours OpeningTimes,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse ChargingWhenClosed    [optional]
+
+                if (JSON.ParseOptional("charging_when_closed",
+                                       "charging when closed",
+                                       out Boolean? ChargingWhenClosed,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Images                [optional]
+
+                if (JSON.ParseOptionalJSON("images",
+                                           "images",
+                                           Image.TryParse,
+                                           out IEnumerable<Image> Images,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse EnergyMix             [optional]
+
+                if (JSON.ParseOptionalJSON("energy_mix",
+                                           "energy mix",
+                                           OCPIv2_2.EnergyMix.TryParse,
+                                           out EnergyMix EnergyMix,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
                 }
 
                 #endregion
 
 
-
-
-
-                #region Parse LastUpdated          [mandatory]
+                #region Parse LastUpdated           [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -606,24 +823,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Address,
                                         City,
                                         Country,
-                                        default,
+                                        Coordinates,
                                         Timezone,
-                                        null,
+                                        PublishTokenTypes,
                                         Name,
                                         PostalCode,
                                         State,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
-                                        null,
+                                        RelatedLocations,
+                                        ParkingType,
+                                        EVSEs,
+                                        Directions,
+                                        Operator,
+                                        Suboperator,
+                                        Owner,
+                                        Facilities,
+                                        OpeningTimes,
+                                        ChargingWhenClosed,
+                                        Images,
+                                        EnergyMix,
                                         LastUpdated);
 
                 if (CustomLocationParser != null)

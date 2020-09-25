@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The energy mix.
+    /// The energy source.
     /// </summary>
     public readonly struct EnergySource : IEquatable<EnergySource>,
                                           IComparable<EnergySource>,
@@ -71,17 +71,201 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON()
+        #region (static) Parse   (JSON, CustomEnergySourceParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
+        public static EnergySource Parse(JObject                                    JSON,
+                                         CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out EnergySource energySource,
+                         out String       ErrorResponse,
+                         CustomEnergySourceParser))
+            {
+                return energySource;
+            }
+
+            throw new ArgumentException("The given JSON representation of a hour is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomEnergySourceParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a hour.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
+        public static EnergySource Parse(String                                     Text,
+                                         CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out EnergySource energySource,
+                         out String       ErrorResponse,
+                         CustomEnergySourceParser))
+            {
+                return energySource;
+            }
+
+            throw new ArgumentException("The given text representation of a hour is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out EnergySource, out ErrorResponse, CustomEnergySourceParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnergySource">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject           JSON,
+                                       out EnergySource  EnergySource,
+                                       out String        ErrorResponse)
+
+            => TryParse(JSON,
+                        out EnergySource,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnergySource">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out EnergySource                           EnergySource,
+                                       out String                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser)
+        {
+
+            try
+            {
+
+                EnergySource = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse EnergySourceCategory    [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("source",
+                                             "energy source",
+                                             out EnergySourceCategories EnergySourceCategory,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Percentage              [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("percentage",
+                                             "percentage",
+                                             out Single Percentage,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                EnergySource = new EnergySource(EnergySourceCategory,
+                                                Percentage);
+
+
+                if (CustomEnergySourceParser != null)
+                    EnergySource = CustomEnergySourceParser(JSON,
+                                                            EnergySource);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                EnergySource   = default;
+                ErrorResponse  = "The given JSON representation of a hour is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out EnergySource, out ErrorResponse, CustomEnergySourceParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a hour.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="EnergySource">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
+        public static Boolean TryParse(String                                     Text,
+                                       out EnergySource                           EnergySource,
+                                       out String                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out EnergySource,
+                                out ErrorResponse,
+                                CustomEnergySourceParser);
+
+            }
+            catch (Exception e)
+            {
+                EnergySource = default;
+                ErrorResponse  = "The given text representation of a hour is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomEnergySourceSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        public JObject ToJSON()
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergySource> CustomEnergySourceSerializer = null)
+        {
 
-            => JSONObject.Create(
-                   new JProperty("source",      Source.    ToString()),
-                   new JProperty("percentage",  Percentage)
-               );
+            var JSON = JSONObject.Create(
+                           new JProperty("source",      Source.ToString()),
+                           new JProperty("percentage",  Percentage)
+                       );
+
+            return CustomEnergySourceSerializer != null
+                       ? CustomEnergySourceSerializer(this, JSON)
+                       : JSON;
+
+        }
 
         #endregion
 

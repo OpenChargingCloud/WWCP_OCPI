@@ -72,17 +72,201 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON()
+        #region (static) Parse   (JSON, CustomEnvironmentalImpactParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
+        public static EnvironmentalImpact Parse(JObject                                           JSON,
+                                                CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out EnvironmentalImpact energySource,
+                         out String              ErrorResponse,
+                         CustomEnvironmentalImpactParser))
+            {
+                return energySource;
+            }
+
+            throw new ArgumentException("The given JSON representation of a hour is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomEnvironmentalImpactParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a hour.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
+        public static EnvironmentalImpact Parse(String                                            Text,
+                                                CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out EnvironmentalImpact energySource,
+                         out String              ErrorResponse,
+                         CustomEnvironmentalImpactParser))
+            {
+                return energySource;
+            }
+
+            throw new ArgumentException("The given text representation of a hour is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out EnvironmentalImpact, out ErrorResponse, CustomEnvironmentalImpactParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnvironmentalImpact">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject                  JSON,
+                                       out EnvironmentalImpact  EnvironmentalImpact,
+                                       out String               ErrorResponse)
+
+            => TryParse(JSON,
+                        out EnvironmentalImpact,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnvironmentalImpact">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
+        public static Boolean TryParse(JObject                                           JSON,
+                                       out EnvironmentalImpact                           EnvironmentalImpact,
+                                       out String                                        ErrorResponse,
+                                       CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser)
+        {
+
+            try
+            {
+
+                EnvironmentalImpact = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse EnvironmentalImpactCategory    [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("category",
+                                             "environmental impact category",
+                                             out EnvironmentalImpactCategories EnvironmentalImpactCategory,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Amount                         [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("amount",
+                                             "amount",
+                                             out Single Amount,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                EnvironmentalImpact = new EnvironmentalImpact(EnvironmentalImpactCategory,
+                                                              Amount);
+
+
+                if (CustomEnvironmentalImpactParser != null)
+                    EnvironmentalImpact = CustomEnvironmentalImpactParser(JSON,
+                                                                          EnvironmentalImpact);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                EnvironmentalImpact  = default;
+                ErrorResponse        = "The given JSON representation of a hour is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out EnvironmentalImpact, out ErrorResponse, CustomEnvironmentalImpactParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a hour.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="EnvironmentalImpact">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
+        public static Boolean TryParse(String                                            Text,
+                                       out EnvironmentalImpact                           EnvironmentalImpact,
+                                       out String                                        ErrorResponse,
+                                       CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out EnvironmentalImpact,
+                                out ErrorResponse,
+                                CustomEnvironmentalImpactParser);
+
+            }
+            catch (Exception e)
+            {
+                EnvironmentalImpact = default;
+                ErrorResponse  = "The given text representation of a hour is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomEnvironmentalImpactSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        public JObject ToJSON()
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnvironmentalImpact> CustomEnvironmentalImpactSerializer = null)
+        {
 
-            => JSONObject.Create(
-                   new JProperty("category",  Category.ToString()),
-                   new JProperty("amount",    Amount.  ToString())
-               );
+            var JSON = JSONObject.Create(
+                           new JProperty("category",  Category.ToString()),
+                           new JProperty("amount",    Amount.  ToString())
+                       );
+
+            return CustomEnvironmentalImpactSerializer != null
+                       ? CustomEnvironmentalImpactSerializer(this, JSON)
+                       : JSON;
+
+        }
 
         #endregion
 

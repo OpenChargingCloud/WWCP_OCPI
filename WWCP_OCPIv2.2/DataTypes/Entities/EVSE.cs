@@ -248,6 +248,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region (static) TryParse(JSON, out EVSE, out ErrorResponse, EVSEUIdURL = null, CustomEVSEParser = null)
 
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an EVSE.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EVSE">The parsed EVSE.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject     JSON,
+                                       out EVSE    EVSE,
+                                       out String  ErrorResponse)
+
+            => TryParse(JSON,
+                        out EVSE,
+                        out ErrorResponse,
+                        null,
+                        null);
+
         /// <summary>
         /// Try to parse the given JSON representation of an EVSE.
         /// </summary>
@@ -259,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(JObject                            JSON,
                                        out EVSE                           EVSE,
                                        out String                         ErrorResponse,
-                                       EVSE_UId?                          EVSEUIdURL         = null,
+                                       EVSE_UId?                          EVSEUIdURL,
                                        CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
         {
 

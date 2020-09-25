@@ -84,6 +84,193 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Parse   (JSON, CustomBusinessDetailsParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a business detail.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static BusinessDetails Parse(JObject                                       JSON,
+                                            CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out BusinessDetails additionalGeoLocation,
+                         out String          ErrorResponse,
+                         CustomBusinessDetailsParser))
+            {
+                return additionalGeoLocation;
+            }
+
+            throw new ArgumentException("The given JSON representation of a business detail is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomBusinessDetailsParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a business detail.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static BusinessDetails Parse(String                                        Text,
+                                            CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out BusinessDetails additionalGeoLocation,
+                         out String          ErrorResponse,
+                         CustomBusinessDetailsParser))
+            {
+                return additionalGeoLocation;
+            }
+
+            throw new ArgumentException("The given text representation of a business detail is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out BusinessDetails, out ErrorResponse, CustomBusinessDetailsParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a business detail.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="BusinessDetails">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject              JSON,
+                                       out BusinessDetails  BusinessDetails,
+                                       out String           ErrorResponse)
+
+            => TryParse(JSON,
+                        out BusinessDetails,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a business detail.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="BusinessDetails">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Boolean TryParse(JObject                                       JSON,
+                                       out BusinessDetails                           BusinessDetails,
+                                       out String                                    ErrorResponse,
+                                       CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser)
+        {
+
+            try
+            {
+
+                BusinessDetails = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Name        [mandatory]
+
+                if (!JSON.ParseMandatoryText("name",
+                                             "name",
+                                             out String Name,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse website     [optional]
+
+                var Website  = JSON.GetString("website");
+
+                #endregion
+
+                #region Parse Logo        [optional]
+
+                if (JSON.ParseOptionalJSON("logo",
+                                           "logo",
+                                           Image.TryParse,
+                                           out Image Logo,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+
+                BusinessDetails = new BusinessDetails(Name,
+                                                      Website,
+                                                      Logo);
+
+
+                if (CustomBusinessDetailsParser != null)
+                    BusinessDetails = CustomBusinessDetailsParser(JSON,
+                                                                              BusinessDetails);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                BusinessDetails  = default;
+                ErrorResponse     = "The given JSON representation of a business detail is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out BusinessDetails, out ErrorResponse, CustomBusinessDetailsParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a business detail.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="BusinessDetails">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Boolean TryParse(String                                        Text,
+                                       out BusinessDetails                           BusinessDetails,
+                                       out String                                    ErrorResponse,
+                                       CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out BusinessDetails,
+                                out ErrorResponse,
+                                CustomBusinessDetailsParser);
+
+            }
+            catch (Exception e)
+            {
+                BusinessDetails = default;
+                ErrorResponse  = "The given text representation of a business detail is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
         #region ToJSON(BusinessDetails = null)
 
         /// <summary>

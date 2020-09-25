@@ -69,7 +69,189 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region (static) Parse   (JSON, CustomExceptionalPeriodParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an exceptional period.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
+        public static ExceptionalPeriod Parse(JObject                                    JSON,
+                                         CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out ExceptionalPeriod exceptionalPeriod,
+                         out String            ErrorResponse,
+                         CustomExceptionalPeriodParser))
+            {
+                return exceptionalPeriod;
+            }
+
+            throw new ArgumentException("The given JSON representation of an exceptional period is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomExceptionalPeriodParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an exceptional period.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
+        public static ExceptionalPeriod Parse(String                                     Text,
+                                         CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out ExceptionalPeriod exceptionalPeriod,
+                         out String            ErrorResponse,
+                         CustomExceptionalPeriodParser))
+            {
+                return exceptionalPeriod;
+            }
+
+            throw new ArgumentException("The given text representation of an exceptional period is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out ExceptionalPeriod, out ErrorResponse, CustomExceptionalPeriodParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an exceptional period.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="ExceptionalPeriod">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject                JSON,
+                                       out ExceptionalPeriod  ExceptionalPeriod,
+                                       out String             ErrorResponse)
+
+            => TryParse(JSON,
+                        out ExceptionalPeriod,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an exceptional period.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="ExceptionalPeriod">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
+        public static Boolean TryParse(JObject                                         JSON,
+                                       out ExceptionalPeriod                           ExceptionalPeriod,
+                                       out String                                      ErrorResponse,
+                                       CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser)
+        {
+
+            try
+            {
+
+                ExceptionalPeriod = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse PeriodBegin    [mandatory]
+
+                if (!JSON.ParseMandatory("period_begin",
+                                         "period begin",
+                                         out DateTime PeriodBegin,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PeriodEnd      [mandatory]
+
+                if (!JSON.ParseMandatory("period_end",
+                                         "period end",
+                                         out DateTime PeriodEnd,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                ExceptionalPeriod = new ExceptionalPeriod(PeriodBegin,
+                                                          PeriodEnd);
+
+
+                if (CustomExceptionalPeriodParser != null)
+                    ExceptionalPeriod = CustomExceptionalPeriodParser(JSON,
+                                                                      ExceptionalPeriod);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                ExceptionalPeriod   = default;
+                ErrorResponse  = "The given JSON representation of an exceptional period is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out ExceptionalPeriod, out ErrorResponse, CustomExceptionalPeriodParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an exceptional period.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="ExceptionalPeriod">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
+        public static Boolean TryParse(String                                          Text,
+                                       out ExceptionalPeriod                           ExceptionalPeriod,
+                                       out String                                      ErrorResponse,
+                                       CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out ExceptionalPeriod,
+                                out ErrorResponse,
+                                CustomExceptionalPeriodParser);
+
+            }
+            catch (Exception e)
+            {
+                ExceptionalPeriod = default;
+                ErrorResponse  = "The given text representation of an exceptional period is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomExceptionalPeriodSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomExceptionalPeriodSerializer">A delegate to serialize custom regular hours JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ExceptionalPeriod> CustomExceptionalPeriodSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -77,9 +259,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("period_end",   End.  ToIso8601())
                        );
 
-            return JSON;
+            return CustomExceptionalPeriodSerializer != null
+                       ? CustomExceptionalPeriodSerializer(this, JSON)
+                       : JSON;
 
         }
+
+        #endregion
 
 
         #region Operator overloading

@@ -116,6 +116,234 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Parse   (JSON, CustomImageParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an image.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Image Parse(JObject                             JSON,
+                                  CustomJObjectParserDelegate<Image>  CustomImageParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out Image  additionalGeoLocation,
+                         out String ErrorResponse,
+                         CustomImageParser))
+            {
+                return additionalGeoLocation;
+            }
+
+            throw new ArgumentException("The given JSON representation of an image is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomImageParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an image.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Image Parse(String                                        Text,
+                                            CustomJObjectParserDelegate<Image>  CustomImageParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out Image  additionalGeoLocation,
+                         out String ErrorResponse,
+                         CustomImageParser))
+            {
+                return additionalGeoLocation;
+            }
+
+            throw new ArgumentException("The given text representation of an image is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out Image, out ErrorResponse, CustomImageParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an image.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="Image">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject     JSON,
+                                       out Image   Image,
+                                       out String  ErrorResponse)
+
+            => TryParse(JSON,
+                        out Image,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an image.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="Image">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Boolean TryParse(JObject                             JSON,
+                                       out Image                           Image,
+                                       out String                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Image>  CustomImageParser)
+        {
+
+            try
+            {
+
+                Image = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Url         [mandatory]
+
+                if (!JSON.ParseMandatoryText("url",
+                                             "url",
+                                             out String Url,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Category    [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("category",
+                                             "image category",
+                                             out ImageCategories Category,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Type        [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("type",
+                                             "image type",
+                                             out ImageFileTypes Type,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse website     [optional]
+
+                var Thumbnail = JSON.GetString("thumbnail");
+
+                #endregion
+
+                #region Parse Width       [optional]
+
+                if (JSON.ParseOptional("width",
+                                       "image width",
+                                       out UInt32? Width,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse Height      [optional]
+
+                if (JSON.ParseOptional("height",
+                                       "image height",
+                                       out UInt32? Height,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+
+                Image = new Image(Url,
+                                  Type,
+                                  Category,
+                                  Width,
+                                  Width,
+                                  Thumbnail);
+
+
+                if (CustomImageParser != null)
+                    Image = CustomImageParser(JSON,
+                                                                              Image);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Image  = default;
+                ErrorResponse     = "The given JSON representation of an image is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out Image, out ErrorResponse, CustomImageParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an image.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="Image">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        public static Boolean TryParse(String                              Text,
+                                       out Image                           Image,
+                                       out String                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Image>  CustomImageParser)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out Image,
+                                out ErrorResponse,
+                                CustomImageParser);
+
+            }
+            catch (Exception e)
+            {
+                Image = default;
+                ErrorResponse  = "The given text representation of an image is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
         #region ToJSON(CustomImageSerializer = null)
 
         /// <summary>

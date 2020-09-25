@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Regular recurring operation or access hours.
+    /// Regular recurring operation or access regular hours.
     /// </summary>
     public readonly struct RegularHours : IEquatable<RegularHours>
     {
@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public DayOfWeek  Weekday    { get; }
 
         /// <summary>
-        /// Begin of the regular period given in hours and minutes. Must be in 24h format.
+        /// Begin of the regular period given in regular hours and minutes. Must be in 24h format.
         /// </summary>
         public HourMin    Begin      { get; }
 
@@ -56,22 +56,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new specification of a regular recurring operation or access hours.
+        /// Create a new specification of a regular recurring operation or access regular hours.
         /// </summary>
         /// <param name="Weekday">Day of the week, from Monday till Sunday.</param>
-        /// <param name="Begin">Begin of the regular period given in hours and minutes. Must be in 24h format.</param>
+        /// <param name="Begin">Begin of the regular period given in regular hours and minutes. Must be in 24h format.</param>
         /// <param name="End">End of the regular period, syntax as for period_begin. Must be later than the begin.</param>
         public RegularHours(DayOfWeek  Weekday,
                             HourMin    Begin,
                             HourMin    End)
         {
 
-            #region Initial checks
-
             if (Begin >= End)
                 throw new ArgumentException("Begin time must be before the end time!");
-
-            #endregion
 
             this.Weekday  = Weekday;
             this.Begin    = Begin;
@@ -82,56 +78,266 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public JObject ToJSON()
+        #region (static) Parse   (JSON, CustomRegularHoursParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a regular hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
+        public static RegularHours Parse(JObject                                    JSON,
+                                         CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser   = null)
         {
 
-            var JSON = JSONObject.Create(
-                           new JProperty("weekday",       (UInt32) Weekday),
-                           new JProperty("period_begin",  Begin.ToString()),
-                           new JProperty("period_end",    End.  ToString())
-                       );
+            if (TryParse(JSON,
+                         out RegularHours regularHours,
+                         out String       ErrorResponse,
+                         CustomRegularHoursParser))
+            {
+                return regularHours;
+            }
 
-            return JSON;
+            throw new ArgumentException("The given JSON representation of a regular hour is invalid: " + ErrorResponse, nameof(JSON));
 
         }
 
+        #endregion
+
+        #region (static) Parse   (Text, CustomRegularHoursParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a regular hour.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
+        public static RegularHours Parse(String                                     Text,
+                                         CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out RegularHours regularHours,
+                         out String       ErrorResponse,
+                         CustomRegularHoursParser))
+            {
+                return regularHours;
+            }
+
+            throw new ArgumentException("The given text representation of a regular hour is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out RegularHours, out ErrorResponse, CustomRegularHoursParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a regular hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="RegularHours">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject           JSON,
+                                       out RegularHours  RegularHours,
+                                       out String        ErrorResponse)
+
+            => TryParse(JSON,
+                        out RegularHours,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a regular hour.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="RegularHours">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out RegularHours                           RegularHours,
+                                       out String                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser)
+        {
+
+            try
+            {
+
+                RegularHours = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse WeekDay        [mandatory]
+
+                if (!JSON.ParseMandatory("weekday",
+                                         "weekday",
+                                         out Int32 WeekDayInt32,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                // https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_regularhours_class
+                // "Number of day in the week, from Monday (1) till Sunday (7)" <= OCPI is crazy!
+
+                var WeekDay = (DayOfWeek) (WeekDayInt32 % 7);
+
+                #endregion
+
+                #region Parse PeriodBegin    [mandatory]
+
+                if (!JSON.ParseMandatory("period_begin",
+                                         "period begin",
+                                         HourMin.TryParse,
+                                         out HourMin PeriodBegin,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PeriodEnd      [mandatory]
+
+                if (!JSON.ParseMandatory("period_end",
+                                         "period end",
+                                         HourMin.TryParse,
+                                         out HourMin PeriodEnd,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                RegularHours = new RegularHours(WeekDay,
+                                                PeriodBegin,
+                                                PeriodEnd);
+
+
+                if (CustomRegularHoursParser != null)
+                    RegularHours = CustomRegularHoursParser(JSON,
+                                                            RegularHours);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                RegularHours   = default;
+                ErrorResponse  = "The given JSON representation of a regular hour is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out RegularHours, out ErrorResponse, CustomRegularHoursParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a regular hour.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="RegularHours">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
+        public static Boolean TryParse(String                                     Text,
+                                       out RegularHours                           RegularHours,
+                                       out String                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out RegularHours,
+                                out ErrorResponse,
+                                CustomRegularHoursParser);
+
+            }
+            catch (Exception e)
+            {
+                RegularHours = default;
+                ErrorResponse  = "The given text representation of a regular hour is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomRegularHoursSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomRegularHoursSerializer">A delegate to serialize custom regular hours JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<RegularHours> CustomRegularHoursSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           // https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc#mod_locations_regularhours_class
+                           // "Number of day in the week, from Monday (1) till Sunday (7)" <= OCPI is crazy!
+                           new JProperty("weekday",       Weekday == DayOfWeek.Sunday ? 7 : (UInt32) Weekday),
+
+                           new JProperty("period_begin",  Begin.ToString()),
+                           new JProperty("period_end",    End.  ToString())
+
+                       );
+
+            return CustomRegularHoursSerializer != null
+                       ? CustomRegularHoursSerializer(this, JSON)
+                       : JSON;
+
+        }
+
+        #endregion
 
 
         #region Operator overloading
 
-        #region Operator == (RegularHours1, RegularHours2)
+        #region Operator == (RegularRegularHours1, RegularRegularHours2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RegularHours1">A specification of a regular recurring operation or access hours.</param>
-        /// <param name="RegularHours2">Another specification of a regular recurring operation or access hours.</param>
+        /// <param name="RegularRegularHours1">A specification of a regular recurring operation or access regular hours.</param>
+        /// <param name="RegularRegularHours2">Another specification of a regular recurring operation or access regular hours.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (RegularHours RegularHours1,
-                                           RegularHours RegularHours2)
+        public static Boolean operator == (RegularHours RegularRegularHours1,
+                                           RegularHours RegularRegularHours2)
 
-            => RegularHours1.Equals(RegularHours2);
+            => RegularRegularHours1.Equals(RegularRegularHours2);
 
         #endregion
 
-        #region Operator != (RegularHours1, RegularHours2)
+        #region Operator != (RegularRegularHours1, RegularRegularHours2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RegularHours1">A specification of a regular recurring operation or access hours.</param>
-        /// <param name="RegularHours2">Another specification of a regular recurring operation or access hours.</param>
+        /// <param name="RegularRegularHours1">A specification of a regular recurring operation or access regular hours.</param>
+        /// <param name="RegularRegularHours2">Another specification of a regular recurring operation or access regular hours.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (RegularHours RegularHours1,
-                                           RegularHours RegularHours2)
+        public static Boolean operator != (RegularHours RegularRegularHours1,
+                                           RegularHours RegularRegularHours2)
 
-            => !(RegularHours1 == RegularHours2);
-
-        #endregion
+            => !(RegularRegularHours1 == RegularRegularHours2);
 
         #endregion
 
-        #region IEquatable<RegularHours> Members
+        #endregion
+
+        #region IEquatable<RegularRegularHours> Members
 
         #region Equals(Object)
 
@@ -142,23 +348,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is RegularHours RegularHours &&
-                   Equals(RegularHours);
+            => Object is RegularHours RegularRegularHours &&
+                   Equals(RegularRegularHours);
 
         #endregion
 
-        #region Equals(RegularHours)
+        #region Equals(RegularRegularHours)
 
         /// <summary>
-        /// Compares two RegularHourss for equality.
+        /// Compares two RegularRegularHourss for equality.
         /// </summary>
-        /// <param name="RegularHours">A RegularHours to compare with.</param>
+        /// <param name="RegularRegularHours">A RegularRegularHours to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(RegularHours RegularHours)
+        public Boolean Equals(RegularHours RegularRegularHours)
 
-            => Weekday.Equals(RegularHours.Weekday) &&
-               Begin.  Equals(RegularHours.Begin)   &&
-               End.    Equals(RegularHours.End);
+            => Weekday.Equals(RegularRegularHours.Weekday) &&
+               Begin.  Equals(RegularRegularHours.Begin)   &&
+               End.    Equals(RegularRegularHours.End);
 
         #endregion
 

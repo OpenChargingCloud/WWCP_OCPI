@@ -99,34 +99,253 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON()
+        #region (static) Parse   (JSON, CustomEnergyMixParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an energy mix.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
+        public static EnergyMix Parse(JObject                                 JSON,
+                                      CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out EnergyMix energyMix,
+                         out String    ErrorResponse,
+                         CustomEnergyMixParser))
+            {
+                return energyMix;
+            }
+
+            throw new ArgumentException("The given JSON representation of an energy mix is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomEnergyMixParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an energy mix.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
+        public static EnergyMix Parse(String                                         Text,
+                                             CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out EnergyMix energyMix,
+                         out String    ErrorResponse,
+                         CustomEnergyMixParser))
+            {
+                return energyMix;
+            }
+
+            throw new ArgumentException("The given text representation of an energy mix is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out EnergyMix, out ErrorResponse, CustomEnergyMixParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an energy mix.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnergyMix">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject        JSON,
+                                       out EnergyMix  EnergyMix,
+                                       out String     ErrorResponse)
+
+            => TryParse(JSON,
+                        out EnergyMix,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an energy mix.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnergyMix">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
+        public static Boolean TryParse(JObject                                 JSON,
+                                       out EnergyMix                           EnergyMix,
+                                       out String                              ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser)
+        {
+
+            try
+            {
+
+                EnergyMix = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse IsGreenEnergy           [mandatory]
+
+                if (!JSON.ParseMandatory("is_green_energy",
+                                         "is green energy",
+                                         out Boolean IsGreenEnergy,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse EnergySources           [optional]
+
+                if (JSON.ParseOptionalJSON("energy_sources",
+                                           "energy sources",
+                                           EnergySource.TryParse,
+                                           out IEnumerable<EnergySource> EnergySources,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse EnvironmentalImpacts    [optional]
+
+                if (JSON.ParseOptionalJSON("environ_impact",
+                                           "environmental impacts",
+                                           EnvironmentalImpact.TryParse,
+                                           out IEnumerable<EnvironmentalImpact> EnvironmentalImpacts,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse SupplierName            [optional]
+
+                var SupplierName      = JSON.GetString("supplier_name");
+
+                #endregion
+
+                #region Parse EnergyProductName       [optional]
+
+                var EnergyProductName = JSON.GetString("energy_product_name");
+
+                #endregion
+
+
+                EnergyMix = new EnergyMix(IsGreenEnergy,
+                                          EnergySources,
+                                          EnvironmentalImpacts,
+                                          SupplierName,
+                                          EnergyProductName);
+
+
+                if (CustomEnergyMixParser != null)
+                    EnergyMix = CustomEnergyMixParser(JSON,
+                                              EnergyMix);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                EnergyMix          = default;
+                ErrorResponse  = "The given JSON representation of an energy mix is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out EnergyMix, out ErrorResponse, CustomEnergyMixParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an energy mix.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="EnergyMix">The parsed connector.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
+        public static Boolean TryParse(String                                  Text,
+                                       out EnergyMix                           EnergyMix,
+                                       out String                              ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out EnergyMix,
+                                out ErrorResponse,
+                                CustomEnergyMixParser);
+
+            }
+            catch (Exception e)
+            {
+                EnergyMix          = default;
+                ErrorResponse  = "The given text representation of an energy mix is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomEnergyMixSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        public JObject ToJSON()
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMix> CustomEnergyMixSerializer = null)
+        {
 
-            => JSONObject.Create(
+            var JSON = JSONObject.Create(
 
-                   new JProperty("is_green_energy",            IsGreenEnergy),
+                           new JProperty("is_green_energy",            IsGreenEnergy),
 
-                   EnergySources.       SafeAny()
-                       ? new JProperty("energy_sources",       new JArray(EnergySources.       Select(energysource        => energysource.       ToJSON())))
-                       : null,
+                           EnergySources.       SafeAny()
+                               ? new JProperty("energy_sources",       new JArray(EnergySources.       Select(energysource        => energysource.       ToJSON())))
+                               : null,
 
-                   EnvironmentalImpacts.SafeAny()
-                       ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())))
-                       : null,
+                           EnvironmentalImpacts.SafeAny()
+                               ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())))
+                               : null,
 
-                   SupplierName.IsNotNullOrEmpty()
-                       ? new JProperty("supplier_name",        SupplierName)
-                       : null,
+                           SupplierName.IsNotNullOrEmpty()
+                               ? new JProperty("supplier_name",        SupplierName)
+                               : null,
 
-                   EnergyProductName.IsNotNullOrEmpty()
-                       ? new JProperty("energy_product_name",  EnergyProductName)
-                       : null
+                           EnergyProductName.IsNotNullOrEmpty()
+                               ? new JProperty("energy_product_name",  EnergyProductName)
+                               : null
 
-               );
+                       );
+
+            return CustomEnergyMixSerializer != null
+                       ? CustomEnergyMixSerializer(this, JSON)
+                       : JSON;
+
+        }
 
         #endregion
 
