@@ -41,9 +41,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Unique ID by which this Token can be identified.
         /// </summary>
-        /// <remarks>Mandatory within this implementation.</remarks>
-        [Mandatory]
-        public Token_Id     Id              { get; }
+        [Optional]
+        public Token_Id?    Id              { get; }
 
         /// <summary>
         /// Type of the token.
@@ -77,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create new publish token for opening or access hours.
         /// </summary>
 
-        public PublishTokenType(Token_Id     Id,
+        public PublishTokenType(Token_Id?    Id             = null,
                                 TokenTypes?  Type           = null,
                                 String       VisualNumber   = null,
                                 String       Issuer         = null,
@@ -183,19 +182,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 PublishTokenType = default;
 
-                if (JSON?.HasValues != true)
-                {
-                    ErrorResponse = "The given JSON object must not be null or empty!";
-                    return false;
-                }
+                //if (JSON?.HasValues != true)
+                //{
+                //    ErrorResponse = "The given JSON object must not be null or empty!";
+                //    return false;
+                //}
 
-                #region Parse Id              [mandatory]
+                #region Parse Id              [optional]
 
-                if (!JSON.ParseMandatory("uid",
-                                         "uid",
-                                         Token_Id.TryParse,
-                                         out Token_Id Id,
-                                         out ErrorResponse))
+                if (!JSON.ParseOptional("uid",
+                                        "uid",
+                                        Token_Id.TryParse,
+                                        out Token_Id? Id,
+                                        out ErrorResponse))
                 {
                     return false;
                 }
@@ -255,7 +254,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (CustomPublishTokenTypeParser != null)
                     PublishTokenType = CustomPublishTokenTypeParser(JSON,
-                                                                PublishTokenType);
+                                                                    PublishTokenType);
+
+
+                if (!Id.HasValue                  &&
+                    !Type.HasValue                &&
+                    !VisualNumber.IsNullOrEmpty() &&
+                    !Issuer.IsNullOrEmpty()       &&
+                    !GroupId.HasValue)
+                {
+                    PublishTokenType = null;
+                }
 
                 return true;
 
@@ -477,10 +486,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="PublishTokenType">An object to compare with.</param>
         public Int32 CompareTo(PublishTokenType PublishTokenType)
+        {
 
-            => PublishTokenType is null
-                   ? throw new ArgumentNullException(nameof(PublishTokenType), "The given publish token must not be null!")
-                   : Id.CompareTo(PublishTokenType.Id);
+            if (PublishTokenType is null)
+                throw new ArgumentNullException(nameof(PublishTokenType), "The given publish token must not be null!");
+
+            var c = Id.HasValue && PublishTokenType.Id.HasValue
+                        ? Id.Value.CompareTo(PublishTokenType.Id.Value)
+                        : 0;
+
+            if (c == 0 && VisualNumber.IsNotNullOrEmpty() && PublishTokenType.VisualNumber.IsNotNullOrEmpty())
+                c = VisualNumber.CompareTo(PublishTokenType.VisualNumber);
+
+            if (c == 0 && GroupId.HasValue && PublishTokenType.GroupId.HasValue)
+                c = GroupId.Value.CompareTo(PublishTokenType.GroupId.Value);
+
+            if (c == 0 && Issuer.IsNotNullOrEmpty() && PublishTokenType.Issuer.IsNotNullOrEmpty())
+                c = Issuer.CompareTo(PublishTokenType.Issuer);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -512,7 +538,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(PublishTokenType PublishTokenType)
 
             => !(PublishTokenType is null) &&
-                   Id.Equals(PublishTokenType.Id);
+
+                 (!Id.     HasValue && !PublishTokenType.Id.     HasValue) || (Id.     HasValue && PublishTokenType.Id.     HasValue && Id.     Value.Equals(PublishTokenType.Id.     Value)) &&
+                 (!Type.   HasValue && !PublishTokenType.Type.   HasValue) || (Type.   HasValue && PublishTokenType.Type.   HasValue && Type.   Value.Equals(PublishTokenType.Type.   Value)) &&
+                 (!GroupId.HasValue && !PublishTokenType.GroupId.HasValue) || (GroupId.HasValue && PublishTokenType.GroupId.HasValue && GroupId.Value.Equals(PublishTokenType.GroupId.Value)) &&
+
+                 (!VisualNumber.IsNullOrEmpty() && !PublishTokenType.VisualNumber.IsNullOrEmpty()) || (VisualNumber.IsNotNullOrEmpty() && PublishTokenType.VisualNumber.IsNotNullOrEmpty() && VisualNumber.Equals(PublishTokenType.VisualNumber)) &&
+                 (!Issuer.      IsNullOrEmpty() && !PublishTokenType.Issuer.      IsNullOrEmpty()) || (Issuer.      IsNotNullOrEmpty() && PublishTokenType.Issuer.      IsNotNullOrEmpty() && Issuer.      Equals(PublishTokenType.Issuer));
 
         #endregion
 
@@ -528,7 +560,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
-                return Id.GetHashCode();
+
+                return (Id.HasValue
+                            ? Id.     Value.GetHashCode() * 11
+                            : 0) ^
+
+                       (Type.HasValue
+                            ? Type.   Value.GetHashCode() * 7
+                            : 0) ^
+
+                       (VisualNumber.IsNotNullOrEmpty()
+                            ? VisualNumber. GetHashCode() * 5
+                            : 0) ^
+
+                       (Issuer.IsNotNullOrEmpty()
+                            ? Issuer.       GetHashCode() * 3
+                            : 0) ^
+
+                       (GroupId.HasValue
+                            ? GroupId.Value.GetHashCode()
+                            : 0);
+
             }
         }
 
@@ -541,19 +593,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Id,
-                             Type.HasValue
-                                 ? " (" + Type.ToString() + ")"
-                                 : "",
-                             VisualNumber.IsNotNullOrEmpty()
-                                 ? ", visual: '" + VisualNumber + "'"
-                                 : "",
-                             Issuer.IsNotNullOrEmpty()
-                                 ? ", issuer: '" + Issuer + "'"
-                                 : "",
-                             GroupId.HasValue
-                                 ? ", group: '"  + GroupId.ToString() + "'"
-                                 : "");
+            => new String[] {
+                   Id.HasValue
+                       ? "id: '"     + Id.     ToString() + "'"
+                       : "",
+                   Type.HasValue
+                       ? "type: '"   + Type.   ToString() + "'"
+                       : "",
+                   VisualNumber.IsNotNullOrEmpty()
+                       ? "visual: '" + VisualNumber + "'"
+                       : "",
+                   Issuer.IsNotNullOrEmpty()
+                       ? "issuer: '" + Issuer + "'"
+                       : "",
+                   GroupId.HasValue
+                       ? "group: '"  + GroupId.ToString() + "'"
+                       : ""
+               }.AggregateWith(", ");
 
         #endregion
 

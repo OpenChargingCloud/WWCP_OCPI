@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given JSON representation of a business detail.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
         public static BusinessDetails Parse(JObject                                       JSON,
                                             CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser   = null)
         {
@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given text representation of a business detail.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
         public static BusinessDetails Parse(String                                        Text,
                                             CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser   = null)
         {
@@ -160,7 +160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="BusinessDetails">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
         public static Boolean TryParse(JObject                                       JSON,
                                        out BusinessDetails                           BusinessDetails,
                                        out String                                    ErrorResponse,
@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="BusinessDetails">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
         public static Boolean TryParse(String                                        Text,
                                        out BusinessDetails                           BusinessDetails,
                                        out String                                    ErrorResponse,
@@ -271,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(BusinessDetails = null)
+        #region ToJSON(CustomBusinessDetailsSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.

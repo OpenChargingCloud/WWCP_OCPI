@@ -149,7 +149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given JSON representation of a hour.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomHoursParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
         public static Hours Parse(JObject                                        JSON,
                                              CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
         {
@@ -174,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given text representation of a hour.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomHoursParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
         public static Hours Parse(String                                         Text,
                                              CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
         {
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Hours">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomHoursParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
         public static Boolean TryParse(JObject                             JSON,
                                        out Hours                           Hours,
                                        out String                          ErrorResponse,
@@ -330,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="Hours">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomHoursParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
         public static Boolean TryParse(String                              Text,
                                        out Hours                           Hours,
                                        out String                          ErrorResponse,

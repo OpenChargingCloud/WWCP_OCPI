@@ -74,7 +74,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             PartyId       = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 2)
+            if (HTTPRequest.ParsedURLParameters.Length < 2)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -88,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -106,7 +106,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             LocationId    = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 3)
+            if (HTTPRequest.ParsedURLParameters.Length < 3)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -185,7 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -203,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
             if (!LocationId.HasValue)
             {
@@ -285,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             Location      = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 3) {
+            if (HTTPRequest.ParsedURLParameters.Length < 3) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -298,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -316,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
             if (!LocationId.HasValue) {
 
@@ -414,7 +414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             EVSEUId       = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 4)
+            if (HTTPRequest.ParsedURLParameters.Length < 4)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -428,7 +428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -464,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -482,7 +482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -552,7 +552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             EVSE          = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 4) {
+            if (HTTPRequest.ParsedURLParameters.Length < 4) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -565,7 +565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -583,7 +583,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -601,7 +601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
@@ -618,7 +618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -719,7 +719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             ConnectorId   = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 5)
+            if (HTTPRequest.ParsedURLParameters.Length < 5)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -733,7 +733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -751,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -769,7 +769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -787,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -805,7 +805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
             if (!EVSEUId.HasValue)
             {
@@ -881,7 +881,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             Connector     = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 5) {
+            if (HTTPRequest.ParsedURLParameters.Length < 5) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -894,7 +894,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -912,7 +912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
@@ -930,7 +930,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
@@ -947,7 +947,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -965,7 +965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
             if (!EVSEUId.HasValue)
             {
@@ -1037,36 +1037,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
+        private static JObject createResponse(this JToken   Data,
+                                              Int32         ErrorCode,
+                                              String        StatusMessage,
+                                              DateTime?     Timestamp = null)
 
+            => JSONObject.Create(
 
+                   new JProperty("data",                  Data),
+                   new JProperty("status_code",           ErrorCode),
 
+                   StatusMessage.IsNotNullOrEmpty()
+                       ? new JProperty("status_message",  StatusMessage)
+                       :  null,
 
+                   new JProperty("timestamp",            (Timestamp ?? DateTime.UtcNow).ToIso8601())
 
-
+               );
 
         public static JObject CreateResponse(this JObject  Data,
-                                             UInt32        ErrorCode,
-                                             String        StatusMessage,
-                                             DateTime      Timestamp)
+                                             Int32         ErrorCode,
+                                             String        StatusMessage = null,
+                                             DateTime?     Timestamp     = null)
 
-            => new JObject(
-                   new JProperty("data",            Data),
-                   new JProperty("status_code",     ErrorCode),
-                   new JProperty("status_message",  StatusMessage),
-                   new JProperty("timestamp",       Timestamp.ToIso8601())
-               );
+            => createResponse(Data,
+                              ErrorCode,
+                              StatusMessage,
+                              Timestamp);
 
         public static JObject CreateResponse(this JArray  Data,
-                                             UInt32       ErrorCode,
-                                             String       StatusMessage,
-                                             DateTime     Timestamp)
+                                             Int32        ErrorCode,
+                                             String       StatusMessage = null,
+                                             DateTime?    Timestamp     = null)
 
-            => new JObject(
-                   new JProperty("data",            Data),
-                   new JProperty("status_code",     ErrorCode),
-                   new JProperty("status_message",  StatusMessage),
-                   new JProperty("timestamp",       Timestamp.ToIso8601())
-               );
+            => createResponse(Data,
+                              ErrorCode,
+                              StatusMessage,
+                              Timestamp);
 
     }
 

@@ -94,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given JSON representation of an additional geo location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
         public static AdditionalGeoLocation Parse(JObject                                             JSON,
                                                   CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser   = null)
         {
@@ -119,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given text representation of an additional geo location.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
         public static AdditionalGeoLocation Parse(String                                         Text,
                                              CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser   = null)
         {
@@ -164,7 +164,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="AdditionalGeoLocation">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
         public static Boolean TryParse(JObject                                             JSON,
                                        out AdditionalGeoLocation                           AdditionalGeoLocation,
                                        out String                                          ErrorResponse,
@@ -255,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="AdditionalGeoLocation">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
         public static Boolean TryParse(String                                              Text,
                                        out AdditionalGeoLocation                           AdditionalGeoLocation,
                                        out String                                          ErrorResponse,

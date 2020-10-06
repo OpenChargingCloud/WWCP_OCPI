@@ -49,13 +49,16 @@
   <ItemGroup>
     <Compile Include="DataTypes\Complex\CDRToken.cs" />
     <Compile Include="DataTypes\Complex\AuthorizationInfo.cs" />
+    <Compile Include="DataTypes\Complex\CredentialsRole.cs" />
     <Compile Include="DataTypes\Complex\EnergyContract.cs" />
+    <Compile Include="DataTypes\Complex\Hours.cs" />
     <Compile Include="DataTypes\Complex\Price.cs" />
     <Compile Include="DataTypes\Complex\SignedValue.cs" />
     <Compile Include="DataTypes\Complex\SignedData.cs" />
     <Compile Include="DataTypes\Complex\ChargingPreference.cs" />
     <Compile Include="DataTypes\Complex\LocationReference.cs" />
     <Compile Include="DataTypes\Complex\PublishTokenType.cs" />
+    <Compile Include="DataTypes\OCPIResponse.cs" />
     <Compile Include="DataTypes\Entities\Token.cs" />
     <Compile Include="DataTypes\Entities\CDR.cs" />
     <Compile Include="DataTypes\Entities\CDRLocation.cs" />
@@ -72,6 +75,7 @@
     <Compile Include="DataTypes\Enums\WhitelistTypes.cs" />
     <Compile Include="DataTypes\Enums\TokenTypes.cs" />
     <Compile Include="DataTypes\Simple\AuthorizationReference.cs" />
+    <Compile Include="DataTypes\Simple\AccessToken.cs" />
     <Compile Include="DataTypes\Simple\EnergyContract_Id.cs" />
     <Compile Include="DataTypes\Simple\Currency.cs" />
     <Compile Include="DataTypes\Simple\CreditReference_Id.cs" />
@@ -83,7 +87,7 @@
     <Compile Include="DataTypes\Simple\EVSE_Id.cs" />
     <Compile Include="DataTypes\Simple\CDR_Id.cs" />
     <Compile Include="DataTypes\Entities\Connector.cs" />
-    <Compile Include="DataTypes\Complex\Hours.cs" />
+    <Compile Include="DataTypes\Complex\Credentials.cs" />
     <Compile Include="DataTypes\Enums\ParkingTypes.cs" />
     <Compile Include="DataTypes\Enums\ParkingRestrictions.cs" />
     <Compile Include="DataTypes\Complex\StatusSchedule .cs" />
@@ -129,6 +133,7 @@
     <Compile Include="CPO\CPOAPI\CPOAPI.cs" />
     <Compile Include="EMSP\EMSPAPI\EMSPAPI.cs" />
     <Compile Include="CommonAPI\CommonAPI.cs" />
+    <Compile Include="EMSP\EMSPClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\JSONHelper.cs" />
     <Compile Include="Tools\OCPIMapper.cs" />

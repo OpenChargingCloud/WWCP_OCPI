@@ -76,7 +76,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             LocationId    = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 1)
+            if (HTTPRequest.ParsedURLParameters.Length < 1)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -148,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             Location      = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 1) {
+            if (HTTPRequest.ParsedURLParameters.Length < 1) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
@@ -238,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             EVSEUId       = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 2)
+            if (HTTPRequest.ParsedURLParameters.Length < 2)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -252,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -334,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             EVSE          = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 2) {
+            if (HTTPRequest.ParsedURLParameters.Length < 2) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -347,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
@@ -364,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -461,7 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             ConnectorId   = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 3)
+            if (HTTPRequest.ParsedURLParameters.Length < 3)
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -475,7 +475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -493,7 +493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -511,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
             if (!EVSEUId.HasValue)
             {
@@ -581,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             Connector     = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURIParameters.Length < 3) {
+            if (HTTPRequest.ParsedURLParameters.Length < 3) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -594,7 +594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURIParameters[0]);
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
@@ -611,7 +611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURIParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -629,7 +629,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURIParameters[2]);
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
             if (!EVSEUId.HasValue)
             {

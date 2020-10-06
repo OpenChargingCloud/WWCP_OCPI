@@ -30,43 +30,32 @@ using org.GraphDefined.Vanaheimr.Hermod;
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public static class JSONHelper
+    public static class JSON_IO
     {
 
-        #region ToJSON(this I18N)
+        //public static JObject CreateResponse(JArray     Data,
+        //                                     Int32      StatusCode,
+        //                                     String     StatusMessage,
+        //                                     DateTime?  Timestamp  = null)
 
-        /// <summary>
-        /// Create a JSON representation of the given internationalized string.
-        /// </summary>
-        /// <param name="I18N">An internationalized string.</param>
-        public static JArray ToJSON(I18NString I18N)
-        {
+        //    => JSONObject.Create(
+        //           new JProperty("data",            Data),
+        //           new JProperty("status_code",     StatusCode),
+        //           new JProperty("status_message",  StatusMessage),
+        //           new JProperty("timestamp",       (Timestamp ?? DateTime.UtcNow).ToIso8601())
+        //       );
 
-            return new JArray(I18N.SafeSelect(i18n => new JObject(new JProperty("language", i18n.Language.ToString()),
-                                                                  new JProperty("text",     i18n.Text))));
+        //public static JObject CreateResponse(JObject    Data,
+        //                                     Int32      StatusCode,
+        //                                     String     StatusMessage,
+        //                                     DateTime?  Timestamp  = null)
 
-        }
-
-        #endregion
-
-        #region ToJSON(JPropertyKey, this I18N)
-
-        /// <summary>
-        /// Create a JSON representation of the given internationalized string.
-        /// </summary>
-        /// <param name="JPropertyKey">The name of the JSON property key.</param>
-        /// <param name="I18N">An internationalized string.</param>
-        public static JProperty ToJSON(String JPropertyKey, I18NString I18N)
-        {
-
-            if (I18N.Any())
-                return new JProperty(JPropertyKey, JSONHelper.ToJSON(I18N));
-            else
-                return null;
-
-        }
-
-        #endregion
+        //    => JSONObject.Create(
+        //           new JProperty("data",            Data),
+        //           new JProperty("status_code",     StatusCode),
+        //           new JProperty("status_message",  StatusMessage),
+        //           new JProperty("timestamp",       (Timestamp ?? DateTime.UtcNow).ToIso8601())
+        //       );
 
     }
 

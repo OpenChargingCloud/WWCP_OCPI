@@ -122,7 +122,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given JSON representation of an image.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
         public static Image Parse(JObject                             JSON,
                                   CustomJObjectParserDelegate<Image>  CustomImageParser   = null)
         {
@@ -147,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Parse the given text representation of an image.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
         public static Image Parse(String                                        Text,
                                             CustomJObjectParserDelegate<Image>  CustomImageParser   = null)
         {
@@ -192,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Image">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
         public static Boolean TryParse(JObject                             JSON,
                                        out Image                           Image,
                                        out String                          ErrorResponse,
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="Image">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomImageParser">A delegate to parse custom publish token type JSON objects.</param>
+        /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
         public static Boolean TryParse(String                              Text,
                                        out Image                           Image,
                                        out String                          ErrorResponse,
