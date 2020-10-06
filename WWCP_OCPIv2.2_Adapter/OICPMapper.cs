@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                     null,
                                                                     null,
                                                                     new EVSE[0],
-                                                                    I18NString.Create(Languages.eng, "directions"),
+                                                                    new DisplayText[] { new DisplayText(Languages.eng, "directions") },
                                                                     new BusinessDetails(pool.Operator.Name.FirstText(),
                                                                                         pool.Operator.Homepage,
                                                                                         null),

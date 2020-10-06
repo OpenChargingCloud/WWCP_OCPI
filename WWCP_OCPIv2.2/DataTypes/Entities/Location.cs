@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Human-readable directions on how to reach the location.
         /// </summary>
         [Optional]
-        public I18NString                          Directions               { get; }
+        public IEnumerable<DisplayText>            Directions               { get; }
 
         /// <summary>
         /// Information of the charging station operator.
@@ -258,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         IEnumerable<AdditionalGeoLocation>  RelatedLocations     = null,
                         ParkingTypes?                       ParkingType          = null,
                         IEnumerable<EVSE>                   EVSEs                = null,
-                        I18NString                          Directions           = null,
+                        IEnumerable<DisplayText>            Directions           = null,
                         BusinessDetails                     Operator             = null,
                         BusinessDetails                     SubOperator          = null,
                         BusinessDetails                     Owner                = null,
@@ -663,10 +663,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Directions            [optional]
 
-                if (JSON.ParseOptional("directions",
-                                       "directions",
-                                       out I18NString Directions,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalJSON("directions",
+                                           "multi-language directions",
+                                           DisplayText.TryParse,
+                                           out IEnumerable<DisplayText> Directions,
+                                           out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -833,7 +834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         RelatedLocations?.Distinct(),
                                         ParkingType,
                                         EVSEs?.           Distinct(),
-                                        Directions,
+                                        Directions?.      Distinct(),
                                         Operator,
                                         Suboperator,
                                         Owner,
@@ -915,6 +916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
@@ -923,6 +925,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
                               CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
+                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
                               CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
         {
@@ -973,8 +976,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                                                                         CustomConnectorSerializer))))
                                : null,
 
-                           Directions.IsNeitherNullNorEmpty()
-                               ? new JProperty("directions",                Directions. ToJSON())
+                           Directions.SafeAny()
+                               ? new JProperty("directions",                new JArray(Directions.Select(evse => evse.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            Operator != null
