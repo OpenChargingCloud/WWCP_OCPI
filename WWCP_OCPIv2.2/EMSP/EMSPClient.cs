@@ -428,7 +428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<JObject>>>
+        public async Task<OCPIResponse<IEnumerable<Version>>>
 
             GetVersions(DateTime?                Timestamp              = null,
                         CancellationToken?       CancellationToken      = null,
@@ -436,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         TimeSpan?                RequestTimeout         = null)
         {
 
-            OCPIResponse<IEnumerable<JObject>> response;
+            OCPIResponse<IEnumerable<Version>> response;
 
             try
             {
@@ -498,15 +498,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<JObject>.ParseJArray(HTTPResponse,
-                                                             json => json);
+                response = OCPIResponse<Version>.ParseJArray(HTTPResponse,
+                                                             json => Version.Parse(json));
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<IEnumerable<JObject>>(default,
+                response = new OCPIResponse<IEnumerable<Version>>(default,
                                                                   -1,
                                                                   e.Message,
                                                                   e.StackTrace);

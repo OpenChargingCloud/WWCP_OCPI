@@ -189,17 +189,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse URL       [mandatory]
 
-                if (JSON.ParseMandatoryText("url",
-                                            "url",
-                                            out String URL,
-                                            out ErrorResponse))
+                if (!JSON.ParseMandatoryText("url",
+                                             "url",
+                                             out String URL,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse Roles     [mandatory]
+                #region Parse Roles     [optional]
 
                 if (JSON.ParseOptionalJSON("roles",
                                            "roles",

@@ -692,6 +692,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+
+            // GET   CDR {CDRId}
+            // POST  CDR <= new one!
+
+            // POST /authorize[?type={type}]     HTTP body: LocationReferences
+            // https://www.server.com/ocpi/emsp/2.2/tokens/012345678/authorize
+            // https://ocpi.server.com/2.2/tokens/012345678/authorize?type=RFID
+
+
+
         }
 
         #endregion

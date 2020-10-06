@@ -67,8 +67,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public OCPIResponse(TResponse  Data,
                             Int32?     StatusCode,
                             String     StatusMessage,
-                            String     AdditionalInformation,
-                            DateTime?  Timestamp = null)
+                            String     AdditionalInformation   = null,
+                            DateTime?  Timestamp               = null)
         {
 
             this.Data                   = Data;
@@ -80,6 +80,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
         #endregion
+
+
+
+        public JObject ToJSON()
+
+            => JSONObject.Create(
+
+                   new JProperty("data",                  Data),
+                   new JProperty("status_code",           StatusCode),
+
+                   StatusMessage.IsNotNullOrEmpty()
+                       ? new JProperty("status_message",  StatusMessage)
+                       :  null,
+
+                   new JProperty("timestamp",             Timestamp.ToIso8601())
+
+               );
+
 
 
 

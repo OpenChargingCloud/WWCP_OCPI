@@ -53,6 +53,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// A multi-language text.
         /// </summary>
+        /// <param name="Language">The language of the text.</param>
+        /// <param name="Text">The text.</param>
         public DisplayText(Languages Language,
                            String    Text)
         {
@@ -176,10 +178,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Text         [mandatory]
 
-                if (JSON.ParseMandatoryText("text",
-                                            "text",
-                                            out String Text,
-                                            out ErrorResponse))
+                if (!JSON.ParseMandatoryText("text",
+                                             "text",
+                                             out String Text,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
