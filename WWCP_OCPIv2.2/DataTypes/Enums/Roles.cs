@@ -24,6 +24,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public enum Roles
     {
 
+        OpenData,
+
         /// <summary>
         /// Charge point operator.
         /// </summary>

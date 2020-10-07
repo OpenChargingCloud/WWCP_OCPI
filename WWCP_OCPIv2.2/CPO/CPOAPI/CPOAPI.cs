@@ -179,10 +179,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
 
-            if (!CPOAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                       CPOAPI.DefaultPartyId,
-                                       LocationId.Value,
-                                       out Location)) {
+            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
+                                                 CPOAPI.DefaultPartyId,
+                                                 LocationId.Value,
+                                                 out Location)) {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
@@ -383,10 +383,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
 
-            if (!CPOAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                       CPOAPI.DefaultPartyId,
-                                       LocationId.Value,
-                                       out Location))
+            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
+                                                 CPOAPI.DefaultPartyId,
+                                                 LocationId.Value,
+                                                 out Location))
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -648,10 +648,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
 
-            if (!CPOAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                       CPOAPI.DefaultPartyId,
-                                       LocationId.Value,
-                                       out Location))
+            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
+                                                 CPOAPI.DefaultPartyId,
+                                                 LocationId.Value,
+                                                 out Location))
             {
 
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
@@ -708,7 +708,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The HTTP API for charge point operators.
     /// </summary>
-    public class CPOAPI : CommonAPI
+    public class CPOAPI : HTTPAPI
     {
 
         #region Data
@@ -737,7 +737,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
+        /// <summary>
+        /// The OCPI common API.
+        /// </summary>
+        public CommonAPI   CommonAPI             { get; }
+
+
         public CountryCode DefaultCountryCode    { get; }
+
 
         public Party_Id    DefaultPartyId        { get; }
 
@@ -745,61 +752,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Constructor(s)
 
-        #region CPOAPI(HTTPServerName = default, ...)
-
         /// <summary>
-        /// Create an instance of the OCPI HTTP API for Charge Point Operators
-        /// using a newly created HTTP server.
-        /// </summary>
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
-        /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
-        /// <param name="HTTPServerName">An optional HTTP server name.</param>
-        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
-        /// <param name="ServiceName">An optional HTTP service name.</param>
-        /// <param name="DNSClient">An optional DNS client.</param>
-        public CPOAPI(String          HTTPServerName    = DefaultHTTPServerName,
-                      HTTPHostname?   HTTPHostname      = null,
-                      IPPort?         HTTPServerPort    = null,
-                      String          ExternalDNSName   = null,
-                      HTTPPath?       URLPathPrefix     = null,
-                      String          ServiceName       = DefaultHTTPServerName,
-                      DNSClient       DNSClient         = null)
-
-            : base(HTTPHostname   ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPHostname.Any,
-                   HTTPServerPort ?? DefaultHTTPServerPort,
-                   HTTPServerName ?? DefaultHTTPServerName,
-                   ExternalDNSName,
-                   URLPathPrefix  ?? DefaultURLPathPrefix,
-                   ServiceName,
-                   DNSClient)
-
-        {
-
-            RegisterURLTemplates();
-
-        }
-
-        #endregion
-
-        #region CPOAPI(HTTPServer, ...)
-
-        /// <summary>
-        /// Create an instance of the OCPI HTTP API for Charge Point Operators
+        /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
         /// using the given HTTP server.
         /// </summary>
-        /// <param name="HTTPServer">A HTTP server.</param>
+        /// <param name="CommonAPI">The OCPI common API.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public CPOAPI(HTTPServer      HTTPServer,
+        public CPOAPI(CommonAPI       CommonAPI,
                       HTTPHostname?   HTTPHostname      = null,
                       String          ExternalDNSName   = null,
                       HTTPPath?       URLPathPrefix     = null,
                       String          ServiceName       = DefaultHTTPServerName)
 
-            : base(HTTPServer,
+            : base(CommonAPI.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
                    URLPathPrefix ?? DefaultURLPathPrefix,
@@ -807,11 +775,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given OCPI common API must not be null!");
+
             RegisterURLTemplates();
 
         }
-
-        #endregion
 
         #endregion
 
@@ -853,76 +821,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET    [/cpo]/versions
-
-            //HTTPServer.AddMethodCallback(HTTPHostname.Any,
-            //                             HTTPMethod.GET,
-            //                             URLPathPrefix + "versions",
-            //                             HTTPContentType.JSON_UTF8,
-            //                             HTTPDelegate: async Request => {
-
-            //                                 return new HTTPResponse.Builder(Request) {
-            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
-            //                                     Server          = DefaultHTTPServerName,
-            //                                     Date            = DateTime.UtcNow,
-            //                                     ContentType     = HTTPContentType.HTML_UTF8,
-            //                                     Content         = new JArray(new JObject(
-            //                                                                      new JProperty("version",  "2.2"),
-            //                                                                      new JProperty("url",      "http://" + Request.Host + URLPathPrefix + "/versions/2.2/")
-            //                                                       )).ToUTF8Bytes(),
-            //                                     Connection      = "close"
-            //                                 };
-
-            //                             });
-
-            #endregion
-
-            #region GET    [/cpo]/versions/2.2/
-
-            //HTTPServer.AddMethodCallback(HTTPHostname.Any,
-            //                             HTTPMethod.GET,
-            //                             URLPathPrefix + "versions/2.2",
-            //                             HTTPContentType.JSON_UTF8,
-            //                             HTTPDelegate: async Request => {
-
-            //                                 return new HTTPResponse.Builder(Request) {
-            //                                     HTTPStatusCode  = HTTPStatusCode.OK,
-            //                                     Server          = DefaultHTTPServerName,
-            //                                     Date            = DateTime.UtcNow,
-            //                                     ContentType     = HTTPContentType.HTML_UTF8,
-            //                                     Content         = JSONObject.Create(
-            //                                                           new JProperty("version",  "2.2"),
-            //                                                           new JProperty("endpoints", new JArray(
-            //                                                               new JObject(
-            //                                                                   new JProperty("identifier",  "credentials"),
-            //                                                                   new JProperty("role",         InterfaceRoles.SENDER.ToString()),
-            //                                                                   new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "credentials/")
-            //                                                               ),
-            //                                                               new JObject(
-            //                                                                   new JProperty("identifier",  "locations"),
-            //                                                                   new JProperty("role",         InterfaceRoles.SENDER.ToString()),
-            //                                                                   new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "locations/")
-
-            //                                                               // cdrs
-            //                                                               // chargingprofiles
-            //                                                               // commands
-            //                                                               // credentials
-            //                                                               // hubclientinfo
-            //                                                               // locations
-            //                                                               // sessions
-            //                                                               // tariffs
-            //                                                               // tokens
-
-            //                                                               )
-            //                                                       ))).ToUTF8Bytes(),
-            //                                     Connection      = "close"
-            //                                 };
-
-            //                             });
-
-            #endregion
-
-
 
             // Sender Interface for CPOs
 
@@ -944,7 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
                                              // X-Limit          The maximum number of objects that the server WILL return.
 
-                                             var locations  = GetLocations().
+                                             var locations  = CommonAPI.GetLocations().
                                                                   Where(location => !from.HasValue || location.LastUpdated >  from.Value).
                                                                   Where(location => !to.  HasValue || location.LastUpdated <= to.  Value).
                                                                   SkipTakeFilter(offset, limit).

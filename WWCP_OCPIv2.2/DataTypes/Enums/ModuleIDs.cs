@@ -19,20 +19,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The interface role of a party.
+    /// The interface modules of a party.
     /// </summary>
-    public enum InterfaceRoles
+    public enum ModuleIDs
     {
 
         /// <summary>
-        /// Sender Interface implementation. Interface implemented by the owner of data, so the Receiver can Pull information from the data Sender/owner.
+        /// The CDRs module.
         /// </summary>
-        SENDER,
+        CDRs,
 
         /// <summary>
-        /// Receiver Interface implementation. Interface implemented by the receiver of data, so the Sender/owner can Push information to the Receiver.
+        /// The charging profiles module.
         /// </summary>
-        RECEIVER
+        ChargingProfiles,
+
+        /// <summary>
+        /// The commands module.
+        /// </summary>
+        Commands,
+
+        /// <summary>
+        /// The credentials & registration module.
+        /// </summary>
+        Credentials,
+
+        /// <summary>
+        /// The hub client info module.
+        /// </summary>
+        HubClientInfo,
+
+        /// <summary>
+        /// The locations module.
+        /// </summary>
+        Locations,
+
+        /// <summary>
+        /// The sessions module.
+        /// </summary>
+        Sessions,
+
+        /// <summary>
+        /// The tariffs module.
+        /// </summary>
+        Tariffs,
+
+        /// <summary>
+        /// The tokens module.
+        /// </summary>
+        Tokens
 
     }
 

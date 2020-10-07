@@ -41,10 +41,921 @@ using org.GraphDefined.WWCP;
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
+
+    /// <summary>
+    /// Extention methods for the Common API.
+    /// </summary>
+    public static class EMSPAPIExtentions
+    {
+
+        #region ParseLocationId             (this HTTPRequest, EMSPAPI, out CountryCode, out PartyId, out LocationId,                                                                      out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Common API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
+                                              EMSPAPI         EMSPAPI,
+                                              out CountryCode?  CountryCode,
+                                              out Party_Id?     PartyId,
+                                              out Location_Id?  LocationId,
+                                              out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given Common API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            LocationId    = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 3)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+            if (!LocationId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocation               (this HTTPRequest, EMSPAPI, out CountryCode, out PartyId, out LocationId, out Location,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
+                                            EMSPAPI         EMSPAPI,
+                                            out CountryCode?  CountryCode,
+                                            out Party_Id?     PartyId,
+                                            out Location_Id?  LocationId,
+                                            out Location      Location,
+                                            out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given Common API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            LocationId    = null;
+            Location      = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 3) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+            if (!LocationId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!EMSPAPI.CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseLocationEVSEId         (this HTTPRequest, EMSPAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,                                           out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Common API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
+                                                  EMSPAPI         EMSPAPI,
+                                                  out CountryCode?  CountryCode,
+                                                  out Party_Id?     PartyId,
+                                                  out Location_Id?  LocationId,
+                                                  out EVSE_UId?     EVSEUId,
+                                                  out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given Common API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            LocationId    = null;
+            EVSEUId       = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 4)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocationEVSE           (this HTTPRequest, EMSPAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="EVSE">The resolved EVSE.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
+                                                EMSPAPI         EMSPAPI,
+                                                out CountryCode?  CountryCode,
+                                                out Party_Id?     PartyId,
+                                                out Location_Id?  LocationId,
+                                                out Location      Location,
+                                                out EVSE_UId?     EVSEUId,
+                                                out EVSE          EVSE,
+                                                out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given Common API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            LocationId    = null;
+            Location      = null;
+            EVSEUId       = null;
+            EVSE          = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 4) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!EMSPAPI.CommonAPI.TryGetLocation(CountryCode.Value,
+                                                  PartyId.    Value,
+                                                  LocationId. Value, out Location)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
+        #region ParseLocationEVSEConnectorId(this HTTPRequest, EMSPAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Common API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="ConnectorId">The parsed unique connector identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
+                                                           EMSPAPI          EMSPAPI,
+                                                           out CountryCode?   CountryCode,
+                                                           out Party_Id?      PartyId,
+                                                           out Location_Id?   LocationId,
+                                                           out EVSE_UId?      EVSEUId,
+                                                           out Connector_Id?  ConnectorId,
+                                                           out HTTPResponse   HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given Common API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            LocationId    = null;
+            EVSEUId       = null;
+            ConnectorId   = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 5)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseLocationEVSEConnector  (this HTTPRequest, EMSPAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="LocationId">The parsed unique location identification.</param>
+        /// <param name="Location">The resolved user.</param>
+        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        /// <param name="EVSE">The resolved EVSE.</param>
+        /// <param name="ConnectorId">The parsed unique connector identification.</param>
+        /// <param name="Connector">The resolved connector.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
+                                                         EMSPAPI          EMSPAPI,
+                                                         out CountryCode?   CountryCode,
+                                                         out Party_Id?      PartyId,
+                                                         out Location_Id?   LocationId,
+                                                         out Location       Location,
+                                                         out EVSE_UId?      EVSEUId,
+                                                         out EVSE           EVSE,
+                                                         out Connector_Id?  ConnectorId,
+                                                         out Connector      Connector,
+                                                         out HTTPResponse   HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given Common API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            LocationId    = null;
+            Location      = null;
+            EVSEUId       = null;
+            EVSE          = null;
+            ConnectorId   = null;
+            Connector     = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 5) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!LocationId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+            if (!EVSEUId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!EMSPAPI.CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+    }
+
+
     /// <summary>
     /// The OCPI HTTP API for e-Mobility Service Providers.
     /// </summary>
-    public class EMSPAPI : CommonAPI
+    public class EMSPAPI : HTTPAPI
     {
 
         #region Data
@@ -71,63 +982,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region Constructor(s)
-
-        #region EMSPAPI(HTTPServerName = default, ...)
+        #region Properties
 
         /// <summary>
-        /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
-        /// using a newly created HTTP server.
+        /// The OCPI common API.
         /// </summary>
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
-        /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
-        /// <param name="HTTPServerName">An optional HTTP server name.</param>
-        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
-        /// <param name="ServiceName">An optional HTTP service name.</param>
-        /// <param name="DNSClient">An optional DNS client.</param>
-        public EMSPAPI(String          HTTPServerName    = DefaultHTTPServerName,
-                       HTTPHostname?   HTTPHostname      = null,
-                       IPPort?         HTTPServerPort    = null,
-                       String          ExternalDNSName   = null,
-                       HTTPPath?       URLPathPrefix     = null,
-                       String          ServiceName       = DefaultHTTPServerName,
-                       DNSClient       DNSClient         = null)
-
-            : base(HTTPHostname   ?? org.GraphDefined.Vanaheimr.Hermod.HTTP.HTTPHostname.Any,
-                   HTTPServerPort ?? DefaultHTTPServerPort,
-                   HTTPServerName ?? DefaultHTTPServerName,
-                   ExternalDNSName,
-                   URLPathPrefix  ?? DefaultURLPathPrefix,
-                   ServiceName,
-                   DNSClient)
-
-        {
-
-            RegisterURLTemplates();
-
-        }
+        public CommonAPI CommonAPI { get; }
 
         #endregion
 
-        #region EMSPAPI(HTTPServer, ...)
+        #region Constructor(s)
 
         /// <summary>
         /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
         /// using the given HTTP server.
         /// </summary>
-        /// <param name="HTTPServer">A HTTP server.</param>
+        /// <param name="CommonAPI">The OCPI common API.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public EMSPAPI(HTTPServer      HTTPServer,
+        public EMSPAPI(CommonAPI       CommonAPI,
                        HTTPHostname?   HTTPHostname      = null,
                        String          ExternalDNSName   = null,
                        HTTPPath?       URLPathPrefix     = null,
                        String          ServiceName       = DefaultHTTPServerName)
 
-            : base(HTTPServer,
+            : base(CommonAPI.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
                    URLPathPrefix ?? DefaultURLPathPrefix,
@@ -135,11 +1016,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given OCPI common API must not be null!");
+
             RegisterURLTemplates();
 
         }
-
-        #endregion
 
         #endregion
 
@@ -181,72 +1062,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET    [/emsp]/versions
-
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "/emsp/versions",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
-
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = new JArray(new JObject(
-                                                                                  new JProperty("version",  "2.2"),
-                                                                                  new JProperty("url",      "http://" + Request.Host + URLPathPrefix + "/versions/2.2/")
-                                                                   )).ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
-
-                                         });
-
-            #endregion
-
-            #region GET    [/emsp]/versions/2.2/
-
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2/",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
-
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = new JObject(
-                                                                       new JProperty("version",  "2.2"),
-                                                                       new JProperty("endpoints", new JArray(
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "credentials"),
-                                                                               new JProperty("url",        "http://" + Request.Host + URLPathPrefix + "versions/2.2/credentials/")
-                                                                           ),
-                                                                           new JObject(
-                                                                               new JProperty("identifier", "locations"),
-                                                                               new JProperty("url",        "http://" + Request.Host + URLPathPrefix + "versions/2.2/locations/")
-                                                                           )
-                                                                   ))).ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
-
-                                         });
-
-            #endregion
-
 
             // Receiver Interface for eMSPs and NSPs
 
-            #region [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}
+            #region ~/locations/{country_code}/{party_id}/{locationId}
 
-            #region GET    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}
+            #region GET    ~/locations/{country_code}/{party_id}/{locationId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -282,11 +1107,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PUT    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}
+            #region PUT    ~/locations/{country_code}/{party_id}/{locationId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.PUT,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -354,11 +1179,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PATCH  [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}
+            #region PATCH  ~/locations/{country_code}/{party_id}/{locationId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.PATCH,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -388,13 +1213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            #region GET    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region GET    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -433,11 +1258,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PUT    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region PUT    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.PUT,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -504,11 +1329,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PATCH  [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region PATCH  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.PATCH,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -539,13 +1364,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            #region GET    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region GET    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -586,11 +1411,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PUT    [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region PUT    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.PUT,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
@@ -657,11 +1482,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PATCH  [/emsp]/versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region PATCH  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.PATCH,
-                                         URLPathPrefix + "versions/2.2/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 

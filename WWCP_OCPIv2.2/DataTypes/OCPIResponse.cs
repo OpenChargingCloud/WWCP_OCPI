@@ -41,14 +41,8 @@ using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-
     public class OCPIResponse<TResponse>
     {
-
-        #region Data
-
-
-        #endregion
 
         #region Properties
 
@@ -79,26 +73,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+
+        public static JObject Create(TResponse                Data,
+                                     Func<TResponse, JToken>  Serializer,
+                                     Int32?                   StatusCode,
+                                     String                   StatusMessage,
+                                     String                   AdditionalInformation   = null,
+                                     DateTime?                Timestamp               = null)
+        {
+
+            return new OCPIResponse<TResponse>(Data,
+                                               StatusCode,
+                                               StatusMessage,
+                                               AdditionalInformation,
+                                               Timestamp).ToJSON(Serializer);
+
+        }
+
+
         #endregion
 
 
 
-        public JObject ToJSON()
+        public JObject ToJSON(Func<TResponse, JToken> Serializer = null)
 
-            => JSONObject.Create(
+        {
 
-                   new JProperty("data",                  Data),
-                   new JProperty("status_code",           StatusCode),
+            var JSON = JSONObject.Create(
 
-                   StatusMessage.IsNotNullOrEmpty()
-                       ? new JProperty("status_message",  StatusMessage)
-                       :  null,
+                           new JProperty("data",                  Serializer?.Invoke(Data)),
+                           new JProperty("status_code",           StatusCode),
 
-                   new JProperty("timestamp",             Timestamp.ToIso8601())
+                           StatusMessage.IsNotNullOrEmpty()
+                               ? new JProperty("status_message",  StatusMessage)
+                               :  null,
 
-               );
+                           new JProperty("timestamp",             Timestamp.ToIso8601())
 
+                       );
 
+            return JSON;
+
+        }
 
 
         public static OCPIResponse<IEnumerable<TResponse>> ParseJArray(HTTPResponse              Response,

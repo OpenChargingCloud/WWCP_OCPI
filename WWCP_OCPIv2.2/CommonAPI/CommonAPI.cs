@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Linq;
+using System.Threading.Tasks;
 
 #endregion
 
@@ -1081,7 +1082,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The common HTTP API.
     /// </summary>
-    public abstract class CommonAPI : HTTPAPI
+    public class CommonAPI : HTTPAPI
     {
 
         #region Data
@@ -1112,6 +1113,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// The default HTTP URL path prefix.
         /// </summary>
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
+
+
+        private readonly Dictionary<AccessToken, AccessInfo> _AccessTokens;
 
         #endregion
 
@@ -1155,7 +1159,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this._Locations = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this._AccessTokens  = new Dictionary<AccessToken, AccessInfo>();
+            this._Locations     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+
+            RegisterURLTemplates();
 
         }
 
@@ -1185,7 +1192,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this._Locations = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this._AccessTokens  = new Dictionary<AccessToken, AccessInfo>();
+            this._Locations     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -1254,98 +1262,574 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            #region GET    /versions
+            #region GET         ~/versions
 
-            // https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/version_information_endpoint.asciidoc#versions_module
-            // [
-            //   {
-            //     "version":  "2.1.1",
-            //     "url":      "https://example.com/ocpi/2.1.1/"
-            //   },
-            //   {
-            //     "version":  "2.2",
-            //     "url":      "https://example.com/ocpi/2.2/"
-            //   }
-            // ]
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            // ----------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/versions
+            // ----------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "versions",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         HTTPDelegate: Request => {
 
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.JSON_UTF8,
-                                                 Content         = new JArray(
-                                                                       new JObject(
-                                                                           new JProperty("version",  "2.2"),
-                                                                           new JProperty("url",      "https://" + Request.Host + URLPathPrefix)
-                                                                       )
-                                                                   ).ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                             #region Check access token
+
+                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                                                  AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken accessToken) &&
+                                                 _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo  accessInfo)  &&
+                                                 accessInfo.Status != AccessStatus.ALLOWED)
+                                             {
+
+                                                 // Invalid or blocked access token!
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode                = HTTPStatusCode.Forbidden,
+                                                         Server                        = HTTPServer.DefaultServerName,
+                                                         Date                          = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin      = "*",
+                                                         AccessControlAllowMethods     = "GET",
+                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         Connection                    = "close",
+                                                         Vary                          = "Accept"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             #endregion
+
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode                = HTTPStatusCode.OK,
+                                                     Server                        = HTTPServer.DefaultServerName,
+                                                     Date                          = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin      = "*",
+                                                     AccessControlAllowMethods     = "GET",
+                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     ContentType                   = HTTPContentType.JSON_UTF8,
+                                                     Content                       = OCPIResponse<IEnumerable<Version>>.Create(
+                                                                                         new Version[] {
+                                                                                             new Version(
+                                                                                                 Version_Id.Parse("2.2"),
+                                                                                                 "https://api.chargeIT-mobility.com/io/ocpi/versions/2.2"
+                                                                                             )
+                                                                                         },
+                                                                                         versions => new JArray(versions.Select(version => version.ToJSON())),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                     Connection                    = "close",
+                                                     Vary                          = "Accept"
+                                                 }.AsImmutable);
+
 
                                          });
 
             #endregion
 
-            #region GET    /versions/2.2/
+            #region GET         ~/versions/{id}
 
-            // {
-            //   "version": "2.2",
-            //   "endpoints": [
-            //     {
-            //       "identifier":  "credentials",
-            //       "role":        "SENDER",
-            //       "url":         "https://example.com/ocpi/2.2/credentials/"
-            //     },
-            //     {
-            //       "identifier":  "locations",
-            //       "role":        "SENDER",
-            //       "url":         "https://example.com/ocpi/cpo/2.2/locations/"
-            //     }
-            //   ]
-            // }
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            // ---------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/versions/{id}
+            // ---------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "versions/2.2",
+                                         URLPathPrefix + "versions/{id}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         HTTPDelegate: Request => {
 
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.HTML_UTF8,
-                                                 Content         = JSONObject.Create(
-                                                                       new JProperty("version",  "2.2"),
-                                                                       new JProperty("endpoints", new JArray(
-                                                                           new JObject(
-                                                                               new JProperty("identifier",  "credentials"),
-                                                                               new JProperty("role",         InterfaceRoles.SENDER.ToString()),
-                                                                               new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "credentials/")
-                                                                           ),
-                                                                           new JObject(
-                                                                               new JProperty("identifier",  "locations"),
-                                                                               new JProperty("role",         InterfaceRoles.SENDER.ToString()),
-                                                                               new JProperty("url",         "http://" + Request.Host + URLPathPrefix + "locations/")
+                                             #region Get version identification URL parameter
 
-                                                                           // cdrs
-                                                                           // chargingprofiles
-                                                                           // commands
-                                                                           // credentials
-                                                                           // hubclientinfo
-                                                                           // locations
-                                                                           // sessions
-                                                                           // tariffs
-                                                                           // tokens
+                                             if (Request.ParsedURLParameters.Length < 1)
+                                             {
 
-                                                                           )
-                                                                   ))).ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                                                         Server          = HTTPServer.DefaultServerName,
+                                                         Date            = DateTime.UtcNow,
+                                                         Connection      = "close"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             if (!Version_Id.TryParse(Request.ParsedURLParameters[0], out Version_Id versionId))
+                                             {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                                                         Server          = HTTPServer.DefaultServerName,
+                                                         Date            = DateTime.UtcNow,
+                                                         Connection      = "close"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             #endregion
+
+                                             #region Check access token
+
+                                             AccessInfo accessInfo = default;
+
+                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                                                  AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken accessToken) &&
+                                                 _AccessTokens.TryGetValue(accessToken,                                  out             accessInfo)  &&
+                                                 accessInfo.Status != AccessStatus.ALLOWED)
+                                             {
+
+                                                 // Invalid or blocked access token!
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode                = HTTPStatusCode.Forbidden,
+                                                         Server                        = HTTPServer.DefaultServerName,
+                                                         Date                          = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin      = "*",
+                                                         AccessControlAllowMethods     = "GET",
+                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         Connection                    = "close",
+                                                         Vary                          = "Accept"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             #endregion
+
+                                             #region Only allow versionId == "2.2"
+
+                                             if (versionId.ToString() != "2.2")
+                                             {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode  = HTTPStatusCode.NotFound,
+                                                         Server          = HTTPServer.DefaultServerName,
+                                                         Date            = DateTime.UtcNow,
+                                                         Connection      = "close"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             #endregion
+
+
+                                             var endpoints  = new List<VersionEndpoint>() {
+
+                                                                  new VersionEndpoint(ModuleIDs.Credentials,
+                                                                                      InterfaceRoles.SENDER,
+                                                                                      "https://" + Request.Host + URLPathPrefix + "2.2/credentials/"),
+
+                                                                  new VersionEndpoint(ModuleIDs.Credentials,
+                                                                                      InterfaceRoles.RECEIVER,
+                                                                                      "https://" + Request.Host + URLPathPrefix + "2.2/credentials/")
+
+                                                              };
+
+
+                                             if (accessInfo.Role == Roles.CPO)
+                                             {
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
+                                                                                   InterfaceRoles.RECEIVER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/locations/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
+                                                                                   InterfaceRoles.RECEIVER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/tariffs/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
+                                                                                   InterfaceRoles.RECEIVER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/sessions/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
+                                                                                   InterfaceRoles.RECEIVER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/cdrs/"));
+
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/commands/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/tokens/"));
+
+                                                 // hubclientinfo
+
+                                             }
+
+
+                                             if (accessInfo.Role == Roles.EMSP || accessInfo.Role == Roles.OpenData)
+                                             {
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/locations/"));
+
+                                             }
+
+                                             if (accessInfo.Role == Roles.EMSP)
+                                             {
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/cdrs/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/sessions/"));
+
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/locations/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/tariffs/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/sessions/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
+                                                                                   InterfaceRoles.SENDER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/cdrs/"));
+
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
+                                                                                   InterfaceRoles.RECEIVER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/commands/"));
+
+                                                 endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
+                                                                                   InterfaceRoles.RECEIVER,
+                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/tokens/"));
+
+                                                 // hubclientinfo
+
+                                             }
+
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = OCPIResponse<VersionDetail>.Create(
+                                                                                      new VersionDetail(
+                                                                                          Version_Id.Parse("2.2"),
+                                                                                          endpoints),
+                                                                                      version => version.ToJSON(),
+                                                                                      1000,
+                                                                                      "Hello world!"
+                                                                                  ).ToUTF8Bytes(),
+                                                     Connection                 = "close",
+                                                     Vary                       = "Accept"
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+
+
+            #region GET         ~/2.2/credentials
+
+            // ---------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // ---------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "2.2/credentials",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken accessToken) &&
+                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo  accessInfo)  &&
+                                                 accessInfo.Status == AccessStatus.ALLOWED)
+                                             {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode                = HTTPStatusCode.OK,
+                                                         Server                        = HTTPServer.DefaultServerName,
+                                                         Date                          = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin      = "*",
+                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         ContentType                   = HTTPContentType.JSON_UTF8,
+                                                         Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
+                                                                                             accessInfo.Credentials,
+                                                                                             credentials => credentials.ToJSON(),
+                                                                                             1000,
+                                                                                             "Hello world!"
+                                                                                         ).ToUTF8Bytes(),
+                                                         Connection                    = "close",
+                                                         Vary                          = "Accept"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
+                                                     Server                        = HTTPServer.DefaultServerName,
+                                                     Date                          = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin      = "*",
+                                                     AccessControlAllowMethods     = "GET",
+                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     Connection                    = "close",
+                                                     Vary                          = "Accept"
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region POST        ~/2.2/credentials
+
+            // REGISTER new OCPI party!
+
+            // ---------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // ---------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.POST,
+                                         URLPathPrefix + "cpo/2.2/credentials",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken  accessToken) &&
+                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo   accessInfo)  &&
+                                                 accessInfo.Status == AccessStatus.ALLOWED)
+                                             {
+
+                                                 if (accessInfo.Credentials != null)
+                                                     return Task.FromResult(
+                                                         new HTTPResponse.Builder(Request) {
+                                                             HTTPStatusCode                = HTTPStatusCode.MethodNotAllowed,
+                                                             Server                        = HTTPServer.DefaultServerName,
+                                                             Date                          = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin      = "*",
+                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             Connection                    = "close"
+                                                         }.AsImmutable);
+
+
+                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse HTTPResp, AllowEmptyHTTPBody: false) ||
+                                                     !OCPIv2_2.Credentials.TryParse(JSONObj, out OCPIv2_2.Credentials credentials, out String ErrorResponse))
+                                                    return Task.FromResult(
+                                                         new HTTPResponse.Builder(Request) {
+                                                             HTTPStatusCode                = HTTPStatusCode.BadRequest,
+                                                             Server                        = HTTPServer.DefaultServerName,
+                                                             Date                          = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin      = "*",
+                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             Connection                    = "close"
+                                                         }.AsImmutable);
+
+
+                                                 // Here we should check the other side!!!
+
+
+                                                 SetAccessToken(accessToken,
+                                                                accessInfo.Role,
+                                                                credentials,
+                                                                AccessStatus.ALLOWED);
+
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode                = HTTPStatusCode.OK,
+                                                         Server                        = HTTPServer.DefaultServerName,
+                                                         Date                          = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin      = "*",
+                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         ContentType                   = HTTPContentType.JSON_UTF8,
+                                                         Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
+                                                                                             credentials,
+                                                                                             credential => credential.ToJSON(),
+                                                                                             1000,
+                                                                                             "Hello world!"
+                                                                                         ).ToUTF8Bytes(),
+                                                         Connection                    = "close"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
+                                                     Server                        = HTTPServer.DefaultServerName,
+                                                     Date                          = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin      = "*",
+                                                     AccessControlAllowMethods     = "GET",
+                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     Connection                    = "close"
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region PUT         ~/2.2/credentials
+
+            // UPDATE the registration of an existing OCPI party!
+
+            // ---------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // ---------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.PUT,
+                                         URLPathPrefix + "2.2/credentials",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken  accessToken) &&
+                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo   accessInfo)  &&
+                                                 accessInfo.Status == AccessStatus.ALLOWED)
+                                             {
+
+                                                 if (accessInfo.Credentials == null)
+                                                     return Task.FromResult(
+                                                         new HTTPResponse.Builder(Request) {
+                                                             HTTPStatusCode                = HTTPStatusCode.MethodNotAllowed,
+                                                             Server                        = HTTPServer.DefaultServerName,
+                                                             Date                          = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin      = "*",
+                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             Connection                    = "close"
+                                                         }.AsImmutable);
+
+
+                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse HTTPResp, AllowEmptyHTTPBody: false) ||
+                                                     !OCPIv2_2.Credentials.TryParse(JSONObj, out OCPIv2_2.Credentials credentials, out String ErrorResponse))
+                                                    return Task.FromResult(
+                                                         new HTTPResponse.Builder(Request) {
+                                                             HTTPStatusCode                = HTTPStatusCode.BadRequest,
+                                                             Server                        = HTTPServer.DefaultServerName,
+                                                             Date                          = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin      = "*",
+                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             Connection                    = "close"
+                                                         }.AsImmutable);
+
+
+                                                 // Here we should check the other side!!!
+
+
+                                                 SetAccessToken(accessToken,
+                                                                accessInfo.Role,
+                                                                credentials,
+                                                                AccessStatus.ALLOWED);
+
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode                = HTTPStatusCode.OK,
+                                                         Server                        = HTTPServer.DefaultServerName,
+                                                         Date                          = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin      = "*",
+                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         ContentType                   = HTTPContentType.JSON_UTF8,
+                                                         Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
+                                                                                             accessInfo.Credentials,
+                                                                                             credential => credential.ToJSON(),
+                                                                                             1000,
+                                                                                             "Hello world!"
+                                                                                         ).ToUTF8Bytes(),
+                                                         Connection                    = "close"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
+                                                     Server                        = HTTPServer.DefaultServerName,
+                                                     Date                          = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin      = "*",
+                                                     AccessControlAllowMethods     = "GET",
+                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     Connection                    = "close"
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region DELETE      ~/2.2/credentials
+
+            // UNREGISTER an existing OCPI party!
+
+            // ---------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // ---------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.DELETE,
+                                         URLPathPrefix + "2.2/credentials",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken  accessToken) &&
+                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo   accessInfo)  &&
+                                                 accessInfo.Status == AccessStatus.ALLOWED)
+                                             {
+
+                                                 if (accessInfo.Credentials == null)
+                                                     return Task.FromResult(
+                                                         new HTTPResponse.Builder(Request) {
+                                                             HTTPStatusCode                = HTTPStatusCode.MethodNotAllowed,
+                                                             Server                        = HTTPServer.DefaultServerName,
+                                                             Date                          = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin      = "*",
+                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             Connection                    = "close"
+                                                         }.AsImmutable);
+
+
+                                                 RemoveAccessToken(accessToken);
+
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode                = HTTPStatusCode.OK,
+                                                         Server                        = HTTPServer.DefaultServerName,
+                                                         Date                          = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin      = "*",
+                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders     = "Authorization",
+                                                         Connection                    = "close"
+                                                     }.AsImmutable);
+
+                                             }
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
+                                                     Server                        = HTTPServer.DefaultServerName,
+                                                     Date                          = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin      = "*",
+                                                     AccessControlAllowMethods     = "GET",
+                                                     AccessControlAllowHeaders     = "Authorization",
+                                                     Connection                    = "close"
+                                                 }.AsImmutable);
 
                                          });
 
@@ -1357,6 +1841,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region AccessTokens
+
+        public CommonAPI SetAccessToken(AccessToken  AccessToken,
+                                           Roles        Role,
+                                           AccessStatus AccessStatus = AccessStatus.ALLOWED)
+        {
+            lock (_AccessTokens)
+            {
+
+                _AccessTokens.Remove(AccessToken);
+
+                _AccessTokens.Add(AccessToken,
+                                  new AccessInfo(Role,
+                                                 AccessStatus,
+                                                 null));
+
+                return this;
+
+            }
+        }
+
+        public CommonAPI SetAccessToken(AccessToken           AccessToken,
+                                           Roles                 Role,
+                                           OCPIv2_2.Credentials  Credentials,
+                                           AccessStatus          AccessStatus = AccessStatus.ALLOWED)
+        {
+            lock (_AccessTokens)
+            {
+
+                _AccessTokens.Remove(AccessToken);
+
+                _AccessTokens.Add(AccessToken,
+                                  new AccessInfo(Role,
+                                                 AccessStatus,
+                                                 Credentials));
+
+                return this;
+
+            }
+        }
+
+        public CommonAPI RemoveAccessToken(AccessToken AccessToken)
+        {
+            lock (_AccessTokens)
+            {
+                _AccessTokens.Remove(AccessToken);
+                return this;
+            }
+        }
+
+        #endregion
 
 
         #region Locations

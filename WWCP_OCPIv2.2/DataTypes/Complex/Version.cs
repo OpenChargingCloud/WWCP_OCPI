@@ -39,14 +39,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The version number.
+        /// The version identification.
         /// </summary>
-        public String  VersionNumber    { get; }
+        public Version_Id  VersionId    { get; }
 
         /// <summary>
         /// The URL of the version.
         /// </summary>
-        public String  URL              { get; }
+        public String      URL          { get; }
 
         #endregion
 
@@ -55,20 +55,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Creat enew version informations.
         /// </summary>
-        /// <param name="VersionNumber">The version number.</param>
+        /// <param name="VersionId">The version identification.</param>
         /// <param name="URL">The URL of the version.</param>
-        public Version(String VersionNumber,
-                       String URL)
+        public Version(Version_Id VersionId,
+                       String     URL)
         {
 
-            if (VersionNumber.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(VersionNumber), "The given version number must not be null or empty!");
+            if (VersionId.IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(VersionId), "The given version identification must not be null or empty!");
 
             if (URL.          IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(URL),           "The given version URL must not be null or empty!");
+                throw new ArgumentNullException(nameof(URL),       "The given version URL must not be null or empty!");
 
-            this.VersionNumber  = VersionNumber?.Trim();
-            this.URL            = URL?.          Trim();
+            this.VersionId  = VersionId;
+            this.URL        = URL?.Trim();
 
         }
 
@@ -169,19 +169,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Version     [mandatory]
+                #region Parse VersionId     [mandatory]
 
-                if (!JSON.ParseMandatoryText("version",
-                                             "version number",
-                                             out String VersionNumber,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("version",
+                                         "version identification",
+                                         Version_Id.TryParse,
+                                         out Version_Id VersionId,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse URL         [mandatory]
+                #region Parse URL           [mandatory]
 
                 if (!JSON.ParseMandatoryText("url",
                                              "version URL",
@@ -194,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                Version = new Version(VersionNumber,
+                Version = new Version(VersionId,
                                       URL);
 
 
@@ -207,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Version    = default;
+                Version        = default;
                 ErrorResponse  = "The given JSON representation of a version is invalid: " + e.Message;
                 return false;
             }
@@ -242,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Version = default;
+                Version        = default;
                 ErrorResponse  = "The given text representation of a version is invalid: " + e.Message;
                 return false;
             }
@@ -261,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("version",  VersionNumber),
+                           new JProperty("version",  VersionId.ToString()),
                            new JProperty("url",      URL)
                        );
 
@@ -281,8 +282,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Version1">A display text.</param>
-        /// <param name="Version2">Another display text.</param>
+        /// <param name="Version1">A version.</param>
+        /// <param name="Version2">Another version.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Version Version1,
                                            Version Version2)
@@ -296,8 +297,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Version1">A display text.</param>
-        /// <param name="Version2">Another display text.</param>
+        /// <param name="Version1">A version.</param>
+        /// <param name="Version2">Another version.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Version Version1,
                                            Version Version2)
@@ -378,8 +379,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is Version energySource
-                   ? CompareTo(energySource)
+            => Object is Version version
+                   ? CompareTo(version)
                    : throw new ArgumentException("The given object is not a version!",
                                                  nameof(Object));
 
@@ -394,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Version Version)
         {
 
-            var c = VersionNumber.CompareTo(Version.VersionNumber);
+            var c = VersionId.CompareTo(Version.VersionId);
 
             if (c == 0)
                 c = URL.CompareTo(Version.URL);
@@ -426,14 +427,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Version)
 
         /// <summary>
-        /// Compares two display texts for equality.
+        /// Compares two versions for equality.
         /// </summary>
-        /// <param name="Version">A display text to compare with.</param>
+        /// <param name="Version">A version to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Version Version)
 
-            => VersionNumber.Equals(Version.VersionNumber) &&
-               URL.          Equals(Version.URL);
+            => VersionId.Equals(Version.VersionId) &&
+               URL.      Equals(Version.URL, StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
@@ -449,8 +450,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
-                return VersionNumber.GetHashCode() * 3 ^
-                       URL.          GetHashCode();
+
+                return VersionId.GetHashCode() * 3 ^
+                       URL.      GetHashCode();
+
             }
         }
 
@@ -463,7 +466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(VersionNumber,
+            => String.Concat(VersionId,
                              " -> ",
                              URL);
 

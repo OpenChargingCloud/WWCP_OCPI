@@ -18,21 +18,11 @@
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    /// <summary>
-    /// The interface role of a party.
-    /// </summary>
-    public enum InterfaceRoles
+    public enum AccessStatus
     {
 
-        /// <summary>
-        /// Sender Interface implementation. Interface implemented by the owner of data, so the Receiver can Pull information from the data Sender/owner.
-        /// </summary>
-        SENDER,
-
-        /// <summary>
-        /// Receiver Interface implementation. Interface implemented by the receiver of data, so the Sender/owner can Push information to the Receiver.
-        /// </summary>
-        RECEIVER
+        BLOCKED,
+        ALLOWED
 
     }
 

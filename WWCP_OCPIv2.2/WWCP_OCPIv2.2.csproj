@@ -47,6 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonAPI\AccessStatus.cs" />
+    <Compile Include="CommonAPI\AccessInfo.cs" />
+    <Compile Include="DataTypes\Complex\VersionEndpoint.cs" />
+    <Compile Include="DataTypes\Complex\VersionDetail.cs" />
     <Compile Include="DataTypes\Complex\Version.cs" />
     <Compile Include="DataTypes\Complex\DisplayText.cs" />
     <Compile Include="DataTypes\Complex\CDRToken.cs" />
@@ -60,11 +64,12 @@
     <Compile Include="DataTypes\Complex\ChargingPreference.cs" />
     <Compile Include="DataTypes\Complex\LocationReference.cs" />
     <Compile Include="DataTypes\Complex\PublishTokenType.cs" />
+    <Compile Include="DataTypes\Enums\ModuleIDs.cs" />
+    <Compile Include="DataTypes\Enums\InterfaceRoles.cs" />
     <Compile Include="DataTypes\OCPIResponse.cs" />
     <Compile Include="DataTypes\Entities\Token.cs" />
     <Compile Include="DataTypes\Entities\CDR.cs" />
     <Compile Include="DataTypes\Entities\CDRLocation.cs" />
-    <Compile Include="DataTypes\Enums\InterfaceRoles.cs" />
     <Compile Include="DataTypes\Enums\Roles.cs" />
     <Compile Include="DataTypes\Enums\ConnectionStatus.cs" />
     <Compile Include="DataTypes\Enums\ReservationRestrictionTypes.cs" />
@@ -109,6 +114,7 @@
     <Compile Include="DataTypes\Simple\Connector_Id.cs" />
     <Compile Include="DataTypes\Entities\Location.cs" />
     <Compile Include="DataTypes\Simple\Group_Id.cs" />
+    <Compile Include="DataTypes\Simple\Version_Id.cs" />
     <Compile Include="DataTypes\Simple\Token_Id.cs" />
     <Compile Include="DataTypes\Simple\Party_Id.cs" />
     <Compile Include="DataTypes\Simple\CountryCode.cs" />

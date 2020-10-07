@@ -918,6 +918,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
                               CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
@@ -927,6 +928,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
                               CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
+                              CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
                               CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
         {
 
@@ -998,7 +1000,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            new JProperty("time_zone",                       Timezone),
 
-                           new JProperty("opening_times",                   OpeningTimes.ToJSON()),
+                           OpeningTimes != null
+                               ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
+                               : null,
 
                            ChargingWhenClosed.HasValue
                                ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
