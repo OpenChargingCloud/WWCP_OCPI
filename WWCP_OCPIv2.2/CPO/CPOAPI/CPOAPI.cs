@@ -42,6 +42,9 @@ using System.Collections.Generic;
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
+    /// <summary>
+    /// Extention methods for the CPO HTTP API.
+    /// </summary>
     public static class CPOAPIExtentions
     {
 
@@ -738,36 +741,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Properties
 
         /// <summary>
-        /// The OCPI common API.
+        /// The CommonAPI.
         /// </summary>
-        public CommonAPI   CommonAPI             { get; }
+        public CommonAPI    CommonAPI             { get; }
 
+        /// <summary>
+        /// The default country code to use.
+        /// </summary>
+        public CountryCode  DefaultCountryCode    { get; }
 
-        public CountryCode DefaultCountryCode    { get; }
-
-
-        public Party_Id    DefaultPartyId        { get; }
+        /// <summary>
+        /// The default party identification to use.
+        /// </summary>
+        public Party_Id     DefaultPartyId        { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create an instance of the OCPI HTTP API for e-Mobility Service Providers
-        /// using the given HTTP server.
+        /// Create an instance of the HTTP API for charge point operators
+        /// using the given CommonAPI.
         /// </summary>
         /// <param name="CommonAPI">The OCPI common API.</param>
+        /// <param name="DefaultCountryCode">The default country code to use.</param>
+        /// <param name="DefaultPartyId">The default party identification to use.</param>
+        /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public CPOAPI(CommonAPI       CommonAPI,
-                      HTTPHostname?   HTTPHostname      = null,
-                      String          ExternalDNSName   = null,
-                      HTTPPath?       URLPathPrefix     = null,
-                      String          ServiceName       = DefaultHTTPServerName)
+        public CPOAPI(CommonAPI      CommonAPI,
+                      CountryCode    DefaultCountryCode,
+                      Party_Id       DefaultPartyId,
 
-            : base(CommonAPI.HTTPServer,
+                      HTTPHostname?  HTTPHostname         = null,
+                      String         ExternalDNSName      = null,
+                      HTTPPath?      URLPathPrefix        = null,
+                      String         ServiceName          = DefaultHTTPServerName)
+
+            : base(CommonAPI?.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
                    URLPathPrefix ?? DefaultURLPathPrefix,
@@ -775,7 +788,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given OCPI common API must not be null!");
+            this.CommonAPI           = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
+            this.DefaultCountryCode  = DefaultCountryCode;
+            this.DefaultPartyId      = DefaultPartyId;
 
             RegisterURLTemplates();
 
@@ -822,45 +837,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            // Sender Interface for CPOs
-
             #region GET    ~/locations
 
+            // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "locations",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
-                                             var from       = Request.QueryString.GetDateTime("date_from");
-                                             var to         = Request.QueryString.GetDateTime("date_to");
-                                             var offset     = Request.QueryString.GetUInt64  ("offset");
-                                             var limit      = Request.QueryString.GetUInt64  ("limit");
+                                             var from                    = Request.QueryString.GetDateTime("date_from");
+                                             var to                      = Request.QueryString.GetDateTime("date_to");
+                                             var offset                  = Request.QueryString.GetUInt64  ("offset");
+                                             var limit                   = Request.QueryString.GetUInt64  ("limit");
 
 
                                              // Link             Link to the 'next' page should be provided when this is NOT the last page.
                                              // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
                                              // X-Limit          The maximum number of objects that the server WILL return.
 
-                                             var locations  = CommonAPI.GetLocations().
-                                                                  Where(location => !from.HasValue || location.LastUpdated >  from.Value).
-                                                                  Where(location => !to.  HasValue || location.LastUpdated <= to.  Value).
-                                                                  SkipTakeFilter(offset, limit).
-                                                                  ToArray();
+                                             var allLocations            = CommonAPI.   GetLocations(DefaultCountryCode,
+                                                                                                     DefaultPartyId).
+                                                                                        ToArray();
+                                             var allLocationsCount       = allLocations.Length;
 
-                                             var JSON       = new JArray(locations.Select(location => location.ToJSON())).
-                                                                  CreateResponse(1000,
-                                                                                 "",
-                                                                                 DateTime.UtcNow);
+                                             var filteredLocations       = allLocations.Where(location => !from.HasValue || location.LastUpdated >  from.Value).
+                                                                                        Where(location => !to.  HasValue || location.LastUpdated <= to.  Value).
+                                                                                        ToArray();
+                                             var filteredLocationsCount  = filteredLocations.Length;
+
 
                                              return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.JSON_UTF8,
-                                                 Content         = JSON.ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET",
+                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<IEnumerable<Location>>.Create(
+                                                                                         filteredLocations.SkipTakeFilter(offset, limit),
+                                                                                         locations => new JArray(locations.Select(location => location.ToJSON())),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
 
                                          });
 
@@ -874,7 +896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
-                                             #region Check LocationId URI parameter
+                                             #region Check Location(Id URI parameter)
 
                                              if (!Request.ParseLocation(this,
                                                                         out Location_Id?  LocationId,
@@ -886,19 +908,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              #endregion
 
-                                             var JSON = Location.ToJSON().
-                                                                 CreateResponse(1000,
-                                                                                "",
-                                                                                DateTime.UtcNow);
 
                                              return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.JSON_UTF8,
-                                                 Content         = JSON.ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET",
+                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Location>.Create(
+                                                                                         Location,
+                                                                                         location => location.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
 
                                          });
 
@@ -912,7 +938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
-                                             #region Check LocationId & EVSEUId URI parameter
+                                             #region Check EVSE(UId URI parameter)
 
                                              if (!Request.ParseLocationEVSE(this,
                                                                             out Location_Id?  LocationId,
@@ -927,19 +953,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             var JSON = EVSE.ToJSON().
-                                                             CreateResponse(1000,
-                                                                            "",
-                                                                            DateTime.UtcNow);
-
                                              return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.JSON_UTF8,
-                                                 Content         = JSON.ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET",
+                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<EVSE>.Create(
+                                                                                         EVSE,
+                                                                                         evse => evse.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
 
                                          });
 
@@ -953,7 +982,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: async Request => {
 
-                                             #region Check LocationId & EVSEUId URI parameter
+                                             #region Check Connector(Id URI parameter)
 
                                              if (!Request.ParseLocationEVSEConnector(this,
                                                                                      out Location_Id?   LocationId,
@@ -970,21 +999,104 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             var JSON = Connector.ToJSON().
-                                                                  CreateResponse(1000,
-                                                                                 "",
-                                                                                 DateTime.UtcNow);
-
                                              return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.JSON_UTF8,
-                                                 Content         = JSON.ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET",
+                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Connector>.Create(
+                                                                                         Connector,
+                                                                                         connector => connector.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
 
                                          });
+
+            #endregion
+
+
+
+            #region GET     ~/tariffs
+
+            // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+
+            #endregion
+
+            #region GET     ~/tariffs/{tariff_id}
+
+            // https://example.com/ocpi/2.2/cpo/tariffs/12454
+
+            #endregion
+
+
+
+            #region GET     ~/sessions
+
+            // https://example.com/ocpi/2.2/cpo/sessions/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+
+            #endregion
+
+            #region GET     ~/sessions/{session_id}
+
+            // https://example.com/ocpi/2.2/cpo/sessions/12454
+
+            #endregion
+
+            #region PUT     ~/sessions/{session_id}/charging_preferences
+
+            // https://example.com/ocpi/2.2/cpo/sessions/12454/charging_preferences
+
+            #endregion
+
+
+
+            #region GET     ~/cdrs
+
+            // https://example.com/ocpi/2.2/cpo/cdrs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+
+            #endregion
+
+            #region GET     ~/cdrs/{cdr_id}
+
+            // https://example.com/ocpi/2.2/cpo/cdrs/12454
+
+            #endregion
+
+
+
+            #region GET     ~/tokens/{country_code}/{party_id}
+
+            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM
+
+            #endregion
+
+            #region GET     ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+
+            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+
+            #endregion
+
+            #region PUT     ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+
+            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+
+            #endregion
+
+            #region PATCH   ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+
+            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+
+            #endregion
+
+            #region DELETE  ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+
+            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
 
             #endregion
 

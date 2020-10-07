@@ -627,6 +627,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Patch(EVSEPatch)
+
+        public EVSE Patch(JObject EVSEPatch)
+        {
+
+            return this;
+
+        }
+
+        #endregion
+
+
         #region TryGetConnector(ConnectorId, out Connector)
 
         /// <summary>

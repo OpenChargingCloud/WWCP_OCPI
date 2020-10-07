@@ -40,7 +40,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public static class CommonAPIExtentions
     {
 
-
         #region ParseParseCountryCodePartyId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId,                                                         out HTTPResponse)
 
         /// <summary>
@@ -130,9 +129,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
-
-
-
 
 
         #region ParseLocationId             (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,                                                                      out HTTPResponse)
@@ -1036,46 +1032,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-
-        private static JObject createResponse(this JToken   Data,
-                                              Int32         ErrorCode,
-                                              String        StatusMessage,
-                                              DateTime?     Timestamp = null)
-
-            => JSONObject.Create(
-
-                   new JProperty("data",                  Data),
-                   new JProperty("status_code",           ErrorCode),
-
-                   StatusMessage.IsNotNullOrEmpty()
-                       ? new JProperty("status_message",  StatusMessage)
-                       :  null,
-
-                   new JProperty("timestamp",            (Timestamp ?? DateTime.UtcNow).ToIso8601())
-
-               );
-
-        public static JObject CreateResponse(this JObject  Data,
-                                             Int32         ErrorCode,
-                                             String        StatusMessage = null,
-                                             DateTime?     Timestamp     = null)
-
-            => createResponse(Data,
-                              ErrorCode,
-                              StatusMessage,
-                              Timestamp);
-
-        public static JObject CreateResponse(this JArray  Data,
-                                             Int32        ErrorCode,
-                                             String       StatusMessage = null,
-                                             DateTime?    Timestamp     = null)
-
-            => createResponse(Data,
-                              ErrorCode,
-                              StatusMessage,
-                              Timestamp);
-
     }
 
 
@@ -1194,6 +1150,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this._AccessTokens  = new Dictionary<AccessToken, AccessInfo>();
             this._Locations     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this._Tariffs       = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this._Sessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this._Tokens        = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    Token>>>();
+            this._CDRs          = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -2158,6 +2118,1067 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
         #endregion
+
+        #region Tariffs
+
+        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> _Tariffs;
+
+
+        #region AddTariff(Tariff)
+
+        public Tariff AddTariff(Tariff Tariff)
+        {
+
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+
+            lock (_Tariffs)
+            {
+
+                if (!_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
+                    _Tariffs.Add(Tariff.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                {
+                    tariffs = new Dictionary<Tariff_Id, Tariff>();
+                    parties.Add(Tariff.PartyId, tariffs);
+                }
+
+                if (!tariffs.ContainsKey(Tariff.Id))
+                {
+                    tariffs.Add(Tariff.Id, Tariff);
+                    return Tariff;
+                }
+
+                throw new ArgumentException("The given tariff already exists!");
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddTariffIfNotExists(Tariff)
+
+        public Tariff AddTariffIfNotExists(Tariff Tariff)
+        {
+
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+
+            lock (_Tariffs)
+            {
+
+                if (!_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
+                    _Tariffs.Add(Tariff.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                {
+                    tariffs = new Dictionary<Tariff_Id, Tariff>();
+                    parties.Add(Tariff.PartyId, tariffs);
+                }
+
+                if (!tariffs.ContainsKey(Tariff.Id))
+                    tariffs.Add(Tariff.Id, Tariff);
+
+                return Tariff;
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddTariffOrUpdate(Tariff)
+
+        public Tariff AddTariffOrUpdate(Tariff Tariff)
+        {
+
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+
+            lock (_Tariffs)
+            {
+
+                if (!_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
+                    _Tariffs.Add(Tariff.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                {
+                    tariffs = new Dictionary<Tariff_Id, Tariff>();
+                    parties.Add(Tariff.PartyId, tariffs);
+                }
+
+                if (tariffs.ContainsKey(Tariff.Id))
+                {
+                    tariffs.Remove(Tariff.Id);
+                }
+
+                tariffs.Add(Tariff.Id, Tariff);
+                return Tariff;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region TryGetTariff(CountryCode, PartyId, TariffId,, out Tariff)
+
+        public Boolean TryGetTariff(CountryCode   CountryCode,
+                                      Party_Id      PartyId,
+                                      Tariff_Id   TariffId,
+                                      out Tariff  Tariff)
+        {
+
+            lock (_Tariffs)
+            {
+
+                if (_Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    {
+                        if (tariffs.TryGetValue(TariffId, out Tariff))
+                            return true;
+                    }
+                }
+
+                Tariff = null;
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetTariffs(CountryCode = null, PartyId = null)
+
+        public IEnumerable<Tariff> GetTariffs(CountryCode? CountryCode  = null,
+                                                  Party_Id?    PartyId      = null)
+        {
+
+            lock (_Tariffs)
+            {
+
+                if (CountryCode.HasValue && PartyId.HasValue)
+                {
+                    if (_Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                    {
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
+                        {
+                            return tariffs.Values.ToArray();
+                        }
+                    }
+                }
+
+                else if (!CountryCode.HasValue && PartyId.HasValue)
+                {
+
+                    var allTariffs = new List<Tariff>();
+
+                    foreach (var party in _Tariffs.Values)
+                    {
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
+                        {
+                            allTariffs.AddRange(tariffs.Values);
+                        }
+                    }
+
+                    return allTariffs;
+
+                }
+
+                else if (CountryCode.HasValue && !PartyId.HasValue)
+                {
+                    if (_Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                    {
+
+                        var allTariffs = new List<Tariff>();
+
+                        foreach (var tariffs in parties.Values)
+                        {
+                            allTariffs.AddRange(tariffs.Values);
+                        }
+
+                        return allTariffs;
+
+                    }
+                }
+
+                else
+                {
+
+                    var allTariffs = new List<Tariff>();
+
+                    foreach (var party in _Tariffs.Values)
+                    {
+                        foreach (var tariffs in party.Values)
+                        {
+                            allTariffs.AddRange(tariffs.Values);
+                        }
+                    }
+
+                    return allTariffs;
+
+                }
+
+                return new Tariff[0];
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RemoveTariff(Tariff)
+
+        public Tariff RemoveTariff(Tariff Tariff)
+        {
+
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+
+            lock (_Tariffs)
+            {
+
+                if (_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+
+                    if (parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    {
+
+                        if (tariffs.ContainsKey(Tariff.Id))
+                        {
+                            tariffs.Remove(Tariff.Id);
+                        }
+
+                        if (!tariffs.Any())
+                            parties.Remove(Tariff.PartyId);
+
+                    }
+
+                    if (!parties.Any())
+                        _Tariffs.Remove(Tariff.CountryCode);
+
+                }
+
+                return Tariff;
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Sessions
+
+        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> _Sessions;
+
+
+        #region AddSession(Session)
+
+        public Session AddSession(Session Session)
+        {
+
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+
+            lock (_Sessions)
+            {
+
+                if (!_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
+                    _Sessions.Add(Session.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                {
+                    sessions = new Dictionary<Session_Id, Session>();
+                    parties.Add(Session.PartyId, sessions);
+                }
+
+                if (!sessions.ContainsKey(Session.Id))
+                {
+                    sessions.Add(Session.Id, Session);
+                    return Session;
+                }
+
+                throw new ArgumentException("The given session already exists!");
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddSessionIfNotExists(Session)
+
+        public Session AddSessionIfNotExists(Session Session)
+        {
+
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+
+            lock (_Sessions)
+            {
+
+                if (!_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
+                    _Sessions.Add(Session.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                {
+                    sessions = new Dictionary<Session_Id, Session>();
+                    parties.Add(Session.PartyId, sessions);
+                }
+
+                if (!sessions.ContainsKey(Session.Id))
+                    sessions.Add(Session.Id, Session);
+
+                return Session;
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddSessionOrUpdate(Session)
+
+        public Session AddSessionOrUpdate(Session Session)
+        {
+
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+
+            lock (_Sessions)
+            {
+
+                if (!_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
+                    _Sessions.Add(Session.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                {
+                    sessions = new Dictionary<Session_Id, Session>();
+                    parties.Add(Session.PartyId, sessions);
+                }
+
+                if (sessions.ContainsKey(Session.Id))
+                {
+                    sessions.Remove(Session.Id);
+                }
+
+                sessions.Add(Session.Id, Session);
+                return Session;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region TryGetSession(CountryCode, PartyId, SessionId,, out Session)
+
+        public Boolean TryGetSession(CountryCode   CountryCode,
+                                      Party_Id      PartyId,
+                                      Session_Id   SessionId,
+                                      out Session  Session)
+        {
+
+            lock (_Sessions)
+            {
+
+                if (_Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
+                    {
+                        if (sessions.TryGetValue(SessionId, out Session))
+                            return true;
+                    }
+                }
+
+                Session = null;
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetSessions(CountryCode = null, PartyId = null)
+
+        public IEnumerable<Session> GetSessions(CountryCode? CountryCode  = null,
+                                                  Party_Id?    PartyId      = null)
+        {
+
+            lock (_Sessions)
+            {
+
+                if (CountryCode.HasValue && PartyId.HasValue)
+                {
+                    if (_Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                    {
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
+                        {
+                            return sessions.Values.ToArray();
+                        }
+                    }
+                }
+
+                else if (!CountryCode.HasValue && PartyId.HasValue)
+                {
+
+                    var allSessions = new List<Session>();
+
+                    foreach (var party in _Sessions.Values)
+                    {
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
+                        {
+                            allSessions.AddRange(sessions.Values);
+                        }
+                    }
+
+                    return allSessions;
+
+                }
+
+                else if (CountryCode.HasValue && !PartyId.HasValue)
+                {
+                    if (_Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                    {
+
+                        var allSessions = new List<Session>();
+
+                        foreach (var sessions in parties.Values)
+                        {
+                            allSessions.AddRange(sessions.Values);
+                        }
+
+                        return allSessions;
+
+                    }
+                }
+
+                else
+                {
+
+                    var allSessions = new List<Session>();
+
+                    foreach (var party in _Sessions.Values)
+                    {
+                        foreach (var sessions in party.Values)
+                        {
+                            allSessions.AddRange(sessions.Values);
+                        }
+                    }
+
+                    return allSessions;
+
+                }
+
+                return new Session[0];
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RemoveSession(Session)
+
+        public Session RemoveSession(Session Session)
+        {
+
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+
+            lock (_Sessions)
+            {
+
+                if (_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+
+                    if (parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                    {
+
+                        if (sessions.ContainsKey(Session.Id))
+                        {
+                            sessions.Remove(Session.Id);
+                        }
+
+                        if (!sessions.Any())
+                            parties.Remove(Session.PartyId);
+
+                    }
+
+                    if (!parties.Any())
+                        _Sessions.Remove(Session.CountryCode);
+
+                }
+
+                return Session;
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Tokens
+
+        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, Token>>> _Tokens;
+
+
+        #region AddToken(Token)
+
+        public Token AddToken(Token Token)
+        {
+
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+
+            lock (_Tokens)
+            {
+
+                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, Token>>();
+                    _Tokens.Add(Token.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                {
+                    tokens = new Dictionary<Token_Id, Token>();
+                    parties.Add(Token.PartyId, tokens);
+                }
+
+                if (!tokens.ContainsKey(Token.Id))
+                {
+                    tokens.Add(Token.Id, Token);
+                    return Token;
+                }
+
+                throw new ArgumentException("The given token already exists!");
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddTokenIfNotExists(Token)
+
+        public Token AddTokenIfNotExists(Token Token)
+        {
+
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+
+            lock (_Tokens)
+            {
+
+                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, Token>>();
+                    _Tokens.Add(Token.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                {
+                    tokens = new Dictionary<Token_Id, Token>();
+                    parties.Add(Token.PartyId, tokens);
+                }
+
+                if (!tokens.ContainsKey(Token.Id))
+                    tokens.Add(Token.Id, Token);
+
+                return Token;
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddTokenOrUpdate(Token)
+
+        public Token AddTokenOrUpdate(Token Token)
+        {
+
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+
+            lock (_Tokens)
+            {
+
+                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, Token>>();
+                    _Tokens.Add(Token.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                {
+                    tokens = new Dictionary<Token_Id, Token>();
+                    parties.Add(Token.PartyId, tokens);
+                }
+
+                if (tokens.ContainsKey(Token.Id))
+                {
+                    tokens.Remove(Token.Id);
+                }
+
+                tokens.Add(Token.Id, Token);
+                return Token;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region TryGetToken(CountryCode, PartyId, TokenId,, out Token)
+
+        public Boolean TryGetToken(CountryCode   CountryCode,
+                                      Party_Id      PartyId,
+                                      Token_Id   TokenId,
+                                      out Token  Token)
+        {
+
+            lock (_Tokens)
+            {
+
+                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, Token> tokens))
+                    {
+                        if (tokens.TryGetValue(TokenId, out Token))
+                            return true;
+                    }
+                }
+
+                Token = null;
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetTokens(CountryCode = null, PartyId = null)
+
+        public IEnumerable<Token> GetTokens(CountryCode? CountryCode  = null,
+                                                  Party_Id?    PartyId      = null)
+        {
+
+            lock (_Tokens)
+            {
+
+                if (CountryCode.HasValue && PartyId.HasValue)
+                {
+                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                    {
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Token_Id, Token> tokens))
+                        {
+                            return tokens.Values.ToArray();
+                        }
+                    }
+                }
+
+                else if (!CountryCode.HasValue && PartyId.HasValue)
+                {
+
+                    var allTokens = new List<Token>();
+
+                    foreach (var party in _Tokens.Values)
+                    {
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<Token_Id, Token> tokens))
+                        {
+                            allTokens.AddRange(tokens.Values);
+                        }
+                    }
+
+                    return allTokens;
+
+                }
+
+                else if (CountryCode.HasValue && !PartyId.HasValue)
+                {
+                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                    {
+
+                        var allTokens = new List<Token>();
+
+                        foreach (var tokens in parties.Values)
+                        {
+                            allTokens.AddRange(tokens.Values);
+                        }
+
+                        return allTokens;
+
+                    }
+                }
+
+                else
+                {
+
+                    var allTokens = new List<Token>();
+
+                    foreach (var party in _Tokens.Values)
+                    {
+                        foreach (var tokens in party.Values)
+                        {
+                            allTokens.AddRange(tokens.Values);
+                        }
+                    }
+
+                    return allTokens;
+
+                }
+
+                return new Token[0];
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RemoveToken(Token)
+
+        public Token RemoveToken(Token Token)
+        {
+
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+
+            lock (_Tokens)
+            {
+
+                if (_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                {
+
+                    if (parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                    {
+
+                        if (tokens.ContainsKey(Token.Id))
+                        {
+                            tokens.Remove(Token.Id);
+                        }
+
+                        if (!tokens.Any())
+                            parties.Remove(Token.PartyId);
+
+                    }
+
+                    if (!parties.Any())
+                        _Tokens.Remove(Token.CountryCode);
+
+                }
+
+                return Token;
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region CDRs
+
+        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> _CDRs;
+
+
+        #region AddCDR(CDR)
+
+        public CDR AddCDR(CDR CDR)
+        {
+
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+
+            lock (_CDRs)
+            {
+
+                if (!_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
+                    _CDRs.Add(CDR.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                {
+                    CDRs = new Dictionary<CDR_Id, CDR>();
+                    parties.Add(CDR.PartyId, CDRs);
+                }
+
+                if (!CDRs.ContainsKey(CDR.Id))
+                {
+                    CDRs.Add(CDR.Id, CDR);
+                    return CDR;
+                }
+
+                throw new ArgumentException("The given charge detail record already exists!");
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddCDRIfNotExists(CDR)
+
+        public CDR AddCDRIfNotExists(CDR CDR)
+        {
+
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+
+            lock (_CDRs)
+            {
+
+                if (!_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
+                    _CDRs.Add(CDR.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                {
+                    CDRs = new Dictionary<CDR_Id, CDR>();
+                    parties.Add(CDR.PartyId, CDRs);
+                }
+
+                if (!CDRs.ContainsKey(CDR.Id))
+                    CDRs.Add(CDR.Id, CDR);
+
+                return CDR;
+
+            }
+
+        }
+
+        #endregion
+
+        #region AddCDROrUpdate(CDR)
+
+        public CDR AddCDROrUpdate(CDR CDR)
+        {
+
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+
+            lock (_CDRs)
+            {
+
+                if (!_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+                    parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
+                    _CDRs.Add(CDR.CountryCode, parties);
+                }
+
+                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                {
+                    CDRs = new Dictionary<CDR_Id, CDR>();
+                    parties.Add(CDR.PartyId, CDRs);
+                }
+
+                if (CDRs.ContainsKey(CDR.Id))
+                {
+                    CDRs.Remove(CDR.Id);
+                }
+
+                CDRs.Add(CDR.Id, CDR);
+                return CDR;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region TryGetCDR(CountryCode, PartyId, CDRId,, out CDR)
+
+        public Boolean TryGetCDR(CountryCode   CountryCode,
+                                      Party_Id      PartyId,
+                                      CDR_Id   CDRId,
+                                      out CDR  CDR)
+        {
+
+            lock (_CDRs)
+            {
+
+                if (_CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                    {
+                        if (CDRs.TryGetValue(CDRId, out CDR))
+                            return true;
+                    }
+                }
+
+                CDR = null;
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetCDRs(CountryCode = null, PartyId = null)
+
+        public IEnumerable<CDR> GetCDRs(CountryCode? CountryCode  = null,
+                                                  Party_Id?    PartyId      = null)
+        {
+
+            lock (_CDRs)
+            {
+
+                if (CountryCode.HasValue && PartyId.HasValue)
+                {
+                    if (_CDRs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                    {
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> CDRs))
+                        {
+                            return CDRs.Values.ToArray();
+                        }
+                    }
+                }
+
+                else if (!CountryCode.HasValue && PartyId.HasValue)
+                {
+
+                    var allCDRs = new List<CDR>();
+
+                    foreach (var party in _CDRs.Values)
+                    {
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> CDRs))
+                        {
+                            allCDRs.AddRange(CDRs.Values);
+                        }
+                    }
+
+                    return allCDRs;
+
+                }
+
+                else if (CountryCode.HasValue && !PartyId.HasValue)
+                {
+                    if (_CDRs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                    {
+
+                        var allCDRs = new List<CDR>();
+
+                        foreach (var CDRs in parties.Values)
+                        {
+                            allCDRs.AddRange(CDRs.Values);
+                        }
+
+                        return allCDRs;
+
+                    }
+                }
+
+                else
+                {
+
+                    var allCDRs = new List<CDR>();
+
+                    foreach (var party in _CDRs.Values)
+                    {
+                        foreach (var CDRs in party.Values)
+                        {
+                            allCDRs.AddRange(CDRs.Values);
+                        }
+                    }
+
+                    return allCDRs;
+
+                }
+
+                return new CDR[0];
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RemoveCDR(CDR)
+
+        public CDR RemoveCDR(CDR CDR)
+        {
+
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+
+            lock (_CDRs)
+            {
+
+                if (_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+
+                    if (parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                    {
+
+                        if (CDRs.ContainsKey(CDR.Id))
+                        {
+                            CDRs.Remove(CDR.Id);
+                        }
+
+                        if (!CDRs.Any())
+                            parties.Remove(CDR.PartyId);
+
+                    }
+
+                    if (!parties.Any())
+                        _CDRs.Remove(CDR.CountryCode);
+
+                }
+
+                return CDR;
+
+            }
+
+        }
+
+        #endregion
+
+        #endregion
+
 
 
         #region Start()

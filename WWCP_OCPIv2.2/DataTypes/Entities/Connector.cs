@@ -492,6 +492,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Patch(EVSEPatch)
+
+        public Connector Patch(JObject ConnectorPatch)
+        {
+
+            return this;
+
+        }
+
+        #endregion
+
 
         #region Operator overloading
 

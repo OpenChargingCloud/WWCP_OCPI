@@ -98,8 +98,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        Party_Id.Parse("GEF"),
                                        Tariff_Id.Parse("12"),
                                        Currency.EUR,
-                                       TariffAltText: I18NString.Create(Languages.eng, "2 euro p/hour").
-                                                                    Add(Languages.nld, "2 euro p/uur"),
+                                       TariffAltText:  new DisplayText[] {
+                                                           new DisplayText(Languages.eng, "2 euro p/hour"),
+                                                           new DisplayText(Languages.nld, "2 euro p/uur")
+                                                       },
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
                                                                new PriceComponent(TariffDimensionTypes.TIME, 2.00M, 300)

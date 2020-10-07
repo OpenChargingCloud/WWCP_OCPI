@@ -18,6 +18,8 @@
 #region Usings
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -38,30 +40,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Status of the token, and whether charging is allowed at the optionally given
         /// charging location.
         /// </summary>
-        public AllowedTypes             Allowed                   { get; }
+        public AllowedTypes              Allowed                   { get; }
 
         /// <summary>
         /// The complete Token object for which this authorization was requested.
         /// </summary>
-        public Token                    Token                     { get; }
+        public Token                     Token                     { get; }
 
         /// <summary>
         /// Optional reference to the location if it was included in the request, and if
         /// the EV driver is allowed to charge at that location. Only the EVSEs the EV
         /// driver is allowed to charge at are returned.
         /// </summary>
-        public LocationReference?       Location                  { get; }
+        public LocationReference?        Location                  { get; }
 
         /// <summary>
         /// Reference to the authorization given by the eMSP, when given, this reference
         /// will be provided in the relevant charging session and/or charge detail record.
         /// </summary>
-        public AuthorizationReference?  AuthorizationReference    { get; }
+        public AuthorizationReference?   AuthorizationReference    { get; }
 
         /// <summary>
         /// Optional display text, additional information to the EV driver.
         /// </summary>
-        public I18NString               Info                      { get; }
+        public IEnumerable<DisplayText>  Info                      { get; }
 
         #endregion
 
@@ -71,17 +73,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// An authorization information consists of a start timestamp and a
         /// list of possible values that influence this period.
         /// </summary>
-        public AuthorizationInfo(AllowedTypes             Allowed,
-                                 Token                    Token,
-
-                                 LocationReference?       Location                 = null,
-                                 AuthorizationReference?  AuthorizationReference   = null,
-                                 I18NString               Info                     = null)
+        public AuthorizationInfo(AllowedTypes              Allowed,
+                                 Token                     Token,
+                                 LocationReference?        Location                 = null,
+                                 AuthorizationReference?   AuthorizationReference   = null,
+                                 IEnumerable<DisplayText>  Info                     = null)
         {
 
             this.Allowed                 = Allowed;
             this.Token                   = Token;
-
             this.Location                = Location;
             this.AuthorizationReference  = AuthorizationReference;
             this.Info                    = Info;
@@ -155,7 +155,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                Location.              HasValue && AuthorizationInfo.Location.              HasValue && Location.              Value.Equals(AuthorizationInfo.Location.              Value) &&
                AuthorizationReference.HasValue && AuthorizationInfo.AuthorizationReference.HasValue && AuthorizationReference.Value.Equals(AuthorizationInfo.AuthorizationReference.Value) &&
-               Info.IsNeitherNullNorEmpty()    && AuthorizationInfo.Info.IsNeitherNullNorEmpty()    && Info.                        Equals(AuthorizationInfo.Info);
+
+               Info.SafeAny()                  && AuthorizationInfo.Info.SafeAny()                  && Info.Count().                Equals(AuthorizationInfo.Info.Count()) &&
+               Info.SafeAll(info => AuthorizationInfo.Info.Contains(info));
 
         #endregion
 
@@ -183,7 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             ? AuthorizationReference.Value.GetHashCode() *  3
                             : 0) ^
 
-                       (Info.IsNeitherNullNorEmpty()
+                       (Info.SafeAny()
                             ? Info.GetHashCode()
                             : 0);
 

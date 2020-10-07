@@ -1029,6 +1029,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region Patch(LocationPatch)
+
+        public Location Patch(JObject LocationPatch)
+        {
+
+            return this;
+
+        }
+
+        #endregion
+
+
         #region TryGetEVSE(EVSEUId, out EVSE)
 
         /// <summary>
