@@ -1854,6 +1854,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        //ToDo: Wrap this into an plugable interface!
+
         #region Locations
 
         private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> _Locations;
@@ -2110,6 +2112,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 return Location;
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllLocations()
+
+        /// <summary>
+        /// Remove all locations.
+        /// </summary>
+        public void RemoveAllLocations()
+        {
+
+            lock (_Locations)
+            {
+                _Locations.Clear();
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllLocations(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all locations owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllLocations(CountryCode  CountryCode,
+                                       Party_Id     PartyId)
+        {
+
+            lock (_Locations)
+            {
+
+                if (_Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
+                    {
+                        locations.Clear();
+                    }
+                }
 
             }
 
@@ -2382,6 +2429,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region RemoveAllTariffs()
+
+        /// <summary>
+        /// Remove all tariffs.
+        /// </summary>
+        public void RemoveAllTariffs()
+        {
+
+            lock (_Tariffs)
+            {
+                _Tariffs.Clear();
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all tariffs owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllTariffs(CountryCode  CountryCode,
+                                     Party_Id     PartyId)
+        {
+
+            lock (_Tariffs)
+            {
+
+                if (_Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    {
+                        tariffs.Clear();
+                    }
+                }
+
+            }
+
+        }
+
+        #endregion
+
         #endregion
 
         #region Sessions
@@ -2647,6 +2739,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region RemoveAllSessions()
+
+        /// <summary>
+        /// Remove all sessions.
+        /// </summary>
+        public void RemoveAllSessions()
+        {
+
+            lock (_Sessions)
+            {
+                _Sessions.Clear();
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllSessions(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all sessions owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllSessions(CountryCode  CountryCode,
+                                      Party_Id     PartyId)
+        {
+
+            lock (_Sessions)
+            {
+
+                if (_Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
+                    {
+                        sessions.Clear();
+                    }
+                }
+
+            }
+
+        }
+
+        #endregion
+
         #endregion
 
         #region Tokens
@@ -2765,10 +2902,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region TryGetToken(CountryCode, PartyId, TokenId,, out Token)
 
-        public Boolean TryGetToken(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Token_Id   TokenId,
-                                      out Token  Token)
+        public Boolean TryGetToken(CountryCode  CountryCode,
+                                   Party_Id     PartyId,
+                                   Token_Id     TokenId,
+                                   out Token    Token)
         {
 
             lock (_Tokens)
@@ -2905,6 +3042,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 return Token;
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens()
+
+        /// <summary>
+        /// Remove all tokens.
+        /// </summary>
+        public void RemoveAllTokens()
+        {
+
+            lock (_Tokens)
+            {
+                _Tokens.Clear();
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all tokens owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllTokens(CountryCode  CountryCode,
+                                    Party_Id     PartyId)
+        {
+
+            lock (_Tokens)
+            {
+
+                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, Token> tokens))
+                    {
+                        tokens.Clear();
+                    }
+                }
 
             }
 
@@ -3170,6 +3352,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 return CDR;
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs()
+
+        /// <summary>
+        /// Remove all CDRs.
+        /// </summary>
+        public void RemoveAllCDRs()
+        {
+
+            lock (_CDRs)
+            {
+                _CDRs.Clear();
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all CDRs owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllCDRs(CountryCode  CountryCode,
+                                  Party_Id     PartyId)
+        {
+
+            lock (_CDRs)
+            {
+
+                if (_CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                    {
+                        CDRs.Clear();
+                    }
+                }
 
             }
 

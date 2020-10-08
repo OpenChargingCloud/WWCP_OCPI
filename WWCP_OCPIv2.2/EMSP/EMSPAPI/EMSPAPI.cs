@@ -17,13 +17,15 @@
 
 #region Usings
 
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+
+using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Illias;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 #endregion
 
@@ -1748,6 +1750,171 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region ParseTokenId                (this HTTPRequest, EMSPAPI, out TokenId,                    out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the token identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The EMSP API.</param>
+        /// <param name="TokenId">The parsed unique token identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseTokenId(this HTTPRequest  HTTPRequest,
+                                           EMSPAPI           EMSPAPI,
+                                           out Token_Id?     TokenId,
+                                           out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),      "The given EMSP API must not be null!");
+
+            #endregion
+
+            TokenId       = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 1)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!TokenId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid token identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseToken                  (this HTTPRequest, EMSPAPI, out TokenId, out Token,         out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the token identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="EMSPAPI">The Users API.</param>
+        /// <param name="TokenId">The parsed unique token identification.</param>
+        /// <param name="Token">The resolved user.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseToken(this HTTPRequest  HTTPRequest,
+                                         EMSPAPI           EMSPAPI,
+                                         out Token_Id?     TokenId,
+                                         out Token         Token,
+                                         out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI    == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),    "The given EMSP API must not be null!");
+
+            #endregion
+
+            TokenId       = null;
+            Token         = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 1) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!TokenId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid token identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            var ToCountryCode    = HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-to-country-code",   CountryCode.TryParse);
+            var ToPartyId        = HTTPRequest.TryParseHeaderField<Party_Id>   ("OCPI-to-party-id",       Party_Id.   TryParse);
+            var FromCountryCode  = HTTPRequest.TryParseHeaderField<CountryCode>("OCPI-from-country-code", CountryCode.TryParse);
+            var FromPartyId      = HTTPRequest.TryParseHeaderField<Party_Id>   ("OCPI-from-party-id",     Party_Id.   TryParse);
+
+
+            if (!EMSPAPI.CommonAPI.TryGetToken(ToCountryCode ?? EMSPAPI.DefaultCountryCode,
+                                               ToPartyId     ?? EMSPAPI.DefaultPartyId,
+                                               TokenId.Value,
+                                               out Token)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = EMSPAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown token identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
     }
 
 
@@ -1786,7 +1953,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The CommonAPI.
         /// </summary>
-        public CommonAPI  CommonAPI    { get; }
+        public CommonAPI    CommonAPI             { get; }
+
+        /// <summary>
+        /// The default country code to use.
+        /// </summary>
+        public CountryCode  DefaultCountryCode    { get; }
+
+        /// <summary>
+        /// The default party identification to use.
+        /// </summary>
+        public Party_Id     DefaultPartyId        { get; }
 
         #endregion
 
@@ -1797,11 +1974,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// using the given CommonAPI.
         /// </summary>
         /// <param name="CommonAPI">The OCPI common API.</param>
+        /// <param name="DefaultCountryCode">The default country code to use.</param>
+        /// <param name="DefaultPartyId">The default party identification to use.</param>
+        /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
         public EMSPAPI(CommonAPI      CommonAPI,
+                       CountryCode    DefaultCountryCode,
+                       Party_Id       DefaultPartyId,
+
                        HTTPHostname?  HTTPHostname      = null,
                        String         ExternalDNSName   = null,
                        HTTPPath?      URLPathPrefix     = null,
@@ -1815,7 +1998,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given OCPI common API must not be null!");
+            this.CommonAPI           = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
+            this.DefaultCountryCode  = DefaultCountryCode;
+            this.DefaultPartyId      = DefaultPartyId;
 
             RegisterURLTemplates();
 
@@ -1915,7 +2100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<IEnumerable<Location>>.Create(
                                                                                          filteredLocations,
@@ -1967,7 +2152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Location>.Create(
                                                                                          Location,
@@ -2022,7 +2207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             Date                       = DateTime.UtcNow,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse<Location>.Create(
                                                                                              newLocation,
@@ -2043,7 +2228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Location>.Create(
                                                                                          newLocation,
@@ -2096,7 +2281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Location>.Create(
                                                                                          patchedLocation,
@@ -2150,7 +2335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<EVSE>.Create(
                                                                                          EVSE,
@@ -2204,7 +2389,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             Date                       = DateTime.UtcNow,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse<EVSE>.Create(
                                                                                              newEVSE,
@@ -2225,7 +2410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<EVSE>.Create(
                                                                                          newEVSE,
@@ -2280,7 +2465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<EVSE>.Create(
                                                                                          patchedEVSE,
@@ -2335,7 +2520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Connector>.Create(
                                                                                          Connector,
@@ -2390,7 +2575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             Date                       = DateTime.UtcNow,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse<Connector>.Create(
                                                                                              newConnector,
@@ -2411,7 +2596,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Connector>.Create(
                                                                                          newConnector,
@@ -2468,7 +2653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Connector>.Create(
                                                                                          patchedConnector,
@@ -2542,7 +2727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<IEnumerable<Tariff>>.Create(
                                                                                          filteredTariffs,
@@ -2594,7 +2779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Tariff>.Create(
                                                                                          Tariff,
@@ -2649,7 +2834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             Date                       = DateTime.UtcNow,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse<Tariff>.Create(
                                                                                              newTariff,
@@ -2670,7 +2855,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Tariff>.Create(
                                                                                          newTariff,
@@ -2744,7 +2929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<IEnumerable<Session>>.Create(
                                                                                          filteredSessions,
@@ -2796,7 +2981,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Session>.Create(
                                                                                          Session,
@@ -2851,7 +3036,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             Date                       = DateTime.UtcNow,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse<Session>.Create(
                                                                                              newSession,
@@ -2872,7 +3057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Session>.Create(
                                                                                          newSession,
@@ -2925,7 +3110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Session>.Create(
                                                                                          patchedSession,
@@ -2999,7 +3184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<IEnumerable<CDR>>.Create(
                                                                                          filteredCDRs,
@@ -3052,7 +3237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             Date                       = DateTime.UtcNow,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, PUT, PATCH",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse<CDR>.Create(
                                                                                              newCDR,
@@ -3076,7 +3261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<CDR>.Create(
                                                                                          newCDR,
@@ -3128,7 +3313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<CDR>.Create(
                                                                                          CDR,
@@ -3151,11 +3336,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-
-
             #region GET     ~/tokens
 
-            // Get the list of known Tokens
+            // https://example.com/ocpi/2.2/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "tokens",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             var from                 = Request.QueryString.GetDateTime("date_from");
+                                             var to                   = Request.QueryString.GetDateTime("date_to");
+                                             var offset               = Request.QueryString.GetUInt64  ("offset");
+                                             var limit                = Request.QueryString.GetUInt64  ("limit");
+
+
+                                             // Link             Link to the 'next' page should be provided when this is NOT the last page.
+                                             // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
+                                             // X-Limit          The maximum number of objects that the server WILL return.
+
+                                             var allTokens            = CommonAPI.GetTokens().
+                                                                                      ToArray();
+                                             var allTokensCount       = allTokens.Length;
+
+                                             var filteredTokens       = allTokens.Where(token => !from.HasValue || token.LastUpdated >  from.Value).
+                                                                                  Where(token => !to.  HasValue || token.LastUpdated <= to.  Value).
+                                                                                  ToArray();
+                                             var filteredTokensCount  = filteredTokens.Length;
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, POST",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<IEnumerable<Token>>.Create(
+                                                                                         filteredTokens.SkipTakeFilter(offset, limit),
+                                                                                         tokens => new JArray(tokens.Select(token => token.ToJSON())),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
 
             #endregion
 
@@ -3167,9 +3394,121 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // => AuthorizationInfo, maybe with copy of the LocationReference
 
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.POST,
+                                         URLPathPrefix + "tokens/{token_id}/authorize",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check TokenId URI parameter
+
+                                             if (!Request.ParseTokenId(this,
+                                                                       out Token_Id?     TokenId,
+                                                                       out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+                                             //ToDo: What exactly to do with this information?
+                                             var TokenType        = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+
+                                             var RequestId        = Request.GetHeaderField("X-Request-ID");
+                                             var CorrelationId    = Request.GetHeaderField("X-Correlation-ID");
+                                             var ToCountryCode    = Request.TryParseHeaderField<CountryCode>("OCPI-to-country-code",   CountryCode.TryParse);
+                                             var ToPartyId        = Request.TryParseHeaderField<Party_Id>   ("OCPI-to-party-id",       Party_Id.   TryParse);
+                                             //var FromCountryCode  = Request.TryParseHeaderField<CountryCode>("OCPI-from-country-code", CountryCode.TryParse);
+                                             //var FromPartyId      = Request.TryParseHeaderField<Party_Id>   ("OCPI-from-party-id",     Party_Id.   TryParse);
+
+                                             if (!CommonAPI.TryGetToken(ToCountryCode ?? DefaultCountryCode,
+                                                                        ToPartyId     ?? DefaultPartyId,
+                                                                        TokenId.Value,
+                                                                        out Token token))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                            Server                     = DefaultHTTPServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "POST",
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            Connection                 = "close"
+                                                        }.Set("X-Request-ID",     RequestId).
+                                                          Set("X-Correlation-ID", CorrelationId);
+
+                                             }
+
+
+                                             #region Parse optional LocationReference JSON
+
+                                             LocationReference? locationReference = null;
+
+                                             if (Request.TryParseJObjectRequestBody(out JObject LocationReferenceJSON, out HTTPResponse, AllowEmptyHTTPBody: true))
+                                             {
+
+                                                 if (!LocationReference.TryParse(LocationReferenceJSON,
+                                                                                 out LocationReference _locationReference,
+                                                                                 out String            ErrorResponse))
+                                                 {
+
+                                                     return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "POST",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        //Content                    = OCPIResponse<IEnumerable<Token>>.Create(
+                                                        //                                 filteredTokens.SkipTakeFilter(offset, limit),
+                                                        //                                 tokens => new JArray(tokens.Select(token => token.ToJSON())),
+                                                        //                                 1000,
+                                                        //                                 "Hello world!"
+                                                        //                             ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                                 }
+                                                 else
+                                                 {
+
+                                                     locationReference = _locationReference;
+
+                                                     //ToDo: Somehow filter by location reference!
+
+                                                 }
+
+                                             }
+
+                                             #endregion
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "POST",
+                                                        AccessControlAllowHeaders  = "Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<AuthorizationInfo>.Create(
+                                                                                         new AuthorizationInfo(AllowedTypes.ALLOWED,
+                                                                                                               token,
+                                                                                                               locationReference,
+                                                                                                               null,
+                                                                                                               null),
+                                                                                         authorizationInfo => authorizationInfo.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
+
             #endregion
-
-
 
         }
 

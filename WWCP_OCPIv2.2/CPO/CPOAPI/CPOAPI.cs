@@ -18,24 +18,14 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
-
-using Org.BouncyCastle.Bcpg.OpenPgp;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.SMTP;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
-using org.GraphDefined.Vanaheimr.Hermod.Mail;
-using org.GraphDefined.Vanaheimr.BouncyCastle;
-using cloud.charging.open.protocols;
-using org.GraphDefined.WWCP;
-using System.Collections.Generic;
 
 #endregion
 
@@ -47,6 +37,97 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// </summary>
     public static class CPOAPIExtentions
     {
+
+        #region ParseParseCountryCodePartyId(this HTTPRequest, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the location identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseParseCountryCodePartyId(this HTTPRequest  HTTPRequest,
+                                                           CPOAPI            CPOAPI,
+                                                           out CountryCode?  CountryCode,
+                                                           out Party_Id?     PartyId,
+                                                           out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 2)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
 
         #region ParseLocationId             (this HTTPRequest, CPOAPI, out LocationId,                                                                      out HTTPResponse)
 
@@ -706,6 +787,248 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+
+
+        #region ParseTokenId               (this HTTPRequest, CPOAPI, out CountryCode, out PartyId, out TokenId,               out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the token identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique token identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseTokenId(this HTTPRequest  HTTPRequest,
+                                           CPOAPI           CPOAPI,
+                                           out CountryCode?  CountryCode,
+                                           out Party_Id?     PartyId,
+                                           out Token_Id?     TokenId,
+                                           out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),      "The given CPO API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            TokenId    = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 3)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid token identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseToken                 (this HTTPRequest, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,    out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the token identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="CPOAPI">The Users API.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        /// <param name="PartyId">The parsed party identification.</param>
+        /// <param name="TokenId">The parsed unique token identification.</param>
+        /// <param name="Token">The resolved user.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseToken(this HTTPRequest  HTTPRequest,
+                                         CPOAPI           CPOAPI,
+                                         out CountryCode?  CountryCode,
+                                         out Party_Id?     PartyId,
+                                         out Token_Id?     TokenId,
+                                         out Token         Token,
+                                         out HTTPResponse  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (CPOAPI    == null)
+                throw new ArgumentNullException(nameof(CPOAPI),      "The given CPO API must not be null!");
+
+            #endregion
+
+            CountryCode   = null;
+            PartyId       = null;
+            TokenId      = null;
+            Token        = null;
+            HTTPResponse  = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 3) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!CountryCode.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+            if (!PartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            TokenId = Token_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+            if (!TokenId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid token identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+
+            if (!CPOAPI.CommonAPI.TryGetToken(CountryCode.Value, PartyId.Value, TokenId.Value, out Token)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = CPOAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown token identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
     }
 
     /// <summary>
@@ -873,7 +1196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<IEnumerable<Location>>.Create(
                                                                                          filteredLocations.SkipTakeFilter(offset, limit),
@@ -915,7 +1238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Location>.Create(
                                                                                          Location,
@@ -959,7 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<EVSE>.Create(
                                                                                          EVSE,
@@ -1005,7 +1328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET",
-                                                        AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Connector>.Create(
                                                                                          Connector,
@@ -1070,33 +1393,365 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region GET     ~/tokens/{country_code}/{party_id}
+            #region ~/tokens/{country_code}/{party_id}       [NonStandard]
 
-            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM
+            #region GET     ~/tokens/{country_code}/{party_id}       [NonStandard]
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check CountryCode and PartyId
+
+                                             if (!Request.ParseParseCountryCodePartyId(this,
+                                                                                       out CountryCode?  CountryCode,
+                                                                                       out Party_Id?     PartyId,
+                                                                                       out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             var from                 = Request.QueryString.GetDateTime("date_from");
+                                             var to                   = Request.QueryString.GetDateTime("date_to");
+                                             var offset               = Request.QueryString.GetUInt64  ("offset");
+                                             var limit                = Request.QueryString.GetUInt64  ("limit");
+
+
+                                             // Link             Link to the 'next' page should be provided when this is NOT the last page.
+                                             // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
+                                             // X-Limit          The maximum number of objects that the server WILL return.
+
+                                             var allTokens            = CommonAPI.GetTokens(CountryCode, PartyId);
+                                             var allTokensCount       = allTokens.Count();
+
+                                             var filteredTokens       = CommonAPI.GetTokens().
+                                                                               Where(token => !from.HasValue || token.LastUpdated >  from.Value).
+                                                                               Where(token => !to.  HasValue || token.LastUpdated <= to.  Value).
+                                                                               SkipTakeFilter(offset, limit).
+                                                                               ToArray();
+
+                                             var filteredTokensCount  = filteredTokens.Count();
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, DELETE",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<IEnumerable<Token>>.Create(
+                                                                                         filteredTokens,
+                                                                                         tokens => new JArray(tokens.Select(token => token.ToJSON())),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
 
             #endregion
 
-            #region GET     ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+            #region DELETE  ~/tokens/{country_code}/{party_id}       [NonStandard]
 
-            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.DELETE,
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check CountryCode and PartyId
+
+                                             if (!Request.ParseParseCountryCodePartyId(this,
+                                                                                       out CountryCode?  CountryCode,
+                                                                                       out Party_Id?     PartyId,
+                                                                                       out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             if (CountryCode.HasValue && PartyId.HasValue)
+                                             {
+
+                                                 CommonAPI.RemoveAllTokens(CountryCode.Value, PartyId.Value);
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.OK,
+                                                            Server                     = DefaultHTTPServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, DELETE",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                            Connection                 = "close"
+                                                        };
+
+                                             }
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = DefaultHTTPServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, DELETE",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                            Connection                 = "close"
+                                                        };
+
+                                         });
 
             #endregion
 
-            #region PUT     ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+            #endregion
 
-            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+            #region ~/tokens/{country_code}/{party_id}/{tokenId}
+
+            #region GET     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check Token(Id URI parameter)
+
+                                             if (!Request.ParseToken(this,
+                                                                     out CountryCode?  CountryCode,
+                                                                     out Party_Id?     PartyId,
+                                                                     out Token_Id?     TokenId,
+                                                                     out Token         Token,
+                                                                     out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             //ToDo: What exactly to do with this information?
+                                             var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Token>.Create(
+                                                                                         Token,
+                                                                                         token => token.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
 
             #endregion
 
-            #region PATCH   ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+            #region PUT     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
-            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PUT,
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check TokenId URI parameter
+
+                                             if (!Request.ParseTokenId(this,
+                                                                        out CountryCode?  CountryCode,
+                                                                        out Party_Id?     PartyId,
+                                                                        out Token_Id?     TokenId,
+                                                                        out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+                                             #region Parse newToken JSON
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject newTokenJSON, out HTTPResponse))
+                                                 return HTTPResponse;
+
+                                             if (!Token.TryParse(newTokenJSON,
+                                                                  out Token   newToken,
+                                                                  out String  ErrorResponse,
+                                                                  CountryCode,
+                                                                  PartyId,
+                                                                  TokenId))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, PUT, PATCH",
+                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = OCPIResponse<Token>.Create(
+                                                                                             newToken,
+                                                                                             token => token.ToJSON(),
+                                                                                             -1,
+                                                                                             ErrorResponse
+                                                                                         ).ToUTF8Bytes()
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+
+                                             //ToDo: What exactly to do with this information?
+                                             var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+
+                                             CommonAPI.AddTokenOrUpdate(newToken);
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Token>.Create(
+                                                                                         newToken,
+                                                                                         token => token.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
 
             #endregion
 
-            #region DELETE  ~/tokens/{country_code}/{party_id}/{token_uid}[?type={type}]
+            #region PATCH   ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
-            // https://example.com/ocpi/2.2/cpo/tokens/NL/TNM/012345678
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.PATCH,
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check Token(Id URI parameter)
+
+                                             if (!Request.ParseToken(this,
+                                                                      out CountryCode?  CountryCode,
+                                                                      out Party_Id?     PartyId,
+                                                                      out Token_Id?     TokenId,
+                                                                      out Token         OldToken,
+                                                                      out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             //ToDo: What exactly to do with this information?
+                                             var TokenType = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+
+
+                                             #region Parse and apply Token JSON patch
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
+                                                 return HTTPResponse;
+
+                                             var patchedToken = OldToken.Patch(JSONPatch);
+
+                                             #endregion
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Token>.Create(
+                                                                                         patchedToken,
+                                                                                         token => token.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
+
+            #endregion
+
+            #region DELETE  ~/tokens/{country_code}/{party_id}/{tokenId}        [NonStandard]
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.DELETE,
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check Token(Id URI parameter)
+
+                                             if (!Request.ParseToken(this,
+                                                                     out CountryCode?  CountryCode,
+                                                                     out Party_Id?     PartyId,
+                                                                     out Token_Id?     TokenId,
+                                                                     out Token         ToBeRemovedToken,
+                                                                     out HTTPResponse  HTTPResponse))
+                                             {
+                                                 return HTTPResponse;
+                                             }
+
+                                             #endregion
+
+
+                                             //ToDo: What exactly to do with this information?
+                                             var TokenType     = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+
+                                             var RemovedToken  = CommonAPI.RemoveToken(ToBeRemovedToken);
+
+
+                                             return new HTTPResponse.Builder(Request) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Token>.Create(
+                                                                                         RemovedToken,
+                                                                                         token => token.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    };
+
+                                         });
+
+            #endregion
 
             #endregion
 
