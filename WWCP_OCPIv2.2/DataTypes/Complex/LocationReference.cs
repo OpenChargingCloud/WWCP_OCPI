@@ -21,8 +21,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using org.GraphDefined.Vanaheimr.Illias;
 using Newtonsoft.Json.Linq;
+
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -46,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Location_Id            LocationId    { get; }
 
         /// <summary>
-        /// Optional enumeration of EVSE identifiers within the CPO’s platform within the EVSE within the given location.
+        /// Optional enumeration of EVSE identifiers within the CPO’s platform.
         /// </summary>
         [Optional]
         public IEnumerable<EVSE_UId>  EVSEUIds      { get; }
@@ -59,13 +60,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new references to location details.
         /// </summary>
         /// <param name="LocationId">Unique identifier for the location..</param>
-        /// <param name="EVSEUIds">Optional enumeration of EVSE identifiers within the CPO’s platform within the given location.</param>
+        /// <param name="EVSEUIds">Optional enumeration of EVSE identifiers within the CPO’s platform.</param>
         public LocationReference(Location_Id            LocationId,
                                  IEnumerable<EVSE_UId>  EVSEUIds)
         {
 
             this.LocationId  = LocationId;
-            this.EVSEUIds    = EVSEUIds?.Distinct() ?? new EVSE_UId[0];
+            this.EVSEUIds    = EVSEUIds?.Distinct().OrderBy(evseUId => evseUId).ToArray() ?? new EVSE_UId[0];
 
         }
 
@@ -85,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             if (TryParse(JSON,
                          out LocationReference  locationReference,
-                         out String   ErrorResponse,
+                         out String             ErrorResponse,
                          CustomLocationReferenceParser))
             {
                 return locationReference;
@@ -182,9 +183,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="LocationReference">The parsed location reference.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
+        public static Boolean TryParse(JObject                JSON,
                                        out LocationReference  LocationReference,
-                                       out String   ErrorResponse)
+                                       out String             ErrorResponse)
 
             => TryParse(JSON,
                         out LocationReference,
@@ -198,9 +199,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationReference">The parsed location reference.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
-        public static Boolean TryParse(JObject                               JSON,
+        public static Boolean TryParse(JObject                                         JSON,
                                        out LocationReference                           LocationReference,
-                                       out String                            ErrorResponse,
+                                       out String                                      ErrorResponse,
                                        CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
         {
 
@@ -215,11 +216,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Publish               [mandatory]
+                #region Parse LocationId        [mandatory]
 
-                if (!JSON.ParseMandatory("publish",
-                                         "publish",
-                                         out Boolean Publish,
+                if (!JSON.ParseMandatory("location_id",
+                                         "location identification",
+                                         Location_Id.TryParse,
+                                         out Location_Id LocationId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -227,346 +229,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                //#region Parse Address               [mandatory]
+                #region Parse EVSEUIds          [optional]
 
-                //if (!JSON.ParseMandatoryText("address",
-                //                             "address",
-                //                             out String Address,
-                //                             out ErrorResponse))
-                //{
-                //    return false;
-                //}
+                if (JSON.ParseOptionalJSON("evse_uids",
+                                           "EVSE identifications",
+                                           EVSE_UId.TryParse,
+                                           out IEnumerable<EVSE_UId> EVSEUIds,
+                                           out ErrorResponse))
+                {
+                    return false;
+                }
 
-                //#endregion
+                #endregion
 
-                //#region Parse City                  [mandatory]
 
-                //if (!JSON.ParseMandatoryText("city",
-                //                             "city",
-                //                             out String City,
-                //                             out ErrorResponse))
-                //{
-                //    return false;
-                //}
+                LocationReference = new LocationReference(LocationId,
+                                                          EVSEUIds);
 
-                //#endregion
-
-                //#region Parse Country               [mandatory]
-
-                //if (!JSON.ParseMandatoryText("country",
-                //                             "country",
-                //                             out String Country,
-                //                             out ErrorResponse))
-                //{
-                //    return false;
-                //}
-
-                //#endregion
-
-                //#region Parse Coordinates           [mandatory]
-
-                ////if (!JSON.ParseMandatoryJSON("coordinates",
-                ////                             "geo coordinates",
-                ////                             GeoCoordinate.TryParse,
-                ////                             out GeoCoordinate Coordinates,
-                ////                             out ErrorResponse))
-                ////{
-                ////    return false;
-                ////}
-
-                //#endregion
-
-                //#region Parse TimeZone              [mandatory]
-
-                //if (!JSON.ParseMandatoryText("time_zone",
-                //                             "time zone",
-                //                             out String TimeZone,
-                //                             out ErrorResponse))
-                //{
-                //    return false;
-                //}
-
-                //#endregion
-
-
-                //#region Parse PublishTokenTypes     [optional]
-
-                //if (JSON.ParseOptionalJSON("publish_allowed_to",
-                //                           "publish allowed to",
-                //                           PublishTokenType.TryParse,
-                //                           out IEnumerable<PublishTokenType> PublishTokenTypes,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Name                  [optional]
-
-                //var Name = JSON.GetString("name");
-
-                //#endregion
-
-                //#region Parse PostalCode            [optional]
-
-                //var PostalCode = JSON.GetString("postal_code");
-
-                //#endregion
-
-                //#region Parse State                 [optional]
-
-                //var State = JSON.GetString("state");
-
-                //#endregion
-
-                //#region Parse RelatedLocationReferences      [optional]
-
-                ////if (JSON.ParseOptionalJSON("related_locationReferences",
-                ////                           "related locationReferences",
-                ////                           AdditionalGeoLocationReference.TryParse,
-                ////                           out IEnumerable<AdditionalGeoLocationReference> RelatedLocationReferences,
-                ////                           out ErrorResponse))
-                ////{
-
-                ////    if (ErrorResponse != null)
-                ////        return false;
-
-                ////}
-
-                //#endregion
-
-                //#region Parse ParkingType           [optional]
-
-                //if (JSON.ParseOptionalEnum("parking_type",
-                //                           "parking type",
-                //                           out ParkingTypes? ParkingType,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse EVSEs                 [optional]
-
-                //if (JSON.ParseOptionalJSON("evses",
-                //                           "evses",
-                //                           EVSE.TryParse,
-                //                           out IEnumerable<EVSE> EVSEs,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Directions            [optional]
-
-                //if (JSON.ParseOptionalJSON("directions",
-                //                           "multi-language directions",
-                //                           DisplayText.TryParse,
-                //                           out IEnumerable<DisplayText> Directions,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Operator              [optional]
-
-                //if (JSON.ParseOptionalJSON("operator",
-                //                           "operator",
-                //                           BusinessDetails.TryParse,
-                //                           out BusinessDetails Operator,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Suboperator           [optional]
-
-                //if (JSON.ParseOptionalJSON("suboperator",
-                //                           "suboperator",
-                //                           BusinessDetails.TryParse,
-                //                           out BusinessDetails Suboperator,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Owner                 [optional]
-
-                //if (JSON.ParseOptionalJSON("owner",
-                //                           "owner",
-                //                           BusinessDetails.TryParse,
-                //                           out BusinessDetails Owner,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Facilities            [optional]
-
-                //if (JSON.ParseOptionalEnums("facilities",
-                //                            "facilities",
-                //                            out IEnumerable<Facilities> Facilities,
-                //                            out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse OpeningTimes          [optional]
-
-                //if (JSON.ParseOptionalJSON("opening_times",
-                //                           "opening times",
-                //                           Hours.TryParse,
-                //                           out Hours OpeningTimes,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse ChargingWhenClosed    [optional]
-
-                //if (JSON.ParseOptional("charging_when_closed",
-                //                       "charging when closed",
-                //                       out Boolean? ChargingWhenClosed,
-                //                       out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse Images                [optional]
-
-                //if (JSON.ParseOptionalJSON("images",
-                //                           "images",
-                //                           Image.TryParse,
-                //                           out IEnumerable<Image> Images,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-                //#region Parse EnergyMix             [optional]
-
-                //if (JSON.ParseOptionalJSON("energy_mix",
-                //                           "energy mix",
-                //                           OCPIv2_2.EnergyMix.TryParse,
-                //                           out EnergyMix EnergyMix,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                //#endregion
-
-
-                //#region Parse LastUpdated           [mandatory]
-
-                //if (!JSON.ParseMandatory("last_updated",
-                //                         "last updated",
-                //                         out DateTime LastUpdated,
-                //                         out ErrorResponse))
-                //{
-                //    return false;
-                //}
-
-                //#endregion
-
-
-                //LocationReference = new LocationReference(CountryCodeBody ?? CountryCodeURL.Value,
-                //                        PartyIdBody     ?? PartyIdURL.Value,
-                //                        LocationReferenceIdBody  ?? LocationReferenceIdURL.Value,
-                //                        Publish,
-                //                        Address?.   Trim(),
-                //                        City?.      Trim(),
-                //                        Country?.   Trim(),
-                //                        Coordinates,
-                //                        TimeZone?.  Trim(),
-
-                //                        PublishTokenTypes,
-                //                        Name?.      Trim(),
-                //                        PostalCode?.Trim(),
-                //                        State?.     Trim(),
-                //                        RelatedLocationReferences?.Distinct(),
-                //                        ParkingType,
-                //                        EVSEs?.           Distinct(),
-                //                        Directions?.      Distinct(),
-                //                        Operator,
-                //                        Suboperator,
-                //                        Owner,
-                //                        Facilities?.      Distinct(),
-                //                        OpeningTimes,
-                //                        ChargingWhenClosed,
-                //                        Images?.          Distinct(),
-                //                        EnergyMix,
-                //                        LastUpdated);
-
-                LocationReference = default;
 
                 if (CustomLocationReferenceParser != null)
                     LocationReference = CustomLocationReferenceParser(JSON,
-                                                  LocationReference);
+                                                                      LocationReference);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                LocationReference        = default;
-                ErrorResponse  = "The given JSON representation of a location reference is invalid: " + e.Message;
+                LocationReference  = default;
+                ErrorResponse      = "The given JSON representation of a location reference is invalid: " + e.Message;
                 return false;
             }
 
@@ -609,118 +300,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomLocationReferenceSerializer = null, CustomEVSESerializer = null, ...)
+        #region ToJSON(CustomLocationReferenceSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom locationReference JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        /// <param name="CustomAdditionalGeoLocationReferenceSerializer">A delegate to serialize custom additional geo locationReference JSON objects.</param>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<LocationReference>                CustomLocationReferenceSerializer                 = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationReferenceSerializer    = null,
-                              CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
-                              CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
-                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
-                              CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
-                              CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
+        /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom location reference JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<LocationReference> CustomLocationReferenceSerializer = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           //new JProperty("country_code",                    CountryCode.ToString()),
-                           //new JProperty("party_id",                        PartyId.    ToString()),
-                           //new JProperty("id",                              Id.         ToString()),
-                           //new JProperty("publish",                         Publish),
+                           new JProperty("location_id",      LocationId.ToString()),
 
-                           //Publish == false && PublishAllowedTo.SafeAny()
-                           //    ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
-                           //    : null,
-
-                           //Name.IsNotNullOrEmpty()
-                           //    ? new JProperty("name",                      Name)
-                           //    : null,
-
-                           //new JProperty("address",                         Address),
-                           //new JProperty("city",                            City),
-
-                           //PostalCode.IsNotNullOrEmpty()
-                           //    ? new JProperty("postal_code",               PostalCode)
-                           //    : null,
-
-                           //State.IsNotNullOrEmpty()
-                           //    ? new JProperty("state",                     State)
-                           //    : null,
-
-                           //new JProperty("country",                         Country),
-                           //new JProperty("coordinates",                     new JObject(
-                           //                                                     new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
-                           //                                                     new JProperty("longitude", Coordinates.Longitude.Value.ToString())
-                           //                                                 )),
-
-                           //RelatedLocationReferences.SafeAny()
-                           //    ? new JProperty("related_locationReferences",         new JArray(RelatedLocationReferences.Select(locationReference => locationReference.ToJSON(CustomAdditionalGeoLocationReferenceSerializer))))
-                           //    : null,
-
-                           //ParkingType.HasValue
-                           //    ? new JProperty("parking_type",              ParkingType.Value.ToString())
-                           //    : null,
-
-                           //EVSEs.SafeAny()
-                           //    ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
-                           //                                                                                             CustomStatusScheduleSerializer,
-                           //                                                                                             CustomConnectorSerializer))))
-                           //    : null,
-
-                           //Directions.SafeAny()
-                           //    ? new JProperty("directions",                new JArray(Directions.Select(evse => evse.ToJSON(CustomDisplayTextSerializer))))
-                           //    : null,
-
-                           //Operator != null
-                           //    ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //SubOperator != null
-                           //    ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //Owner != null
-                           //    ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //Facilities.SafeAny()
-                           //    ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
-                           //    : null,
-
-                           //new JProperty("time_zone",                       Timezone),
-
-                           //OpeningTimes != null
-                           //    ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
-                           //    : null,
-
-                           //ChargingWhenClosed.HasValue
-                           //    ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
-                           //    : null,
-
-                           //Images.SafeAny()
-                           //    ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
-                           //    : null,
-
-                           //EnergyMix != null
-                           //    ? new JProperty("energy_mix",                EnergyMix.ToJSON())
-                           //    : null,
-
-                           //new JProperty("last_updated",                    LastUpdated.ToIso8601())
+                           EVSEUIds.SafeAny()
+                               ? new JProperty("evse_uids",  EVSEUIds.Select(evseUId => evseUId.ToString()))
+                               : null
 
                        );
 
@@ -851,8 +446,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="LocationReference">An object to compare with.</param>
         public Int32 CompareTo(LocationReference LocationReference)
+        {
 
-            => LocationId.CompareTo(LocationReference.LocationId);
+            var c = LocationId.CompareTo(LocationReference.LocationId);
+
+            if (c == 0 && EVSEUIds.SafeAny() && LocationReference.EVSEUIds.SafeAny())
+                c = EVSEUIds.AggregateWith("-").CompareTo(LocationReference.EVSEUIds.AggregateWith("|"));
+
+            return c;
+
+        }
 
         #endregion
 
@@ -883,7 +486,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(LocationReference LocationReference)
 
-            => LocationId.Equals(LocationReference.LocationId);
+            => LocationId.Equals(LocationReference.LocationId) &&
+
+               ((!EVSEUIds.SafeAny() && !LocationReference.EVSEUIds.SafeAny()) ||
+                ( EVSEUIds.SafeAny() &&  LocationReference.EVSEUIds.SafeAny() &&
+                  EVSEUIds.Count() == LocationReference.EVSEUIds.Count() &&
+                  EVSEUIds.All(evseUId => LocationReference.EVSEUIds.Contains(evseUId))));
 
         #endregion
 
@@ -899,7 +507,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
-                return LocationId.GetHashCode();
+
+                return LocationId.GetHashCode() * 3 ^
+                       EVSEUIds.  GetHashCode();
+
             }
         }
 

@@ -38,20 +38,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public static class CPOAPIExtentions
     {
 
-        #region ParseParseCountryCodePartyId(this HTTPRequest, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
+        #region ParseParseCountryCodePartyId(this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The CPO API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseParseCountryCodePartyId(this HTTPRequest  HTTPRequest,
+        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest  Request,
                                                            CPOAPI            CPOAPI,
                                                            out CountryCode?  CountryCode,
                                                            out Party_Id?     PartyId,
@@ -60,10 +60,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
+            if (CPOAPI  == null)
                 throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
 
             #endregion
@@ -72,10 +72,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             PartyId       = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 2)
+            if (Request.ParsedURLParameters.Length < 2)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -86,12 +86,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -104,12 +104,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -129,19 +129,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseLocationId             (this HTTPRequest, CPOAPI, out LocationId,                                                                      out HTTPResponse)
+        #region ParseLocationId             (this Request, CPOAPI, out LocationId,                                                                      out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The CPO API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
+        public static Boolean ParseLocationId(this OCPIRequest  Request,
                                               CPOAPI            CPOAPI,
                                               out Location_Id?  LocationId,
                                               out HTTPResponse  HTTPResponse)
@@ -149,21 +149,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),    "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
             LocationId    = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 1)
+            if (Request.ParsedURLParameters.Length < 1)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -174,12 +174,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -198,20 +198,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseLocation               (this HTTPRequest, CPOAPI, out LocationId, out Location,                                                        out HTTPResponse)
+        #region ParseLocation               (this Request, CPOAPI, out LocationId, out Location,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The Users API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
+        public static Boolean ParseLocation(this OCPIRequest  Request,
                                             CPOAPI            CPOAPI,
                                             out Location_Id?  LocationId,
                                             out Location      Location,
@@ -220,11 +220,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
@@ -232,9 +232,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             Location      = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 1) {
+            if (Request.ParsedURLParameters.Length < 1) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -245,11 +245,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  LocationId.Value,
                                                  out Location)) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -288,20 +288,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseLocationEVSEId         (this HTTPRequest, CPOAPI, out LocationId,               out EVSEUId,                                           out HTTPResponse)
+        #region ParseLocationEVSEId         (this Request, CPOAPI, out LocationId,               out EVSEUId,                                           out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The CPO API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
+        public static Boolean ParseLocationEVSEId(this OCPIRequest  Request,
                                                   CPOAPI            CPOAPI,
                                                   out Location_Id?  LocationId,
                                                   out EVSE_UId?     EVSEUId,
@@ -310,11 +310,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),    "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
@@ -322,10 +322,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             EVSEUId       = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 2)
+            if (Request.ParsedURLParameters.Length < 2)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -336,12 +336,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -354,12 +354,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -378,14 +378,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseLocationEVSE           (this HTTPRequest, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
+        #region ParseLocationEVSE           (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The Users API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
@@ -393,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
+        public static Boolean ParseLocationEVSE(this OCPIRequest  Request,
                                                 CPOAPI            CPOAPI,
                                                 out Location_Id?  LocationId,
                                                 out Location      Location,
@@ -404,11 +404,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
@@ -418,9 +418,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             EVSE          = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 2) {
+            if (Request.ParsedURLParameters.Length < 2) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -431,11 +431,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -448,12 +448,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -473,7 +473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  out Location))
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -488,7 +488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -508,21 +508,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseLocationEVSEConnectorId(this HTTPRequest, CPOAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
+        #region ParseLocationEVSEConnectorId(this Request, CPOAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The CPO API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
+        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest   Request,
                                                            CPOAPI             CPOAPI,
                                                            out Location_Id?   LocationId,
                                                            out EVSE_UId?      EVSEUId,
@@ -532,11 +532,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),    "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
@@ -545,10 +545,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             ConnectorId   = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 3)
+            if (Request.ParsedURLParameters.Length < 3)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -559,12 +559,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -577,12 +577,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -595,12 +595,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
 
             if (!EVSEUId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -619,14 +619,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseLocationEVSEConnector  (this HTTPRequest, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
+        #region ParseLocationEVSEConnector  (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The Users API.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
@@ -636,7 +636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Connector">The resolved connector.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
+        public static Boolean ParseLocationEVSEConnector(this OCPIRequest   Request,
                                                          CPOAPI             CPOAPI,
                                                          out Location_Id?   LocationId,
                                                          out Location       Location,
@@ -649,11 +649,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
@@ -665,9 +665,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             Connector     = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 3) {
+            if (Request.ParsedURLParameters.Length < 3) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -678,11 +678,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -695,12 +695,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -713,12 +713,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
 
             if (!EVSEUId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -738,7 +738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  out Location))
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -753,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -768,7 +768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -789,23 +789,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-
-        #region ParseTokenId               (this HTTPRequest, CPOAPI, out CountryCode, out PartyId, out TokenId,               out HTTPResponse)
+        #region ParseTokenId               (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,               out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The CPO API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTokenId(this HTTPRequest  HTTPRequest,
-                                           CPOAPI           CPOAPI,
+        public static Boolean ParseTokenId(this OCPIRequest  Request,
+                                           CPOAPI            CPOAPI,
                                            out CountryCode?  CountryCode,
                                            out Party_Id?     PartyId,
                                            out Token_Id?     TokenId,
@@ -814,23 +813,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),      "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
             CountryCode   = null;
             PartyId       = null;
-            TokenId    = null;
+            TokenId       = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 3)
+            if (Request.ParsedURLParameters.Length < 3)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -841,12 +840,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -859,12 +858,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -877,12 +876,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            TokenId = Token_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
 
             if (!TokenId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -901,14 +900,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseToken                 (this HTTPRequest, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,    out HTTPResponse)
+        #region ParseToken                 (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,    out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
         /// for the given HTTP hostname and HTTP query parameter
         /// or an HTTP error response.
         /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="Request">A HTTP request.</param>
         /// <param name="CPOAPI">The Users API.</param>
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
@@ -916,8 +915,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Token">The resolved user.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseToken(this HTTPRequest  HTTPRequest,
-                                         CPOAPI           CPOAPI,
+        public static Boolean ParseToken(this OCPIRequest  Request,
+                                         CPOAPI            CPOAPI,
                                          out CountryCode?  CountryCode,
                                          out Party_Id?     PartyId,
                                          out Token_Id?     TokenId,
@@ -927,23 +926,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI    == null)
-                throw new ArgumentNullException(nameof(CPOAPI),      "The given CPO API must not be null!");
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
             CountryCode   = null;
             PartyId       = null;
-            TokenId      = null;
-            Token        = null;
+            TokenId       = null;
+            Token         = null;
             HTTPResponse  = null;
 
-            if (HTTPRequest.ParsedURLParameters.Length < 3) {
+            if (Request.ParsedURLParameters.Length < 3) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -954,12 +953,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -972,12 +971,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
 
             if (!PartyId.HasValue)
             {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -990,11 +989,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            TokenId = Token_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
 
             if (!TokenId.HasValue) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -1010,7 +1009,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (!CPOAPI.CommonAPI.TryGetToken(CountryCode.Value, PartyId.Value, TokenId.Value, out Token)) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
@@ -1030,6 +1029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
     }
+
 
     /// <summary>
     /// The HTTP API for charge point operators.
@@ -1133,20 +1133,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
-            //HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            //HTTPServer.AddOCPIMethod(HTTPHostname.Any,
             //                             HTTPMethod.GET,
             //                             new HTTPPath[] {
             //                                 URLPathPrefix + "/cpo/index.html",
             //                                 URLPathPrefix + "/cpo/"
             //                             },
             //                             HTTPContentType.HTML_UTF8,
-            //                             HTTPDelegate: async Request => {
+            //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
             //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
             //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
-            //                                 return new HTTPResponse.Builder(Request) {
+            //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
             //                                     Server          = DefaultHTTPServerName,
             //                                     Date            = DateTime.UtcNow,
@@ -1163,11 +1163,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET    ~/locations
 
             // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "locations",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              var from                    = Request.QueryString.GetDateTime("date_from");
                                              var to                      = Request.QueryString.GetDateTime("date_to");
@@ -1190,7 +1190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              var filteredLocationsCount  = filteredLocations.Length;
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1213,11 +1213,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET    ~/locations/{locationId}
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "locations/{locationId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check Location(Id URI parameter)
 
@@ -1232,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1255,11 +1255,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET    ~/locations/{locationId}/{evseId}
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "locations/{locationId}/{evseId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check EVSE(UId URI parameter)
 
@@ -1276,7 +1276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1299,11 +1299,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET    ~/locations/{locationId}/{evseId}/{connectorId}
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check Connector(Id URI parameter)
 
@@ -1322,7 +1322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1397,11 +1397,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET     ~/tokens/{country_code}/{party_id}       [NonStandard]
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "tokens/{country_code}/{party_id}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check CountryCode and PartyId
 
@@ -1438,7 +1438,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              var filteredTokensCount  = filteredTokens.Count();
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1461,11 +1461,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE  ~/tokens/{country_code}/{party_id}       [NonStandard]
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.DELETE,
                                          URLPathPrefix + "tokens/{country_code}/{party_id}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check CountryCode and PartyId
 
@@ -1480,32 +1480,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             if (CountryCode.HasValue && PartyId.HasValue)
-                                             {
+                                             CommonAPI.RemoveAllTokens(CountryCode.Value,
+                                                                       PartyId.    Value);
 
-                                                 CommonAPI.RemoveAllTokens(CountryCode.Value, PartyId.Value);
 
-                                                 return new HTTPResponse.Builder(Request) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            Server                     = DefaultHTTPServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "GET, DELETE",
-                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
-                                                            Connection                 = "close"
-                                                        };
-
-                                             }
-
-                                             return new HTTPResponse.Builder(Request) {
-                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = DefaultHTTPServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "GET, DELETE",
-                                                            AccessControlAllowHeaders  = "Content-Type, Authorization",
-                                                            Connection                 = "close"
-                                                        };
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = DefaultHTTPServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "GET, DELETE",
+                                                        AccessControlAllowHeaders  = "Content-Type, Authorization",
+                                                        Connection                 = "close"
+                                                    };
 
                                          });
 
@@ -1517,11 +1504,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check Token(Id URI parameter)
 
@@ -1542,7 +1529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1565,11 +1552,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PUT     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.PUT,
                                          URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check TokenId URI parameter
 
@@ -1597,7 +1584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                   TokenId))
                                              {
 
-                                                 return new HTTPResponse.Builder(Request) {
+                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
                                                             Date                       = DateTime.UtcNow,
@@ -1621,10 +1608,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              //ToDo: What exactly to do with this information?
                                              var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
 
-                                             CommonAPI.AddTokenOrUpdate(newToken);
+                                             CommonAPI.AddOrUpdateToken(newToken);
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1647,11 +1634,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PATCH   ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.PATCH,
                                          URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check Token(Id URI parameter)
 
@@ -1682,7 +1669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #endregion
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
@@ -1705,11 +1692,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE  ~/tokens/{country_code}/{party_id}/{tokenId}        [NonStandard]
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.DELETE,
                                          URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                          HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         OCPIRequest: async Request => {
 
                                              #region Check Token(Id URI parameter)
 
@@ -1732,7 +1719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              var RemovedToken  = CommonAPI.RemoveToken(ToBeRemovedToken);
 
 
-                                             return new HTTPResponse.Builder(Request) {
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,

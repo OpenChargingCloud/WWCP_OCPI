@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\OCPIRequest.cs" />
     <Compile Include="CommonAPI\AccessStatus.cs" />
     <Compile Include="CommonAPI\AccessInfo.cs" />
     <Compile Include="DataTypes\Complex\VersionEndpoint.cs" />
@@ -87,6 +88,8 @@
     <Compile Include="DataTypes\Simple\Currency.cs" />
     <Compile Include="DataTypes\Simple\CreditReference_Id.cs" />
     <Compile Include="DataTypes\Simple\InvoiceReference_Id.cs" />
+    <Compile Include="DataTypes\Simple\Correlation_Id.cs" />
+    <Compile Include="DataTypes\Simple\Request_Id.cs" />
     <Compile Include="DataTypes\Simple\PublicKey.cs" />
     <Compile Include="DataTypes\Simple\EncodingMethod.cs" />
     <Compile Include="DataTypes\Simple\Contract_Id.cs" />

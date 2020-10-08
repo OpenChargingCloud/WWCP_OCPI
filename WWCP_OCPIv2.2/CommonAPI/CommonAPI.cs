@@ -40,997 +40,1089 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public static class CommonAPIExtentions
     {
 
-        #region ParseParseCountryCodePartyId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId,                                                         out HTTPResponse)
+        //#region ParseParseCountryCodePartyId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId,                                                         out HTTPResponse)
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseParseCountryCodePartyId(this HTTPRequest  HTTPRequest,
-                                                           CommonAPI         CommonAPI,
-                                                           out CountryCode?  CountryCode,
-                                                           out Party_Id?     PartyId,
-                                                           out HTTPResponse  HTTPResponse)
-        {
-
-            #region Initial checks
-
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Common API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseHTTPRequest(this HTTPRequest  HTTPRequest,
+        //                                       CommonAPI         CommonAPI,
+        //                                       out CountryCode?  CountryCode,
+        //                                       out Party_Id?     PartyId,
+        //                                       out HTTPResponse  HTTPResponse)
+        //{
 
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            CountryCode   = null;
-            PartyId       = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURLParameters.Length < 2)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
+        //    #region Initial checks
 
-                return false;
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            }
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //    #endregion
 
-            if (!CountryCode.HasValue)
-            {
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    HTTPResponse  = null;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    if (HTTPRequest.ParsedURLParameters.Length < 2)
+        //    {
 
-                return false;
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            }
+        //        return false;
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //    }
 
-            if (!PartyId.HasValue)
-            {
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    if (!CountryCode.HasValue)
+        //    {
 
-                return false;
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            }
+        //        return false;
 
-            return true;
+        //    }
 
-        }
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-        #endregion
+        //    if (!PartyId.HasValue)
+        //    {
 
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-        #region ParseLocationId             (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,                                                                      out HTTPResponse)
+        //        return false;
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
-                                              CommonAPI         CommonAPI,
-                                              out CountryCode?  CountryCode,
-                                              out Party_Id?     PartyId,
-                                              out Location_Id?  LocationId,
-                                              out HTTPResponse  HTTPResponse)
-        {
+        //    }
 
-            #region Initial checks
+        //    return true;
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-            #endregion
-
-            CountryCode   = null;
-            PartyId       = null;
-            LocationId    = null;
-            HTTPResponse  = null;
-
-            if (HTTPRequest.ParsedURLParameters.Length < 3)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //}
 
-                return false;
+        //#endregion
 
-            }
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            if (!PartyId.HasValue)
-            {
+        //#region ParseParseCountryCodePartyId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId,                                                         out HTTPResponse)
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Common API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseParseCountryCodePartyId(this HTTPRequest  HTTPRequest,
+        //                                                   CommonAPI         CommonAPI,
+        //                                                   out CountryCode?  CountryCode,
+        //                                                   out Party_Id?     PartyId,
+        //                                                   out HTTPResponse  HTTPResponse)
+        //{
 
-                return false;
+        //    #region Initial checks
 
-            }
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-            if (!LocationId.HasValue)
-            {
+        //    #endregion
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    HTTPResponse  = null;
 
-                return false;
+        //    if (HTTPRequest.ParsedURLParameters.Length < 2)
+        //    {
 
-            }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            return true;
+        //        return false;
 
-        }
+        //    }
 
-        #endregion
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-        #region ParseLocation               (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location,                                                        out HTTPResponse)
+        //    if (!CountryCode.HasValue)
+        //    {
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
-                                            CommonAPI         CommonAPI,
-                                            out CountryCode?  CountryCode,
-                                            out Party_Id?     PartyId,
-                                            out Location_Id?  LocationId,
-                                            out Location      Location,
-                                            out HTTPResponse  HTTPResponse)
-        {
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            #region Initial checks
+        //        return false;
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+        //    }
 
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            #endregion
+        //    if (!PartyId.HasValue)
+        //    {
 
-            CountryCode   = null;
-            PartyId       = null;
-            LocationId    = null;
-            Location      = null;
-            HTTPResponse  = null;
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (HTTPRequest.ParsedURLParameters.Length < 3) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    return true;
 
-            }
+        //}
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //#endregion
 
-            if (!CountryCode.HasValue)
-            {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //#region ParseLocationId             (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,                                                                      out HTTPResponse)
 
-                return false;
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Common API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="LocationId">The parsed unique location identification.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
+        //                                      CommonAPI         CommonAPI,
+        //                                      out CountryCode?  CountryCode,
+        //                                      out Party_Id?     PartyId,
+        //                                      out Location_Id?  LocationId,
+        //                                      out HTTPResponse  HTTPResponse)
+        //{
 
-            }
+        //    #region Initial checks
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (!PartyId.HasValue)
-            {
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    #endregion
 
-                return false;
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    LocationId    = null;
+        //    HTTPResponse  = null;
 
-            }
+        //    if (HTTPRequest.ParsedURLParameters.Length < 3)
+        //    {
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            if (!LocationId.HasValue) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!CountryCode.HasValue)
+        //    {
 
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!PartyId.HasValue)
+        //    {
 
-            return true;
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-        }
+        //        return false;
 
-        #endregion
+        //    }
 
+        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
-        #region ParseLocationEVSEId         (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,                                           out HTTPResponse)
+        //    if (!LocationId.HasValue)
+        //    {
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
-                                                  CommonAPI         CommonAPI,
-                                                  out CountryCode?  CountryCode,
-                                                  out Party_Id?     PartyId,
-                                                  out Location_Id?  LocationId,
-                                                  out EVSE_UId?     EVSEUId,
-                                                  out HTTPResponse  HTTPResponse)
-        {
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            #region Initial checks
+        //        return false;
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+        //    }
 
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
+        //    return true;
 
-            #endregion
+        //}
 
-            CountryCode   = null;
-            PartyId       = null;
-            LocationId    = null;
-            EVSEUId       = null;
-            HTTPResponse  = null;
+        //#endregion
 
-            if (HTTPRequest.ParsedURLParameters.Length < 4)
-            {
+        //#region ParseLocation               (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location,                                                        out HTTPResponse)
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Users API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="LocationId">The parsed unique location identification.</param>
+        ///// <param name="Location">The resolved user.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
+        //                                    CommonAPI         CommonAPI,
+        //                                    out CountryCode?  CountryCode,
+        //                                    out Party_Id?     PartyId,
+        //                                    out Location_Id?  LocationId,
+        //                                    out Location      Location,
+        //                                    out HTTPResponse  HTTPResponse)
+        //{
 
-                return false;
+        //    #region Initial checks
 
-            }
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-            if (!CountryCode.HasValue)
-            {
+        //    #endregion
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    LocationId    = null;
+        //    Location      = null;
+        //    HTTPResponse  = null;
 
-                return false;
+        //    if (HTTPRequest.ParsedURLParameters.Length < 3) {
 
-            }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        return false;
 
-            if (!PartyId.HasValue)
-            {
+        //    }
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-                return false;
+        //    if (!CountryCode.HasValue)
+        //    {
 
-            }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //        return false;
 
-            if (!LocationId.HasValue)
-            {
+        //    }
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-                return false;
+        //    if (!PartyId.HasValue)
+        //    {
 
-            }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        return false;
 
-            if (!EVSEUId.HasValue)
-            {
+        //    }
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
-                return false;
+        //    if (!LocationId.HasValue) {
 
-            }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            return true;
+        //        return false;
 
-        }
+        //    }
 
-        #endregion
 
-        #region ParseLocationEVSE           (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
+        //    if (!CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
-                                                CommonAPI         CommonAPI,
-                                                out CountryCode?  CountryCode,
-                                                out Party_Id?     PartyId,
-                                                out Location_Id?  LocationId,
-                                                out Location      Location,
-                                                out EVSE_UId?     EVSEUId,
-                                                out EVSE          EVSE,
-                                                out HTTPResponse  HTTPResponse)
-        {
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            #region Initial checks
+        //        return false;
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+        //    }
 
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
+        //    return true;
 
-            #endregion
+        //}
 
-            CountryCode   = null;
-            PartyId       = null;
-            LocationId    = null;
-            Location      = null;
-            EVSEUId       = null;
-            EVSE          = null;
-            HTTPResponse  = null;
+        //#endregion
 
-            if (HTTPRequest.ParsedURLParameters.Length < 4) {
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
+        //#region ParseLocationEVSEId         (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,                                           out HTTPResponse)
 
-                return false;
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Common API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="LocationId">The parsed unique location identification.</param>
+        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
+        //                                          CommonAPI         CommonAPI,
+        //                                          out CountryCode?  CountryCode,
+        //                                          out Party_Id?     PartyId,
+        //                                          out Location_Id?  LocationId,
+        //                                          out EVSE_UId?     EVSEUId,
+        //                                          out HTTPResponse  HTTPResponse)
+        //{
 
-            }
+        //    #region Initial checks
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (!CountryCode.HasValue)
-            {
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    #endregion
 
-                return false;
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    LocationId    = null;
+        //    EVSEUId       = null;
+        //    HTTPResponse  = null;
 
-            }
+        //    if (HTTPRequest.ParsedURLParameters.Length < 4)
+        //    {
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            if (!PartyId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!CountryCode.HasValue)
+        //    {
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!LocationId.HasValue) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!PartyId.HasValue)
+        //    {
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!EVSEUId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!LocationId.HasValue)
+        //    {
 
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!CommonAPI.TryGetLocation(CountryCode.Value,
-                                          PartyId.    Value,
-                                          LocationId. Value, out Location)) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!EVSEUId.HasValue)
+        //    {
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //        return false;
 
-                return false;
+        //    }
 
-            }
+        //    return true;
 
-            return true;
+        //}
 
-        }
+        //#endregion
 
-        #endregion
+        //#region ParseLocationEVSE           (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse, FailOnMissingEVSE = true)
 
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Users API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="LocationId">The parsed unique location identification.</param>
+        ///// <param name="Location">The resolved user.</param>
+        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        ///// <param name="EVSE">The resolved EVSE.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
+        //                                        CommonAPI         CommonAPI,
+        //                                        out CountryCode?  CountryCode,
+        //                                        out Party_Id?     PartyId,
+        //                                        out Location_Id?  LocationId,
+        //                                        out Location      Location,
+        //                                        out EVSE_UId?     EVSEUId,
+        //                                        out EVSE          EVSE,
+        //                                        out HTTPResponse  HTTPResponse)
+        //{
 
-        #region ParseLocationEVSEConnectorId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
+        //    #region Initial checks
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Common API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
-                                                           CommonAPI          CommonAPI,
-                                                           out CountryCode?   CountryCode,
-                                                           out Party_Id?      PartyId,
-                                                           out Location_Id?   LocationId,
-                                                           out EVSE_UId?      EVSEUId,
-                                                           out Connector_Id?  ConnectorId,
-                                                           out HTTPResponse   HTTPResponse)
-        {
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            #region Initial checks
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+        //    #endregion
 
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    LocationId    = null;
+        //    Location      = null;
+        //    EVSEUId       = null;
+        //    EVSE          = null;
+        //    HTTPResponse  = null;
 
-            #endregion
+        //    if (HTTPRequest.ParsedURLParameters.Length < 4) {
 
-            CountryCode   = null;
-            PartyId       = null;
-            LocationId    = null;
-            EVSEUId       = null;
-            ConnectorId   = null;
-            HTTPResponse  = null;
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            if (HTTPRequest.ParsedURLParameters.Length < 5)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!CountryCode.HasValue)
+        //    {
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!CountryCode.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!PartyId.HasValue)
+        //    {
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!PartyId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!LocationId.HasValue) {
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!LocationId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!EVSEUId.HasValue)
+        //    {
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!EVSEUId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
 
-            }
+        //    if (!CommonAPI.TryGetLocation(CountryCode.Value,
+        //                                  PartyId.    Value,
+        //                                  LocationId. Value, out Location)) {
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!EVSEUId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
 
-            }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            return true;
+        //        return false;
 
-        }
+        //    }
 
-        #endregion
+        //    return true;
 
-        #region ParseLocationEVSEConnector  (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
+        //}
 
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="HTTPRequest">A HTTP request.</param>
-        /// <param name="CommonAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="Location">The resolved user.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="EVSE">The resolved EVSE.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="Connector">The resolved connector.</param>
-        /// <param name="HTTPResponse">A HTTP error response.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
-                                                         CommonAPI          CommonAPI,
-                                                         out CountryCode?   CountryCode,
-                                                         out Party_Id?      PartyId,
-                                                         out Location_Id?   LocationId,
-                                                         out Location       Location,
-                                                         out EVSE_UId?      EVSEUId,
-                                                         out EVSE           EVSE,
-                                                         out Connector_Id?  ConnectorId,
-                                                         out Connector      Connector,
-                                                         out HTTPResponse   HTTPResponse)
-        {
+        //#endregion
 
-            #region Initial checks
 
-            if (HTTPRequest == null)
-                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+        //#region ParseLocationEVSEConnectorId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
 
-            if (CommonAPI    == null)
-                throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Common API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="LocationId">The parsed unique location identification.</param>
+        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        ///// <param name="ConnectorId">The parsed unique connector identification.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
+        //                                                   CommonAPI          CommonAPI,
+        //                                                   out CountryCode?   CountryCode,
+        //                                                   out Party_Id?      PartyId,
+        //                                                   out Location_Id?   LocationId,
+        //                                                   out EVSE_UId?      EVSEUId,
+        //                                                   out Connector_Id?  ConnectorId,
+        //                                                   out HTTPResponse   HTTPResponse)
+        //{
 
-            #endregion
+        //    #region Initial checks
 
-            CountryCode   = null;
-            PartyId       = null;
-            LocationId    = null;
-            Location      = null;
-            EVSEUId       = null;
-            EVSE          = null;
-            ConnectorId   = null;
-            Connector     = null;
-            HTTPResponse  = null;
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (HTTPRequest.ParsedURLParameters.Length < 5) {
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    Connection      = "close"
-                };
+        //    #endregion
 
-                return false;
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    LocationId    = null;
+        //    EVSEUId       = null;
+        //    ConnectorId   = null;
+        //    HTTPResponse  = null;
 
-            }
+        //    if (HTTPRequest.ParsedURLParameters.Length < 5)
+        //    {
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-            if (!CountryCode.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!CountryCode.HasValue)
+        //    {
 
-            PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!PartyId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!PartyId.HasValue)
+        //    {
 
-            LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!LocationId.HasValue) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
 
-            }
+        //    if (!LocationId.HasValue)
+        //    {
 
-            EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!EVSEUId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
 
-            }
+        //    if (!EVSEUId.HasValue)
+        //    {
 
-            ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!EVSEUId.HasValue)
-            {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
 
-            }
+        //    if (!EVSEUId.HasValue)
+        //    {
 
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
 
-            if (!CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
+        //        return false;
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    }
 
-                return false;
+        //    return true;
 
-            }
+        //}
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+        //#endregion
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //#region ParseLocationEVSEConnector  (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
 
-                return false;
+        ///// <summary>
+        ///// Parse the given HTTP request and return the location identification
+        ///// for the given HTTP hostname and HTTP query parameter
+        ///// or an HTTP error response.
+        ///// </summary>
+        ///// <param name="HTTPRequest">A HTTP request.</param>
+        ///// <param name="CommonAPI">The Users API.</param>
+        ///// <param name="CountryCode">The parsed country code.</param>
+        ///// <param name="PartyId">The parsed party identification.</param>
+        ///// <param name="LocationId">The parsed unique location identification.</param>
+        ///// <param name="Location">The resolved user.</param>
+        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
+        ///// <param name="EVSE">The resolved EVSE.</param>
+        ///// <param name="ConnectorId">The parsed unique connector identification.</param>
+        ///// <param name="Connector">The resolved connector.</param>
+        ///// <param name="HTTPResponse">A HTTP error response.</param>
+        ///// <returns>True, when user identification was found; false else.</returns>
+        //public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
+        //                                                 CommonAPI          CommonAPI,
+        //                                                 out CountryCode?   CountryCode,
+        //                                                 out Party_Id?      PartyId,
+        //                                                 out Location_Id?   LocationId,
+        //                                                 out Location       Location,
+        //                                                 out EVSE_UId?      EVSEUId,
+        //                                                 out EVSE           EVSE,
+        //                                                 out Connector_Id?  ConnectorId,
+        //                                                 out Connector      Connector,
+        //                                                 out HTTPResponse   HTTPResponse)
+        //{
 
-            }
+        //    #region Initial checks
 
-            if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
+        //    if (HTTPRequest == null)
+        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-                    HTTPStatusCode  = HTTPStatusCode.NotFound,
-                    Server          = CommonAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
-                    ContentType     = HTTPContentType.JSON_UTF8,
-                    Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
-                    Connection      = "close"
-                };
+        //    if (CommonAPI    == null)
+        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
 
-                return false;
+        //    #endregion
 
-            }
+        //    CountryCode   = null;
+        //    PartyId       = null;
+        //    LocationId    = null;
+        //    Location      = null;
+        //    EVSEUId       = null;
+        //    EVSE          = null;
+        //    ConnectorId   = null;
+        //    Connector     = null;
+        //    HTTPResponse  = null;
 
-            return true;
+        //    if (HTTPRequest.ParsedURLParameters.Length < 5) {
 
-        }
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            Connection      = "close"
+        //        };
 
-        #endregion
+        //        return false;
+
+        //    }
+
+        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+        //    if (!CountryCode.HasValue)
+        //    {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+        //    if (!PartyId.HasValue)
+        //    {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+        //    if (!LocationId.HasValue) {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
+
+        //    if (!EVSEUId.HasValue)
+        //    {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
+
+        //    if (!EVSEUId.HasValue)
+        //    {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+
+        //    if (!CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
+
+        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
+        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
+        //            Date            = DateTime.UtcNow,
+        //            ContentType     = HTTPContentType.JSON_UTF8,
+        //            Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
+        //            Connection      = "close"
+        //        };
+
+        //        return false;
+
+        //    }
+
+        //    return true;
+
+        //}
+
+        //#endregion
 
     }
 
@@ -1233,11 +1325,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
+                                             var OCPIRequest = HTTP.OCPIRequest.Parse(Request);
+
                                              #region Check access token
 
-                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                                                  AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken accessToken) &&
-                                                 _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo  accessInfo)  &&
+                                             if (OCPIRequest.AccessToken.HasValue &&
+                                                 _AccessTokens.TryGetValue(OCPIRequest.AccessToken.Value, out AccessInfo accessInfo) &&
                                                  accessInfo.Status != AccessStatus.ALLOWED)
                                              {
 
@@ -1932,9 +2025,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddLocationOrUpdate(Location)
+        #region AddOrUpdateLocation(Location)
 
-        public Location AddLocationOrUpdate(Location Location)
+        public Location AddOrUpdateLocation(Location Location)
         {
 
             if (Location is null)
@@ -2242,9 +2335,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddTariffOrUpdate(Tariff)
+        #region AddOrUpdateTariff(Tariff)
 
-        public Tariff AddTariffOrUpdate(Tariff Tariff)
+        public Tariff AddOrUpdateTariff(Tariff Tariff)
         {
 
             if (Tariff is null)
@@ -2552,9 +2645,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddSessionOrUpdate(Session)
+        #region AddOrUpdateSession(Session)
 
-        public Session AddSessionOrUpdate(Session Session)
+        public Session AddOrUpdateSession(Session Session)
         {
 
             if (Session is null)
@@ -2862,9 +2955,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddTokenOrUpdate(Token)
+        #region AddOrUpdateToken(Token)
 
-        public Token AddTokenOrUpdate(Token Token)
+        public Token AddOrUpdateToken(Token Token)
         {
 
             if (Token is null)
@@ -3172,9 +3265,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddCDROrUpdate(CDR)
+        #region AddOrUpdateCDR(CDR)
 
-        public CDR AddCDROrUpdate(CDR CDR)
+        public CDR AddOrUpdateCDR(CDR CDR)
         {
 
             if (CDR is null)
