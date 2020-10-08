@@ -20,6 +20,8 @@
 using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -67,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Address of the location. // 10
         /// </summary>
-        [Mandatory]
+        [Optional]
         public String                              PostalCode               { get; }
 
         /// <summary>
@@ -125,7 +127,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public CDRLocation(Location_Id       Id,
                            String            Address,
                            String            City,
-                           String            PostalCode,
                            String            Country,
                            GeoCoordinate     Coordinates,
                            EVSE_UId          EVSEUId,
@@ -135,14 +136,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            ConnectorFormats  ConnectorFormat,
                            PowerTypes        ConnectorPowerType,
 
-                           String            Name = null)
+                           String            Name         = null,
+                           String            PostalCode   = null)
 
         {
 
             this.Id                   = Id;
             this.Address              = Address;
             this.City                 = City;
-            this.PostalCode           = PostalCode;
             this.Country              = Country;
             this.Coordinates          = Coordinates;
             this.EVSEUId              = EVSEUId;
@@ -153,6 +154,367 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.ConnectorPowerType   = ConnectorPowerType;
 
             this.Name                 = Name;
+            this.PostalCode           = PostalCode;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, CustomCDRLocationParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a charge detail record location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static CDRLocation Parse(JObject                                   JSON,
+                                        CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out CDRLocation  location,
+                         out String       ErrorResponse,
+                         CustomCDRLocationParser))
+            {
+                return location;
+            }
+
+            throw new ArgumentException("The given JSON representation of a location is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomCDRLocationParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a charge detail record location.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static CDRLocation Parse(String                                    Text,
+                                        CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out CDRLocation  location,
+                         out String       ErrorResponse,
+                         CustomCDRLocationParser))
+            {
+                return location;
+            }
+
+            throw new ArgumentException("The given text representation of a location is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out CDRLocation, out ErrorResponse, CDRLocationIdURL = null, CustomCDRLocationParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CDRLocation">The parsed location.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject          JSON,
+                                       out CDRLocation  CDRLocation,
+                                       out String       ErrorResponse)
+
+            => TryParse(JSON,
+                        out CDRLocation,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record location.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CDRLocation">The parsed location.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static Boolean TryParse(JObject                                   JSON,
+                                       out CDRLocation                           CDRLocation,
+                                       out String                                ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
+        {
+
+            try
+            {
+
+                CDRLocation = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Id                        [mandatory]
+
+                if (!JSON.ParseMandatory("id",
+                                         "location identification",
+                                         Location_Id.TryParse,
+                                         out Location_Id Id,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Name                      [optional]
+
+                var Name = JSON.GetString("name");
+
+                #endregion
+
+                #region Parse Address                   [mandatory]
+
+                if (!JSON.ParseMandatoryText("address",
+                                             "address",
+                                             out String Address,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse City                      [mandatory]
+
+                if (!JSON.ParseMandatoryText("city",
+                                             "city",
+                                             out String City,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PostalCode                [optional]
+
+                var PostalCode = JSON.GetString("postal_code");
+
+                #endregion
+
+                #region Parse Country                   [mandatory]
+
+                if (!JSON.ParseMandatoryText("country",
+                                             "country",
+                                             out String Country,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Coordinates               [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("coordinates",
+                                             "geo coordinates",
+                                             GeoCoordinate.TryParse,
+                                             out GeoCoordinate Coordinates,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse EVSEUId                   [mandatory]
+
+                if (!JSON.ParseMandatory("evse_uid",
+                                         "EVSE unique identification",
+                                         EVSE_UId.TryParse,
+                                         out EVSE_UId EVSEUId,
+                                         out ErrorResponse))
+                {
+                     return false;
+                }
+
+                #endregion
+
+                #region Parse EVSEId                    [mandatory]
+
+                if (!JSON.ParseMandatory("evse_id",
+                                         "EVSE identification",
+                                         EVSE_Id.TryParse,
+                                         out EVSE_Id EVSEId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ConnectorId               [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("connector_id",
+                                             "connector identification",
+                                             out Connector_Id ConnectorId,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ConnectorStandard         [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("connector_standard",
+                                             "connector standard/type",
+                                             out ConnectorTypes ConnectorStandard,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ConnectorFormat           [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("connector_format",
+                                             "connector format",
+                                             out ConnectorFormats ConnectorFormat,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ConnectorPowerType        [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("connector_power_type",
+                                             "connector power type",
+                                             out PowerTypes ConnectorPowerType,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                CDRLocation = new CDRLocation(Id,
+                                              Address,
+                                              City,
+                                              Country,
+                                              Coordinates,
+                                              EVSEUId,
+                                              EVSEId,
+                                              ConnectorId,
+                                              ConnectorStandard,
+                                              ConnectorFormat,
+                                              ConnectorPowerType,
+                                              Name,
+                                              PostalCode);
+
+
+                if (CustomCDRLocationParser != null)
+                    CDRLocation = CustomCDRLocationParser(JSON,
+                                                          CDRLocation);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                CDRLocation       = default;
+                ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out CDRLocation, out ErrorResponse, CDRLocationIdURL = null, CustomCDRLocationParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a charge detail record location.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CDRLocation">The parsed location.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
+        public static Boolean TryParse(String                                    Text,
+                                       out CDRLocation                           CDRLocation,
+                                       out String                                ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out CDRLocation,
+                                out ErrorResponse,
+                                CustomCDRLocationParser);
+
+            }
+            catch (Exception e)
+            {
+                CDRLocation      = null;
+                ErrorResponse  = "The given text representation of a location is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomCDRLocationSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRLocation> CustomCDRLocationSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("id",                    Id.                ToString()),
+
+                           Name.IsNotNullOrEmpty()
+                               ? new JProperty("name",            Name)
+                               : null,
+
+                           new JProperty("address",               Address),
+                           new JProperty("city",                  City),
+
+                           PostalCode.IsNotNullOrEmpty()
+                               ? new JProperty("postal_code",     PostalCode)
+                               : null,
+
+                           new JProperty("country",               Country),
+
+                           new JProperty("coordinates",           new JObject(
+                                                                      new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
+                                                                      new JProperty("longitude", Coordinates.Longitude.Value.ToString())
+                                                                  )),
+
+                           new JProperty("evse_uid",              EVSEUId.           ToString()),
+                           new JProperty("evse_id",               EVSEId.            ToString()),
+                           new JProperty("connector_id",          ConnectorId.       ToString()),
+                           new JProperty("connector_standard",    ConnectorStandard. ToString()),
+                           new JProperty("connector_format",      ConnectorFormat.   ToString()),
+                           new JProperty("connector_power_type",  ConnectorPowerType.ToString())
+
+                       );
+
+            return CustomCDRLocationSerializer != null
+                       ? CustomCDRLocationSerializer(this, JSON)
+                       : JSON;
 
         }
 

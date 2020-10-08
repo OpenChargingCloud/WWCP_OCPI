@@ -18,8 +18,11 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -33,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// Amount of energy charged this period, maximum current during
     /// this period etc.
     /// </summary>
-    public readonly struct SignedData : IEquatable<SignedData>
+    public class SignedData : IEquatable<SignedData>
     {
 
         #region Properties
@@ -103,6 +106,266 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Parse   (JSON, CustomSignedDataParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a signed data.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomSignedDataParser">A delegate to parse custom signed data JSON objects.</param>
+        public static SignedData Parse(JObject                                  JSON,
+                                       CustomJObjectParserDelegate<SignedData>  CustomSignedDataParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out SignedData  signedData,
+                         out String      ErrorResponse,
+                         CustomSignedDataParser))
+            {
+                return signedData;
+            }
+
+            throw new ArgumentException("The given JSON representation of a signed data is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomSignedDataParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a signed data.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomSignedDataParser">A delegate to parse custom signed data JSON objects.</param>
+        public static SignedData Parse(String                                   Text,
+                                       CustomJObjectParserDelegate<SignedData>  CustomSignedDataParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out SignedData  signedData,
+                         out String      ErrorResponse,
+                         CustomSignedDataParser))
+            {
+                return signedData;
+            }
+
+            throw new ArgumentException("The given text representation of a signed data is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out SignedData, out ErrorResponse, CustomSignedDataParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a signed data.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="SignedData">The parsed signed data.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject         JSON,
+                                       out SignedData  SignedData,
+                                       out String      ErrorResponse)
+
+            => TryParse(JSON,
+                        out SignedData,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a signed data.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="SignedData">The parsed signed data.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomSignedDataParser">A delegate to parse custom signed data JSON objects.</param>
+        public static Boolean TryParse(JObject                                  JSON,
+                                       out SignedData                           SignedData,
+                                       out String                               ErrorResponse,
+                                       CustomJObjectParserDelegate<SignedData>  CustomSignedDataParser   = null)
+        {
+
+            try
+            {
+
+                SignedData = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse EncodingMethod            [mandatory]
+
+                if (!JSON.ParseMandatory("encoding_method",
+                                         "encoding method",
+                                         OCPIv2_2.EncodingMethod.TryParse,
+                                         out EncodingMethod EncodingMethod,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse EncodingMethodVersion     [optional]
+
+                if (JSON.ParseOptional("encoding_method_version",
+                                       "encoding method version",
+                                       out Int32? EncodingMethodVersion,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse PublicKey                 [optional]
+
+                if (JSON.ParseOptional("public_key",
+                                       "public key",
+                                       OCPIv2_2.PublicKey.TryParse,
+                                       out PublicKey PublicKey,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse SignedValues              [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("signed_values",
+                                             "signed values",
+                                             SignedValue.TryParse,
+                                             out IEnumerable<SignedValue> SignedValues,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse URL                       [optional]
+
+                var URL = JSON.GetString("url");
+
+                #endregion
+
+
+                SignedData = new SignedData(EncodingMethod,
+                                            SignedValues,
+                                            EncodingMethodVersion,
+                                            PublicKey,
+                                            URL);
+
+
+                if (CustomSignedDataParser != null)
+                    SignedData = CustomSignedDataParser(JSON,
+                                                        SignedData);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                SignedData     = default;
+                ErrorResponse  = "The given JSON representation of a signed data is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out SignedData, out ErrorResponse, CustomSignedDataParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an signedData.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="SignedData">The parsed signedData.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomSignedDataParser">A delegate to parse custom signed data JSON objects.</param>
+        public static Boolean TryParse(String                                   Text,
+                                       out SignedData                           SignedData,
+                                       out String                               ErrorResponse,
+                                       CustomJObjectParserDelegate<SignedData>  CustomSignedDataParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out SignedData,
+                                out ErrorResponse,
+                                CustomSignedDataParser);
+
+            }
+            catch (Exception e)
+            {
+                SignedData     = default;
+                ErrorResponse  = "The given text representation of a signed data is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomSignedDataSerializer = null, CustomSignedValueSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
+        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<SignedData>   CustomSignedDataSerializer    = null,
+                              CustomJObjectSerializerDelegate<SignedValue>  CustomSignedValueSerializer   = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("encoding_method",                EncodingMethod.       ToString()),
+
+                           EncodingMethodVersion.HasValue
+                               ? new JProperty("encoding_method_version",  EncodingMethodVersion.ToString())
+                               : null,
+
+                           PublicKey.HasValue
+                               ? new JProperty("public_key",               PublicKey.            ToString())
+                               : null,
+
+                           SignedValues.SafeAny()
+                               ? new JProperty("signed_values",            new JArray(SignedValues.Select(signedValue => signedValue.ToJSON(CustomSignedValueSerializer))))
+                               : null,
+
+                           URL.IsNotNullOrEmpty()
+                               ? new JProperty("url",                      URL)
+                               : null
+
+                       );
+
+            return CustomSignedDataSerializer != null
+                       ? CustomSignedDataSerializer(this, JSON)
+                       : JSON;
+
+        }
+
+        #endregion
+
+
         #region Operator overloading
 
         #region Operator == (SignedData1, SignedData2)
@@ -115,8 +378,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (SignedData SignedData1,
                                            SignedData SignedData2)
+        {
 
-            => SignedData1.Equals(SignedData2);
+            if (Object.ReferenceEquals(SignedData1, SignedData2))
+                return true;
+
+            if (SignedData1 is null || SignedData2 is null)
+                return false;
+
+            return SignedData1.Equals(SignedData2);
+
+        }
 
         #endregion
 
@@ -162,9 +434,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(SignedData SignedData)
 
-            => EncodingMethod.Equals(SignedData.EncodingMethod)             &&
+            => !(SignedData is null) &&
+
+               EncodingMethod.Equals(SignedData.EncodingMethod) &&
+
                SignedValues.Count().Equals(SignedData.SignedValues.Count()) &&
-               SignedValues.All(dimension => SignedData.SignedValues.Contains(dimension));
+               SignedValues.All(signedValue => SignedData.SignedValues.Contains(signedValue)) &&
+
+               ((!EncodingMethodVersion.HasValue        && !SignedData.EncodingMethodVersion.HasValue)        || (EncodingMethodVersion.HasValue           && SignedData.EncodingMethodVersion.HasValue           && EncodingMethodVersion.Value.Equals(SignedData.EncodingMethodVersion.Value))) &&
+               ((!PublicKey.            HasValue        && !SignedData.PublicKey.            HasValue)        || (PublicKey.            HasValue           && SignedData.PublicKey.            HasValue           && PublicKey.            Value.Equals(SignedData.PublicKey.            Value))) &&
+               ((!URL.                  IsNullOrEmpty() && !SignedData.URL.                  IsNullOrEmpty()) || (URL.                  IsNotNullOrEmpty() && SignedData.URL.                  IsNotNullOrEmpty() && URL.                        Equals(SignedData.URL)));
 
         #endregion
 
@@ -180,8 +459,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
-                return EncodingMethod.GetHashCode() * 3 ^
-                       SignedValues.Aggregate(0, (hashCode, value) => hashCode ^ value.GetHashCode());
+
+                return EncodingMethod.GetHashCode() * 7 ^
+                       SignedValues.Aggregate(0, (hashCode, value) => hashCode ^ value.GetHashCode()) ^
+
+                       (EncodingMethodVersion.HasValue
+                            ? EncodingMethodVersion.Value.GetHashCode() * 5
+                            : 0) ^
+
+                       (PublicKey.HasValue
+                            ? PublicKey.GetHashCode() * 3
+                            : 0) ^
+
+                       (URL.IsNotNullOrEmpty()
+                            ? URL.GetHashCode()
+                            : 0);
+
             }
         }
 

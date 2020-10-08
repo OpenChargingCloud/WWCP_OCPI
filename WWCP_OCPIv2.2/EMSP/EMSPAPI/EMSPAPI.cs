@@ -3593,7 +3593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region POST    ~/tokens/{token_id}/authorize
+            #region POST    ~/tokens/{token_id}/authorize?type=RFID
 
             // Real-time authorization request
             // https://example.com/ocpi/2.2/emsp/tokens/012345678/authorize?type=RFID

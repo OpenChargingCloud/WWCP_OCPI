@@ -19,6 +19,10 @@
 
 using System;
 
+using Newtonsoft.Json.Linq;
+
+using org.GraphDefined.Vanaheimr.Illias;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2
@@ -37,28 +41,284 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Price/Cost excluding VAT.
         /// </summary>
-        public Double ExclVAT { get; }
+        [Mandatory]
+        public Double   ExcludingVAT    { get; }
 
         /// <summary>
         /// Price/Cost including VAT.
         /// </summary>
-        public Double InclVAT { get; }
+        [Optional]
+        public Double?  IncludingVAT    { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// 
+        /// Create a new price for a charging session.
         /// </summary>
-        /// <param name="ExclVAT">Price/Cost excluding VAT.</param>
-        /// <param name="InclVAT">Price/Cost including VAT.</param>
-        public Price(Double  ExclVAT,
-                     Double  InclVAT)
+        /// <param name="ExcludingVAT">Price/Cost excluding VAT.</param>
+        /// <param name="IncludingVAT">Price/Cost including VAT.</param>
+        public Price(Double   ExcludingVAT,
+                     Double?  IncludingVAT)
         {
 
-            this.ExclVAT = ExclVAT;
-            this.InclVAT = InclVAT;
+            this.ExcludingVAT  = ExcludingVAT;
+            this.IncludingVAT  = IncludingVAT;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, CustomPriceParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a price.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
+        public static Price Parse(JObject                             JSON,
+                                  CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out Price   price,
+                         out String  ErrorResponse,
+                         CustomPriceParser))
+            {
+                return price;
+            }
+
+            throw new ArgumentException("The given JSON representation of a price is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomPriceParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a price.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
+        public static Price Parse(String                              Text,
+                                  CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out Price   price,
+                         out String  ErrorResponse,
+                         CustomPriceParser))
+            {
+                return price;
+            }
+
+            throw new ArgumentException("The given text representation of a price is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, CustomPriceParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
+        public static Price? TryParse(JObject                             JSON,
+                                      CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out Price   price,
+                         out String  ErrorResponse,
+                         CustomPriceParser))
+            {
+                return price;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, CustomPriceParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price.
+        /// </summary>
+        /// <param name="Text">The JSON to parse.</param>
+        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
+        public static Price? TryParse(String                              Text,
+                                      CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out Price   price,
+                         out String  ErrorResponse,
+                         CustomPriceParser))
+            {
+                return price;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out Price, out ErrorResponse, CustomPriceParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="Price">The parsed price.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject     JSON,
+                                       out Price   Price,
+                                       out String  ErrorResponse)
+
+            => TryParse(JSON,
+                        out Price,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="Price">The parsed price.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
+        public static Boolean TryParse(JObject                             JSON,
+                                       out Price                           Price,
+                                       out String                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        {
+
+            try
+            {
+
+                Price = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse ExcludingVAT      [mandatory]
+
+                if (!JSON.ParseMandatory("excl_vat",
+                                         "price excluding VAT",
+                                         out Double ExcludingVAT,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse IncludingVAT      [mandatory]
+
+                if (!JSON.ParseMandatory("incl_vat",
+                                         "price including VAT",
+                                         out Double IncludingVAT,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                Price = new Price(ExcludingVAT,
+                                  IncludingVAT);
+
+
+                if (CustomPriceParser != null)
+                    Price = CustomPriceParser(JSON,
+                                              Price);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Price  = default;
+                ErrorResponse      = "The given JSON representation of a price is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out Price, out ErrorResponse, CustomPriceParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a price.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="Price">The parsed price.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
+        public static Boolean TryParse(String                              Text,
+                                       out Price                           Price,
+                                       out String                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out Price,
+                                out ErrorResponse,
+                                CustomPriceParser);
+
+            }
+            catch (Exception e)
+            {
+                Price          = default;
+                ErrorResponse  = "The given text representation of a price is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomPriceSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Price> CustomPriceSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("excl_vat",        ExcludingVAT),
+
+                           IncludingVAT.HasValue
+                               ? new JProperty("incl_vat",  IncludingVAT)
+                               : null
+
+                       );
+
+            return CustomPriceSerializer != null
+                       ? CustomPriceSerializer(this, JSON)
+                       : JSON;
 
         }
 
@@ -185,10 +445,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Price Price)
         {
 
-            var c = ExclVAT.CompareTo(Price.ExclVAT);
+            var c = ExcludingVAT.CompareTo(Price.ExcludingVAT);
 
-            if (c == 0)
-                c = InclVAT.CompareTo(Price.InclVAT);
+            if (c == 0 && IncludingVAT.HasValue && Price.IncludingVAT.HasValue)
+                c = IncludingVAT.Value.CompareTo(Price.IncludingVAT.Value);
 
             return c;
 
@@ -223,8 +483,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Price Price)
 
-            => ExclVAT.Equals(Price.ExclVAT) &&
-               InclVAT.Equals(Price.InclVAT);
+            => ExcludingVAT.Equals(Price.ExcludingVAT) &&
+
+               ((!IncludingVAT.HasValue && !Price.IncludingVAT.HasValue) ||
+                 (IncludingVAT.HasValue &&  Price.IncludingVAT.HasValue && IncludingVAT.Value.Equals(Price.IncludingVAT.Value)));
 
         #endregion
 
@@ -241,8 +503,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return ExclVAT.GetHashCode() * 3 ^
-                       InclVAT.GetHashCode();
+                return ExcludingVAT.GetHashCode() * 3 ^
+
+                       (IncludingVAT.HasValue
+                            ? IncludingVAT.GetHashCode()
+                            : 0);
 
             }
         }
@@ -256,9 +521,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(ExclVAT,
-                             " / ",
-                             InclVAT);
+            => String.Concat(ExcludingVAT,
+                             IncludingVAT.HasValue ? " / " + IncludingVAT : "");
 
         #endregion
 

@@ -89,6 +89,7 @@
     <Compile Include="DataTypes\Simple\CreditReference_Id.cs" />
     <Compile Include="DataTypes\Simple\InvoiceReference_Id.cs" />
     <Compile Include="DataTypes\Simple\Correlation_Id.cs" />
+    <Compile Include="DataTypes\Simple\Language_Id.cs" />
     <Compile Include="DataTypes\Simple\Request_Id.cs" />
     <Compile Include="DataTypes\Simple\PublicKey.cs" />
     <Compile Include="DataTypes\Simple\EncodingMethod.cs" />

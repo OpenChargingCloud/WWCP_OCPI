@@ -18,8 +18,9 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -72,6 +73,273 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.UID         = UID;
             this.TokenType   = TokenType;
             this.ContractId  = ContractId;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, CustomCDRTokenParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an charge detail record token.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
+        public static CDRToken Parse(JObject                                JSON,
+                                     CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out CDRToken  cdrToken,
+                         out String    ErrorResponse,
+                         CustomCDRTokenParser))
+            {
+                return cdrToken;
+            }
+
+            throw new ArgumentException("The given JSON representation of an charge detail record token is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomCDRTokenParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an charge detail record token.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
+        public static CDRToken Parse(String                                 Text,
+                                     CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out CDRToken  cdrToken,
+                         out String    ErrorResponse,
+                         CustomCDRTokenParser))
+            {
+                return cdrToken;
+            }
+
+            throw new ArgumentException("The given text representation of an charge detail record token is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, CustomCDRTokenParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record token.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
+        public static CDRToken? TryParse(JObject                                JSON,
+                                         CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out CDRToken  cdrToken,
+                         out String    ErrorResponse,
+                         CustomCDRTokenParser))
+            {
+                return cdrToken;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, CustomCDRTokenParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record token.
+        /// </summary>
+        /// <param name="Text">The JSON to parse.</param>
+        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
+        public static CDRToken? TryParse(String                                 Text,
+                                         CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out CDRToken  cdrToken,
+                         out String    ErrorResponse,
+                         CustomCDRTokenParser))
+            {
+                return cdrToken;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out CDRToken, out ErrorResponse, CustomCDRTokenParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an charge detail record token.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CDRToken">The parsed charge detail record token.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject       JSON,
+                                       out CDRToken  CDRToken,
+                                       out String    ErrorResponse)
+
+            => TryParse(JSON,
+                        out CDRToken,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an charge detail record token.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CDRToken">The parsed charge detail record token.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
+        public static Boolean TryParse(JObject                                JSON,
+                                       out CDRToken                           CDRToken,
+                                       out String                             ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        {
+
+            try
+            {
+
+                CDRToken = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse UID               [mandatory]
+
+                if (!JSON.ParseMandatory("uid",
+                                         "token identification",
+                                         Token_Id.TryParse,
+                                         out Token_Id UID,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse TokenType         [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("type",
+                                             "token type",
+                                             out TokenTypes TokenType,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ContractId        [mandatory]
+
+                if (!JSON.ParseMandatory("contract_id",
+                                         "contract identification",
+                                         Contract_Id.TryParse,
+                                         out Contract_Id ContractId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                CDRToken = new CDRToken(UID,
+                                        TokenType,
+                                        ContractId);
+
+
+                if (CustomCDRTokenParser != null)
+                    CDRToken = CustomCDRTokenParser(JSON,
+                                                    CDRToken);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                CDRToken       = default;
+                ErrorResponse  = "The given JSON representation of an charge detail record token is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out CDRToken, out ErrorResponse, CustomCDRTokenParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an cdrToken.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CDRToken">The parsed cdrToken.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
+        public static Boolean TryParse(String                                 Text,
+                                       out CDRToken                           CDRToken,
+                                       out String                             ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out CDRToken,
+                                out ErrorResponse,
+                                CustomCDRTokenParser);
+
+            }
+            catch (Exception e)
+            {
+                CDRToken       = default;
+                ErrorResponse  = "The given text representation of an charge detail record token is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomCDRTokenSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRToken> CustomCDRTokenSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("uid",          UID.       ToString()),
+                           new JProperty("type",         TokenType. ToString()),
+                           new JProperty("contract_id",  ContractId.ToString())
+
+                       );
+
+            return CustomCDRTokenSerializer != null
+                       ? CustomCDRTokenSerializer(this, JSON)
+                       : JSON;
 
         }
 

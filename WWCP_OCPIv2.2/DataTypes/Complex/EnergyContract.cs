@@ -19,6 +19,8 @@
 
 using System;
 
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -39,13 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The name of the energy supplier for this token.
         /// </summary>
-        public String              SupplierName    { get; }
+        public String             SupplierName    { get; }
 
         /// <summary>
         /// The optional contract identification at the energy supplier, that belongs
         /// to the owner of this token.
         /// </summary>
-        public EnergyContract_Id?  ContractId      { get; }
+        public EnergyContract_Id  ContractId      { get; }
 
         #endregion
 
@@ -56,8 +58,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="SupplierName">The name of the energy supplier for this token.</param>
         /// <param name="ContractId">The optional contract identification at the energy supplier, that belongs to the owner of this token.</param>
-        public EnergyContract(String              SupplierName,
-                              EnergyContract_Id?  ContractId)
+        public EnergyContract(String             SupplierName,
+                              EnergyContract_Id  ContractId)
         {
 
             #region Initial checks
@@ -69,6 +71,259 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.SupplierName  = SupplierName;
             this.ContractId    = ContractId;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, CustomEnergyContractParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of an energy contract.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
+        public static EnergyContract Parse(JObject                                      JSON,
+                                           CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out EnergyContract  energyContract,
+                         out String          ErrorResponse,
+                         CustomEnergyContractParser))
+            {
+                return energyContract;
+            }
+
+            throw new ArgumentException("The given JSON representation of an energy contract is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomEnergyContractParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of an energy contract.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
+        public static EnergyContract Parse(String                                       Text,
+                                           CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out EnergyContract  energyContract,
+                         out String          ErrorResponse,
+                         CustomEnergyContractParser))
+            {
+                return energyContract;
+            }
+
+            throw new ArgumentException("The given text representation of an energy contract is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, CustomEnergyContractParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a energy contract.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
+        public static EnergyContract? TryParse(JObject                                         JSON,
+                                                  CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out EnergyContract  energyContract,
+                         out String          ErrorResponse,
+                         CustomEnergyContractParser))
+            {
+                return energyContract;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, CustomEnergyContractParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a energy contract.
+        /// </summary>
+        /// <param name="Text">The JSON to parse.</param>
+        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
+        public static EnergyContract? TryParse(String                                       Text,
+                                               CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out EnergyContract  energyContract,
+                         out String          ErrorResponse,
+                         CustomEnergyContractParser))
+            {
+                return energyContract;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out EnergyContract, out ErrorResponse, CustomEnergyContractParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an energy contract.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnergyContract">The parsed energy contract.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject             JSON,
+                                       out EnergyContract  EnergyContract,
+                                       out String          ErrorResponse)
+
+            => TryParse(JSON,
+                        out EnergyContract,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of an energy contract.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="EnergyContract">The parsed energy contract.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
+        public static Boolean TryParse(JObject                                      JSON,
+                                       out EnergyContract                           EnergyContract,
+                                       out String                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        {
+
+            try
+            {
+
+                EnergyContract = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse SupplierName      [mandatory]
+
+                if (!JSON.ParseMandatoryText("supplier_name",
+                                             "energy supplier name",
+                                             out String SupplierName,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ContractId        [mandatory]
+
+                if (!JSON.ParseMandatory("contract_id",
+                                         "energy contract identification",
+                                         EnergyContract_Id.TryParse,
+                                         out EnergyContract_Id ContractId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                EnergyContract = new EnergyContract(SupplierName,
+                                                    ContractId);
+
+
+                if (CustomEnergyContractParser != null)
+                    EnergyContract = CustomEnergyContractParser(JSON,
+                                                                EnergyContract);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                EnergyContract  = default;
+                ErrorResponse      = "The given JSON representation of an energy contract is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out EnergyContract, out ErrorResponse, CustomEnergyContractParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an energyContract.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="EnergyContract">The parsed energyContract.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
+        public static Boolean TryParse(String                                       Text,
+                                       out EnergyContract                           EnergyContract,
+                                       out String                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out EnergyContract,
+                                out ErrorResponse,
+                                CustomEnergyContractParser);
+
+            }
+            catch (Exception e)
+            {
+                EnergyContract  = default;
+                ErrorResponse   = "The given text representation of an energy contract is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomEnergyContractSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyContract> CustomEnergyContractSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("supplier_name",  SupplierName),
+
+                           new JProperty("contract_id",    ContractId.ToString())
+
+                       );
+
+            return CustomEnergyContractSerializer != null
+                       ? CustomEnergyContractSerializer(this, JSON)
+                       : JSON;
 
         }
 
@@ -197,8 +452,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var c = SupplierName.CompareTo(EnergyContract.SupplierName);
 
-            if (c == 0 && ContractId.HasValue && EnergyContract.ContractId.HasValue)
-                c = ContractId.Value.CompareTo(EnergyContract.ContractId.Value);
+            if (c == 0)
+                c = ContractId.CompareTo(EnergyContract.ContractId);
 
             return c;
 
@@ -234,9 +489,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(EnergyContract EnergyContract)
 
             => SupplierName.Equals(EnergyContract.SupplierName) &&
-
-            ((!ContractId.HasValue && !EnergyContract.ContractId.HasValue) ||
-              (ContractId.HasValue &&  EnergyContract.ContractId.HasValue && ContractId.Value.Equals(EnergyContract.ContractId.Value)));
+               ContractId.  Equals(EnergyContract.ContractId);
 
         #endregion
 
@@ -253,11 +506,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return SupplierName.GetHashCode() ^
-
-                       (ContractId.HasValue
-                            ? ContractId.GetHashCode()
-                            : 0);
+                return SupplierName.GetHashCode() * 3 ^
+                       ContractId.  GetHashCode();
 
             }
         }
@@ -272,9 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(SupplierName,
-                             ContractId.HasValue
-                                 ? " (" + ContractId + ")"
-                                 : "");
+                             " (", ContractId, ")");
 
         #endregion
 

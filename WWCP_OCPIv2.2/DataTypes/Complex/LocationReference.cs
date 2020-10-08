@@ -192,6 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         out ErrorResponse,
                         null);
 
+
         /// <summary>
         /// Try to parse the given JSON representation of a location reference.
         /// </summary>
@@ -266,6 +267,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
         #region (static) TryParse(Text, out LocationReference, out ErrorResponse, CustomLocationReferenceParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given text representation of a location reference.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="LocationReference">The parsed location reference.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(String                 Text,
+                                       out LocationReference  LocationReference,
+                                       out String             ErrorResponse)
+
+            => TryParse(Text,
+                        out LocationReference,
+                        out ErrorResponse,
+                        null);
+
 
         /// <summary>
         /// Try to parse the given text representation of an locationReference.

@@ -803,7 +803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        /// <param name="CustomAdditionalGeoTariffSerializer">A delegate to serialize custom additional geo tariff JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo tariff JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
@@ -813,7 +813,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>                 CustomTariffSerializer                  = null,
                               CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoTariffSerializer   = null,
+                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
                               CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
                               CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,

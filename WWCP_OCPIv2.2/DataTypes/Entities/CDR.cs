@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -142,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Signed data that belongs to this charging session.
         /// </summary>
         [Optional]
-        public SignedData?                  SignedData                  { get; }
+        public SignedData                   SignedData                  { get; }
 
         /// <summary>
         /// Total sum of all the costs of this transaction in the specified currency.
@@ -173,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Total duration of the charging session (including the duration of charging and not charging), in hours.
         /// </summary>
         [Mandatory]
-        public Decimal                      TotalTime                   { get; }
+        public TimeSpan                     TotalTime                   { get; }
 
         /// <summary>
         /// Total sum of all the cost related to duration of charging during this transaction, in the specified currency.
@@ -186,14 +186,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
         /// </summary>
         [Optional]
-        public Decimal?                     TotalParkingTime            { get; }
+        public TimeSpan?                    TotalParkingTime            { get; }
 
         /// <summary>
         /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
         /// </summary>
         [Optional]
-        public Decimal                      TotalChargingTime
-            => TotalTime - (TotalParkingTime ?? 0);
+        public TimeSpan                     TotalChargingTime
+            => TotalTime - (TotalParkingTime ?? TimeSpan.Zero);
 
         /// <summary>
         /// Total sum of all the cost related to parking of this transaction, including fixed price components, in the specified currency.
@@ -261,17 +261,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    IEnumerable<ChargingPeriod>  ChargingPeriods,
                    Price                        TotalCosts,
                    Decimal                      TotalEnergy,
-                   Decimal                      TotalTime,
+                   TimeSpan                     TotalTime,
 
                    Session_Id?                  SessionId                = null,
                    AuthorizationReference?      AuthorizationReference   = null,
                    Meter_Id?                    MeterId                  = null,
                    IEnumerable<Tariff>          Tariffs                  = null,
-                   SignedData?                  SignedData               = null,
+                   SignedData                   SignedData               = null,
                    Price?                       TotalFixedCosts          = null,
                    Price?                       TotalEnergyCost          = null,
                    Price?                       TotalTimeCost            = null,
-                   Decimal?                     TotalParkingTime         = null,
+                   TimeSpan?                    TotalParkingTime         = null,
                    Price?                       TotalParkingCost         = null,
                    Price?                       TotalReservationCost     = null,
                    String                       Remark                   = null,
@@ -335,16 +335,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static CDR Parse(JObject                               JSON,
-                                    CountryCode?                          CountryCodeURL        = null,
-                                    Party_Id?                             PartyIdURL            = null,
-                                    CDR_Id?                           CDRIdURL          = null,
-                                    CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
+        public static CDR Parse(JObject                           JSON,
+                                CountryCode?                      CountryCodeURL    = null,
+                                Party_Id?                         PartyIdURL        = null,
+                                CDR_Id?                           CDRIdURL          = null,
+                                CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CDR  CDR,
-                         out String   ErrorResponse,
+                         out CDR     CDR,
+                         out String  ErrorResponse,
                          CountryCodeURL,
                          PartyIdURL,
                          CDRIdURL,
@@ -367,16 +367,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static CDR Parse(String                                Text,
-                                    CountryCode?                          CountryCodeURL        = null,
-                                    Party_Id?                             PartyIdURL            = null,
-                                    CDR_Id?                           CDRIdURL          = null,
-                                    CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
+        public static CDR Parse(String                            Text,
+                                CountryCode?                      CountryCodeURL    = null,
+                                Party_Id?                         PartyIdURL        = null,
+                                CDR_Id?                           CDRIdURL          = null,
+                                CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
         {
 
             if (TryParse(Text,
-                         out CDR  CDR,
-                         out String   ErrorResponse,
+                         out CDR     CDR,
+                         out String  ErrorResponse,
                          CountryCodeURL,
                          PartyIdURL,
                          CDRIdURL,
@@ -401,9 +401,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDR">The parsed CDR.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject      JSON,
-                                       out CDR  CDR,
-                                       out String   ErrorResponse)
+        public static Boolean TryParse(JObject     JSON,
+                                       out CDR     CDR,
+                                       out String  ErrorResponse)
 
             => TryParse(JSON,
                         out CDR,
@@ -423,11 +423,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static Boolean TryParse(JObject                               JSON,
+        public static Boolean TryParse(JObject                           JSON,
                                        out CDR                           CDR,
-                                       out String                            ErrorResponse,
-                                       CountryCode?                          CountryCodeURL        = null,
-                                       Party_Id?                             PartyIdURL            = null,
+                                       out String                        ErrorResponse,
+                                       CountryCode?                      CountryCodeURL    = null,
+                                       Party_Id?                         PartyIdURL        = null,
                                        CDR_Id?                           CDRIdURL          = null,
                                        CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
         {
@@ -527,302 +527,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Publish               [mandatory]
-
-                if (!JSON.ParseMandatory("publish",
-                                         "publish",
-                                         out Boolean Publish,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse Address               [mandatory]
-
-                if (!JSON.ParseMandatoryText("address",
-                                             "address",
-                                             out String Address,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse City                  [mandatory]
-
-                if (!JSON.ParseMandatoryText("city",
-                                             "city",
-                                             out String City,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse Country               [mandatory]
-
-                if (!JSON.ParseMandatoryText("country",
-                                             "country",
-                                             out String Country,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse Coordinates           [mandatory]
-
-                //if (!JSON.ParseMandatoryJSON("coordinates",
-                //                             "geo coordinates",
-                //                             GeoCoordinate.TryParse,
-                //                             out GeoCoordinate Coordinates,
-                //                             out ErrorResponse))
-                //{
-                //    return false;
-                //}
-
-                #endregion
-
-                #region Parse TimeZone              [mandatory]
-
-                if (!JSON.ParseMandatoryText("time_zone",
-                                             "time zone",
-                                             out String TimeZone,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-
-                #region Parse PublishTokenTypes     [optional]
-
-                if (JSON.ParseOptionalJSON("publish_allowed_to",
-                                           "publish allowed to",
-                                           PublishTokenType.TryParse,
-                                           out IEnumerable<PublishTokenType> PublishTokenTypes,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Name                  [optional]
-
-                var Name = JSON.GetString("name");
-
-                #endregion
-
-                #region Parse PostalCode            [optional]
-
-                var PostalCode = JSON.GetString("postal_code");
-
-                #endregion
-
-                #region Parse State                 [optional]
-
-                var State = JSON.GetString("state");
-
-                #endregion
-
-                #region Parse RelatedCDRs      [optional]
-
-                //if (JSON.ParseOptionalJSON("related_CDRs",
-                //                           "related CDRs",
-                //                           AdditionalGeoCDR.TryParse,
-                //                           out IEnumerable<AdditionalGeoCDR> RelatedCDRs,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                #endregion
-
-                #region Parse ParkingType           [optional]
-
-                if (JSON.ParseOptionalEnum("parking_type",
-                                           "parking type",
-                                           out ParkingTypes? ParkingType,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse EVSEs                 [optional]
-
-                if (JSON.ParseOptionalJSON("evses",
-                                           "evses",
-                                           EVSE.TryParse,
-                                           out IEnumerable<EVSE> EVSEs,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Directions            [optional]
-
-                if (JSON.ParseOptionalJSON("directions",
-                                           "multi-language directions",
-                                           DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> Directions,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Operator              [optional]
-
-                if (JSON.ParseOptionalJSON("operator",
-                                           "operator",
-                                           BusinessDetails.TryParse,
-                                           out BusinessDetails Operator,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Suboperator           [optional]
-
-                if (JSON.ParseOptionalJSON("suboperator",
-                                           "suboperator",
-                                           BusinessDetails.TryParse,
-                                           out BusinessDetails Suboperator,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Owner                 [optional]
-
-                if (JSON.ParseOptionalJSON("owner",
-                                           "owner",
-                                           BusinessDetails.TryParse,
-                                           out BusinessDetails Owner,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Facilities            [optional]
-
-                if (JSON.ParseOptionalEnums("facilities",
-                                            "facilities",
-                                            out IEnumerable<Facilities> Facilities,
-                                            out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse OpeningTimes          [optional]
-
-                if (JSON.ParseOptionalJSON("opening_times",
-                                           "opening times",
-                                           Hours.TryParse,
-                                           out Hours OpeningTimes,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse ChargingWhenClosed    [optional]
-
-                if (JSON.ParseOptional("charging_when_closed",
-                                       "charging when closed",
-                                       out Boolean? ChargingWhenClosed,
-                                       out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Images                [optional]
-
-                if (JSON.ParseOptionalJSON("images",
-                                           "images",
-                                           Image.TryParse,
-                                           out IEnumerable<Image> Images,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse EnergyMix             [optional]
-
-                if (JSON.ParseOptionalJSON("energy_mix",
-                                           "energy mix",
-                                           OCPIv2_2.EnergyMix.TryParse,
-                                           out EnergyMix EnergyMix,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
 
 
                 #region Parse LastUpdated           [mandatory]
@@ -928,116 +632,111 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomCDRSerializer = null, CustomEVSESerializer = null, ...)
+        #region ToJSON(CustomCDRSerializer = null, CustomCDRTokenSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomCDRSerializer">A delegate to serialize custom CDR JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        /// <param name="CustomAdditionalGeoCDRSerializer">A delegate to serialize custom additional geo CDR JSON objects.</param>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>                CustomCDRSerializer                 = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoCDRSerializer    = null,
-                              CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
-                              CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
-                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
-                              CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
-                              CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
+        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>          CustomCDRSerializer           = null,
+                              CustomJObjectSerializerDelegate<CDRToken>     CustomCDRTokenSerializer      = null,
+                              CustomJObjectSerializerDelegate<CDRLocation>  CustomCDRLocationSerializer   = null,
+
+                              CustomJObjectSerializerDelegate<SignedData>   CustomSignedDataSerializer    = null,
+                              CustomJObjectSerializerDelegate<SignedValue>  CustomSignedValueSerializer   = null,
+                              CustomJObjectSerializerDelegate<Price>        CustomPriceSerializer         = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                    CountryCode.ToString()),
-                           new JProperty("party_id",                        PartyId.    ToString()),
-                           new JProperty("id",                              Id.         ToString()),
-                           //new JProperty("publish",                         Publish),
+                           new JProperty("country_code",                    CountryCode.                 ToString()),
+                           new JProperty("party_id",                        PartyId.                     ToString()),
+                           new JProperty("id",                              Id.                          ToString()),
+                           new JProperty("start_date_time",                 Start.                       ToIso8601()),
+                           new JProperty("end_date_time",                   End.                         ToIso8601()),
 
-                           //Publish == false && PublishAllowedTo.SafeAny()
-                           //    ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
+                           SessionId.HasValue
+                               ? new JProperty("session_id",                SessionId.             Value.ToString())
+                               : null,
+
+                           new JProperty("cdr_token",                       CDRToken.                    ToJSON(CustomCDRTokenSerializer)),
+                           new JProperty("auth_method",                     AuthMethod.                  ToString()),
+
+                           AuthorizationReference.HasValue
+                               ? new JProperty("authorization_reference",   AuthorizationReference.Value.ToString())
+                               : null,
+
+                           new JProperty("cdr_location",                    Location.                    ToJSON(CustomCDRLocationSerializer)),
+
+                           MeterId.HasValue
+                               ? new JProperty("meter_id",                  MeterId.               Value.ToString())
+                               : null,
+
+                           new JProperty("currency",                        Currency.                    ToString()),
+
+                           //Tariffs.SafeAny()
+                           //    ? new JProperty("tariffs",                   new JArray(Tariffs.        Select(tariff => tariff.ToJSON(CustomEVSESerializer,
+                           //                                                                                                           CustomStatusScheduleSerializer,
+                           //                                                                                                           CustomConnectorSerializer))))
                            //    : null,
 
-                           //Name.IsNotNullOrEmpty()
-                           //    ? new JProperty("name",                      Name)
+                           //ChargingPeriods.SafeAny()
+                           //    ? new JProperty("charging_periods",          new JArray(ChargingPeriods.Select(period => period.ToJSON(CustomEVSESerializer,
+                           //                                                                                                           CustomStatusScheduleSerializer,
+                           //                                                                                                           CustomConnectorSerializer))))
                            //    : null,
 
-                           //new JProperty("address",                         Address),
-                           //new JProperty("city",                            City),
+                           SignedData != null
+                               ? new JProperty("signed_data",               SignedData.                  ToJSON(CustomSignedDataSerializer,
+                                                                                                                CustomSignedValueSerializer))
+                               : null,
 
-                           //PostalCode.IsNotNullOrEmpty()
-                           //    ? new JProperty("postal_code",               PostalCode)
-                           //    : null,
+                           new JProperty("total_cost",                      TotalCosts.                  ToJSON(CustomPriceSerializer)),
 
-                           //State.IsNotNullOrEmpty()
-                           //    ? new JProperty("state",                     State)
-                           //    : null,
+                           TotalFixedCosts.HasValue
+                               ? new JProperty("total_fixed_cost",          TotalFixedCosts.       Value.ToJSON(CustomPriceSerializer))
+                               : null,
 
-                           //new JProperty("country",                         Country),
-                           //new JProperty("coordinates",                     new JObject(
-                           //                                                     new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
-                           //                                                     new JProperty("longitude", Coordinates.Longitude.Value.ToString())
-                           //                                                 )),
+                           new JProperty("total_energy",                    TotalEnergy.                 ToString()),
 
-                           //RelatedCDRs.SafeAny()
-                           //    ? new JProperty("related_CDRs",         new JArray(RelatedCDRs.Select(CDR => CDR.ToJSON(CustomAdditionalGeoCDRSerializer))))
-                           //    : null,
+                           TotalEnergyCost.HasValue
+                               ? new JProperty("total_energy_cost",         TotalEnergyCost.       Value.ToJSON(CustomPriceSerializer))
+                               : null,
 
-                           //ParkingType.HasValue
-                           //    ? new JProperty("parking_type",              ParkingType.Value.ToString())
-                           //    : null,
+                           new JProperty("total_time",                      TotalTime.                   ToString()),
 
-                           //EVSEs.SafeAny()
-                           //    ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
-                           //                                                                                             CustomStatusScheduleSerializer,
-                           //                                                                                             CustomConnectorSerializer))))
-                           //    : null,
+                           TotalTimeCost.HasValue
+                               ? new JProperty("total_time_cost",           TotalTimeCost.         Value.ToJSON(CustomPriceSerializer))
+                               : null,
 
-                           //Directions.SafeAny()
-                           //    ? new JProperty("directions",                new JArray(Directions.Select(evse => evse.ToJSON(CustomDisplayTextSerializer))))
-                           //    : null,
+                           TotalParkingTime.HasValue
+                               ? new JProperty("total_parking_time",        TotalParkingTime.      Value.TotalHours)
+                               : null,
 
-                           //Operator != null
-                           //    ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
+                           TotalParkingCost.HasValue
+                               ? new JProperty("total_parking_cost",        TotalParkingCost.      Value.ToJSON(CustomPriceSerializer))
+                               : null,
 
-                           //SubOperator != null
-                           //    ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
+                           TotalReservationCost.HasValue
+                               ? new JProperty("total_reservation_cost",    TotalReservationCost.  Value.ToJSON(CustomPriceSerializer))
+                               : null,
 
-                           //Owner != null
-                           //    ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
+                           Remark.IsNotNullOrEmpty()
+                               ? new JProperty("remark",                    Remark)
+                               : null,
 
-                           //Facilities.SafeAny()
-                           //    ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
-                           //    : null,
+                           Credit.HasValue
+                               ? new JProperty("credit",                    Credit)
+                               : null,
 
-                           //new JProperty("time_zone",                       Timezone),
-
-                           //OpeningTimes != null
-                           //    ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
-                           //    : null,
-
-                           //ChargingWhenClosed.HasValue
-                           //    ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
-                           //    : null,
-
-                           //Images.SafeAny()
-                           //    ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
-                           //    : null,
-
-                           //EnergyMix != null
-                           //    ? new JProperty("energy_mix",                EnergyMix.ToJSON())
-                           //    : null,
+                           CreditReferenceId.HasValue
+                               ? new JProperty("credit_reference_id",       CreditReferenceId.     Value.ToString())
+                               : null,
 
                            new JProperty("last_updated",                    LastUpdated.ToIso8601())
 

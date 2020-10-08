@@ -252,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<DisplayText> CustomDisplayTextSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<DisplayText> CustomDisplayTextSerializer = null)
         {
 
             var JSON = JSONObject.Create(

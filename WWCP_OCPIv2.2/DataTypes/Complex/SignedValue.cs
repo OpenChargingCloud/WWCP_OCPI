@@ -18,8 +18,9 @@
 #region Usings
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
+using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -33,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// Amount of energy charged this period, maximum current during
     /// this period etc.
     /// </summary>
-    public readonly struct SignedValue : IEquatable<SignedValue>
+    public class SignedValue : IEquatable<SignedValue>
     {
 
         #region Properties
@@ -64,6 +65,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// A signed value consists of a start timestamp and a
         /// list of possible values that influence this period.
         /// </summary>
+        /// <param name="Nature">Nature of the value, in other words, the event this value belongs to.</param>
+        /// <param name="PlainData">The unencoded string of data. The format of the content depends on the EncodingMethod field.</param>
+        /// <param name="SignedData">Blob of signed data, base64 encoded. The format of the content depends on the EncodingMethod field.</param>
         public SignedValue(SignedValueTypes  Nature,
                            String            PlainData,
                            String            SignedData)
@@ -71,7 +75,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Initial checks
 
-            if (PlainData.IsNullOrEmpty())
+            if (PlainData. IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(PlainData),   "The given plain data must not be null or empty!");
 
             if (SignedData.IsNullOrEmpty())
@@ -82,6 +86,221 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Nature      = Nature;
             this.PlainData   = PlainData;
             this.SignedData  = SignedData;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, CustomSignedValueParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a signed value.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
+        public static SignedValue Parse(JObject                                   JSON,
+                                        CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out SignedValue  signedValue,
+                         out String       ErrorResponse,
+                         CustomSignedValueParser))
+            {
+                return signedValue;
+            }
+
+            throw new ArgumentException("The given JSON representation of a signed value is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomSignedValueParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a signed value.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
+        public static SignedValue Parse(String                                    Text,
+                                        CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out SignedValue  signedValue,
+                         out String       ErrorResponse,
+                         CustomSignedValueParser))
+            {
+                return signedValue;
+            }
+
+            throw new ArgumentException("The given text representation of a signed value is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out SignedValue, out ErrorResponse, CustomSignedValueParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a signed value.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="SignedValue">The parsed signed value.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject          JSON,
+                                       out SignedValue  SignedValue,
+                                       out String       ErrorResponse)
+
+            => TryParse(JSON,
+                        out SignedValue,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a signed value.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="SignedValue">The parsed signed value.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
+        public static Boolean TryParse(JObject                                   JSON,
+                                       out SignedValue                           SignedValue,
+                                       out String                                ErrorResponse,
+                                       CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
+        {
+
+            try
+            {
+
+                SignedValue = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Nature            [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("nature",
+                                             "signed value nature",
+                                             out SignedValueTypes Nature,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PlainData         [mandatory]
+
+                if (!JSON.ParseMandatoryText("plain_data",
+                                             "plain data",
+                                             out String PlainData,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse SignedData        [mandatory]
+
+                if (!JSON.ParseMandatoryText("signed_data",
+                                             "signed data",
+                                             out String SignedData,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                SignedValue = new SignedValue(Nature,
+                                              PlainData,
+                                              SignedData);
+
+
+                if (CustomSignedValueParser != null)
+                    SignedValue = CustomSignedValueParser(JSON,
+                                                          SignedValue);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                SignedValue    = default;
+                ErrorResponse  = "The given JSON representation of a signed value is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out SignedValue, out ErrorResponse, CustomSignedValueParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an signedValue.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="SignedValue">The parsed signedValue.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
+        public static Boolean TryParse(String                                    Text,
+                                       out SignedValue                           SignedValue,
+                                       out String                                ErrorResponse,
+                                       CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out SignedValue,
+                                out ErrorResponse,
+                                CustomSignedValueParser);
+
+            }
+            catch (Exception e)
+            {
+                SignedValue    = default;
+                ErrorResponse  = "The given text representation of a signed value is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomSignedValueSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<SignedValue> CustomSignedValueSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("nature",       Nature),
+                           new JProperty("plain_data",   PlainData),
+                           new JProperty("signed_data",  SignedData)
+
+                       );
+
+            return CustomSignedValueSerializer != null
+                       ? CustomSignedValueSerializer(this, JSON)
+                       : JSON;
 
         }
 
@@ -100,8 +319,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (SignedValue SignedValue1,
                                            SignedValue SignedValue2)
+        {
 
-            => SignedValue1.Equals(SignedValue2);
+            if (Object.ReferenceEquals(SignedValue1, SignedValue2))
+                return true;
+
+            if (SignedValue1 is null || SignedValue2 is null)
+                return false;
+
+            return SignedValue1.Equals(SignedValue2);
+
+        }
 
         #endregion
 
@@ -147,7 +375,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(SignedValue SignedValue)
 
-            => Nature.    Equals(SignedValue.Nature)    &&
+            => !(SignedValue is null) &&
+
+               Nature.    Equals(SignedValue.Nature)    &&
                PlainData. Equals(SignedValue.PlainData) &&
                SignedData.Equals(SignedValue.SignedData);
 

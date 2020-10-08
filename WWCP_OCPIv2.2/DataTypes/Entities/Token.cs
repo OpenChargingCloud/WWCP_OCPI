@@ -43,13 +43,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this token.
         /// </summary>
-        [Optional]
+        [Mandatory]
         public CountryCode                  CountryCode                 { get; }
 
         /// <summary>
         /// The Id of the CPO that 'owns' this token (following the ISO-15118 standard).
         /// </summary>
-        [Optional]
+        [Mandatory]
         public Party_Id                     PartyId                     { get; }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Type of the token.
         /// </summary>
         [Mandatory]
-        public TokenTypes                   Types                       { get; }
+        public TokenTypes                   Type                        { get; }
 
         /// <summary>
         /// Uniquely identifies the EV Driver contract token within the eMSP’s platform
@@ -97,13 +97,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Is this Token valid.
         /// </summary>
         [Mandatory]
-        public Boolean                      Valid                       { get; }
+        public Boolean                      IsValid                     { get; }
 
         /// <summary>
         /// Indicates what type of white-listing is allowed.
         /// </summary>
         [Mandatory]
-        public WhitelistTypes               Whitelist                   { get; }
+        public WhitelistTypes               WhitelistType               { get; }
 
         /// <summary>
         /// Optional language Code ISO 639-1. This optional field indicates the token
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// not supported then the CPO is free to choose its own language.
         /// </summary>
         [Optional]
-        public String                       Language                    { get; }
+        public Language_Id?                 UILanguage                  { get; }
 
         /// <summary>
         /// The default charging preference. When this is provided, and a charging session
@@ -128,7 +128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// which energy supplier to use.
         /// </summary>
         [Optional]
-        public EnergyContract?              EnergyContract              { get; }
+        public EnergyContract?              EnergyContract            { get; }
 
         /// <summary>
         /// Timestamp when this token was last updated (or created).
@@ -147,15 +147,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Token(CountryCode      CountryCode,
                      Party_Id         PartyId,
                      Token_Id         Id,
-                     TokenTypes       Types,
+                     TokenTypes       Type,
                      Contract_Id      ContractId,
                      String           Issuer,
-                     Boolean          Valid,
-                     WhitelistTypes   Whitelist,
+                     Boolean          IsValid,
+                     WhitelistTypes   WhitelistType,
 
                      String           VisualNumber     = null,
                      Group_Id?        GroupId          = null,
-                     String           Language         = null,
+                     Language_Id?     UILanguage         = null,
                      ProfileTypes?    DefaultProfile   = null,
                      EnergyContract?  EnergyContract   = null,
 
@@ -170,22 +170,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #endregion
 
-            this.CountryCode      = CountryCode;
-            this.PartyId          = PartyId;
-            this.Id               = Id;
-            this.Types            = Types;
-            this.ContractId       = ContractId;
-            this.Issuer           = Issuer;
-            this.Valid            = Valid;
-            this.Whitelist        = Whitelist;
+            this.CountryCode     = CountryCode;
+            this.PartyId         = PartyId;
+            this.Id              = Id;
+            this.Type            = Type;
+            this.ContractId      = ContractId;
+            this.Issuer          = Issuer;
+            this.IsValid         = IsValid;
+            this.WhitelistType   = WhitelistType;
 
-            this.VisualNumber     = VisualNumber;
-            this.GroupId          = GroupId;
-            this.Language         = Language;
-            this.DefaultProfile   = DefaultProfile;
-            this.EnergyContract   = EnergyContract;
+            this.VisualNumber    = VisualNumber;
+            this.GroupId         = GroupId;
+            this.UILanguage      = UILanguage;
+            this.DefaultProfile  = DefaultProfile;
+            this.EnergyContract  = EnergyContract;
 
-            this.LastUpdated      = LastUpdated ?? DateTime.Now;
+            this.LastUpdated     = LastUpdated ?? DateTime.Now;
 
         }
 
@@ -208,8 +208,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(JSON,
-                         out Token  token,
-                         out String   ErrorResponse,
+                         out Token   token,
+                         out String  ErrorResponse,
                          CountryCodeURL,
                          PartyIdURL,
                          TokenIdURL,
@@ -277,6 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         null,
                         null,
                         null);
+
 
         /// <summary>
         /// Try to parse the given JSON representation of a token.
@@ -366,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                    [optional]
 
-                if (JSON.ParseOptionalStruct("id",
+                if (JSON.ParseOptionalStruct("uid",
                                              "token identification",
                                              Token_Id.TryParse,
                                              out Token_Id? TokenIdBody,
@@ -392,11 +393,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Publish               [mandatory]
+                #region Parse Type                  [mandatory]
 
-                if (!JSON.ParseMandatory("publish",
-                                         "publish",
-                                         out Boolean Publish,
+                if (!JSON.ParseMandatoryEnum("type",
+                                             "token type",
+                                             out TokenTypes Type,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ContractId            [mandatory]
+
+                if (!JSON.ParseMandatory("contract_id",
+                                         "contract identification",
+                                         Contract_Id.TryParse,
+                                         out Contract_Id ContractId,
                                          out ErrorResponse))
                 {
                     return false;
@@ -404,11 +418,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Address               [mandatory]
+                #region Parse VisualNumber          [optional]
 
-                if (!JSON.ParseMandatoryText("address",
-                                             "address",
-                                             out String Address,
+                var VisualNumber = JSON.GetString("visual_number");
+
+                #endregion
+
+                #region Parse Issuer                [mandatory]
+
+                if (!JSON.ParseMandatoryText("issuer",
+                                             "issuer",
+                                             out String Issuer,
                                              out ErrorResponse))
                 {
                     return false;
@@ -416,237 +436,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse City                  [mandatory]
-
-                if (!JSON.ParseMandatoryText("city",
-                                             "city",
-                                             out String City,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse Country               [mandatory]
-
-                if (!JSON.ParseMandatoryText("country",
-                                             "country",
-                                             out String Country,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse Coordinates           [mandatory]
-
-                //if (!JSON.ParseMandatoryJSON("coordinates",
-                //                             "geo coordinates",
-                //                             GeoCoordinate.TryParse,
-                //                             out GeoCoordinate Coordinates,
-                //                             out ErrorResponse))
-                //{
-                //    return false;
-                //}
-
-                #endregion
-
-                #region Parse TimeZone              [mandatory]
-
-                if (!JSON.ParseMandatoryText("time_zone",
-                                             "time zone",
-                                             out String TimeZone,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-
-                #region Parse PublishTokenTypes     [optional]
-
-                if (JSON.ParseOptionalJSON("publish_allowed_to",
-                                           "publish allowed to",
-                                           PublishTokenType.TryParse,
-                                           out IEnumerable<PublishTokenType> PublishTokenTypes,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Name                  [optional]
-
-                var Name = JSON.GetString("name");
-
-                #endregion
-
-                #region Parse PostalCode            [optional]
-
-                var PostalCode = JSON.GetString("postal_code");
-
-                #endregion
-
-                #region Parse State                 [optional]
-
-                var State = JSON.GetString("state");
-
-                #endregion
-
-                #region Parse RelatedTokens      [optional]
-
-                //if (JSON.ParseOptionalJSON("related_tokens",
-                //                           "related tokens",
-                //                           AdditionalGeoToken.TryParse,
-                //                           out IEnumerable<AdditionalGeoToken> RelatedTokens,
-                //                           out ErrorResponse))
-                //{
-
-                //    if (ErrorResponse != null)
-                //        return false;
-
-                //}
-
-                #endregion
-
-                #region Parse ParkingType           [optional]
-
-                if (JSON.ParseOptionalEnum("parking_type",
-                                           "parking type",
-                                           out ParkingTypes? ParkingType,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse EVSEs                 [optional]
-
-                if (JSON.ParseOptionalJSON("evses",
-                                           "evses",
-                                           EVSE.TryParse,
-                                           out IEnumerable<EVSE> EVSEs,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Directions            [optional]
-
-                if (JSON.ParseOptionalJSON("directions",
-                                           "multi-language directions",
-                                           DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> Directions,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Operator              [optional]
-
-                if (JSON.ParseOptionalJSON("operator",
-                                           "operator",
-                                           BusinessDetails.TryParse,
-                                           out BusinessDetails Operator,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Suboperator           [optional]
-
-                if (JSON.ParseOptionalJSON("suboperator",
-                                           "suboperator",
-                                           BusinessDetails.TryParse,
-                                           out BusinessDetails Suboperator,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Owner                 [optional]
-
-                if (JSON.ParseOptionalJSON("owner",
-                                           "owner",
-                                           BusinessDetails.TryParse,
-                                           out BusinessDetails Owner,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse Facilities            [optional]
-
-                if (JSON.ParseOptionalEnums("facilities",
-                                            "facilities",
-                                            out IEnumerable<Facilities> Facilities,
-                                            out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse OpeningTimes          [optional]
-
-                if (JSON.ParseOptionalJSON("opening_times",
-                                           "opening times",
-                                           Hours.TryParse,
-                                           out Hours OpeningTimes,
-                                           out ErrorResponse))
-                {
-
-                    if (ErrorResponse != null)
-                        return false;
-
-                }
-
-                #endregion
-
-                #region Parse ChargingWhenClosed    [optional]
-
-                if (JSON.ParseOptional("charging_when_closed",
-                                       "charging when closed",
-                                       out Boolean? ChargingWhenClosed,
+                #region Parse GroupId               [optional]
+
+                if (JSON.ParseOptional("group_id",
+                                       "group identification",
+                                       Group_Id.TryParse,
+                                       out Group_Id? GroupId,
                                        out ErrorResponse))
                 {
 
@@ -657,12 +452,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Images                [optional]
+                #region Parse IsValid               [mandatory]
 
-                if (JSON.ParseOptionalJSON("images",
-                                           "images",
-                                           Image.TryParse,
-                                           out IEnumerable<Image> Images,
+                if (!JSON.ParseMandatory("valid",
+                                         "token is valid",
+                                         out Boolean IsValid,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse WhitelistType         [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("whitelist",
+                                             "whitelist type",
+                                             out WhitelistTypes WhitelistType,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse UILanguage            [optional]
+
+                if (JSON.ParseOptional("language",
+                                       "user-interface language",
+                                       Language_Id.TryParse,
+                                       out Language_Id? UILanguage,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse DefaultProfile        [optional]
+
+                if (JSON.ParseOptionalEnum("default_profile_type",
+                                           "user-interface language",
+                                           out ProfileTypes? DefaultProfile,
                                            out ErrorResponse))
                 {
 
@@ -673,12 +507,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse EnergyMix             [optional]
+                #region Parse EnergyContract        [optional]
 
-                if (JSON.ParseOptionalJSON("energy_mix",
-                                           "energy mix",
-                                           OCPIv2_2.EnergyMix.TryParse,
-                                           out EnergyMix EnergyMix,
+                if (JSON.ParseOptionalJSON("energy_contract",
+                                           "energy contract",
+                                           OCPIv2_2.EnergyContract.TryParse,
+                                           out EnergyContract EnergyContract,
                                            out ErrorResponse))
                 {
 
@@ -688,7 +522,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
                 #endregion
-
 
                 #region Parse LastUpdated           [mandatory]
 
@@ -703,46 +536,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                //Token = new Token(CountryCodeBody ?? CountryCodeURL.Value,
-                //                        PartyIdBody     ?? PartyIdURL.Value,
-                //                        TokenIdBody  ?? TokenIdURL.Value,
-                //                        Publish,
-                //                        Address?.   Trim(),
-                //                        City?.      Trim(),
-                //                        Country?.   Trim(),
-                //                        Coordinates,
-                //                        TimeZone?.  Trim(),
+                Token = new Token(CountryCodeBody ?? CountryCodeURL.Value,
+                                  PartyIdBody     ?? PartyIdURL.Value,
+                                  TokenIdBody     ?? TokenIdURL.Value,
+                                  Type,
+                                  ContractId,
+                                  Issuer,
+                                  IsValid,
+                                  WhitelistType,
+                                  VisualNumber,
+                                  GroupId,
+                                  UILanguage,
+                                  DefaultProfile,
+                                  EnergyContract,
+                                  LastUpdated);
 
-                //                        PublishTokenTypes,
-                //                        Name?.      Trim(),
-                //                        PostalCode?.Trim(),
-                //                        State?.     Trim(),
-                //                        RelatedTokens?.Distinct(),
-                //                        ParkingType,
-                //                        EVSEs?.           Distinct(),
-                //                        Directions?.      Distinct(),
-                //                        Operator,
-                //                        Suboperator,
-                //                        Owner,
-                //                        Facilities?.      Distinct(),
-                //                        OpeningTimes,
-                //                        ChargingWhenClosed,
-                //                        Images?.          Distinct(),
-                //                        EnergyMix,
-                //                        LastUpdated);
-
-                Token = null;
 
                 if (CustomTokenParser != null)
                     Token = CustomTokenParser(JSON,
-                                                  Token);
+                                              Token);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                Token        = default;
+                Token          = default;
                 ErrorResponse  = "The given JSON representation of a token is invalid: " + e.Message;
                 return false;
             }
@@ -784,7 +603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Token        = null;
+                Token          = null;
                 ErrorResponse  = "The given text representation of a token is invalid: " + e.Message;
                 return false;
             }
@@ -793,118 +612,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomTokenSerializer = null, CustomEVSESerializer = null, ...)
+        #region ToJSON(CustomTokenSerializer = null, CustomEnergyContractSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        /// <param name="CustomAdditionalGeoTokenSerializer">A delegate to serialize custom additional geo token JSON objects.</param>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Token>                  CustomTokenSerializer                = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer     = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoTokenSerializer   = null,
-                              CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                 = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer       = null,
-                              CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer            = null,
-                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer          = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer      = null,
-                              CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                = null,
-                              CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                = null)
+        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Token>           CustomTokenSerializer            = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>  CustomEnergyContractSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                    CountryCode.ToString()),
-                           new JProperty("party_id",                        PartyId.    ToString()),
-                           new JProperty("id",                              Id.         ToString()),
-                           //new JProperty("publish",                         Publish),
+                           new JProperty("country_code",                CountryCode.         ToString()),
+                           new JProperty("party_id",                    PartyId.             ToString()),
+                           new JProperty("uid",                         Id.                  ToString()),
+                           new JProperty("type",                        Type.                ToString()),
+                           new JProperty("contract_id",                 ContractId.          ToString()),
 
-                           //Publish == false && PublishAllowedTo.SafeAny()
-                           //    ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
-                           //    : null,
+                           VisualNumber.IsNotNullOrEmpty()
+                               ? new JProperty("visual_number",         VisualNumber)
+                               : null,
 
-                           //Name.IsNotNullOrEmpty()
-                           //    ? new JProperty("name",                      Name)
-                           //    : null,
+                           new JProperty("issuer",                      Issuer),
 
-                           //new JProperty("address",                         Address),
-                           //new JProperty("city",                            City),
+                           GroupId.HasValue
+                               ? new JProperty("group_id",              GroupId)
+                               : null,
 
-                           //PostalCode.IsNotNullOrEmpty()
-                           //    ? new JProperty("postal_code",               PostalCode)
-                           //    : null,
+                           new JProperty("valid",                       IsValid),
+                           new JProperty("whitelist",                   WhitelistType.       ToString()),
 
-                           //State.IsNotNullOrEmpty()
-                           //    ? new JProperty("state",                     State)
-                           //    : null,
+                           UILanguage.HasValue
+                               ? new JProperty("language",              UILanguage.          ToString())
+                               : null,
 
-                           //new JProperty("country",                         Country),
-                           //new JProperty("coordinates",                     new JObject(
-                           //                                                     new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
-                           //                                                     new JProperty("longitude", Coordinates.Longitude.Value.ToString())
-                           //                                                 )),
+                           DefaultProfile.HasValue
+                               ? new JProperty("default_profile_type",  DefaultProfile.      ToString())
+                               : null,
 
-                           //RelatedTokens.SafeAny()
-                           //    ? new JProperty("related_tokens",         new JArray(RelatedTokens.Select(token => token.ToJSON(CustomAdditionalGeoTokenSerializer))))
-                           //    : null,
+                           EnergyContract.HasValue
+                               ? new JProperty("energy_contract",       EnergyContract.Value.ToJSON(CustomEnergyContractSerializer))
+                               : null,
 
-                           //ParkingType.HasValue
-                           //    ? new JProperty("parking_type",              ParkingType.Value.ToString())
-                           //    : null,
-
-                           //EVSEs.SafeAny()
-                           //    ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
-                           //                                                                                             CustomStatusScheduleSerializer,
-                           //                                                                                             CustomConnectorSerializer))))
-                           //    : null,
-
-                           //Directions.SafeAny()
-                           //    ? new JProperty("directions",                new JArray(Directions.Select(evse => evse.ToJSON(CustomDisplayTextSerializer))))
-                           //    : null,
-
-                           //Operator != null
-                           //    ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //SubOperator != null
-                           //    ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //Owner != null
-                           //    ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //Facilities.SafeAny()
-                           //    ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
-                           //    : null,
-
-                           //new JProperty("time_zone",                       Timezone),
-
-                           //OpeningTimes != null
-                           //    ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
-                           //    : null,
-
-                           //ChargingWhenClosed.HasValue
-                           //    ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
-                           //    : null,
-
-                           //Images.SafeAny()
-                           //    ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
-                           //    : null,
-
-                           //EnergyMix != null
-                           //    ? new JProperty("energy_mix",                EnergyMix.ToJSON())
-                           //    : null,
-
-                           new JProperty("last_updated",                    LastUpdated.ToIso8601())
+                           new JProperty("last_updated",                LastUpdated.         ToIso8601())
 
                        );
 
