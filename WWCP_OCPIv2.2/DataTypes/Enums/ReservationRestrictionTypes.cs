@@ -25,12 +25,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     {
 
         /// <summary>
-        /// Used in TariffElements to describe costs for a reservation.
+        /// Used in tariff elements to describe costs for a reservation.
         /// </summary>
         RESERVATION,
 
         /// <summary>
-        /// Used in TariffElements to describe costs for a reservation that expires
+        /// Used in tariff elements to describe costs for a reservation that expires
         /// (i.e. driver does not start a charging session before expiry_date of the reservation).
         /// </summary>
         RESERVATION_EXPIRES

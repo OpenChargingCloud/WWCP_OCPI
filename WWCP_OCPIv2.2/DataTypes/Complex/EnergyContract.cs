@@ -272,7 +272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, out EnergyContract, out ErrorResponse, CustomEnergyContractParser = null)
 
         /// <summary>
-        /// Try to parse the given text representation of an energyContract.
+        /// Try to parse the given text representation of an energy contract.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="EnergyContract">The parsed energyContract.</param>

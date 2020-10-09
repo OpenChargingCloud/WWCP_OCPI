@@ -804,8 +804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
 
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>                 CustomTariffSerializer                  = null,
-                              )
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff> CustomTariffSerializer = null)
         {
 
             var JSON = JSONObject.Create(

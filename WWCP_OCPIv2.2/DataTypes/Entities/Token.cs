@@ -681,8 +681,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-
-
         #region Operator overloading
 
         #region Operator == (Token1, Token2)

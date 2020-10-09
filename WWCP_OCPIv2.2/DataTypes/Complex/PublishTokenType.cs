@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Unique ID by which this Token can be identified.
+        /// Unique identification by which this token can be identified.
         /// </summary>
         [Optional]
         public Token_Id?    Id              { get; }
@@ -51,19 +51,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public TokenTypes?  Type            { get; }
 
         /// <summary>
-        /// Visual readable number/identification as printed on the Token (RFID card).  // 64
+        /// Visual readable number/identification as printed on the token (RFID card).  // 64
         /// </summary>
         [Optional]
         public String       VisualNumber    { get; }
 
         /// <summary>
-        /// Begin of the opening or access hours exception.  // 64
+        /// Issuing company, most of the times the name of the company printed on the token (RFID card), not necessarily the eMSP.  // 64
         /// </summary>
         [Optional]
         public String       Issuer          { get; }
 
         /// <summary>
-        /// This ID groups a couple of tokens. This can be used to make two or more tokens work as one.
+        /// This identification groups a couple of tokens to make two or more tokens work as one.
+        /// So a session can be started with one token and stopped with another, handy when a card
+        /// and key-fob are given to the EV-driver.
+        /// Beware that OCPP 1.5/1.6 only support group_ids (it is called parentId in OCPP 1.5/1.6) with
+        /// a maximum length of 20.
         /// </summary>
         [Optional]
         public Group_Id?    GroupId         { get; }
@@ -75,7 +79,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create new publish token for opening or access hours.
         /// </summary>
-
+        /// <param name="Id">Unique identification by which this token can be identified.</param>
+        /// <param name="Type">Type of the token.</param>
+        /// <param name="VisualNumber">Visual readable number/identification as printed on the Token (RFID card), might be equal to the contract_id.</param>
+        /// <param name="Issuer">Issuing company, most of the times the name of the company printed on the token (RFID card), not necessarily the eMSP.</param>
+        /// <param name="GroupId">This identification groups a couple of tokens to make two or more tokens work as one.</param>
         public PublishTokenType(Token_Id?    Id             = null,
                                 TokenTypes?  Type           = null,
                                 String       VisualNumber   = null,
@@ -182,11 +190,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 PublishTokenType = default;
 
-                //if (JSON?.HasValues != true)
-                //{
-                //    ErrorResponse = "The given JSON object must not be null or empty!";
-                //    return false;
-                //}
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = null;
+                    return true;
+                }
+
 
                 #region Parse Id              [optional]
 
@@ -245,26 +254,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                PublishTokenType = new PublishTokenType(Id,
-                                                        Type,
-                                                        VisualNumber,
-                                                        Issuer,
-                                                        GroupId);
+                PublishTokenType = (Id.          HasValue        ||
+                                    Type.        HasValue        ||
+                                    VisualNumber.IsNullOrEmpty() ||
+                                    Issuer.      IsNullOrEmpty() ||
+                                    GroupId.     HasValue)
+
+                                        ? new PublishTokenType(Id,
+                                                               Type,
+                                                               VisualNumber,
+                                                               Issuer,
+                                                               GroupId)
+
+                                        : null;
 
 
                 if (CustomPublishTokenTypeParser != null)
                     PublishTokenType = CustomPublishTokenTypeParser(JSON,
                                                                     PublishTokenType);
 
-
-                if (!Id.HasValue                  &&
-                    !Type.HasValue                &&
-                    !VisualNumber.IsNullOrEmpty() &&
-                    !Issuer.IsNullOrEmpty()       &&
-                    !GroupId.HasValue)
-                {
-                    PublishTokenType = null;
-                }
 
                 return true;
 

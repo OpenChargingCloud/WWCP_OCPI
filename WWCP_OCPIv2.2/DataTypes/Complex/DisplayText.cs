@@ -39,11 +39,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The language of the text.
         /// </summary>
+        [Mandatory]
         public Languages  Language    { get; }
 
         /// <summary>
         /// The text.
         /// </summary>
+        [Mandatory]
         public String     Text        { get; }
 
         #endregion
