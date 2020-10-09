@@ -19,9 +19,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The authentication method used.
+    /// Tariff dimensions.
     /// </summary>
-    public enum TariffDimensionTypes
+    public enum TariffDimensions
     {
 
         /// <summary>

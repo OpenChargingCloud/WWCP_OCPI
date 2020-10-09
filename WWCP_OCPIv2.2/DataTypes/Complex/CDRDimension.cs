@@ -19,6 +19,10 @@
 
 using System;
 
+using Newtonsoft.Json.Linq;
+
+using org.GraphDefined.Vanaheimr.Illias;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2
@@ -35,14 +39,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Type of cdr dimension.
+        /// The type of the charge detail record dimension.
         /// </summary>
-        public TariffDimensionTypes  Type      { get; }
+        public TariffDimensions  Type      { get; }
 
         /// <summary>
         /// Volume of the dimension consumed, measured according to the dimension type.
         /// </summary>
-        public Decimal         Volume    { get; }
+        public Decimal           Volume    { get; }
 
         #endregion
 
@@ -53,12 +57,263 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Type">Type of charge detail record dimension.</param>
         /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
-        public CDRDimension(TariffDimensionTypes  Type,
-                            Decimal         Volume)
+        public CDRDimension(TariffDimensions  Type,
+                            Decimal           Volume)
         {
 
             this.Type    = Type;
             this.Volume  = Volume;
+
+        }
+
+        #endregion
+
+
+        #region (static) Parse   (JSON, CustomCDRDimensionParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a charge detail record dimension.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        public static CDRDimension Parse(JObject                                      JSON,
+                                           CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out CDRDimension  cdrDimension,
+                         out String        ErrorResponse,
+                         CustomCDRDimensionParser))
+            {
+                return cdrDimension;
+            }
+
+            throw new ArgumentException("The given JSON representation of a charge detail record dimension is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomCDRDimensionParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a charge detail record dimension.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        public static CDRDimension Parse(String                                     Text,
+                                         CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out CDRDimension  cdrDimension,
+                         out String        ErrorResponse,
+                         CustomCDRDimensionParser))
+            {
+                return cdrDimension;
+            }
+
+            throw new ArgumentException("The given text representation of a charge detail record dimension is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, CustomCDRDimensionParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        public static CDRDimension? TryParse(JObject                                    JSON,
+                                             CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out CDRDimension  cdrDimension,
+                         out String        ErrorResponse,
+                         CustomCDRDimensionParser))
+            {
+                return cdrDimension;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, CustomCDRDimensionParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// </summary>
+        /// <param name="Text">The JSON to parse.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        public static CDRDimension? TryParse(String                                     Text,
+                                             CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out CDRDimension  cdrDimension,
+                         out String        ErrorResponse,
+                         CustomCDRDimensionParser))
+            {
+                return cdrDimension;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out CDRDimension, out ErrorResponse, CustomCDRDimensionParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CDRDimension">The parsed charge detail record dimension.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject           JSON,
+                                       out CDRDimension  CDRDimension,
+                                       out String        ErrorResponse)
+
+            => TryParse(JSON,
+                        out CDRDimension,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CDRDimension">The parsed charge detail record dimension.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out CDRDimension                           CDRDimension,
+                                       out String                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        {
+
+            try
+            {
+
+                CDRDimension = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Type      [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("type",
+                                             "tariff dimension type",
+                                             out TariffDimensions Type,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Volume    [mandatory]
+
+                if (!JSON.ParseMandatory("volume",
+                                         "charge detail record dimension identification",
+                                         out Decimal Volume,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                CDRDimension = new CDRDimension(Type,
+                                                Volume);
+
+
+                if (CustomCDRDimensionParser != null)
+                    CDRDimension = CustomCDRDimensionParser(JSON,
+                                                            CDRDimension);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                CDRDimension   = default;
+                ErrorResponse  = "The given JSON representation of a charge detail record dimension is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out CDRDimension, out ErrorResponse, CustomCDRDimensionParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of an cdrDimension.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CDRDimension">The parsed cdrDimension.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        public static Boolean TryParse(String                                     Text,
+                                       out CDRDimension                           CDRDimension,
+                                       out String                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out CDRDimension,
+                                out ErrorResponse,
+                                CustomCDRDimensionParser);
+
+            }
+            catch (Exception e)
+            {
+                CDRDimension   = default;
+                ErrorResponse  = "The given text representation of a charge detail record dimension is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomCDRDimensionSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRDimension> CustomCDRDimensionSerializer = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("type",    Type),
+                           new JProperty("volume",  Volume)
+
+                       );
+
+            return CustomCDRDimensionSerializer != null
+                       ? CustomCDRDimensionSerializer(this, JSON)
+                       : JSON;
 
         }
 
@@ -232,8 +487,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
+
                 return Type.  GetHashCode() * 3 ^
                        Volume.GetHashCode();
+
             }
         }
 

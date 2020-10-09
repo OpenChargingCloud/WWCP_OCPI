@@ -732,6 +732,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 //                        ChargingWhenClosed,
                 //                        Images?.          Distinct(),
                 //                        EnergyMix,
+
                 //                        LastUpdated);
 
                 Tariff = null;
@@ -802,25 +803,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo tariff JSON objects.</param>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+
         public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>                 CustomTariffSerializer                  = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
-                              CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
-                              CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
-                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
-                              CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
-                              CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
+                              )
         {
 
             var JSON = JSONObject.Create(
@@ -828,84 +813,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("country_code",                    CountryCode.ToString()),
                            new JProperty("party_id",                        PartyId.    ToString()),
                            new JProperty("id",                              Id.         ToString()),
-                           //new JProperty("publish",                         Publish),
 
-                           //Publish == false && PublishAllowedTo.SafeAny()
-                           //    ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
-                           //    : null,
 
-                           //Name.IsNotNullOrEmpty()
-                           //    ? new JProperty("name",                      Name)
-                           //    : null,
 
-                           //new JProperty("address",                         Address),
-                           //new JProperty("city",                            City),
 
-                           //PostalCode.IsNotNullOrEmpty()
-                           //    ? new JProperty("postal_code",               PostalCode)
-                           //    : null,
 
-                           //State.IsNotNullOrEmpty()
-                           //    ? new JProperty("state",                     State)
-                           //    : null,
-
-                           //new JProperty("country",                         Country),
-                           //new JProperty("coordinates",                     new JObject(
-                           //                                                     new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
-                           //                                                     new JProperty("longitude", Coordinates.Longitude.Value.ToString())
-                           //                                                 )),
-
-                           //RelatedTariffs.SafeAny()
-                           //    ? new JProperty("related_tariffs",         new JArray(RelatedTariffs.Select(tariff => tariff.ToJSON(CustomAdditionalGeoTariffSerializer))))
-                           //    : null,
-
-                           //ParkingType.HasValue
-                           //    ? new JProperty("parking_type",              ParkingType.Value.ToString())
-                           //    : null,
-
-                           //EVSEs.SafeAny()
-                           //    ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
-                           //                                                                                             CustomStatusScheduleSerializer,
-                           //                                                                                             CustomConnectorSerializer))))
-                           //    : null,
-
-                           //Directions.SafeAny()
-                           //    ? new JProperty("directions",                new JArray(Directions.Select(evse => evse.ToJSON(CustomDisplayTextSerializer))))
-                           //    : null,
-
-                           //Operator != null
-                           //    ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //SubOperator != null
-                           //    ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //Owner != null
-                           //    ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
-                           //    : null,
-
-                           //Facilities.SafeAny()
-                           //    ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
-                           //    : null,
-
-                           //new JProperty("time_zone",                       Timezone),
-
-                           //OpeningTimes != null
-                           //    ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
-                           //    : null,
-
-                           //ChargingWhenClosed.HasValue
-                           //    ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
-                           //    : null,
-
-                           //Images.SafeAny()
-                           //    ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
-                           //    : null,
-
-                           //EnergyMix != null
-                           //    ? new JProperty("energy_mix",                EnergyMix.ToJSON())
-                           //    : null,
 
                            new JProperty("last_updated",                    LastUpdated.ToIso8601())
 

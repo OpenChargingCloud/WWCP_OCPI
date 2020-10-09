@@ -574,14 +574,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (CustomCDRParser != null)
                     CDR = CustomCDRParser(JSON,
-                                                  CDR);
+                                          CDR);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                CDR        = default;
+                CDR            = default;
                 ErrorResponse  = "The given JSON representation of a CDR is invalid: " + e.Message;
                 return false;
             }
@@ -640,16 +640,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomCDRSerializer">A delegate to serialize custom CDR JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// 
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>          CustomCDRSerializer           = null,
-                              CustomJObjectSerializerDelegate<CDRToken>     CustomCDRTokenSerializer      = null,
-                              CustomJObjectSerializerDelegate<CDRLocation>  CustomCDRLocationSerializer   = null,
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>             CustomCDRSerializer              = null,
+                              CustomJObjectSerializerDelegate<CDRToken>        CustomCDRTokenSerializer         = null,
+                              CustomJObjectSerializerDelegate<CDRLocation>     CustomCDRLocationSerializer      = null,
 
-                              CustomJObjectSerializerDelegate<SignedData>   CustomSignedDataSerializer    = null,
-                              CustomJObjectSerializerDelegate<SignedValue>  CustomSignedValueSerializer   = null,
-                              CustomJObjectSerializerDelegate<Price>        CustomPriceSerializer         = null)
+                              CustomJObjectSerializerDelegate<ChargingPeriod>  CustomChargingPeriodSerializer   = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>    CustomCDRDimensionSerializer     = null,
+                              CustomJObjectSerializerDelegate<SignedData>      CustomSignedDataSerializer       = null,
+                              CustomJObjectSerializerDelegate<SignedValue>     CustomSignedValueSerializer      = null,
+                              CustomJObjectSerializerDelegate<Price>           CustomPriceSerializer            = null)
         {
 
             var JSON = JSONObject.Create(
@@ -685,11 +690,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            //                                                                                                           CustomConnectorSerializer))))
                            //    : null,
 
-                           //ChargingPeriods.SafeAny()
-                           //    ? new JProperty("charging_periods",          new JArray(ChargingPeriods.Select(period => period.ToJSON(CustomEVSESerializer,
-                           //                                                                                                           CustomStatusScheduleSerializer,
-                           //                                                                                                           CustomConnectorSerializer))))
-                           //    : null,
+                           ChargingPeriods.SafeAny()
+                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.Select(period => period.ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                      CustomCDRDimensionSerializer))))
+                               : null,
 
                            SignedData != null
                                ? new JProperty("signed_data",               SignedData.                  ToJSON(CustomSignedDataSerializer,

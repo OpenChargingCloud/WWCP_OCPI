@@ -124,7 +124,7 @@
     <Compile Include="DataTypes\Simple\CountryCode.cs" />
     <Compile Include="DataTypes\Simple\Location_Id.cs" />
     <Compile Include="DataTypes\Enums\SessionStatusTypes.cs" />
-    <Compile Include="DataTypes\Enums\TariffDimensionTypes.cs" />
+    <Compile Include="DataTypes\Enums\TariffDimensions.cs" />
     <Compile Include="DataTypes\Enums\AuthMethods.cs" />
     <Compile Include="DataTypes\Complex\CDRDimension.cs" />
     <Compile Include="DataTypes\Complex\ChargingPeriod.cs" />

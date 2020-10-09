@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        Currency.EUR,
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(TariffDimensionTypes.TIME, 2.00M, 300)
+                                                               new PriceComponent(TariffDimensions.TIME, 2.00M, 300)
                                                            )
                                                        )
                                       );
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                        },
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
-                                                               new PriceComponent(TariffDimensionTypes.TIME, 2.00M, 300)
+                                                               new PriceComponent(TariffDimensions.TIME, 2.00M, 300)
                                                            )
                                                        )
                                       );

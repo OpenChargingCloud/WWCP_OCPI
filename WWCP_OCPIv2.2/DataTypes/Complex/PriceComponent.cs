@@ -42,20 +42,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Type of tariff dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimensionTypes  Type        { get; }
+        public TariffDimensions  Type        { get; }
 
         /// <summary>
         /// Price per unit (excl. VAT) for this tariff dimension.
         /// </summary>
         [Mandatory]
-        public Decimal               Price       { get; }
+        public Decimal           Price       { get; }
 
         /// <summary>
         /// Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.
         /// Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.
         /// </summary>
         [Optional]
-        public Decimal?              VAT         { get; }
+        public Decimal?          VAT         { get; }
 
         /// <summary>
         /// Minimum amount to be billed. This unit will be billed in this step_size blocks.
@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
         [Mandatory]
-        public UInt32                StepSize    { get; }
+        public UInt32            StepSize    { get; }
 
         #endregion
 
@@ -78,7 +78,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Price">Price per unit (excl. VAT) for this tariff dimension.</param>
         /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
-        public PriceComponent(TariffDimensionTypes  Type,
+        public PriceComponent(TariffDimensions  Type,
                               Decimal               Price,
                               Decimal?              VAT,
                               UInt32                StepSize = 1)
@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static PriceComponent FlatRate(Decimal   Price,
                                               Decimal?  VAT = null)
 
-            => new PriceComponent(TariffDimensionTypes.FLAT,
+            => new PriceComponent(TariffDimensions.FLAT,
                                   Price,
                                   VAT,
                                   1);
@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                   Decimal   Price,
                                                   Decimal?  VAT = null)
 
-            => new PriceComponent(TariffDimensionTypes.TIME,
+            => new PriceComponent(TariffDimensions.TIME,
                                   Price,
                                   VAT,
                                   (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
@@ -142,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                  Decimal   Price,
                                                  Decimal?  VAT = null)
 
-            => new PriceComponent(TariffDimensionTypes.PARKING_TIME,
+            => new PriceComponent(TariffDimensions.PARKING_TIME,
                                   Price,
                                   VAT,
                                   (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
