@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Complex\Time.cs" />
     <Compile Include="DataTypes\OCPIRequest.cs" />
     <Compile Include="CommonAPI\AccessStatus.cs" />
     <Compile Include="CommonAPI\AccessInfo.cs" />

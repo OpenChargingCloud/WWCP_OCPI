@@ -60,7 +60,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ExcludingVAT">Price/Cost excluding VAT.</param>
         /// <param name="IncludingVAT">Price/Cost including VAT.</param>
         public Price(Double   ExcludingVAT,
-                     Double?  IncludingVAT)
+                     Double?  IncludingVAT   = null)
         {
 
             this.ExcludingVAT  = ExcludingVAT;

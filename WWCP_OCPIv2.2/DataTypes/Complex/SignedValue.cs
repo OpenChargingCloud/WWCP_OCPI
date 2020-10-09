@@ -73,15 +73,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            String            SignedData)
         {
 
-            #region Initial checks
-
             if (PlainData. IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(PlainData),   "The given plain data must not be null or empty!");
 
             if (SignedData.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(SignedData),  "The given signed data must not be null or empty!");
-
-            #endregion
 
             this.Nature      = Nature;
             this.PlainData   = PlainData;

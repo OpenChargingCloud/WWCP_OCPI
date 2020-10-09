@@ -79,9 +79,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
         public PriceComponent(TariffDimensions  Type,
-                              Decimal               Price,
-                              Decimal?              VAT,
-                              UInt32                StepSize = 1)
+                              Decimal           Price,
+                              Decimal?          VAT        = null,
+                              UInt32            StepSize   = 1)
         {
 
             this.Type      = Type;
@@ -149,6 +149,261 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region (static) Parse   (JSON, CustomPriceComponentParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a price component.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
+        public static PriceComponent Parse(JObject                                      JSON,
+                                           CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out PriceComponent  priceComponent,
+                         out String          ErrorResponse,
+                         CustomPriceComponentParser))
+            {
+                return priceComponent;
+            }
+
+            throw new ArgumentException("The given JSON representation of a price component is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomPriceComponentParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a price component.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
+        public static PriceComponent Parse(String                                       Text,
+                                           CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out PriceComponent  priceComponent,
+                         out String          ErrorResponse,
+                         CustomPriceComponentParser))
+            {
+                return priceComponent;
+            }
+
+            throw new ArgumentException("The given text representation of a price component is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, CustomPriceComponentParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price component.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
+        public static PriceComponent? TryParse(JObject                                         JSON,
+                                                  CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out PriceComponent  priceComponent,
+                         out String          ErrorResponse,
+                         CustomPriceComponentParser))
+            {
+                return priceComponent;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, CustomPriceComponentParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price component.
+        /// </summary>
+        /// <param name="Text">The JSON to parse.</param>
+        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
+        public static PriceComponent? TryParse(String                                       Text,
+                                               CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out PriceComponent  priceComponent,
+                         out String          ErrorResponse,
+                         CustomPriceComponentParser))
+            {
+                return priceComponent;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out PriceComponent, out ErrorResponse, CustomPriceComponentParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price component.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="PriceComponent">The parsed price component.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject             JSON,
+                                       out PriceComponent  PriceComponent,
+                                       out String          ErrorResponse)
+
+            => TryParse(JSON,
+                        out PriceComponent,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a price component.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="PriceComponent">The parsed price component.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
+        public static Boolean TryParse(JObject                                      JSON,
+                                       out PriceComponent                           PriceComponent,
+                                       out String                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        {
+
+            try
+            {
+
+                PriceComponent = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse Type          [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("type",
+                                             "tariff dimension type",
+                                             out TariffDimensions Type,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Price         [mandatory]
+
+                if (!JSON.ParseMandatory("price",
+                                         "price",
+                                         out Decimal Price,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse VAT           [optional]
+
+                if (JSON.ParseOptional("vat",
+                                       "value added tax",
+                                       out Decimal? VAT,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse == null)
+                        return false;
+
+                }
+
+                #endregion
+
+                #region Parse StepSize      [mandatory]
+
+                if (!JSON.ParseMandatory("step_size",
+                                         "step size",
+                                         out UInt32 StepSize,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
+                PriceComponent = new PriceComponent(Type,
+                                                    Price,
+                                                    VAT,
+                                                    StepSize);
+
+
+                if (CustomPriceComponentParser != null)
+                    PriceComponent = CustomPriceComponentParser(JSON,
+                                                                PriceComponent);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                PriceComponent  = default;
+                ErrorResponse   = "The given JSON representation of a price component is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out PriceComponent, out ErrorResponse, CustomPriceComponentParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a price component.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="PriceComponent">The parsed priceComponent.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
+        public static Boolean TryParse(String                                       Text,
+                                       out PriceComponent                           PriceComponent,
+                                       out String                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out PriceComponent,
+                                out ErrorResponse,
+                                CustomPriceComponentParser);
+
+            }
+            catch (Exception e)
+            {
+                PriceComponent  = default;
+                ErrorResponse   = "The given text representation of a price component is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
 
         #region ToJSON(CustomPriceComponentSerializer = null)
 

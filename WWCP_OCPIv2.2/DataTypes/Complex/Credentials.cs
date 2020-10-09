@@ -41,8 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Case Sensitive, ASCII only. The credentials token for the other party to
-        /// authenticate in your system. Not encoded in Base64 or any other encoding.
+        /// The credentials token for the other party to authenticate in your system.
         /// </summary>
         [Mandatory]
         public AccessToken                   Token     { get; }
@@ -56,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The enumeration of roles a party provides.
         /// </summary>
-        [Optional]
+        [Mandatory]
         public IEnumerable<CredentialsRole>  Roles     { get; }
 
         #endregion
@@ -66,14 +65,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create new credentials.
         /// </summary>
+        /// <param name="Token">The credentials token for the other party to authenticate in your system.</param>
+        /// <param name="URL">The URL to your API versions endpoint.</param>
+        /// <param name="Roles">The enumeration of roles a party provides.</param>
         public Credentials(AccessToken                   Token,
                            String                        URL,
                            IEnumerable<CredentialsRole>  Roles)
         {
 
+            if (!Roles.SafeAny())
+                throw new ArgumentNullException(nameof(Roles), "The given enumeration of roles must not be null or empty!");
+
             this.Token  = Token;
             this.URL    = URL;
-            this.Roles  = Roles;
+            this.Roles  = Roles?.Distinct();
 
         }
 
@@ -92,8 +97,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(JSON,
-                         out Credentials credentials,
-                         out String      ErrorResponse,
+                         out Credentials  credentials,
+                         out String       ErrorResponse,
                          CustomCredentialsParser))
             {
                 return credentials;
@@ -117,8 +122,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(Text,
-                         out Credentials credentials,
-                         out String      ErrorResponse,
+                         out Credentials  credentials,
+                         out String       ErrorResponse,
                          CustomCredentialsParser))
             {
                 return credentials;
@@ -265,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Credentials = default;
+                Credentials    = default;
                 ErrorResponse  = "The given text representation of a credentials is invalid: " + e.Message;
                 return false;
             }

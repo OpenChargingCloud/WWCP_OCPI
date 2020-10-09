@@ -41,11 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The version identification.
         /// </summary>
+        [Mandatory]
         public Version_Id  VersionId    { get; }
 
         /// <summary>
         /// The URL of the version.
         /// </summary>
+        [Mandatory]
         public String      URL          { get; }
 
         #endregion
@@ -57,8 +59,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="VersionId">The version identification.</param>
         /// <param name="URL">The URL of the version.</param>
-        public Version(Version_Id VersionId,
-                       String     URL)
+        public Version(Version_Id  VersionId,
+                       String      URL)
         {
 
             if (VersionId.IsNullOrEmpty)
@@ -66,6 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             if (URL.          IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(URL),       "The given version URL must not be null or empty!");
+
 
             this.VersionId  = VersionId;
             this.URL        = URL?.Trim();

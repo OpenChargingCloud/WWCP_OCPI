@@ -48,17 +48,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// This period ends when a next period starts,
         /// the last period ends when the session ends.
         /// </summary>
+        [Mandatory]
         public DateTime                   StartTimestamp     { get; }
 
         /// <summary>
         /// List of relevant values for this charging period.
         /// </summary>
+        [Mandatory]
         public IEnumerable<CDRDimension>  Dimensions         { get; }
 
         /// <summary>
         /// Unique identifier of the tariff that is relevant for this charging period.
         /// If not provided, no tariff is relevant during this period.
         /// </summary>
+        [Optional]
         public Tariff_Id?                 TariffId           { get;}
 
         #endregion
@@ -71,9 +74,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
+        /// <param name="TariffId">Unique identifier of the tariff that is relevant for this charging period.</param>
         public ChargingPeriod(DateTime                   StartTimestamp,
                               IEnumerable<CDRDimension>  Dimensions,
-                              Tariff_Id?                 TariffId)
+                              Tariff_Id?                 TariffId   = null)
         {
 
             #region Initial checks

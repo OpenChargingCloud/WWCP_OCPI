@@ -41,12 +41,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Begin of the opening or access hours exception.
         /// </summary>
-        public DateTime Begin    { get; }
+        [Mandatory]
+        public DateTime  Begin    { get; }
 
         /// <summary>
         /// End of the opening or access hours exception.
         /// </summary>
-        public DateTime End      { get; }
+        [Mandatory]
+        public DateTime  End      { get; }
 
         #endregion
 
@@ -76,13 +78,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
-        public static ExceptionalPeriod Parse(JObject                                    JSON,
-                                         CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
+        public static ExceptionalPeriod Parse(JObject                                         JSON,
+                                              CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ExceptionalPeriod exceptionalPeriod,
-                         out String            ErrorResponse,
+                         out ExceptionalPeriod  exceptionalPeriod,
+                         out String             ErrorResponse,
                          CustomExceptionalPeriodParser))
             {
                 return exceptionalPeriod;
@@ -101,13 +103,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
-        public static ExceptionalPeriod Parse(String                                     Text,
-                                         CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
+        public static ExceptionalPeriod Parse(String                                          Text,
+                                              CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
         {
 
             if (TryParse(Text,
-                         out ExceptionalPeriod exceptionalPeriod,
-                         out String            ErrorResponse,
+                         out ExceptionalPeriod  exceptionalPeriod,
+                         out String             ErrorResponse,
                          CustomExceptionalPeriodParser))
             {
                 return exceptionalPeriod;
@@ -236,8 +238,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                ExceptionalPeriod = default;
-                ErrorResponse  = "The given text representation of an exceptional period is invalid: " + e.Message;
+                ExceptionalPeriod  = default;
+                ErrorResponse      = "The given text representation of an exceptional period is invalid: " + e.Message;
                 return false;
             }
 
@@ -255,8 +257,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("period_begin", Begin.ToIso8601()),
-                           new JProperty("period_end",   End.  ToIso8601())
+                           new JProperty("period_begin",  Begin.ToIso8601()),
+                           new JProperty("period_end",    End.  ToIso8601())
                        );
 
             return CustomExceptionalPeriodSerializer != null

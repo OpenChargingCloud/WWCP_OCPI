@@ -40,12 +40,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The geo location.
         /// </summary>
+        [Mandatory]
         public GeoCoordinate  GeoLocation    { get; }
 
         /// <summary>
         /// An optional name for this geo location.
         /// </summary>
         /// <example>The street name of a parking lot entrance or it's number.</example>
+        [Optional]
         public I18NString     Name           { get; }
 
         #endregion
@@ -100,8 +102,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(JSON,
-                         out AdditionalGeoLocation additionalGeoLocation,
-                         out String                ErrorResponse,
+                         out AdditionalGeoLocation  additionalGeoLocation,
+                         out String                 ErrorResponse,
                          CustomAdditionalGeoLocationParser))
             {
                 return additionalGeoLocation;
@@ -125,8 +127,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(Text,
-                         out AdditionalGeoLocation additionalGeoLocation,
-                         out String                ErrorResponse,
+                         out AdditionalGeoLocation  additionalGeoLocation,
+                         out String                 ErrorResponse,
                          CustomAdditionalGeoLocationParser))
             {
                 return additionalGeoLocation;
@@ -239,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 AdditionalGeoLocation  = default;
-                ErrorResponse     = "The given JSON representation of an additional geo location is invalid: " + e.Message;
+                ErrorResponse          = "The given JSON representation of an additional geo location is invalid: " + e.Message;
                 return false;
             }
 
@@ -273,8 +275,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                AdditionalGeoLocation = default;
-                ErrorResponse  = "The given text representation of an additional geo location is invalid: " + e.Message;
+                AdditionalGeoLocation  = default;
+                ErrorResponse          = "The given text representation of an additional geo location is invalid: " + e.Message;
                 return false;
             }
 

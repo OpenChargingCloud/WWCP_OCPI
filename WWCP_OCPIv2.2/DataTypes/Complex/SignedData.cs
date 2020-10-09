@@ -49,26 +49,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public EncodingMethod            EncodingMethod             { get; }
 
         /// <summary>
-        /// Version of the EncodingMethod (when applicable).
-        /// </summary>
-        [Optional]
-        public Int32?                    EncodingMethodVersion      { get; }
-
-        /// <summary>
-        /// Public key used to sign the data, base64 encoded.
-        /// </summary>
-        [Optional]
-        public PublicKey?                PublicKey                  { get; }
-
-        /// <summary>
-        /// Enumeration of signed values.
+        /// The enumeration of signed values.
         /// </summary>
         [Mandatory]
         public IEnumerable<SignedValue>  SignedValues               { get; }
 
         /// <summary>
-        /// URL that can be shown to an EV driver. This URL gives the EV driver the possibility
-        /// to verify the signed data of a charging session.
+        /// Version of the encoding method (when applicable).
+        /// </summary>
+        [Optional]
+        public Int32?                    EncodingMethodVersion      { get; }
+
+        /// <summary>
+        /// The public key used to sign the data, base64 encoded.
+        /// </summary>
+        [Optional]
+        public PublicKey?                PublicKey                  { get; }
+
+        /// <summary>
+        /// URL that can be shown to an electric vehicle driver.
+        /// This URL gives the EV driver the possibility to verify the signed data of a charging session.
         /// </summary>
         [Optional]
         public String                    URL                        { get; }
@@ -78,22 +78,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// A charging period consists of a start timestamp and a
-        /// list of possible values that influence this period.
+        /// A charging period consists of a start timestamp and an enumeration of possible values that influence this period.
         /// </summary>
+        /// <param name="EncodingMethod">The name of the encoding used in the SignedData field.</param>
+        /// <param name="SignedValues">An enumeration of signed values.</param>
+        /// 
+        /// <param name="EncodingMethodVersion">Version of the encoding method (when applicable).</param>
+        /// <param name="PublicKey">The public key used to sign the data, base64 encoded.</param>
+        /// <param name="URL">URL that can be shown to an electric vehicle driver.</param>
         public SignedData(EncodingMethod            EncodingMethod,
                           IEnumerable<SignedValue>  SignedValues,
-                          Int32?                    EncodingMethodVersion,
-                          PublicKey?                PublicKey,
-                          String                    URL)
-        {
 
-            #region Initial checks
+                          Int32?                    EncodingMethodVersion   = null,
+                          PublicKey?                PublicKey               = null,
+                          String                    URL                     = null)
+        {
 
             if (!SignedValues.SafeAny())
                 throw new ArgumentNullException(nameof(SignedValues), "The given enumeration of signed values must not be null or empty!");
-
-            #endregion
 
             this.EncodingMethod          = EncodingMethod;
             this.SignedValues            = SignedValues.Distinct();

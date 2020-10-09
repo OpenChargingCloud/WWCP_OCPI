@@ -41,16 +41,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Name of the operator.
         /// </summary>
+        [Mandatory]
         public String  Name       { get; }
 
         /// <summary>
         /// Optinal link to the operator's website.
         /// </summary>
+        [Optional]
         public String  Website    { get; }
 
         /// <summary>
         /// Optinal image link to the operator's logo.
         /// </summary>
+        [Optional]
         public Image   Logo       { get; }
 
         #endregion

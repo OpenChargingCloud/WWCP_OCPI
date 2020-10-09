@@ -41,12 +41,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The name of the energy supplier for this token.
         /// </summary>
+        [Mandatory]
         public String             SupplierName    { get; }
 
         /// <summary>
         /// The optional contract identification at the energy supplier, that belongs
         /// to the owner of this token.
         /// </summary>
+        [Mandatory]
         public EnergyContract_Id  ContractId      { get; }
 
         #endregion
@@ -62,12 +64,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               EnergyContract_Id  ContractId)
         {
 
-            #region Initial checks
-
             if (SupplierName.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(SupplierName), "The given energy supplier name must not be null or empty!");
-
-            #endregion
 
             this.SupplierName  = SupplierName;
             this.ContractId    = ContractId;

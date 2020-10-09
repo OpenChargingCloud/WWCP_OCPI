@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        Party_Id.Parse("GEF"),
                                        Tariff_Id.Parse("12"),
                                        Currency.EUR,
-                                       TariffAltUrl:   "https://company.com/tariffs/12",
+                                       TariffAltURL:   "https://company.com/tariffs/12",
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(
                                                                PriceComponent.ChargingTime(TimeSpan.FromSeconds(300),
@@ -197,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        Party_Id.Parse("GEF"),
                                        Tariff_Id.Parse("11"),
                                        Currency.EUR,
-                                       TariffAltUrl:   "https://company.com/tariffs/11",
+                                       TariffAltURL:   "https://company.com/tariffs/11",
                                        TariffElements: new List<TariffElement>() {
 
                                                            // 2.50 euro start tariff

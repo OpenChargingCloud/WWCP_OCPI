@@ -112,13 +112,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Identification of the connector of this location the charging session is/was happening.
         /// </summary>
         [Mandatory]
-        public Session_Id                        SessionId                  { get; }
+        public Connector_Id                        ConnectorId                  { get; }
 
         /// <summary>
         /// Optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
-        public Meter_Id                            MeterId                      { get; }
+        public Meter_Id?                           MeterId                      { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this session.
@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// This is the price that the eMSP will have to pay to the CPO.
         /// </summary>
         [Optional]
-        public Decimal?                            TotalCosts                   { get; }
+        public Price?                              TotalCosts                   { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of the session in the specified currency.
@@ -160,25 +160,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new charging session.
         /// </summary>
-        public Session(CountryCode              CountryCode,
-                       Party_Id                 PartyId,
-                       Session_Id               Id,
-                       DateTime                 Start,
-                       Decimal                  kWh,
-                       CDRToken                 CDRToken,
-                       AuthMethods              AuthMethod,
-                       Location_Id              LocationId,
-                       EVSE_UId                 EVSEUId,
-                       Session_Id             SessionId,
-                       Meter_Id                 MeterId,
-                       Currency                 Currency,
-                       SessionStatusTypes       Status,
+        public Session(CountryCode                  CountryCode,
+                       Party_Id                     PartyId,
+                       Session_Id                   Id,
+                       DateTime                     Start,
+                       Decimal                      kWh,
+                       CDRToken                     CDRToken,
+                       AuthMethods                  AuthMethod,
+                       Location_Id                  LocationId,
+                       EVSE_UId                     EVSEUId,
+                       Connector_Id                 ConnectorId,
+                       Currency                     Currency,
+                       SessionStatusTypes           Status,
 
-                       DateTime?                End                      = null,
-                       AuthorizationReference?  AuthorizationReference   = null,
-                       Decimal?                 TotalCosts               = null,
+                       DateTime?                    End                      = null,
+                       AuthorizationReference?      AuthorizationReference   = null,
+                       Meter_Id?                    MeterId                  = null,
+                       IEnumerable<ChargingPeriod>  ChargingPeriods          = null,
+                       Price?                       TotalCosts               = null,
 
-                       DateTime?                LastUpdated              = null)
+                       DateTime?                    LastUpdated              = null)
 
         {
 
@@ -191,13 +192,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.AuthMethod               = AuthMethod;
             this.LocationId               = LocationId;
             this.EVSEUId                  = EVSEUId;
-            this.SessionId              = SessionId;
-            this.MeterId                  = MeterId;
+            this.ConnectorId              = ConnectorId;
             this.Currency                 = Currency;
             this.Status                   = Status;
 
             this.End                      = End;
             this.AuthorizationReference   = AuthorizationReference;
+            this.MeterId                  = MeterId;
+            this.ChargingPeriods          = ChargingPeriods;
             this.TotalCosts               = TotalCosts;
 
             this.LastUpdated              = LastUpdated ?? DateTime.Now;

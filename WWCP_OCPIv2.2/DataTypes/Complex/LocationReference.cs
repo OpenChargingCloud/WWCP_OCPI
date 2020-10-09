@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationId">Unique identifier for the location..</param>
         /// <param name="EVSEUIds">Optional enumeration of EVSE identifiers within the CPO’s platform.</param>
         public LocationReference(Location_Id            LocationId,
-                                 IEnumerable<EVSE_UId>  EVSEUIds)
+                                 IEnumerable<EVSE_UId>  EVSEUIds   = null)
         {
 
             this.LocationId  = LocationId;

@@ -44,11 +44,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The version identification.
         /// </summary>
+        [Mandatory]
         public Version_Id                    VersionId    { get; }
 
         /// <summary>
         /// The endpoints of this version.
         /// </summary>
+        [Mandatory]
         public IEnumerable<VersionEndpoint>  Endpoints    { get; }
 
         #endregion
@@ -69,6 +71,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             if (!Endpoints.   SafeAny())
                 throw new ArgumentNullException(nameof(Endpoints),  "The given version endpoints must not be null or empty!");
+
 
             this.VersionId    = VersionId;
             this.Endpoints  = Endpoints?.Distinct();

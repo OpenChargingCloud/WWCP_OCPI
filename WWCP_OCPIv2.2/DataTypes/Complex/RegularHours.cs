@@ -39,16 +39,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Day of the week, from Monday till Sunday.
         /// </summary>
+        [Mandatory]
         public DayOfWeek  Weekday    { get; }
 
         /// <summary>
         /// Begin of the regular period given in regular hours and minutes. Must be in 24h format.
         /// </summary>
+        [Mandatory]
         public HourMin    Begin      { get; }
 
         /// <summary>
         /// End of the regular period, syntax as for period_begin. Must be later than the begin.
         /// </summary>
+        [Mandatory]
         public HourMin    End        { get; }
 
         #endregion
@@ -90,8 +93,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(JSON,
-                         out RegularHours regularHours,
-                         out String       ErrorResponse,
+                         out RegularHours  regularHours,
+                         out String        ErrorResponse,
                          CustomRegularHoursParser))
             {
                 return regularHours;
@@ -115,8 +118,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(Text,
-                         out RegularHours regularHours,
-                         out String       ErrorResponse,
+                         out RegularHours  regularHours,
+                         out String        ErrorResponse,
                          CustomRegularHoursParser))
             {
                 return regularHours;

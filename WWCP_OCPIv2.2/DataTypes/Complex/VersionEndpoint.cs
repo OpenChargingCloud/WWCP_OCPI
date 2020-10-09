@@ -41,16 +41,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The module identifier.
         /// </summary>
+        [Mandatory]
         public ModuleIDs       Identifier    { get; }
 
         /// <summary>
         /// The interface role.
         /// </summary>
+        [Mandatory]
         public InterfaceRoles  Role          { get; }
 
         /// <summary>
         /// The URL of the module.
         /// </summary>
+        [Mandatory]
         public String          URL           { get; }
 
         #endregion

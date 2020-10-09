@@ -125,21 +125,256 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region ToJSON(CustomTariffElementSerializer = null)
+        #region (static) Parse   (JSON, CustomTariffElementParser = null)
+
+        /// <summary>
+        /// Parse the given JSON representation of a tariff element.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
+        public static TariffElement Parse(JObject                                     JSON,
+                                          CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out TariffElement  tariffElement,
+                         out String         ErrorResponse,
+                         CustomTariffElementParser))
+            {
+                return tariffElement;
+            }
+
+            throw new ArgumentException("The given JSON representation of a tariff element is invalid: " + ErrorResponse, nameof(JSON));
+
+        }
+
+        #endregion
+
+        #region (static) Parse   (Text, CustomTariffElementParser = null)
+
+        /// <summary>
+        /// Parse the given text representation of a tariff element.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
+        public static TariffElement Parse(String                                      Text,
+                                          CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out TariffElement  tariffElement,
+                         out String         ErrorResponse,
+                         CustomTariffElementParser))
+            {
+                return tariffElement;
+            }
+
+            throw new ArgumentException("The given text representation of a tariff element is invalid: " + ErrorResponse, nameof(Text));
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, CustomTariffElementParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a tariff element.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
+        public static TariffElement? TryParse(JObject                                     JSON,
+                                              CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        {
+
+            if (TryParse(JSON,
+                         out TariffElement  tariffElement,
+                         out String         ErrorResponse,
+                         CustomTariffElementParser))
+            {
+                return tariffElement;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, CustomTariffElementParser = null)
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a tariff element.
+        /// </summary>
+        /// <param name="Text">The JSON to parse.</param>
+        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
+        public static TariffElement? TryParse(String                                      Text,
+                                              CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        {
+
+            if (TryParse(Text,
+                         out TariffElement  tariffElement,
+                         out String         ErrorResponse,
+                         CustomTariffElementParser))
+            {
+                return tariffElement;
+            }
+
+            return default;
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(JSON, out TariffElement, out ErrorResponse, CustomTariffElementParser = null)
+
+        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a tariff element.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="TariffElement">The parsed tariff element.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        public static Boolean TryParse(JObject            JSON,
+                                       out TariffElement  TariffElement,
+                                       out String         ErrorResponse)
+
+            => TryParse(JSON,
+                        out TariffElement,
+                        out ErrorResponse,
+                        null);
+
+
+        /// <summary>
+        /// Try to parse the given JSON representation of a tariff element.
+        /// </summary>
+        /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="TariffElement">The parsed tariff element.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
+        public static Boolean TryParse(JObject                                     JSON,
+                                       out TariffElement                           TariffElement,
+                                       out String                                  ErrorResponse,
+                                       CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        {
+
+            try
+            {
+
+                TariffElement = default;
+
+                if (JSON?.HasValues != true)
+                {
+                    ErrorResponse = "The given JSON object must not be null or empty!";
+                    return false;
+                }
+
+                #region Parse PriceComponents           [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("supplier_name",
+                                             "energy supplier name",
+                                             PriceComponent.TryParse,
+                                             out IEnumerable<PriceComponent> PriceComponents,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse TariffRestrictions        [optional]
+
+                if (JSON.ParseOptionalJSON("contract_id",
+                                           "tariff tariff restrictions",
+                                           OCPIv2_2.TariffRestrictions.TryParse,
+                                           out IEnumerable<TariffRestrictions> TariffRestrictions,
+                                           out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
+
+                #endregion
+
+
+                TariffElement = new TariffElement(PriceComponents,
+                                                  TariffRestrictions);
+
+
+                if (CustomTariffElementParser != null)
+                    TariffElement = CustomTariffElementParser(JSON,
+                                                              TariffElement);
+
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                TariffElement  = default;
+                ErrorResponse  = "The given JSON representation of a tariff element is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region (static) TryParse(Text, out TariffElement, out ErrorResponse, CustomTariffElementParser = null)
+
+        /// <summary>
+        /// Try to parse the given text representation of a tariff element.
+        /// </summary>
+        /// <param name="Text">The text to parse.</param>
+        /// <param name="TariffElement">The parsed tariffElement.</param>
+        /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
+        public static Boolean TryParse(String                                      Text,
+                                       out TariffElement                           TariffElement,
+                                       out String                                  ErrorResponse,
+                                       CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        {
+
+            try
+            {
+
+                return TryParse(JObject.Parse(Text),
+                                out TariffElement,
+                                out ErrorResponse,
+                                CustomTariffElementParser);
+
+            }
+            catch (Exception e)
+            {
+                TariffElement  = default;
+                ErrorResponse  = "The given text representation of a tariff element is invalid: " + e.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
+
+        #region ToJSON(CustomTariffElementSerializer = null, CustomPriceComponentSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffElement> CustomTariffElementSerializer = null)
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
+                              CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
+                              CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("price_components",    new JArray(PriceComponents.   SafeSelect(PriceComponent    => PriceComponent.   ToJSON()))),
+                           new JProperty("price_components",    new JArray(PriceComponents.   SafeSelect(PriceComponent    => PriceComponent.   ToJSON(CustomPriceComponentSerializer)))),
 
                            TariffRestrictions.SafeAny()
-                               ? new JProperty("restrictions",  new JArray(TariffRestrictions.SafeSelect(TariffRestriction => TariffRestriction.ToJSON())))
+                               ? new JProperty("restrictions",  new JArray(TariffRestrictions.SafeSelect(TariffRestriction => TariffRestriction.ToJSON(CustomTariffRestrictionsSerializer))))
                                : null
 
                        );

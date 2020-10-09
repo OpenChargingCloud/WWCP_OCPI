@@ -18,7 +18,7 @@
 #region Usings
 
 using System;
-
+using System.Management.Instrumentation;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -41,11 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The type of the charge detail record dimension.
         /// </summary>
+        [Mandatory]
         public TariffDimensions  Type      { get; }
 
         /// <summary>
         /// Volume of the dimension consumed, measured according to the dimension type.
         /// </summary>
+        [Mandatory]
         public Decimal           Volume    { get; }
 
         #endregion
@@ -305,10 +307,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-
                            new JProperty("type",    Type),
                            new JProperty("volume",  Volume)
-
                        );
 
             return CustomCDRDimensionSerializer != null

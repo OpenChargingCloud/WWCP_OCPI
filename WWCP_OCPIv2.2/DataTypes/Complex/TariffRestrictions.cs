@@ -41,33 +41,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Start time of day, for example "13:30", valid from this time of the day.
         /// </summary>
+        [Optional]
         public Time?                         StartTime           { get; }
 
         /// <summary>
         /// End time of day, for example "19:45", valid from this time of the day.
         /// </summary>
+        [Optional]
         public Time?                         EndTime             { get; }
 
         /// <summary>
         /// Start date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
+        [Optional]
         public DateTime?                     StartDate           { get; }
 
         /// <summary>
         /// End date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
+        [Optional]
         public DateTime?                     EndDate             { get; }
 
         /// <summary>
         /// Minimum consumed energy in kWh, for example 20, valid from this amount of energy
         /// (inclusive) being used.
         /// </summary>
+        [Optional]
         public Decimal?                      MinkWh              { get; }
 
         /// <summary>
         /// Maximum consumed energy in kWh, for example 50, valid until this amount of energy
         /// (exclusive) being used.
         /// </summary>
+        [Optional]
         public Decimal?                      MaxkWh              { get; }
 
         /// <summary>
@@ -79,6 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// when the charging current is above the defined value, but the tariff element MUST no
         /// longer be active when the charging current drops below the defined value.
         /// </summary>
+        [Optional]
         public Decimal?                      MinCurrent          { get; }
 
         /// <summary>
@@ -90,6 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// the charging current is below this value, but the tariff element MUST no longer be
         /// active when the charging current raises above the defined value.
         /// </summary>
+        [Optional]
         public Decimal?                      MaxCurrent          { get; }
 
         /// <summary>
@@ -101,6 +109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// the tariff element MUST no longer be active when the charging power drops below the
         /// defined value.
         /// </summary>
+        [Optional]
         public Decimal?                      MinPower            { get; }
 
         /// <summary>
@@ -112,6 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// tariff element MUST no longer be active when the charging power raises above the defined
         /// value.
         /// </summary>
+        [Optional]
         public Decimal?                      MaxPower            { get; }
 
         /// <summary>
@@ -119,6 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// duration of a charging session is longer than the defined value, this tariff element is
         /// or becomes active. Before that moment, this tariff element is not yet active.
         /// </summary>
+        [Optional]
         public TimeSpan?                     MinDuration         { get; }
 
         /// <summary>
@@ -126,11 +137,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// duration of a Charging Session is shorter than the defined value, this tariff element
         /// is or becomes active. After that moment, this tariff element is no longer active.
         /// </summary>
+        [Optional]
         public TimeSpan?                     MaxDuration         { get; }
 
         /// <summary>
         /// Which day(s) of the week this tariff element is active.
         /// </summary>
+        [Optional]
         public IEnumerable<DayOfWeek>        DayOfWeek           { get; }
 
         /// <summary>
@@ -140,6 +153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// expires. A reservation can only have: FLAT and TIME tariff dimensions, where TIME is
         /// for the duration of the reservation.
         /// </summary>
+        [Optional]
         public ReservationRestrictionTypes?  Reservation         { get; }
 
         #endregion
@@ -293,25 +307,172 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return true;
                 }
 
-                #region Parse SupplierName      [mandatory]
+                #region Parse StartTime         [optional]
 
-                if (!JSON.ParseMandatoryText("supplier_name",
-                                             "energy supplier name",
-                                             out String SupplierName,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("start_time",
+                                       "start time",
+                                       Time.TryParse,
+                                       out Time? StartTime,
+                                       out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse ContractId        [mandatory]
+                #region Parse EndTime           [optional]
 
-                if (!JSON.ParseMandatory("contract_id",
-                                         "tariff restrictions identification",
-                                         TariffRestrictions_Id.TryParse,
-                                         out TariffRestrictions_Id ContractId,
-                                         out ErrorResponse))
+                if (JSON.ParseOptional("end_time",
+                                       "end time",
+                                       Time.TryParse,
+                                       out Time? EndTime,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse StartDate         [optional]
+
+                if (JSON.ParseOptional("start_date",
+                                       "start date",
+                                       out DateTime? StartDate,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse EndDate           [optional]
+
+                if (JSON.ParseOptional("end_date",
+                                       "end date",
+                                       out DateTime? EndDate,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MinKWh            [optional]
+
+                if (JSON.ParseOptional("min_kwh",
+                                       "minimum consumed kWh",
+                                       out Decimal? MinKWh,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxKWh            [optional]
+
+                if (JSON.ParseOptional("max_kwh",
+                                       "maximum consumed kWh",
+                                       out Decimal? MaxKWh,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MinCurrent        [optional]
+
+                if (JSON.ParseOptional("min_current",
+                                       "minimum current",
+                                       out Decimal? MinCurrent,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxCurrent        [optional]
+
+                if (JSON.ParseOptional("max_current",
+                                       "maximum current",
+                                       out Decimal? MaxCurrent,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MinPower          [optional]
+
+                if (JSON.ParseOptional("min_power",
+                                       "minimum power",
+                                       out Decimal? MinPower,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxPower          [optional]
+
+                if (JSON.ParseOptional("max_power",
+                                       "maximum power",
+                                       out Decimal? MaxPower,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MinDuration       [optional]
+
+                if (JSON.ParseOptional("min_duration",
+                                       "minimum duration",
+                                       out Double? MinDurationSec,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MaxDuration       [optional]
+
+                if (JSON.ParseOptional("max_duration",
+                                       "maximum duration",
+                                       out Double? MaxDurationSec,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse DayOfWeek         [optional]
+
+                // "day_of_week": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"]
+
+                if (JSON.ParseOptionalEnums("day_of_week",
+                                            "day of week",
+                                            out IEnumerable<DayOfWeek> DayOfWeek,
+                                            out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Reservation       [optional]
+
+                if (JSON.ParseOptionalEnum("reservation",
+                                           "reservation restriction",
+                                           out ReservationRestrictionTypes? Reservation,
+                                           out ErrorResponse))
                 {
                     return false;
                 }
@@ -319,13 +480,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                TariffRestrictions = new TariffRestrictions(SupplierName,
-                                                            ContractId);
+                TariffRestrictions  = (StartTime.     HasValue  ||
+                                       EndTime.       HasValue  ||
+                                       StartDate.     HasValue  ||
+                                       EndDate.       HasValue  ||
+                                       MinKWh.        HasValue  ||
+                                       MaxKWh.        HasValue  ||
+                                       MinCurrent.    HasValue  ||
+                                       MaxCurrent.    HasValue  ||
+                                       MinPower.      HasValue  ||
+                                       MaxPower.      HasValue  ||
+                                       MinDurationSec.HasValue  ||
+                                       MaxDurationSec.HasValue  ||
+                                       DayOfWeek.     SafeAny() ||
+                                       Reservation.   HasValue)
+
+                                           ? new TariffRestrictions(StartTime,
+                                                                    EndTime,
+                                                                    StartDate,
+                                                                    EndDate,
+                                                                    MinKWh,
+                                                                    MaxKWh,
+                                                                    MinCurrent,
+                                                                    MaxCurrent,
+                                                                    MinPower,
+                                                                    MaxPower,
+                                                                    MinDurationSec.HasValue ? new TimeSpan?(TimeSpan.FromSeconds(MinDurationSec.Value)) : null,
+                                                                    MaxDurationSec.HasValue ? new TimeSpan?(TimeSpan.FromSeconds(MaxDurationSec.Value)) : null,
+                                                                    DayOfWeek,
+                                                                    Reservation)
+
+                                           : null;
 
 
                 if (CustomTariffRestrictionsParser != null)
                     TariffRestrictions = CustomTariffRestrictionsParser(JSON,
-                                                                TariffRestrictions);
+                                                                        TariffRestrictions);
 
                 return true;
 

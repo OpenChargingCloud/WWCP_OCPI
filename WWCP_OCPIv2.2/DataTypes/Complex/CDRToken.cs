@@ -18,7 +18,7 @@
 #region Usings
 
 using System;
-
+using System.Management.Instrumentation;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -41,17 +41,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The unique identification by which this token can be identified.
         /// </summary>
+        [Mandatory]
         public Token_Id     UID           { get; }
 
         /// <summary>
         /// The type of the token.
         /// </summary>
+        [Mandatory]
         public TokenTypes   TokenType     { get; }
 
         /// <summary>
         /// Uniquely identifies the EV driver contract token within the eMSP’s
         /// platform (and suboperator platforms).
         /// </summary>
+        [Mandatory]
         public Contract_Id  ContractId    { get; }
 
         #endregion
