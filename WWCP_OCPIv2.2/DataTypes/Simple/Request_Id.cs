@@ -82,8 +82,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Request_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Request_Id locationId))
-                return locationId;
+            if (TryParse(Text, out Request_Id requestId))
+                return requestId;
 
             if (Text.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Text), "The given text representation of a request identification must not be null or empty!");
@@ -103,8 +103,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Request_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Request_Id locationId))
-                return locationId;
+            if (TryParse(Text, out Request_Id requestId))
+                return requestId;
 
             return null;
 
@@ -258,8 +258,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is Request_Id locationId
-                   ? CompareTo(locationId)
+            => Object is Request_Id requestId
+                   ? CompareTo(requestId)
                    : throw new ArgumentException("The given object is not a request identification!",
                                                  nameof(Object));
 
@@ -292,8 +292,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is Request_Id locationId &&
-                   Equals(locationId);
+            => Object is Request_Id requestId &&
+                   Equals(requestId);
 
         #endregion
 

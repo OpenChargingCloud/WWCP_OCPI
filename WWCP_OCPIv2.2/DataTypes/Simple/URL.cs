@@ -27,9 +27,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a charge detail record.
+    /// An uniform resource location (URL).
     /// </summary>
-    public readonly struct CDR_Id : IId<CDR_Id>
+    public readonly struct URL : IId<URL>
     {
 
         #region Data
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the charge detail record identification.
+        /// The length of the uniform resource location.
         /// </summary>
         public UInt64 Length
 
@@ -62,10 +62,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charge detail record identification based on the given string.
+        /// Create a new uniform resource location based on the given string.
         /// </summary>
-        /// <param name="String">The string representation of the charge detail record identification.</param>
-        private CDR_Id(String String)
+        /// <param name="String">The string representation of the uniform resource location.</param>
+        private URL(String String)
         {
             this.InternalId  = String;
         }
@@ -76,19 +76,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a charge detail record identification.
+        /// Parse the given string as an uniform resource location.
         /// </summary>
-        /// <param name="Text">A text representation of a charge detail record identification.</param>
-        public static CDR_Id Parse(String Text)
+        /// <param name="Text">A text representation of an uniform resource location.</param>
+        public static URL Parse(String Text)
         {
 
-            if (TryParse(Text, out CDR_Id cdrId))
-                return cdrId;
+            if (TryParse(Text, out URL url))
+                return url;
 
             if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a charge detail record identification must not be null or empty!");
+                throw new ArgumentNullException(nameof(Text), "The given text representation of an uniform resource location must not be null or empty!");
 
-            throw new ArgumentException("The given text representation of a charge detail record identification is invalid!", nameof(Text));
+            throw new ArgumentException("The given text representation of an uniform resource location is invalid!", nameof(Text));
 
         }
 
@@ -97,14 +97,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a charge detail record identification.
+        /// Try to parse the given text as an uniform resource location.
         /// </summary>
-        /// <param name="Text">A text representation of a charge detail record identification.</param>
-        public static CDR_Id? TryParse(String Text)
+        /// <param name="Text">A text representation of an uniform resource location.</param>
+        public static URL? TryParse(String Text)
         {
 
-            if (TryParse(Text, out CDR_Id cdrId))
-                return cdrId;
+            if (TryParse(Text, out URL url))
+                return url;
 
             return null;
 
@@ -112,28 +112,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CDRId)
+        #region (static) TryParse(Text, out URL)
 
         /// <summary>
-        /// Try to parse the given text as a charge detail record identification.
+        /// Try to parse the given text as an uniform resource location.
         /// </summary>
-        /// <param name="Text">A text representation of a charge detail record identification.</param>
-        /// <param name="CDRId">The parsed charge detail record identification.</param>
-        public static Boolean TryParse(String Text, out CDR_Id CDRId)
+        /// <param name="Text">A text representation of an uniform resource location.</param>
+        /// <param name="URL">The parsed uniform resource location.</param>
+        public static Boolean TryParse(String Text, out URL URL)
         {
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    CDRId = new CDR_Id(Text.Trim());
+                    URL = new URL(Text.Trim());
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            CDRId = default;
+            URL = default;
             return false;
 
         }
@@ -143,11 +143,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this charge detail record identification.
+        /// Clone this uniform resource location.
         /// </summary>
-        public CDR_Id Clone
+        public URL Clone
 
-            => new CDR_Id(
+            => new URL(
                    new String(InternalId?.ToCharArray())
                );
 
@@ -156,99 +156,99 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (CDRId1, CDRId2)
+        #region Operator == (URL1, URL2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId1">A charge detail record identification.</param>
-        /// <param name="CDRId2">Another charge detail record identification.</param>
+        /// <param name="URL1">A uniform resource location.</param>
+        /// <param name="URL2">Another uniform resource location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (CDR_Id CDRId1,
-                                           CDR_Id CDRId2)
+        public static Boolean operator == (URL URL1,
+                                           URL URL2)
 
-            => CDRId1.Equals(CDRId2);
+            => URL1.Equals(URL2);
 
         #endregion
 
-        #region Operator != (CDRId1, CDRId2)
+        #region Operator != (URL1, URL2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId1">A charge detail record identification.</param>
-        /// <param name="CDRId2">Another charge detail record identification.</param>
+        /// <param name="URL1">A uniform resource location.</param>
+        /// <param name="URL2">Another uniform resource location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (CDR_Id CDRId1,
-                                           CDR_Id CDRId2)
+        public static Boolean operator != (URL URL1,
+                                           URL URL2)
 
-            => !(CDRId1 == CDRId2);
+            => !(URL1 == URL2);
 
         #endregion
 
-        #region Operator <  (CDRId1, CDRId2)
+        #region Operator <  (URL1, URL2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId1">A charge detail record identification.</param>
-        /// <param name="CDRId2">Another charge detail record identification.</param>
+        /// <param name="URL1">A uniform resource location.</param>
+        /// <param name="URL2">Another uniform resource location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (CDR_Id CDRId1,
-                                          CDR_Id CDRId2)
+        public static Boolean operator < (URL URL1,
+                                          URL URL2)
 
-            => CDRId1.CompareTo(CDRId2) < 0;
+            => URL1.CompareTo(URL2) < 0;
 
         #endregion
 
-        #region Operator <= (CDRId1, CDRId2)
+        #region Operator <= (URL1, URL2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId1">A charge detail record identification.</param>
-        /// <param name="CDRId2">Another charge detail record identification.</param>
+        /// <param name="URL1">A uniform resource location.</param>
+        /// <param name="URL2">Another uniform resource location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (CDR_Id CDRId1,
-                                           CDR_Id CDRId2)
+        public static Boolean operator <= (URL URL1,
+                                           URL URL2)
 
-            => !(CDRId1 > CDRId2);
+            => !(URL1 > URL2);
 
         #endregion
 
-        #region Operator >  (CDRId1, CDRId2)
+        #region Operator >  (URL1, URL2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId1">A charge detail record identification.</param>
-        /// <param name="CDRId2">Another charge detail record identification.</param>
+        /// <param name="URL1">A uniform resource location.</param>
+        /// <param name="URL2">Another uniform resource location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (CDR_Id CDRId1,
-                                          CDR_Id CDRId2)
+        public static Boolean operator > (URL URL1,
+                                          URL URL2)
 
-            => CDRId1.CompareTo(CDRId2) > 0;
+            => URL1.CompareTo(URL2) > 0;
 
         #endregion
 
-        #region Operator >= (CDRId1, CDRId2)
+        #region Operator >= (URL1, URL2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId1">A charge detail record identification.</param>
-        /// <param name="CDRId2">Another charge detail record identification.</param>
+        /// <param name="URL1">A uniform resource location.</param>
+        /// <param name="URL2">Another uniform resource location.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (CDR_Id CDRId1,
-                                           CDR_Id CDRId2)
+        public static Boolean operator >= (URL URL1,
+                                           URL URL2)
 
-            => !(CDRId1 < CDRId2);
-
-        #endregion
+            => !(URL1 < URL2);
 
         #endregion
 
-        #region IComparable<CDRId> Members
+        #endregion
+
+        #region IComparable<URL> Members
 
         #region CompareTo(Object)
 
@@ -258,30 +258,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is CDR_Id cdrId
-                   ? CompareTo(cdrId)
-                   : throw new ArgumentException("The given object is not a charge detail record identification!",
+            => Object is URL url
+                   ? CompareTo(url)
+                   : throw new ArgumentException("The given object is not an uniform resource location!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(CDRId)
+        #region CompareTo(URL)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRId">An object to compare with.</param>
-        public Int32 CompareTo(CDR_Id CDRId)
+        /// <param name="URL">An object to compare with.</param>
+        public Int32 CompareTo(URL URL)
 
             => String.Compare(InternalId,
-                              CDRId.InternalId,
+                              URL.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<CDRId> Members
+        #region IEquatable<URL> Members
 
         #region Equals(Object)
 
@@ -292,22 +292,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is CDR_Id cdrId &&
-                   Equals(cdrId);
+            => Object is URL url &&
+                   Equals(url);
 
         #endregion
 
-        #region Equals(CDRId)
+        #region Equals(URL)
 
         /// <summary>
-        /// Compares two charge detail record identifications for equality.
+        /// Compares two uniform resource locations for equality.
         /// </summary>
-        /// <param name="CDRId">An charge detail record identification to compare with.</param>
+        /// <param name="URL">An uniform resource location to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CDR_Id CDRId)
+        public Boolean Equals(URL URL)
 
             => String.Equals(InternalId,
-                             CDRId.InternalId,
+                             URL.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion
