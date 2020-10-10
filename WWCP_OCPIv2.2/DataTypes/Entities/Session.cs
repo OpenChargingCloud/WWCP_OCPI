@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -121,6 +121,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Meter_Id?                           MeterId                      { get; }
 
         /// <summary>
+        /// The optional public key of the energy meter.
+        /// </summary>
+        [Optional, NonStandard]
+        public PublicKey?                          MeterPublicKey               { get; }
+
+        /// <summary>
         /// ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
@@ -176,6 +182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        DateTime?                    End                      = null,
                        AuthorizationReference?      AuthorizationReference   = null,
                        Meter_Id?                    MeterId                  = null,
+                       PublicKey?                   MeterPublicKey           = null,
                        IEnumerable<ChargingPeriod>  ChargingPeriods          = null,
                        Price?                       TotalCosts               = null,
 
@@ -199,6 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.End                      = End;
             this.AuthorizationReference   = AuthorizationReference;
             this.MeterId                  = MeterId;
+            this.MeterPublicKey           = MeterPublicKey;
             this.ChargingPeriods          = ChargingPeriods;
             this.TotalCosts               = TotalCosts;
 
@@ -295,6 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         null,
                         null);
 
+
         /// <summary>
         /// Try to parse the given JSON representation of a session.
         /// </summary>
@@ -325,7 +334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse CountryCode           [optional]
+                #region Parse CountryCode               [optional]
 
                 if (JSON.ParseOptionalStruct("country_code",
                                              "country code",
@@ -353,7 +362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PartyIdURL            [optional]
+                #region Parse PartyIdURL                [optional]
 
                 if (JSON.ParseOptionalStruct("party_id",
                                              "party identification",
@@ -381,7 +390,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Id                    [optional]
+                #region Parse Id                        [optional]
 
                 if (JSON.ParseOptionalStruct("id",
                                              "session identification",
@@ -409,8 +418,202 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse Start                     [mandatory]
 
-                #region Parse LastUpdated           [mandatory]
+                if (!JSON.ParseMandatory("start_date_time",
+                                         "start timestamp",
+                                         out DateTime Start,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse End                       [optional]
+
+                if (JSON.ParseOptional("end_date_time",
+                                       "end timestamp",
+                                       out DateTime? End,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse KWh                       [mandatory]
+
+                if (!JSON.ParseMandatory("kwh",
+                                         "charged kWh",
+                                         out Decimal KWh,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CDRToken                  [mandatory]
+
+                if (!JSON.ParseMandatory("cdr_token",
+                                         "charge detail record token",
+                                         CDRToken.TryParse,
+                                         out CDRToken CDRToken,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse AuthMethod                [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("auth_method",
+                                             "authentication method",
+                                             out AuthMethods AuthMethod,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse AuthorizationReference    [optional]
+
+                if (JSON.ParseOptionalStruct("authorization_reference",
+                                             "authorization reference",
+                                             OCPIv2_2.AuthorizationReference.TryParse,
+                                             out AuthorizationReference? AuthorizationReference,
+                                             out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse LocationId                [mandatory]
+
+                if (!JSON.ParseMandatory("location_id",
+                                         "location identification",
+                                         Location_Id.TryParse,
+                                         out Location_Id LocationId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse EVSEUId                   [mandatory]
+
+                if (!JSON.ParseMandatory("evse_uid",
+                                         "EVSE identification",
+                                         EVSE_UId.TryParse,
+                                         out EVSE_UId EVSEUId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ConnectorId               [mandatory]
+
+                if (!JSON.ParseMandatory("connector_id",
+                                         "connector identification",
+                                         Connector_Id.TryParse,
+                                         out Connector_Id ConnectorId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse MeterId                   [optional]
+
+                if (JSON.ParseOptional("meter_id",
+                                       "meter identification",
+                                       Meter_Id.TryParse,
+                                       out Meter_Id? MeterId,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse MeterPublicKey            [optional]
+
+                if (JSON.ParseOptional("public_key",
+                                       "public key",
+                                       PublicKey.TryParse,
+                                       out PublicKey? MeterPublicKey,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse Currency                  [mandatory]
+
+                if (!JSON.ParseMandatory("currency",
+                                         "currency",
+                                         OCPIv2_2.Currency.TryParse,
+                                         out Currency Currency,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse ChargingPeriods           [optional]
+
+                if (JSON.ParseOptionalJSON("charging_periods",
+                                           "charging periods",
+                                           ChargingPeriod.TryParse,
+                                           out IEnumerable<ChargingPeriod> ChargingPeriods,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse TotalCosts                [mandatory]
+
+                if (!JSON.ParseMandatory("total_cost",
+                                         "total costs",
+                                         OCPIv2_2.Price.TryParse,
+                                         out Price TotalCosts,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Status                    [mandatory]
+
+                if (!JSON.ParseMandatoryEnum("status",
+                                             "session status",
+                                             out SessionStatusTypes Status,
+                                             out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse LastUpdated               [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -423,35 +626,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                //Session = new Session(CountryCodeBody ?? CountryCodeURL.Value,
-                //                        PartyIdBody     ?? PartyIdURL.Value,
-                //                        SessionIdBody  ?? SessionIdURL.Value,
-                //                        Publish,
-                //                        Address?.   Trim(),
-                //                        City?.      Trim(),
-                //                        Country?.   Trim(),
-                //                        Coordinates,
-                //                        TimeZone?.  Trim(),
+                Session = new Session(CountryCodeBody ?? CountryCodeURL.Value,
+                                      PartyIdBody     ?? PartyIdURL.    Value,
+                                      SessionIdBody   ?? SessionIdURL.  Value,
+                                      Start,
+                                      KWh,
+                                      CDRToken,
+                                      AuthMethod,
+                                      LocationId,
+                                      EVSEUId,
+                                      ConnectorId,
+                                      Currency,
+                                      Status,
 
-                //                        PublishTokenTypes,
-                //                        Name?.      Trim(),
-                //                        PostalCode?.Trim(),
-                //                        State?.     Trim(),
-                //                        RelatedSessions?.Distinct(),
-                //                        ParkingType,
-                //                        EVSEs?.           Distinct(),
-                //                        Directions?.      Distinct(),
-                //                        Operator,
-                //                        Suboperator,
-                //                        Owner,
-                //                        Facilities?.      Distinct(),
-                //                        OpeningTimes,
-                //                        ChargingWhenClosed,
-                //                        Images?.          Distinct(),
-                //                        EnergyMix,
-                //                        LastUpdated);
+                                      End,
+                                      AuthorizationReference,
+                                      MeterId,
+                                      MeterPublicKey,
+                                      ChargingPeriods,
+                                      TotalCosts,
 
-                Session = null;
+                                      LastUpdated);
+
 
                 if (CustomSessionParser != null)
                     Session = CustomSessionParser(JSON,
@@ -513,24 +709,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomSessionSerializer = null, CustomEVSESerializer = null, ...)
+        #region ToJSON(CustomSessionSerializer = null, CustomCDRTokenSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
-
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>                CustomSessionSerializer                 = null)
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>         CustomSessionSerializer          = null,
+                              CustomJObjectSerializerDelegate<CDRToken>        CustomCDRTokenSerializer         = null,
+                              CustomJObjectSerializerDelegate<ChargingPeriod>  CustomChargingPeriodSerializer   = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>    CustomCDRDimensionSerializer     = null,
+                              CustomJObjectSerializerDelegate<Price>           CustomPriceSerializer            = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                    CountryCode.ToString()),
-                           new JProperty("party_id",                        PartyId.    ToString()),
-                           new JProperty("id",                              Id.         ToString()),
+                           new JProperty("country_code",             CountryCode.           ToString()),
+                           new JProperty("party_id",                 PartyId.               ToString()),
+                           new JProperty("id",                       Id.                    ToString()),
+
+                           new JProperty("start_date_time",          Start.                 ToIso8601()),
+
+                           End.HasValue
+                               ? new JProperty("end_date_time",      End.             Value.ToIso8601())
+                               : null,
+
+                           new JProperty("kwh",                      kWh),
+
+                           new JProperty("cdr_token",                CDRToken.ToJSON(CustomCDRTokenSerializer)),
+                           new JProperty("auth_method",              AuthMethod.            ToString()),
+                           new JProperty("authorization_reference",  AuthorizationReference.ToString()),
+                           new JProperty("location_id",              LocationId.            ToString()),
+                           new JProperty("evse_uid",                 EVSEUId.               ToString()),
+                           new JProperty("connector_id",             ConnectorId.           ToString()),
+
+                           MeterId.HasValue
+                               ? new JProperty("meter_id",           MeterId.               ToString())
+                               : null,
+
+                           MeterPublicKey.HasValue
+                               ? new JProperty("meter_public_key",   MeterPublicKey.        ToString())
+                               : null,
+
+                           new JProperty("currency",                 Currency.              ToString()),
+
+                           ChargingPeriods.SafeAny()
+                               ? new JProperty("charging_periods",   new JArray(ChargingPeriods.Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                               CustomCDRDimensionSerializer))))
+                               : null,
+
+                           TotalCosts.HasValue
+                               ? new JProperty("total_cost",         TotalCosts.      Value.ToJSON(CustomPriceSerializer))
+                               : null,
+
+                           new JProperty("status",                   Status.                ToString()),
 
 
-                           new JProperty("last_updated",                    LastUpdated.ToIso8601())
+                           new JProperty("last_updated",             LastUpdated.           ToIso8601())
 
                        );
 
@@ -686,10 +925,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Session">An Session to compare with.</param>
         public Int32 CompareTo(Session Session)
+        {
 
-            => Session is null
-                   ? throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!")
-                   : Id.CompareTo(Session.Id);
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!");
+
+            var c = Id.CompareTo(Session.Id);
+
+            if (c == 0)
+                c = LastUpdated.CompareTo(Session.LastUpdated);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -721,7 +969,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(Session Session)
 
             => !(Session is null) &&
-                   Id.Equals(Session.Id);
+
+               Id.         Equals(Session.Id) &&
+               LastUpdated.Equals(Session.LastUpdated);
 
         #endregion
 

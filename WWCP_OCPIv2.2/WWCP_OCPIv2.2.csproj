@@ -54,6 +54,7 @@
     <Compile Include="DataTypes\Complex\ActiveChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfileResponse.cs" />
     <Compile Include="DataTypes\Complex\CommandResponse.cs" />
+    <Compile Include="DataTypes\Complex\ClientInfo.cs" />
     <Compile Include="DataTypes\Complex\ReserveNowCommand.cs" />
     <Compile Include="DataTypes\Complex\CommandResult.cs" />
     <Compile Include="DataTypes\Complex\CancelReservationCommand.cs" />

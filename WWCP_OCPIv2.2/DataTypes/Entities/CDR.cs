@@ -235,7 +235,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Optional]
         public CreditReference_Id?          CreditReferenceId           { get; }
 
-
         /// <summary>
         /// Timestamp when this charge detail record was last updated (or created).
         /// </summary>
