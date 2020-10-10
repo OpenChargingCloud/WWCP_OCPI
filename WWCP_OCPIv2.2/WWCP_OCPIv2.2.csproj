@@ -47,14 +47,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Complex\ChargingProfile.cs" />
+    <Compile Include="DataTypes\Complex\ActiveChargingProfile.cs" />
     <Compile Include="DataTypes\Complex\CommandResponse.cs" />
     <Compile Include="DataTypes\Complex\ReserveNowCommand.cs" />
     <Compile Include="DataTypes\Complex\CommandResult.cs" />
     <Compile Include="DataTypes\Complex\CancelReservationCommand.cs" />
+    <Compile Include="DataTypes\Complex\ChargingProfilePeriod.cs" />
+    <Compile Include="DataTypes\Complex\SetChargingProfileCommand.cs" />
     <Compile Include="DataTypes\Complex\StopSessionCommand.cs" />
     <Compile Include="DataTypes\Complex\StartSessionCommand.cs" />
     <Compile Include="DataTypes\Complex\UnlockConnectorCommand.cs" />
     <Compile Include="DataTypes\Complex\Time.cs" />
+    <Compile Include="DataTypes\Enums\ChargingProfileResponseTypes.cs" />
+    <Compile Include="DataTypes\Enums\ChargingRateUnit.cs" />
+    <Compile Include="DataTypes\Enums\ChargingProfileResultTypes.cs" />
     <Compile Include="DataTypes\Enums\CommandTypes.cs" />
     <Compile Include="DataTypes\Enums\CommandResultTypes.cs" />
     <Compile Include="DataTypes\Enums\CommandResponseTypes.cs" />
