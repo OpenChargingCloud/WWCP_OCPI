@@ -23,6 +23,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -121,10 +122,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Meter_Id?                           MeterId                      { get; }
 
         /// <summary>
-        /// The optional public key of the energy meter.
+        /// An optional energy meter, e.g. for the German calibration law.
         /// </summary>
         [Optional, NonStandard]
-        public PublicKey?                          MeterPublicKey               { get; }
+        public EnergyMeter                         EnergyMeter                  { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this session.
@@ -182,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        DateTime?                    End                      = null,
                        AuthorizationReference?      AuthorizationReference   = null,
                        Meter_Id?                    MeterId                  = null,
-                       PublicKey?                   MeterPublicKey           = null,
+                       EnergyMeter                  EnergyMeter              = null,
                        IEnumerable<ChargingPeriod>  ChargingPeriods          = null,
                        Price?                       TotalCosts               = null,
 
@@ -206,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.End                      = End;
             this.AuthorizationReference   = AuthorizationReference;
             this.MeterId                  = MeterId;
-            this.MeterPublicKey           = MeterPublicKey;
+            this.EnergyMeter              = EnergyMeter;
             this.ChargingPeriods          = ChargingPeriods;
             this.TotalCosts               = TotalCosts;
 
@@ -459,7 +460,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("cdr_token",
                                          "charge detail record token",
-                                         CDRToken.TryParse,
+                                         OCPIv2_2.CDRToken.TryParse,
                                          out CDRToken CDRToken,
                                          out ErrorResponse))
                 {
@@ -547,13 +548,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MeterPublicKey            [optional]
+                #region Parse EnergyMeter               [optional]
 
-                if (JSON.ParseOptional("public_key",
-                                       "public key",
-                                       PublicKey.TryParse,
-                                       out PublicKey? MeterPublicKey,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalJSON("energy_meter",
+                                           "energy meter",
+                                           OCPIv2_2.EnergyMeter.TryParse,
+                                           out EnergyMeter EnergyMeter,
+                                           out ErrorResponse))
                 {
                     if (ErrorResponse != null)
                         return false;
@@ -642,7 +643,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                       End,
                                       AuthorizationReference,
                                       MeterId,
-                                      MeterPublicKey,
+                                      EnergyMeter,
                                       ChargingPeriods,
                                       TotalCosts,
 
@@ -716,11 +717,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Session>         CustomSessionSerializer          = null,
                               CustomJObjectSerializerDelegate<CDRToken>        CustomCDRTokenSerializer         = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter>     CustomEnergyMeterSerializer      = null,
                               CustomJObjectSerializerDelegate<ChargingPeriod>  CustomChargingPeriodSerializer   = null,
                               CustomJObjectSerializerDelegate<CDRDimension>    CustomCDRDimensionSerializer     = null,
                               CustomJObjectSerializerDelegate<Price>           CustomPriceSerializer            = null)
@@ -751,8 +754,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("meter_id",           MeterId.               ToString())
                                : null,
 
-                           MeterPublicKey.HasValue
-                               ? new JProperty("meter_public_key",   MeterPublicKey.        ToString())
+                           EnergyMeter != null
+                               ? new JProperty("energy_meter",       EnergyMeter.           ToJSON(CustomEnergyMeterSerializer))
                                : null,
 
                            new JProperty("currency",                 Currency.              ToString()),

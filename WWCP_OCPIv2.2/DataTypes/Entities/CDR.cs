@@ -120,6 +120,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Meter_Id?                    MeterId                     { get; }
 
         /// <summary>
+        /// An optional energy meter.
+        /// </summary>
+        [Optional, NonStandard]
+        public EnergyMeter                  EnergyMeter                 { get; }
+
+        /// <summary>
         /// ISO 4217 code of the currency used for this CDR.
         /// </summary>
         [Mandatory]
@@ -266,6 +272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    Session_Id?                  SessionId                = null,
                    AuthorizationReference?      AuthorizationReference   = null,
                    Meter_Id?                    MeterId                  = null,
+                   EnergyMeter                  EnergyMeter              = null,
                    IEnumerable<Tariff>          Tariffs                  = null,
                    SignedData                   SignedData               = null,
                    Price?                       TotalFixedCosts          = null,
@@ -307,6 +314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.SessionId                = SessionId;
             this.AuthorizationReference   = AuthorizationReference;
             this.MeterId                  = MeterId;
+            this.EnergyMeter              = EnergyMeter;
             this.Tariffs                  = Tariffs;
             this.SignedData               = SignedData;
             this.TotalFixedCosts          = TotalFixedCosts;
@@ -632,6 +640,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse EnergyMeter               [optional]
+
+                if (JSON.ParseOptionalJSON("energy_meter",
+                                           "energy meter",
+                                           OCPIv2_2.EnergyMeter.TryParse,
+                                           out EnergyMeter EnergyMeter,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse Currency                  [mandatory]
 
                 if (!JSON.ParseMandatory("currency",
@@ -877,6 +899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               SessionId,
                               AuthorizationReference,
                               MeterId,
+                              EnergyMeter,
                               Tariffs,
                               SignedData,
                               TotalFixedCosts,
@@ -961,6 +984,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomCDRSerializer">A delegate to serialize custom CDR JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
@@ -973,6 +997,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>                 CustomCDRSerializer                  = null,
                               CustomJObjectSerializerDelegate<CDRToken>            CustomCDRTokenSerializer             = null,
                               CustomJObjectSerializerDelegate<CDRLocation>         CustomCDRLocationSerializer          = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter>         CustomEnergyMeterSerializer          = null,
                               CustomJObjectSerializerDelegate<Tariff>              CustomTariffSerializer               = null,
                               CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
                               CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
@@ -1007,6 +1032,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            MeterId.HasValue
                                ? new JProperty("meter_id",                  MeterId.               Value.ToString())
+                               : null,
+
+                           EnergyMeter != null
+                               ? new JProperty("energy_meter",              EnergyMeter.                 ToJSON(CustomEnergyMeterSerializer))
                                : null,
 
                            new JProperty("currency",                        Currency.                    ToString()),
