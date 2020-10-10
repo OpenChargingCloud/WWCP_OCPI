@@ -55,6 +55,7 @@
     <Compile Include="DataTypes\Complex\ChargingProfileResponse.cs" />
     <Compile Include="DataTypes\Complex\CommandResponse.cs" />
     <Compile Include="DataTypes\Complex\ClientInfo.cs" />
+    <Compile Include="DataTypes\Complex\TransparencySoftware.cs" />
     <Compile Include="DataTypes\Complex\EnergyMeter.cs" />
     <Compile Include="DataTypes\Complex\ReserveNowCommand.cs" />
     <Compile Include="DataTypes\Complex\CommandResult.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="DataTypes\Enums\CommandTypes.cs" />
     <Compile Include="DataTypes\Enums\CommandResultTypes.cs" />
     <Compile Include="DataTypes\Enums\CommandResponseTypes.cs" />
+    <Compile Include="DataTypes\Enums\OpenSourceLicenses.cs" />
+    <Compile Include="DataTypes\Enums\LegalStatus.cs" />
     <Compile Include="DataTypes\NonStandardAttribute.cs" />
     <Compile Include="DataTypes\OCPIRequest.cs" />
     <Compile Include="CommonAPI\AccessStatus.cs" />

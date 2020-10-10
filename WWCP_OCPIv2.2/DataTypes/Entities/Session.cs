@@ -128,6 +128,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public EnergyMeter                         EnergyMeter                  { get; }
 
         /// <summary>
+        /// An enumeration of transparency softwares which can be used to validate the charging session data.
+        /// </summary>
+        [Optional, NonStandard]
+        public IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
+
+        /// <summary>
         /// ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
@@ -167,27 +173,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new charging session.
         /// </summary>
-        public Session(CountryCode                  CountryCode,
-                       Party_Id                     PartyId,
-                       Session_Id                   Id,
-                       DateTime                     Start,
-                       Decimal                      kWh,
-                       CDRToken                     CDRToken,
-                       AuthMethods                  AuthMethod,
-                       Location_Id                  LocationId,
-                       EVSE_UId                     EVSEUId,
-                       Connector_Id                 ConnectorId,
-                       Currency                     Currency,
-                       SessionStatusTypes           Status,
+        public Session(CountryCode                        CountryCode,
+                       Party_Id                           PartyId,
+                       Session_Id                         Id,
+                       DateTime                           Start,
+                       Decimal                            kWh,
+                       CDRToken                           CDRToken,
+                       AuthMethods                        AuthMethod,
+                       Location_Id                        LocationId,
+                       EVSE_UId                           EVSEUId,
+                       Connector_Id                       ConnectorId,
+                       Currency                           Currency,
+                       SessionStatusTypes                 Status,
 
-                       DateTime?                    End                      = null,
-                       AuthorizationReference?      AuthorizationReference   = null,
-                       Meter_Id?                    MeterId                  = null,
-                       EnergyMeter                  EnergyMeter              = null,
-                       IEnumerable<ChargingPeriod>  ChargingPeriods          = null,
-                       Price?                       TotalCosts               = null,
+                       DateTime?                          End                      = null,
+                       AuthorizationReference?            AuthorizationReference   = null,
+                       Meter_Id?                          MeterId                  = null,
+                       EnergyMeter                        EnergyMeter              = null,
+                       IEnumerable<TransparencySoftware>  TransparencySoftwares    = null,
+                       IEnumerable<ChargingPeriod>        ChargingPeriods          = null,
+                       Price?                             TotalCosts               = null,
 
-                       DateTime?                    LastUpdated              = null)
+                       DateTime?                          LastUpdated              = null)
 
         {
 
@@ -208,6 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.AuthorizationReference   = AuthorizationReference;
             this.MeterId                  = MeterId;
             this.EnergyMeter              = EnergyMeter;
+            this.TransparencySoftwares    = TransparencySoftwares;
             this.ChargingPeriods          = ChargingPeriods;
             this.TotalCosts               = TotalCosts;
 
@@ -562,6 +570,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse TransparencySoftwares     [optional]
+
+                if (JSON.ParseOptionalJSON("transparency_softwares",
+                                           "transparency softwares",
+                                           TransparencySoftware.TryParse,
+                                           out IEnumerable<TransparencySoftware> TransparencySoftwares,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
                 #region Parse Currency                  [mandatory]
 
                 if (!JSON.ParseMandatory("currency",
@@ -644,6 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                       AuthorizationReference,
                                       MeterId,
                                       EnergyMeter,
+                                      TransparencySoftwares,
                                       ChargingPeriods,
                                       TotalCosts,
 
@@ -718,61 +741,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>         CustomSessionSerializer          = null,
-                              CustomJObjectSerializerDelegate<CDRToken>        CustomCDRTokenSerializer         = null,
-                              CustomJObjectSerializerDelegate<EnergyMeter>     CustomEnergyMeterSerializer      = null,
-                              CustomJObjectSerializerDelegate<ChargingPeriod>  CustomChargingPeriodSerializer   = null,
-                              CustomJObjectSerializerDelegate<CDRDimension>    CustomCDRDimensionSerializer     = null,
-                              CustomJObjectSerializerDelegate<Price>           CustomPriceSerializer            = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>               CustomSessionSerializer                = null,
+                              CustomJObjectSerializerDelegate<CDRToken>              CustomCDRTokenSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter>           CustomEnergyMeterSerializer            = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftware>  CustomTransparencySoftwareSerializer   = null,
+                              CustomJObjectSerializerDelegate<ChargingPeriod>        CustomChargingPeriodSerializer         = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>          CustomCDRDimensionSerializer           = null,
+                              CustomJObjectSerializerDelegate<Price>                 CustomPriceSerializer                  = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",             CountryCode.           ToString()),
-                           new JProperty("party_id",                 PartyId.               ToString()),
-                           new JProperty("id",                       Id.                    ToString()),
+                           new JProperty("country_code",                  CountryCode.           ToString()),
+                           new JProperty("party_id",                      PartyId.               ToString()),
+                           new JProperty("id",                            Id.                    ToString()),
 
-                           new JProperty("start_date_time",          Start.                 ToIso8601()),
+                           new JProperty("start_date_time",               Start.                 ToIso8601()),
 
                            End.HasValue
-                               ? new JProperty("end_date_time",      End.             Value.ToIso8601())
+                               ? new JProperty("end_date_time",           End.             Value.ToIso8601())
                                : null,
 
-                           new JProperty("kwh",                      kWh),
+                           new JProperty("kwh",                           kWh),
 
-                           new JProperty("cdr_token",                CDRToken.ToJSON(CustomCDRTokenSerializer)),
-                           new JProperty("auth_method",              AuthMethod.            ToString()),
-                           new JProperty("authorization_reference",  AuthorizationReference.ToString()),
-                           new JProperty("location_id",              LocationId.            ToString()),
-                           new JProperty("evse_uid",                 EVSEUId.               ToString()),
-                           new JProperty("connector_id",             ConnectorId.           ToString()),
+                           new JProperty("cdr_token",                     CDRToken.ToJSON(CustomCDRTokenSerializer)),
+                           new JProperty("auth_method",                   AuthMethod.            ToString()),
+                           new JProperty("authorization_reference",       AuthorizationReference.ToString()),
+                           new JProperty("location_id",                   LocationId.            ToString()),
+                           new JProperty("evse_uid",                      EVSEUId.               ToString()),
+                           new JProperty("connector_id",                  ConnectorId.           ToString()),
 
                            MeterId.HasValue
-                               ? new JProperty("meter_id",           MeterId.               ToString())
+                               ? new JProperty("meter_id",                MeterId.               ToString())
                                : null,
 
                            EnergyMeter != null
-                               ? new JProperty("energy_meter",       EnergyMeter.           ToJSON(CustomEnergyMeterSerializer))
+                               ? new JProperty("energy_meter",            EnergyMeter.           ToJSON(CustomEnergyMeterSerializer))
                                : null,
 
-                           new JProperty("currency",                 Currency.              ToString()),
+                           TransparencySoftwares.SafeAny()
+                               ? new JProperty("transparency_softwares",  new JArray(TransparencySoftwares.Select(software       => software.      ToJSON(CustomTransparencySoftwareSerializer))))
+                               : null,
+
+                           new JProperty("currency",                      Currency.              ToString()),
 
                            ChargingPeriods.SafeAny()
-                               ? new JProperty("charging_periods",   new JArray(ChargingPeriods.Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                               CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",        new JArray(ChargingPeriods.      Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                          CustomCDRDimensionSerializer))))
                                : null,
 
                            TotalCosts.HasValue
-                               ? new JProperty("total_cost",         TotalCosts.      Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_cost",              TotalCosts.      Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                           new JProperty("status",                   Status.                ToString()),
+                           new JProperty("status",                        Status.                ToString()),
 
 
-                           new JProperty("last_updated",             LastUpdated.           ToIso8601())
+                           new JProperty("last_updated",                  LastUpdated.           ToIso8601())
 
                        );
 
