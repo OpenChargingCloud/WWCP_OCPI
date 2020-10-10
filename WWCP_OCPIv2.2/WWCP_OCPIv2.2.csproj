@@ -47,8 +47,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\Complex\ClearProfileResult.cs" />
+    <Compile Include="DataTypes\Complex\ChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfile.cs" />
     <Compile Include="DataTypes\Complex\ActiveChargingProfile.cs" />
+    <Compile Include="DataTypes\Complex\ActiveChargingProfileResult.cs" />
+    <Compile Include="DataTypes\Complex\ChargingProfileResponse.cs" />
     <Compile Include="DataTypes\Complex\CommandResponse.cs" />
     <Compile Include="DataTypes\Complex\ReserveNowCommand.cs" />
     <Compile Include="DataTypes\Complex\CommandResult.cs" />
