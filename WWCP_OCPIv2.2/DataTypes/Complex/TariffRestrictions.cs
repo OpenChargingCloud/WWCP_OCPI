@@ -635,9 +635,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomTariffRestrictionsSerializer != null
-                       ? CustomTariffRestrictionsSerializer(this, JSON)
-                       : JSON;
+            var JSON2 = CustomTariffRestrictionsSerializer != null
+                            ? CustomTariffRestrictionsSerializer(this, JSON)
+                            : JSON;
+
+
+            return JSON2.HasValues
+                       ? JSON2
+                       : null;
 
         }
 

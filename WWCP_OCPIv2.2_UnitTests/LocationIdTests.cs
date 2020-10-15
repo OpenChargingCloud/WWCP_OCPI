@@ -24,7 +24,7 @@ using NUnit.Framework;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.tests
+namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 {
 
     /// <summary>

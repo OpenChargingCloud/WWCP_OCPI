@@ -146,7 +146,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => TryParse(JSON,
                         out StatusSchedule,
-                        out ErrorResponse);
+                        out ErrorResponse,
+                        null);
 
 
         /// <summary>

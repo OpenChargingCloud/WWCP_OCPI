@@ -72,6 +72,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Create  (Language, Text)
+
+        /// <summary>
+        /// Create a new multi-language text.
+        /// </summary>
+        /// <param name="Language">The language of the text.</param>
+        /// <param name="Text">The text.</param>
+        public static DisplayText Create(Languages  Language,
+                                         String     Text)
+
+            => new DisplayText(Language,
+                               Text);
+
+        #endregion
+
         #region (static) Parse   (JSON, CustomDisplayTextParser = null)
 
         /// <summary>

@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <example>The street name of a parking lot entrance or it's number.</example>
         [Optional]
-        public I18NString     Name           { get; }
+        public DisplayText?   Name           { get; }
 
         #endregion
 
@@ -60,11 +60,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="GeoLocation">The geo location.</param>
         /// <param name="Name">An optional name for this geo location.</param>
         public AdditionalGeoLocation(GeoCoordinate  GeoLocation,
-                                     I18NString     Name   = null)
+                                     DisplayText?   Name   = null)
         {
 
             this.GeoLocation  = GeoLocation;
-            this.Name         = Name ?? new I18NString();
+            this.Name         = Name;
 
         }
 
@@ -75,10 +75,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Longitude">The Longitude (parallel to equator).</param>
         /// <param name="Altitude">The (optional) Altitude.</param>
         /// <param name="Name">An optional name for this geo location.</param>
-        public AdditionalGeoLocation(Latitude    Latitude,
-                                     Longitude   Longitude,
-                                     Altitude?   Altitude   = null,
-                                     I18NString  Name       = null)
+        public AdditionalGeoLocation(Latitude      Latitude,
+                                     Longitude     Longitude,
+                                     Altitude?     Altitude   = null,
+                                     DisplayText?  Name       = null)
 
             : this(new GeoCoordinate(Latitude,
                                      Longitude,
@@ -212,15 +212,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Name         [optional]
 
-                if (JSON.ParseOptional("name",
-                                       "name id",
-                                       out I18NString Name,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalJSON("name",
+                                           "name",
+                                           DisplayText.TryParse,
+                                           out DisplayText? Name,
+                                           out ErrorResponse))
                 {
-
                     if (ErrorResponse != null)
                         return false;
-
                 }
 
                 #endregion
@@ -284,13 +283,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomAdditionalGeoLocationSerializer = null)
+        #region ToJSON(CustomAdditionalGeoLocationSerializer = null, CustomDisplayTextSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<AdditionalGeoLocation> CustomAdditionalGeoLocationSerializer = null)
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
+                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null)
         {
 
             var JSON = JSONObject.Create(
@@ -298,8 +299,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("latitude",  GeoLocation.Latitude. Value.ToString()),
                            new JProperty("longitude", GeoLocation.Longitude.Value.ToString()),
 
-                           Name.IsNeitherNullNorEmpty()
-                               ? new JProperty("name", Name.ToJSON())
+                           Name.HasValue
+                               ? new JProperty("name", Name.Value.ToJSON(CustomDisplayTextSerializer))
                                : null
 
                        );
@@ -374,8 +375,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => GeoLocation.Equals(AdditionalGeoLocation.GeoLocation) &&
 
-               ((Name.IsNullOrEmpty()         && AdditionalGeoLocation.Name.IsNullOrEmpty()) ||
-                (Name.IsNeitherNullNorEmpty() && AdditionalGeoLocation.Name.IsNeitherNullNorEmpty() && Name.Equals(AdditionalGeoLocation.Name)));
+               ((!Name.HasValue && !AdditionalGeoLocation.Name.HasValue) ||
+                 (Name.HasValue &&  AdditionalGeoLocation.Name.HasValue && Name.Value.Equals(AdditionalGeoLocation.Name.Value)));
 
         #endregion
 
@@ -394,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 return GeoLocation.GetHashCode() * 3 ^
 
-                       (Name.IsNeitherNullNorEmpty()
+                       (Name.HasValue
                             ? Name.GetHashCode()
                             : 0);
 
@@ -413,7 +414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => String.Concat(GeoLocation.Latitude,
                              " / ",
                              GeoLocation.Longitude,
-                             Name.IsNeitherNullNorEmpty()
+                             Name.HasValue
                                  ? " : Name = " + Name.ToString()
                                  : "");
 

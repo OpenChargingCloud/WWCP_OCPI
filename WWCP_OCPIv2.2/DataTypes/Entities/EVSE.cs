@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// information on how to reach the EVSE from the location is required.
         /// </summary>
         [Optional]
-        public I18NString                        Directions                 { get; }
+        public DisplayText?                      Directions                 { get; }
 
         /// <summary>
         /// Optional restrictions that apply to the parking spot.
@@ -161,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     String                            FloorLevel            = null,
                     GeoCoordinate?                    Coordinates           = null,
                     String                            PhysicalReference     = null,
-                    I18NString                        Directions            = null,
+                    DisplayText?                      Directions            = null,
                     IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
                     IEnumerable<Image>                Images                = null,
 
@@ -423,10 +423,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Directions                [optional]
 
-                if (JSON.ParseOptional("directions",
-                                       "directions",
-                                       out I18NString Directions,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalJSON("directions",
+                                           "directions",
+                                           DisplayText.TryParse,
+                                           out DisplayText? Directions,
+                                           out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -562,10 +563,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>            CustomEVSESerializer             = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>  CustomStatusScheduleSerializer   = null,
                               CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null,
+                              CustomJObjectSerializerDelegate<DisplayText>     CustomDisplayTextSerializer      = null,
                               CustomJObjectSerializerDelegate<Image>           CustomImageSerializer            = null)
         {
 
@@ -593,8 +596,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            Coordinates.HasValue
                                ? new JProperty("coordinates",           new JObject(
-                                                                            new JProperty("latitude",  Coordinates.Value.Latitude. Value.ToString()),
-                                                                            new JProperty("longitude", Coordinates.Value.Longitude.Value.ToString())
+                                                                            new JProperty("latitude",  Coordinates.Value.Latitude. Value.ToString("0.0000000").Replace(",", ".")),
+                                                                            new JProperty("longitude", Coordinates.Value.Longitude.Value.ToString("0.0000000").Replace(",", "."))
                                                                         ))
                                : null,
 
@@ -602,8 +605,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("physical_reference",    PhysicalReference)
                                : null,
 
-                           Directions.IsNeitherNullNorEmpty()
-                               ? new JProperty("directions",            Directions.ToJSON())
+                           Directions.HasValue
+                               ? new JProperty("directions",            Directions.Value.ToJSON(CustomDisplayTextSerializer))
                                : null,
 
                            ParkingRestrictions.SafeAny()

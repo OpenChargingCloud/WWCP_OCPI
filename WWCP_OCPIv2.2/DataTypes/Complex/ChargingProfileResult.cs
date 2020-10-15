@@ -32,8 +32,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// A charging profile result.
     /// </summary>
     public readonly struct ChargingProfileResult : IEquatable<ChargingProfileResult>,
-                                                         IComparable<ChargingProfileResult>,
-                                                         IComparable
+                                                   IComparable<ChargingProfileResult>,
+                                                   IComparable
     {
 
         #region Properties

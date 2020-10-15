@@ -32,11 +32,8 @@ using NUnit.Framework;
 namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 {
 
-#if __MonoCS__
-#else
-
     /// <summary>
-    /// Unit tests for OCPI v2.0 tariffs.
+    /// Unit tests for tariffs.
     /// https://github.com/ocpi/ocpi/blob/master/mod_tariffs.md#54-tariffrestrictions-class
     /// </summary>
     [TestFixture]
@@ -368,7 +365,5 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         #endregion
 
     }
-
-#endif
 
 }

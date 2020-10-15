@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="LocationIdTests.cs" />
     <Compile Include="TariffTests.cs" />
+    <Compile Include="LocationTests.cs" />
     <Compile Include="OCPITests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

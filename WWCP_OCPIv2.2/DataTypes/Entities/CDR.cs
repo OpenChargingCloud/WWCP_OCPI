@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// An enumeration of transparency softwares which can be used to validate the charging session data.
         /// </summary>
         [Optional, NonStandard]
-        public IEnumerable<TransparencySoftware>  TransparencySoftwares        { get; }
+        public IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
 
         /// <summary>
         /// ISO 4217 code of the currency used for this CDR.
@@ -173,52 +173,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Total energy charged, in kWh.
         /// </summary>
         [Mandatory]
-        public Decimal                      TotalEnergy                 { get; }
+        public Decimal                             TotalEnergy                 { get; }
 
         /// <summary>
         /// Total sum of all the cost of all the energy used, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                       TotalEnergyCost             { get; }
+        public Price?                              TotalEnergyCost             { get; }
 
 
         /// <summary>
         /// Total duration of the charging session (including the duration of charging and not charging), in hours.
         /// </summary>
         [Mandatory]
-        public TimeSpan                     TotalTime                   { get; }
+        public TimeSpan                            TotalTime                   { get; }
 
         /// <summary>
         /// Total sum of all the cost related to duration of charging during this transaction, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                       TotalTimeCost               { get; }
+        public Price?                              TotalTimeCost               { get; }
 
 
         /// <summary>
         /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
         /// </summary>
         [Optional]
-        public TimeSpan?                    TotalParkingTime            { get; }
+        public TimeSpan?                           TotalParkingTime            { get; }
 
         /// <summary>
         /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
         /// </summary>
         [Optional]
-        public TimeSpan                     TotalChargingTime
+        public TimeSpan                            TotalChargingTime
             => TotalTime - (TotalParkingTime ?? TimeSpan.Zero);
 
         /// <summary>
         /// Total sum of all the cost related to parking of this transaction, including fixed price components, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                       TotalParkingCost            { get; }
+        public Price?                              TotalParkingCost            { get; }
 
         /// <summary>
         /// Total sum of all the cost related to a reservation of a Charge Point, including fixed price components, in the specified currency.
         /// </summary>
         [Optional]
-        public Price?                       TotalReservationCost        { get; }
+        public Price?                              TotalReservationCost        { get; }
 
         /// <summary>
         /// Optional remark, can be used to provide addition human
@@ -226,32 +226,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// reason why a transaction was stopped.
         /// </summary>
         [Optional]
-        public String                       Remark                      { get; }
+        public String                              Remark                      { get; }
 
         /// <summary>
         /// This field can be used to reference an invoice, that will later be send for this CDR. Making it easier to link a CDR to a given invoice. Maybe even group CDRs that will be on the same invoice.
         /// </summary>
         [Optional]
-        public InvoiceReference_Id?         InvoiceReferenceId          { get; }
+        public InvoiceReference_Id?                InvoiceReferenceId          { get; }
 
 
         /// <summary>
         /// When set to true, this is a Credit CDR, and the field credit_reference_id needs to be set as well.
         /// </summary>
         [Optional]
-        public Boolean?                     Credit                      { get; }
+        public Boolean?                            Credit                      { get; }
 
         /// <summary>
         /// Is required to be set for a Credit CDR. This SHALL contain the id of the CDR for which this is a Credit CDR.
         /// </summary>
         [Optional]
-        public CreditReference_Id?          CreditReferenceId           { get; }
+        public CreditReference_Id?                 CreditReferenceId           { get; }
 
         /// <summary>
         /// Timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                     LastUpdated                 { get; }
+        public DateTime                            LastUpdated                 { get; }
 
         #endregion
 

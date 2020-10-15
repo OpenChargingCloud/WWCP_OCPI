@@ -960,12 +960,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            new JProperty("country",                         Country),
                            new JProperty("coordinates",                     new JObject(
-                                                                                new JProperty("latitude",  Coordinates.Latitude. Value.ToString()),
-                                                                                new JProperty("longitude", Coordinates.Longitude.Value.ToString())
+                                                                                new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.0000000").Replace(",", ".")),
+                                                                                new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.0000000").Replace(",", "."))
                                                                             )),
 
                            RelatedLocations.SafeAny()
-                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(location => location.ToJSON(CustomAdditionalGeoLocationSerializer))))
+                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(location => location.ToJSON(CustomAdditionalGeoLocationSerializer,
+                                                                                                                                           CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingType.HasValue
@@ -975,7 +976,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            EVSEs.SafeAny()
                                ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
                                                                                                                         CustomStatusScheduleSerializer,
-                                                                                                                        CustomConnectorSerializer))))
+                                                                                                                        CustomConnectorSerializer,
+                                                                                                                        CustomDisplayTextSerializer,
+                                                                                                                        CustomImageSerializer))))
                                : null,
 
                            Directions.SafeAny()
