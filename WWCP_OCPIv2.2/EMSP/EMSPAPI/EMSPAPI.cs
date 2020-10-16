@@ -2362,7 +2362,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Check whether the new location is "newer" than the existing location
 
-                                         if (newOrUpdatedLocation.LastUpdated < ExistingLocation.LastUpdated)
+                                         if (newOrUpdatedLocation.LastUpdated < ExistingLocation.LastUpdated &&
+                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
                                          {
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -2620,7 +2621,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Check whether the new EVSE is "newer" than the existing EVSE
 
-                                         if (newOrUpdatedEVSE.LastUpdated < ExistingEVSE.LastUpdated)
+                                         if (newOrUpdatedEVSE.LastUpdated < ExistingEVSE.LastUpdated &&
+                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
                                          {
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -2884,7 +2886,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Check whether the new connector is "newer" than the existing connector
 
-                                         if (newOrUpdatedConnector.LastUpdated < ExistingConnector.LastUpdated)
+                                         if (newOrUpdatedConnector.LastUpdated < ExistingConnector.LastUpdated &&
+                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
                                          {
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3220,7 +3223,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Check whether the new tariff is "newer" than the existing tariff
 
-                                         if (newOrUpdatedTariff.LastUpdated < ExistingTariff.LastUpdated)
+                                         if (newOrUpdatedTariff.LastUpdated < ExistingTariff.LastUpdated &&
+                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
                                          {
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3446,7 +3450,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Check whether the new session is "newer" than the existing session
 
-                                         if (newOrUpdatedSession.LastUpdated < ExistingSession.LastUpdated)
+                                         if (newOrUpdatedSession.LastUpdated < ExistingSession.LastUpdated &&
+                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
                                          {
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
