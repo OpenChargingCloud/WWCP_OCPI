@@ -1169,6 +1169,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
+        public HTTPPath?  AdditionalURLPathPrefix    { get; }
+
         #endregion
 
         #region Events
@@ -1189,13 +1191,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
         /// <param name="ServiceName">An optional HTTP service name.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
-        public CommonAPI(HTTPHostname?   HTTPHostname      = null,
-                         IPPort?         HTTPServerPort    = null,
-                         String          HTTPServerName    = DefaultHTTPServerName,
-                         String          ExternalDNSName   = null,
-                         HTTPPath?       URLPathPrefix     = null,
-                         String          ServiceName       = DefaultHTTPServiceName,
-                         DNSClient       DNSClient         = null)
+        public CommonAPI(HTTPHostname?   HTTPHostname              = null,
+                         IPPort?         HTTPServerPort            = null,
+                         String          HTTPServerName            = DefaultHTTPServerName,
+                         String          ExternalDNSName           = null,
+                         HTTPPath?       URLPathPrefix             = null,
+                         String          ServiceName               = DefaultHTTPServiceName,
+                         HTTPPath?       AdditionalURLPathPrefix   = null,
+                         DNSClient       DNSClient                 = null)
 
             : base(HTTPHostname,
                    HTTPServerPort ?? DefaultHTTPServerPort,
@@ -1207,8 +1210,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this._AccessTokens  = new Dictionary<AccessToken, AccessInfo>();
-            this._Locations     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+
+            this._AccessTokens            = new Dictionary<AccessToken, AccessInfo>();
+            this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
 
             RegisterURLTemplates();
 
@@ -1227,10 +1232,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
         public CommonAPI(HTTPServer      HTTPServer,
-                         HTTPHostname?   HTTPHostname      = null,
-                         String          ExternalDNSName   = null,
-                         HTTPPath?       URLPathPrefix     = null,
-                         String          ServiceName       = DefaultHTTPServerName)
+                         HTTPHostname?   HTTPHostname              = null,
+                         String          ExternalDNSName           = null,
+                         HTTPPath?       URLPathPrefix             = null,
+                         String          ServiceName               = DefaultHTTPServerName,
+                         HTTPPath?       AdditionalURLPathPrefix   = null)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -1240,17 +1246,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this._AccessTokens  = new Dictionary<AccessToken, AccessInfo>();
-            this._Locations     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this._Tariffs       = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this._Sessions      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this._Tokens        = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    Token>>>();
-            this._CDRs          = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+
+            this._AccessTokens            = new Dictionary<AccessToken, AccessInfo>();
+            this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this._Tariffs                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this._Sessions                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this._Tokens                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this._CDRs                    = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
-            HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog  += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog     += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+            HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+            HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+            HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
             RegisterURLTemplates();
 
@@ -1337,14 +1345,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  // Invalid or blocked access token!
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode                = HTTPStatusCode.Forbidden,
-                                                         Server                        = HTTPServer.DefaultServerName,
-                                                         Date                          = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin      = "*",
-                                                         AccessControlAllowMethods     = "GET",
-                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
-                                                         Connection                    = "close",
-                                                         Vary                          = "Accept"
+                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         Connection                 = "close"
                                                      }.AsImmutable);
 
                                              }
@@ -1359,21 +1366,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Date                          = DateTime.UtcNow,
                                                      AccessControlAllowOrigin      = "*",
                                                      AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     AccessControlAllowHeaders     = "Authorization",
                                                      ContentType                   = HTTPContentType.JSON_UTF8,
                                                      Content                       = OCPIResponse<IEnumerable<Version>>.Create(
                                                                                          new Version[] {
                                                                                              new Version(
                                                                                                  Version_Id.Parse("2.2"),
-                                                                                                 "https://api.chargeIT-mobility.com/io/ocpi/versions/2.2"
+                                                                                                 "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2").Replace("//", "/")
                                                                                              )
                                                                                          },
                                                                                          versions => new JArray(versions.Select(version => version.ToJSON())),
                                                                                          1000,
                                                                                          "Hello world!"
                                                                                      ).ToUTF8Bytes(),
-                                                     Connection                    = "close",
-                                                     Vary                          = "Accept"
+                                                     Connection                    = "close"
                                                  }.AsImmutable);
 
 
@@ -1440,9 +1446,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          Date                          = DateTime.UtcNow,
                                                          AccessControlAllowOrigin      = "*",
                                                          AccessControlAllowMethods     = "GET",
-                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
-                                                         Connection                    = "close",
-                                                         Vary                          = "Accept"
+                                                         AccessControlAllowHeaders     = "Authorization",
+                                                         Connection                    = "close"
                                                      }.AsImmutable);
 
                                              }
@@ -1471,11 +1476,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                                   new VersionEndpoint(ModuleIDs.Credentials,
                                                                                       InterfaceRoles.SENDER,
-                                                                                      "https://" + Request.Host + URLPathPrefix + "2.2/credentials/"),
+                                                                                      "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials").Replace("//", "/")),
 
                                                                   new VersionEndpoint(ModuleIDs.Credentials,
                                                                                       InterfaceRoles.RECEIVER,
-                                                                                      "https://" + Request.Host + URLPathPrefix + "2.2/credentials/")
+                                                                                      "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials").Replace("//", "/"))
 
                                                               };
 
@@ -1485,28 +1490,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                                    InterfaceRoles.RECEIVER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/locations/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/locations").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                                    InterfaceRoles.RECEIVER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/tariffs/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tariffs").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                                    InterfaceRoles.RECEIVER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/sessions/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/sessions").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                                    InterfaceRoles.RECEIVER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/cdrs/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/cdrs").Replace("//", "/")));
 
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/commands/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/commands").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/emsp/tokens/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tokens").Replace("//", "/")));
 
                                                  // hubclientinfo
 
@@ -1518,7 +1523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/locations/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/")));
 
                                              }
 
@@ -1527,37 +1532,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/cdrs/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/sessions/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions").Replace("//", "/")));
 
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/locations/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/tariffs/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tariffs").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/sessions/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                                    InterfaceRoles.SENDER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/cdrs/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs").Replace("//", "/")));
 
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                                    InterfaceRoles.RECEIVER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/commands/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/commands").Replace("//", "/")));
 
                                                  endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                                    InterfaceRoles.RECEIVER,
-                                                                                   "https://" + Request.Host + URLPathPrefix + "2.2/cpo/tokens/"));
+                                                                                   "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tokens").Replace("//", "/")));
 
                                                  // hubclientinfo
 
@@ -1571,7 +1576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET",
-                                                     AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                     AccessControlAllowHeaders  = "Authorization",
                                                      ContentType                = HTTPContentType.JSON_UTF8,
                                                      Content                    = OCPIResponse<VersionDetail>.Create(
                                                                                       new VersionDetail(
@@ -1581,8 +1586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                       1000,
                                                                                       "Hello world!"
                                                                                   ).ToUTF8Bytes(),
-                                                     Connection                 = "close",
-                                                     Vary                       = "Accept"
+                                                     Connection                 = "close"
                                                  }.AsImmutable);
 
                                          });
@@ -1610,35 +1614,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode                = HTTPStatusCode.OK,
-                                                         Server                        = HTTPServer.DefaultServerName,
-                                                         Date                          = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin      = "*",
-                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
-                                                         ContentType                   = HTTPContentType.JSON_UTF8,
-                                                         Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
-                                                                                             accessInfo.Credentials,
-                                                                                             credentials => credentials.ToJSON(),
-                                                                                             1000,
-                                                                                             "Hello world!"
-                                                                                         ).ToUTF8Bytes(),
-                                                         Connection                    = "close",
-                                                         Vary                          = "Accept"
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.JSON_UTF8,
+                                                         Content                    = OCPIResponse<OCPIv2_2.Credentials>.Create(
+                                                                                          accessInfo.Credentials,
+                                                                                          credentials => credentials.ToJSON(),
+                                                                                          1000,
+                                                                                          "Hello world!"
+                                                                                      ).ToUTF8Bytes(),
+                                                         Connection                 = "close"
                                                      }.AsImmutable);
 
                                              }
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
-                                                     Server                        = HTTPServer.DefaultServerName,
-                                                     Date                          = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin      = "*",
-                                                     AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
-                                                     Connection                    = "close",
-                                                     Vary                          = "Accept"
+                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     Connection                 = "close"
                                                  }.AsImmutable);
 
                                          });
@@ -1672,13 +1674,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              Date                          = DateTime.UtcNow,
                                                              AccessControlAllowOrigin      = "*",
                                                              AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             AccessControlAllowHeaders     = "Authorization",
                                                              Connection                    = "close"
                                                          }.AsImmutable);
 
 
-                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse HTTPResp, AllowEmptyHTTPBody: false) ||
-                                                     !OCPIv2_2.Credentials.TryParse(JSONObj, out OCPIv2_2.Credentials credentials, out String ErrorResponse))
+                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
+                                                     !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
                                                     return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
                                                              HTTPStatusCode                = HTTPStatusCode.BadRequest,
@@ -1686,7 +1688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              Date                          = DateTime.UtcNow,
                                                              AccessControlAllowOrigin      = "*",
                                                              AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             AccessControlAllowHeaders     = "Authorization",
                                                              Connection                    = "close"
                                                          }.AsImmutable);
 
@@ -1707,7 +1709,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          Date                          = DateTime.UtcNow,
                                                          AccessControlAllowOrigin      = "*",
                                                          AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         AccessControlAllowHeaders     = "Authorization",
                                                          ContentType                   = HTTPContentType.JSON_UTF8,
                                                          Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
                                                                                              credentials,
@@ -1727,7 +1729,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Date                          = DateTime.UtcNow,
                                                      AccessControlAllowOrigin      = "*",
                                                      AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     AccessControlAllowHeaders     = "Authorization",
                                                      Connection                    = "close"
                                                  }.AsImmutable);
 
@@ -1762,13 +1764,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              Date                          = DateTime.UtcNow,
                                                              AccessControlAllowOrigin      = "*",
                                                              AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             AccessControlAllowHeaders     = "Authorization",
                                                              Connection                    = "close"
                                                          }.AsImmutable);
 
 
-                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse HTTPResp, AllowEmptyHTTPBody: false) ||
-                                                     !OCPIv2_2.Credentials.TryParse(JSONObj, out OCPIv2_2.Credentials credentials, out String ErrorResponse))
+                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
+                                                     !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
                                                     return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
                                                              HTTPStatusCode                = HTTPStatusCode.BadRequest,
@@ -1776,7 +1778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              Date                          = DateTime.UtcNow,
                                                              AccessControlAllowOrigin      = "*",
                                                              AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             AccessControlAllowHeaders     = "Authorization",
                                                              Connection                    = "close"
                                                          }.AsImmutable);
 
@@ -1797,7 +1799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          Date                          = DateTime.UtcNow,
                                                          AccessControlAllowOrigin      = "*",
                                                          AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                         AccessControlAllowHeaders     = "Authorization",
                                                          ContentType                   = HTTPContentType.JSON_UTF8,
                                                          Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
                                                                                              accessInfo.Credentials,
@@ -1817,7 +1819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Date                          = DateTime.UtcNow,
                                                      AccessControlAllowOrigin      = "*",
                                                      AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     AccessControlAllowHeaders     = "Authorization",
                                                      Connection                    = "close"
                                                  }.AsImmutable);
 
@@ -1852,7 +1854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              Date                          = DateTime.UtcNow,
                                                              AccessControlAllowOrigin      = "*",
                                                              AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                             AccessControlAllowHeaders     = "Authorization",
                                                              Connection                    = "close"
                                                          }.AsImmutable);
 
@@ -1896,9 +1898,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AccessTokens
 
-        public CommonAPI SetAccessToken(AccessToken  AccessToken,
-                                           Roles        Role,
-                                           AccessStatus AccessStatus = AccessStatus.ALLOWED)
+        public CommonAPI SetAccessToken(AccessToken   AccessToken,
+                                        Roles         Role,
+                                        AccessStatus  AccessStatus   = AccessStatus.ALLOWED)
         {
             lock (_AccessTokens)
             {
@@ -1915,10 +1917,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
         }
 
-        public CommonAPI SetAccessToken(AccessToken           AccessToken,
-                                           Roles                 Role,
-                                           OCPIv2_2.Credentials  Credentials,
-                                           AccessStatus          AccessStatus = AccessStatus.ALLOWED)
+        public CommonAPI SetAccessToken(AccessToken   AccessToken,
+                                        Roles         Role,
+                                        Credentials   Credentials,
+                                        AccessStatus  AccessStatus = AccessStatus.ALLOWED)
         {
             lock (_AccessTokens)
             {
@@ -1951,10 +1953,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Locations
 
-        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> _Locations;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> _Locations;
 
 
-        #region AddLocation(Location)
+        #region AddLocation           (Location)
 
         public Location AddLocation(Location Location)
         {
@@ -2025,7 +2027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddOrUpdateLocation(Location)
+        #region AddOrUpdateLocation   (Location)
 
         public Location AddOrUpdateLocation(Location Location)
         {
@@ -2055,6 +2057,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 locations.Add(Location.Id, Location);
                 return Location;
+
+            }
+
+        }
+
+        #endregion
+
+        #region UpdateLocation        (Location)
+
+        public Location UpdateLocation(Location Location)
+        {
+
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+
+            lock (_Locations)
+            {
+
+                if (_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
+                    parties.   TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
+                    locations.ContainsKey(Location.Id))
+                {
+                    locations[Location.Id] = Location;
+                    return Location;
+                }
+
+                return null;
 
             }
 
@@ -2261,10 +2290,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Tariffs
 
-        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> _Tariffs;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> _Tariffs;
 
 
-        #region AddTariff(Tariff)
+        #region AddTariff           (Tariff)
 
         public Tariff AddTariff(Tariff Tariff)
         {
@@ -2335,7 +2364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddOrUpdateTariff(Tariff)
+        #region AddOrUpdateTariff   (Tariff)
 
         public Tariff AddOrUpdateTariff(Tariff Tariff)
         {
@@ -2365,6 +2394,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 tariffs.Add(Tariff.Id, Tariff);
                 return Tariff;
+
+            }
+
+        }
+
+        #endregion
+
+        #region UpdateTariff        (Tariff)
+
+        public Tariff UpdateTariff(Tariff Tariff)
+        {
+
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+
+            lock (_Tariffs)
+            {
+
+                if (_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
+                    parties. TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
+                    tariffs.ContainsKey(Tariff.Id))
+                {
+                    tariffs[Tariff.Id] = Tariff;
+                    return Tariff;
+                }
+
+                return null;
 
             }
 
@@ -2571,10 +2627,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Sessions
 
-        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> _Sessions;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> _Sessions;
 
 
-        #region AddSession(Session)
+        #region AddSession           (Session)
 
         public Session AddSession(Session Session)
         {
@@ -2645,7 +2701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddOrUpdateSession(Session)
+        #region AddOrUpdateSession   (Session)
 
         public Session AddOrUpdateSession(Session Session)
         {
@@ -2675,6 +2731,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 sessions.Add(Session.Id, Session);
                 return Session;
+
+            }
+
+        }
+
+        #endregion
+
+        #region UpdateSession        (Session)
+
+        public Session UpdateSession(Session Session)
+        {
+
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+
+            lock (_Sessions)
+            {
+
+                if (_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
+                    parties.  TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
+                    sessions.ContainsKey(Session.Id))
+                {
+                    sessions[Session.Id] = Session;
+                    return Session;
+                }
+
+                return null;
 
             }
 
@@ -2881,12 +2964,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Tokens
 
-        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, Token>>> _Tokens;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> _Tokens;
 
 
-        #region AddToken(Token)
+        #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
 
-        public Token AddToken(Token Token)
+        public Token AddToken(Token         Token,
+                              AllowedTypes  Status = AllowedTypes.ALLOWED)
         {
 
             if (Token is null)
@@ -2895,21 +2979,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (_Tokens)
             {
 
-                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, Token>>();
+                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
                     _Tokens.Add(Token.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                 {
-                    tokens = new Dictionary<Token_Id, Token>();
+                    tokens = new Dictionary<Token_Id, TokenStatus>();
                     parties.Add(Token.PartyId, tokens);
                 }
 
                 if (!tokens.ContainsKey(Token.Id))
                 {
-                    tokens.Add(Token.Id, Token);
+                    tokens.Add(Token.Id, new TokenStatus(Token, Status));
                     return Token;
                 }
 
@@ -2921,9 +3005,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddTokenIfNotExists(Token)
+        #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED)
 
-        public Token AddTokenIfNotExists(Token Token)
+        public Token AddTokenIfNotExists(Token         Token,
+                                         AllowedTypes  Status = AllowedTypes.ALLOWED)
         {
 
             if (Token is null)
@@ -2932,20 +3017,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (_Tokens)
             {
 
-                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, Token>>();
+                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
                     _Tokens.Add(Token.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                 {
-                    tokens = new Dictionary<Token_Id, Token>();
+                    tokens = new Dictionary<Token_Id, TokenStatus>();
                     parties.Add(Token.PartyId, tokens);
                 }
 
                 if (!tokens.ContainsKey(Token.Id))
-                    tokens.Add(Token.Id, Token);
+                    tokens.Add(Token.Id, new TokenStatus(Token, Status));
 
                 return Token;
 
@@ -2955,9 +3040,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddOrUpdateToken(Token)
+        #region AddOrUpdateToken   (Token, Status = AllowedTypes.ALLOWED)
 
-        public Token AddOrUpdateToken(Token Token)
+        public Token AddOrUpdateToken(Token         Token,
+                                      AllowedTypes  Status = AllowedTypes.ALLOWED)
         {
 
             if (Token is null)
@@ -2966,15 +3052,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (_Tokens)
             {
 
-                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
-                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, Token>>();
+                    parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
                     _Tokens.Add(Token.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                 {
-                    tokens = new Dictionary<Token_Id, Token>();
+                    tokens = new Dictionary<Token_Id, TokenStatus>();
                     parties.Add(Token.PartyId, tokens);
                 }
 
@@ -2983,7 +3069,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     tokens.Remove(Token.Id);
                 }
 
-                tokens.Add(Token.Id, Token);
+                tokens.Add(Token.Id, new TokenStatus(Token, Status));
                 return Token;
 
             }
@@ -2993,27 +3079,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryGetToken(CountryCode, PartyId, TokenId,, out Token)
+        #region TryGetToken(CountryCode, PartyId, TokenId, out TokenWithStatus)
 
-        public Boolean TryGetToken(CountryCode  CountryCode,
-                                   Party_Id     PartyId,
-                                   Token_Id     TokenId,
-                                   out Token    Token)
+        public Boolean TryGetToken(CountryCode      CountryCode,
+                                   Party_Id         PartyId,
+                                   Token_Id         TokenId,
+                                   out TokenStatus  TokenWithStatus)
         {
 
             lock (_Tokens)
             {
 
-                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, Token> tokens))
+                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                     {
-                        if (tokens.TryGetValue(TokenId, out Token))
+                        if (tokens.TryGetValue(TokenId, out TokenWithStatus))
                             return true;
                     }
                 }
 
-                Token = null;
+                TokenWithStatus = default;
                 return false;
 
             }
@@ -3024,8 +3110,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region GetTokens(CountryCode = null, PartyId = null)
 
-        public IEnumerable<Token> GetTokens(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<TokenStatus> GetTokens(CountryCode?  CountryCode   = null,
+                                                  Party_Id?     PartyId       = null)
         {
 
             lock (_Tokens)
@@ -3033,9 +3119,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Token_Id, Token> tokens))
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Token_Id, TokenStatus> tokens))
                         {
                             return tokens.Values.ToArray();
                         }
@@ -3045,11 +3131,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 else if (!CountryCode.HasValue && PartyId.HasValue)
                 {
 
-                    var allTokens = new List<Token>();
+                    var allTokens = new List<TokenStatus>();
 
                     foreach (var party in _Tokens.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Token_Id, Token> tokens))
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<Token_Id, TokenStatus> tokens))
                         {
                             allTokens.AddRange(tokens.Values);
                         }
@@ -3061,10 +3147,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                     {
 
-                        var allTokens = new List<Token>();
+                        var allTokens = new List<TokenStatus>();
 
                         foreach (var tokens in parties.Values)
                         {
@@ -3079,7 +3165,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 else
                 {
 
-                    var allTokens = new List<Token>();
+                    var allTokens = new List<TokenStatus>();
 
                     foreach (var party in _Tokens.Values)
                     {
@@ -3093,7 +3179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return new Token[0];
+                return new TokenStatus[0];
 
             }
 
@@ -3101,6 +3187,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+        #region RemoveToken(TokenId)
+
+        public Token RemoveToken(Token_Id TokenId)
+        {
+
+            lock (_Tokens)
+            {
+
+                Token foundToken = null;
+
+                foreach (var parties in _Tokens.Values)
+                {
+
+                    foreach (var tokens in parties.Values)
+                    {
+                        if (tokens.TryGetValue(TokenId, out TokenStatus tokenStatus))
+                        {
+                            foundToken = tokenStatus.Token;
+                            break;
+                        }
+                    }
+
+                    if (foundToken != null)
+                        break;
+
+                }
+
+                return foundToken != null
+                           ? RemoveToken(foundToken)
+                           : null;
+
+            }
+
+        }
+
+        #endregion
 
         #region RemoveToken(Token)
 
@@ -3113,10 +3236,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (_Tokens)
             {
 
-                if (_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                if (_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
 
-                    if (parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, Token> tokens))
+                    if (parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                     {
 
                         if (tokens.ContainsKey(Token.Id))
@@ -3173,9 +3296,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (_Tokens)
             {
 
-                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, Token>> parties))
+                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, Token> tokens))
+                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                     {
                         tokens.Clear();
                     }
@@ -3191,10 +3314,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region CDRs
 
-        private Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> _CDRs;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> _CDRs;
 
 
-        #region AddCDR(CDR)
+        #region AddCDR           (CDR)
 
         public CDR AddCDR(CDR CDR)
         {
@@ -3265,7 +3388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddOrUpdateCDR(CDR)
+        #region AddOrUpdateCDR   (CDR)
 
         public CDR AddOrUpdateCDR(CDR CDR)
         {
@@ -3295,6 +3418,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 CDRs.Add(CDR.Id, CDR);
                 return CDR;
+
+            }
+
+        }
+
+        #endregion
+
+        #region UpdateCDR        (CDR)
+
+        public CDR UpdateCDR(CDR CDR)
+        {
+
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+
+            lock (_CDRs)
+            {
+
+                if (_CDRs.  TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties) &&
+                    parties.TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  CDRs)    &&
+                    CDRs.ContainsKey(CDR.Id))
+                {
+                    CDRs[CDR.Id] = CDR;
+                    return CDR;
+                }
+
+                return null;
 
             }
 

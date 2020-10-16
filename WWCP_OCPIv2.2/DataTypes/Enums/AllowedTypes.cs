@@ -25,22 +25,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     {
 
         /// <summary>
-        /// This Token is allowed to charge (at this location).
+        /// This token is allowed to charge (at this location).
         /// </summary>
         ALLOWED,
 
         /// <summary>
-        /// This Token is blocked.
+        /// This token is blocked.
         /// </summary>
         BLOCKED,
 
         /// <summary>
-        /// This Token has expired.
+        /// This token has expired.
         /// </summary>
         EXPIRED,
 
         /// <summary>
-        /// This Token belongs to an account that has not enough credits to charge (at the given location).
+        /// This token belongs to an account that has not enough credits to charge (at the given location).
         /// </summary>
         NO_CREDIT,
 

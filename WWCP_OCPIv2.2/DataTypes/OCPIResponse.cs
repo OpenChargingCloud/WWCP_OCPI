@@ -46,23 +46,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-        public TResponse  Data                      { get; }
+        public TResponse        Data                      { get; }
 
-        public Int32?     StatusCode                { get; }
-        public String     StatusMessage             { get; }
+        public Int32?           StatusCode                { get; }
+        public String           StatusMessage             { get; }
 
-        public String     AdditionalInformation     { get; }
-        public DateTime   Timestamp                 { get; }
+        public String           AdditionalInformation     { get; }
+        public DateTime         Timestamp                 { get; }
+
+
+        public Request_Id?      RequestId                 { get; }
+        public Correlation_Id?  CorrelationId             { get; } 
 
         #endregion
 
         #region Constructor(s)
 
-        public OCPIResponse(TResponse  Data,
-                            Int32?     StatusCode,
-                            String     StatusMessage,
-                            String     AdditionalInformation   = null,
-                            DateTime?  Timestamp               = null)
+        public OCPIResponse(TResponse        Data,
+                            Int32?           StatusCode,
+                            String           StatusMessage,
+                            String           AdditionalInformation   = null,
+                            DateTime?        Timestamp               = null,
+
+                            Request_Id?      RequestId               = null,
+                            Correlation_Id?  CorrelationId           = null)
+
         {
 
             this.Data                   = Data;
@@ -71,7 +79,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.AdditionalInformation  = AdditionalInformation;
             this.Timestamp              = Timestamp ?? DateTime.UtcNow;
 
+            this.RequestId              = RequestId;
+            this.CorrelationId          = CorrelationId;
+
         }
+
+        #endregion
 
 
         public static JObject Create(TResponse                Data,
@@ -79,7 +92,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                      Int32?                   StatusCode,
                                      String                   StatusMessage,
                                      String                   AdditionalInformation   = null,
-                                     DateTime?                Timestamp               = null)
+                                     DateTime?                Timestamp               = null,
+
+                                     Request_Id?              RequestId               = null,
+                                     Correlation_Id?          CorrelationId           = null)
+
         {
 
             return new OCPIResponse<TResponse>(Data,
@@ -90,7 +107,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
-        #endregion
+
+        public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
+        {
+
+            return new HTTPResponse.Builder(Request);
+
+            //.Set("X-Request-ID", Request.RequestId).
+            //                                          Set("X-Correlation-ID", Request.CorrelationId);
+
+
+
+        }
 
 
 

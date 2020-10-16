@@ -189,12 +189,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 this.AccessToken = accessToken;
             }
 
-
-
-            // Set("X-Request-ID", RequestId).
-            // Set("X-Correlation-ID", CorrelationId);
-
-
         }
 
         public DateAndPaginationFilters GetDateAndPaginationFilters()
@@ -207,16 +201,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public Boolean TryParseJObjectRequestBody(out JObject       JSON,
-                                                  out HTTPResponse  HTTPResponse,
-                                                  Boolean           AllowEmptyHTTPBody = false,
-                                                  String            JSONLDContext      = null)
+        public Boolean TryParseJObjectRequestBody(out JObject               JSON,
+                                                  out HTTPResponse.Builder  HTTPResponse,
+                                                  Boolean                   AllowEmptyHTTPBody = false,
+                                                  String                    JSONLDContext      = null)
+        {
 
-            => HTTPRequest.TryParseJObjectRequestBody(out JSON,
-                                                      out HTTPResponse,
-                                                      AllowEmptyHTTPBody,
-                                                      JSONLDContext);
+            var result = HTTPRequest.TryParseJObjectRequestBody(out JSON,
+                                                                out HTTPResponse,
+                                                                AllowEmptyHTTPBody,
+                                                                JSONLDContext);
 
+            if (HTTPResponse != null)
+            {
+                HTTPResponse.Set("X-Request-ID",      RequestId).
+                             Set("X-Correlation-ID",  CorrelationId);
+            }
+
+            return result;
+
+        }
 
 
         public static OCPIRequest Parse(HTTPRequest HTTPRequest)

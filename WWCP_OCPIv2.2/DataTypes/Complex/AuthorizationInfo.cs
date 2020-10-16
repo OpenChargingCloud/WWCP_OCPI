@@ -343,7 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                    Allowed.                     ToString()),
+                           new JProperty("allowed",                         Allowed.                     ToString()),
                            new JProperty("token",                           Token.                       ToJSON(CustomTokenSerializer)),
 
                            Location.HasValue

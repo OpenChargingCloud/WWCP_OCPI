@@ -55,6 +55,7 @@
     <Compile Include="DataTypes\Complex\ChargingProfileResponse.cs" />
     <Compile Include="DataTypes\Complex\CommandResponse.cs" />
     <Compile Include="DataTypes\Complex\ClientInfo.cs" />
+    <Compile Include="DataTypes\Complex\TokenStatus.cs" />
     <Compile Include="DataTypes\Complex\TransparencySoftware.cs" />
     <Compile Include="DataTypes\Complex\EnergyMeter.cs" />
     <Compile Include="DataTypes\Complex\ReserveNowCommand.cs" />

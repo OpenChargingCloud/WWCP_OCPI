@@ -51,11 +51,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest  Request,
-                                                           CPOAPI            CPOAPI,
-                                                           out CountryCode?  CountryCode,
-                                                           out Party_Id?     PartyId,
-                                                           out HTTPResponse  HTTPResponse)
+        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest          Request,
+                                                           CPOAPI                    CPOAPI,
+                                                           out CountryCode?          CountryCode,
+                                                           out Party_Id?             PartyId,
+                                                           out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -64,13 +64,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
             if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),       "The given CPO API must not be null!");
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
-            CountryCode   = null;
-            PartyId       = null;
-            HTTPResponse  = null;
+            CountryCode   = default;
+            PartyId       = default;
+            HTTPResponse  = default;
 
             if (Request.ParsedURLParameters.Length < 2)
             {
@@ -80,7 +80,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -98,7 +99,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -116,7 +118,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -141,10 +144,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this OCPIRequest  Request,
-                                              CPOAPI            CPOAPI,
-                                              out Location_Id?  LocationId,
-                                              out HTTPResponse  HTTPResponse)
+        public static Boolean ParseLocationId(this OCPIRequest          Request,
+                                              CPOAPI                    CPOAPI,
+                                              out Location_Id?          LocationId,
+                                              out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -157,8 +160,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            LocationId    = null;
-            HTTPResponse  = null;
+            LocationId    = default;
+            HTTPResponse  = default;
 
             if (Request.ParsedURLParameters.Length < 1)
             {
@@ -168,7 +171,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -186,7 +190,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -211,11 +216,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Location">The resolved user.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest  Request,
-                                            CPOAPI            CPOAPI,
-                                            out Location_Id?  LocationId,
-                                            out Location      Location,
-                                            out HTTPResponse  HTTPResponse)
+        public static Boolean ParseLocation(this OCPIRequest          Request,
+                                            CPOAPI                    CPOAPI,
+                                            out Location_Id?          LocationId,
+                                            out Location              Location,
+                                            out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -228,18 +233,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            LocationId    = null;
-            Location      = null;
-            HTTPResponse  = null;
+            LocationId    =  default;
+            Location      =  default;
+            HTTPResponse  =  default;
 
-            if (Request.ParsedURLParameters.Length < 1) {
+            if (Request.ParsedURLParameters.Length < 1)
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -247,7 +254,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
-            if (!LocationId.HasValue) {
+            if (!LocationId.HasValue)
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -256,7 +264,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -275,7 +284,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -301,11 +311,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this OCPIRequest  Request,
-                                                  CPOAPI            CPOAPI,
-                                                  out Location_Id?  LocationId,
-                                                  out EVSE_UId?     EVSEUId,
-                                                  out HTTPResponse  HTTPResponse)
+        public static Boolean ParseLocationEVSEId(this OCPIRequest          Request,
+                                                  CPOAPI                    CPOAPI,
+                                                  out Location_Id?          LocationId,
+                                                  out EVSE_UId?             EVSEUId,
+                                                  out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -318,9 +328,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            LocationId    = null;
-            EVSEUId       = null;
-            HTTPResponse  = null;
+            LocationId    = default;
+            EVSEUId       = default;
+            HTTPResponse  = default;
 
             if (Request.ParsedURLParameters.Length < 2)
             {
@@ -330,7 +340,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -348,7 +359,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -366,7 +378,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -393,13 +406,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this OCPIRequest  Request,
-                                                CPOAPI            CPOAPI,
-                                                out Location_Id?  LocationId,
-                                                out Location      Location,
-                                                out EVSE_UId?     EVSEUId,
-                                                out EVSE          EVSE,
-                                                out HTTPResponse  HTTPResponse)
+        public static Boolean ParseLocationEVSE(this OCPIRequest          Request,
+                                                CPOAPI                    CPOAPI,
+                                                out Location_Id?          LocationId,
+                                                out Location              Location,
+                                                out EVSE_UId?             EVSEUId,
+                                                out EVSE                  EVSE,
+                                                out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -412,20 +425,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            LocationId    = null;
-            Location      = null;
-            EVSEUId       = null;
-            EVSE          = null;
-            HTTPResponse  = null;
+            LocationId    = default;
+            Location      = default;
+            EVSEUId       = default;
+            EVSE          = default;
+            HTTPResponse  = default;
 
-            if (Request.ParsedURLParameters.Length < 2) {
+            if (Request.ParsedURLParameters.Length < 2)
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -433,7 +448,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
-            if (!LocationId.HasValue) {
+            if (!LocationId.HasValue)
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -442,7 +458,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -460,7 +477,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -480,7 +498,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -495,7 +514,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -522,12 +542,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest   Request,
-                                                           CPOAPI             CPOAPI,
-                                                           out Location_Id?   LocationId,
-                                                           out EVSE_UId?      EVSEUId,
-                                                           out Connector_Id?  ConnectorId,
-                                                           out HTTPResponse   HTTPResponse)
+        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest          Request,
+                                                           CPOAPI                    CPOAPI,
+                                                           out Location_Id?          LocationId,
+                                                           out EVSE_UId?             EVSEUId,
+                                                           out Connector_Id?         ConnectorId,
+                                                           out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -540,10 +560,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            LocationId    = null;
-            EVSEUId       = null;
-            ConnectorId   = null;
-            HTTPResponse  = null;
+            LocationId    = default;
+            EVSEUId       = default;
+            ConnectorId   = default;
+            HTTPResponse  = default;
 
             if (Request.ParsedURLParameters.Length < 3)
             {
@@ -553,7 +573,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -571,7 +592,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -589,7 +611,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -607,7 +630,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -636,15 +660,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Connector">The resolved connector.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest   Request,
-                                                         CPOAPI             CPOAPI,
-                                                         out Location_Id?   LocationId,
-                                                         out Location       Location,
-                                                         out EVSE_UId?      EVSEUId,
-                                                         out EVSE           EVSE,
-                                                         out Connector_Id?  ConnectorId,
-                                                         out Connector      Connector,
-                                                         out HTTPResponse   HTTPResponse)
+        public static Boolean ParseLocationEVSEConnector(this OCPIRequest          Request,
+                                                         CPOAPI                    CPOAPI,
+                                                         out Location_Id?          LocationId,
+                                                         out Location              Location,
+                                                         out EVSE_UId?             EVSEUId,
+                                                         out EVSE                  EVSE,
+                                                         out Connector_Id?         ConnectorId,
+                                                         out Connector             Connector,
+                                                         out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -657,13 +681,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            LocationId    = null;
-            Location      = null;
-            EVSEUId       = null;
-            EVSE          = null;
-            ConnectorId   = null;
-            Connector     = null;
-            HTTPResponse  = null;
+            LocationId    = default;
+            Location      = default;
+            EVSEUId       = default;
+            EVSE          = default;
+            ConnectorId   = default;
+            Connector     = default;
+            HTTPResponse  = default;
 
             if (Request.ParsedURLParameters.Length < 3) {
 
@@ -672,7 +696,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -689,7 +714,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -707,7 +733,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -725,7 +752,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -745,7 +773,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -760,7 +789,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -775,7 +805,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -803,12 +834,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTokenId(this OCPIRequest  Request,
-                                           CPOAPI            CPOAPI,
-                                           out CountryCode?  CountryCode,
-                                           out Party_Id?     PartyId,
-                                           out Token_Id?     TokenId,
-                                           out HTTPResponse  HTTPResponse)
+        public static Boolean ParseTokenId(this OCPIRequest          Request,
+                                           CPOAPI                    CPOAPI,
+                                           out CountryCode?          CountryCode,
+                                           out Party_Id?             PartyId,
+                                           out Token_Id?             TokenId,
+                                           out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -821,10 +852,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            CountryCode   = null;
-            PartyId       = null;
-            TokenId       = null;
-            HTTPResponse  = null;
+            CountryCode   = default;
+            PartyId       = default;
+            TokenId       = default;
+            HTTPResponse  = default;
 
             if (Request.ParsedURLParameters.Length < 3)
             {
@@ -834,7 +865,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -852,7 +884,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -870,7 +903,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -888,7 +922,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid token identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -912,16 +947,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CountryCode">The parsed country code.</param>
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="TokenId">The parsed unique token identification.</param>
-        /// <param name="Token">The resolved user.</param>
+        /// <param name="TokenStatus">The resolved token with status.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseToken(this OCPIRequest  Request,
-                                         CPOAPI            CPOAPI,
-                                         out CountryCode?  CountryCode,
-                                         out Party_Id?     PartyId,
-                                         out Token_Id?     TokenId,
-                                         out Token         Token,
-                                         out HTTPResponse  HTTPResponse)
+        public static Boolean ParseToken(this OCPIRequest          Request,
+                                         CPOAPI                    CPOAPI,
+                                         out CountryCode?          CountryCode,
+                                         out Party_Id?             PartyId,
+                                         out Token_Id?             TokenId,
+                                         out TokenStatus           TokenStatus,
+                                         out HTTPResponse.Builder  HTTPResponse)
         {
 
             #region Initial checks
@@ -934,20 +969,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            CountryCode   = null;
-            PartyId       = null;
-            TokenId       = null;
-            Token         = null;
-            HTTPResponse  = null;
+            CountryCode   = default;
+            PartyId       = default;
+            TokenId       = default;
+            TokenStatus   = default;
+            HTTPResponse  = default;
 
-            if (Request.ParsedURLParameters.Length < 3) {
+            if (Request.ParsedURLParameters.Length < 3)
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = CPOAPI.HTTPServer.DefaultServerName,
                     Date            = DateTime.UtcNow,
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -965,7 +1002,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -983,7 +1021,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -991,7 +1030,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
 
-            if (!TokenId.HasValue) {
+            if (!TokenId.HasValue)
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
@@ -1000,14 +1040,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid token identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetToken(CountryCode.Value, PartyId.Value, TokenId.Value, out Token)) {
+            if (!CPOAPI.CommonAPI.TryGetToken(CountryCode.Value, PartyId.Value, TokenId.Value, out TokenStatus))
+            {
 
                 HTTPResponse = new HTTPResponse.Builder(Request.HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
@@ -1016,7 +1058,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown token identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
-                };
+                }.Set("X-Request-ID",      Request.RequestId).
+                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                 return false;
 
@@ -1033,6 +1076,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
     /// <summary>
     /// The HTTP API for charge point operators.
+    /// EMSPs will connect to this API.
     /// </summary>
     public class CPOAPI : HTTPAPI
     {
@@ -1222,9 +1266,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check Location(Id URI parameter)
 
                                              if (!Request.ParseLocation(this,
-                                                                        out Location_Id?  LocationId,
-                                                                        out Location      Location,
-                                                                        out HTTPResponse  HTTPResponse))
+                                                                        out Location_Id?          LocationId,
+                                                                        out Location              Location,
+                                                                        out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1264,11 +1308,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check EVSE(UId URI parameter)
 
                                              if (!Request.ParseLocationEVSE(this,
-                                                                            out Location_Id?  LocationId,
-                                                                            out Location      Location,
-                                                                            out EVSE_UId?     EVSEId,
-                                                                            out EVSE          EVSE,
-                                                                            out HTTPResponse  HTTPResponse))
+                                                                            out Location_Id?          LocationId,
+                                                                            out Location              Location,
+                                                                            out EVSE_UId?             EVSEId,
+                                                                            out EVSE                  EVSE,
+                                                                            out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1308,13 +1352,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check Connector(Id URI parameter)
 
                                              if (!Request.ParseLocationEVSEConnector(this,
-                                                                                     out Location_Id?   LocationId,
-                                                                                     out Location       Location,
-                                                                                     out EVSE_UId?      EVSEId,
-                                                                                     out EVSE           EVSE,
-                                                                                     out Connector_Id?  ConnectorId,
-                                                                                     out Connector      Connector,
-                                                                                     out HTTPResponse   HTTPResponse))
+                                                                                     out Location_Id?          LocationId,
+                                                                                     out Location              Location,
+                                                                                     out EVSE_UId?             EVSEId,
+                                                                                     out EVSE                  EVSE,
+                                                                                     out Connector_Id?         ConnectorId,
+                                                                                     out Connector             Connector,
+                                                                                     out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1406,9 +1450,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check CountryCode and PartyId
 
                                              if (!Request.ParseParseCountryCodePartyId(this,
-                                                                                       out CountryCode?  CountryCode,
-                                                                                       out Party_Id?     PartyId,
-                                                                                       out HTTPResponse  HTTPResponse))
+                                                                                       out CountryCode?          CountryCode,
+                                                                                       out Party_Id?             PartyId,
+                                                                                       out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1430,8 +1474,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              var allTokensCount       = allTokens.Count();
 
                                              var filteredTokens       = CommonAPI.GetTokens().
-                                                                               Where(token => !from.HasValue || token.LastUpdated >  from.Value).
-                                                                               Where(token => !to.  HasValue || token.LastUpdated <= to.  Value).
+                                                                               Where(tokenStatus => !from.HasValue || tokenStatus.Token.LastUpdated >  from.Value).
+                                                                               Where(tokenStatus => !to.  HasValue || tokenStatus.Token.LastUpdated <= to.  Value).
                                                                                SkipTakeFilter(offset, limit).
                                                                                ToArray();
 
@@ -1446,9 +1490,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         AccessControlAllowMethods  = "GET, DELETE",
                                                         AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
-                                                        Content                    = OCPIResponse<IEnumerable<Token>>.Create(
+                                                        Content                    = OCPIResponse<IEnumerable<TokenStatus>>.Create(
                                                                                          filteredTokens,
-                                                                                         tokens => new JArray(tokens.Select(token => token.ToJSON())),
+                                                                                         tokenStatusList => new JArray(tokenStatusList.Select(tokenStatus => tokenStatus.ToJSON())),
                                                                                          1000,
                                                                                          "Hello world!"
                                                                                      ).ToUTF8Bytes(),
@@ -1470,9 +1514,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check CountryCode and PartyId
 
                                              if (!Request.ParseParseCountryCodePartyId(this,
-                                                                                       out CountryCode?  CountryCode,
-                                                                                       out Party_Id?     PartyId,
-                                                                                       out HTTPResponse  HTTPResponse))
+                                                                                       out CountryCode?          CountryCode,
+                                                                                       out Party_Id?             PartyId,
+                                                                                       out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1513,11 +1557,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check Token(Id URI parameter)
 
                                              if (!Request.ParseToken(this,
-                                                                     out CountryCode?  CountryCode,
-                                                                     out Party_Id?     PartyId,
-                                                                     out Token_Id?     TokenId,
-                                                                     out Token         Token,
-                                                                     out HTTPResponse  HTTPResponse))
+                                                                     out CountryCode?          CountryCode,
+                                                                     out Party_Id?             PartyId,
+                                                                     out Token_Id?             TokenId,
+                                                                     out TokenStatus           TokenStatus,
+                                                                     out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1538,7 +1582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         AccessControlAllowHeaders  = "Content-Type, Authorization",
                                                         ContentType                = HTTPContentType.JSON_UTF8,
                                                         Content                    = OCPIResponse<Token>.Create(
-                                                                                         Token,
+                                                                                         TokenStatus.Token,
                                                                                          token => token.ToJSON(),
                                                                                          1000,
                                                                                          "Hello world!"
@@ -1561,10 +1605,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check TokenId URI parameter
 
                                              if (!Request.ParseTokenId(this,
-                                                                        out CountryCode?  CountryCode,
-                                                                        out Party_Id?     PartyId,
-                                                                        out Token_Id?     TokenId,
-                                                                        out HTTPResponse  HTTPResponse))
+                                                                        out CountryCode?          CountryCode,
+                                                                        out Party_Id?             PartyId,
+                                                                        out Token_Id?             TokenId,
+                                                                        out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1643,11 +1687,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check Token(Id URI parameter)
 
                                              if (!Request.ParseToken(this,
-                                                                      out CountryCode?  CountryCode,
-                                                                      out Party_Id?     PartyId,
-                                                                      out Token_Id?     TokenId,
-                                                                      out Token         OldToken,
-                                                                      out HTTPResponse  HTTPResponse))
+                                                                      out CountryCode?          CountryCode,
+                                                                      out Party_Id?             PartyId,
+                                                                      out Token_Id?             TokenId,
+                                                                      out TokenStatus           OldTokenStatus,
+                                                                      out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1664,7 +1708,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
                                                  return HTTPResponse;
 
-                                             var patchedToken = OldToken.Patch(JSONPatch);
+                                             var patchedToken = OldTokenStatus.Token.Patch(JSONPatch);
 
                                              #endregion
 
@@ -1701,11 +1745,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Check Token(Id URI parameter)
 
                                              if (!Request.ParseToken(this,
-                                                                     out CountryCode?  CountryCode,
-                                                                     out Party_Id?     PartyId,
-                                                                     out Token_Id?     TokenId,
-                                                                     out Token         ToBeRemovedToken,
-                                                                     out HTTPResponse  HTTPResponse))
+                                                                     out CountryCode?          CountryCode,
+                                                                     out Party_Id?             PartyId,
+                                                                     out Token_Id?             TokenId,
+                                                                     out TokenStatus           ToBeRemovedTokenStatus,
+                                                                     out HTTPResponse.Builder  HTTPResponse))
                                              {
                                                  return HTTPResponse;
                                              }
@@ -1716,7 +1760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              //ToDo: What exactly to do with this information?
                                              var TokenType     = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
 
-                                             var RemovedToken  = CommonAPI.RemoveToken(ToBeRemovedToken);
+                                             var RemovedToken  = CommonAPI.RemoveToken(ToBeRemovedTokenStatus.Token);
 
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
