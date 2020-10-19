@@ -75,15 +75,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Random  (Length)
+        #region (static) Random  (Length = 30, IsLocal = false)
 
         /// <summary>
         /// Create a new random request correlation identification.
         /// </summary>
         /// <param name="Length">The expected length of the request correlation identification.</param>
-        public static Correlation_Id Random(Byte Length = 30)
+        /// <param name="IsLocal">The request correlation identification was generated locally and not received via network.</param>
+        public static Correlation_Id Random(Byte      Length    = 30,
+                                            Boolean?  IsLocal   = false)
 
-            => new Correlation_Id(random.RandomString(Length));
+            => new Correlation_Id((IsLocal == true ? "Local:" : "") +
+                                  random.RandomString(Length));
 
         #endregion
 

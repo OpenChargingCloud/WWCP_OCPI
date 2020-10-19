@@ -149,18 +149,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public AccessToken?     AccessToken         { get; }
 
 
+
+        /// <summary>
+        /// The HTTP query string.
+        /// </summary>
+        public HTTPHostname     Host
+            => HTTPRequest.Host;
+
         /// <summary>
         /// The parsed URL parameters of the best matching URL template.
         /// Set by the HTTP server.
         /// </summary>
-        public String[]     ParsedURLParameters
+        public String[]         ParsedURLParameters
             => HTTPRequest.ParsedURLParameters;
 
         /// <summary>
         /// The HTTP query string.
         /// </summary>
         public QueryString      QueryString
-            => HTTPRequest?.QueryString;
+            => HTTPRequest.QueryString;
 
         #endregion
 
@@ -169,8 +176,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(HTTPRequest), "The given HTTP request must not be null!");
 
-            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse);
-            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse);
+            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    Random(IsLocal: true);
+            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.Random(IsLocal: true);
             this.ToCountryCode    = Request.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
             this.ToPartyId        = Request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
             this.FromCountryCode  = Request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);

@@ -2418,7 +2418,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     LastModified               = newOrUpdatedLocation.LastUpdated.ToIso8601(),
                                                     Connection                 = "close"
                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                  Set("X-Correlation-ID",  Request.CorrelationId);;
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                                      });
 

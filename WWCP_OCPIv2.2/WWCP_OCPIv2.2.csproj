@@ -48,25 +48,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CPO\CPOClient.cs" />
-    <Compile Include="DataTypes\Complex\ClearProfileResult.cs" />
-    <Compile Include="DataTypes\Complex\ChargingProfileResult.cs" />
+    <Compile Include="DataTypes\Commands\ClearProfileResult.cs" />
+    <Compile Include="DataTypes\Commands\ChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfile.cs" />
     <Compile Include="DataTypes\Complex\ActiveChargingProfile.cs" />
-    <Compile Include="DataTypes\Complex\ActiveChargingProfileResult.cs" />
+    <Compile Include="DataTypes\Commands\ActiveChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfileResponse.cs" />
-    <Compile Include="DataTypes\Complex\CommandResponse.cs" />
+    <Compile Include="DataTypes\Commands\CommandResponse.cs" />
     <Compile Include="DataTypes\Complex\ClientInfo.cs" />
     <Compile Include="DataTypes\Complex\TokenStatus.cs" />
     <Compile Include="DataTypes\Complex\TransparencySoftware.cs" />
     <Compile Include="DataTypes\Complex\EnergyMeter.cs" />
-    <Compile Include="DataTypes\Complex\ReserveNowCommand.cs" />
-    <Compile Include="DataTypes\Complex\CommandResult.cs" />
-    <Compile Include="DataTypes\Complex\CancelReservationCommand.cs" />
+    <Compile Include="DataTypes\Commands\ReserveNowCommand.cs" />
+    <Compile Include="DataTypes\Commands\CommandResult.cs" />
+    <Compile Include="DataTypes\Commands\CancelReservationCommand.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfilePeriod.cs" />
-    <Compile Include="DataTypes\Complex\SetChargingProfileCommand.cs" />
-    <Compile Include="DataTypes\Complex\StopSessionCommand.cs" />
-    <Compile Include="DataTypes\Complex\StartSessionCommand.cs" />
-    <Compile Include="DataTypes\Complex\UnlockConnectorCommand.cs" />
+    <Compile Include="DataTypes\Commands\SetChargingProfileCommand.cs" />
+    <Compile Include="DataTypes\Commands\StopSessionCommand.cs" />
+    <Compile Include="DataTypes\Commands\StartSessionCommand.cs" />
+    <Compile Include="DataTypes\Commands\UnlockConnectorCommand.cs" />
     <Compile Include="DataTypes\Complex\Time.cs" />
     <Compile Include="DataTypes\Enums\ChargingProfileResponseTypes.cs" />
     <Compile Include="DataTypes\Enums\ChargingRateUnit.cs" />
@@ -206,9 +206,7 @@
     <EmbeddedResource Include="EMSP\EMSPAPI\HTTPRoot\_footer.html" />
     <EmbeddedResource Include="EMSP\EMSPAPI\HTTPRoot\_header.html" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="README.md" />
   </ItemGroup>

@@ -75,15 +75,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Random  (Length)
+        #region (static) Random  (Length = 30, IsLocal = false)
 
         /// <summary>
         /// Create a new random request identification.
         /// </summary>
         /// <param name="Length">The expected length of the request identification.</param>
-        public static Request_Id Random(Byte Length = 30)
+        /// <param name="IsLocal">The request identification was generated locally and not received via network.</param>
+        public static Request_Id Random(Byte      Length    = 30,
+                                        Boolean?  IsLocal   = false)
 
-            => new Request_Id(random.RandomString(Length));
+            => new Request_Id((IsLocal == true ? "Local:" : "") +
+                              random.RandomString(Length));
 
         #endregion
 
