@@ -2067,6 +2067,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public Party_Id     DefaultPartyId        { get; }
 
+        /// <summary>
+        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
+        /// OCPI v2.2 does not define any behaviour for this.
+        /// </summary>
+        public Boolean?     AllowDowngrades       { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -2078,6 +2084,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CommonAPI">The OCPI common API.</param>
         /// <param name="DefaultCountryCode">The default country code to use.</param>
         /// <param name="DefaultPartyId">The default party identification to use.</param>
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
@@ -2086,6 +2093,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public EMSPAPI(CommonAPI      CommonAPI,
                        CountryCode    DefaultCountryCode,
                        Party_Id       DefaultPartyId,
+                       Boolean?       AllowDowngrades   = null,
 
                        HTTPHostname?  HTTPHostname      = null,
                        String         ExternalDNSName   = null,
@@ -2103,6 +2111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.CommonAPI           = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given CommonAPI must not be null!");
             this.DefaultCountryCode  = DefaultCountryCode;
             this.DefaultPartyId      = DefaultPartyId;
+            this.AllowDowngrades     = AllowDowngrades;
 
             RegisterURLTemplates();
 
@@ -2362,7 +2371,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Check whether the new location is "newer" than the existing location
 
-                                         if (newOrUpdatedLocation.LastUpdated < ExistingLocation.LastUpdated &&
+                                         var bbb = Request.QueryString.GetBoolean("forceDowngrade") ??
+                                                   // ToDo: Check AccessToken
+                                                   AllowDowngrades;
+
+                                         if (AllowDowngrades == false &&
+                                             // ToDo: Check AccessToken
+                                             newOrUpdatedLocation.LastUpdated < ExistingLocation.LastUpdated &&
                                              !Request.QueryString.GetBoolean("forceDowngrade", false))
                                          {
 
@@ -3049,9 +3064,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region ~/tariffs/{country_code}/{party_id}       [NonStandard]
+            #region ~/tariffs/{country_code}/{party_id}             [NonStandard]
 
-            #region GET     ~/tariffs/{country_code}/{party_id}       [NonStandard]
+            #region GET     ~/tariffs/{country_code}/{party_id}             [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
@@ -3116,7 +3131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE  ~/tariffs/{country_code}/{party_id}       [NonStandard]
+            #region DELETE  ~/tariffs/{country_code}/{party_id}             [NonStandard]
 
             #endregion
 
@@ -3275,9 +3290,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region ~/sessions/{country_code}/{party_id}       [NonStandard]
+            #region ~/sessions/{country_code}/{party_id}                [NonStandard]
 
-            #region GET     ~/sessions/{country_code}/{party_id}       [NonStandard]
+            #region GET     ~/sessions/{country_code}/{party_id}                [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
@@ -3342,7 +3357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE  ~/sessions/{country_code}/{party_id}       [NonStandard]
+            #region DELETE  ~/sessions/{country_code}/{party_id}                [NonStandard]
 
             #endregion
 
@@ -3553,7 +3568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE  ~/sessions/{country_code}/{party_id}/{sessionId}        [NonStandard]
+            #region DELETE  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
             #endregion
 
@@ -3561,9 +3576,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region ~/cdrs/{country_code}/{party_id}       [NonStandard]
+            #region ~/cdrs/{country_code}/{party_id}            [NonStandard]
 
-            #region GET     ~/cdrs/{country_code}/{party_id}       [NonStandard]
+            #region GET     ~/cdrs/{country_code}/{party_id}            [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
@@ -3712,7 +3727,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE  ~/cdrs/{country_code}/{party_id}       [NonStandard]
+            #region DELETE  ~/cdrs/{country_code}/{party_id}            [NonStandard]
 
             #endregion
 
@@ -3765,7 +3780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE  ~/cdrs/{country_code}/{party_id}/{cdrId}        [NonStandard]
+            #region DELETE  ~/cdrs/{country_code}/{party_id}/{cdrId}    [NonStandard]
 
             #endregion
 

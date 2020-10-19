@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CPO\CPOClient.cs" />
     <Compile Include="DataTypes\Complex\ClearProfileResult.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfile.cs" />

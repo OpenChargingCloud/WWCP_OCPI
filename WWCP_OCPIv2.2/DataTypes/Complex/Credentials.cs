@@ -50,7 +50,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The URL to your API versions endpoint.
         /// </summary>
         [Mandatory]
-        public String                        URL       { get; }
+        public URL                           URL       { get; }
 
         /// <summary>
         /// The enumeration of roles a party provides.
@@ -69,12 +69,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="URL">The URL to your API versions endpoint.</param>
         /// <param name="Roles">The enumeration of roles a party provides.</param>
         public Credentials(AccessToken                   Token,
-                           String                        URL,
+                           URL                           URL,
                            IEnumerable<CredentialsRole>  Roles)
         {
 
+            if (Token. IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(Token),  "The given token must not be null or empty!");
+
+            if (URL.   IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(URL),    "The given URL must not be null or empty!");
+
             if (!Roles.SafeAny())
-                throw new ArgumentNullException(nameof(Roles), "The given enumeration of roles must not be null or empty!");
+                throw new ArgumentNullException(nameof(Roles),  "The given enumeration of roles must not be null or empty!");
+
 
             this.Token  = Token;
             this.URL    = URL;
@@ -194,10 +201,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse URL       [mandatory]
 
-                if (!JSON.ParseMandatoryText("url",
-                                             "url",
-                                             out String URL,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("url",
+                                         "url",
+                                         OCPIv2_2.URL.TryParse,
+                                         out URL URL,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -295,7 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var JSON = JSONObject.Create(
 
                            new JProperty("token",  Token.ToString()),
-                           new JProperty("url",    URL),
+                           new JProperty("url",    URL.  ToString()),
 
                            new JProperty("roles",  new JArray(Roles.SafeSelect(role => role.ToJSON(CustomCredentialsRoleSerializer,
                                                                                                    CustomBusinessDetailsSerializer))))
@@ -447,7 +455,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (Credentials == null)
                 throw new ArgumentNullException(nameof(Credentials), "The given credential must not be null!");
 
-            return Token.CompareTo(Credentials.Token);
+            var c = Token.CompareTo(Credentials.Token);
+
+            if (c == 0)
+                c = URL.CompareTo(Credentials.URL);
+
+            return c;
 
         }
 

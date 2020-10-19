@@ -42,10 +42,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// An EMSP client.
+    /// The EMSP client.
     /// </summary>
-    public class EMSPClient : IHTTPClient,
-                              IRemoteChargingStationOperator
+    public class EMSPClient : IHTTPClient
     {
 
         #region Data
@@ -69,13 +68,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         /// <summary>
         /// The access token.
+        /// (Might be updated during the REGISTRATION process!)
         /// </summary>
-        public AccessToken                          AccessToken                   { get; }
+        public AccessToken                          AccessToken                   { get; private set; }
 
         /// <summary>
-        /// The common HTTP path prefix.
+        /// The common HTTP URL.
         /// </summary>
-        public HTTPPath                             PathPrefix                    { get; }
+        public URL                                  URL                           { get; }
 
         /// <summary>
         /// The remote hostname.
@@ -83,14 +83,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public HTTPHostname                         Hostname                      { get; }
 
         /// <summary>
-        /// The remote virtual hostname.
-        /// </summary>
-        public HTTPHostname?                        VirtualHostname               { get; }
-
-        /// <summary>
         /// The remote HTTPS port.
         /// </summary>
         public IPPort                               RemotePort                    { get; }
+
+        /// <summary>
+        /// The remote virtual hostname.
+        /// </summary>
+        public HTTPHostname?                        VirtualHostname               { get; }
 
         /// <summary>
         /// The remote SSL/TLS certificate validator.
@@ -186,8 +186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public EMSPClient(//RoamingNetwork                       RoamingNetwork,
                           AccessToken                          AccessToken,
-                          HTTPHostname                         Hostname,
-                          HTTPPath?                            PathPrefix                   = null,
+                          URL                                  URL,
                           HTTPHostname?                        VirtualHostname              = null,
                           IPPort?                              RemotePort                   = null,
                           RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
@@ -198,10 +197,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
          //   this.RoamingNetwork              = RoamingNetwork             ?? throw new ArgumentNullException(nameof(RoamingNetwork), "The given roaming network must not be null!");
             this.AccessToken                 = AccessToken;
             this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().ToBase64());    //"Ms9_ZcT/s&Da}MY6W4v]u%{L4&Rzoh6GiZRo<hu+QTc+#7^SUyXG?ujGw3H_?F5U")
-            this.Hostname                    = Hostname;
-            this.PathPrefix                  = PathPrefix                 ?? HTTPPath.Parse("/");
-            this.VirtualHostname             = VirtualHostname            ?? this.Hostname;
-            this.RemotePort                  = RemotePort                 ?? DefaultRemotePort;
+            this.URL                         = URL;
+            this.Hostname                    = URL.Hostname;
+            this.RemotePort                  = URL.Port                   ?? DefaultRemotePort;
+            this.VirtualHostname             = VirtualHostname;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;// ?? ((sender, certificate, chain, policyErrors) => true); // Otherwise forcing HTTP will not work!
             this.RequestTimeout              = RequestTimeout             ?? DefaultRequestTimeout;
             this.DNSClient                   = DNSClient;
@@ -211,464 +210,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region PostCredentials(AccessToken, ...)
-
-        /// <summary>
-        /// Start a charging session.
-        /// </summary>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<RemoteStartResult>
-
-            PostCredentials(Credentials         Cred,
-            
-                            DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
-        {
-
-            #region Initial checks
-
-
-            #endregion
-
-            Thread.CurrentThread.Priority = ThreadPriority.BelowNormal;
-
-            try
-            {
-
-                #region Upstream HTTP request...
-
-                var requestTask = (RemoteCertificateValidator == null
-
-                                           ? new HTTPClient (Hostname,
-                                                             RemotePort:  RemotePort,
-                                                             DNSClient:   DNSClient)
-
-                                           : new HTTPSClient(Hostname,
-                                                             RemoteCertificateValidator,
-                                                             RemotePort:  RemotePort,
-                                                             DNSClient:   DNSClient)).
-
-                                        Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                               HTTPPath.Parse("/backend/rest/ocpi/2.2/credentials"),
-
-                                                                               requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? Hostname;
-                                                                                   requestbuilder.Authorization  = TokenAuth;
-                                                                                   requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                   requestbuilder.Content        = Cred.ToJSON().
-                                                                                                                     ToUTF8Bytes();
-                                                                                   requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                               }),
-
-                                              RequestLogDelegate:   OnRemoteStartHTTPRequest,
-                                              ResponseLogDelegate:  OnRemoteStartHTTPResponse,
-                                              CancellationToken:    CancellationToken,
-                                              EventTrackingId:      EventTrackingId,
-                                              RequestTimeout:       RequestTimeout ?? this.RequestTimeout);//.ContinueWith(t => { Thread.Sleep(6000); return t.Result; });
-
-                //                        ConfigureAwait(false);
-
-                #endregion
-
-                var StartTime    = DateTime.UtcNow;
-                var timeout      = TimeSpan.FromSeconds(7);
-                var timeoutTask  = Task.Delay(timeout);
-                var resultTask   = await Task.WhenAny(requestTask, timeoutTask).
-                                              ConfigureAwait(false);
-
-                RemoteStartResult result;
-
-                if (resultTask == timeoutTask)
-                    result = result = RemoteStartResult.Error();
-                             //RemoteStartResult.AsyncOperation(new ChargingSession(SessionId.Value) {
-                             //                                     EVSEId               = EVSEId,
-                             //                                     ChargingProduct      = ChargingProduct,
-                             //                                     ReservationId        = ReservationId,
-                             //                                     ProviderIdStart      = ProviderId,
-                             //                                     AuthenticationStart  = RemoteAuthentication
-                             //                                 },
-                             //                                 Runtime: DateTime.UtcNow - StartTime);
-
-                else
-                {
-
-                    var httpresult = requestTask.Result;
-
-                    #region HTTPStatusCode.OK
-
-                    if (httpresult.HTTPStatusCode == HTTPStatusCode.OK)
-                    {
-
-                        // HTTP/1.1 200
-                        // Server:                  nginx/1.10.1
-                        // Date:                    Sat, 16 May 2020 05:23:13 GMT
-                        // Content-Type:            application/json;charset=utf-8
-                        // Content-Length:          22
-                        // Connection:              keep-alive
-                        // X-Content-Type-Options:  nosniff
-                        // X-XSS-Protection:        1; mode=block
-                        // Cache-Control:           no-cache, no-store, max-age=0, must-revalidate
-                        // Pragma:                  no-cache
-                        // Expires:                 0
-                        // X-Frame-Options:         DENY
-                        // 
-                        // {"code":"Not_Allowed"}
-
-                        try
-                        {
-
-                            var JSONResponse = JObject.Parse(httpresult.HTTPBody?.ToUTF8String());
-
-                            //switch (JSONResponse["code"]?.Value<String>())
-                            //{
-
-                            //    // Hubject error codes
-                            //    // -------------------
-                            //    // 400 Session is invalid.
-                            //    // 501 Communication to EVSE failed.
-                            //    // 510 No EV connected to EVSE.
-                            //    // 601 EVSE already reserved.
-                            //    // 602 EVSE already in use/ wrong token.
-                            //    // 603 Unknown EVSE ID.
-                            //    // 604 EVSE ID is not Hubject compatible.
-                            //    // 700 EVSE out of service.
-
-                            //    case "EVSE_AlreadyInUse":
-                            //        result = RemoteStartResult.AlreadyInUse       (httpresult.Runtime);
-                            //        break;
-
-                            //    case "SessionId_AlreadyInUse":
-                            //        result = RemoteStartResult.InvalidSessionId   (httpresult.Runtime);
-                            //        break;
-
-                            //    case "Rejected":
-                            //        result = RemoteStartResult.NoEVConnectedToEVSE(httpresult.Runtime);
-                            //        break;
-
-                            //    case "EVSE_Unknown":
-                            //        result = RemoteStartResult.UnknownLocation    (httpresult.Runtime);
-                            //        break;
-
-                            //    case "EVSE_NotReachable":
-                            //        result = RemoteStartResult.Offline            (httpresult.Runtime);
-                            //        break;
-
-                            //    case "Not_Allowed":
-                            //        result = RemoteStartResult.InvalidCredentials (httpresult.Runtime);
-                            //        break;
-
-                            //    case "Start_Timeout":
-                            //        result = RemoteStartResult.Timeout(Runtime:    httpresult.Runtime);
-                            //        break;
-
-                            //    case "Success":
-                            //        result = RemoteStartResult.Success(new ChargingSession(SessionId.Value) {
-                            //                                               EVSEId               = EVSEId,
-                            //                                               ChargingProduct      = ChargingProduct,
-                            //                                               ReservationId        = ReservationId,
-                            //                                               ProviderIdStart      = ProviderId,
-                            //                                               AuthenticationStart  = RemoteAuthentication
-                            //                                           },
-                            //                                           httpresult.Runtime);
-                            //        break;
-
-                            //    default:
-                                    result = RemoteStartResult.Error();
-                            //        break;
-
-                            //}
-
-                        }
-                        catch (Exception e)
-                        {
-                            result = RemoteStartResult.Error("chargeIT mobility REMOTESTART response JSON could not be parsed: " +
-                                                             e.Message    + Environment.NewLine +
-                                                             e.StackTrace + Environment.NewLine +
-                                                             httpresult.EntirePDU);
-                        }
-
-                    }
-
-                    #endregion
-
-                    else
-                        result = RemoteStartResult.Error(httpresult.HTTPStatusCode.ToString(),
-                                                         httpresult.EntirePDU);
-
-                }
-
-                return result;
-
-            }
-
-            catch (Exception e)
-            {
-                return RemoteStartResult.Error(e.Message);
-            }
-
-        }
-
-        #endregion
-
-
-
-
-        #region GetVersions(...)
-
-        /// <summary>
-        /// Get versions.
-        /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<Version>>>
-
-            GetVersions(DateTime?                Timestamp              = null,
-                        CancellationToken?       CancellationToken      = null,
-                        EventTracking_Id         EventTrackingId        = null,
-                        TimeSpan?                RequestTimeout         = null)
-        {
-
-            OCPIResponse<IEnumerable<Version>> response;
-
-            try
-            {
-
-                var StartTime = DateTime.UtcNow;
-
-                // ToDo: Add request logging!
-
-
-                #region Upstream HTTP request...
-
-                var HTTPResponse = await (RemoteCertificateValidator == null
-
-                                          ? new HTTPClient (Hostname,
-                                                            RemotePort:  RemotePort,
-                                                            DNSClient:   DNSClient)
-
-                                          : new HTTPSClient(Hostname,
-                                                            RemoteCertificateValidator,
-                                                            RemotePort:  RemotePort,
-                                                            DNSClient:   DNSClient)).
-
-                                       Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                              PathPrefix + "versions",
-
-                                                                              requestbuilder => {
-                                                                                  requestbuilder.Host           = VirtualHostname ?? Hostname;
-                                                                                  requestbuilder.Authorization  = TokenAuth;
-                                                                                  //requestbuilder.ContentType  = HTTPContentType.JSON_UTF8;
-                                                                                  //requestbuilder.Content      = JSONObject.Create(
-
-                                                                                  //                              ).ToString().
-                                                                                  //                                ToUTF8Bytes();
-                                                                                  requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                              }),
-
-                                             RequestLogDelegate:   OnRemoteStartHTTPRequest,
-                                             ResponseLogDelegate:  OnRemoteStartHTTPResponse,
-                                             CancellationToken:    CancellationToken,
-                                             EventTrackingId:      EventTrackingId,
-                                             RequestTimeout:       RequestTimeout ?? this.RequestTimeout);//.ContinueWith(t => { Thread.Sleep(6000); return t.Result; });
-
-                //                   ConfigureAwait(false);
-
-                #endregion
-
-                #region Documentation
-
-                // {
-                //   "data": [
-                //     {
-                //       "version": "2.2",
-                //       "url":     "https://example.com/ocpi/versions/2.2/"
-                //     }
-                //   ],
-                //   "status_code": 1000,
-                //   "timestamp":  "2020-10-05T21:15:30.134Z"
-                // }
-
-                #endregion
-
-                response = OCPIResponse<Version>.ParseJArray(HTTPResponse,
-                                                             json => Version.Parse(json));
-
-            }
-
-            catch (Exception e)
-            {
-
-                response = new OCPIResponse<IEnumerable<Version>>(default,
-                                                                  -1,
-                                                                  e.Message,
-                                                                  e.StackTrace);
-
-            }
-
-
-            // ToDo: Add response logging!
-
-            return response;
-
-        }
-
-        #endregion
-
-        #region GetVersionDetails(VersionId, ...)
-
-        /// <summary>
-        /// Get versions.
-        /// </summary>
-        /// <param name="VersionId">The requested version.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional token to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<String, JObject>>
-
-            GetVersionDetails(String              VersionId,
-
-                              DateTime?           Timestamp           = null,
-                              CancellationToken?  CancellationToken   = null,
-                              EventTracking_Id    EventTrackingId     = null,
-                              TimeSpan?           RequestTimeout      = null)
-
-        {
-
-            OCPIResponse<String, JObject> response;
-
-            try
-            {
-
-                var StartTime = DateTime.UtcNow;
-
-                // ToDo: Add request logging!
-
-
-                #region Upstream HTTP request...
-
-                var HTTPResponse = await (RemoteCertificateValidator == null
-
-                                              ? new HTTPClient (Hostname,
-                                                                RemotePort:  RemotePort,
-                                                                DNSClient:   DNSClient)
-
-                                              : new HTTPSClient(Hostname,
-                                                                RemoteCertificateValidator,
-                                                                RemotePort:  RemotePort,
-                                                                DNSClient:   DNSClient)).
-
-                                           Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                  (PathPrefix + "versions") + VersionId,
-
-                                                                                  requestbuilder => {
-                                                                                      requestbuilder.Host           = VirtualHostname ?? Hostname;
-                                                                                      requestbuilder.Authorization  = TokenAuth;
-                                                                                      //requestbuilder.ContentType  = HTTPContentType.JSON_UTF8;
-                                                                                      //requestbuilder.Content      = JSONObject.Create(
-
-                                                                                      //                              ).ToString().
-                                                                                      //                                ToUTF8Bytes();
-                                                                                      requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                  }),
-
-                                                 RequestLogDelegate:   OnRemoteStartHTTPRequest,
-                                                 ResponseLogDelegate:  OnRemoteStartHTTPResponse,
-                                                 CancellationToken:    CancellationToken,
-                                                 EventTrackingId:      EventTrackingId,
-                                                 RequestTimeout:       RequestTimeout ?? this.RequestTimeout);//.ContinueWith(t => { Thread.Sleep(6000); return t.Result; });
-
-                //                   ConfigureAwait(false);
-
-                #endregion
-
-                #region Documentation
-
-                // {
-                //   "data": {
-                //     "version": "2.2",
-                //     "endpoints": [
-                //       {
-                //         "identifier": "sessions",
-                //         "role":       "SENDER",
-                //         "url":        "https://example.com/ocpi/cpo/2.2/sessions/"
-                //       },
-                //       {
-                //         "identifier": "tariffs",
-                //         "role":       "SENDER",
-                //         "url":        "https://example.com/ocpi/cpo/2.2/tariffs/"
-                //       },
-                //       {
-                //         "identifier": "hubclientinfo",
-                //         "role":       "RECEIVER",
-                //         "url":        "https://example.com/ocpi/cpo/2.2/hubclientinfo/"
-                //       },
-                //       {
-                //         "identifier": "locations",
-                //         "role":       "SENDER",
-                //         "url":        "https://example.com/ocpi/cpo/2.2/locations/"
-                //       },
-                //       {
-                //         "identifier": "tokens",
-                //         "role":       "RECEIVER",
-                //         "url":        "https://example.com/ocpi/cpo/2.2/tokens/"
-                //       },
-                //       {
-                //         "identifier": "commands",
-                //         "role":       "RECEIVER",
-                //         "url":        "https://example.com/ocpi/cpo/2.2/commands/"
-                //       },
-                //       {
-                //         "identifier": "credentials",
-                //         "role":       "RECEIVER",
-                //         "url":        "https://example.com/ocpi/2.2/credentials/"
-                //       },
-                //       {
-                //         "identifier": "credentials",
-                //         "role":       "SENDER",
-                //         "url":        "https://example.com/ocpi/2.2/credentials/"
-                //       }
-                //     ]
-                //   },
-                //   "status_code": 1000
-                // }
-
-                #endregion
-
-                response = OCPIResponse<String, JObject>.ParseJObject(VersionId,
-                                                                      HTTPResponse,
-                                                                      json => json);
-
-            }
-
-            catch (Exception e)
-            {
-
-                response = new OCPIResponse<String, JObject>(VersionId,
-                                                             default,
-                                                             -1,
-                                                             e.Message,
-                                                             e.StackTrace);
-
-            }
-
-
-            // ToDo: Add response logging!
-
-            return response;
-
-        }
-
-        #endregion
 
 
 
@@ -695,7 +236,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                var StartTime = DateTime.UtcNow;
+                var StartTime      = DateTime.UtcNow;
+                var RequestId      = Request_Id.Random();
+                var CorrelationId  = Correlation_Id.Random();
 
                 // ToDo: Add request logging!
 
@@ -714,7 +257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                              DNSClient:   DNSClient)).
 
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                               PathPrefix + "cpo/2.2/locations",
+                                                                               URL.Path + "cpo/2.2/locations",
 
                                                                                requestbuilder => {
                                                                                    requestbuilder.Host           = VirtualHostname ?? Hostname;
@@ -733,6 +276,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
                 response = OCPIResponse<Location>.ParseJArray(HTTPResponse,
+                                                              RequestId,
+                                                              CorrelationId,
                                                               json => Location.Parse(json));
 
             }

@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The URL of the version.
         /// </summary>
         [Mandatory]
-        public String      URL          { get; }
+        public URL         URL          { get; }
 
         #endregion
 
@@ -60,18 +60,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="VersionId">The version identification.</param>
         /// <param name="URL">The URL of the version.</param>
         public Version(Version_Id  VersionId,
-                       String      URL)
+                       URL         URL)
         {
 
             if (VersionId.IsNullOrEmpty)
                 throw new ArgumentNullException(nameof(VersionId), "The given version identification must not be null or empty!");
 
-            if (URL.          IsNullOrEmpty())
+            if (URL.      IsNullOrEmpty)
                 throw new ArgumentNullException(nameof(URL),       "The given version URL must not be null or empty!");
 
 
             this.VersionId  = VersionId;
-            this.URL        = URL?.Trim();
+            this.URL        = URL;
 
         }
 
@@ -187,10 +187,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse URL           [mandatory]
 
-                if (!JSON.ParseMandatoryText("url",
-                                             "version URL",
-                                             out String URL,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("url",
+                                         "version URL",
+                                         OCPIv2_2.URL.TryParse,
+                                         out URL URL,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -266,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
                            new JProperty("version",  VersionId.ToString()),
-                           new JProperty("url",      URL)
+                           new JProperty("url",      URL.      ToString())
                        );
 
             return CustomVersionSerializer != null

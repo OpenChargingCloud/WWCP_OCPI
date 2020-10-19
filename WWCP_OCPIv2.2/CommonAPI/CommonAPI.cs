@@ -1171,6 +1171,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public HTTPPath?  AdditionalURLPathPrefix    { get; }
 
+        /// <summary>
+        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
+        /// OCPI v2.2 does not define any behaviour for this.
+        /// </summary>
+        public Boolean?  AllowDowngrades             { get; }
+
         #endregion
 
         #region Events
@@ -1190,6 +1196,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
         /// <param name="ServiceName">An optional HTTP service name.</param>
+        /// 
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
         public CommonAPI(HTTPHostname?   HTTPHostname              = null,
                          IPPort?         HTTPServerPort            = null,
@@ -1198,6 +1206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          HTTPPath?       URLPathPrefix             = null,
                          String          ServiceName               = DefaultHTTPServiceName,
                          HTTPPath?       AdditionalURLPathPrefix   = null,
+                         Boolean?        AllowDowngrades           = null,
                          DNSClient       DNSClient                 = null)
 
             : base(HTTPHostname,
@@ -1211,6 +1220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.AllowDowngrades          = AllowDowngrades;
 
             this._AccessTokens            = new Dictionary<AccessToken, AccessInfo>();
             this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
@@ -1372,7 +1382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          new Version[] {
                                                                                              new Version(
                                                                                                  Version_Id.Parse("2.2"),
-                                                                                                 "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2").Replace("//", "/")
+                                                                                                 URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2").Replace("//", "/"))
                                                                                              )
                                                                                          },
                                                                                          versions => new JArray(versions.Select(version => version.ToJSON())),
@@ -1441,13 +1451,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  // Invalid or blocked access token!
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode                = HTTPStatusCode.Forbidden,
-                                                         Server                        = HTTPServer.DefaultServerName,
-                                                         Date                          = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin      = "*",
-                                                         AccessControlAllowMethods     = "GET",
-                                                         AccessControlAllowHeaders     = "Authorization",
-                                                         Connection                    = "close"
+                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         Connection                 = "close"
                                                      }.AsImmutable);
 
                                              }
@@ -1621,7 +1631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          ContentType                = HTTPContentType.JSON_UTF8,
-                                                         Content                    = OCPIResponse<OCPIv2_2.Credentials>.Create(
+                                                         Content                    = OCPIResponse<Credentials>.Create(
                                                                                           accessInfo.Credentials,
                                                                                           credentials => credentials.ToJSON(),
                                                                                           1000,
@@ -1666,16 +1676,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  accessInfo.Status == AccessStatus.ALLOWED)
                                              {
 
+                                                 // Client is already registered!
                                                  if (accessInfo.Credentials != null)
                                                      return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode                = HTTPStatusCode.MethodNotAllowed,
-                                                             Server                        = HTTPServer.DefaultServerName,
-                                                             Date                          = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin      = "*",
-                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Authorization",
-                                                             Connection                    = "close"
+                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                             Server                     = HTTPServer.DefaultServerName,
+                                                             Date                       = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin   = "*",
+                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders  = "Authorization",
+                                                             Connection                 = "close"
                                                          }.AsImmutable);
 
 
@@ -1683,13 +1694,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
                                                     return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode                = HTTPStatusCode.BadRequest,
-                                                             Server                        = HTTPServer.DefaultServerName,
-                                                             Date                          = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin      = "*",
-                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Authorization",
-                                                             Connection                    = "close"
+                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                             Server                     = HTTPServer.DefaultServerName,
+                                                             Date                       = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin   = "*",
+                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders  = "Authorization",
+                                                             Connection                 = "close"
                                                          }.AsImmutable);
 
 
@@ -1704,33 +1715,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode                = HTTPStatusCode.OK,
-                                                         Server                        = HTTPServer.DefaultServerName,
-                                                         Date                          = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin      = "*",
-                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders     = "Authorization",
-                                                         ContentType                   = HTTPContentType.JSON_UTF8,
-                                                         Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
-                                                                                             credentials,
-                                                                                             credential => credential.ToJSON(),
-                                                                                             1000,
-                                                                                             "Hello world!"
-                                                                                         ).ToUTF8Bytes(),
-                                                         Connection                    = "close"
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.JSON_UTF8,
+                                                         Content                    = OCPIResponse<Credentials>.Create(
+                                                                                          credentials,
+                                                                                          credential => credential.ToJSON(),
+                                                                                          1000,
+                                                                                          "Hello world!"
+                                                                                      ).ToUTF8Bytes(),
+                                                         Connection                 = "close"
                                                      }.AsImmutable);
 
                                              }
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
-                                                     Server                        = HTTPServer.DefaultServerName,
-                                                     Date                          = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin      = "*",
-                                                     AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Authorization",
-                                                     Connection                    = "close"
+                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     Connection                 = "close"
                                                  }.AsImmutable);
 
                                          });
@@ -1759,13 +1770,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  if (accessInfo.Credentials == null)
                                                      return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode                = HTTPStatusCode.MethodNotAllowed,
-                                                             Server                        = HTTPServer.DefaultServerName,
-                                                             Date                          = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin      = "*",
-                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Authorization",
-                                                             Connection                    = "close"
+                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                             Server                     = HTTPServer.DefaultServerName,
+                                                             Date                       = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin   = "*",
+                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders  = "Authorization",
+                                                             Connection                 = "close"
                                                          }.AsImmutable);
 
 
@@ -1773,13 +1784,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
                                                     return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode                = HTTPStatusCode.BadRequest,
-                                                             Server                        = HTTPServer.DefaultServerName,
-                                                             Date                          = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin      = "*",
-                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Authorization",
-                                                             Connection                    = "close"
+                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                             Server                     = HTTPServer.DefaultServerName,
+                                                             Date                       = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin   = "*",
+                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders  = "Authorization",
+                                                             Connection                 = "close"
                                                          }.AsImmutable);
 
 
@@ -1794,33 +1805,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode                = HTTPStatusCode.OK,
-                                                         Server                        = HTTPServer.DefaultServerName,
-                                                         Date                          = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin      = "*",
-                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders     = "Authorization",
-                                                         ContentType                   = HTTPContentType.JSON_UTF8,
-                                                         Content                       = OCPIResponse<OCPIv2_2.Credentials>.Create(
-                                                                                             accessInfo.Credentials,
-                                                                                             credential => credential.ToJSON(),
-                                                                                             1000,
-                                                                                             "Hello world!"
-                                                                                         ).ToUTF8Bytes(),
-                                                         Connection                    = "close"
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.JSON_UTF8,
+                                                         Content                    = OCPIResponse<Credentials>.Create(
+                                                                                          accessInfo.Credentials,
+                                                                                          credential => credential.ToJSON(),
+                                                                                          1000,
+                                                                                          "Hello world!"
+                                                                                      ).ToUTF8Bytes(),
+                                                         Connection                 = "close"
                                                      }.AsImmutable);
 
                                              }
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
-                                                     Server                        = HTTPServer.DefaultServerName,
-                                                     Date                          = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin      = "*",
-                                                     AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Authorization",
-                                                     Connection                    = "close"
+                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     Connection                 = "close"
                                                  }.AsImmutable);
 
                                          });
@@ -1849,13 +1860,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  if (accessInfo.Credentials == null)
                                                      return Task.FromResult(
                                                          new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode                = HTTPStatusCode.MethodNotAllowed,
-                                                             Server                        = HTTPServer.DefaultServerName,
-                                                             Date                          = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin      = "*",
-                                                             AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders     = "Authorization",
-                                                             Connection                    = "close"
+                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                             Server                     = HTTPServer.DefaultServerName,
+                                                             Date                       = DateTime.UtcNow,
+                                                             AccessControlAllowOrigin   = "*",
+                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                             AccessControlAllowHeaders  = "Authorization",
+                                                             Connection                 = "close"
                                                          }.AsImmutable);
 
 
@@ -1864,26 +1875,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode                = HTTPStatusCode.OK,
-                                                         Server                        = HTTPServer.DefaultServerName,
-                                                         Date                          = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin      = "*",
-                                                         AccessControlAllowMethods     = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders     = "Authorization",
-                                                         Connection                    = "close"
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         Connection                 = "close"
                                                      }.AsImmutable);
 
                                              }
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode                = HTTPStatusCode.Forbidden,
-                                                     Server                        = HTTPServer.DefaultServerName,
-                                                     Date                          = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin      = "*",
-                                                     AccessControlAllowMethods     = "GET",
-                                                     AccessControlAllowHeaders     = "Authorization",
-                                                     Connection                    = "close"
+                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     Connection                 = "close"
                                                  }.AsImmutable);
 
                                          });

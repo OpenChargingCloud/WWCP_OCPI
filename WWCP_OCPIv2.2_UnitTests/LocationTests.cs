@@ -124,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                          },
                                          new BusinessDetails(
                                              "Open Charging Cloud",
-                                             "https://open.charging.cloud",
+                                             URL.Parse("https://open.charging.cloud"),
                                              new Image(
                                                  "http://open.charging.cloud/logo.svg",
                                                  ImageFileTypes.svg,
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                          ),
                                          new BusinessDetails(
                                              "GraphDefined GmbH",
-                                             "https://www.graphdefined.com",
+                                             URL.Parse("https://www.graphdefined.com"),
                                              new Image(
                                                  "http://www.graphdefined.com/logo.png",
                                                  ImageFileTypes.png,
@@ -148,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                          ),
                                          new BusinessDetails(
                                              "Achim Friedland",
-                                             "https://ahzf.de",
+                                             URL.Parse("https://ahzf.de"),
                                              new Image(
                                                  "http://ahzf.de/logo.gif",
                                                  ImageFileTypes.gif,

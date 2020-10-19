@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a HTTP correlation.
+    /// The unique identification of a request correlation.
     /// </summary>
     public struct Correlation_Id : IId<Correlation_Id>
     {
@@ -38,6 +38,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The internal identification.
         /// </summary>
         private readonly String InternalId;
+
+        private static readonly Random random = new Random(DateTime.Now.Millisecond);
 
         #endregion
 
@@ -51,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the correlation identification.
+        /// The length of the request correlation identification.
         /// </summary>
         public UInt64 Length
 
@@ -62,9 +64,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new HTTP correlation identification based on the given string.
+        /// Create a new request correlation identification based on the given string.
         /// </summary>
-        /// <param name="String">The string representation of the HTTP correlation identification.</param>
+        /// <param name="String">The string representation of the request correlation identification.</param>
         private Correlation_Id(String String)
         {
             this.InternalId  = String;
@@ -73,10 +75,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Random  (Length)
+
+        /// <summary>
+        /// Create a new random request correlation identification.
+        /// </summary>
+        /// <param name="Length">The expected length of the request correlation identification.</param>
+        public static Correlation_Id Random(Byte Length = 30)
+
+            => new Correlation_Id(random.RandomString(Length));
+
+        #endregion
+
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a HTTP correlation identification.
+        /// Parse the given string as an OCPI correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         public static Correlation_Id Parse(String Text)
@@ -97,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a HTTP correlation identification.
+        /// Try to parse the given text as an OCPI correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         public static Correlation_Id? TryParse(String Text)
@@ -115,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, out CorrelationId)
 
         /// <summary>
-        /// Try to parse the given text as a HTTP correlation identification.
+        /// Try to parse the given text as an OCPI correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         /// <param name="CorrelationId">The parsed correlation identification.</param>
@@ -143,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this HTTP correlation identification.
+        /// Clone this request correlation identification.
         /// </summary>
         public Correlation_Id Clone
 
@@ -161,8 +175,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A HTTP correlation identification.</param>
-        /// <param name="CorrelationId2">Another HTTP correlation identification.</param>
+        /// <param name="CorrelationId1">A request correlation identification.</param>
+        /// <param name="CorrelationId2">Another request correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
@@ -176,8 +190,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A HTTP correlation identification.</param>
-        /// <param name="CorrelationId2">Another HTTP correlation identification.</param>
+        /// <param name="CorrelationId1">A request correlation identification.</param>
+        /// <param name="CorrelationId2">Another request correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
@@ -191,8 +205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A HTTP correlation identification.</param>
-        /// <param name="CorrelationId2">Another HTTP correlation identification.</param>
+        /// <param name="CorrelationId1">A request correlation identification.</param>
+        /// <param name="CorrelationId2">Another request correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Correlation_Id CorrelationId1,
                                           Correlation_Id CorrelationId2)
@@ -206,8 +220,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A HTTP correlation identification.</param>
-        /// <param name="CorrelationId2">Another HTTP correlation identification.</param>
+        /// <param name="CorrelationId1">A request correlation identification.</param>
+        /// <param name="CorrelationId2">Another request correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
@@ -221,8 +235,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A HTTP correlation identification.</param>
-        /// <param name="CorrelationId2">Another HTTP correlation identification.</param>
+        /// <param name="CorrelationId1">A request correlation identification.</param>
+        /// <param name="CorrelationId2">Another request correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Correlation_Id CorrelationId1,
                                           Correlation_Id CorrelationId2)
@@ -236,8 +250,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A HTTP correlation identification.</param>
-        /// <param name="CorrelationId2">Another HTTP correlation identification.</param>
+        /// <param name="CorrelationId1">A request correlation identification.</param>
+        /// <param name="CorrelationId2">Another request correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
@@ -300,9 +314,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(CorrelationId)
 
         /// <summary>
-        /// Compares two HTTP correlation identifications for equality.
+        /// Compares two request correlation identifications for equality.
         /// </summary>
-        /// <param name="CorrelationId">A HTTP correlation identification to compare with.</param>
+        /// <param name="CorrelationId">A request correlation identification to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Correlation_Id CorrelationId)
 

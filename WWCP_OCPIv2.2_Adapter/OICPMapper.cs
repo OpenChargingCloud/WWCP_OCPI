@@ -64,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                     new EVSE[0],
                                                                     new DisplayText[] { new DisplayText(Languages.eng, "directions") },
                                                                     new BusinessDetails(pool.Operator.Name.FirstText(),
-                                                                                        pool.Operator.Homepage,
+                                                                                        URL.Parse(pool.Operator.Homepage),
                                                                                         null),
                                                                     null,
                                                                     null,

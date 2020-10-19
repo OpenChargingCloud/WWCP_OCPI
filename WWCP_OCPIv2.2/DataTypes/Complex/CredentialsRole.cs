@@ -18,8 +18,6 @@
 #region Usings
 
 using System;
-using System.Linq;
-using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -41,28 +39,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Type of role.
-        /// </summary>
-        [Mandatory]
-        public Roles            Role               { get; }
-
-        /// <summary>
-        /// Details of this party.
-        /// </summary>
-        [Optional]
-        public BusinessDetails  BusinessDetails    { get; }
-
-        /// <summary>
         /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
         /// </summary>
-        [Optional]
-        public Party_Id         PartyId            { get; }
+        [Mandatory]
+        public Party_Id         PartyId             { get; }
 
         /// <summary>
         /// ISO-3166 alpha-2 country code of the country this party is operating in.
         /// </summary>
+        [Mandatory]
+        public CountryCode      CountryCode         { get; }
+
+        /// <summary>
+        /// The type of the role.
+        /// </summary>
+        [Mandatory]
+        public Roles            Role                { get; }
+
+        /// <summary>
+        /// Business details of this party.
+        /// </summary>
+        [Mandatory]
+        public BusinessDetails  BusinessDetails     { get; }
+
+        /// <summary>
+        /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
+        /// OCPI v2.2 does not define any behaviour for this.
+        /// </summary>
         [Optional]
-        public CountryCode      CountryCode        { get; }
+        public Boolean?         AllowDowngrades     { get; }
 
         #endregion
 
@@ -71,16 +76,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new credentials role.
         /// </summary>
-        public CredentialsRole(Roles            Role,
-                               BusinessDetails  BusinessDetails,
+        /// <param name="CountryCode">ISO-3166 alpha-2 country code of the country this party is operating in.</param>
+        /// <param name="PartyId">CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).</param>
+        /// <param name="Role">The type of the role.</param>
+        /// <param name="BusinessDetails">Business details of this party.</param>
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        public CredentialsRole(CountryCode      CountryCode,
                                Party_Id         PartyId,
-                               CountryCode      CountryCode)
+                               Roles            Role,
+                               BusinessDetails  BusinessDetails,
+                               Boolean?         AllowDowngrades)
         {
 
+            if (CountryCode. IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(CountryCode),      "The given CountryCode must not be null or empty!");
+
+            if (PartyId.   IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(PartyId),          "The given PartyId must not be null or empty!");
+
+            if (BusinessDetails is null)
+                throw new ArgumentNullException(nameof(BusinessDetails),  "The given business details must not be null!");
+
+
+            this.CountryCode      = CountryCode;
+            this.PartyId          = PartyId;
             this.Role             = Role;
             this.BusinessDetails  = BusinessDetails;
-            this.PartyId          = PartyId;
-            this.CountryCode      = CountryCode;
+            this.AllowDowngrades  = AllowDowngrades;
 
         }
 
@@ -181,6 +203,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
+                #region Parse CountryCode           [mandatory]
+
+                if (!JSON.ParseMandatory("country_code",
+                                         "country code",
+                                         OCPIv2_2.CountryCode.TryParse,
+                                         out CountryCode CountryCode,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyId               [mandatory]
+
+                if (!JSON.ParseMandatory("party_id",
+                                         "party identification",
+                                         Party_Id.TryParse,
+                                         out Party_Id PartyId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse Role                  [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("role",
@@ -206,37 +254,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PartyId               [mandatory]
+                #region Parse AllowDowngrades       [optional]
 
-                if (!JSON.ParseMandatory("party_id",
-                                         "party identification",
-                                         Party_Id.TryParse,
-                                         out Party_Id PartyId,
-                                         out ErrorResponse))
+                if (JSON.ParseOptional("allowDowngrades",
+                                       "allow downgrades",
+                                       out Boolean? AllowDowngrades,
+                                       out ErrorResponse))
                 {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse CountryCode           [mandatory]
-
-                if (!JSON.ParseMandatory("country_code",
-                                         "country code",
-                                         OCPIv2_2.CountryCode.TryParse,
-                                         out CountryCode CountryCode,
-                                         out ErrorResponse))
-                {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
 
 
-                CredentialsRole = new CredentialsRole(Role,
-                                                      BusinessDetails,
+                CredentialsRole = new CredentialsRole(CountryCode,
                                                       PartyId,
-                                                      CountryCode);
+                                                      Role,
+                                                      BusinessDetails,
+                                                      AllowDowngrades);
 
 
                 if (CustomCredentialsRoleParser != null)
@@ -304,10 +340,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("role",              Role.           ToString()),
-                           new JProperty("business_details",  BusinessDetails.ToJSON(CustomBusinessDetailsSerializer)),
-                           new JProperty("party_id",          PartyId.        ToString()),
-                           new JProperty("country_code",      CountryCode.    ToString())
+
+                           new JProperty("country_code",            CountryCode.    ToString()),
+                           new JProperty("party_id",                PartyId.        ToString()),
+                           new JProperty("role",                    Role.           ToString()),
+                           new JProperty("business_details",        BusinessDetails.ToJSON(CustomBusinessDetailsSerializer)),
+
+                           AllowDowngrades.HasValue
+                               ? new JProperty("allow_downgrades",  AllowDowngrades.Value)
+                               : null
+
                        );
 
             return CustomCredentialsRoleSerializer != null

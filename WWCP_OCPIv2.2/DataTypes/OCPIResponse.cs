@@ -145,6 +145,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         public static OCPIResponse<IEnumerable<TResponse>> ParseJArray(HTTPResponse              Response,
+                                                                       Request_Id                RequestId,
+                                                                       Correlation_Id            CorrelationId,
                                                                        Func<JObject, TResponse>  Parser)
         {
 
@@ -153,41 +155,92 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                if (Response.HTTPStatusCode == HTTPStatusCode.OK)
+                var RemoteRequestId      = Response.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? RequestId;
+                var RemoteCorrelationId  = Response.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? CorrelationId;
+
+                if (Response.HTTPBody.Length > 0)
                 {
 
-                    var JSON  = JObject.Parse(Response.HTTPBody?.ToUTF8String());
-                    var Items = new List<TResponse>();
+                    var JSON           = JObject.Parse(Response.HTTPBody?.ToUTF8String());
 
-                    if (JSON["data"] is JArray JSONArray)
+                    #region Documentation
+
+                    // {
+                    //   "data": [
+                    //     {
+                    //       "version": "2.2",
+                    //       "url":     "https://example.com/ocpi/versions/2.2/"
+                    //     }
+                    //   ],
+                    //   "status_code":     1000,
+                    //   "status_message": "hello world!",
+                    //   "timestamp":      "2020-10-05T21:15:30.134Z"
+                    // }
+
+                    #endregion
+
+                    var statusCode     = JSON["status_code"].    Value<Int32>();
+                    var statusMessage  = JSON["status_message"]?.Value<String>();
+                    var timestamp      = JSON["timestamp"]?.     Value<DateTime>();
+                    if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
+                        timestamp      = timestamp.Value.ToUniversalTime();
+
+                    if (Response.HTTPStatusCode == HTTPStatusCode.OK)
                     {
-                        foreach (JObject item in JSONArray)
+
+                        var Items          = new List<TResponse>();
+                        var exceptions     = new List<String>();
+
+                        if (JSON["data"] is JArray JSONArray)
                         {
-                            Items.Add(Parser(item));
+                            foreach (JObject item in JSONArray)
+                            {
+                                try
+                                {
+                                    Items.Add(Parser(item));
+                                }
+                                catch (Exception e)
+                                {
+                                    exceptions.Add(e.Message);
+                                }
+                            }
                         }
+
+                        result = new OCPIResponse<IEnumerable<TResponse>>(Items,
+                                                                          statusCode,
+                                                                          statusMessage,
+                                                                          exceptions.Any() ? exceptions.AggregateWith(Environment.NewLine) : null,
+                                                                          timestamp,
+                                                                          RequestId,
+                                                                          CorrelationId);
+
                     }
 
-                    result = new OCPIResponse<IEnumerable<TResponse>>(Items,
-                                                                      1000,
-                                                                      String.Empty,
-                                                                      String.Empty);
+                    else
+                        result = new OCPIResponse<IEnumerable<TResponse>>(new TResponse[0],
+                                                                          statusCode,
+                                                                          statusMessage,
+                                                                          Response.EntirePDU,
+                                                                          timestamp);
 
                 }
 
                 else
-                    result = new OCPIResponse<IEnumerable<TResponse>>(default,
+                    result = new OCPIResponse<IEnumerable<TResponse>>(new TResponse[0],
                                                                       -1,
                                                                       Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                                      Response.EntirePDU);
+                                                                      Response.EntirePDU,
+                                                                      Response.Timestamp);
 
             }
             catch (Exception e)
             {
 
-                result = new OCPIResponse<IEnumerable<TResponse>>(default,
+                result = new OCPIResponse<IEnumerable<TResponse>>(new TResponse[0],
                                                                   -1,
                                                                   e.Message,
-                                                                  e.StackTrace);
+                                                                  e.StackTrace,
+                                                                  DateTime.UtcNow);
 
             }
 
@@ -208,13 +261,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (Response.HTTPStatusCode == HTTPStatusCode.OK)
                 {
 
-                    var JSON  = JObject.Parse(Response.HTTPBody?.ToUTF8String());
+                    var JSON           = JObject.Parse(Response.HTTPBody?.ToUTF8String());
+
+                    var statusCode     = JSON["status_code"].    Value<Int32>();
+                    var statusMessage  = JSON["status_message"]?.Value<String>();
+                    var timestamp      = JSON["timestmap"].      Value<DateTime>();
 
                     if (JSON["data"] is JObject JSONObject)
                         result = new OCPIResponse<TResponse>(Parser(JSONObject),
-                                                             1000,
-                                                             String.Empty,
-                                                             String.Empty);
+                                                             statusCode,
+                                                             statusMessage,
+                                                             null,
+                                                             timestamp);
 
                 }
 
@@ -261,18 +319,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Constructor(s)
 
-        public OCPIResponse(TRequest   Request,
-                            TResponse  Data,
-                            Int32?     StatusCode,
-                            String     StatusMessage,
-                            String     AdditionalInformation,
-                            DateTime?  Timestamp = null)
+        public OCPIResponse(TRequest         Request,
+                            TResponse        Data,
+                            Int32?           StatusCode,
+                            String           StatusMessage,
+                            String           AdditionalInformation,
+                            DateTime?        Timestamp       = null,
+
+                            Request_Id?      RequestId       = null,
+                            Correlation_Id?  CorrelationId   = null)
 
             : base(Data,
                    StatusCode,
                    StatusMessage,
                    AdditionalInformation,
-                   Timestamp)
+                   Timestamp,
+
+                   RequestId,
+                   CorrelationId)
 
         {
 
@@ -285,57 +349,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         public static OCPIResponse<TRequest, IEnumerable<TResponse>> ParseJArray(TRequest                  Request,
+                                                                                 Request_Id                RequestId,
+                                                                                 Correlation_Id            CorrelationId,
                                                                                  HTTPResponse              Response,
                                                                                  Func<JObject, TResponse>  Parser)
         {
 
-            OCPIResponse<TRequest, IEnumerable<TResponse>> result = default;
+            var r = OCPIResponse <TResponse>.ParseJArray(Response,
+                                                         RequestId,
+                                                         CorrelationId,
+                                                         Parser);
 
-            try
-            {
-
-                if (Response.HTTPStatusCode == HTTPStatusCode.OK)
-                {
-
-                    var JSON  = JObject.Parse(Response.HTTPBody?.ToUTF8String());
-                    var Items = new List<TResponse>();
-
-                    if (JSON["data"] is JArray JSONArray)
-                    {
-                        foreach (JObject item in JSONArray)
-                        {
-                            Items.Add(Parser(item));
-                        }
-                    }
-
-                    result = new OCPIResponse<TRequest, IEnumerable<TResponse>>(Request,
-                                                                                Items,
-                                                                                1000,
-                                                                                String.Empty,
-                                                                                String.Empty);
-
-                }
-
-                else
-                    result = new OCPIResponse<TRequest, IEnumerable<TResponse>>(Request,
-                                                                                default,
-                                                                                -1,
-                                                                                Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                                                Response.EntirePDU);
-
-            }
-            catch (Exception e)
-            {
-
-                result = new OCPIResponse<TRequest, IEnumerable<TResponse>>(Request,
-                                                                            default,
-                                                                            -1,
-                                                                            e.Message,
-                                                                            e.StackTrace);
-
-            }
-
-            return result;
+            return new OCPIResponse<TRequest, IEnumerable<TResponse>>(Request,
+                                                                      r.Data,
+                                                                      r.StatusCode,
+                                                                      r.StatusMessage,
+                                                                      r.AdditionalInformation,
+                                                                      r.Timestamp,
+                                                                      r.RequestId,
+                                                                      r.CorrelationId);
 
         }
 

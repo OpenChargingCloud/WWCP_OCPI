@@ -18,13 +18,21 @@
 #region Usings
 
 using System;
-
+using org.GraphDefined.Vanaheimr.Hermod;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
+
+    public enum HTTPProtocols
+    {
+        http,
+        https
+    }
+
 
     /// <summary>
     /// An uniform resource location (URL).
@@ -57,6 +65,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => (UInt64) (InternalId?.Length ?? 0);
 
+        public HTTPProtocols  Protocol    { get; }
+
+        public HTTPHostname   Hostname    { get; }
+
+        public IPPort?        Port        { get; }
+
+        public HTTPPath       Path        { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -65,9 +81,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new uniform resource location based on the given string.
         /// </summary>
         /// <param name="String">The string representation of the uniform resource location.</param>
-        private URL(String String)
+        private URL(String         String,
+                    HTTPProtocols  Protocol,
+                    HTTPHostname   Hostname,
+                    IPPort?        Port,
+                    HTTPPath       Path)
         {
+
             this.InternalId  = String;
+            this.Protocol    = Protocol;
+            this.Hostname    = Hostname;
+            this.Port        = Port;
+            this.Path        = Path;
+
         }
 
         #endregion
@@ -122,18 +148,71 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out URL URL)
         {
 
+            Text  = Text?.Trim();
+            URL   = default;
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    URL = new URL(Text.Trim());
+
+                    if (!Text.Contains("://"))
+                        Text = "https://" + Text;
+
+                    var elements = Text.Split('/');
+
+                    HTTPProtocols  protocol  = HTTPProtocols.https;
+                    HTTPHostname   hostname;
+                    IPPort?        port      = default;
+                    HTTPPath?      path      = default;
+
+                    switch (elements[0])
+                    {
+
+                        case "http":
+                            protocol = HTTPProtocols.http;
+                            break;
+
+                        default:
+                            protocol = HTTPProtocols.https;
+                            break;
+
+                    }
+
+                    // A HTTP(S) port is given...
+                    if (elements[2].Contains(":"))
+                    {
+
+                        if (!HTTPHostname.TryParse(elements[2].Substring(0, elements[2].IndexOf(":")),  out hostname))
+                            return false;
+
+                        if (IPPort.       TryParse(elements[2].Substring(elements[2].IndexOf(":") + 1), out IPPort _port))
+                            port = _port;
+                        else
+                            return false;
+
+                    }
+
+                    else if (!HTTPHostname.TryParse(elements[2], out hostname))
+                        return false;
+
+                    if (elements.Length > 3)
+                        path = HTTPPath.TryParse(elements.Skip(3).AggregateWith("/"));
+
+
+                    URL = new URL(Text,
+                                  protocol,
+                                  hostname,
+                                  port,
+                                  path ?? HTTPPath.Parse("/"));
+
                     return true;
+
                 }
                 catch (Exception)
                 { }
             }
 
-            URL = default;
             return false;
 
         }
@@ -148,7 +227,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public URL Clone
 
             => new URL(
-                   new String(InternalId?.ToCharArray())
+                   new String(InternalId?.ToCharArray()),
+                   Protocol,
+                   Hostname,
+                   Port,
+                   Path
                );
 
         #endregion

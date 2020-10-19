@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Optinal link to the operator's website.
         /// </summary>
         [Optional]
-        public String  Website    { get; }
+        public URL?    Website    { get; }
 
         /// <summary>
         /// Optinal image link to the operator's logo.
@@ -67,19 +67,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Website">Optinal link to the operator's website.</param>
         /// <param name="Logo">Optinal image link to the operator's logo.</param>
         public BusinessDetails(String  Name,
-                               String  Website   = null,
+                               URL?    Website   = null,
                                Image   Logo      = null)
         {
-
-            #region Initial checks
 
             if (Name.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Name), "The given name must not be null or empty!");
 
-            #endregion
-
-            this.Name     = Name?.   Trim();
-            this.Website  = Website?.Trim();
+            this.Name     = Name?.Trim();
+            this.Website  = Website;
             this.Logo     = Logo;
 
         }
@@ -193,9 +189,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse website     [optional]
+                #region Parse Website     [optional]
 
-                var Website  = JSON.GetString("website");
+                if (JSON.ParseOptional("website",
+                                       "website",
+                                       URL.TryParse,
+                                       out URL? Website,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
 
                 #endregion
 
@@ -223,7 +229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (CustomBusinessDetailsParser != null)
                     BusinessDetails = CustomBusinessDetailsParser(JSON,
-                                                                              BusinessDetails);
+                                                                  BusinessDetails);
 
                 return true;
 
@@ -287,12 +293,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            new JProperty("name",            Name),
 
-                           Website.IsNotNullOrEmpty()
-                               ? new JProperty("website",   Website)
+                           Website.HasValue
+                               ? new JProperty("website",   Website.ToString())
                                : null,
 
                            Logo != null
-                               ? new JProperty("logo",      Logo.ToJSON())
+                               ? new JProperty("logo",      Logo.   ToJSON())
                                : null
 
                        );
@@ -423,8 +429,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is BusinessDetails chargingPeriod
-                   ? CompareTo(chargingPeriod)
+            => Object is BusinessDetails businessDetails
+                   ? CompareTo(businessDetails)
                    : throw new ArgumentException("The given object is not a business detail!",
                                                  nameof(Object));
 
@@ -445,18 +451,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var c = Name.   CompareTo(BusinessDetails.Name);
 
             if (c == 0)
-                c = Website.IsNotNullOrEmpty() && BusinessDetails.Website.IsNotNullOrEmpty()
-                        ? 0
-                        : Website.IsNotNullOrEmpty()
-                              ? -1
-                              : Website.CompareTo(BusinessDetails.Website);
+                c = Website.HasValue && BusinessDetails.Website.HasValue
+                        ? Website.Value.CompareTo(BusinessDetails.Website.Value)
+                        : 0;
 
             if (c == 0)
-                c = Logo == null && BusinessDetails.Logo == null
-                        ? 0
-                        : Logo == null
-                              ? -1
-                              : Logo.CompareTo(BusinessDetails.Logo);
+                c = !(Logo is null) && !(BusinessDetails.Logo is null)
+                        ? Logo.CompareTo(BusinessDetails.Logo)
+                        : 0;
 
             return c;
 
@@ -477,8 +479,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is BusinessDetails BusinessDetails &&
-                   Equals(BusinessDetails);
+            => Object is BusinessDetails businessDetails &&
+                   Equals(businessDetails);
 
         #endregion
 
@@ -495,11 +497,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                  Name.Equals(BusinessDetails.Name) &&
 
-               ((Website.IsNullOrEmpty()         && BusinessDetails.Website.IsNullOrEmpty()) ||
-                (Website.IsNeitherNullNorEmpty() && BusinessDetails.Website.IsNeitherNullNorEmpty() && Website.Equals(BusinessDetails.Website))) &&
+               ((!Website.HasValue && !BusinessDetails.Website.HasValue) ||
+                 (Website.HasValue && BusinessDetails.Website.HasValue && Website.Value.Equals(BusinessDetails.Website.Value))) &&
 
-               ((Logo == null                    && BusinessDetails.Logo == null) ||
-                (Logo != null                    && BusinessDetails.Logo != null                    && Logo.   Equals(BusinessDetails.Logo)));
+               ((Logo == null      && BusinessDetails.Logo == null) ||
+                (Logo != null      && BusinessDetails.Logo != null     && Logo.         Equals(BusinessDetails.Logo)));
 
         #endregion
 
@@ -516,14 +518,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return        Name.   GetHashCode() * 5 ^
+                return        Name.         GetHashCode() * 5 ^
 
-                       (Website.IsNotNullOrEmpty()
-                            ? Website.GetHashCode() * 3
+                       (Website.HasValue
+                            ? Website.Value.GetHashCode() * 3
                             : 0) ^
 
                        (Logo    != null
-                            ? Logo.   GetHashCode()
+                            ? Logo.         GetHashCode()
                             : 0);
 
             }
@@ -539,7 +541,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(Name,
-                             Website.IsNotNullOrEmpty()
+                             Website.HasValue
                                  ? "; " + Website
                                  : "",
                              Logo != null

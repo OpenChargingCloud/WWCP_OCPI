@@ -27,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a HTTP request.
+    /// The unique identification of an OCPI request.
     /// </summary>
     public struct Request_Id : IId<Request_Id>
     {
@@ -38,6 +38,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The internal identification.
         /// </summary>
         private readonly String InternalId;
+
+        private static readonly Random random = new Random(DateTime.Now.Millisecond);
 
         #endregion
 
@@ -72,6 +74,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region (static) Random  (Length)
+
+        /// <summary>
+        /// Create a new random request identification.
+        /// </summary>
+        /// <param name="Length">The expected length of the request identification.</param>
+        public static Request_Id Random(Byte Length = 30)
+
+            => new Request_Id(random.RandomString(Length));
+
+        #endregion
 
         #region (static) Parse   (Text)
 
