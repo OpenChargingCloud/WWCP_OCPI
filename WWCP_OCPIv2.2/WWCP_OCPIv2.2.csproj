@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\CommonClientLogger.cs" />
+    <Compile Include="Common\CommonClient.cs" />
     <Compile Include="CPO\CPOClient.cs" />
     <Compile Include="DataTypes\Commands\ClearProfileResult.cs" />
     <Compile Include="DataTypes\Commands\ChargingProfileResult.cs" />
@@ -78,8 +80,8 @@
     <Compile Include="DataTypes\Enums\LegalStatus.cs" />
     <Compile Include="DataTypes\NonStandardAttribute.cs" />
     <Compile Include="DataTypes\OCPIRequest.cs" />
-    <Compile Include="CommonAPI\AccessStatus.cs" />
-    <Compile Include="CommonAPI\AccessInfo.cs" />
+    <Compile Include="DataTypes\Enums\AccessStatus.cs" />
+    <Compile Include="DataTypes\Complex\AccessInfo.cs" />
     <Compile Include="DataTypes\Complex\VersionEndpoint.cs" />
     <Compile Include="DataTypes\Complex\VersionDetail.cs" />
     <Compile Include="DataTypes\Complex\Version.cs" />
@@ -176,7 +178,7 @@
     <Compile Include="DataTypes\Entities\Tariff.cs" />
     <Compile Include="CPO\CPOAPI\CPOAPI.cs" />
     <Compile Include="EMSP\EMSPAPI\EMSPAPI.cs" />
-    <Compile Include="CommonAPI\CommonAPI.cs" />
+    <Compile Include="Common\CommonAPI.cs" />
     <Compile Include="EMSP\EMSPClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tools\JSONHelper.cs" />

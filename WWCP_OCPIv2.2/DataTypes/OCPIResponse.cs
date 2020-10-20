@@ -56,7 +56,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         public Request_Id?      RequestId                 { get; }
-        public Correlation_Id?  CorrelationId             { get; } 
+        public Correlation_Id?  CorrelationId             { get; }
+
+        public HTTPResponse     Response                  { get; }
 
         #endregion
 
@@ -69,7 +71,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             DateTime?        Timestamp               = null,
 
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            HTTPResponse     Response                = null)
 
         {
 
@@ -81,6 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.RequestId              = RequestId;
             this.CorrelationId          = CorrelationId;
+            this.Response               = Response;
 
         }
 
@@ -211,8 +215,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                           statusMessage,
                                                                           exceptions.Any() ? exceptions.AggregateWith(Environment.NewLine) : null,
                                                                           timestamp,
-                                                                          RequestId,
-                                                                          CorrelationId);
+                                                                          RemoteRequestId,
+                                                                          RemoteCorrelationId,
+                                                                          Response);
 
                     }
 
@@ -221,7 +226,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                           statusCode,
                                                                           statusMessage,
                                                                           Response.EntirePDU,
-                                                                          timestamp);
+                                                                          timestamp,
+                                                                          RemoteRequestId,
+                                                                          RemoteCorrelationId,
+                                                                          Response);
 
                 }
 
@@ -230,7 +238,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                       -1,
                                                                       Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
                                                                       Response.EntirePDU,
-                                                                      Response.Timestamp);
+                                                                      Response.Timestamp,
+                                                                      RemoteRequestId,
+                                                                      RemoteCorrelationId,
+                                                                      Response);
 
             }
             catch (Exception e)
@@ -240,7 +251,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                   -1,
                                                                   e.Message,
                                                                   e.StackTrace,
-                                                                  DateTime.UtcNow);
+                                                                  DateTime.UtcNow,
+                                                                  RequestId,
+                                                                  CorrelationId,
+                                                                  Response);
 
             }
 
@@ -250,6 +264,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         public static OCPIResponse<TResponse> ParseJObject(HTTPResponse              Response,
+                                                           Request_Id                RequestId,
+                                                           Correlation_Id            CorrelationId,
                                                            Func<JObject, TResponse>  Parser)
         {
 
@@ -258,21 +274,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                if (Response.HTTPStatusCode == HTTPStatusCode.OK)
+                var RemoteRequestId      = Response.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? RequestId;
+                var RemoteCorrelationId  = Response.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? CorrelationId;
+
+                if (Response.HTTPBody.Length > 0)
                 {
 
                     var JSON           = JObject.Parse(Response.HTTPBody?.ToUTF8String());
 
                     var statusCode     = JSON["status_code"].    Value<Int32>();
                     var statusMessage  = JSON["status_message"]?.Value<String>();
-                    var timestamp      = JSON["timestmap"].      Value<DateTime>();
+                    var timestamp      = JSON["timestamp"]?.     Value<DateTime>();
+                    if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
+                        timestamp      = timestamp.Value.ToUniversalTime();
 
-                    if (JSON["data"] is JObject JSONObject)
-                        result = new OCPIResponse<TResponse>(Parser(JSONObject),
+                    if (Response.HTTPStatusCode == HTTPStatusCode.OK)
+                    {
+
+                        if (JSON["data"] is JObject JSONObject)
+                            result = new OCPIResponse<TResponse>(Parser(JSONObject),
+                                                                 statusCode,
+                                                                 statusMessage,
+                                                                 null,
+                                                                 timestamp,
+                                                                 RemoteRequestId,
+                                                                 RemoteCorrelationId,
+                                                                 Response);
+
+                    }
+
+                    else
+                        result = new OCPIResponse<TResponse>(default,
                                                              statusCode,
                                                              statusMessage,
-                                                             null,
-                                                             timestamp);
+                                                             Response.EntirePDU,
+                                                             timestamp,
+                                                             RemoteRequestId,
+                                                             RemoteCorrelationId,
+                                                             Response);
 
                 }
 
@@ -280,7 +319,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     result = new OCPIResponse<TResponse>(default,
                                                          -1,
                                                          Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                         Response.EntirePDU);
+                                                         Response.EntirePDU,
+                                                         Response.Timestamp,
+                                                         RemoteRequestId,
+                                                         RemoteCorrelationId,
+                                                         Response);
 
             }
             catch (Exception e)
@@ -296,8 +339,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             return result;
 
         }
-
-
 
     }
 
@@ -323,11 +364,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             TResponse        Data,
                             Int32?           StatusCode,
                             String           StatusMessage,
-                            String           AdditionalInformation,
-                            DateTime?        Timestamp       = null,
+                            String           AdditionalInformation   = null,
+                            DateTime?        Timestamp               = null,
 
-                            Request_Id?      RequestId       = null,
-                            Correlation_Id?  CorrelationId   = null)
+                            Request_Id?      RequestId               = null,
+                            Correlation_Id?  CorrelationId           = null)
 
             : base(Data,
                    StatusCode,
@@ -373,52 +414,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         public static OCPIResponse<TRequest, TResponse> ParseJObject(TRequest                  Request,
+                                                                     Request_Id                RequestId,
+                                                                     Correlation_Id            CorrelationId,
                                                                      HTTPResponse              Response,
                                                                      Func<JObject, TResponse>  Parser)
         {
 
-            OCPIResponse<TRequest, TResponse> result = default;
+            var r = OCPIResponse<TResponse>.ParseJObject(Response,
+                                                         RequestId,
+                                                         CorrelationId,
+                                                         Parser);
 
-            try
-            {
-
-                if (Response.HTTPStatusCode == HTTPStatusCode.OK)
-                {
-
-                    var JSON  = JObject.Parse(Response.HTTPBody?.ToUTF8String());
-
-                    if (JSON["data"] is JObject JSONObject)
-                        result = new OCPIResponse<TRequest, TResponse>(Request,
-                                                                       Parser(JSONObject),
-                                                                       1000,
-                                                                       String.Empty,
-                                                                       String.Empty);
-
-                }
-
-                else
-                    result = new OCPIResponse<TRequest, TResponse>(Request,
-                                                                   default,
-                                                                   -1,
-                                                                   Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
-                                                                   Response.EntirePDU);
-
-            }
-            catch (Exception e)
-            {
-
-                result = new OCPIResponse<TRequest, TResponse>(Request,
-                                                               default,
-                                                               -1,
-                                                               e.Message,
-                                                               e.StackTrace);
-
-            }
-
-            return result;
+            return new OCPIResponse<TRequest, TResponse>(Request,
+                                                         r.Data,
+                                                         r.StatusCode,
+                                                         r.StatusMessage,
+                                                         r.AdditionalInformation,
+                                                         r.Timestamp,
+                                                         r.RequestId,
+                                                         r.CorrelationId);
 
         }
-
 
 
     }
