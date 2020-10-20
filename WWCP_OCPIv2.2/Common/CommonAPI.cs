@@ -1284,7 +1284,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private void RegisterURLTemplates()
         {
 
-            #region GET    /
+            #region OPTIONS     ~/
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.OPTIONS,
+                                         URLPathPrefix,
+                                         HTTPDelegate: Request => {
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = DefaultHTTPServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     Connection                 = "close"
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region GET         ~/
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
             //                                   URLPrefix + "/", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot",
@@ -1315,22 +1337,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix,
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: async Request => {
+                                         HTTPDelegate: Request => {
 
-                                             return new HTTPResponse.Builder(Request) {
-                                                 HTTPStatusCode  = HTTPStatusCode.OK,
-                                                 Server          = DefaultHTTPServerName,
-                                                 Date            = DateTime.UtcNow,
-                                                 ContentType     = HTTPContentType.TEXT_UTF8,
-                                                 Content         = ("This is an Open Charge Point Interface HTTP service!\nPlease check /versions!").ToUTF8Bytes(),
-                                                 Connection      = "close"
-                                             };
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = DefaultHTTPServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     ContentType                = HTTPContentType.TEXT_UTF8,
+                                                     Content                    = "This is an Open Charge Point Interface HTTP service!\r\nPlease check ~/versions!".ToUTF8Bytes(),
+                                                     Connection                 = "close"
+                                                 }.AsImmutable);
 
                                          });
 
             #endregion
 
+
+            #region OPTIONS     ~/versions
+
+            // ----------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2000/versions
+            // ----------------------------------------------------
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "versions",
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "OPTIONS, GET",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
+
+            #endregion
 
             #region GET         ~/versions
 
@@ -1398,6 +1450,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+            #region OPTIONS     ~/versions/{id}
+
+            // --------------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2000/versions/{id}
+            // --------------------------------------------------------
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "versions/{id}",
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "OPTIONS, GET",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
+
+            #endregion
+
             #region GET         ~/versions/{id}
 
             // ---------------------------------------------------------------------------
@@ -1408,6 +1487,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      URLPathPrefix + "versions/{id}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
+
+                                         #region Check access token
+
+                                         AccessInfo accessInfo = default;
+
+                                         if (Request.AccessToken.HasValue &&
+                                             _AccessTokens.TryGetValue(Request.AccessToken.Value, out accessInfo) &&
+                                             accessInfo.Status != AccessStatus.ALLOWED)
+                                         {
+
+                                             // Invalid or blocked access token!
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowHeaders  = "Authorization",
+                                                     Connection                 = "close"
+                                                 }.Set("X-Request-ID",      Request.RequestId).
+                                                   Set("X-Correlation-ID",  Request.CorrelationId).
+                                                   AsImmutable);
+
+                                         }
+
+                                         #endregion
 
                                          #region Get version identification URL parameter
 
@@ -1439,33 +1545,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Check access token
-
-                                         AccessInfo accessInfo = default;
-
-                                         if (Request.AccessToken.HasValue &&
-                                             _AccessTokens.TryGetValue(Request.AccessToken.Value, out accessInfo) &&
-                                             accessInfo.Status != AccessStatus.ALLOWED)
-                                         {
-
-                                             // Invalid or blocked access token!
-                                             return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
-
-                                         }
-
-                                         #endregion
-
                                          #region Only allow versionId == "2.2"
 
                                          if (versionId.ToString() != "2.2")
@@ -1486,6 +1565,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
+                                         #region Common credential endpoints...
+
                                          var endpoints  = new List<VersionEndpoint>() {
 
                                                               new VersionEndpoint(ModuleIDs.Credentials,
@@ -1498,6 +1579,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                           };
 
+                                         #endregion
+
+
+                                         #region The other side is a CPO...
 
                                          if (accessInfo.Role == Roles.CPO)
                                          {
@@ -1531,6 +1616,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          }
 
+                                         #endregion
+
+                                         #region The other side is an EMP or unauthenticated (Open Data Access)...
 
                                          if (accessInfo.Role == Roles.EMSP || accessInfo.Role == Roles.OpenData)
                                          {
@@ -1540,6 +1628,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/"))));
 
                                          }
+
+                                         #endregion
+
+                                         #region The other side is an EMP...
 
                                          if (accessInfo.Role == Roles.EMSP)
                                          {
@@ -1582,6 +1674,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          }
 
+                                         #endregion
+
 
                                          return Task.FromResult(
                                              new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -1610,6 +1704,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            #region OPTIONS     ~/2.2/credentials
+
+            // ----------------------------------------------------------
+            // curl -v -X OPTIONS http://127.0.0.1:2000/2.2/credentials
+            // ----------------------------------------------------------
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "2.2/credentials",
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.OK,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
+
+            #endregion
 
             #region GET         ~/2.2/credentials
 
@@ -1633,7 +1753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                     AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                      AccessControlAllowHeaders  = "Authorization",
                                                      ContentType                = HTTPContentType.JSON_UTF8,
                                                      Content                    = OCPIResponse<Credentials>.Create(
@@ -1692,7 +1812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          Server                     = HTTPServer.DefaultServerName,
                                                          Date                       = DateTime.UtcNow,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          Connection                 = "close"
                                                      }.Set("X-Request-ID",      Request.RequestId).
@@ -1789,7 +1909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          Server                     = HTTPServer.DefaultServerName,
                                                          Date                       = DateTime.UtcNow,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          Connection                 = "close"
                                                      }.Set("X-Request-ID",      Request.RequestId).
@@ -1886,7 +2006,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          Server                     = HTTPServer.DefaultServerName,
                                                          Date                       = DateTime.UtcNow,
                                                          AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          Connection                 = "close"
                                                      }.Set("X-Request-ID",      Request.RequestId).
@@ -1928,7 +2048,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      });
 
             #endregion
-
 
         }
 
