@@ -2401,9 +2401,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          //ToDo: Handle AddOrUpdate errors
                                          CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation);
 
+                                         var wasCreated = true;
+
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    HTTPStatusCode             = wasCreated
+                                                                                     ? HTTPStatusCode.Created
+                                                                                     : HTTPStatusCode.OK,
                                                     Server                     = DefaultHTTPServerName,
                                                     Date                       = DateTime.UtcNow,
                                                     AccessControlAllowOrigin   = "*",
@@ -2660,9 +2664,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          //ToDo: Handle AddOrUpdate errors
                                          //CommonAPI.AddOrUpdate(newOrUpdatedLocation);
 
+                                         var wasCreated = true;
+
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    HTTPStatusCode             = wasCreated
+                                                                                     ? HTTPStatusCode.Created
+                                                                                     : HTTPStatusCode.OK,
                                                     Server                     = DefaultHTTPServerName,
                                                     Date                       = DateTime.UtcNow,
                                                     AccessControlAllowOrigin   = "*",
@@ -2925,9 +2933,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          //ToDo: Handle AddOrUpdate errors
                                          //CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation);
 
+                                         var wasCreated = true;
+
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    HTTPStatusCode             = wasCreated
+                                                                                     ? HTTPStatusCode.Created
+                                                                                     : HTTPStatusCode.OK,
                                                     Server                     = DefaultHTTPServerName,
                                                     Date                       = DateTime.UtcNow,
                                                     AccessControlAllowOrigin   = "*",
@@ -3260,9 +3272,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          //ToDo: Handle AddOrUpdate errors
                                          CommonAPI.AddOrUpdateTariff(newOrUpdatedTariff);
 
+                                         var wasCreated = true;
+
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    HTTPStatusCode             = wasCreated
+                                                                                     ? HTTPStatusCode.Created
+                                                                                     : HTTPStatusCode.OK,
                                                     Server                     = DefaultHTTPServerName,
                                                     Date                       = DateTime.UtcNow,
                                                     AccessControlAllowOrigin   = "*",
@@ -3487,9 +3503,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          //ToDo: Handle AddOrUpdate errors
                                          CommonAPI.AddOrUpdateSession(newOrUpdatedSession);
 
+                                         var wasCreated = true;
+
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    HTTPStatusCode             = wasCreated
+                                                                                     ? HTTPStatusCode.Created
+                                                                                     : HTTPStatusCode.OK,
                                                     Server                     = DefaultHTTPServerName,
                                                     Date                       = DateTime.UtcNow,
                                                     AccessControlAllowOrigin   = "*",
@@ -3705,9 +3725,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          // ToDo: What kind of error might happen here?
                                          CommonAPI.AddCDR(newCDR);
 
+                                         var wasCreated = true;
+
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    HTTPStatusCode             = HTTPStatusCode.Created,
                                                     Server                     = DefaultHTTPServerName,
                                                     Date                       = DateTime.UtcNow,
                                                     AccessControlAllowOrigin   = "*",

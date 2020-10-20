@@ -15,27 +15,51 @@
  * limitations under the License.
  */
 
+#region Usings
+
+using System.Linq;
+using System.Collections.Generic;
+
+#endregion
+
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     public struct AccessInfo
     {
 
-        public Roles         Role           { get; }
-        public AccessStatus  Status         { get; }
-        public Credentials   Credentials    { get; set; }
+        public AccessToken                   Token          { get; }
+
+        public URL?                          VersionsURL    { get; }
+
+        public IEnumerable<CredentialsRole>  Roles          { get; }
+
+        public AccessStatus                  Status         { get; set; }
 
 
-        public AccessInfo(Roles         Role,
-                          AccessStatus  Status,
-                          Credentials   Credentials)
+        public AccessInfo(AccessToken                   Token,
+                          AccessStatus                  Status,
+                          URL?                          VersionsURL   = null,
+                          IEnumerable<CredentialsRole>  Roles         = null)
         {
 
-            this.Role         = Role;
+            this.Token        = Token;
+            this.VersionsURL  = VersionsURL;
+            this.Roles        = Roles?.Distinct();
             this.Status       = Status;
-            this.Credentials  = Credentials;
 
         }
+
+
+
+        public Credentials AsCredentials()
+
+            => new Credentials(Token,
+                               VersionsURL.Value,
+                               Roles.Select(role => new CredentialsRole(role.CountryCode,
+                                                                        role.PartyId,
+                                                                        role.Role,
+                                                                        role.BusinessDetails)));
 
     }
 

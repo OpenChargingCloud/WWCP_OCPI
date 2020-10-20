@@ -1163,19 +1163,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
 
 
-        private readonly Dictionary<AccessToken, AccessInfo> _AccessTokens;
+        private readonly Dictionary<AccessToken, AccessInfo> AccessTokens;
+
+        private readonly List<RemoteAccessInfo> RemoteAccessInfos;
 
         #endregion
 
         #region Properties
 
-        public HTTPPath?  AdditionalURLPathPrefix    { get; }
+        public URL                           OurURL                     { get; }
+
+        public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
+
+
+        public HTTPPath?                     AdditionalURLPathPrefix    { get; }
 
         /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
-        public Boolean?  AllowDowngrades             { get; }
+        public Boolean?                      AllowDowngrades            { get; }
 
         #endregion
 
@@ -1199,15 +1206,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// 
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
-        public CommonAPI(HTTPHostname?   HTTPHostname              = null,
-                         IPPort?         HTTPServerPort            = null,
-                         String          HTTPServerName            = DefaultHTTPServerName,
-                         String          ExternalDNSName           = null,
-                         HTTPPath?       URLPathPrefix             = null,
-                         String          ServiceName               = DefaultHTTPServiceName,
-                         HTTPPath?       AdditionalURLPathPrefix   = null,
-                         Boolean?        AllowDowngrades           = null,
-                         DNSClient       DNSClient                 = null)
+        public CommonAPI(URL                           OurURL,
+                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+                         HTTPHostname?                 HTTPHostname              = null,
+                         IPPort?                       HTTPServerPort            = null,
+                         String                        HTTPServerName            = DefaultHTTPServerName,
+                         String                        ExternalDNSName           = null,
+                         HTTPPath?                     URLPathPrefix             = null,
+                         String                        ServiceName               = DefaultHTTPServiceName,
+                         HTTPPath?                     AdditionalURLPathPrefix   = null,
+                         Boolean?                      AllowDowngrades           = null,
+                         DNSClient                     DNSClient                 = null)
 
             : base(HTTPHostname,
                    HTTPServerPort ?? DefaultHTTPServerPort,
@@ -1219,11 +1228,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (!OurCredentialRoles.SafeAny())
+                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
+
+            this.OurURL                   = OurURL;
+            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.AllowDowngrades          = AllowDowngrades;
 
-            this._AccessTokens            = new Dictionary<AccessToken, AccessInfo>();
+            this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
+            this.RemoteAccessInfos        = new List<RemoteAccessInfo>();
             this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this._Tariffs                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this._Sessions                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this._Tokens                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this._CDRs                    = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             RegisterURLTemplates();
 
@@ -1241,12 +1260,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public CommonAPI(HTTPServer      HTTPServer,
-                         HTTPHostname?   HTTPHostname              = null,
-                         String          ExternalDNSName           = null,
-                         HTTPPath?       URLPathPrefix             = null,
-                         String          ServiceName               = DefaultHTTPServerName,
-                         HTTPPath?       AdditionalURLPathPrefix   = null)
+        public CommonAPI(URL                           OurURL,
+                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+                         HTTPServer                    HTTPServer,
+                         HTTPHostname?                 HTTPHostname              = null,
+                         String                        ExternalDNSName           = null,
+                         HTTPPath?                     URLPathPrefix             = null,
+                         String                        ServiceName               = DefaultHTTPServerName,
+                         HTTPPath?                     AdditionalURLPathPrefix   = null,
+                         Boolean?                      AllowDowngrades           = null)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -1256,9 +1278,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            if (!OurCredentialRoles.SafeAny())
+                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this._AccessTokens            = new Dictionary<AccessToken, AccessInfo>();
+            this.OurURL                   = OurURL;
+            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
+            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.AllowDowngrades          = AllowDowngrades;
+
+            this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
+            this.RemoteAccessInfos        = new List<RemoteAccessInfo>();
             this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this._Tariffs                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this._Sessions                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
@@ -1398,7 +1427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #region Check access token
 
                                          if (Request.AccessToken.HasValue &&
-                                             _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
                                              accessInfo.Status != AccessStatus.ALLOWED)
                                          {
 
@@ -1493,7 +1522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          AccessInfo accessInfo = default;
 
                                          if (Request.AccessToken.HasValue &&
-                                             _AccessTokens.TryGetValue(Request.AccessToken.Value, out accessInfo) &&
+                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out accessInfo) &&
                                              accessInfo.Status != AccessStatus.ALLOWED)
                                          {
 
@@ -1584,7 +1613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region The other side is a CPO...
 
-                                         if (accessInfo.Role == Roles.CPO)
+                                         if (accessInfo.Roles.Any(role  => role.Role == Roles.CPO))
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
@@ -1620,7 +1649,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region The other side is an EMP or unauthenticated (Open Data Access)...
 
-                                         if (accessInfo.Role == Roles.EMSP || accessInfo.Role == Roles.OpenData)
+                                         if (accessInfo.Roles.Any(role => role.Role == Roles.EMSP) ||
+                                             accessInfo.Roles.Any(role => role.Role == Roles.OpenData))
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
@@ -1633,7 +1663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region The other side is an EMP...
 
-                                         if (accessInfo.Role == Roles.EMSP)
+                                         if (accessInfo.Roles.Any(role => role.Role == Roles.EMSP))
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
@@ -1743,7 +1773,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      OCPIRequest: Request => {
 
                                          if (Request.AccessToken.HasValue &&
-                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             accessInfo.VersionsURL.HasValue &&
                                              accessInfo.Status == AccessStatus.ALLOWED)
                                          {
 
@@ -1757,7 +1788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      AccessControlAllowHeaders  = "Authorization",
                                                      ContentType                = HTTPContentType.JSON_UTF8,
                                                      Content                    = OCPIResponse<Credentials>.Create(
-                                                                                      accessInfo.Credentials,
+                                                                                      accessInfo.AsCredentials(),
                                                                                       credentials => credentials.ToJSON(),
                                                                                       1000,
                                                                                       "Hello world!"
@@ -1777,6 +1808,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  AccessControlAllowOrigin   = "*",
                                                  AccessControlAllowMethods  = "GET",
                                                  AccessControlAllowHeaders  = "Authorization",
+                                                 ContentType                = HTTPContentType.JSON_UTF8,
+                                                 Content                    = OCPIResponse.Create(
+                                                                                  2000,
+                                                                                  "You need to be registered before trying to invoke this protected method."
+                                                                              ).ToUTF8Bytes(),
                                                  Connection                 = "close"
                                              }.Set("X-Request-ID",      Request.RequestId).
                                                Set("X-Correlation-ID",  Request.CorrelationId).
@@ -1790,95 +1826,200 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // REGISTER new OCPI party!
 
-            // ---------------------------------------------------------------------------------
+            // -----------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
-            // ---------------------------------------------------------------------------------
+            // -----------------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.POST,
-                                     URLPathPrefix + "cpo/2.2/credentials",
+                                     URLPathPrefix + "2.2/credentials",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequest: async Request => {
 
                                          if (Request.AccessToken.HasValue &&
-                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
                                              accessInfo.Status == AccessStatus.ALLOWED)
                                          {
 
-                                             // Client is already registered!
-                                             if (accessInfo.Credentials != null)
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                         HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                         Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders  = "Authorization",
-                                                         Connection                 = "close"
-                                                     }.Set("X-Request-ID",      Request.RequestId).
-                                                       Set("X-Correlation-ID",  Request.CorrelationId).
-                                                       AsImmutable);
+                                             #region Validations
+
+                                             if (accessInfo.VersionsURL.HasValue)
+                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = OCPIResponse.Create(
+                                                                                            2000,
+                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is already registered!"
+                                                                                        ).ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.Set("X-Request-ID",      Request.RequestId).
+                                                          Set("X-Correlation-ID",  Request.CorrelationId);
 
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
-                                                 !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
-                                                return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                         Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders  = "Authorization",
-                                                         Connection                 = "close"
-                                                     }.Set("X-Request-ID",      Request.RequestId).
-                                                       Set("X-Correlation-ID",  Request.CorrelationId).
-                                                       AsImmutable);
+                                             var ErrorResponse = String.Empty;
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
+                                                 !Credentials.TryParse(JSON, out Credentials receivedCredentials, out ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = OCPIResponse.Create(
+                                                                                            2000,
+                                                                                            "Could not parse the credentials JSON object! " + ErrorResponse
+                                                                                        ).ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.Set("X-Request-ID",      Request.RequestId).
+                                                          Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                             }
+
+                                             #endregion
 
 
-                                             // Here we should check the other side!!!
+                                             #region Additional security checks... (Non-Standard)
+
+                                             lock (AccessTokens)
+                                             {
+                                                 foreach (var credentialsRole in receivedCredentials.Roles)
+                                                 {
+
+                                                     var result = AccessTokens.Values.Where(accessToken => accessToken.Roles.Any(role => role.CountryCode == credentialsRole.CountryCode &&
+                                                                                                                                         role.PartyId     == credentialsRole.PartyId &&
+                                                                                                                                         role.Role        == credentialsRole.Role)).ToArray();
+
+                                                     if (result.Length == 0)
+                                                     {
+
+                                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                    HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                                    Server                     = HTTPServer.DefaultServerName,
+                                                                    Date                       = DateTime.UtcNow,
+                                                                    AccessControlAllowOrigin   = "*",
+                                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                                    AccessControlAllowHeaders  = "Authorization",
+                                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                                    Content                    = OCPIResponse.Create(
+                                                                                                    2000,
+                                                                                                    "The given combination of country code, party identification and role is unknown!"
+                                                                                                ).ToUTF8Bytes(),
+                                                                    Connection                 = "close"
+                                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                                     }
+
+                                                     if (result.Length > 0 &&
+                                                         result.First().VersionsURL.HasValue)
+                                                     {
+
+                                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                    HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                                    Server                     = HTTPServer.DefaultServerName,
+                                                                    Date                       = DateTime.UtcNow,
+                                                                    AccessControlAllowOrigin   = "*",
+                                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                                    AccessControlAllowHeaders  = "Authorization",
+                                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                                    Content                    = OCPIResponse.Create(
+                                                                                                    2000,
+                                                                                                    "The given combination of country code, party identification and role is already registered!"
+                                                                                                ).ToUTF8Bytes(),
+                                                                    Connection                 = "close"
+                                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                                     }
+
+                                                 }
+                                             }
+
+                                             #endregion
 
 
-                                             SetAccessToken(Request.AccessToken.Value,
-                                                            accessInfo.Role,
-                                                            credentials,
+
+                                             var commonClient         = new CommonClient(receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
+                                                                                         receivedCredentials.URL,
+                                                                                         DNSClient: HTTPServer.DNSClient);
+
+                                             var otherVersions        = await commonClient.GetVersions();
+                                             var version2_2           = otherVersions.Data.Where(v => v.VersionId.ToString() == "2.2").FirstOrDefault();
+                                             var otherVersionDetails  = await commonClient.GetVersionDetails(Version_Id.Parse("2.2"));
+
+
+                                             // Store credential of the other side!
+                                             foreach (var role in receivedCredentials.Roles)
+                                                 SetRemoteAccessInfo(role.CountryCode,
+                                                                     role.PartyId,
+                                                                     role.Role,
+                                                                     role.BusinessDetails,
+                                                                     receivedCredentials.Token,
+                                                                     receivedCredentials.URL,
+                                                                     otherVersions.Data.Select(version => version.VersionId),
+                                                                     RemoteAccessStatus.ONLINE);
+
+
+                                             var CREDENTIALS_TOKEN_C = AccessToken.Random();
+
+                                             SetAccessToken(CREDENTIALS_TOKEN_C,
+                                                            receivedCredentials.URL,
+                                                            receivedCredentials.Roles,
                                                             AccessStatus.ALLOWED);
 
+                                             // CREDENTIALS_TOKEN_A
+                                             RemoveAccessToken(Request.AccessToken.Value);
 
-                                             return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = OCPIResponse<Credentials>.Create(
-                                                                                      credentials,
-                                                                                      credential => credential.ToJSON(),
-                                                                                      1000,
-                                                                                      "Hello world!"
-                                                                                  ).ToUTF8Bytes(),
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+
+
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = HTTPServer.DefaultServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Credentials>.Create(
+                                                                                         new Credentials(
+                                                                                             CREDENTIALS_TOKEN_C,
+                                                                                             OurURL,
+                                                                                             OurCredentialRoles
+                                                                                         ),
+                                                                                         credential => credential.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    }.Set("X-Request-ID",      Request.RequestId).
+                                                      Set("X-Correlation-ID",  Request.CorrelationId);
 
                                          }
 
-                                         return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                    Server                     = HTTPServer.DefaultServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse.Create(
+                                                                                     2000,
+                                                                                     "You need to be registered before trying to invoke this protected method."
+                                                                                 ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                                      });
 
@@ -1895,87 +2036,112 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "2.2/credentials",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequest: async Request => {
 
                                          if (Request.AccessToken.HasValue &&
-                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
                                              accessInfo.Status == AccessStatus.ALLOWED)
                                          {
 
-                                             if (accessInfo.Credentials == null)
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                         HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                         Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders  = "Authorization",
-                                                         Connection                 = "close"
-                                                     }.Set("X-Request-ID",      Request.RequestId).
-                                                       Set("X-Correlation-ID",  Request.CorrelationId).
-                                                       AsImmutable);
+                                             #region Validations
+
+                                             if (!accessInfo.VersionsURL.HasValue)
+                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = OCPIResponse.Create(
+                                                                                            2000,
+                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!"
+                                                                                        ).ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.Set("X-Request-ID",      Request.RequestId).
+                                                          Set("X-Correlation-ID",  Request.CorrelationId);
 
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
-                                                 !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
-                                                return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                         Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders  = "Authorization",
-                                                         Connection                 = "close"
-                                                     }.Set("X-Request-ID",      Request.RequestId).
-                                                       Set("X-Correlation-ID",  Request.CorrelationId).
-                                                       AsImmutable);
+                                             var ErrorResponse = String.Empty;
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
+                                                 !Credentials.TryParse(JSON, out Credentials credentials, out ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = OCPIResponse.Create(
+                                                                                            2000,
+                                                                                            "Could not parse the credentials JSON object! " + ErrorResponse
+                                                                                        ).ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.Set("X-Request-ID",      Request.RequestId).
+                                                          Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                             }
+
+                                             #endregion
+
+                                             var commonClient         = new CommonClient(credentials.Token,     // CREDENTIALS_TOKEN_B
+                                                                                         credentials.URL,
+                                                                                         DNSClient: HTTPServer.DNSClient);
+
+                                             var otherVersions        = await commonClient.GetVersions();
+                                             var version2_2           = otherVersions.Data.Where(v => v.VersionId.ToString() == "2.2").FirstOrDefault();
+                                             var otherVersionDetails  = await commonClient.GetVersionDetails(Version_Id.Parse("2.2"));
 
 
                                              // Here we should check the other side!!!
 
 
-                                             SetAccessToken(Request.AccessToken.Value,
-                                                            accessInfo.Role,
-                                                            credentials,
-                                                            AccessStatus.ALLOWED);
+                                             //SetAccessToken(Request.AccessToken.Value,
+                                             //               accessInfo.Role,
+                                             //               credentials,
+                                             //               AccessStatus.ALLOWED);
 
 
-                                             return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = OCPIResponse<Credentials>.Create(
-                                                                                      accessInfo.Credentials,
-                                                                                      credential => credential.ToJSON(),
-                                                                                      1000,
-                                                                                      "Hello world!"
-                                                                                  ).ToUTF8Bytes(),
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = HTTPServer.DefaultServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse<Credentials>.Create(
+                                                                                         accessInfo.AsCredentials(),
+                                                                                         credential => credential.ToJSON(),
+                                                                                         1000,
+                                                                                         "Hello world!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    }.Set("X-Request-ID",      Request.RequestId).
+                                                      Set("X-Correlation-ID",  Request.CorrelationId);
 
                                          }
 
-                                         return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                    Server                     = HTTPServer.DefaultServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse.Create(
+                                                                                     2000,
+                                                                                     "You need to be registered before trying to invoke this protected method."
+                                                                                ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                                      });
 
@@ -1995,11 +2161,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      OCPIRequest: Request => {
 
                                          if (Request.AccessToken.HasValue &&
-                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
                                              accessInfo.Status == AccessStatus.ALLOWED)
                                          {
 
-                                             if (accessInfo.Credentials == null)
+                                             #region Validations
+
+                                             if (accessInfo.VersionsURL.HasValue)
                                                  return Task.FromResult(
                                                      new HTTPResponse.Builder(Request.HTTPRequest) {
                                                          HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2008,10 +2176,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.JSON_UTF8,
+                                                         Content                    = OCPIResponse.Create(
+                                                                                         2000,
+                                                                                         "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!"
+                                                                                     ).ToUTF8Bytes(),
                                                          Connection                 = "close"
                                                      }.Set("X-Request-ID",      Request.RequestId).
                                                        Set("X-Correlation-ID",  Request.CorrelationId).
                                                        AsImmutable);
+
+                                             #endregion
 
 
                                              RemoveAccessToken(Request.AccessToken.Value);
@@ -2023,8 +2198,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                     AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                      AccessControlAllowHeaders  = "Authorization",
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = OCPIResponse.Create(
+                                                                                      1000,
+                                                                                      "The given access token was deleted!"
+                                                                                 ).ToUTF8Bytes(),
                                                      Connection                 = "close"
                                                  }.Set("X-Request-ID",      Request.RequestId).
                                                    Set("X-Correlation-ID",  Request.CorrelationId).
@@ -2038,8 +2218,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  Server                     = HTTPServer.DefaultServerName,
                                                  Date                       = DateTime.UtcNow,
                                                  AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "GET",
+                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                  AccessControlAllowHeaders  = "Authorization",
+                                                 ContentType                = HTTPContentType.JSON_UTF8,
+                                                 Content                    = OCPIResponse.Create(
+                                                                                  2000,
+                                                                                  "You need to be registered before trying to invoke this protected method."
+                                                                             ).ToUTF8Bytes(),
                                                  Connection                 = "close"
                                              }.Set("X-Request-ID",      Request.RequestId).
                                                Set("X-Correlation-ID",  Request.CorrelationId).
@@ -2056,51 +2241,137 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AccessTokens
 
-        public CommonAPI SetAccessToken(AccessToken   AccessToken,
-                                        Roles         Role,
-                                        AccessStatus  AccessStatus   = AccessStatus.ALLOWED)
+        public CommonAPI SetAccessToken(AccessToken                   AccessToken,
+                                        URL                           VersionsURL,
+                                        IEnumerable<CredentialsRole>  Roles,
+                                        AccessStatus                  AccessStatus   = AccessStatus.ALLOWED)
         {
-            lock (_AccessTokens)
+            lock (AccessTokens)
             {
 
-                _AccessTokens.Remove(AccessToken);
+                if (AccessTokens.ContainsKey(AccessToken))
+                    AccessTokens.Remove(AccessToken);
 
-                _AccessTokens.Add(AccessToken,
-                                  new AccessInfo(Role,
-                                                 AccessStatus,
-                                                 null));
+                AccessTokens.Add(AccessToken,
+                                 new AccessInfo(AccessToken,
+                                                AccessStatus,
+                                                VersionsURL,
+                                                Roles));
 
                 return this;
 
             }
         }
 
-        public CommonAPI SetAccessToken(AccessToken   AccessToken,
-                                        Roles         Role,
-                                        Credentials   Credentials,
-                                        AccessStatus  AccessStatus = AccessStatus.ALLOWED)
+        public Boolean SetAccessToken(AccessToken   AccessToken,
+                                      CountryCode   CountryCode,
+                                      Party_Id      PartyId,
+                                      Roles         Role,
+                                      String        BusinessName = null,
+                                      AccessStatus  AccessStatus = AccessStatus.ALLOWED)
         {
-            lock (_AccessTokens)
+            lock (AccessTokens)
             {
 
-                _AccessTokens.Remove(AccessToken);
+                if (AccessTokens.ContainsKey(AccessToken))
+                    AccessTokens.Remove(AccessToken);
 
-                _AccessTokens.Add(AccessToken,
-                                  new AccessInfo(Role,
-                                                 AccessStatus,
-                                                 Credentials));
+                var alreadyExists = AccessTokens.Where(accessToken => accessToken.Value.Roles.Any(role => role.CountryCode == CountryCode &&
+                                                                                                          role.PartyId     == PartyId &&
+                                                                                                          role.Role        == Role)).ToArray();
 
-                return this;
+                if (alreadyExists.Length > 0)
+                    return false;
+
+                AccessTokens.Add(AccessToken,
+                                 new AccessInfo(AccessToken,
+                                                AccessStatus,
+                                                null,
+                                                new CredentialsRole[] {
+                                                    new CredentialsRole(CountryCode,
+                                                                        PartyId,
+                                                                        Role,
+                                                                        BusinessName.IsNotNullOrEmpty()
+                                                                            ? new BusinessDetails(BusinessName)
+                                                                            : null)
+                                                }));
+
+                return true;
 
             }
         }
 
         public CommonAPI RemoveAccessToken(AccessToken AccessToken)
         {
-            lock (_AccessTokens)
+            lock (AccessTokens)
             {
-                _AccessTokens.Remove(AccessToken);
+                AccessTokens.Remove(AccessToken);
                 return this;
+            }
+        }
+
+        #endregion
+
+        #region RemoteAccessInfos
+
+        public Boolean SetRemoteAccessInfo(CountryCode              CountryCode,
+                                           Party_Id                 PartyId,
+                                           Roles                    Role,
+                                           BusinessDetails          BusinessDetails,
+                                           AccessToken              Token,
+                                           URL?                     VersionsURL,
+                                           IEnumerable<Version_Id>  VersionIds   = null,
+                                           RemoteAccessStatus?      Status       = RemoteAccessStatus.ONLINE)
+        {
+            lock (RemoteAccessInfos)
+            {
+
+                var existingAccessInfos = RemoteAccessInfos.Where(info => info.CountryCode == CountryCode &&
+                                                                          info.PartyId     == PartyId &&
+                                                                          info.Role        == Role).ToArray();
+
+                foreach (var info in existingAccessInfos)
+                    RemoteAccessInfos.Remove(info);
+
+
+                RemoteAccessInfos.Add(new RemoteAccessInfo(CountryCode,
+                                                           PartyId,
+                                                           Role,
+                                                           BusinessDetails,
+                                                           Token,
+                                                           VersionsURL,
+                                                           VersionIds,
+                                                           Status));
+
+                return true;
+
+            }
+        }
+
+        public Boolean RemoveRemoteAccessInfo(RemoteAccessInfo RemoteAccessInfo)
+        {
+            lock (RemoteAccessInfos)
+            {
+                return RemoteAccessInfos.Remove(RemoteAccessInfo);
+            }
+        }
+
+        public Boolean RemoveRemoteAccessInfos(CountryCode  CountryCode,
+                                               Party_Id     PartyId,
+                                               Roles        Role)
+        {
+            lock (RemoteAccessInfos)
+            {
+
+                var existingAccessInfos = RemoteAccessInfos.Where(info => info.CountryCode == CountryCode &&
+                                                                          info.PartyId     == PartyId &&
+                                                                          info.Role        == Role).ToArray();
+
+                foreach (var info in existingAccessInfos)
+                    RemoteAccessInfos.Remove(info);
+
+                return true;
+
             }
         }
 

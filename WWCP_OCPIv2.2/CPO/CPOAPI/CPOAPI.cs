@@ -1663,9 +1663,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              CommonAPI.AddOrUpdateToken(newToken);
 
+                                             var wasCreated = true;
+
 
                                              return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        HTTPStatusCode             = wasCreated
+                                                                                         ? HTTPStatusCode.Created
+                                                                                         : HTTPStatusCode.OK,
                                                         Server                     = DefaultHTTPServerName,
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",

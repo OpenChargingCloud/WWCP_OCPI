@@ -39,16 +39,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
-        /// </summary>
-        [Mandatory]
-        public Party_Id         PartyId             { get; }
-
-        /// <summary>
         /// ISO-3166 alpha-2 country code of the country this party is operating in.
         /// </summary>
         [Mandatory]
         public CountryCode      CountryCode         { get; }
+
+        /// <summary>
+        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id         PartyId             { get; }
 
         /// <summary>
         /// The type of the role.
@@ -85,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                Party_Id         PartyId,
                                Roles            Role,
                                BusinessDetails  BusinessDetails,
-                               Boolean?         AllowDowngrades)
+                               Boolean?         AllowDowngrades   = true)
         {
 
             if (CountryCode. IsNullOrEmpty)
@@ -243,11 +243,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Business details      [mandatory]
 
-                if (!JSON.ParseMandatory("business_details",
-                                         "business details",
-                                         OCPIv2_2.BusinessDetails.TryParse,
-                                         out BusinessDetails BusinessDetails,
-                                         out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON2("business_details",
+                                              "business details",
+                                              OCPIv2_2.BusinessDetails.TryParse,
+                                              out BusinessDetails BusinessDetails,
+                                              out ErrorResponse))
                 {
                     return false;
                 }
@@ -578,8 +578,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(CountryCode, "*", PartyId,
-                             " => ",
-                             Role);
+                             " ", Role, " ",
+                             " => '", BusinessDetails.Name, "'");
 
         #endregion
 

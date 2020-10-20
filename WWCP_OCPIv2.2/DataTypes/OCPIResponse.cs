@@ -41,12 +41,10 @@ using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public class OCPIResponse<TResponse>
+    public class OCPIResponse
     {
 
         #region Properties
-
-        public TResponse        Data                      { get; }
 
         public Int32?           StatusCode                { get; }
         public String           StatusMessage             { get; }
@@ -64,8 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Constructor(s)
 
-        public OCPIResponse(TResponse        Data,
-                            Int32?           StatusCode,
+        public OCPIResponse(Int32?           StatusCode,
                             String           StatusMessage,
                             String           AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
@@ -76,7 +73,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            this.Data                   = Data;
             this.StatusCode             = StatusCode;
             this.StatusMessage          = StatusMessage;
             this.AdditionalInformation  = AdditionalInformation;
@@ -91,6 +87,95 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        public static JObject Create(Int32?           StatusCode,
+                                     String           StatusMessage,
+                                     String           AdditionalInformation   = null,
+                                     DateTime?        Timestamp               = null,
+
+                                     Request_Id?      RequestId               = null,
+                                     Correlation_Id?  CorrelationId           = null,
+                                     HTTPResponse     Response                = null)
+
+        {
+
+            return new OCPIResponse(StatusCode,
+                                    StatusMessage,
+                                    AdditionalInformation,
+                                    Timestamp,
+                                    RequestId,
+                                    CorrelationId,
+                                    Response).ToJSON();
+
+        }
+
+
+        //public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
+        //{
+        //    return new HTTPResponse.Builder(Request);
+        //}
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("status_code",           StatusCode),
+
+                           StatusMessage.IsNotNullOrEmpty()
+                               ? new JProperty("status_message",  StatusMessage)
+                               :  null,
+
+                           new JProperty("timestamp",             Timestamp.ToIso8601())
+
+                       );
+
+            return JSON;
+
+        }
+
+    }
+
+
+
+    public class OCPIResponse<TResponse> : OCPIResponse
+    {
+
+        #region Properties
+
+        public TResponse        Data                      { get; }
+
+        #endregion
+
+        #region Constructor(s)
+
+        public OCPIResponse(TResponse        Data,
+                            Int32?           StatusCode,
+                            String           StatusMessage,
+                            String           AdditionalInformation   = null,
+                            DateTime?        Timestamp               = null,
+
+                            Request_Id?      RequestId               = null,
+                            Correlation_Id?  CorrelationId           = null,
+                            HTTPResponse     Response                = null)
+
+            : base(StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+                   RequestId,
+                   CorrelationId,
+                   Response)
+
+        {
+
+            this.Data  = Data;
+
+        }
+
+        #endregion
+
+
         public static JObject Create(TResponse                Data,
                                      Func<TResponse, JToken>  Serializer,
                                      Int32?                   StatusCode,
@@ -99,7 +184,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                      DateTime?                Timestamp               = null,
 
                                      Request_Id?              RequestId               = null,
-                                     Correlation_Id?          CorrelationId           = null)
+                                     Correlation_Id?          CorrelationId           = null,
+                                     HTTPResponse             Response                = null)
 
         {
 
@@ -107,22 +193,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                StatusCode,
                                                StatusMessage,
                                                AdditionalInformation,
-                                               Timestamp).ToJSON(Serializer);
+                                               Timestamp,
+                                               RequestId,
+                                               CorrelationId,
+                                               Response).ToJSON(Serializer);
 
         }
 
 
-        public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
-        {
-
-            return new HTTPResponse.Builder(Request);
-
-            //.Set("X-Request-ID", Request.RequestId).
-            //                                          Set("X-Correlation-ID", Request.CorrelationId);
-
-
-
-        }
+        //public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
+        //{
+        //    return new HTTPResponse.Builder(Request);
+        //}
 
 
 
@@ -214,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                           statusCode,
                                                                           statusMessage,
                                                                           exceptions.Any() ? exceptions.AggregateWith(Environment.NewLine) : null,
-                                                                          timestamp,
+                                                                          timestamp ?? DateTime.UtcNow,
                                                                           RemoteRequestId,
                                                                           RemoteCorrelationId,
                                                                           Response);
@@ -226,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                           statusCode,
                                                                           statusMessage,
                                                                           Response.EntirePDU,
-                                                                          timestamp,
+                                                                          timestamp ?? DateTime.UtcNow,
                                                                           RemoteRequestId,
                                                                           RemoteCorrelationId,
                                                                           Response);
