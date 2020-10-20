@@ -18,6 +18,8 @@
 #region Usings
 
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
@@ -26,8 +28,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Linq;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -1490,11 +1490,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                               new VersionEndpoint(ModuleIDs.Credentials,
                                                                                   InterfaceRoles.SENDER,
-                                                                                  "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials").Replace("//", "/")),
+                                                                                  URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials").Replace("//", "/"))),
 
                                                               new VersionEndpoint(ModuleIDs.Credentials,
                                                                                   InterfaceRoles.RECEIVER,
-                                                                                  "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials").Replace("//", "/"))
+                                                                                  URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials").Replace("//", "/")))
 
                                                           };
 
@@ -1504,28 +1504,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                                InterfaceRoles.RECEIVER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/locations").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/locations").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                                InterfaceRoles.RECEIVER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tariffs").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tariffs").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                                InterfaceRoles.RECEIVER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/sessions").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/sessions").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                                InterfaceRoles.RECEIVER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/cdrs").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/cdrs").Replace("//", "/"))));
 
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/commands").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/commands").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tokens").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tokens").Replace("//", "/"))));
 
                                              // hubclientinfo
 
@@ -1537,7 +1537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/"))));
 
                                          }
 
@@ -1546,37 +1546,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions").Replace("//", "/"))));
 
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tariffs").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tariffs").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                                InterfaceRoles.SENDER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs").Replace("//", "/"))));
 
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                                InterfaceRoles.RECEIVER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/commands").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/commands").Replace("//", "/"))));
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                                InterfaceRoles.RECEIVER,
-                                                                               "https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tokens").Replace("//", "/")));
+                                                                               URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tokens").Replace("//", "/"))));
 
                                              // hubclientinfo
 
@@ -1616,50 +1616,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
             // ---------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "2.2/credentials",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: Request => {
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.GET,
+                                     URLPathPrefix + "2.2/credentials",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
 
-                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken accessToken) &&
-                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo  accessInfo)  &&
-                                                 accessInfo.Status == AccessStatus.ALLOWED)
-                                             {
-
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
-                                                         Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders  = "Authorization",
-                                                         ContentType                = HTTPContentType.JSON_UTF8,
-                                                         Content                    = OCPIResponse<Credentials>.Create(
-                                                                                          accessInfo.Credentials,
-                                                                                          credentials => credentials.ToJSON(),
-                                                                                          1000,
-                                                                                          "Hello world!"
-                                                                                      ).ToUTF8Bytes(),
-                                                         Connection                 = "close"
-                                                     }.AsImmutable);
-
-                                             }
+                                         if (Request.AccessToken.HasValue &&
+                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             accessInfo.Status == AccessStatus.ALLOWED)
+                                         {
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                      AccessControlAllowHeaders  = "Authorization",
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = OCPIResponse<Credentials>.Create(
+                                                                                      accessInfo.Credentials,
+                                                                                      credentials => credentials.ToJSON(),
+                                                                                      1000,
+                                                                                      "Hello world!"
+                                                                                  ).ToUTF8Bytes(),
                                                      Connection                 = "close"
-                                                 }.AsImmutable);
+                                                 }.Set("X-Request-ID",      Request.RequestId).
+                                                   Set("X-Correlation-ID",  Request.CorrelationId).
+                                                   AsImmutable);
 
-                                         });
+                                         }
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "GET",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
 
             #endregion
 
@@ -1670,87 +1673,94 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
             // ---------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
-                                         HTTPMethod.POST,
-                                         URLPathPrefix + "cpo/2.2/credentials",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: Request => {
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "cpo/2.2/credentials",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
 
-                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken  accessToken) &&
-                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo   accessInfo)  &&
-                                                 accessInfo.Status == AccessStatus.ALLOWED)
-                                             {
+                                         if (Request.AccessToken.HasValue &&
+                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             accessInfo.Status == AccessStatus.ALLOWED)
+                                         {
 
-                                                 // Client is already registered!
-                                                 if (accessInfo.Credentials != null)
-                                                     return Task.FromResult(
-                                                         new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                             Server                     = HTTPServer.DefaultServerName,
-                                                             Date                       = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin   = "*",
-                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders  = "Authorization",
-                                                             Connection                 = "close"
-                                                         }.AsImmutable);
-
-
-                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
-                                                     !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
-                                                    return Task.FromResult(
-                                                         new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                             Server                     = HTTPServer.DefaultServerName,
-                                                             Date                       = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin   = "*",
-                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders  = "Authorization",
-                                                             Connection                 = "close"
-                                                         }.AsImmutable);
-
-
-                                                 // Here we should check the other side!!!
-
-
-                                                 SetAccessToken(accessToken,
-                                                                accessInfo.Role,
-                                                                credentials,
-                                                                AccessStatus.ALLOWED);
-
-
+                                             // Client is already registered!
+                                             if (accessInfo.Credentials != null)
                                                  return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                         HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                          Server                     = HTTPServer.DefaultServerName,
                                                          Date                       = DateTime.UtcNow,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
-                                                         ContentType                = HTTPContentType.JSON_UTF8,
-                                                         Content                    = OCPIResponse<Credentials>.Create(
-                                                                                          credentials,
-                                                                                          credential => credential.ToJSON(),
-                                                                                          1000,
-                                                                                          "Hello world!"
-                                                                                      ).ToUTF8Bytes(),
                                                          Connection                 = "close"
-                                                     }.AsImmutable);
+                                                     }.Set("X-Request-ID",      Request.RequestId).
+                                                       Set("X-Correlation-ID",  Request.CorrelationId).
+                                                       AsImmutable);
 
-                                             }
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
+                                                 !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
+                                                return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         Connection                 = "close"
+                                                     }.Set("X-Request-ID",      Request.RequestId).
+                                                       Set("X-Correlation-ID",  Request.CorrelationId).
+                                                       AsImmutable);
+
+
+                                             // Here we should check the other side!!!
+
+
+                                             SetAccessToken(Request.AccessToken.Value,
+                                                            accessInfo.Role,
+                                                            credentials,
+                                                            AccessStatus.ALLOWED);
+
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                      AccessControlAllowHeaders  = "Authorization",
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = OCPIResponse<Credentials>.Create(
+                                                                                      credentials,
+                                                                                      credential => credential.ToJSON(),
+                                                                                      1000,
+                                                                                      "Hello world!"
+                                                                                  ).ToUTF8Bytes(),
                                                      Connection                 = "close"
-                                                 }.AsImmutable);
+                                                 }.Set("X-Request-ID",      Request.RequestId).
+                                                   Set("X-Correlation-ID",  Request.CorrelationId).
+                                                   AsImmutable);
 
-                                         });
+                                         }
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "GET",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
 
             #endregion
 
@@ -1761,86 +1771,93 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
             // ---------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
-                                         HTTPMethod.PUT,
-                                         URLPathPrefix + "2.2/credentials",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: Request => {
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.PUT,
+                                     URLPathPrefix + "2.2/credentials",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
 
-                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken  accessToken) &&
-                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo   accessInfo)  &&
-                                                 accessInfo.Status == AccessStatus.ALLOWED)
-                                             {
+                                         if (Request.AccessToken.HasValue &&
+                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             accessInfo.Status == AccessStatus.ALLOWED)
+                                         {
 
-                                                 if (accessInfo.Credentials == null)
-                                                     return Task.FromResult(
-                                                         new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                             Server                     = HTTPServer.DefaultServerName,
-                                                             Date                       = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin   = "*",
-                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders  = "Authorization",
-                                                             Connection                 = "close"
-                                                         }.AsImmutable);
-
-
-                                                 if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
-                                                     !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
-                                                    return Task.FromResult(
-                                                         new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                             Server                     = HTTPServer.DefaultServerName,
-                                                             Date                       = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin   = "*",
-                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders  = "Authorization",
-                                                             Connection                 = "close"
-                                                         }.AsImmutable);
-
-
-                                                 // Here we should check the other side!!!
-
-
-                                                 SetAccessToken(accessToken,
-                                                                accessInfo.Role,
-                                                                credentials,
-                                                                AccessStatus.ALLOWED);
-
-
+                                             if (accessInfo.Credentials == null)
                                                  return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                         HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                          Server                     = HTTPServer.DefaultServerName,
                                                          Date                       = DateTime.UtcNow,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
-                                                         ContentType                = HTTPContentType.JSON_UTF8,
-                                                         Content                    = OCPIResponse<Credentials>.Create(
-                                                                                          accessInfo.Credentials,
-                                                                                          credential => credential.ToJSON(),
-                                                                                          1000,
-                                                                                          "Hello world!"
-                                                                                      ).ToUTF8Bytes(),
                                                          Connection                 = "close"
-                                                     }.AsImmutable);
+                                                     }.Set("X-Request-ID",      Request.RequestId).
+                                                       Set("X-Correlation-ID",  Request.CorrelationId).
+                                                       AsImmutable);
 
-                                             }
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSONObj, out HTTPResponse.Builder HTTPResp, AllowEmptyHTTPBody: false) ||
+                                                 !Credentials.TryParse(JSONObj, out Credentials credentials, out String ErrorResponse))
+                                                return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         Connection                 = "close"
+                                                     }.Set("X-Request-ID",      Request.RequestId).
+                                                       Set("X-Correlation-ID",  Request.CorrelationId).
+                                                       AsImmutable);
+
+
+                                             // Here we should check the other side!!!
+
+
+                                             SetAccessToken(Request.AccessToken.Value,
+                                                            accessInfo.Role,
+                                                            credentials,
+                                                            AccessStatus.ALLOWED);
+
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                      AccessControlAllowHeaders  = "Authorization",
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = OCPIResponse<Credentials>.Create(
+                                                                                      accessInfo.Credentials,
+                                                                                      credential => credential.ToJSON(),
+                                                                                      1000,
+                                                                                      "Hello world!"
+                                                                                  ).ToUTF8Bytes(),
                                                      Connection                 = "close"
-                                                 }.AsImmutable);
+                                                 }.Set("X-Request-ID",      Request.RequestId).
+                                                   Set("X-Correlation-ID",  Request.CorrelationId).
+                                                   AsImmutable);
 
-                                         });
+                                         }
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "GET",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
 
             #endregion
 
@@ -1851,59 +1868,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
             // ---------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
-                                         HTTPMethod.DELETE,
-                                         URLPathPrefix + "2.2/credentials",
-                                         HTTPContentType.JSON_UTF8,
-                                         HTTPDelegate: Request => {
+            HTTPServer.AddOCPIMethod(Hostname,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "2.2/credentials",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
 
-                                             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                                                 AccessToken. TryParse   (StringExtensions.FromBase64(TokenAuth.Token), out AccessToken  accessToken) &&
-                                                _AccessTokens.TryGetValue(accessToken,                                  out AccessInfo   accessInfo)  &&
-                                                 accessInfo.Status == AccessStatus.ALLOWED)
-                                             {
+                                         if (Request.AccessToken.HasValue &&
+                                            _AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                             accessInfo.Status == AccessStatus.ALLOWED)
+                                         {
 
-                                                 if (accessInfo.Credentials == null)
-                                                     return Task.FromResult(
-                                                         new HTTPResponse.Builder(Request) {
-                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                             Server                     = HTTPServer.DefaultServerName,
-                                                             Date                       = DateTime.UtcNow,
-                                                             AccessControlAllowOrigin   = "*",
-                                                             AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
-                                                             AccessControlAllowHeaders  = "Authorization",
-                                                             Connection                 = "close"
-                                                         }.AsImmutable);
-
-
-                                                 RemoveAccessToken(accessToken);
-
-
+                                             if (accessInfo.Credentials == null)
                                                  return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request) {
-                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                         HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                          Server                     = HTTPServer.DefaultServerName,
                                                          Date                       = DateTime.UtcNow,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                          AccessControlAllowHeaders  = "Authorization",
                                                          Connection                 = "close"
-                                                     }.AsImmutable);
+                                                     }.Set("X-Request-ID",      Request.RequestId).
+                                                       Set("X-Correlation-ID",  Request.CorrelationId).
+                                                       AsImmutable);
 
-                                             }
+
+                                             RemoveAccessToken(Request.AccessToken.Value);
+
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
+                                                     AccessControlAllowMethods  = "GET, POST, PUT, DELETE",
                                                      AccessControlAllowHeaders  = "Authorization",
                                                      Connection                 = "close"
-                                                 }.AsImmutable);
+                                                 }.Set("X-Request-ID",      Request.RequestId).
+                                                   Set("X-Correlation-ID",  Request.CorrelationId).
+                                                   AsImmutable);
 
-                                         });
+                                         }
+
+                                         return Task.FromResult(
+                                             new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                 Server                     = HTTPServer.DefaultServerName,
+                                                 Date                       = DateTime.UtcNow,
+                                                 AccessControlAllowOrigin   = "*",
+                                                 AccessControlAllowMethods  = "GET",
+                                                 AccessControlAllowHeaders  = "Authorization",
+                                                 Connection                 = "close"
+                                             }.Set("X-Request-ID",      Request.RequestId).
+                                               Set("X-Correlation-ID",  Request.CorrelationId).
+                                               AsImmutable);
+
+                                     });
 
             #endregion
 

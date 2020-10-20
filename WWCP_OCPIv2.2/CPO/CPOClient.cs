@@ -47,6 +47,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public class CPOClient : CommonClient
     {
 
+        public class CPOCounters
+        {
+
+            public CounterValues GetTokens  { get; }
+            public CounterValues PostTokens { get; }
+
+            public CPOCounters(CounterValues? GetTokens  = null,
+                               CounterValues? PostTokens = null)
+            {
+
+                this.GetTokens  = GetTokens  ?? new CounterValues();
+                this.PostTokens = PostTokens ?? new CounterValues();
+
+            }
+
+            public JObject ToJSON()
+
+                => JSONObject.Create(
+                       new JProperty("GetTokens",  GetTokens. ToJSON()),
+                       new JProperty("PostTokens", PostTokens.ToJSON())
+                   );
+
+        }
+
+
         #region Data
 
         #endregion

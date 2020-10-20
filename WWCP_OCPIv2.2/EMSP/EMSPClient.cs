@@ -47,6 +47,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public class EMSPClient : CommonClient
     {
 
+        public class EMSPCounters
+        {
+
+            public CounterValues  GetLocations    { get; }
+
+            public EMSPCounters(CounterValues? GetLocations = null)
+            {
+
+                this.GetLocations = GetLocations ?? new CounterValues();
+
+            }
+
+            public JObject ToJSON()
+
+                => JSONObject.Create(
+                       new JProperty("GetLocations", GetLocations.ToJSON())
+
+                    
+                   );
+
+        }
+
+
         #region Data
 
         #endregion
@@ -92,9 +115,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-
-
-
         #region GetLocations(...)
 
         /// <summary>
@@ -106,7 +126,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<IEnumerable<Location>>>
 
-            GetLocations(DateTime?           Timestamp           = null,
+            GetLocations(Version_Id?         VersionId           = null,
+                         Request_Id?         RequestId           = null,
+                         Correlation_Id?     CorrelationId       = null,
+
+                         DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
                          EventTracking_Id    EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
@@ -115,40 +139,75 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             OCPIResponse<IEnumerable<Location>> response;
 
+            // ToDo: Add request logging!
+
             try
             {
 
                 var StartTime      = DateTime.UtcNow;
-                var RequestId      = Request_Id.Random();
-                var CorrelationId  = Correlation_Id.Random();
+                var versionId      = VersionId     ?? SelectedOCPIVersionId;
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
-                // ToDo: Add request logging!
+                if (!versionId.HasValue)
+                {
+
+                    if (VersionDetails.Any())
+                        versionId = VersionDetails.Keys.OrderByDescending(id => id).First();
+
+                    else
+                    {
+
+                        await GetVersions();
+
+                        if (Versions.Any())
+                        {
+                            versionId = Versions.Keys.OrderByDescending(id => id).First();
+                            await GetVersionDetails(versionId.Value);
+                        }
+
+                    }
+
+                }
+
+
+                URL LocationsURL   = default;
+
+                if (versionId.HasValue &&
+                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                {
+
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+
+                }
 
 
                 #region Upstream HTTP request...
 
                 var HTTPResponse = await (RemoteCertificateValidator == null
 
-                                           ? new HTTPClient (Hostname,
-                                                             RemotePort:  RemotePort,
+                                           ? new HTTPClient (LocationsURL.Hostname,
+                                                             RemotePort:  LocationsURL.Port ?? IPPort.HTTP,
                                                              DNSClient:   DNSClient)
 
-                                           : new HTTPSClient(Hostname,
+                                           : new HTTPSClient(LocationsURL.Hostname,
                                                              RemoteCertificateValidator,
-                                                             RemotePort:  RemotePort,
+                                                             RemotePort:  LocationsURL.Port ?? IPPort.HTTPS,
                                                              DNSClient:   DNSClient)).
 
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                               VersionsURL.Path + "cpo/2.2/locations",
-
+                                                                               LocationsURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? Hostname;
+                                                                                   requestbuilder.Host           = VirtualHostname ?? LocationsURL.Hostname;
                                                                                    requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                   requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                   requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                                }),
 
-                                              //RequestLogDelegate:   OnRemoteStartHTTPRequest,
-                                              //ResponseLogDelegate:  OnRemoteStartHTTPResponse,
+                                              //RequestLogDelegate:   OnGetLocationsHTTPRequest,
+                                              //ResponseLogDelegate:  OnGetLocationsHTTPResponse,
                                               CancellationToken:    CancellationToken,
                                               EventTrackingId:      EventTrackingId,
                                               RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
@@ -158,8 +217,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
                 response = OCPIResponse<Location>.ParseJArray(HTTPResponse,
-                                                              RequestId,
-                                                              CorrelationId,
+                                                              requestId,
+                                                              correlationId,
                                                               json => Location.Parse(json));
 
             }

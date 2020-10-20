@@ -54,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The URL of the module.
         /// </summary>
         [Mandatory]
-        public String          URL           { get; }
+        public URL             URL           { get; }
 
         #endregion
 
@@ -68,15 +68,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="URL">The URL of the module.</param>
         public VersionEndpoint(ModuleIDs       Identifier,
                                InterfaceRoles  Role,
-                               String          URL)
+                               URL             URL)
         {
 
-            if (URL.IsNullOrEmpty())
+            if (URL.IsNullOrEmpty)
                 throw new ArgumentNullException(nameof(URL), "The given version URL must not be null or empty!");
 
             this.Identifier  = Identifier;
             this.Role        = Role;
-            this.URL         = URL?.Trim();
+            this.URL         = URL;
 
         }
 
@@ -203,10 +203,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse URL            [mandatory]
 
-                if (!JSON.ParseMandatoryText("url",
-                                             "version URL",
-                                             out String URL,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("url",
+                                         "version URL",
+                                         OCPIv2_2.URL.TryParse,
+                                         out URL URL,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -284,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var JSON = JSONObject.Create(
                            new JProperty("identifier",  Identifier.ToString().ToLower()),
                            new JProperty("role",        Role.      ToString()),
-                           new JProperty("url",         URL)
+                           new JProperty("url",         URL.       ToString())
                        );
 
             return CustomVersionEndpointSerializer != null

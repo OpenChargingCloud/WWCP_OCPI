@@ -194,6 +194,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public AccessToken                          AccessToken                   { get; private set; }
 
+
+        public Version_Id?                          SelectedOCPIVersionId         { get; set; }
+
         /// <summary>
         /// The remote URL of the VERSIONS endpoint to connect to.
         /// </summary>
@@ -768,6 +771,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<Version_Id, VersionDetail>>
 
             GetVersionDetails(Version_Id          VersionId,
+                              Request_Id?         RequestId           = null,
+                              Correlation_Id?     CorrelationId       = null,
 
                               DateTime?           Timestamp           = null,
                               CancellationToken?  CancellationToken   = null,
@@ -791,8 +796,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 var StartTime      = DateTime.UtcNow;
-                var RequestId      = Request_Id.Random();
-                var CorrelationId  = Correlation_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
                 // ToDo: Add request logging!
 
@@ -816,8 +821,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                                       requestbuilder.Host           = Versions[VersionId].Hostname;
                                                                                       requestbuilder.Authorization  = TokenAuth;
                                                                                       requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                      requestbuilder.Set("X-Request-ID",      RequestId);
-                                                                                      requestbuilder.Set("X-Correlation-ID",  CorrelationId);
+                                                                                      requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                      requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                                   }),
 
                                                  RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
@@ -884,8 +889,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
                 response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(VersionId,
-                                                                                RequestId,
-                                                                                CorrelationId,
+                                                                                requestId,
+                                                                                correlationId,
                                                                                 HTTPResponse,
                                                                                 json => VersionDetail.Parse(json, null));
 
