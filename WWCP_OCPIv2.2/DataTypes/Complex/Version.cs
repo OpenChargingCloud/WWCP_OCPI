@@ -42,36 +42,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The version identification.
         /// </summary>
         [Mandatory]
-        public Version_Id  VersionId    { get; }
+        public Version_Id  Id     { get; }
 
         /// <summary>
         /// The URL of the version.
         /// </summary>
         [Mandatory]
-        public URL         URL          { get; }
+        public URL         URL    { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Creat enew version informations.
+        /// Create a new version information.
         /// </summary>
-        /// <param name="VersionId">The version identification.</param>
+        /// <param name="Id">The version identification.</param>
         /// <param name="URL">The URL of the version.</param>
-        public Version(Version_Id  VersionId,
+        public Version(Version_Id  Id,
                        URL         URL)
         {
 
-            if (VersionId.IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(VersionId), "The given version identification must not be null or empty!");
+            if (Id. IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(Id),   "The given version identification must not be null or empty!");
 
-            if (URL.      IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(URL),       "The given version URL must not be null or empty!");
+            if (URL.IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(URL),  "The given version URL must not be null or empty!");
 
 
-            this.VersionId  = VersionId;
-            this.URL        = URL;
+            this.Id   = Id;
+            this.URL  = URL;
 
         }
 
@@ -177,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (!JSON.ParseMandatory("version",
                                          "version identification",
                                          Version_Id.TryParse,
-                                         out Version_Id VersionId,
+                                         out Version_Id Id,
                                          out ErrorResponse))
                 {
                     return false;
@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                Version = new Version(VersionId,
+                Version = new Version(Id,
                                       URL);
 
 
@@ -266,8 +266,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("version",  VersionId.ToString()),
-                           new JProperty("url",      URL.      ToString())
+                           new JProperty("version",  Id. ToString()),
+                           new JProperty("url",      URL.ToString())
                        );
 
             return CustomVersionSerializer != null
@@ -399,7 +399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Version Version)
         {
 
-            var c = VersionId.CompareTo(Version.VersionId);
+            var c = Id.CompareTo(Version.Id);
 
             if (c == 0)
                 c = URL.CompareTo(Version.URL);
@@ -437,7 +437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Version Version)
 
-            => VersionId.Equals(Version.VersionId) &&
+            => Id.Equals(Version.Id) &&
                URL.      Equals(Version.URL, StringComparison.OrdinalIgnoreCase);
 
         #endregion
@@ -455,7 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return VersionId.GetHashCode() * 3 ^
+                return Id.GetHashCode() * 3 ^
                        URL.      GetHashCode();
 
             }
@@ -470,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(VersionId,
+            => String.Concat(Id,
                              " -> ",
                              URL);
 

@@ -429,7 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (getVersion_HTTPResponse.StatusCode == 1000)
             {
 
-                var filteredVersions    = getVersion_HTTPResponse.Data.Where(version => version.VersionId.ToString() == "2.2").ToArray();
+                var filteredVersions    = getVersion_HTTPResponse.Data.Where(version => version.Id.ToString() == "2.2").ToArray();
 
                 if (filteredVersions.Length == 1)
                 {
@@ -680,7 +680,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             lock (Versions)
                             {
                                 Versions.Clear();
-                                response.Data.ForEach(version => Versions.Add(version.VersionId, version.URL));
+                                response.Data.ForEach(version => Versions.Add(version.Id, version.URL));
                             }
 
                             break;

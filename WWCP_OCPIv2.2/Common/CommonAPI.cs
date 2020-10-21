@@ -40,1090 +40,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public static class CommonAPIExtentions
     {
 
-        //#region ParseParseCountryCodePartyId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId,                                                         out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Common API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseHTTPRequest(this HTTPRequest  HTTPRequest,
-        //                                       CommonAPI         CommonAPI,
-        //                                       out CountryCode?  CountryCode,
-        //                                       out Party_Id?     PartyId,
-        //                                       out HTTPResponse  HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 2)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-
-
-        //#region ParseParseCountryCodePartyId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId,                                                         out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Common API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseParseCountryCodePartyId(this HTTPRequest  HTTPRequest,
-        //                                                   CommonAPI         CommonAPI,
-        //                                                   out CountryCode?  CountryCode,
-        //                                                   out Party_Id?     PartyId,
-        //                                                   out HTTPResponse  HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 2)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-
-        //#region ParseLocationId             (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,                                                                      out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Common API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="LocationId">The parsed unique location identification.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseLocationId(this HTTPRequest  HTTPRequest,
-        //                                      CommonAPI         CommonAPI,
-        //                                      out CountryCode?  CountryCode,
-        //                                      out Party_Id?     PartyId,
-        //                                      out Location_Id?  LocationId,
-        //                                      out HTTPResponse  HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    LocationId    = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 3)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
-
-        //    if (!LocationId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-        //#region ParseLocation               (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location,                                                        out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Users API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="LocationId">The parsed unique location identification.</param>
-        ///// <param name="Location">The resolved user.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseLocation(this HTTPRequest  HTTPRequest,
-        //                                    CommonAPI         CommonAPI,
-        //                                    out CountryCode?  CountryCode,
-        //                                    out Party_Id?     PartyId,
-        //                                    out Location_Id?  LocationId,
-        //                                    out Location      Location,
-        //                                    out HTTPResponse  HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    LocationId    = null;
-        //    Location      = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 3) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
-
-        //    if (!LocationId.HasValue) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-
-        //    if (!CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-
-        //#region ParseLocationEVSEId         (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,                                           out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Common API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="LocationId">The parsed unique location identification.</param>
-        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseLocationEVSEId(this HTTPRequest  HTTPRequest,
-        //                                          CommonAPI         CommonAPI,
-        //                                          out CountryCode?  CountryCode,
-        //                                          out Party_Id?     PartyId,
-        //                                          out Location_Id?  LocationId,
-        //                                          out EVSE_UId?     EVSEUId,
-        //                                          out HTTPResponse  HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    LocationId    = null;
-        //    EVSEUId       = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 4)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!LocationId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!EVSEUId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-        //#region ParseLocationEVSE           (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse, FailOnMissingEVSE = true)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Users API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="LocationId">The parsed unique location identification.</param>
-        ///// <param name="Location">The resolved user.</param>
-        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        ///// <param name="EVSE">The resolved EVSE.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseLocationEVSE(this HTTPRequest  HTTPRequest,
-        //                                        CommonAPI         CommonAPI,
-        //                                        out CountryCode?  CountryCode,
-        //                                        out Party_Id?     PartyId,
-        //                                        out Location_Id?  LocationId,
-        //                                        out Location      Location,
-        //                                        out EVSE_UId?     EVSEUId,
-        //                                        out EVSE          EVSE,
-        //                                        out HTTPResponse  HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    LocationId    = null;
-        //    Location      = null;
-        //    EVSEUId       = null;
-        //    EVSE          = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 4) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!LocationId.HasValue) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!EVSEUId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-
-        //    if (!CommonAPI.TryGetLocation(CountryCode.Value,
-        //                                  PartyId.    Value,
-        //                                  LocationId. Value, out Location)) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-
-        //#region ParseLocationEVSEConnectorId(this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Common API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="LocationId">The parsed unique location identification.</param>
-        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        ///// <param name="ConnectorId">The parsed unique connector identification.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseLocationEVSEConnectorId(this HTTPRequest   HTTPRequest,
-        //                                                   CommonAPI          CommonAPI,
-        //                                                   out CountryCode?   CountryCode,
-        //                                                   out Party_Id?      PartyId,
-        //                                                   out Location_Id?   LocationId,
-        //                                                   out EVSE_UId?      EVSEUId,
-        //                                                   out Connector_Id?  ConnectorId,
-        //                                                   out HTTPResponse   HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    LocationId    = null;
-        //    EVSEUId       = null;
-        //    ConnectorId   = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 5)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!LocationId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!EVSEUId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
-
-        //    if (!EVSEUId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
-        //#region ParseLocationEVSEConnector  (this HTTPRequest, CommonAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
-
-        ///// <summary>
-        ///// Parse the given HTTP request and return the location identification
-        ///// for the given HTTP hostname and HTTP query parameter
-        ///// or an HTTP error response.
-        ///// </summary>
-        ///// <param name="HTTPRequest">A HTTP request.</param>
-        ///// <param name="CommonAPI">The Users API.</param>
-        ///// <param name="CountryCode">The parsed country code.</param>
-        ///// <param name="PartyId">The parsed party identification.</param>
-        ///// <param name="LocationId">The parsed unique location identification.</param>
-        ///// <param name="Location">The resolved user.</param>
-        ///// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        ///// <param name="EVSE">The resolved EVSE.</param>
-        ///// <param name="ConnectorId">The parsed unique connector identification.</param>
-        ///// <param name="Connector">The resolved connector.</param>
-        ///// <param name="HTTPResponse">A HTTP error response.</param>
-        ///// <returns>True, when user identification was found; false else.</returns>
-        //public static Boolean ParseLocationEVSEConnector(this HTTPRequest   HTTPRequest,
-        //                                                 CommonAPI          CommonAPI,
-        //                                                 out CountryCode?   CountryCode,
-        //                                                 out Party_Id?      PartyId,
-        //                                                 out Location_Id?   LocationId,
-        //                                                 out Location       Location,
-        //                                                 out EVSE_UId?      EVSEUId,
-        //                                                 out EVSE           EVSE,
-        //                                                 out Connector_Id?  ConnectorId,
-        //                                                 out Connector      Connector,
-        //                                                 out HTTPResponse   HTTPResponse)
-        //{
-
-        //    #region Initial checks
-
-        //    if (HTTPRequest == null)
-        //        throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
-
-        //    if (CommonAPI    == null)
-        //        throw new ArgumentNullException(nameof(CommonAPI),    "The given Common API must not be null!");
-
-        //    #endregion
-
-        //    CountryCode   = null;
-        //    PartyId       = null;
-        //    LocationId    = null;
-        //    Location      = null;
-        //    EVSEUId       = null;
-        //    EVSE          = null;
-        //    ConnectorId   = null;
-        //    Connector     = null;
-        //    HTTPResponse  = null;
-
-        //    if (HTTPRequest.ParsedURLParameters.Length < 5) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    CountryCode = OCPIv2_2.CountryCode.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!CountryCode.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid country code!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    PartyId = Party_Id.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!PartyId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid party identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    LocationId = Location_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
-
-        //    if (!LocationId.HasValue) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    EVSEUId = EVSE_UId.TryParse(HTTPRequest.ParsedURLParameters[1]);
-
-        //    if (!EVSEUId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid EVSE identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    ConnectorId = Connector_Id.TryParse(HTTPRequest.ParsedURLParameters[2]);
-
-        //    if (!EVSEUId.HasValue)
-        //    {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.BadRequest,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Invalid connector identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-
-        //    if (!CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location)) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Unknown location identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Unknown EVSE identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    if (!EVSE.TryGetConnector(ConnectorId.Value, out Connector)) {
-
-        //        HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
-        //            HTTPStatusCode  = HTTPStatusCode.NotFound,
-        //            Server          = CommonAPI.HTTPServer.DefaultServerName,
-        //            Date            = DateTime.UtcNow,
-        //            ContentType     = HTTPContentType.JSON_UTF8,
-        //            Content         = @"{ ""description"": ""Unknown connector identification!"" }".ToUTF8Bytes(),
-        //            Connection      = "close"
-        //        };
-
-        //        return false;
-
-        //    }
-
-        //    return true;
-
-        //}
-
-        //#endregion
-
     }
 
 
@@ -1134,13 +50,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     {
 
         #region Data
-
-        private static readonly    Random    _Random                   = new Random();
-
-        protected internal const   String    __DefaultHTTPRoot         = "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CommonAPI.HTTPRoot";
-
-        //private readonly Func<String, Stream>  _GetRessources;
-
 
         /// <summary>
         /// The default HTTP server name.
@@ -1162,17 +71,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
 
-
-        private readonly Dictionary<AccessToken, AccessInfo> AccessTokens;
-
-        private readonly List<RemoteAccessInfo> RemoteAccessInfos;
-
         #endregion
 
         #region Properties
 
-        public URL                           OurURL                     { get; }
+        /// <summary>
+        /// The URL of our VERSIONS endpoint.
+        /// </summary>
+        public URL                           OurVersionsURL             { get; }
 
+        /// <summary>
+        /// All our credential roles.
+        /// </summary>
         public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
 
 
@@ -1197,6 +107,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Create a new common HTTP API.
         /// </summary>
+        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
+        /// <param name="OurCredentialRoles">All our credential roles.</param>
+        /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
         /// <param name="HTTPServerName">An optional HTTP server name.</param>
@@ -1206,17 +119,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// 
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
-        public CommonAPI(URL                           OurURL,
+        public CommonAPI(URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
+
                          HTTPHostname?                 HTTPHostname              = null,
                          IPPort?                       HTTPServerPort            = null,
                          String                        HTTPServerName            = DefaultHTTPServerName,
                          String                        ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          String                        ServiceName               = DefaultHTTPServiceName,
+                         DNSClient                     DNSClient                 = null,
+
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Boolean?                      AllowDowngrades           = null,
-                         DNSClient                     DNSClient                 = null)
+                         Boolean?                      AllowDowngrades           = null)
 
             : base(HTTPHostname,
                    HTTPServerPort ?? DefaultHTTPServerPort,
@@ -1231,18 +146,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurURL                   = OurURL;
+            this.OurVersionsURL           = OurVersionsURL;
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.AllowDowngrades          = AllowDowngrades;
 
             this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
             this.RemoteAccessInfos        = new List<RemoteAccessInfo>();
-            this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this._Tariffs                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this._Sessions                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this._Tokens                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this._CDRs                    = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.CDRs                     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             RegisterURLTemplates();
 
@@ -1255,18 +170,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Create a new common HTTP API.
         /// </summary>
+        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
+        /// <param name="OurCredentialRoles">All our credential roles.</param>
+        /// 
         /// <param name="HTTPServer">A HTTP server.</param>
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        public CommonAPI(URL                           OurURL,
+        public CommonAPI(URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
+
                          HTTPServer                    HTTPServer,
                          HTTPHostname?                 HTTPHostname              = null,
                          String                        ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          String                        ServiceName               = DefaultHTTPServerName,
+
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Boolean?                      AllowDowngrades           = null)
 
@@ -1281,18 +201,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (!OurCredentialRoles.SafeAny())
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
-            this.OurURL                   = OurURL;
+            this.OurVersionsURL           = OurVersionsURL;
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.AllowDowngrades          = AllowDowngrades;
 
             this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
             this.RemoteAccessInfos        = new List<RemoteAccessInfo>();
-            this._Locations               = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this._Tariffs                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this._Sessions                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this._Tokens                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this._CDRs                    = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.CDRs                     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -1835,12 +755,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: async Request => {
 
-                                         if (Request.AccessToken.HasValue &&
-                                             AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
+                                         var CREDENTIALS_TOKEN_A = Request.AccessToken;
+
+                                         if (CREDENTIALS_TOKEN_A.HasValue &&
+                                             AccessTokens.TryGetValue(CREDENTIALS_TOKEN_A.Value, out AccessInfo accessInfo) &&
                                              accessInfo.Status == AccessStatus.ALLOWED)
                                          {
-
-                                             #region Validations
 
                                              if (accessInfo.VersionsURL.HasValue)
                                                  return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -1853,155 +773,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse.Create(
                                                                                             2000,
-                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is already registered!"
+                                                                                            "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!"
                                                                                         ).ToUTF8Bytes(),
                                                             Connection                 = "close"
                                                         }.Set("X-Request-ID",      Request.RequestId).
                                                           Set("X-Correlation-ID",  Request.CorrelationId);
 
 
-                                             var ErrorResponse = String.Empty;
+                                             return await POSTOrPUTCredentials(Request);
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
-                                                 !Credentials.TryParse(JSON, out Credentials receivedCredentials, out ErrorResponse))
-                                             {
-
-                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = OCPIResponse.Create(
-                                                                                            2000,
-                                                                                            "Could not parse the credentials JSON object! " + ErrorResponse
-                                                                                        ).ToUTF8Bytes(),
-                                                            Connection                 = "close"
-                                                        }.Set("X-Request-ID",      Request.RequestId).
-                                                          Set("X-Correlation-ID",  Request.CorrelationId);
-
-                                             }
-
-                                             #endregion
-
-
-                                             #region Additional security checks... (Non-Standard)
-
-                                             lock (AccessTokens)
-                                             {
-                                                 foreach (var credentialsRole in receivedCredentials.Roles)
-                                                 {
-
-                                                     var result = AccessTokens.Values.Where(accessToken => accessToken.Roles.Any(role => role.CountryCode == credentialsRole.CountryCode &&
-                                                                                                                                         role.PartyId     == credentialsRole.PartyId &&
-                                                                                                                                         role.Role        == credentialsRole.Role)).ToArray();
-
-                                                     if (result.Length == 0)
-                                                     {
-
-                                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                    HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                                    Server                     = HTTPServer.DefaultServerName,
-                                                                    Date                       = DateTime.UtcNow,
-                                                                    AccessControlAllowOrigin   = "*",
-                                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                                    AccessControlAllowHeaders  = "Authorization",
-                                                                    ContentType                = HTTPContentType.JSON_UTF8,
-                                                                    Content                    = OCPIResponse.Create(
-                                                                                                    2000,
-                                                                                                    "The given combination of country code, party identification and role is unknown!"
-                                                                                                ).ToUTF8Bytes(),
-                                                                    Connection                 = "close"
-                                                                }.Set("X-Request-ID",      Request.RequestId).
-                                                                  Set("X-Correlation-ID",  Request.CorrelationId);
-
-                                                     }
-
-                                                     if (result.Length > 0 &&
-                                                         result.First().VersionsURL.HasValue)
-                                                     {
-
-                                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                    HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                                    Server                     = HTTPServer.DefaultServerName,
-                                                                    Date                       = DateTime.UtcNow,
-                                                                    AccessControlAllowOrigin   = "*",
-                                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                                    AccessControlAllowHeaders  = "Authorization",
-                                                                    ContentType                = HTTPContentType.JSON_UTF8,
-                                                                    Content                    = OCPIResponse.Create(
-                                                                                                    2000,
-                                                                                                    "The given combination of country code, party identification and role is already registered!"
-                                                                                                ).ToUTF8Bytes(),
-                                                                    Connection                 = "close"
-                                                                }.Set("X-Request-ID",      Request.RequestId).
-                                                                  Set("X-Correlation-ID",  Request.CorrelationId);
-
-                                                     }
-
-                                                 }
-                                             }
-
-                                             #endregion
-
-
-
-                                             var commonClient         = new CommonClient(receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
-                                                                                         receivedCredentials.URL,
-                                                                                         DNSClient: HTTPServer.DNSClient);
-
-                                             var otherVersions        = await commonClient.GetVersions();
-                                             var version2_2           = otherVersions.Data.Where(v => v.VersionId.ToString() == "2.2").FirstOrDefault();
-                                             var otherVersionDetails  = await commonClient.GetVersionDetails(Version_Id.Parse("2.2"));
-
-
-                                             // Store credential of the other side!
-                                             foreach (var role in receivedCredentials.Roles)
-                                                 SetRemoteAccessInfo(role.CountryCode,
-                                                                     role.PartyId,
-                                                                     role.Role,
-                                                                     role.BusinessDetails,
-                                                                     receivedCredentials.Token,
-                                                                     receivedCredentials.URL,
-                                                                     otherVersions.Data.Select(version => version.VersionId),
-                                                                     RemoteAccessStatus.ONLINE);
-
-
-                                             var CREDENTIALS_TOKEN_C = AccessToken.Random();
-
-                                             SetAccessToken(CREDENTIALS_TOKEN_C,
-                                                            receivedCredentials.URL,
-                                                            receivedCredentials.Roles,
-                                                            AccessStatus.ALLOWED);
-
-                                             // CREDENTIALS_TOKEN_A
-                                             RemoveAccessToken(Request.AccessToken.Value);
-
-
-
-                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        Server                     = HTTPServer.DefaultServerName,
-                                                        Date                       = DateTime.UtcNow,
-                                                        AccessControlAllowOrigin   = "*",
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        ContentType                = HTTPContentType.JSON_UTF8,
-                                                        Content                    = OCPIResponse<Credentials>.Create(
-                                                                                         new Credentials(
-                                                                                             CREDENTIALS_TOKEN_C,
-                                                                                             OurURL,
-                                                                                             OurCredentialRoles
-                                                                                         ),
-                                                                                         credential => credential.ToJSON(),
-                                                                                         1000,
-                                                                                         "Hello world!"
-                                                                                     ).ToUTF8Bytes(),
-                                                        Connection                 = "close"
-                                                    }.Set("X-Request-ID",      Request.RequestId).
-                                                      Set("X-Correlation-ID",  Request.CorrelationId);
 
                                          }
 
@@ -2043,8 +823,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              accessInfo.Status == AccessStatus.ALLOWED)
                                          {
 
-                                             #region Validations
-
                                              if (!accessInfo.VersionsURL.HasValue)
                                                  return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
@@ -2056,74 +834,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = OCPIResponse.Create(
                                                                                             2000,
-                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!"
+                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!"
                                                                                         ).ToUTF8Bytes(),
                                                             Connection                 = "close"
                                                         }.Set("X-Request-ID",      Request.RequestId).
                                                           Set("X-Correlation-ID",  Request.CorrelationId);
 
 
-                                             var ErrorResponse = String.Empty;
+                                             return await POSTOrPUTCredentials(Request);
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
-                                                 !Credentials.TryParse(JSON, out Credentials credentials, out ErrorResponse))
-                                             {
-
-                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = OCPIResponse.Create(
-                                                                                            2000,
-                                                                                            "Could not parse the credentials JSON object! " + ErrorResponse
-                                                                                        ).ToUTF8Bytes(),
-                                                            Connection                 = "close"
-                                                        }.Set("X-Request-ID",      Request.RequestId).
-                                                          Set("X-Correlation-ID",  Request.CorrelationId);
-
-                                             }
-
-                                             #endregion
-
-                                             var commonClient         = new CommonClient(credentials.Token,     // CREDENTIALS_TOKEN_B
-                                                                                         credentials.URL,
-                                                                                         DNSClient: HTTPServer.DNSClient);
-
-                                             var otherVersions        = await commonClient.GetVersions();
-                                             var version2_2           = otherVersions.Data.Where(v => v.VersionId.ToString() == "2.2").FirstOrDefault();
-                                             var otherVersionDetails  = await commonClient.GetVersionDetails(Version_Id.Parse("2.2"));
-
-
-                                             // Here we should check the other side!!!
-
-
-                                             //SetAccessToken(Request.AccessToken.Value,
-                                             //               accessInfo.Role,
-                                             //               credentials,
-                                             //               AccessStatus.ALLOWED);
-
-
-                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        Server                     = HTTPServer.DefaultServerName,
-                                                        Date                       = DateTime.UtcNow,
-                                                        AccessControlAllowOrigin   = "*",
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        ContentType                = HTTPContentType.JSON_UTF8,
-                                                        Content                    = OCPIResponse<Credentials>.Create(
-                                                                                         accessInfo.AsCredentials(),
-                                                                                         credential => credential.ToJSON(),
-                                                                                         1000,
-                                                                                         "Hello world!"
-                                                                                     ).ToUTF8Bytes(),
-                                                        Connection                 = "close"
-                                                    }.Set("X-Request-ID",      Request.RequestId).
-                                                      Set("X-Correlation-ID",  Request.CorrelationId);
 
                                          }
 
@@ -2239,7 +958,246 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region (private) POSTOrPUTCredentials(Request)
+
+        private async Task<HTTPResponse> POSTOrPUTCredentials(OCPIRequest Request)
+        {
+
+            var CREDENTIALS_TOKEN_A = Request.AccessToken;
+
+            #region Parse JSON
+
+            var ErrorResponse = String.Empty;
+
+            if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
+                !Credentials.TryParse(JSON, out Credentials receivedCredentials, out ErrorResponse))
+            {
+
+                return new HTTPResponse.Builder(Request.HTTPRequest) {
+                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                           Server                     = HTTPServer.DefaultServerName,
+                           Date                       = DateTime.UtcNow,
+                           AccessControlAllowOrigin   = "*",
+                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                           AccessControlAllowHeaders  = "Authorization",
+                           ContentType                = HTTPContentType.JSON_UTF8,
+                           Content                    = OCPIResponse.Create(
+                                                           2000,
+                                                           "Could not parse the credentials JSON object! " + ErrorResponse
+                                                       ).ToUTF8Bytes(),
+                           Connection                 = "close"
+                       }.Set("X-Request-ID",      Request.RequestId).
+                         Set("X-Correlation-ID",  Request.CorrelationId);
+
+            }
+
+            #endregion
+
+            #region Additional security checks... (Non-Standard)
+
+            lock (AccessTokens)
+            {
+                foreach (var credentialsRole in receivedCredentials.Roles)
+                {
+
+                    var result = AccessTokens.Values.Where(accessToken => accessToken.Roles.Any(role => role.CountryCode == credentialsRole.CountryCode &&
+                                                                                                        role.PartyId     == credentialsRole.PartyId &&
+                                                                                                        role.Role        == credentialsRole.Role)).ToArray();
+
+                    if (result.Length == 0)
+                    {
+
+                        return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                   Server                     = HTTPServer.DefaultServerName,
+                                   Date                       = DateTime.UtcNow,
+                                   AccessControlAllowOrigin   = "*",
+                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                   AccessControlAllowHeaders  = "Authorization",
+                                   ContentType                = HTTPContentType.JSON_UTF8,
+                                   Content                    = OCPIResponse.Create(
+                                                                   2000,
+                                                                   "The given combination of country code, party identification and role is unknown!"
+                                                               ).ToUTF8Bytes(),
+                                   Connection                 = "close"
+                               }.Set("X-Request-ID",      Request.RequestId).
+                                 Set("X-Correlation-ID",  Request.CorrelationId);
+
+                    }
+
+                    if (result.Length > 0 &&
+                        result.First().VersionsURL.HasValue)
+                    {
+
+                        return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                   Server                     = HTTPServer.DefaultServerName,
+                                   Date                       = DateTime.UtcNow,
+                                   AccessControlAllowOrigin   = "*",
+                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                   AccessControlAllowHeaders  = "Authorization",
+                                   ContentType                = HTTPContentType.JSON_UTF8,
+                                   Content                    = OCPIResponse.Create(
+                                                                   2000,
+                                                                   "The given combination of country code, party identification and role is already registered!"
+                                                               ).ToUTF8Bytes(),
+                                   Connection                 = "close"
+                               }.Set("X-Request-ID",      Request.RequestId).
+                                 Set("X-Correlation-ID",  Request.CorrelationId);
+
+                    }
+
+                }
+            }
+
+            #endregion
+
+
+            var commonClient            = new CommonClient(receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
+                                                           receivedCredentials.URL,
+                                                           DNSClient: HTTPServer.DNSClient);
+
+            var otherVersions           = await commonClient.GetVersions();
+
+            #region ...or send error!
+
+            if (otherVersions.StatusCode != 1000)
+            {
+
+                return new HTTPResponse.Builder(Request.HTTPRequest) {
+                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                           Server                     = HTTPServer.DefaultServerName,
+                           Date                       = DateTime.UtcNow,
+                           AccessControlAllowOrigin   = "*",
+                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                           AccessControlAllowHeaders  = "Authorization",
+                           ContentType                = HTTPContentType.JSON_UTF8,
+                           Content                    = OCPIResponse.Create(
+                                                           3001,
+                                                           "Could not fetch VERSIONS information from '" + receivedCredentials.URL + "'!",
+                                                           otherVersions.StatusMessage
+                                                       ).ToUTF8Bytes(),
+                           Connection                 = "close"
+                       }.Set("X-Request-ID",      Request.RequestId).
+                         Set("X-Correlation-ID",  Request.CorrelationId);
+
+            }
+
+            #endregion
+
+            var version2_2              = Version_Id.Parse("2.2");
+            var justVersion2_2          = otherVersions.Data.Where(version => version.Id == version2_2).ToArray();
+
+            #region ...or send error!
+
+            if (justVersion2_2.Length == 0)
+            {
+
+                return new HTTPResponse.Builder(Request.HTTPRequest) {
+                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                           Server                     = HTTPServer.DefaultServerName,
+                           Date                       = DateTime.UtcNow,
+                           AccessControlAllowOrigin   = "*",
+                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                           AccessControlAllowHeaders  = "Authorization",
+                           ContentType                = HTTPContentType.JSON_UTF8,
+                           Content                    = OCPIResponse.Create(
+                                                           3003,
+                                                           "Could not find OCPI v2.2 at '" + receivedCredentials.URL + "'!"
+                                                       ).ToUTF8Bytes(),
+                           Connection                 = "close"
+                       }.Set("X-Request-ID",      Request.RequestId).
+                         Set("X-Correlation-ID",  Request.CorrelationId);
+
+            }
+
+            #endregion
+
+            var otherVersion2_2Details  = await commonClient.GetVersionDetails(version2_2);
+
+            #region ...or send error!
+
+            if (otherVersion2_2Details.StatusCode != 1000)
+            {
+
+                return new HTTPResponse.Builder(Request.HTTPRequest) {
+                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                           Server                     = HTTPServer.DefaultServerName,
+                           Date                       = DateTime.UtcNow,
+                           AccessControlAllowOrigin   = "*",
+                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                           AccessControlAllowHeaders  = "Authorization",
+                           ContentType                = HTTPContentType.JSON_UTF8,
+                           Content                    = OCPIResponse.Create(
+                                                           3001,
+                                                           "Could not fetch v2.2 information from '" + justVersion2_2.First().URL + "'!",
+                                                           otherVersion2_2Details.StatusMessage
+                                                       ).ToUTF8Bytes(),
+                           Connection                 = "close"
+                       }.Set("X-Request-ID",      Request.RequestId).
+                         Set("X-Correlation-ID",  Request.CorrelationId);
+
+            }
+
+            #endregion
+
+
+            // Store credential of the other side!
+            foreach (var role in receivedCredentials.Roles)
+                SetRemoteAccessInfo(role.CountryCode,
+                                    role.PartyId,
+                                    role.Role,
+                                    role.BusinessDetails,
+                                    receivedCredentials.Token,
+                                    receivedCredentials.URL,
+                                    otherVersions.Data.Select(version => version.Id),
+                                    RemoteAccessStatus.ONLINE);
+
+
+            var CREDENTIALS_TOKEN_C = AccessToken.Random();
+
+            SetAccessToken(CREDENTIALS_TOKEN_C,
+                           receivedCredentials.URL,
+                           receivedCredentials.Roles,
+                           AccessStatus.ALLOWED);
+
+
+            RemoveAccessToken(CREDENTIALS_TOKEN_A.Value);
+
+
+
+            return new HTTPResponse.Builder(Request.HTTPRequest) {
+                       HTTPStatusCode             = HTTPStatusCode.OK,
+                       Server                     = HTTPServer.DefaultServerName,
+                       Date                       = DateTime.UtcNow,
+                       AccessControlAllowOrigin   = "*",
+                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                       AccessControlAllowHeaders  = "Authorization",
+                       ContentType                = HTTPContentType.JSON_UTF8,
+                       Content                    = OCPIResponse<Credentials>.Create(
+                                                        new Credentials(
+                                                            CREDENTIALS_TOKEN_C,
+                                                            OurVersionsURL,
+                                                            OurCredentialRoles
+                                                        ),
+                                                        credential => credential.ToJSON(),
+                                                        1000,
+                                                        "Hello world!"
+                                                    ).ToUTF8Bytes(),
+                       Connection                 = "close"
+                   }.Set("X-Request-ID",      Request.RequestId).
+                     Set("X-Correlation-ID",  Request.CorrelationId);
+
+        }
+
+        #endregion
+
+
+        //ToDo: Wrap the following into a plugable interface!
+
         #region AccessTokens
+
+        private readonly Dictionary<AccessToken, AccessInfo> AccessTokens;
 
         public CommonAPI SetAccessToken(AccessToken                   AccessToken,
                                         URL                           VersionsURL,
@@ -2267,8 +1225,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       CountryCode   CountryCode,
                                       Party_Id      PartyId,
                                       Roles         Role,
-                                      String        BusinessName = null,
-                                      AccessStatus  AccessStatus = AccessStatus.ALLOWED)
+                                      String        BusinessName   = null,
+                                      AccessStatus  AccessStatus   = AccessStatus.ALLOWED)
         {
             lock (AccessTokens)
             {
@@ -2313,6 +1271,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
         #region RemoteAccessInfos
+
+        private readonly List<RemoteAccessInfo> RemoteAccessInfos;
 
         public Boolean SetRemoteAccessInfo(CountryCode              CountryCode,
                                            Party_Id                 PartyId,
@@ -2378,11 +1338,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        //ToDo: Wrap this into an plugable interface!
-
         #region Locations
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> _Locations;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> Locations;
 
 
         #region AddLocation           (Location)
@@ -2393,13 +1351,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (!_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    _Locations.Add(Location.CountryCode, parties);
+                    Locations.Add(Location.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
@@ -2430,13 +1388,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (!_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    _Locations.Add(Location.CountryCode, parties);
+                    Locations.Add(Location.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
@@ -2464,13 +1422,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (!_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    _Locations.Add(Location.CountryCode, parties);
+                    Locations.Add(Location.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
@@ -2501,10 +1459,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
+                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
                     parties.   TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
                     locations.ContainsKey(Location.Id))
                 {
@@ -2529,10 +1487,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       out Location  Location)
         {
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (_Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
                     {
@@ -2556,12 +1514,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                   Party_Id?    PartyId      = null)
         {
 
-            lock (_Locations)
+            lock (Locations)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (_Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                    if (Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
                         {
@@ -2575,7 +1533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allLocations = new List<Location>();
 
-                    foreach (var party in _Locations.Values)
+                    foreach (var party in Locations.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
                         {
@@ -2589,7 +1547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (_Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                    if (Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                     {
 
                         var allLocations = new List<Location>();
@@ -2609,7 +1567,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allLocations = new List<Location>();
 
-                    foreach (var party in _Locations.Values)
+                    foreach (var party in Locations.Values)
                     {
                         foreach (var locations in party.Values)
                         {
@@ -2638,10 +1596,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (_Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                 {
 
                     if (parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
@@ -2658,7 +1616,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
 
                     if (!parties.Any())
-                        _Locations.Remove(Location.CountryCode);
+                        Locations.Remove(Location.CountryCode);
 
                 }
 
@@ -2678,9 +1636,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public void RemoveAllLocations()
         {
 
-            lock (_Locations)
+            lock (Locations)
             {
-                _Locations.Clear();
+                Locations.Clear();
             }
 
         }
@@ -2698,10 +1656,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                        Party_Id     PartyId)
         {
 
-            lock (_Locations)
+            lock (Locations)
             {
 
-                if (_Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
                     {
@@ -2719,7 +1677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Tariffs
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> _Tariffs;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> Tariffs;
 
 
         #region AddTariff           (Tariff)
@@ -2730,13 +1688,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (!_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    _Tariffs.Add(Tariff.CountryCode, parties);
+                    Tariffs.Add(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
@@ -2767,13 +1725,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (!_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    _Tariffs.Add(Tariff.CountryCode, parties);
+                    Tariffs.Add(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
@@ -2801,13 +1759,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (!_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    _Tariffs.Add(Tariff.CountryCode, parties);
+                    Tariffs.Add(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
@@ -2838,10 +1796,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
+                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
                     parties. TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
                     tariffs.ContainsKey(Tariff.Id))
                 {
@@ -2866,10 +1824,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       out Tariff  Tariff)
         {
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (_Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
                     {
@@ -2893,12 +1851,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                   Party_Id?    PartyId      = null)
         {
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (_Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                    if (Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
                         {
@@ -2912,7 +1870,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTariffs = new List<Tariff>();
 
-                    foreach (var party in _Tariffs.Values)
+                    foreach (var party in Tariffs.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
                         {
@@ -2926,7 +1884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (_Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                    if (Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                     {
 
                         var allTariffs = new List<Tariff>();
@@ -2946,7 +1904,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTariffs = new List<Tariff>();
 
-                    foreach (var party in _Tariffs.Values)
+                    foreach (var party in Tariffs.Values)
                     {
                         foreach (var tariffs in party.Values)
                         {
@@ -2975,10 +1933,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (_Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                 {
 
                     if (parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
@@ -2995,7 +1953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
 
                     if (!parties.Any())
-                        _Tariffs.Remove(Tariff.CountryCode);
+                        Tariffs.Remove(Tariff.CountryCode);
 
                 }
 
@@ -3015,9 +1973,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public void RemoveAllTariffs()
         {
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
-                _Tariffs.Clear();
+                Tariffs.Clear();
             }
 
         }
@@ -3035,10 +1993,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      Party_Id     PartyId)
         {
 
-            lock (_Tariffs)
+            lock (Tariffs)
             {
 
-                if (_Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
                     {
@@ -3056,7 +2014,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Sessions
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> _Sessions;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> Sessions;
 
 
         #region AddSession           (Session)
@@ -3067,13 +2025,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (!_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
-                    _Sessions.Add(Session.CountryCode, parties);
+                    Sessions.Add(Session.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
@@ -3104,13 +2062,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (!_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
-                    _Sessions.Add(Session.CountryCode, parties);
+                    Sessions.Add(Session.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
@@ -3138,13 +2096,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (!_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
-                    _Sessions.Add(Session.CountryCode, parties);
+                    Sessions.Add(Session.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
@@ -3175,10 +2133,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
+                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
                     parties.  TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
                     sessions.ContainsKey(Session.Id))
                 {
@@ -3203,10 +2161,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       out Session  Session)
         {
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (_Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
                     {
@@ -3230,12 +2188,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                   Party_Id?    PartyId      = null)
         {
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (_Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                    if (Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
                         {
@@ -3249,7 +2207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allSessions = new List<Session>();
 
-                    foreach (var party in _Sessions.Values)
+                    foreach (var party in Sessions.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
                         {
@@ -3263,7 +2221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (_Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                    if (Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                     {
 
                         var allSessions = new List<Session>();
@@ -3283,7 +2241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allSessions = new List<Session>();
 
-                    foreach (var party in _Sessions.Values)
+                    foreach (var party in Sessions.Values)
                     {
                         foreach (var sessions in party.Values)
                         {
@@ -3312,10 +2270,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (_Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                 {
 
                     if (parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
@@ -3332,7 +2290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
 
                     if (!parties.Any())
-                        _Sessions.Remove(Session.CountryCode);
+                        Sessions.Remove(Session.CountryCode);
 
                 }
 
@@ -3352,9 +2310,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public void RemoveAllSessions()
         {
 
-            lock (_Sessions)
+            lock (Sessions)
             {
-                _Sessions.Clear();
+                Sessions.Clear();
             }
 
         }
@@ -3372,10 +2330,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       Party_Id     PartyId)
         {
 
-            lock (_Sessions)
+            lock (Sessions)
             {
 
-                if (_Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
                     {
@@ -3393,7 +2351,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Tokens
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> _Tokens;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> Tokens;
 
 
         #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
@@ -3405,13 +2363,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
-                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (!Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
-                    _Tokens.Add(Token.CountryCode, parties);
+                    Tokens.Add(Token.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
@@ -3443,13 +2401,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
-                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (!Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
-                    _Tokens.Add(Token.CountryCode, parties);
+                    Tokens.Add(Token.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
@@ -3478,13 +2436,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
-                if (!_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (!Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
-                    _Tokens.Add(Token.CountryCode, parties);
+                    Tokens.Add(Token.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
@@ -3516,10 +2474,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                    out TokenStatus  TokenWithStatus)
         {
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
-                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                     {
@@ -3543,12 +2501,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                   Party_Id?     PartyId       = null)
         {
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                    if (Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out Dictionary<Token_Id, TokenStatus> tokens))
                         {
@@ -3562,7 +2520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTokens = new List<TokenStatus>();
 
-                    foreach (var party in _Tokens.Values)
+                    foreach (var party in Tokens.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out Dictionary<Token_Id, TokenStatus> tokens))
                         {
@@ -3576,7 +2534,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (_Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                    if (Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                     {
 
                         var allTokens = new List<TokenStatus>();
@@ -3596,7 +2554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTokens = new List<TokenStatus>();
 
-                    foreach (var party in _Tokens.Values)
+                    foreach (var party in Tokens.Values)
                     {
                         foreach (var tokens in party.Values)
                         {
@@ -3622,12 +2580,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public Token RemoveToken(Token_Id TokenId)
         {
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
                 Token foundToken = null;
 
-                foreach (var parties in _Tokens.Values)
+                foreach (var parties in Tokens.Values)
                 {
 
                     foreach (var tokens in parties.Values)
@@ -3662,10 +2620,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
-                if (_Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
 
                     if (parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
@@ -3682,7 +2640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
 
                     if (!parties.Any())
-                        _Tokens.Remove(Token.CountryCode);
+                        Tokens.Remove(Token.CountryCode);
 
                 }
 
@@ -3702,9 +2660,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public void RemoveAllTokens()
         {
 
-            lock (_Tokens)
+            lock (Tokens)
             {
-                _Tokens.Clear();
+                Tokens.Clear();
             }
 
         }
@@ -3722,10 +2680,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     Party_Id     PartyId)
         {
 
-            lock (_Tokens)
+            lock (Tokens)
             {
 
-                if (_Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
                 {
                     if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
                     {
@@ -3743,7 +2701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region CDRs
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> _CDRs;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> CDRs;
 
 
         #region AddCDR           (CDR)
@@ -3754,24 +2712,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (!_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (!CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
-                    _CDRs.Add(CDR.CountryCode, parties);
+                    CDRs.Add(CDR.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
                 {
-                    CDRs = new Dictionary<CDR_Id, CDR>();
-                    parties.Add(CDR.PartyId, CDRs);
+                    partyCDRs = new Dictionary<CDR_Id, CDR>();
+                    parties.Add(CDR.PartyId, partyCDRs);
                 }
 
-                if (!CDRs.ContainsKey(CDR.Id))
+                if (!partyCDRs.ContainsKey(CDR.Id))
                 {
-                    CDRs.Add(CDR.Id, CDR);
+                    partyCDRs.Add(CDR.Id, CDR);
                     return CDR;
                 }
 
@@ -3791,23 +2749,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (!_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (!CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
-                    _CDRs.Add(CDR.CountryCode, parties);
+                    CDRs.Add(CDR.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
                 {
-                    CDRs = new Dictionary<CDR_Id, CDR>();
-                    parties.Add(CDR.PartyId, CDRs);
+                    partyCDRs = new Dictionary<CDR_Id, CDR>();
+                    parties.Add(CDR.PartyId, partyCDRs);
                 }
 
-                if (!CDRs.ContainsKey(CDR.Id))
-                    CDRs.Add(CDR.Id, CDR);
+                if (!partyCDRs.ContainsKey(CDR.Id))
+                    partyCDRs.Add(CDR.Id, CDR);
 
                 return CDR;
 
@@ -3825,27 +2783,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (!_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (!CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
-                    _CDRs.Add(CDR.CountryCode, parties);
+                    CDRs.Add(CDR.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
                 {
-                    CDRs = new Dictionary<CDR_Id, CDR>();
-                    parties.Add(CDR.PartyId, CDRs);
+                    partyCDRs = new Dictionary<CDR_Id, CDR>();
+                    parties.Add(CDR.PartyId, partyCDRs);
                 }
 
-                if (CDRs.ContainsKey(CDR.Id))
+                if (partyCDRs.ContainsKey(CDR.Id))
                 {
-                    CDRs.Remove(CDR.Id);
+                    partyCDRs.Remove(CDR.Id);
                 }
 
-                CDRs.Add(CDR.Id, CDR);
+                partyCDRs.Add(CDR.Id, CDR);
                 return CDR;
 
             }
@@ -3862,14 +2820,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (_CDRs.  TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties) &&
-                    parties.TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  CDRs)    &&
-                    CDRs.ContainsKey(CDR.Id))
+                if (CDRs.     TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties)   &&
+                    parties.  TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  partyCDRs) &&
+                    partyCDRs.ContainsKey(CDR.Id))
                 {
-                    CDRs[CDR.Id] = CDR;
+                    partyCDRs[CDR.Id] = CDR;
                     return CDR;
                 }
 
@@ -3884,20 +2842,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region TryGetCDR(CountryCode, PartyId, CDRId,, out CDR)
 
-        public Boolean TryGetCDR(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      CDR_Id   CDRId,
-                                      out CDR  CDR)
+        public Boolean TryGetCDR(CountryCode  CountryCode,
+                                 Party_Id     PartyId,
+                                 CDR_Id       CDRId,
+                                 out CDR      CDR)
         {
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (_CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
                     {
-                        if (CDRs.TryGetValue(CDRId, out CDR))
+                        if (partyCDRs.TryGetValue(CDRId, out CDR))
                             return true;
                     }
                 }
@@ -3913,20 +2871,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region GetCDRs(CountryCode = null, PartyId = null)
 
-        public IEnumerable<CDR> GetCDRs(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<CDR> GetCDRs(CountryCode?  CountryCode   = null,
+                                        Party_Id?     PartyId       = null)
         {
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (_CDRs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                    if (CDRs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> CDRs))
+                        if (parties.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> partyCDRs))
                         {
-                            return CDRs.Values.ToArray();
+                            return partyCDRs.Values.ToArray();
                         }
                     }
                 }
@@ -3936,11 +2894,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allCDRs = new List<CDR>();
 
-                    foreach (var party in _CDRs.Values)
+                    foreach (var party in CDRs.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> CDRs))
+                        if (party.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> partyCDRs))
                         {
-                            allCDRs.AddRange(CDRs.Values);
+                            allCDRs.AddRange(partyCDRs.Values);
                         }
                     }
 
@@ -3950,14 +2908,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (_CDRs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                    if (CDRs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                     {
 
                         var allCDRs = new List<CDR>();
 
-                        foreach (var CDRs in parties.Values)
+                        foreach (var partyCDRs in parties.Values)
                         {
-                            allCDRs.AddRange(CDRs.Values);
+                            allCDRs.AddRange(partyCDRs.Values);
                         }
 
                         return allCDRs;
@@ -3970,11 +2928,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allCDRs = new List<CDR>();
 
-                    foreach (var party in _CDRs.Values)
+                    foreach (var party in CDRs.Values)
                     {
-                        foreach (var CDRs in party.Values)
+                        foreach (var partyCDRs in party.Values)
                         {
-                            allCDRs.AddRange(CDRs.Values);
+                            allCDRs.AddRange(partyCDRs.Values);
                         }
                     }
 
@@ -3999,27 +2957,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (_CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (CDRs.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                 {
 
-                    if (parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                    if (parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
                     {
 
-                        if (CDRs.ContainsKey(CDR.Id))
+                        if (partyCDRs.ContainsKey(CDR.Id))
                         {
-                            CDRs.Remove(CDR.Id);
+                            partyCDRs.Remove(CDR.Id);
                         }
 
-                        if (!CDRs.Any())
+                        if (!partyCDRs.Any())
                             parties.Remove(CDR.PartyId);
 
                     }
 
                     if (!parties.Any())
-                        _CDRs.Remove(CDR.CountryCode);
+                        CDRs.Remove(CDR.CountryCode);
 
                 }
 
@@ -4039,9 +2997,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public void RemoveAllCDRs()
         {
 
-            lock (_CDRs)
+            lock (CDRs)
             {
-                _CDRs.Clear();
+                CDRs.Clear();
             }
 
         }
@@ -4059,15 +3017,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                   Party_Id     PartyId)
         {
 
-            lock (_CDRs)
+            lock (CDRs)
             {
 
-                if (_CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> CDRs))
-                    {
-                        CDRs.Clear();
-                    }
+                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                        partyCDRs.Clear();
                 }
 
             }
