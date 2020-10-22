@@ -82,6 +82,7 @@
     <Compile Include="DataTypes\Enums\CommandResponseTypes.cs" />
     <Compile Include="DataTypes\Enums\OpenSourceLicenses.cs" />
     <Compile Include="DataTypes\Enums\LegalStatus.cs" />
+    <Compile Include="DataTypes\Patch.cs" />
     <Compile Include="EMSP\EMSPAPILogger.cs" />
     <Compile Include="IO\OCPIAPILogger.cs" />
     <Compile Include="IO\OCPIRequestLogHandler.cs" />

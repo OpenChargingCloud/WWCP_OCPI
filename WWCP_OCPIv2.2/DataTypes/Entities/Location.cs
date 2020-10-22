@@ -47,6 +47,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             IEnumerable<EVSE>
     {
 
+        #region Data
+
+        private readonly Object patchLock = new Object();
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -1038,7 +1044,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Location Patch(JObject LocationPatch)
         {
 
-            return this;
+            if (!LocationPatch.HasValues)
+                return this;
+
+            lock (patchLock)
+            {
+
+                if (TryParse(PatchObject.Apply(ToJSON(), LocationPatch),
+                             out Location  patchedLocation,
+                             out String    ErrorResponse))
+                {
+                    return patchedLocation;
+                }
+
+                else
+                    return null;
+
+            }
 
         }
 

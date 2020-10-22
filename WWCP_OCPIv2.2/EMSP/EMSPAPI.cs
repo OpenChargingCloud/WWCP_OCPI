@@ -3556,6 +3556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      1000,
                                                                                      "Hello world!"
                                                                                  ).ToUTF8Bytes(),
+                                                    LastModified               = patchedLocation.LastUpdated.ToIso8601(),
                                                     Connection                 = "close"
                                                 };
 
@@ -3826,6 +3827,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      1000,
                                                                                      "Hello world!"
                                                                                  ).ToUTF8Bytes(),
+                                                    LastModified               = patchedEVSE.LastUpdated.ToIso8601(),
                                                     Connection                 = "close"
                                                 };
 
@@ -4103,6 +4105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      1000,
                                                                                      "Hello world!"
                                                                                  ).ToUTF8Bytes(),
+                                                    LastModified               = patchedConnector.LastUpdated.ToIso8601(),
                                                     Connection                 = "close"
                                                 };
 
@@ -4156,7 +4159,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      1000,
                                                                                      "Hello world!"
                                                                                  ).ToUTF8Bytes(),
-                                                    LastModified               = ExistingConnector.LastUpdated.ToIso8601(),
                                                     Connection                 = "close"
                                                 };
 
@@ -4806,6 +4808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      1000,
                                                                                      "Hello world!"
                                                                                  ).ToUTF8Bytes(),
+                                                    LastModified               = patchedSession.LastUpdated.ToIso8601(),
                                                     Connection                 = "close"
                                                 }.Set("X-Request-ID",      Request.RequestId).
                                                   Set("X-Correlation-ID",  Request.CorrelationId);

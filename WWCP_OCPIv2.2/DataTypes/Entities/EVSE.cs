@@ -42,6 +42,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         IEnumerable<Connector>
     {
 
+        #region Data
+
+        private readonly Object patchLock = new Object();
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -635,7 +641,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public EVSE Patch(JObject EVSEPatch)
         {
 
-            return this;
+            if (!EVSEPatch.HasValues)
+                return this;
+
+            lock (patchLock)
+            {
+
+                if (TryParse(PatchObject.Apply(ToJSON(), EVSEPatch),
+                             out EVSE    patchedEVSE,
+                             out String  ErrorResponse))
+                {
+                    return patchedEVSE;
+                }
+
+                else
+                    return null;
+
+            }
 
         }
 

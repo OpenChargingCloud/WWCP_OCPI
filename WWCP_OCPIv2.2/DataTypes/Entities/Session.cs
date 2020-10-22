@@ -39,6 +39,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            IComparable
     {
 
+        #region Data
+
+        private readonly Object patchLock = new Object();
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -819,7 +825,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Session Patch(JObject SessionPatch)
         {
 
-            return this;
+            if (!SessionPatch.HasValues)
+                return this;
+
+            lock (patchLock)
+            {
+
+                if (TryParse(PatchObject.Apply(ToJSON(), SessionPatch),
+                             out Session  patchedSession,
+                             out String   ErrorResponse))
+                {
+                    return patchedSession;
+                }
+
+                else
+                    return null;
+
+            }
 
         }
 
