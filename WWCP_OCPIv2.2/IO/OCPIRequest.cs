@@ -91,9 +91,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          URLAuthentication,
                                          HTTPMethodAuthentication,
                                          ContentTypeAuthentication,
-                                         (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger (timestamp, null, HTTP.OCPIRequest.Parse(httpRequest)),
-                                         (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger(timestamp, null, httpRequest.SubprotocolRequest as OCPIRequest,
-                                                                                                                                httpResponse), //HTTP.OCPIResponse.Parse(httpRequest),
+                                         (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, HTTP.OCPIRequest.Parse(httpRequest)),
+                                         (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest.SubprotocolRequest as OCPIRequest,
+                                                                                                                                        httpResponse), //HTTP.OCPIResponse.Parse(httpRequest),
                                          DefaultErrorHandler,
                                          httpRequest => OCPIRequest(httpRequest.SubprotocolRequest is null
                                                                         ? HTTP.OCPIRequest.Parse(httpRequest) // When no OCPIRequestLogger was used!

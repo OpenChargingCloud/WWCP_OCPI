@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// within this charging station.
         /// </summary>
         [Optional]
-        public IEnumerable<EVSE>                   EVSEs                    { get; }
+        public IEnumerable<EVSE>                   EVSEs                    { get; private set; }
 
         ///// <summary>
         ///// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.State                = State;
             this.RelatedLocations     = RelatedLocations;
             this.ParkingType          = ParkingType;
-            this.EVSEs                = EVSEs;
+            this.EVSEs                = EVSEs?.Distinct() ?? new EVSE[0];
             this.Directions           = Directions;
             this.Operator             = Operator;
             this.SubOperator          = SubOperator;
@@ -306,6 +306,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.EnergyMix            = EnergyMix;
 
             this.LastUpdated          = LastUpdated ?? DateTime.Now;
+
+            foreach (var evse in EVSEs)
+                evse.ParentLocation = this;
 
         }
 
@@ -1050,6 +1053,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             lock (patchLock)
             {
 
+                if (LocationPatch["last_updated"] is null)
+                    LocationPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+
                 if (TryParse(PatchObject.Apply(ToJSON(), LocationPatch),
                              out Location  patchedLocation,
                              out String    ErrorResponse))
@@ -1059,6 +1065,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return null;
+
+            }
+
+        }
+
+        #endregion
+
+        #region (internal) SetEVSE(EVSE)
+
+        internal void SetEVSE(EVSE EVSE)
+        {
+
+            if (EVSE is null)
+                return;
+
+            lock (EVSEs)
+            {
+
+                EVSEs = EVSEs.
+                            Where(evse => evse.UId != EVSE.UId).
+                            Concat(new EVSE[] { EVSE });
 
             }
 

@@ -686,6 +686,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             lock (patchLock)
             {
 
+                if (TokenPatch["last_updated"] is null)
+                    TokenPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+
                 if (TryParse(PatchObject.Apply(ToJSON(), TokenPatch),
                              out Token   patchedToken,
                              out String  ErrorResponse))

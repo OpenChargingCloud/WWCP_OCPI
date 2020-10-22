@@ -3317,6 +3317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
+                                         //ToDo: await...
                                          CommonAPI.RemoveAllLocations(CountryCode.Value,
                                                                       PartyId.    Value);
 
@@ -3355,7 +3356,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                     out Party_Id?             PartyId,
                                                                     out Location_Id?          LocationId,
                                                                     out Location              Location,
-                                                                    out HTTPResponse.Builder  HTTPResponse))
+                                                                    out HTTPResponse.Builder  HTTPResponse,
+                                                                    FailOnMissingLocation: true))
                                          {
                                              return Task.FromResult(HTTPResponse.AsImmutable);
                                          }
@@ -3530,16 +3532,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Parse and apply Location JSON patch
 
-                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
+                                         if (!Request.TryParseJObjectRequestBody(out JObject LocationPatch, out HTTPResponse))
                                              return HTTPResponse;
-
-                                         var patchedLocation = ExistingLocation.Patch(JSONPatch);
 
                                          #endregion
 
 
                                          //ToDo: await..., handle update errors!
-                                         CommonAPI.UpdateLocation(patchedLocation);
+                                         var patchedLocation = CommonAPI.PatchLocation(ExistingLocation,
+                                                                                       LocationPatch);
 
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3801,16 +3802,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Parse and apply EVSE JSON patch
 
-                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
+                                         if (!Request.TryParseJObjectRequestBody(out JObject EVSEPatch, out HTTPResponse))
                                              return HTTPResponse;
-
-                                         var patchedEVSE = ExistingEVSE.Patch(JSONPatch);
 
                                          #endregion
 
 
                                          //ToDo: Handle update errors
-                                         //CommonAPI.UpdateEVSE(patchedEVSE);
+                                         var patchedEVSE = CommonAPI.PatchEVSE(ExistingEVSE,
+                                                                               EVSEPatch);
 
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -4079,16 +4079,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Parse and apply Connector JSON patch
 
-                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
+                                         if (!Request.TryParseJObjectRequestBody(out JObject ConnectorPatch, out HTTPResponse))
                                              return HTTPResponse;
-
-                                         var patchedConnector = ExistingConnector.Patch(JSONPatch);
 
                                          #endregion
 
 
                                          //ToDo: Handle update errors
-                                         //CommonAPI.UpdateConnector(patchedConnector);
+                                         var patchedConnector = CommonAPI.PatchConnector(ExistingConnector,
+                                                                                         ConnectorPatch);
 
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {

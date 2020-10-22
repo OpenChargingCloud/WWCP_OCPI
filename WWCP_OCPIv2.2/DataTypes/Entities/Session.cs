@@ -831,6 +831,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             lock (patchLock)
             {
 
+                if (SessionPatch["last_updated"] is null)
+                    SessionPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+
                 if (TryParse(PatchObject.Apply(ToJSON(), SessionPatch),
                              out Session  patchedSession,
                              out String   ErrorResponse))

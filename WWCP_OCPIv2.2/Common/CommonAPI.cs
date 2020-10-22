@@ -1613,7 +1613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             {
 
                 if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
-                    parties.   TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
+                    parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
                     locations.ContainsKey(Location.Id))
                 {
                     locations[Location.Id] = Location;
@@ -1623,6 +1623,91 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 return null;
 
             }
+
+        }
+
+        #endregion
+
+
+        #region PatchLocation         (Location, Patch)
+
+        public Location PatchLocation(Location  Location,
+                                      JObject   Patch)
+        {
+
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+
+            if (Patch is null || !Patch.HasValues)
+                return Location;
+
+            lock (Locations)
+            {
+
+                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
+                    parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
+                    locations.ContainsKey(Location.Id))
+                {
+
+                    var patchedLocation = Location.Patch(Patch);
+
+                    locations[Location.Id] = patchedLocation;
+
+                    return patchedLocation;
+
+                }
+
+            }
+
+            return Location;
+
+        }
+
+        #endregion
+
+        #region PatchEVSE             (EVSE,     Patch)
+
+        public EVSE PatchEVSE(EVSE     EVSE,
+                              JObject  Patch)
+        {
+
+            if (EVSE is null)
+                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
+
+            //if (Patch is null || !Patch.HasValues)
+                return EVSE;
+
+        //    lock (Locations)
+        //    {
+
+        //        var patchedEVSE = EVSE.Patch(Patch);
+        //        var builder = EVSE.ParentLocation.To
+
+        //    }
+
+        }
+
+        #endregion
+
+        #region PatchConnector           (Connector,     Patch)
+
+        public Connector PatchConnector(Connector  Connector,
+                                        JObject    Patch)
+        {
+
+            if (Connector is null)
+                throw new ArgumentNullException(nameof(Connector), "The given connector must not be null!");
+
+            //if (Patch is null || !Patch.HasValues)
+                return Connector;
+
+        //    lock (Locations)
+        //    {
+
+        //        var patchedEVSE = EVSE.Patch(Patch);
+        //        var builder = EVSE.ParentLocation.To
+
+        //    }
 
         }
 

@@ -50,6 +50,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
+
+        public Location                          ParentLocation             { get; internal set; }
+
+
         /// <summary>
         /// Uniquely identifies the EVSE within the CPOs platform.
         /// </summary>
@@ -84,7 +88,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Enumeration of available connectors at this EVSE.
         /// </summary>
         [Mandatory]
-        public IEnumerable<Connector>            Connectors                 { get; }
+        public IEnumerable<Connector>            Connectors                 { get; private set; }
 
         /// <summary>
         /// The unique identifications of all connectors at this EVSE.
@@ -157,21 +161,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
         /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
         /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
-        public EVSE(EVSE_UId                          UId,
-                    StatusTypes                       Status,
-                    IEnumerable<Connector>            Connectors,
+        internal EVSE(Location                          ParentLocation,
 
-                    EVSE_Id?                          EVSEId                = null,
-                    IEnumerable<StatusSchedule>       StatusSchedule        = null,
-                    IEnumerable<CapabilityTypes>      Capabilities          = null,
-                    String                            FloorLevel            = null,
-                    GeoCoordinate?                    Coordinates           = null,
-                    String                            PhysicalReference     = null,
-                    DisplayText?                      Directions            = null,
-                    IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
-                    IEnumerable<Image>                Images                = null,
+                      EVSE_UId                          UId,
+                      StatusTypes                       Status,
+                      IEnumerable<Connector>            Connectors,
 
-                    DateTime?                         LastUpdated           = null)
+                      EVSE_Id?                          EVSEId                = null,
+                      IEnumerable<StatusSchedule>       StatusSchedule        = null,
+                      IEnumerable<CapabilityTypes>      Capabilities          = null,
+                      String                            FloorLevel            = null,
+                      GeoCoordinate?                    Coordinates           = null,
+                      String                            PhysicalReference     = null,
+                      DisplayText?                      Directions            = null,
+                      IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
+                      IEnumerable<Image>                Images                = null,
+
+                      DateTime?                         LastUpdated           = null)
 
         {
 
@@ -191,7 +197,64 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.LastUpdated           = LastUpdated ?? DateTime.Now;
 
+            foreach (var connector in Connectors)
+                connector.ParentEVSE = this;
+
         }
+
+
+        /// <summary>
+        /// Create a new EVSE.
+        /// </summary>
+        /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
+        /// <param name="Status">Indicates the current status of the EVSE.</param>
+        /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
+        /// 
+        /// <param name="EVSEId">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
+        /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
+        /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
+        /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
+        /// <param name="Coordinates">An optional geographical location of this EVSE.</param>
+        /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
+        /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
+        /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
+        /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+        /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
+        public EVSE(EVSE_UId                          UId,
+                    StatusTypes                       Status,
+                    IEnumerable<Connector>            Connectors,
+
+                    EVSE_Id?                          EVSEId                = null,
+                    IEnumerable<StatusSchedule>       StatusSchedule        = null,
+                    IEnumerable<CapabilityTypes>      Capabilities          = null,
+                    String                            FloorLevel            = null,
+                    GeoCoordinate?                    Coordinates           = null,
+                    String                            PhysicalReference     = null,
+                    DisplayText?                      Directions            = null,
+                    IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
+                    IEnumerable<Image>                Images                = null,
+
+                    DateTime?                         LastUpdated           = null)
+
+            : this(null,
+
+                   UId,
+                   Status,
+                   Connectors,
+
+                   EVSEId,
+                   StatusSchedule,
+                   Capabilities,
+                   FloorLevel,
+                   Coordinates,
+                   PhysicalReference,
+                   Directions,
+                   ParkingRestrictions,
+                   Images,
+
+                   LastUpdated)
+
+            { }
 
         #endregion
 
@@ -636,9 +699,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Patch(EVSEPatch)
+        #region (internal) Patch(EVSEPatch)
 
-        public EVSE Patch(JObject EVSEPatch)
+        internal EVSE Patch(JObject EVSEPatch)
         {
 
             if (!EVSEPatch.HasValues)
@@ -647,15 +710,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             lock (patchLock)
             {
 
+                if (EVSEPatch["last_updated"] is null)
+                    EVSEPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+
+                //ToDo: Also update 'last_updated' of the location!
+
                 if (TryParse(PatchObject.Apply(ToJSON(), EVSEPatch),
                              out EVSE    patchedEVSE,
                              out String  ErrorResponse))
                 {
+
+                    patchedEVSE.ParentLocation = ParentLocation;
+
                     return patchedEVSE;
+
                 }
 
                 else
                     return null;
+
+            }
+
+        }
+
+        #endregion
+
+        #region (internal) SetConnector(Connector)
+
+        internal void SetConnector(Connector Connector)
+        {
+
+            if (Connector is null)
+                return;
+
+            lock (Connectors)
+            {
+
+                Connectors = Connectors.
+                                 Where (connector => connector.Id != Connector.Id).
+                                 Concat(new Connector[] { Connector });
 
             }
 

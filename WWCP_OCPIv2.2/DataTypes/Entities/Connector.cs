@@ -47,6 +47,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
+        public EVSE                    ParentEVSE            { get; internal set; }
+
+
         /// <summary>
         /// Identifier of the connector within the EVSE.
         /// Two connectors may have the same id as long as they do not belong to the same EVSE object.
@@ -130,18 +133,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="TariffIds">Identifiers of the currently valid charging tariffs.</param>
         /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
         /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
-        public Connector(Connector_Id            Id,
-                         ConnectorTypes          Standard,
-                         ConnectorFormats        Format,
-                         PowerTypes              PowerType,
-                         UInt16                  MaxVoltage,
-                         UInt16                  MaxAmperage,
+        internal Connector(EVSE                    ParentEVSE,
 
-                         UInt16?                 MaxElectricPower     = null,
-                         IEnumerable<Tariff_Id>  TariffIds            = null,
-                         String                  TermsAndConditions   = null,
+                           Connector_Id            Id,
+                           ConnectorTypes          Standard,
+                           ConnectorFormats        Format,
+                           PowerTypes              PowerType,
+                           UInt16                  MaxVoltage,
+                           UInt16                  MaxAmperage,
 
-                         DateTime?               LastUpdated          = null)
+                           UInt16?                 MaxElectricPower     = null,
+                           IEnumerable<Tariff_Id>  TariffIds            = null,
+                           String                  TermsAndConditions   = null,
+
+                           DateTime?               LastUpdated          = null)
 
         {
 
@@ -159,6 +164,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.LastUpdated         = LastUpdated ?? DateTime.Now;
 
         }
+
+
+        /// <summary>
+        /// A connector is the socket or cable available for the electric vehicle to make use of.
+        /// </summary>
+        /// <param name="Id">Identifier of the connector within the EVSE.</param>
+        /// <param name="Standard">The standard of the installed connector.</param>
+        /// <param name="Format">The format (socket/cable) of the installed connector.</param>
+        /// <param name="PowerType">The type of powert at the connector.</param>
+        /// <param name="MaxVoltage">Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
+        /// <param name="MaxAmperage">Maximum amperage of the connector, in ampere [A].</param>
+        /// <param name="MaxElectricPower">Maximum electric power that can be delivered by this connector, in Watts (W).</param>
+        /// <param name="TariffIds">Identifiers of the currently valid charging tariffs.</param>
+        /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
+        /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
+        public Connector(Connector_Id            Id,
+                         ConnectorTypes          Standard,
+                         ConnectorFormats        Format,
+                         PowerTypes              PowerType,
+                         UInt16                  MaxVoltage,
+                         UInt16                  MaxAmperage,
+
+                         UInt16?                 MaxElectricPower     = null,
+                         IEnumerable<Tariff_Id>  TariffIds            = null,
+                         String                  TermsAndConditions   = null,
+
+                         DateTime?               LastUpdated          = null)
+
+            : this(null,
+
+                   Id,
+                   Standard,
+                   Format,
+                   PowerType,
+                   MaxVoltage,
+                   MaxAmperage,
+
+                   MaxElectricPower,
+                   TariffIds,
+                   TermsAndConditions,
+
+                   LastUpdated)
+
+        { }
 
         #endregion
 
@@ -498,9 +547,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Patch(EVSEPatch)
+        #region (internal) Patch(EVSEPatch)
 
-        public Connector Patch(JObject ConnectorPatch)
+        internal Connector Patch(JObject ConnectorPatch)
         {
 
             if (!ConnectorPatch.HasValues)
@@ -509,11 +558,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             lock (patchLock)
             {
 
+                if (ConnectorPatch["last_updated"] is null)
+                    ConnectorPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+
+                //ToDo: Also update 'last_updated' of the EVSE!
+                //      Also update 'last_updated' of the location!
+
                 if (TryParse(PatchObject.Apply(ToJSON(), ConnectorPatch),
                              out Connector  patchedConnector,
                              out String     ErrorResponse))
                 {
+
+                    patchedConnector.ParentEVSE = ParentEVSE;
+
                     return patchedConnector;
+
                 }
 
                 else
