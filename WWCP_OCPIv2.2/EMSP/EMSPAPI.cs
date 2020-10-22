@@ -3435,6 +3435,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse.Create(
+                                                                                         2000,
+                                                                                         "Could not parse the given JSON: " + ErrorResponse
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
                                                     }.Set("X-Request-ID",      Request.RequestId).
                                                       Set("X-Correlation-ID",  Request.CorrelationId);
 
