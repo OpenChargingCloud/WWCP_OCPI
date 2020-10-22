@@ -682,7 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region The other side is a CPO...
 
-                                         if (accessInfo.Roles.Any(role  => role.Role == Roles.CPO))
+                                         if (accessInfo.Roles?.Any(role  => role.Role == Roles.CPO) == true)
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
@@ -718,8 +718,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region The other side is an EMP or unauthenticated (Open Data Access)...
 
-                                         if (accessInfo.Roles.Any(role => role.Role == Roles.EMSP) ||
-                                             accessInfo.Roles.Any(role => role.Role == Roles.OpenData))
+                                         if (accessInfo.Roles?.Any(role => role.Role == Roles.EMSP)     == true ||
+                                             accessInfo.Roles?.Any(role => role.Role == Roles.OpenData) == true)
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
@@ -732,7 +732,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region The other side is an EMP...
 
-                                         if (accessInfo.Roles.Any(role => role.Role == Roles.EMSP))
+                                         if (accessInfo.Roles?.Any(role => role.Role == Roles.EMSP) == true)
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
