@@ -3466,7 +3466,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         Date                       = DateTime.UtcNow,
                                                         AccessControlAllowOrigin   = "*",
                                                         AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization"
+                                                        AccessControlAllowHeaders  = "Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse.Create(
+                                                                                         2000,
+                                                                                         "LastUpdated must ne newer then the existing one!"
+                                                                                     ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
                                                     }.Set("X-Request-ID",      Request.RequestId).
                                                       Set("X-Correlation-ID",  Request.CorrelationId).
                                                       AsImmutable;
