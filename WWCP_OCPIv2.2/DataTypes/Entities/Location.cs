@@ -307,8 +307,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.LastUpdated          = LastUpdated ?? DateTime.Now;
 
-            foreach (var evse in EVSEs)
-                evse.ParentLocation = this;
+            if (EVSEs != null)
+                foreach (var evse in EVSEs)
+                    evse.ParentLocation = this;
 
         }
 

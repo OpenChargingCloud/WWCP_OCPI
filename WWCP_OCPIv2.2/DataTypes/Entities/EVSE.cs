@@ -197,8 +197,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.LastUpdated           = LastUpdated ?? DateTime.Now;
 
-            foreach (var connector in Connectors)
-                connector.ParentEVSE = this;
+            if (Connectors != null)
+                foreach (var connector in Connectors)
+                    connector.ParentEVSE = this;
 
         }
 
