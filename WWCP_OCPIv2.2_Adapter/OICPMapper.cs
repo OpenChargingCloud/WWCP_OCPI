@@ -22,10 +22,9 @@ using org.GraphDefined.WWCP;
 
 using System;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+
+using WWCP = org.GraphDefined.WWCP;
 
 #endregion
 
@@ -37,6 +36,104 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// </summary>
     public static class OICPMapper
     {
+
+        #region AsWWCPEVSEStatus(this EVSEStatus)
+
+        /// <summary>
+        /// Convert an OCPI v2.0 EVSE status into a corresponding WWCP EVSE status.
+        /// </summary>
+        /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
+        /// <returns>The corresponding WWCP EVSE status.</returns>
+        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this OCPIv2_2.StatusTypes EVSEStatus)
+        {
+
+            switch (EVSEStatus)
+            {
+
+                case OCPIv2_2.StatusTypes.AVAILABLE:
+                    return WWCP.EVSEStatusTypes.Available;
+
+                case OCPIv2_2.StatusTypes.BLOCKED:
+                    return WWCP.EVSEStatusTypes.OutOfService;
+
+                case OCPIv2_2.StatusTypes.CHARGING:
+                    return WWCP.EVSEStatusTypes.Charging;
+
+                case OCPIv2_2.StatusTypes.INOPERATIVE:
+                    return WWCP.EVSEStatusTypes.OutOfService;
+
+                case OCPIv2_2.StatusTypes.OUTOFORDER:
+                    return WWCP.EVSEStatusTypes.Faulted;
+
+                //case OCPIv2_2.EVSEStatusType.Planned:
+                //    return WWCP.EVSEStatusTypes.Planned;
+
+                case OCPIv2_2.StatusTypes.REMOVED:
+                    return WWCP.EVSEStatusTypes.UnknownEVSE;
+
+                case OCPIv2_2.StatusTypes.RESERVED:
+                    return WWCP.EVSEStatusTypes.Reserved;
+
+                default:
+                    return WWCP.EVSEStatusTypes.Unspecified;
+
+            }
+
+        }
+
+        #endregion
+
+        #region AsOCPIEVSEStatus(this EVSEStatus)
+
+        /// <summary>
+        /// Convert an OCPI v2.0 EVSE status into a corresponding WWCP EVSE status.
+        /// </summary>
+        /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
+        /// <returns>The corresponding WWCP EVSE status.</returns>
+        public static OCPIv2_2.StatusTypes AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
+        {
+
+            switch (EVSEStatus)
+            {
+
+                //case WWCP.EVSEStatusTypes.Planned:
+                //    return OCPIv2_2.EVSEStatusType.Planned;
+
+                //case WWCP.EVSEStatusTypes.InDeployment:
+                //    return OCPIv2_2.EVSEStatusType.Planned;
+
+                case WWCP.EVSEStatusTypes.Available:
+                    return OCPIv2_2.StatusTypes.AVAILABLE;
+
+                case WWCP.EVSEStatusTypes.Charging:
+                    return OCPIv2_2.StatusTypes.CHARGING;
+
+                case WWCP.EVSEStatusTypes.Faulted:
+                    return OCPIv2_2.StatusTypes.OUTOFORDER;
+
+                case WWCP.EVSEStatusTypes.OutOfService:
+                    return OCPIv2_2.StatusTypes.INOPERATIVE;
+
+                case WWCP.EVSEStatusTypes.Offline:
+                    return OCPIv2_2.StatusTypes.UNKNOWN;
+
+                case WWCP.EVSEStatusTypes.Reserved:
+                    return OCPIv2_2.StatusTypes.RESERVED;
+
+                //case WWCP.EVSEStatusTypes.Private:
+                //    return OCPIv2_2.EVSEStatusType.Unknown;
+
+                case WWCP.EVSEStatusTypes.UnknownEVSE:
+                    return OCPIv2_2.StatusTypes.REMOVED;
+
+                default:
+                    return OCPIv2_2.StatusTypes.UNKNOWN;
+
+            }
+
+        }
+
+        #endregion
 
 
         public static IEnumerable<Location> ToOCPI(this IEnumerable<ChargingPool>  ChargingPools)

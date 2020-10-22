@@ -49,7 +49,9 @@
   <ItemGroup>
     <Compile Include="Common\CommonClientLogger.cs" />
     <Compile Include="Common\CommonClient.cs" />
+    <Compile Include="Common\CommonAPILogger.cs" />
     <Compile Include="CPO\CPOClient.cs" />
+    <Compile Include="CPO\CPOAPILogger.cs" />
     <Compile Include="DataTypes\Commands\ClearProfileResult.cs" />
     <Compile Include="DataTypes\Commands\ChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\RemoteAccessInfo.cs" />
@@ -80,8 +82,14 @@
     <Compile Include="DataTypes\Enums\CommandResponseTypes.cs" />
     <Compile Include="DataTypes\Enums\OpenSourceLicenses.cs" />
     <Compile Include="DataTypes\Enums\LegalStatus.cs" />
+    <Compile Include="EMSP\EMSPAPILogger.cs" />
+    <Compile Include="IO\OCPIAPILogger.cs" />
+    <Compile Include="IO\OCPIRequestLogHandler.cs" />
+    <Compile Include="IO\OCPIResponseLogHandler.cs" />
+    <Compile Include="IO\OCPIResponseLogEvent.cs" />
+    <Compile Include="IO\OCPIRequestLogEvent.cs" />
     <Compile Include="DataTypes\NonStandardAttribute.cs" />
-    <Compile Include="DataTypes\OCPIRequest.cs" />
+    <Compile Include="IO\OCPIRequest.cs" />
     <Compile Include="DataTypes\Enums\AccessStatus.cs" />
     <Compile Include="DataTypes\Complex\AccessInfo.cs" />
     <Compile Include="DataTypes\Complex\VersionEndpoint.cs" />
@@ -101,7 +109,7 @@
     <Compile Include="DataTypes\Complex\PublishTokenType.cs" />
     <Compile Include="DataTypes\Enums\ModuleIDs.cs" />
     <Compile Include="DataTypes\Enums\InterfaceRoles.cs" />
-    <Compile Include="DataTypes\OCPIResponse.cs" />
+    <Compile Include="IO\OCPIResponse.cs" />
     <Compile Include="DataTypes\Entities\Token.cs" />
     <Compile Include="DataTypes\Entities\CDR.cs" />
     <Compile Include="DataTypes\Entities\CDRLocation.cs" />
@@ -178,13 +186,11 @@
     <Compile Include="DataTypes\Complex\TariffElement.cs" />
     <Compile Include="DataTypes\Simple\Tariff_Id.cs" />
     <Compile Include="DataTypes\Entities\Tariff.cs" />
-    <Compile Include="CPO\CPOAPI\CPOAPI.cs" />
-    <Compile Include="EMSP\EMSPAPI\EMSPAPI.cs" />
+    <Compile Include="CPO\CPOAPI.cs" />
+    <Compile Include="EMSP\EMSPAPI.cs" />
     <Compile Include="Common\CommonAPI.cs" />
     <Compile Include="EMSP\EMSPClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\JSONHelper.cs" />
-    <Compile Include="Tools\OCPIMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BouncyCastle\crypto\crypto.csproj">
@@ -203,12 +209,6 @@
       <Project>{33836742-af1d-4aa4-963f-b0a8e60e6480}</Project>
       <Name>WWCP_Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="CPO\CPOAPI\HTTPRoot\_footer.html" />
-    <EmbeddedResource Include="CPO\CPOAPI\HTTPRoot\_header.html" />
-    <EmbeddedResource Include="EMSP\EMSPAPI\HTTPRoot\_footer.html" />
-    <EmbeddedResource Include="EMSP\EMSPAPI\HTTPRoot\_header.html" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

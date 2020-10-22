@@ -64,8 +64,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLAuthentication">Whether this method needs explicit uri authentication or not.</param>
         /// <param name="HTTPMethodAuthentication">Whether this method needs explicit HTTP method authentication or not.</param>
         /// <param name="ContentTypeAuthentication">Whether this method needs explicit HTTP content type authentication or not.</param>
-        /// <param name="HTTPRequestLogger">A HTTP request logger.</param>
-        /// <param name="HTTPResponseLogger">A HTTP response logger.</param>
+        /// <param name="OCPIRequestLogger">A OCPI request logger.</param>
+        /// <param name="OCPIResponseLogger">A OCPI response logger.</param>
         /// <param name="DefaultErrorHandler">The default error handler.</param>
         /// <param name="OCPIRequest">The method to call.</param>
         public static void AddOCPIMethod(this HTTPServer         HTTPServer,
@@ -76,8 +76,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          HTTPAuthentication      URLAuthentication           = null,
                                          HTTPAuthentication      HTTPMethodAuthentication    = null,
                                          HTTPAuthentication      ContentTypeAuthentication   = null,
-                                         HTTPRequestLogHandler   HTTPRequestLogger           = null,
-                                         HTTPResponseLogHandler  HTTPResponseLogger          = null,
+                                         OCPIRequestLogHandler   OCPIRequestLogger           = null,
+                                         OCPIResponseLogHandler  OCPIResponseLogger          = null,
                                          HTTPDelegate            DefaultErrorHandler         = null,
                                          OCPIRequestDelegate     OCPIRequest                 = null,
                                          URLReplacement          AllowReplacement            = URLReplacement.Fail)
@@ -91,10 +91,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          URLAuthentication,
                                          HTTPMethodAuthentication,
                                          ContentTypeAuthentication,
-                                         HTTPRequestLogger,
-                                         HTTPResponseLogger,
+                                         (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger (timestamp, null, HTTP.OCPIRequest.Parse(httpRequest)),
+                                         (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger(timestamp, null, httpRequest.SubprotocolRequest as OCPIRequest,
+                                                                                                                                httpResponse), //HTTP.OCPIResponse.Parse(httpRequest),
                                          DefaultErrorHandler,
-                                         httpRequest => OCPIRequest(HTTP.OCPIRequest.Parse(httpRequest)),
+                                         httpRequest => OCPIRequest(httpRequest.SubprotocolRequest is null
+                                                                        ? HTTP.OCPIRequest.Parse(httpRequest) // When no OCPIRequestLogger was used!
+                                                                        : httpRequest.SubprotocolRequest as OCPIRequest),
                                          AllowReplacement);
 
         }
@@ -195,6 +198,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             {
                 this.AccessToken = accessToken;
             }
+
+            this.HTTPRequest.SubprotocolRequest = this;
 
         }
 

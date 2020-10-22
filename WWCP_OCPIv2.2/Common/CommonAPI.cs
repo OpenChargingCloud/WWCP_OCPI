@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
     /// <summary>
-    /// The common HTTP API.
+    /// The Common API.
     /// </summary>
     public class CommonAPI : HTTPAPI
     {
@@ -97,6 +97,155 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
         #region Events
+
+        #region (protected internal) PostCredentialsRequest   (Request)
+
+        /// <summary>
+        /// An event sent whenever a post credentials request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostCredentialsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a post credentials request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostCredentialsRequest(DateTime     Timestamp,
+                                                       HTTPAPI      API,
+                                                       OCPIRequest  Request)
+
+            => OnPostCredentialsRequest?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request);
+
+        #endregion
+
+        #region (protected internal) PostCredentialsResponse  (Response)
+
+        /// <summary>
+        /// An event sent whenever a post credentials response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostCredentialsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a post credentials response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostCredentialsResponse(DateTime      Timestamp,
+                                                        HTTPAPI       API,
+                                                        OCPIRequest   Request,
+                                                        HTTPResponse  Response)
+
+            => OnPostCredentialsResponse?.WhenAll(Timestamp,
+                                                  API ?? this,
+                                                  Request,
+                                                  Response);
+
+        #endregion
+
+
+        #region (protected internal) PutCredentialsRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a put credentials request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPutCredentialsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put credentials request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PutCredentialsRequest(DateTime     Timestamp,
+                                                      HTTPAPI      API,
+                                                      OCPIRequest  Request)
+
+            => OnPutCredentialsRequest?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
+
+        #endregion
+
+        #region (protected internal) PutCredentialsResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a put credentials response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPutCredentialsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put credentials response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PutCredentialsResponse(DateTime      Timestamp,
+                                                       HTTPAPI       API,
+                                                       OCPIRequest   Request,
+                                                       HTTPResponse  Response)
+
+            => OnPutCredentialsResponse?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteCredentialsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete credentials request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete credentials request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteCredentialsRequest(DateTime     Timestamp,
+                                                         HTTPAPI      API,
+                                                         OCPIRequest  Request)
+
+            => OnDeleteCredentialsRequest?.WhenAll(Timestamp,
+                                                   API ?? this,
+                                                   Request);
+
+        #endregion
+
+        #region (protected internal) DeleteCredentialsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete credentials response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete credentials response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The Common API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteCredentialsResponse(DateTime      Timestamp,
+                                                          HTTPAPI       API,
+                                                          OCPIRequest   Request,
+                                                          HTTPResponse  Response)
+
+            => OnDeleteCredentialsResponse?.WhenAll(Timestamp,
+                                                    API ?? this,
+                                                    Request,
+                                                    Response);
+
+        #endregion
 
         #endregion
 
@@ -753,7 +902,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.POST,
                                      URLPathPrefix + "2.2/credentials",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PostCredentialsRequest,
+                                     OCPIResponseLogger:  PostCredentialsResponse,
+                                     OCPIRequest:   async Request => {
 
                                          var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
@@ -816,7 +967,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "2.2/credentials",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PutCredentialsRequest,
+                                     OCPIResponseLogger:  PutCredentialsResponse,
+                                     OCPIRequest:   async Request => {
 
                                          if (Request.AccessToken.HasValue &&
                                              AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
@@ -877,7 +1030,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "2.2/credentials",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestLogger:   DeleteCredentialsRequest,
+                                     OCPIResponseLogger:  DeleteCredentialsResponse,
+                                     OCPIRequest:   async Request => {
 
                                          if (Request.AccessToken.HasValue &&
                                              AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
@@ -887,67 +1042,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Validations
 
                                              if (accessInfo.VersionsURL.HasValue)
-                                                 return Task.FromResult(
-                                                     new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                         HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                         Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
-                                                         AccessControlAllowOrigin   = "*",
-                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                         AccessControlAllowHeaders  = "Authorization",
-                                                         ContentType                = HTTPContentType.JSON_UTF8,
-                                                         Content                    = OCPIResponse.Create(
-                                                                                         2000,
-                                                                                         "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!"
-                                                                                     ).ToUTF8Bytes(),
-                                                         Connection                 = "close"
-                                                     }.Set("X-Request-ID",      Request.RequestId).
-                                                       Set("X-Correlation-ID",  Request.CorrelationId).
-                                                       AsImmutable);
+                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = OCPIResponse.Create(
+                                                                                            2000,
+                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!"
+                                                                                        ).ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.Set("X-Request-ID",      Request.RequestId).
+                                                          Set("X-Correlation-ID",  Request.CorrelationId);
 
                                              #endregion
 
 
+                                             //ToDo: await...
                                              RemoveAccessToken(Request.AccessToken.Value);
 
 
-                                             return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = OCPIResponse.Create(
-                                                                                      1000,
-                                                                                      "The given access token was deleted!"
-                                                                                 ).ToUTF8Bytes(),
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        Server                     = HTTPServer.DefaultServerName,
+                                                        Date                       = DateTime.UtcNow,
+                                                        AccessControlAllowOrigin   = "*",
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization",
+                                                        ContentType                = HTTPContentType.JSON_UTF8,
+                                                        Content                    = OCPIResponse.Create(
+                                                                                         1000,
+                                                                                         "The given access token was deleted!"
+                                                                                    ).ToUTF8Bytes(),
+                                                        Connection                 = "close"
+                                                    }.Set("X-Request-ID",      Request.RequestId).
+                                                      Set("X-Correlation-ID",  Request.CorrelationId);
 
                                          }
 
-                                         return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                 Content                    = OCPIResponse.Create(
-                                                                                  2000,
-                                                                                  "You need to be registered before trying to invoke this protected method."
-                                                                             ).ToUTF8Bytes(),
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                    Server                     = HTTPServer.DefaultServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse.Create(
+                                                                                     2000,
+                                                                                     "You need to be registered before trying to invoke this protected method."
+                                                                                ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
 
                                      });
 
@@ -1479,7 +1629,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryGetLocation(CountryCode, PartyId, LocationId,, out Location)
+        #region LocationExists(CountryCode, PartyId, LocationId)
+
+        public Boolean LocationExists(CountryCode   CountryCode,
+                                      Party_Id      PartyId,
+                                      Location_Id   LocationId)
+        {
+
+            lock (Locations)
+            {
+
+                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
+                    {
+                        return locations.ContainsKey(LocationId);
+                    }
+                }
+
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region TryGetLocation(CountryCode, PartyId, LocationId, out Location)
 
         public Boolean TryGetLocation(CountryCode   CountryCode,
                                       Party_Id      PartyId,
@@ -1508,7 +1684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GetLocations(CountryCode = null, PartyId = null)
+        #region GetLocations  (CountryCode = null, PartyId = null)
 
         public IEnumerable<Location> GetLocations(CountryCode? CountryCode  = null,
                                                   Party_Id?    PartyId      = null)
@@ -1816,7 +1992,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryGetTariff(CountryCode, PartyId, TariffId,, out Tariff)
+        #region TariffExists(CountryCode, PartyId, TariffId)
+
+        public Boolean TariffExists(CountryCode  CountryCode,
+                                    Party_Id     PartyId,
+                                    Tariff_Id    TariffId)
+        {
+
+            lock (Tariffs)
+            {
+
+                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    {
+                        return tariffs.ContainsKey(TariffId);
+                    }
+                }
+
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region TryGetTariff(CountryCode, PartyId, TariffId, out Tariff)
 
         public Boolean TryGetTariff(CountryCode   CountryCode,
                                       Party_Id      PartyId,
@@ -1845,7 +2047,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GetTariffs(CountryCode = null, PartyId = null)
+        #region GetTariffs  (CountryCode = null, PartyId = null)
 
         public IEnumerable<Tariff> GetTariffs(CountryCode? CountryCode  = null,
                                                   Party_Id?    PartyId      = null)
@@ -2153,12 +2355,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryGetSession(CountryCode, PartyId, SessionId,, out Session)
+        #region SessionExists(CountryCode, PartyId, SessionId)
 
-        public Boolean TryGetSession(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Session_Id   SessionId,
-                                      out Session  Session)
+        public Boolean SessionExists(CountryCode  CountryCode,
+                                     Party_Id     PartyId,
+                                     Session_Id   SessionId)
+        {
+
+            lock (Sessions)
+            {
+
+                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
+                    {
+                        return sessions.ContainsKey(SessionId);
+                    }
+                }
+
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region TryGetSession(CountryCode, PartyId, SessionId, out Session)
+
+        public Boolean TryGetSession(CountryCode  CountryCode,
+                                     Party_Id     PartyId,
+                                     Session_Id   SessionId,
+                                     out Session  Session)
         {
 
             lock (Sessions)
@@ -2182,7 +2410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GetSessions(CountryCode = null, PartyId = null)
+        #region GetSessions  (CountryCode = null, PartyId = null)
 
         public IEnumerable<Session> GetSessions(CountryCode? CountryCode  = null,
                                                   Party_Id?    PartyId      = null)
@@ -2466,6 +2694,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region TokenExists(CountryCode, PartyId, TokenId)
+
+        public Boolean TokenExists(CountryCode  CountryCode,
+                                   Party_Id     PartyId,
+                                   Token_Id     TokenId)
+        {
+
+            lock (Tokens)
+            {
+
+                if (Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                    {
+                        return tokens.ContainsKey(TokenId);
+                    }
+                }
+
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
         #region TryGetToken(CountryCode, PartyId, TokenId, out TokenWithStatus)
 
         public Boolean TryGetToken(CountryCode      CountryCode,
@@ -2495,7 +2749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GetTokens(CountryCode = null, PartyId = null)
+        #region GetTokens  (CountryCode = null, PartyId = null)
 
         public IEnumerable<TokenStatus> GetTokens(CountryCode?  CountryCode   = null,
                                                   Party_Id?     PartyId       = null)
@@ -2840,7 +3094,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryGetCDR(CountryCode, PartyId, CDRId,, out CDR)
+        #region CDRExists(CountryCode, PartyId, CDRId)
+
+        public Boolean CDRExists(CountryCode  CountryCode,
+                                 Party_Id     PartyId,
+                                 CDR_Id       CDRId)
+        {
+
+            lock (CDRs)
+            {
+
+                if (CDRs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                {
+                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                    {
+                        return partyCDRs.ContainsKey(CDRId);
+                    }
+                }
+
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region TryGetCDR(CountryCode, PartyId, CDRId, out CDR)
 
         public Boolean TryGetCDR(CountryCode  CountryCode,
                                  Party_Id     PartyId,
@@ -2869,7 +3149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region GetCDRs(CountryCode = null, PartyId = null)
+        #region GetCDRs  (CountryCode = null, PartyId = null)
 
         public IEnumerable<CDR> GetCDRs(CountryCode?  CountryCode   = null,
                                         Party_Id?     PartyId       = null)

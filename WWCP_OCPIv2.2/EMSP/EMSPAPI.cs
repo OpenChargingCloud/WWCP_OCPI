@@ -2076,6 +2076,1072 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region Events
+
+        #region (protected internal) DeleteLocationsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete locations request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteLocationsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete locations request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteLocationsRequest(DateTime     Timestamp,
+                                                       HTTPAPI      API,
+                                                       OCPIRequest  Request)
+
+            => OnDeleteLocationsRequest?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request);
+
+        #endregion
+
+        #region (protected internal) DeleteLocationsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete locations response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteLocationsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete locations response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteLocationsResponse(DateTime      Timestamp,
+                                                        HTTPAPI       API,
+                                                        OCPIRequest   Request,
+                                                        HTTPResponse  Response)
+
+            => OnDeleteLocationsResponse?.WhenAll(Timestamp,
+                                                  API ?? this,
+                                                  Request,
+                                                  Response);
+
+        #endregion
+
+
+
+        #region (protected internal) PutLocationRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a put location request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPutLocationRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put location request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PutLocationRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnPutLocationRequest?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
+
+        #endregion
+
+        #region (protected internal) PutLocationResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a put location response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPutLocationResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put location response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PutLocationResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    HTTPResponse  Response)
+
+            => OnPutLocationResponse?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
+
+        #endregion
+
+
+        #region (protected internal) PatchLocationRequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a patch location request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPatchLocationRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch location request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PatchLocationRequest(DateTime     Timestamp,
+                                                     HTTPAPI      API,
+                                                     OCPIRequest  Request)
+
+            => OnPatchLocationRequest?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
+
+        #endregion
+
+        #region (protected internal) PatchLocationResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a patch location response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPatchLocationResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch location response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PatchLocationResponse(DateTime      Timestamp,
+                                                      HTTPAPI       API,
+                                                      OCPIRequest   Request,
+                                                      HTTPResponse  Response)
+
+            => OnPatchLocationResponse?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteLocationRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete location request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteLocationRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete location request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteLocationRequest(DateTime     Timestamp,
+                                                      HTTPAPI      API,
+                                                      OCPIRequest  Request)
+
+            => OnDeleteLocationRequest?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
+
+        #endregion
+
+        #region (protected internal) DeleteLocationResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete location response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteLocationResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete location response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteLocationResponse(DateTime      Timestamp,
+                                                       HTTPAPI       API,
+                                                       OCPIRequest   Request,
+                                                       HTTPResponse  Response)
+
+            => OnDeleteLocationResponse?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
+
+        #endregion
+
+
+
+        #region (protected internal) PutEVSERequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a put EVSE request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPutEVSERequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put EVSE request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PutEVSERequest(DateTime     Timestamp,
+                                               HTTPAPI      API,
+                                               OCPIRequest  Request)
+
+            => OnPutEVSERequest?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request);
+
+        #endregion
+
+        #region (protected internal) PutEVSEResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a put EVSE response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPutEVSEResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put EVSE response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PutEVSEResponse(DateTime      Timestamp,
+                                                HTTPAPI       API,
+                                                OCPIRequest   Request,
+                                                HTTPResponse  Response)
+
+            => OnPutEVSEResponse?.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request,
+                                          Response);
+
+        #endregion
+
+
+        #region (protected internal) PatchEVSERequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a patch EVSE request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPatchEVSERequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch EVSE request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PatchEVSERequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnPatchEVSERequest?.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) PatchEVSEResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a patch EVSE response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPatchEVSEResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch EVSE response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PatchEVSEResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  HTTPResponse  Response)
+
+            => OnPatchEVSEResponse?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteEVSERequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete EVSE request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteEVSERequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete EVSE request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteEVSERequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnDeleteEVSERequest?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) DeleteEVSEResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete EVSE response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteEVSEResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete EVSE response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteEVSEResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   HTTPResponse  Response)
+
+            => OnDeleteEVSEResponse?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+
+        #region (protected internal) PutConnectorRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a put connector request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPutConnectorRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put connector request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PutConnectorRequest(DateTime     Timestamp,
+                                                    HTTPAPI      API,
+                                                    OCPIRequest  Request)
+
+            => OnPutConnectorRequest?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
+
+        #endregion
+
+        #region (protected internal) PutConnectorResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a put connector response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPutConnectorResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put connector response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PutConnectorResponse(DateTime      Timestamp,
+                                                     HTTPAPI       API,
+                                                     OCPIRequest   Request,
+                                                     HTTPResponse  Response)
+
+            => OnPutConnectorResponse?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
+
+        #endregion
+
+
+        #region (protected internal) PatchConnectorRequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a patch connector request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPatchConnectorRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch connector request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PatchConnectorRequest(DateTime     Timestamp,
+                                                      HTTPAPI      API,
+                                                      OCPIRequest  Request)
+
+            => OnPatchConnectorRequest?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
+
+        #endregion
+
+        #region (protected internal) PatchConnectorResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a patch connector response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPatchConnectorResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch connector response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PatchConnectorResponse(DateTime      Timestamp,
+                                                       HTTPAPI       API,
+                                                       OCPIRequest   Request,
+                                                       HTTPResponse  Response)
+
+            => OnPatchConnectorResponse?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteConnectorRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete connector request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteConnectorRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete connector request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteConnectorRequest(DateTime     Timestamp,
+                                                       HTTPAPI      API,
+                                                       OCPIRequest  Request)
+
+            => OnDeleteConnectorRequest?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request);
+
+        #endregion
+
+        #region (protected internal) DeleteConnectorResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete connector response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteConnectorResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete connector response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteConnectorResponse(DateTime      Timestamp,
+                                                        HTTPAPI       API,
+                                                        OCPIRequest   Request,
+                                                        HTTPResponse  Response)
+
+            => OnDeleteConnectorResponse?.WhenAll(Timestamp,
+                                                  API ?? this,
+                                                  Request,
+                                                  Response);
+
+        #endregion
+
+
+
+
+        #region (protected internal) DeleteTariffsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete tariffs request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteTariffsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete tariffs request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteTariffsRequest(DateTime     Timestamp,
+                                                     HTTPAPI      API,
+                                                     OCPIRequest  Request)
+
+            => OnDeleteTariffsRequest?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
+
+        #endregion
+
+        #region (protected internal) DeleteTariffsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete tariffs response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteTariffsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete tariffs response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteTariffsResponse(DateTime      Timestamp,
+                                                      HTTPAPI       API,
+                                                      OCPIRequest   Request,
+                                                      HTTPResponse  Response)
+
+            => OnDeleteTariffsResponse?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
+
+        #endregion
+
+
+
+        #region (protected internal) PutTariffRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a put tariff request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPutTariffRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put tariff request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PutTariffRequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnPutTariffRequest?.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) PutTariffResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a put tariff response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPutTariffResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put tariff response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PutTariffResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  HTTPResponse  Response)
+
+            => OnPutTariffResponse?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteTariffRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete tariff request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteTariffRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete tariff request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteTariffRequest(DateTime     Timestamp,
+                                                    HTTPAPI      API,
+                                                    OCPIRequest  Request)
+
+            => OnDeleteTariffRequest?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
+
+        #endregion
+
+        #region (protected internal) DeleteTariffResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete tariff response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteTariffResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete tariff response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteTariffResponse(DateTime      Timestamp,
+                                                     HTTPAPI       API,
+                                                     OCPIRequest   Request,
+                                                     HTTPResponse  Response)
+
+            => OnDeleteTariffResponse?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
+
+        #endregion
+
+
+
+
+        #region (protected internal) DeleteSessionsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete sessions request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteSessionsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete sessions request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteSessionsRequest(DateTime     Timestamp,
+                                                      HTTPAPI      API,
+                                                      OCPIRequest  Request)
+
+            => OnDeleteSessionsRequest?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request);
+
+        #endregion
+
+        #region (protected internal) DeleteSessionsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete sessions response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteSessionsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete sessions response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteSessionsResponse(DateTime      Timestamp,
+                                                       HTTPAPI       API,
+                                                       OCPIRequest   Request,
+                                                       HTTPResponse  Response)
+
+            => OnDeleteSessionsResponse?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request,
+                                                 Response);
+
+        #endregion
+
+
+
+        #region (protected internal) PutSessionRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a put session request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPutSessionRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put session request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PutSessionRequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnPutSessionRequest?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) PutSessionResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a put session response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPutSessionResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a put session response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PutSessionResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   HTTPResponse  Response)
+
+            => OnPutSessionResponse?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+        #region (protected internal) PatchSessionRequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a patch session request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPatchSessionRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch session request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PatchSessionRequest(DateTime     Timestamp,
+                                                    HTTPAPI      API,
+                                                    OCPIRequest  Request)
+
+            => OnPatchSessionRequest?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
+
+        #endregion
+
+        #region (protected internal) PatchSessionResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a patch session response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPatchSessionResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch session response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PatchSessionResponse(DateTime      Timestamp,
+                                                     HTTPAPI       API,
+                                                     OCPIRequest   Request,
+                                                     HTTPResponse  Response)
+
+            => OnPatchSessionResponse?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteSessionRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete session request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteSessionRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete session request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteSessionRequest(DateTime     Timestamp,
+                                                     HTTPAPI      API,
+                                                     OCPIRequest  Request)
+
+            => OnDeleteSessionRequest?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request);
+
+        #endregion
+
+        #region (protected internal) DeleteSessionResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete session response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteSessionResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete session response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteSessionResponse(DateTime      Timestamp,
+                                                      HTTPAPI       API,
+                                                      OCPIRequest   Request,
+                                                      HTTPResponse  Response)
+
+            => OnDeleteSessionResponse?.WhenAll(Timestamp,
+                                                API ?? this,
+                                                Request,
+                                                Response);
+
+        #endregion
+
+
+
+
+        #region (protected internal) DeleteCDRsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete CDRs request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteCDRsRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete CDRs request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteCDRsRequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnDeleteCDRsRequest?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) DeleteCDRsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete CDRs response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteCDRsResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete CDRs response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteCDRsResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   HTTPResponse  Response)
+
+            => OnDeleteCDRsResponse?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+        #region (protected internal) PostCDRRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a post CDR request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostCDRRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a post CDR request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostCDRRequest(DateTime     Timestamp,
+                                               HTTPAPI      API,
+                                               OCPIRequest  Request)
+
+            => OnPostCDRRequest?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request);
+
+        #endregion
+
+        #region (protected internal) PostCDRResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a post CDR response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostCDRResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a post CDR response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostCDRResponse(DateTime      Timestamp,
+                                                HTTPAPI       API,
+                                                OCPIRequest   Request,
+                                                HTTPResponse  Response)
+
+            => OnPostCDRResponse?.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request,
+                                          Response);
+
+        #endregion
+
+
+        #region (protected internal) DeleteCDRRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a delete CDR request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnDeleteCDRRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete CDR request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task DeleteCDRRequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnDeleteCDRRequest?.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) DeleteCDRResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a delete CDR response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnDeleteCDRResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a delete CDR response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task DeleteCDRResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  HTTPResponse  Response)
+
+            => OnDeleteCDRResponse?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
+
+
+
+        #region (protected internal) PostTokenRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a post token request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostTokenRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a post token request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostTokenRequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnPostTokenRequest?.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) PostTokenResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a post token response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostTokenResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a post token response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostTokenResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  HTTPResponse  Response)
+
+            => OnPostTokenResponse?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
+        #endregion
+
         #region Constructor(s)
 
         /// <summary>
@@ -2234,9 +3300,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   DeleteLocationsRequest,
+                                     OCPIResponseLogger:  DeleteLocationsResponse,
+                                     OCPIRequest:   async Request => {
 
-                                         #region Check Location(Id URI parameter)
+                                         #region Check CountryCode & PartyId
 
                                          if (!Request.ParseCountryCodeAndPartyId(this,
                                                                                  out CountryCode?          CountryCode,
@@ -2326,7 +3394,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PutLocationRequest,
+                                     OCPIResponseLogger:  PutLocationResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check existing location
 
@@ -2398,10 +3468,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
+                                         var wasCreated = CommonAPI.LocationExists(newOrUpdatedLocation.CountryCode,
+                                                                                   newOrUpdatedLocation.PartyId,
+                                                                                   newOrUpdatedLocation.Id);
+
+
                                          //ToDo: Handle AddOrUpdate errors
                                          CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation);
 
-                                         var wasCreated = true;
 
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -2435,7 +3509,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PatchLocationRequest,
+                                     OCPIResponseLogger:  PatchLocationResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check location
 
@@ -2462,7 +3538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
-                                         //ToDo: Handle update errors
+                                         //ToDo: await..., handle update errors!
                                          CommonAPI.UpdateLocation(patchedLocation);
 
 
@@ -2493,7 +3569,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   DeleteLocationRequest,
+                                     OCPIResponseLogger:  DeleteLocationResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check existing location
 
@@ -2510,6 +3588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
+                                         //ToDo: await...
                                          CommonAPI.RemoveLocation(ExistingLocation);
 
 
@@ -2595,7 +3674,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PutEVSERequest,
+                                     OCPIResponseLogger:  PutEVSEResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check existing EVSE
 
@@ -2696,7 +3777,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PatchEVSERequest,
+                                     OCPIResponseLogger:  PatchEVSEResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check EVSE
 
@@ -2756,7 +3839,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   DeleteEVSERequest,
+                                     OCPIResponseLogger:  DeleteEVSEResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check existing Location/EVSE(UId URI parameter)
 
@@ -2862,7 +3947,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PutConnectorRequest,
+                                     OCPIResponseLogger:  PutConnectorResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check connector
 
@@ -2962,114 +4049,118 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region PATCH   ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.PATCH,
-                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequest: async Request => {
+                                     HTTPMethod.PATCH,
+                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   PatchConnectorRequest,
+                                     OCPIResponseLogger:  PatchConnectorResponse,
+                                     OCPIRequest:   async Request => {
 
-                                             #region Check connector
+                                         #region Check connector
 
-                                             if (!Request.ParseLocationEVSEConnector(this,
-                                                                                     out CountryCode?          CountryCode,
-                                                                                     out Party_Id?             PartyId,
-                                                                                     out Location_Id?          LocationId,
-                                                                                     out Location              OldLocation,
-                                                                                     out EVSE_UId?             EVSEUId,
-                                                                                     out EVSE                  OldEVSE,
-                                                                                     out Connector_Id?         ConnectorId,
-                                                                                     out Connector             ExistingConnector,
-                                                                                     out HTTPResponse.Builder  HTTPResponse,
-                                                                                     FailOnMissingConnector: true))
-                                             {
-                                                 return HTTPResponse;
-                                             }
+                                         if (!Request.ParseLocationEVSEConnector(this,
+                                                                                 out CountryCode?          CountryCode,
+                                                                                 out Party_Id?             PartyId,
+                                                                                 out Location_Id?          LocationId,
+                                                                                 out Location              OldLocation,
+                                                                                 out EVSE_UId?             EVSEUId,
+                                                                                 out EVSE                  OldEVSE,
+                                                                                 out Connector_Id?         ConnectorId,
+                                                                                 out Connector             ExistingConnector,
+                                                                                 out HTTPResponse.Builder  HTTPResponse,
+                                                                                 FailOnMissingConnector: true))
+                                         {
+                                             return HTTPResponse;
+                                         }
 
-                                             #endregion
+                                         #endregion
 
-                                             #region Parse and apply Connector JSON patch
+                                         #region Parse and apply Connector JSON patch
 
-                                             if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
-                                                 return HTTPResponse;
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out HTTPResponse))
+                                             return HTTPResponse;
 
-                                             var patchedConnector = ExistingConnector.Patch(JSONPatch);
+                                         var patchedConnector = ExistingConnector.Patch(JSONPatch);
 
-                                             #endregion
-
-
-                                             //ToDo: Handle update errors
-                                             //CommonAPI.UpdateConnector(patchedConnector);
+                                         #endregion
 
 
-                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        Server                     = DefaultHTTPServerName,
-                                                        Date                       = DateTime.UtcNow,
-                                                        AccessControlAllowOrigin   = "*",
-                                                        AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        ContentType                = HTTPContentType.JSON_UTF8,
-                                                        Content                    = OCPIResponse<Connector>.Create(
-                                                                                         patchedConnector,
-                                                                                         connector => connector.ToJSON(),
-                                                                                         1000,
-                                                                                         "Hello world!"
-                                                                                     ).ToUTF8Bytes(),
-                                                        Connection                 = "close"
-                                                    };
+                                         //ToDo: Handle update errors
+                                         //CommonAPI.UpdateConnector(patchedConnector);
 
-                                         });
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse<Connector>.Create(
+                                                                                     patchedConnector,
+                                                                                     connector => connector.ToJSON(),
+                                                                                     1000,
+                                                                                     "Hello world!"
+                                                                                 ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                };
+
+                                     });
 
             #endregion
 
             #region DELETE  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}       [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.DELETE,
-                                         URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequest: async Request => {
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteConnectorRequest,
+                                     OCPIResponseLogger:  DeleteConnectorResponse,
+                                     OCPIRequest:   async Request => {
 
-                                             #region Check existing Location/EVSE/Connector(UId URI parameter)
+                                         #region Check existing Location/EVSE/Connector(UId URI parameter)
 
-                                             if (!Request.ParseLocationEVSEConnector(this,
-                                                                                     out CountryCode?          CountryCode,
-                                                                                     out Party_Id?             PartyId,
-                                                                                     out Location_Id?          LocationId,
-                                                                                     out Location              ExistingLocation,
-                                                                                     out EVSE_UId?             EVSEUId,
-                                                                                     out EVSE                  ExistingEVSE,
-                                                                                     out Connector_Id?         ConnectorId,
-                                                                                     out Connector             ExistingConnector,
-                                                                                     out HTTPResponse.Builder  HTTPResponse))
-                                             {
-                                                 return HTTPResponse;
-                                             }
+                                         if (!Request.ParseLocationEVSEConnector(this,
+                                                                                 out CountryCode?          CountryCode,
+                                                                                 out Party_Id?             PartyId,
+                                                                                 out Location_Id?          LocationId,
+                                                                                 out Location              ExistingLocation,
+                                                                                 out EVSE_UId?             EVSEUId,
+                                                                                 out EVSE                  ExistingEVSE,
+                                                                                 out Connector_Id?         ConnectorId,
+                                                                                 out Connector             ExistingConnector,
+                                                                                 out HTTPResponse.Builder  HTTPResponse))
+                                         {
+                                             return HTTPResponse;
+                                         }
 
-                                             #endregion
-
-
-                                             //CommonAPI.Remove(ExistingLocation, ExistingEVSE);
+                                         #endregion
 
 
-                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        Server                     = DefaultHTTPServerName,
-                                                        Date                       = DateTime.UtcNow,
-                                                        AccessControlAllowOrigin   = "*",
-                                                        AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        ContentType                = HTTPContentType.JSON_UTF8,
-                                                        Content                    = OCPIResponse<Connector>.Create(
-                                                                                         ExistingConnector,
-                                                                                         location => location.ToJSON(),
-                                                                                         1000,
-                                                                                         "Hello world!"
-                                                                                     ).ToUTF8Bytes(),
-                                                        LastModified               = ExistingConnector.LastUpdated.ToIso8601(),
-                                                        Connection                 = "close"
-                                                    };
+                                         //CommonAPI.Remove(ExistingLocation, ExistingEVSE);
 
-                                         });
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse<Connector>.Create(
+                                                                                     ExistingConnector,
+                                                                                     location => location.ToJSON(),
+                                                                                     1000,
+                                                                                     "Hello world!"
+                                                                                 ).ToUTF8Bytes(),
+                                                    LastModified               = ExistingConnector.LastUpdated.ToIso8601(),
+                                                    Connection                 = "close"
+                                                };
+
+                                     });
 
             #endregion
 
@@ -3146,6 +4237,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE  ~/tariffs/{country_code}/{party_id}             [NonStandard]
 
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteTariffsRequest,
+                                     OCPIResponseLogger:  DeleteTariffsResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check CountryCode & PartyId
+
+                                         if (!Request.ParseCountryCodeAndPartyId(this,
+                                                                                 out CountryCode?          CountryCode,
+                                                                                 out Party_Id?             PartyId,
+                                                                                 out HTTPResponse.Builder  HTTPResponse))
+                                         {
+                                             return HTTPResponse;
+                                         }
+
+                                         #endregion
+
+
+                                         CommonAPI.RemoveAllTariffs(CountryCode.Value,
+                                                                    PartyId.    Value);
+
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    Connection                 = "close"
+                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                     });
+
             #endregion
 
             #endregion
@@ -3205,7 +4334,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PutTariffRequest,
+                                     OCPIResponseLogger:  PutTariffResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check existing tariff
 
@@ -3269,10 +4400,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
+                                         var wasCreated = CommonAPI.TariffExists(newOrUpdatedTariff.CountryCode,
+                                                                                 newOrUpdatedTariff.PartyId,
+                                                                                 newOrUpdatedTariff.Id);
+
                                          //ToDo: Handle AddOrUpdate errors
                                          CommonAPI.AddOrUpdateTariff(newOrUpdatedTariff);
-
-                                         var wasCreated = true;
 
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3300,6 +4433,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
             #region DELETE  ~/tariffs/{country_code}/{party_id}/{tariffId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteTariffRequest,
+                                     OCPIResponseLogger:  DeleteTariffResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check existing tariff
+
+                                         if (!Request.ParseTariff(this,
+                                                                  out CountryCode?          CountryCode,
+                                                                  out Party_Id?             PartyId,
+                                                                  out Tariff_Id?            TariffId,
+                                                                  out Tariff                ExistingTariff,
+                                                                  out HTTPResponse.Builder  HTTPResponse,
+                                                                  FailOnMissingTariff:      true))
+                                         {
+                                             return HTTPResponse;
+                                         }
+
+                                         #endregion
+
+
+                                         //ToDo: await...
+                                         CommonAPI.RemoveTariff(ExistingTariff);
+
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse<Tariff>.Create(
+                                                                                     ExistingTariff,
+                                                                                     tariff => tariff.ToJSON(),
+                                                                                     1000,
+                                                                                     "Hello world!"
+                                                                                 ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                };
+
+                                     });
 
             #endregion
 
@@ -3376,6 +4556,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE  ~/sessions/{country_code}/{party_id}                [NonStandard]
 
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "sessions/{country_code}/{party_id}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteSessionsRequest,
+                                     OCPIResponseLogger:  DeleteSessionsResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check CountryCode & PartyId
+
+                                         if (!Request.ParseCountryCodeAndPartyId(this,
+                                                                                 out CountryCode?          CountryCode,
+                                                                                 out Party_Id?             PartyId,
+                                                                                 out HTTPResponse.Builder  HTTPResponse))
+                                         {
+                                             return HTTPResponse;
+                                         }
+
+                                         #endregion
+
+
+                                         CommonAPI.RemoveAllSessions(CountryCode.Value,
+                                                                     PartyId.    Value);
+
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    Connection                 = "close"
+                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                     });
+
             #endregion
 
             #endregion
@@ -3390,14 +4608,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
-                                         #region Check Session(Id URI parameter)
+                                         #region Check existing session
 
                                          if (!Request.ParseSession(this,
                                                                    out CountryCode?          CountryCode,
                                                                    out Party_Id?             PartyId,
                                                                    out Session_Id?           SessionId,
-                                                                   out Session               Session,
-                                                                   out HTTPResponse.Builder  HTTPResponse))
+                                                                   out Session               ExistingSession,
+                                                                   out HTTPResponse.Builder  HTTPResponse,
+                                                                   FailOnMissingSession: true))
                                          {
                                              return Task.FromResult(HTTPResponse.AsImmutable);
                                          }
@@ -3415,7 +4634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  AccessControlAllowHeaders  = "Authorization",
                                                  ContentType                = HTTPContentType.JSON_UTF8,
                                                  Content                    = OCPIResponse<Session>.Create(
-                                                                                  Session,
+                                                                                  ExistingSession,
                                                                                   session => session.ToJSON(),
                                                                                   1000,
                                                                                   "Hello world!"
@@ -3435,7 +4654,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PutSessionRequest,
+                                     OCPIResponseLogger:  PutSessionResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check existing session
 
@@ -3500,10 +4721,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
+                                         var wasCreated = CommonAPI.SessionExists(newOrUpdatedSession.CountryCode,
+                                                                                  newOrUpdatedSession.PartyId,
+                                                                                  newOrUpdatedSession.Id);
+
                                          //ToDo: Handle AddOrUpdate errors
                                          CommonAPI.AddOrUpdateSession(newOrUpdatedSession);
-
-                                         var wasCreated = true;
 
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -3536,7 +4759,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PatchSessionRequest,
+                                     OCPIResponseLogger:  PatchSessionResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check session
 
@@ -3590,6 +4815,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
             #region DELETE  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteSessionRequest,
+                                     OCPIResponseLogger:  DeleteSessionResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check existing session
+
+                                         if (!Request.ParseSession(this,
+                                                                   out CountryCode?          CountryCode,
+                                                                   out Party_Id?             PartyId,
+                                                                   out Session_Id?           SessionId,
+                                                                   out Session               ExistingSession,
+                                                                   out HTTPResponse.Builder  HTTPResponse,
+                                                                   FailOnMissingSession: true))
+                                         {
+                                             return HTTPResponse;
+                                         }
+
+                                         #endregion
+
+
+                                         //ToDo: await...
+                                         CommonAPI.RemoveSession(ExistingSession);
+
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse<Session>.Create(
+                                                                                     ExistingSession,
+                                                                                     session => session.ToJSON(),
+                                                                                     1000,
+                                                                                     "Hello world!"
+                                                                                 ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                };
+
+                                     });
 
             #endregion
 
@@ -3674,7 +4946,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.POST,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PostCDRRequest,
+                                     OCPIResponseLogger:  PostCDRResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check CountryCode & PartyId URI parameter
 
@@ -3725,8 +4999,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          // ToDo: What kind of error might happen here?
                                          CommonAPI.AddCDR(newCDR);
 
-                                         var wasCreated = true;
-
 
                                          return new HTTPResponse.Builder(Request.HTTPRequest) {
                                                     HTTPStatusCode             = HTTPStatusCode.Created,
@@ -3752,6 +5024,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE  ~/cdrs/{country_code}/{party_id}            [NonStandard]
 
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteCDRsRequest,
+                                     OCPIResponseLogger:  DeleteCDRsResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check CountryCode & PartyId
+
+                                         if (!Request.ParseCountryCodeAndPartyId(this,
+                                                                                 out CountryCode?          CountryCode,
+                                                                                 out Party_Id?             PartyId,
+                                                                                 out HTTPResponse.Builder  HTTPResponse))
+                                         {
+                                             return HTTPResponse;
+                                         }
+
+                                         #endregion
+
+
+                                         CommonAPI.RemoveAllCDRs(CountryCode.Value,
+                                                                 PartyId.    Value);
+
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    Connection                 = "close"
+                                                }.Set("X-Request-ID",      Request.RequestId).
+                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+
+                                     });
+
             #endregion
 
             #endregion
@@ -3766,14 +5076,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: async Request => {
 
-                                         #region Check CDR(Id URI parameter)
+                                         #region Check existing CDR
 
                                          if (!Request.ParseCDR(this,
                                                                out CountryCode?          CountryCode,
                                                                out Party_Id?             PartyId,
                                                                out CDR_Id?               CDRId,
-                                                               out CDR                   CDR,
-                                                               out HTTPResponse.Builder  HTTPResponse))
+                                                               out CDR                   ExistingCDR,
+                                                               out HTTPResponse.Builder  HTTPResponse,
+                                                               FailOnMissingCDR: true))
                                          {
                                              return HTTPResponse;
                                          }
@@ -3790,7 +5101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     AccessControlAllowHeaders  = "Authorization",
                                                     ContentType                = HTTPContentType.JSON_UTF8,
                                                     Content                    = OCPIResponse<CDR>.Create(
-                                                                                     CDR,
+                                                                                     ExistingCDR,
                                                                                      cdr => cdr.ToJSON(),
                                                                                      1000,
                                                                                      "Hello world!"
@@ -3804,6 +5115,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
             #region DELETE  ~/cdrs/{country_code}/{party_id}/{cdrId}    [NonStandard]
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.DELETE,
+                                     URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   DeleteCDRRequest,
+                                     OCPIResponseLogger:  DeleteCDRResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check existing CDR
+
+                                         if (!Request.ParseCDR(this,
+                                                               out CountryCode?          CountryCode,
+                                                               out Party_Id?             PartyId,
+                                                               out CDR_Id?               CDRId,
+                                                               out CDR                   ExistingCDR,
+                                                               out HTTPResponse.Builder  HTTPResponse,
+                                                               FailOnMissingCDR: true))
+                                         {
+                                             return HTTPResponse;
+                                         }
+
+                                         #endregion
+
+
+                                         //ToDo: await...
+                                         CommonAPI.RemoveCDR(ExistingCDR);
+
+
+                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    Server                     = DefaultHTTPServerName,
+                                                    Date                       = DateTime.UtcNow,
+                                                    AccessControlAllowOrigin   = "*",
+                                                    AccessControlAllowMethods  = "GET, PUT, PATCH, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    ContentType                = HTTPContentType.JSON_UTF8,
+                                                    Content                    = OCPIResponse<CDR>.Create(
+                                                                                     ExistingCDR,
+                                                                                     CDR => CDR.ToJSON(),
+                                                                                     1000,
+                                                                                     "Hello world!"
+                                                                                 ).ToUTF8Bytes(),
+                                                    Connection                 = "close"
+                                                };
+
+                                     });
 
             #endregion
 
@@ -3870,7 +5228,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.POST,
                                      URLPathPrefix + "tokens/{token_id}/authorize",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: async Request => {
+                                     OCPIRequestLogger:   PostTokenRequest,
+                                     OCPIResponseLogger:  PostTokenResponse,
+                                     OCPIRequest:   async Request => {
 
                                          #region Check TokenId URI parameter
 
