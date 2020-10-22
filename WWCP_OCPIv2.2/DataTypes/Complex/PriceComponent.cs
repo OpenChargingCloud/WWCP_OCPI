@@ -325,10 +325,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? VAT,
                                        out ErrorResponse))
                 {
-
-                    if (ErrorResponse == null)
+                    if (ErrorResponse != null)
                         return false;
-
                 }
 
                 #endregion

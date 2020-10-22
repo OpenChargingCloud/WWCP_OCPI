@@ -357,10 +357,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse ConnectorId               [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_id",
-                                             "connector identification",
-                                             out Connector_Id ConnectorId,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_id",
+                                         "connector identification",
+                                         Connector_Id.TryParse,
+                                         out Connector_Id ConnectorId,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

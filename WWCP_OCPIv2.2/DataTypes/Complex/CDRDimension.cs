@@ -230,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #region Parse Volume    [mandatory]
 
                 if (!JSON.ParseMandatory("volume",
-                                         "charge detail record dimension identification",
+                                         "volume of the dimension consumed",
                                          out Decimal Volume,
                                          out ErrorResponse))
                 {

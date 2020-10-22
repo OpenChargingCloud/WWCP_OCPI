@@ -271,8 +271,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PriceComponents           [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("supplier_name",
-                                             "energy supplier name",
+                if (!JSON.ParseMandatoryJSON("price_components",
+                                             "price components",
                                              PriceComponent.TryParse,
                                              out IEnumerable<PriceComponent> PriceComponents,
                                              out ErrorResponse))
@@ -284,8 +284,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse TariffRestrictions        [optional]
 
-                if (JSON.ParseOptionalJSON("contract_id",
-                                           "tariff tariff restrictions",
+                if (JSON.ParseOptionalJSON("restrictions",
+                                           "tariff restrictions",
                                            OCPIv2_2.TariffRestrictions.TryParse,
                                            out IEnumerable<TariffRestrictions> TariffRestrictions,
                                            out ErrorResponse))

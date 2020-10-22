@@ -563,8 +563,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                     EnergyMix,
                                     LastUpdated);
 
-                Tariff = null;
-
                 if (CustomTariffParser != null)
                     Tariff = CustomTariffParser(JSON,
                                                 Tariff);

@@ -273,7 +273,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Tariff_Id? TariffId,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion

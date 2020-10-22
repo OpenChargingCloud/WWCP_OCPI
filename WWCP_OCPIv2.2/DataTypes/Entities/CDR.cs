@@ -584,11 +584,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse CDRToken                  [mandatory]
 
-                if (!JSON.ParseMandatory("cdr_token",
-                                         "charge detail record token",
-                                         OCPIv2_2.CDRToken.TryParse,
-                                         out CDRToken CDRToken,
-                                         out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("cdr_token",
+                                             "charge detail record token",
+                                             OCPIv2_2.CDRToken.TryParse,
+                                             out CDRToken CDRToken,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
@@ -623,11 +623,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Location                  [mandatory]
 
-                if (!JSON.ParseMandatory("cdr_location",
-                                         "charge detail record location",
-                                         CDRLocation.TryParse,
-                                         out CDRLocation Location,
-                                         out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON2("cdr_location",
+                                              "charge detail record location",
+                                              CDRLocation.TryParse,
+                                              out CDRLocation Location,
+                                              out ErrorResponse))
                 {
                     return false;
                 }
@@ -732,11 +732,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse TotalCosts                [mandatory]
 
-                if (!JSON.ParseMandatory("total_cost",
-                                         "total costs",
-                                         Price.TryParse,
-                                         out Price TotalCosts,
-                                         out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("total_cost",
+                                             "total costs",
+                                             Price.TryParse,
+                                             out Price TotalCosts,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
@@ -801,7 +801,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalTimeCost,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -826,7 +827,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalParkingCost,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -839,7 +841,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalReservationCost,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
