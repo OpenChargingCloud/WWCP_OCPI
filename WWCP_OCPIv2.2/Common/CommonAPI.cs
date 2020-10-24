@@ -764,8 +764,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 2000,
-                                                    StatusMessage        = "Version identification is unknown!",
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
                                                     Data                 = new VersionDetail(
                                                                                Version_Id.Parse("2.2"),
                                                                                endpoints
