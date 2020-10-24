@@ -42,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// </summary>
     /// <param name="Request">The HTTP request.</param>
     /// <returns>A HTTP response task.</returns>
-    public delegate Task<HTTPResponse> OCPIRequestDelegate(OCPIRequest Request);
+    public delegate Task<OCPIResponse.Builder> OCPIRequestDelegate(OCPIRequest Request);
 
 
     /// <summary>
@@ -95,9 +95,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest.SubprotocolRequest as OCPIRequest,
                                                                                                                                         httpResponse), //HTTP.OCPIResponse.Parse(httpRequest),
                                          DefaultErrorHandler,
-                                         httpRequest => OCPIRequest(httpRequest.SubprotocolRequest is null
-                                                                        ? HTTP.OCPIRequest.Parse(httpRequest) // When no OCPIRequestLogger was used!
-                                                                        : httpRequest.SubprotocolRequest as OCPIRequest),
+                                         async httpRequest => {
+
+                                             var OCPIResponseBuilder = await OCPIRequest(httpRequest.SubprotocolRequest is null
+                                                                                 ? HTTP.OCPIRequest.Parse(httpRequest) // When no OCPIRequestLogger was used!
+                                                                                 : httpRequest.SubprotocolRequest as OCPIRequest);
+
+                                             return OCPIResponseBuilder.UpdateHTTPResponseBuilder();
+
+                                         },
                                          AllowReplacement);
 
         }
@@ -214,21 +220,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
         public Boolean TryParseJObjectRequestBody(out JObject               JSON,
-                                                  out HTTPResponse.Builder  HTTPResponse,
+                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
                                                   Boolean                   AllowEmptyHTTPBody = false,
                                                   String                    JSONLDContext      = null)
         {
 
             var result = HTTPRequest.TryParseJObjectRequestBody(out JSON,
-                                                                out HTTPResponse,
+                                                                out HTTPResponse.Builder HTTPResponseBuilder,
                                                                 AllowEmptyHTTPBody,
                                                                 JSONLDContext);
 
-            if (HTTPResponse != null)
+            if (HTTPResponseBuilder != null)
             {
-                HTTPResponse.Set("X-Request-ID",      RequestId).
-                             Set("X-Correlation-ID",  CorrelationId);
+                HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
+                                    Set("X-Correlation-ID",  CorrelationId);
             }
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(this) {
+                StatusCode     = 1000,
+                StatusMessage  = "Invalid JSON object in request body!"
+            };
 
             return result;
 

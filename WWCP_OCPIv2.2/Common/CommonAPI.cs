@@ -466,17 +466,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      OCPIRequest: Request => {
 
                                          return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "OPTIONS, GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                             new OCPIResponse.Builder(Request) {
+                                                 HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                 }
+                                             });
 
                                      });
 
@@ -500,19 +496,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              accessInfo.Status != AccessStatus.ALLOWED)
                                          {
 
-                                             // Invalid or blocked access token!
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+                                                 new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Invalid or blocked access token!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
 
                                          }
 
@@ -520,29 +513,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
                                          return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                 Content                    = OCPIResponse<IEnumerable<Version>>.Create(
-                                                                                  new Version[] {
-                                                                                      new Version(
-                                                                                          Version_Id.Parse("2.2"),
-                                                                                          URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2").Replace("//", "/"))
-                                                                                      )
-                                                                                  },
-                                                                                  versions => new JArray(versions.Select(version => version.ToJSON())),
-                                                                                  1000,
-                                                                                  "Hello world!"
-                                                                              ).ToUTF8Bytes(),
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                             new OCPIResponse.Builder(Request) {
+                                                 StatusCode           = 1000,
+                                                 StatusMessage        = "Hello world!",
+                                                 Data                 = new JArray(
+                                                                            new Version[] {
+                                                                                new Version(
+                                                                                    Version_Id.Parse("2.2"),
+                                                                                    URL.Parse("https://" + (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2").Replace("//", "/"))
+                                                                                )
+                                                                            }.Select(version => version.ToJSON())
+                                                                        ),
+                                                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                 }
+                                             });
 
                                      });
 
@@ -559,18 +546,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      OCPIRequest: Request => {
 
                                          return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "OPTIONS, GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
-
+                                             new OCPIResponse.Builder(Request) {
+                                                 HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                 }
+                                             });
                                      });
 
             #endregion
@@ -595,19 +577,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              accessInfo.Status != AccessStatus.ALLOWED)
                                          {
 
-                                             // Invalid or blocked access token!
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "GET",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+                                                 new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Invalid or blocked access token!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
 
                                          }
 
@@ -619,12 +598,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          {
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                                                     Server          = HTTPServer.DefaultServerName,
-                                                     Date            = DateTime.UtcNow,
-                                                     Connection      = "close"
-                                                 }.AsImmutable);
+                                                 new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Version identification is missing!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
 
                                          }
 
@@ -632,12 +614,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          {
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
-                                                     Server          = HTTPServer.DefaultServerName,
-                                                     Date            = DateTime.UtcNow,
-                                                     Connection      = "close"
-                                                 }.AsImmutable);
+                                                 new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Version identification is invalid!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
 
                                          }
 
@@ -649,14 +634,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          {
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode  = HTTPStatusCode.NotFound,
-                                                     Server          = HTTPServer.DefaultServerName,
-                                                     Date            = DateTime.UtcNow,
-                                                     Connection      = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+                                                 new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Version identification is unknown!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
 
                                          }
 
@@ -777,26 +763,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
                                          return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                 Content                    = OCPIResponse<VersionDetail>.Create(
-                                                                                  new VersionDetail(
-                                                                                      Version_Id.Parse("2.2"),
-                                                                                      endpoints),
-                                                                                  version => version.ToJSON(),
-                                                                                  1000,
-                                                                                  "Hello world!"
-                                                                              ).ToUTF8Bytes(),
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                             new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Version identification is unknown!",
+                                                    Data                 = new VersionDetail(
+                                                                               Version_Id.Parse("2.2"),
+                                                                               endpoints
+                                                                           ).ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
 
                                      });
 
@@ -814,17 +793,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      OCPIRequest: Request => {
 
                                          return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.OK,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                             new OCPIResponse.Builder(Request) {
+                                                 HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                 }
+                                             });
 
                                      });
 
@@ -848,44 +823,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          {
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
-                                                     AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                     AccessControlAllowHeaders  = "Authorization",
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = OCPIResponse<Credentials>.Create(
-                                                                                      accessInfo.AsCredentials(),
-                                                                                      credentials => credentials.ToJSON(),
-                                                                                      1000,
-                                                                                      "Hello world!"
-                                                                                  ).ToUTF8Bytes(),
-                                                     Connection                 = "close"
-                                                 }.Set("X-Request-ID",      Request.RequestId).
-                                                   Set("X-Correlation-ID",  Request.CorrelationId).
-                                                   AsImmutable);
+                                                 new OCPIResponse.Builder(Request) {
+                                                     StatusCode           = 1000,
+                                                     StatusMessage        = "Hello world!",
+                                                     Data                 = accessInfo.AsCredentials().ToJSON(),
+                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                         AccessControlAllowHeaders  = "Authorization"
+                                                     }
+                                                 });
 
                                          }
 
                                          return Task.FromResult(
-                                             new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                 HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                 Server                     = HTTPServer.DefaultServerName,
-                                                 Date                       = DateTime.UtcNow,
-                                                 AccessControlAllowOrigin   = "*",
-                                                 AccessControlAllowMethods  = "GET",
-                                                 AccessControlAllowHeaders  = "Authorization",
-                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                 Content                    = OCPIResponse.Create(
-                                                                                  2000,
-                                                                                  "You need to be registered before trying to invoke this protected method."
-                                                                              ).ToUTF8Bytes(),
-                                                 Connection                 = "close"
-                                             }.Set("X-Request-ID",      Request.RequestId).
-                                               Set("X-Correlation-ID",  Request.CorrelationId).
-                                               AsImmutable);
+                                             new OCPIResponse.Builder(Request) {
+                                                 StatusCode           = 2000,
+                                                 StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                 HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                     HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                     AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                 }
+                                             });
 
                                      });
 
@@ -914,21 +874,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          {
 
                                              if (accessInfo.VersionsURL.HasValue)
-                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                            Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = OCPIResponse.Create(
-                                                                                            2000,
-                                                                                            "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!"
-                                                                                        ).ToUTF8Bytes(),
-                                                            Connection                 = "close"
-                                                        }.Set("X-Request-ID",      Request.RequestId).
-                                                          Set("X-Correlation-ID",  Request.CorrelationId);
+                                                 return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!",
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
 
 
                                              return await POSTOrPUTCredentials(Request);
@@ -936,21 +890,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          }
 
-                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                    Server                     = HTTPServer.DefaultServerName,
-                                                    Date                       = DateTime.UtcNow,
-                                                    AccessControlAllowOrigin   = "*",
-                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                    AccessControlAllowHeaders  = "Authorization",
-                                                    ContentType                = HTTPContentType.JSON_UTF8,
-                                                    Content                    = OCPIResponse.Create(
-                                                                                     2000,
-                                                                                     "You need to be registered before trying to invoke this protected method."
-                                                                                 ).ToUTF8Bytes(),
-                                                    Connection                 = "close"
-                                                }.Set("X-Request-ID",      Request.RequestId).
-                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
 
                                      });
 
@@ -977,43 +925,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          {
 
                                              if (!accessInfo.VersionsURL.HasValue)
-                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                            Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = OCPIResponse.Create(
-                                                                                            2000,
-                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!"
-                                                                                        ).ToUTF8Bytes(),
-                                                            Connection                 = "close"
-                                                        }.Set("X-Request-ID",      Request.RequestId).
-                                                          Set("X-Correlation-ID",  Request.CorrelationId);
-
+                                                 return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!",
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
 
                                              return await POSTOrPUTCredentials(Request);
 
 
                                          }
 
-                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                    Server                     = HTTPServer.DefaultServerName,
-                                                    Date                       = DateTime.UtcNow,
-                                                    AccessControlAllowOrigin   = "*",
-                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                    AccessControlAllowHeaders  = "Authorization",
-                                                    ContentType                = HTTPContentType.JSON_UTF8,
-                                                    Content                    = OCPIResponse.Create(
-                                                                                     2000,
-                                                                                     "You need to be registered before trying to invoke this protected method."
-                                                                                ).ToUTF8Bytes(),
-                                                    Connection                 = "close"
-                                                }.Set("X-Request-ID",      Request.RequestId).
-                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+                                         return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2000,
+                                                        StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
 
                                      });
 
@@ -1042,21 +977,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              #region Validations
 
                                              if (accessInfo.VersionsURL.HasValue)
-                                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                            Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = OCPIResponse.Create(
-                                                                                            2000,
-                                                                                            "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!"
-                                                                                        ).ToUTF8Bytes(),
-                                                            Connection                 = "close"
-                                                        }.Set("X-Request-ID",      Request.RequestId).
-                                                          Set("X-Correlation-ID",  Request.CorrelationId);
+                                                 return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
 
                                              #endregion
 
@@ -1065,39 +994,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              RemoveAccessToken(Request.AccessToken.Value);
 
 
-                                             return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        Server                     = HTTPServer.DefaultServerName,
-                                                        Date                       = DateTime.UtcNow,
-                                                        AccessControlAllowOrigin   = "*",
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        ContentType                = HTTPContentType.JSON_UTF8,
-                                                        Content                    = OCPIResponse.Create(
-                                                                                         1000,
-                                                                                         "The given access token was deleted!"
-                                                                                    ).ToUTF8Bytes(),
-                                                        Connection                 = "close"
-                                                    }.Set("X-Request-ID",      Request.RequestId).
-                                                      Set("X-Correlation-ID",  Request.CorrelationId);
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 1000,
+                                                        StatusMessage        = "The given access token was deleted!",
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.OK,
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
 
                                          }
 
-                                         return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                    Server                     = HTTPServer.DefaultServerName,
-                                                    Date                       = DateTime.UtcNow,
-                                                    AccessControlAllowOrigin   = "*",
-                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                    AccessControlAllowHeaders  = "Authorization",
-                                                    ContentType                = HTTPContentType.JSON_UTF8,
-                                                    Content                    = OCPIResponse.Create(
-                                                                                     2000,
-                                                                                     "You need to be registered before trying to invoke this protected method."
-                                                                                ).ToUTF8Bytes(),
-                                                    Connection                 = "close"
-                                                }.Set("X-Request-ID",      Request.RequestId).
-                                                  Set("X-Correlation-ID",  Request.CorrelationId);
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
 
                                      });
 
@@ -1110,7 +1027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region (private) POSTOrPUTCredentials(Request)
 
-        private async Task<HTTPResponse> POSTOrPUTCredentials(OCPIRequest Request)
+        private async Task<OCPIResponse.Builder> POSTOrPUTCredentials(OCPIRequest Request)
         {
 
             var CREDENTIALS_TOKEN_A = Request.AccessToken;
@@ -1119,25 +1036,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             var ErrorResponse = String.Empty;
 
-            if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
+            if (!Request.TryParseJObjectRequestBody(out JObject JSON, out OCPIResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
                 !Credentials.TryParse(JSON, out Credentials receivedCredentials, out ErrorResponse))
             {
 
-                return new HTTPResponse.Builder(Request.HTTPRequest) {
-                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                           Server                     = HTTPServer.DefaultServerName,
-                           Date                       = DateTime.UtcNow,
-                           AccessControlAllowOrigin   = "*",
-                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                           AccessControlAllowHeaders  = "Authorization",
-                           ContentType                = HTTPContentType.JSON_UTF8,
-                           Content                    = OCPIResponse.Create(
-                                                           2000,
-                                                           "Could not parse the credentials JSON object! " + ErrorResponse
-                                                       ).ToUTF8Bytes(),
-                           Connection                 = "close"
-                       }.Set("X-Request-ID",      Request.RequestId).
-                         Set("X-Correlation-ID",  Request.CorrelationId);
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 2000,
+                           StatusMessage        = "Could not parse the credentials JSON object! " + ErrorResponse,
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
 
             }
 
@@ -1157,21 +1068,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (result.Length == 0)
                     {
 
-                        return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                   Server                     = HTTPServer.DefaultServerName,
-                                   Date                       = DateTime.UtcNow,
-                                   AccessControlAllowOrigin   = "*",
-                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                   AccessControlAllowHeaders  = "Authorization",
-                                   ContentType                = HTTPContentType.JSON_UTF8,
-                                   Content                    = OCPIResponse.Create(
-                                                                   2000,
-                                                                   "The given combination of country code, party identification and role is unknown!"
-                                                               ).ToUTF8Bytes(),
-                                   Connection                 = "close"
-                               }.Set("X-Request-ID",      Request.RequestId).
-                                 Set("X-Correlation-ID",  Request.CorrelationId);
+                        return new OCPIResponse.Builder(Request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "The given combination of country code, party identification and role is unknown!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                       AccessControlAllowHeaders  = "Authorization"
+                                   }
+                               };
 
                     }
 
@@ -1179,21 +1084,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         result.First().VersionsURL.HasValue)
                     {
 
-                        return new HTTPResponse.Builder(Request.HTTPRequest) {
-                                   HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                   Server                     = HTTPServer.DefaultServerName,
-                                   Date                       = DateTime.UtcNow,
-                                   AccessControlAllowOrigin   = "*",
-                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                   AccessControlAllowHeaders  = "Authorization",
-                                   ContentType                = HTTPContentType.JSON_UTF8,
-                                   Content                    = OCPIResponse.Create(
-                                                                   2000,
-                                                                   "The given combination of country code, party identification and role is already registered!"
-                                                               ).ToUTF8Bytes(),
-                                   Connection                 = "close"
-                               }.Set("X-Request-ID",      Request.RequestId).
-                                 Set("X-Correlation-ID",  Request.CorrelationId);
+                        return new OCPIResponse.Builder(Request) {
+                                   StatusCode           = 2000,
+                                   StatusMessage        = "The given combination of country code, party identification and role is already registered!",
+                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                       AccessControlAllowHeaders  = "Authorization"
+                                   }
+                               };
 
                     }
 
@@ -1214,22 +1113,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (otherVersions.StatusCode != 1000)
             {
 
-                return new HTTPResponse.Builder(Request.HTTPRequest) {
-                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                           Server                     = HTTPServer.DefaultServerName,
-                           Date                       = DateTime.UtcNow,
-                           AccessControlAllowOrigin   = "*",
-                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                           AccessControlAllowHeaders  = "Authorization",
-                           ContentType                = HTTPContentType.JSON_UTF8,
-                           Content                    = OCPIResponse.Create(
-                                                           3001,
-                                                           "Could not fetch VERSIONS information from '" + receivedCredentials.URL + "'!",
-                                                           otherVersions.StatusMessage
-                                                       ).ToUTF8Bytes(),
-                           Connection                 = "close"
-                       }.Set("X-Request-ID",      Request.RequestId).
-                         Set("X-Correlation-ID",  Request.CorrelationId);
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 2000,
+                           StatusMessage        = "Could not fetch VERSIONS information from '" + receivedCredentials.URL + "'!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
 
             }
 
@@ -1243,21 +1135,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (justVersion2_2.Length == 0)
             {
 
-                return new HTTPResponse.Builder(Request.HTTPRequest) {
-                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                           Server                     = HTTPServer.DefaultServerName,
-                           Date                       = DateTime.UtcNow,
-                           AccessControlAllowOrigin   = "*",
-                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                           AccessControlAllowHeaders  = "Authorization",
-                           ContentType                = HTTPContentType.JSON_UTF8,
-                           Content                    = OCPIResponse.Create(
-                                                           3003,
-                                                           "Could not find OCPI v2.2 at '" + receivedCredentials.URL + "'!"
-                                                       ).ToUTF8Bytes(),
-                           Connection                 = "close"
-                       }.Set("X-Request-ID",      Request.RequestId).
-                         Set("X-Correlation-ID",  Request.CorrelationId);
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 3003,
+                           StatusMessage        = "Could not find OCPI v2.2 at '" + receivedCredentials.URL + "'!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
 
             }
 
@@ -1270,22 +1156,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (otherVersion2_2Details.StatusCode != 1000)
             {
 
-                return new HTTPResponse.Builder(Request.HTTPRequest) {
-                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                           Server                     = HTTPServer.DefaultServerName,
-                           Date                       = DateTime.UtcNow,
-                           AccessControlAllowOrigin   = "*",
-                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                           AccessControlAllowHeaders  = "Authorization",
-                           ContentType                = HTTPContentType.JSON_UTF8,
-                           Content                    = OCPIResponse.Create(
-                                                           3001,
-                                                           "Could not fetch v2.2 information from '" + justVersion2_2.First().URL + "'!",
-                                                           otherVersion2_2Details.StatusMessage
-                                                       ).ToUTF8Bytes(),
-                           Connection                 = "close"
-                       }.Set("X-Request-ID",      Request.RequestId).
-                         Set("X-Correlation-ID",  Request.CorrelationId);
+                return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 3001,
+                           StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_2.First().URL + "'!",
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
 
             }
 
@@ -1316,27 +1195,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            return new HTTPResponse.Builder(Request.HTTPRequest) {
-                       HTTPStatusCode             = HTTPStatusCode.OK,
-                       Server                     = HTTPServer.DefaultServerName,
-                       Date                       = DateTime.UtcNow,
-                       AccessControlAllowOrigin   = "*",
-                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                       AccessControlAllowHeaders  = "Authorization",
-                       ContentType                = HTTPContentType.JSON_UTF8,
-                       Content                    = OCPIResponse<Credentials>.Create(
-                                                        new Credentials(
-                                                            CREDENTIALS_TOKEN_C,
-                                                            OurVersionsURL,
-                                                            OurCredentialRoles
-                                                        ),
-                                                        credential => credential.ToJSON(),
-                                                        1000,
-                                                        "Hello world!"
-                                                    ).ToUTF8Bytes(),
-                       Connection                 = "close"
-                   }.Set("X-Request-ID",      Request.RequestId).
-                     Set("X-Correlation-ID",  Request.CorrelationId);
+            return new OCPIResponse.Builder(Request) {
+                           StatusCode           = 1000,
+                           StatusMessage        = "Hello world!",
+                           Data                 = new Credentials(
+                                                      CREDENTIALS_TOKEN_C,
+                                                      OurVersionsURL,
+                                                      OurCredentialRoles
+                                                  ).ToJSON(),
+                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                               HTTPStatusCode             = HTTPStatusCode.OK,
+                               AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                               AccessControlAllowHeaders  = "Authorization"
+                           }
+                       };
 
         }
 
@@ -1488,6 +1360,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        // Add last modified timestamp to locations!
+
         #region Locations
 
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> Locations;
@@ -1629,7 +1503,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region PatchLocation         (Location, Patch)
+        #region PatchLocation         (Location,  Patch)
 
         public Location PatchLocation(Location  Location,
                                       JObject   Patch)
@@ -1665,7 +1539,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PatchEVSE             (EVSE,     Patch)
+        #region PatchEVSE             (EVSE,      Patch)
 
         public EVSE PatchEVSE(EVSE     EVSE,
                               JObject  Patch)
@@ -1689,7 +1563,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PatchConnector           (Connector,     Patch)
+        #region PatchConnector        (Connector, Patch)
 
         public Connector PatchConnector(Connector  Connector,
                                         JObject    Patch)
@@ -2077,6 +1951,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region PatchTariff         (Tariff, Patch)
+
+        public Tariff PatchTariff(Tariff   Tariff,
+                                  JObject  Patch)
+        {
+
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+
+            if (Patch is null || !Patch.HasValues)
+                return Tariff;
+
+            lock (Tariffs)
+            {
+
+                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
+                    parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
+                    tariffs.ContainsKey(Tariff.Id))
+                {
+
+                    var patchedTariff = Tariff.Patch(Patch);
+
+                    tariffs[Tariff.Id] = patchedTariff;
+
+                    return patchedTariff;
+
+                }
+
+            }
+
+            return Tariff;
+
+        }
+
+        #endregion
+
+
         #region TariffExists(CountryCode, PartyId, TariffId)
 
         public Boolean TariffExists(CountryCode  CountryCode,
@@ -2440,6 +2351,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region PatchSession         (Session, Patch)
+
+        public Session PatchSession(Session  Session,
+                                    JObject  Patch)
+        {
+
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+
+            if (Patch is null || !Patch.HasValues)
+                return Session;
+
+            lock (Sessions)
+            {
+
+                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
+                    parties. TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
+                    sessions.ContainsKey(Session.Id))
+                {
+
+                    var patchedSession = Session.Patch(Patch);
+
+                    sessions[Session.Id] = patchedSession;
+
+                    return patchedSession;
+
+                }
+
+            }
+
+            return Session;
+
+        }
+
+        #endregion
+
+
         #region SessionExists(CountryCode, PartyId, SessionId)
 
         public Boolean SessionExists(CountryCode  CountryCode,
@@ -2773,6 +2721,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 return Token;
 
             }
+
+        }
+
+        #endregion
+
+
+        #region PatchToken         (Token, Patch)
+
+        public Token PatchToken(Token    Token,
+                                JObject  Patch)
+        {
+
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+
+            if (Patch is null || !Patch.HasValues)
+                return Token;
+
+            lock (Tokens)
+            {
+
+                if (Tokens. TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties) &&
+                    parties.TryGetValue(Token.PartyId,     out                      Dictionary<Token_Id, TokenStatus>  tokens)  &&
+                    tokens. TryGetValue(Token.Id,          out                                           TokenStatus   tokenStatus))
+                {
+
+                    var patchedToken = Token.Patch(Patch);
+
+                    tokens[Token.Id] = new TokenStatus(patchedToken,
+                                                       tokenStatus.Status);
+
+                    return patchedToken;
+
+                }
+
+            }
+
+            return Token;
 
         }
 

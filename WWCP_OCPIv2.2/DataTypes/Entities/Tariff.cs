@@ -42,6 +42,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                           IComparable
     {
 
+        #region Data
+
+        private readonly Object patchLock = new Object();
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -691,6 +697,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             return CustomTariffSerializer != null
                        ? CustomTariffSerializer(this, JSON)
                        : JSON;
+
+        }
+
+        #endregion
+
+
+        #region Patch(TariffPatch)
+
+        public Tariff Patch(JObject TariffPatch)
+        {
+
+            if (!TariffPatch.HasValues)
+                return this;
+
+            lock (patchLock)
+            {
+
+                if (TariffPatch["last_updated"] is null)
+                    TariffPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+
+                if (TryParse(PatchObject.Apply(ToJSON(), TariffPatch),
+                             out Tariff patchedTariff,
+                             out String ErrorResponse))
+                {
+                    return patchedTariff;
+                }
+
+                else
+                    return null;
+
+            }
 
         }
 

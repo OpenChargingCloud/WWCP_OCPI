@@ -46,6 +46,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
+        public OCPIRequest      Request                   { get; }
+
         public Int32?           StatusCode                { get; }
         public String           StatusMessage             { get; }
 
@@ -56,11 +58,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Request_Id?      RequestId                 { get; }
         public Correlation_Id?  CorrelationId             { get; }
 
-        public HTTPResponse     Response                  { get; }
+        public HTTPResponse     HTTPResponse              { get; }
 
         #endregion
 
         #region Constructor(s)
+
+        public OCPIResponse(OCPIRequest   Request,
+
+                            Int32?        StatusCode,
+                            String        StatusMessage,
+                            String        AdditionalInformation   = null,
+                            DateTime?     Timestamp               = null,
+
+                            HTTPResponse  HTTPResponse            = null)
+
+        {
+
+            this.Request                = Request;
+
+            this.StatusCode             = StatusCode;
+            this.StatusMessage          = StatusMessage;
+            this.AdditionalInformation  = AdditionalInformation;
+            this.Timestamp              = Timestamp ?? DateTime.UtcNow;
+
+            this.RequestId              = RequestId;
+            this.CorrelationId          = CorrelationId;
+            this.HTTPResponse           = HTTPResponse;
+
+        }
+
+
 
         public OCPIResponse(Int32?           StatusCode,
                             String           StatusMessage,
@@ -80,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.RequestId              = RequestId;
             this.CorrelationId          = CorrelationId;
-            this.Response               = Response;
+            this.HTTPResponse           = Response;
 
         }
 
@@ -133,6 +161,111 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             return JSON;
 
         }
+
+        public static JObject ToJSON(Int32            StatusCode,
+                                     String           StatusMessage           = null,
+                                     JToken           Data                    = null,
+                                     String           AdditionalInformation   = null,
+                                     DateTime?        Timestamp               = null)
+        {
+
+            var JSON = JSONObject.Create(
+
+                           Data != null
+                               ? new JProperty("data",            Data)
+                               : null,
+
+                           new JProperty("status_code",           StatusCode),
+
+                           StatusMessage.IsNotNullOrEmpty()
+                               ? new JProperty("status_message",  StatusMessage)
+                               :  null,
+
+                           new JProperty("timestamp",             (Timestamp ?? DateTime.UtcNow).ToIso8601())
+
+                       );
+
+            return JSON;
+
+        }
+
+
+
+        public class Builder
+        {
+
+            #region Properties
+
+            public OCPIRequest           Request                   { get; }
+
+            public JToken                Data                      { get; set; }
+            public Int32?                StatusCode                { get; set; }
+            public String                StatusMessage             { get; set; }
+
+            public String                AdditionalInformation     { get; set; }
+            public DateTime?             Timestamp                 { get; set; }
+
+            public HTTPResponse.Builder  HTTPResponseBuilder       { get; set; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            public Builder(OCPIRequest Request)
+            {
+                this.Request = Request;
+            }
+
+            #endregion
+
+
+            public HTTPResponse.Builder UpdateHTTPResponseBuilder()
+            {
+
+                if (!Timestamp.HasValue)
+                    Timestamp = DateTime.UtcNow;
+
+                HTTPResponseBuilder.Server                    = Request.HTTPRequest.HTTPServer.DefaultServerName;
+                HTTPResponseBuilder.Date                      = Timestamp.Value;
+                HTTPResponseBuilder.AccessControlAllowOrigin  = "*";
+                HTTPResponseBuilder.Connection                = "close";
+
+                if (Request.HTTPRequest.HTTPMethod != HTTPMethod.OPTIONS)
+                {
+
+                    HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
+
+                    if (HTTPResponseBuilder.Content == null)
+                        HTTPResponseBuilder.Content = ToJSON(
+                                                          StatusCode ?? 2000,
+                                                          StatusMessage,
+                                                          Data,
+                                                          AdditionalInformation,
+                                                          Timestamp
+                                                      ).ToUTF8Bytes();
+
+                }
+
+                HTTPResponseBuilder.Set("X-Request-ID",      Request.RequestId).
+                                    Set("X-Correlation-ID",  Request.CorrelationId);
+
+                return HTTPResponseBuilder;
+
+            }
+
+
+            public OCPIResponse ToImmutable
+
+                => new OCPIResponse(Request,
+                                    StatusCode,
+                                    StatusMessage,
+                                    AdditionalInformation,
+                                    Timestamp ?? DateTime.UtcNow,
+                                    UpdateHTTPResponseBuilder().AsImmutable);
+
+
+        }
+
 
     }
 

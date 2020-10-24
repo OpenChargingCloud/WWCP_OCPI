@@ -701,8 +701,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
             }
-            while ((response.Response.HTTPStatusCode.IsServerError ||
-                    response.Response.HTTPStatusCode == HTTPStatusCode.RequestTimeout) &&
+            while ((response.HTTPResponse.HTTPStatusCode.IsServerError ||
+                    response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.RequestTimeout) &&
                    TransmissionRetry++ < MaxNumberOfRetries);
 
 
