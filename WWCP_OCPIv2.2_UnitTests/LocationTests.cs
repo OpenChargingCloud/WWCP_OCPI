@@ -107,12 +107,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                  },
                                                  new Image[] {
                                                      new Image(
-                                                         "http://example.com/pinguine.jpg",
-                                                         ImageFileTypes.jpeg,
+                                                         URL.Parse("http://example.com/pinguine.jpg"),
+                                                         ImageFileType.jpeg,
                                                          ImageCategories.OPERATOR,
                                                          100,
                                                          150,
-                                                         "http://example.com/kleine_pinguine.jpg"
+                                                         URL.Parse("http://example.com/kleine_pinguine.jpg")
                                                      )
                                                  },
                                                  DateTime.Parse("2020-09-22")
@@ -126,36 +126,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                              "Open Charging Cloud",
                                              URL.Parse("https://open.charging.cloud"),
                                              new Image(
-                                                 "http://open.charging.cloud/logo.svg",
-                                                 ImageFileTypes.svg,
+                                                 URL.Parse("http://open.charging.cloud/logo.svg"),
+                                                 ImageFileType.svg,
                                                  ImageCategories.OPERATOR,
                                                  1000,
                                                  1500,
-                                                 "http://open.charging.cloud/logo_small.svg"
+                                                 URL.Parse("http://open.charging.cloud/logo_small.svg")
                                              )
                                          ),
                                          new BusinessDetails(
                                              "GraphDefined GmbH",
                                              URL.Parse("https://www.graphdefined.com"),
                                              new Image(
-                                                 "http://www.graphdefined.com/logo.png",
-                                                 ImageFileTypes.png,
+                                                 URL.Parse("http://www.graphdefined.com/logo.png"),
+                                                 ImageFileType.png,
                                                  ImageCategories.OPERATOR,
                                                  1000,
                                                  1500,
-                                                 "http://www.graphdefined.com/logo_small.png"
+                                                 URL.Parse("http://www.graphdefined.com/logo_small.png")
                                              )
                                          ),
                                          new BusinessDetails(
                                              "Achim Friedland",
                                              URL.Parse("https://ahzf.de"),
                                              new Image(
-                                                 "http://ahzf.de/logo.gif",
-                                                 ImageFileTypes.gif,
+                                                 URL.Parse("http://ahzf.de/logo.gif"),
+                                                 ImageFileType.gif,
                                                  ImageCategories.OWNER,
                                                  1000,
                                                  1000,
-                                                 "http://ahzf.de/logo_small.gif"
+                                                 URL.Parse("http://ahzf.de/logo_small.gif")
                                              )
                                          ),
                                          new Facilities[] {
@@ -185,12 +185,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                          false,
                                          new Image[] {
                                              new Image(
-                                                 "http://open.charging.cloud/locations/location0001.jpg",
-                                                 ImageFileTypes.jpeg,
+                                                 URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
+                                                 ImageFileType.jpeg,
                                                  ImageCategories.LOCATION,
                                                  200,
                                                  400,
-                                                 "http://open.charging.cloud/locations/location0001s.jpg"
+                                                 URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
                                              )
                                          },
                                          new EnergyMix(true,
@@ -216,8 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                      );
 
             var JSON = LocationA.ToJSON();
-
-            Assert.IsTrue(Location.TryParse(JSON, out Location LocationB, out String ErrorResponse));
+            Assert.IsTrue(Location.TryParse(JSON, out Location LocationB, out _));
 
             Assert.AreEqual(LocationA.CountryCode,  LocationB.CountryCode);
             Assert.AreEqual(LocationA.PartyId,      LocationB.PartyId);

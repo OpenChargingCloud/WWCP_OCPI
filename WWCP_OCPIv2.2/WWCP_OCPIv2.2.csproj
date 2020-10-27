@@ -156,7 +156,7 @@
     <Compile Include="DataTypes\Complex\Image.cs" />
     <Compile Include="DataTypes\Complex\AdditionalGeoLocation.cs" />
     <Compile Include="DataTypes\Enums\CapabilityTypes.cs" />
-    <Compile Include="DataTypes\Enums\ImageFileTypes.cs" />
+    <Compile Include="DataTypes\Simple\ImageFileType.cs" />
     <Compile Include="DataTypes\Enums\ImageCategories.cs" />
     <Compile Include="DataTypes\Entities\EVSE.cs" />
     <Compile Include="DataTypes\Enums\StatusTypes.cs" />

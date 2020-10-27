@@ -84,8 +84,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Group_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Group_Id locationId))
-                return locationId;
+            if (TryParse(Text, out Group_Id groupId))
+                return groupId;
 
             if (Text.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Text), "The given text representation of a group identification must not be null or empty!");
@@ -105,8 +105,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Group_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Group_Id locationId))
-                return locationId;
+            if (TryParse(Text, out Group_Id groupId))
+                return groupId;
 
             return null;
 
@@ -260,8 +260,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is Group_Id locationId
-                   ? CompareTo(locationId)
+            => Object is Group_Id groupId
+                   ? CompareTo(groupId)
                    : throw new ArgumentException("The given object is not a group identification!",
                                                  nameof(Object));
 
@@ -294,8 +294,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is Group_Id locationId &&
-                   Equals(locationId);
+            => Object is Group_Id groupId &&
+                   Equals(groupId);
 
         #endregion
 
