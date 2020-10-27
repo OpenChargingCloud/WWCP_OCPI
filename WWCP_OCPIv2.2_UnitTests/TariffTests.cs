@@ -96,8 +96,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        Tariff_Id.Parse("12"),
                                        Currency.EUR,
                                        TariffAltText:  new DisplayText[] {
-                                                           new DisplayText(Languages.eng, "2 euro p/hour"),
-                                                           new DisplayText(Languages.nld, "2 euro p/uur")
+                                                           new DisplayText(Languages.en, "2 euro p/hour"),
+                                                           new DisplayText(Languages.nl, "2 euro p/uur")
                                                        },
                                        TariffElements: Enumeration.Create(
                                                            new TariffElement(

@@ -62,7 +62,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                              new AdditionalGeoLocation(
                                                  Latitude.Parse(11),
                                                  Longitude.Parse(22),
-                                                 Name: DisplayText.Create(Languages.deu, "Postkasten")
+                                                 Name: DisplayText.Create(Languages.de, "Postkasten")
                                              )
                                          },
                                          ParkingTypes.PARKING_LOT,
@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                  "1. Stock",
                                                  GeoCoordinate.Parse(10.1, 20.2),
                                                  "Ladestation #1",
-                                                 DisplayText.Create(Languages.deu, "Ken sent me!"),
+                                                 DisplayText.Create(Languages.de, "Ken sent me!"),
                                                  new ParkingRestrictions[] {
                                                      ParkingRestrictions.EV_ONLY
                                                  },
@@ -119,8 +119,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                              )
                                          },
                                          new DisplayText[] {
-                                             new DisplayText(Languages.deu, "Hallo Welt!"),
-                                             new DisplayText(Languages.eng, "Hello world!")
+                                             new DisplayText(Languages.de, "Hallo Welt!"),
+                                             new DisplayText(Languages.en, "Hello world!")
                                          },
                                          new BusinessDetails(
                                              "Open Charging Cloud",
