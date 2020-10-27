@@ -237,8 +237,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
             OCPIResponseBuilder = new OCPIResponse.Builder(this) {
-                StatusCode     = 1000,
-                StatusMessage  = "Invalid JSON object in request body!"
+                StatusCode           = result ? 1000 : 2001,
+                StatusMessage        = result ? ""   : "Could not parse JSON object in HTTP request body!",
+                HTTPResponseBuilder  = HTTPResponseBuilder
             };
 
             return result;
