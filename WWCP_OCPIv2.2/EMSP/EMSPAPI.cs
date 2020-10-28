@@ -3589,22 +3589,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
-                                         //ToDo: await..., handle update errors!
-                                         var patchedLocation = CommonAPI.PatchLocation(ExistingLocation,
-                                                                                       LocationPatch);
+                                         //ToDo: await does not like "out ..."! Handle update errors!
+                                         if (CommonAPI.TryPatchLocation(ExistingLocation,
+                                                                        LocationPatch,
+                                                                        out Location PatchedLocation,
+                                                                        out String   ErrorResponse))
+                                         {
 
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = PatchedLocation.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = PatchedLocation.LastUpdated.ToIso8601()
+                                                            }
+                                                        };
 
-                                         return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = patchedLocation.ToJSON(),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            LastModified               = patchedLocation.LastUpdated.ToIso8601(),
-                                                        }
-                                                    };
+                                         }
+
+                                         else
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = ErrorResponse,
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
+
+                                         }
 
                                      });
 

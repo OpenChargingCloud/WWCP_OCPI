@@ -1503,17 +1503,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region PatchLocation         (Location,  Patch)
+        #region TryPatchLocation      (Location,  Patch, out PatchedLocation, out ErrorResponse)
 
-        public Location PatchLocation(Location  Location,
-                                      JObject   Patch)
+        public Boolean TryPatchLocation(Location      Location,
+                                        JObject       Patch,
+                                        out Location  PatchedLocation,
+                                        out String    ErrorResponse)
         {
 
+            PatchedLocation = Location;
+
             if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+            {
+                ErrorResponse = "The given location must not be null!";
+                return false;
+            }
 
             if (Patch is null || !Patch.HasValues)
-                return Location;
+            {
+                ErrorResponse = "The given location patch must not be null or empty!";
+                return false;
+            }
 
             lock (Locations)
             {
@@ -1523,17 +1533,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     locations.ContainsKey(Location.Id))
                 {
 
-                    var patchedLocation = Location.Patch(Patch);
+                    Location.TryPatch(Patch, out PatchedLocation, out ErrorResponse);
 
-                    locations[Location.Id] = patchedLocation;
+                    locations[Location.Id] = PatchedLocation;
 
-                    return patchedLocation;
+                    return true;
 
                 }
 
-            }
+                else
+                {
+                    ErrorResponse = "The given location does not exist!";
+                    return false;
+                }
 
-            return Location;
+            }
 
         }
 

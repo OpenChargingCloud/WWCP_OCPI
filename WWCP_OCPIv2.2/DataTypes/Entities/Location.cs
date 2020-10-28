@@ -25,6 +25,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
+using System.Threading;
 
 #endregion
 
@@ -1043,13 +1044,142 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Patch(LocationPatch)
+        private Boolean TryPatch(JObject JSON, JObject Patch, out JObject PatchedJSON, out String ErrorResponse)
+        {
 
-        public Location Patch(JObject LocationPatch)
+            foreach (var property in Patch)
+            {
+
+                if (property.Key      == "country_code")
+                {
+                    ErrorResponse  = "The country code of a location must not be patched!";
+                    PatchedJSON    = JSON;
+                    return false;
+                }
+
+                else if (property.Key == "party_id")
+                {
+                    ErrorResponse  = "The party identification of a location must not be patched!";
+                    PatchedJSON    = JSON;
+                    return false;
+                }
+
+                else if (property.Key == "id")
+                {
+                    ErrorResponse  = "The identification of a location must not be patched!";
+                    PatchedJSON    = JSON;
+                    return false;
+                }
+
+                else if (property.Key == "evses")
+                {
+
+                    if (property.Value == null)
+                    {
+                        // Delete all EVSEs?
+                    }
+
+                    else if (property.Value is JArray EVSEArray)
+                    {
+
+                        if (EVSEArray.Count == 0)
+                        {
+                            // Delete all EVSEs?
+                        }
+                        else
+                        {
+                            foreach (var evse in EVSEArray)
+                            {
+
+                                if (evse is JObject EVSEObject)
+                                {
+
+                                    if (EVSEObject.ParseMandatory("uid",
+                                                                  "internal EVSE identification",
+                                                                  EVSE_UId.TryParse,
+                                                                  out EVSE_UId EVSEUId,
+                                                                  out ErrorResponse))
+                                    {
+                                        PatchedJSON = JSON;
+                                        return false;
+                                    }
+
+                                    if (!TryGetEVSE(EVSEUId, out EVSE EVSE))
+                                    {
+                                        ErrorResponse  = "Unknown EVSE UId!";
+                                        PatchedJSON    = JSON;
+                                        return false;
+                                    }
+
+                                    EVSE.Patch(EVSEObject);
+
+                                }
+                                else
+                                {
+                                    ErrorResponse  = "Invalid EVSE patch!";
+                                    PatchedJSON    = JSON;
+                                    return false;
+                                }
+
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        ErrorResponse  = "Invalid evses patch!";
+                        PatchedJSON    = JSON;
+                        return false;
+                    }
+
+                }
+
+                else if (property.Value is null)
+                {
+                    JSON.Remove(property.Key);
+                }
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON[property.Key] is JObject oldSubObject)
+                        JSON[property.Key] = TryPatch(oldSubObject, subObject, out PatchedJSON, out ErrorResponse);
+
+                    else
+                        JSON[property.Key] = subObject;
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            PatchedJSON    = JSON;
+            ErrorResponse  = null;
+            return true;
+
+        }
+
+
+
+        #region TryPatch(LocationPatch, out PatchedLocation, out ErrorResponse)
+
+        public Boolean TryPatch(JObject       LocationPatch,
+                                out Location  PatchedLocation,
+                                out String    ErrorResponse)
         {
 
             if (!LocationPatch.HasValues)
-                return this;
+            {
+                PatchedLocation  = this;
+                ErrorResponse    = "The given location must not be null!";
+                return false;
+            }
 
             lock (patchLock)
             {
@@ -1057,15 +1187,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (LocationPatch["last_updated"] is null)
                     LocationPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                if (TryParse(PatchObject.Apply(ToJSON(), LocationPatch),
-                             out Location  patchedLocation,
-                             out String    ErrorResponse))
+                if (!TryPatch(ToJSON(), LocationPatch, out JObject PatchedJSON, out ErrorResponse))
                 {
-                    return patchedLocation;
+                    PatchedLocation = this;
+                    return false;
+                }
+
+                if (TryParse(PatchedJSON,
+                             out PatchedLocation,
+                             out ErrorResponse))
+                {
+                    return true;
                 }
 
                 else
-                    return null;
+                {
+                    PatchedLocation = this;
+                    return false;
+                }
 
             }
 
