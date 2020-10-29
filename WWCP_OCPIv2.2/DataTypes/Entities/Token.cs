@@ -18,7 +18,11 @@
 #region Usings
 
 using System;
+using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -142,6 +146,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                     LastUpdated                 { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this tokenf.
+        /// </summary>
+        public String                       SHA256Hash                  { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -169,12 +178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            #region Initial checks
-
             if (Issuer.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Issuer), "The given issuer must not be null or empty!");
-
-            #endregion
 
             this.CountryCode     = CountryCode;
             this.PartyId         = PartyId;
@@ -192,6 +197,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.EnergyContract  = EnergyContract;
 
             this.LastUpdated     = LastUpdated ?? DateTime.Now;
+
+            CalcSHA256Hash();
 
         }
 
@@ -698,6 +705,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return null;
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomTokenSerializer = null, CustomEnergyContractSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
+        /// </summary>
+        /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
+        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Token>           CustomTokenSerializer            = null,
+                                     CustomJObjectSerializerDelegate<EnergyContract>  CustomEnergyContractSerializer   = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomTokenSerializer,
+                                                                         CustomEnergyContractSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
 
             }
 

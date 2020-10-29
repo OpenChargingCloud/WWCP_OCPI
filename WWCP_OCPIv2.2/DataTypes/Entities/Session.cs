@@ -19,7 +19,9 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
 
@@ -172,6 +174,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                            LastUpdated                  { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this charging session.
+        /// </summary>
+        public String                              SHA256Hash                   { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -226,6 +233,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.TotalCosts               = TotalCosts;
 
             this.LastUpdated              = LastUpdated ?? DateTime.Now;
+
+            CalcSHA256Hash();
 
         }
 
@@ -820,13 +829,85 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Patch(SessionPatch)
 
-        public Session Patch(JObject SessionPatch)
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
         {
 
-            if (!SessionPatch.HasValues)
-                return this;
+            foreach (var property in Patch)
+            {
+
+                if (property.Key == "country_code")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'country code' of a charging session is not allowed!");
+
+                else if (property.Key == "party_id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'party identification' of a charging session is not allowed!");
+
+                else if (property.Key == "id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'identification' of a charging session is not allowed!");
+
+                else if (property.Value is null)
+                {
+                    //if (JSON.ContainsKey(property.Key))
+                    JSON.Remove(property.Key);
+                }
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
+
+                    else
+                    {
+                        JSON.Add(property.Key, subObject);
+                    }
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            return PatchResult<JObject>.Success(JSON);
+
+        }
+
+
+
+        #region TryPatch(SessionPatch)
+
+        public PatchResult<Session> TryPatch(JObject SessionPatch)
+        {
+
+            if (SessionPatch == null)
+                return PatchResult<Session>.Failed(this,
+                                                   "The given charging session patch must not be null!");
 
             lock (patchLock)
             {
@@ -834,15 +915,69 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (SessionPatch["last_updated"] is null)
                     SessionPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                if (TryParse(PatchObject.Apply(ToJSON(), SessionPatch),
-                             out Session  patchedSession,
+                var patchResult = TryPrivatePatch(ToJSON(), SessionPatch);
+
+                if (patchResult.IsFailed)
+                    return PatchResult<Session>.Failed(this,
+                                                       patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out Session  PatchedSession,
                              out String   ErrorResponse))
                 {
-                    return patchedSession;
+
+                    return PatchResult<Session>.Success(PatchedSession,
+                                                        ErrorResponse);
+
                 }
 
                 else
-                    return null;
+                    return PatchResult<Session>.Failed(this,
+                                                       patchResult.ErrorResponse);
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomSessionSerializer = null, CustomCDRTokenSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this charging session in HEX.
+        /// </summary>
+        /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>               CustomSessionSerializer                = null,
+                                     CustomJObjectSerializerDelegate<CDRToken>              CustomCDRTokenSerializer               = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter>           CustomEnergyMeterSerializer            = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftware>  CustomTransparencySoftwareSerializer   = null,
+                                     CustomJObjectSerializerDelegate<ChargingPeriod>        CustomChargingPeriodSerializer         = null,
+                                     CustomJObjectSerializerDelegate<CDRDimension>          CustomCDRDimensionSerializer           = null,
+                                     CustomJObjectSerializerDelegate<Price>                 CustomPriceSerializer                  = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomSessionSerializer,
+                                                                         CustomCDRTokenSerializer,
+                                                                         CustomEnergyMeterSerializer,
+                                                                         CustomTransparencySoftwareSerializer,
+                                                                         CustomChargingPeriodSerializer,
+                                                                         CustomCDRDimensionSerializer,
+                                                                         CustomPriceSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
 
             }
 

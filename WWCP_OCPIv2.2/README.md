@@ -44,6 +44,17 @@ this will *really* delete anything this method should not be used within daily o
 or unless you really know what you are doing and understand all side effects.
 
 
+### PATCH
+
+[PATCH Method for HTTP]( https://datatracker.ietf.org/doc/rfc5789/ ) is well-known. Yet there
+exist two versions for manipulating JSON documents:
+
+- The [JavaScript Object Notation (JSON) Patch]( https://datatracker.ietf.org/doc/rfc6902/ ) describes a PATCH document having its own methods for manipulating the JSON data structure.
+- OCPI is using the so called [JSON Merge Patch]( https://datatracker.ietf.org/doc/rfc7396/ ), which is roughly speaking a JSON DIFF document.
+
+The OCPI PATCH specification is again *not safe*. Therefore this implementation adds support for ETAGs and Timestamp
+
+
 ## Your participation
 
 This software is free and Open Source under [**Apache 2.0 license**](LICENSE).

@@ -19,13 +19,14 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using System.Threading;
 
 #endregion
 
@@ -237,6 +238,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                            LastUpdated              { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this location.
+        /// </summary>
+        public String                              SHA256Hash               { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -311,6 +317,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (EVSEs != null)
                 foreach (var evse in EVSEs)
                     evse.ParentLocation = this;
+
+            CalcSHA256Hash();
 
         }
 
@@ -1044,81 +1052,78 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        private Boolean TryPatch(JObject JSON, JObject Patch, out JObject PatchedJSON, out String ErrorResponse)
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
         {
 
             foreach (var property in Patch)
             {
 
-                if (property.Key      == "country_code")
-                {
-                    ErrorResponse  = "The country code of a location must not be patched!";
-                    PatchedJSON    = JSON;
-                    return false;
-                }
+                if (property.Key == "country_code")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'country code' of a location is not allowed!");
 
                 else if (property.Key == "party_id")
-                {
-                    ErrorResponse  = "The party identification of a location must not be patched!";
-                    PatchedJSON    = JSON;
-                    return false;
-                }
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'party identification' of a location is not allowed!");
 
                 else if (property.Key == "id")
-                {
-                    ErrorResponse  = "The identification of a location must not be patched!";
-                    PatchedJSON    = JSON;
-                    return false;
-                }
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'identification' of a location is not allowed!");
 
                 else if (property.Key == "evses")
                 {
 
                     if (property.Value == null)
-                    {
-                        // Delete all EVSEs?
-                    }
+                        return PatchResult<JObject>.Failed(JSON,
+                                                           "Patching the 'evses' array of a location to 'null' is not allowed!");
 
                     else if (property.Value is JArray EVSEArray)
                     {
 
                         if (EVSEArray.Count == 0)
-                        {
-                            // Delete all EVSEs?
-                        }
+                            return PatchResult<JObject>.Failed(JSON,
+                                                               "Patching the 'evses' array of a location to '[]' is not allowed!");
+
                         else
                         {
                             foreach (var evse in EVSEArray)
                             {
 
+                                //ToDo: What to do with multiple EVSE objects having the same EVSEUId?
                                 if (evse is JObject EVSEObject)
                                 {
 
                                     if (EVSEObject.ParseMandatory("uid",
                                                                   "internal EVSE identification",
                                                                   EVSE_UId.TryParse,
-                                                                  out EVSE_UId EVSEUId,
-                                                                  out ErrorResponse))
+                                                                  out EVSE_UId  EVSEUId,
+                                                                  out String    ErrorResponse))
                                     {
-                                        PatchedJSON = JSON;
-                                        return false;
+
+                                        return PatchResult<JObject>.Failed(JSON,
+                                                                           "Patching the 'evses' array of a location led to an error: " + ErrorResponse);
+
                                     }
 
-                                    if (!TryGetEVSE(EVSEUId, out EVSE EVSE))
+                                    if (TryGetEVSE(EVSEUId, out EVSE EVSE))
                                     {
-                                        ErrorResponse  = "Unknown EVSE UId!";
-                                        PatchedJSON    = JSON;
-                                        return false;
+                                        //EVSE.Patch(EVSEObject);
                                     }
+                                    else
+                                    {
 
-                                    EVSE.Patch(EVSEObject);
+                                        //ToDo: Create this "new" EVSE!
+                                        return PatchResult<JObject>.Failed(JSON,
+                                                                           "Unknown EVSE UId!");
+
+                                    }
 
                                 }
                                 else
                                 {
-                                    ErrorResponse  = "Invalid EVSE patch!";
-                                    PatchedJSON    = JSON;
-                                    return false;
+                                    return PatchResult<JObject>.Failed(JSON,
+                                                                       "Invalid JSON merge patch for 'evses' array of a location: Data within the 'evses' array is not a valid EVSE object!");
                                 }
 
                             }
@@ -1127,26 +1132,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                     else
                     {
-                        ErrorResponse  = "Invalid evses patch!";
-                        PatchedJSON    = JSON;
-                        return false;
+                        return PatchResult<JObject>.Failed(JSON,
+                                                           "Invalid JSON merge patch for 'evses' array of a location: JSON property 'evses' is not an array!");
                     }
 
                 }
 
                 else if (property.Value is null)
                 {
+                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
                 }
 
                 else if (property.Value is JObject subObject)
                 {
 
-                    if (JSON[property.Key] is JObject oldSubObject)
-                        JSON[property.Key] = TryPatch(oldSubObject, subObject, out PatchedJSON, out ErrorResponse);
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
 
                     else
-                        JSON[property.Key] = subObject;
+                    {
+                        JSON.Add(property.Key, subObject);
+                    }
 
                 }
 
@@ -1159,27 +1183,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             }
 
-            PatchedJSON    = JSON;
-            ErrorResponse  = null;
-            return true;
+            return PatchResult<JObject>.Success(JSON);
 
         }
 
 
 
-        #region TryPatch(LocationPatch, out PatchedLocation, out ErrorResponse)
+        #region TryPatch(LocationPatch)
 
-        public Boolean TryPatch(JObject       LocationPatch,
-                                out Location  PatchedLocation,
-                                out String    ErrorResponse)
+        public PatchResult<Location> TryPatch(JObject LocationPatch)
         {
 
-            if (!LocationPatch.HasValues)
-            {
-                PatchedLocation  = this;
-                ErrorResponse    = "The given location must not be null!";
-                return false;
-            }
+            if (LocationPatch == null)
+                return PatchResult<Location>.Failed(this,
+                                                    "The given location patch must not be null!");
 
             lock (patchLock)
             {
@@ -1187,30 +1204,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (LocationPatch["last_updated"] is null)
                     LocationPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                if (!TryPatch(ToJSON(), LocationPatch, out JObject PatchedJSON, out ErrorResponse))
-                {
-                    PatchedLocation = this;
-                    return false;
-                }
+                var patchResult = TryPrivatePatch(ToJSON(), LocationPatch);
 
-                if (TryParse(PatchedJSON,
-                             out PatchedLocation,
-                             out ErrorResponse))
+                if (patchResult.IsFailed)
+                    return PatchResult<Location>.Failed(this,
+                                                        patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out Location  PatchedLocation,
+                             out String    ErrorResponse))
                 {
-                    return true;
+
+                    return PatchResult<Location>.Success(PatchedLocation,
+                                                         ErrorResponse);
+
                 }
 
                 else
-                {
-                    PatchedLocation = this;
-                    return false;
-                }
+                    return PatchResult<Location>.Failed(this,
+                                                        patchResult.ErrorResponse);
 
             }
 
         }
 
         #endregion
+
 
         #region (internal) SetEVSE(EVSE)
 
@@ -1295,6 +1314,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public IEnumerator<EVSE> GetEnumerator()
             => EVSEs.GetEnumerator();
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomLocationSerializer = null, CustomEVSESerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this location in HEX.
+        /// </summary>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
+                                     CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
+                                     CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
+                                     CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
+                                     CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
+                                     CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
+                                     CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
+                                     CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomLocationSerializer,
+                                                                         CustomPublishTokenTypeSerializer,
+                                                                         CustomAdditionalGeoLocationSerializer,
+                                                                         CustomEVSESerializer,
+                                                                         CustomStatusScheduleSerializer,
+                                                                         CustomConnectorSerializer,
+                                                                         CustomDisplayTextSerializer,
+                                                                         CustomBusinessDetailsSerializer,
+                                                                         CustomHoursSerializer,
+                                                                         CustomImageSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
+
+            }
+
+        }
 
         #endregion
 

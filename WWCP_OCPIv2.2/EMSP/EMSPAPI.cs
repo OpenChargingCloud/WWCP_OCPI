@@ -3403,6 +3403,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.PUT,
+                                                                                         HTTPMethod.PATCH,
+                                                                                         HTTPMethod.DELETE
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -3443,7 +3453,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = Location.LastUpdated.ToIso8601()
+                                                        LastModified               = Location.LastUpdated.ToIso8601(),
+                                                        ETag                       = Location.SHA256Hash
                                                     }
                                              });
 
@@ -3548,7 +3559,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            LastModified               = newOrUpdatedLocation.LastUpdated.ToIso8601(),
+                                                            ETag                       = newOrUpdatedLocation.SHA256Hash
                                                         }
                                                     };
 
@@ -3589,22 +3602,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
-                                         //ToDo: await does not like "out ..."! Handle update errors!
-                                         if (CommonAPI.TryPatchLocation(ExistingLocation,
-                                                                        LocationPatch,
-                                                                        out Location PatchedLocation,
-                                                                        out String   ErrorResponse))
+                                         // Validation-Checks for PATCHes
+                                         // (E-Tag, Timestamp, ...)
+
+
+                                         var patchedLocation = await CommonAPI.TryPatchLocation(ExistingLocation,
+                                                                                                LocationPatch);
+
+                                         //ToDo: Handle update errors!
+                                         if (patchedLocation.IsSuccess)
                                          {
 
                                              return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 1000,
                                                             StatusMessage        = "Hello world!",
-                                                            Data                 = PatchedLocation.ToJSON(),
+                                                            Data                 = patchedLocation.PatchedData.ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.OK,
                                                                 AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                 AccessControlAllowHeaders  = "Authorization",
-                                                                LastModified               = PatchedLocation.LastUpdated.ToIso8601()
+                                                                LastModified               = patchedLocation.PatchedData.LastUpdated.ToIso8601(),
+                                                                ETag                       = patchedLocation.PatchedData.SHA256Hash
                                                             }
                                                         };
 
@@ -3615,7 +3633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 2000,
-                                                            StatusMessage        = ErrorResponse,
+                                                            StatusMessage        = patchedLocation.ErrorResponse,
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.OK,
                                                                 AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -3691,6 +3709,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.PUT,
+                                                                                         HTTPMethod.PATCH,
+                                                                                         HTTPMethod.DELETE
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -3733,6 +3761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
                                                         LastModified               = EVSE.LastUpdated.ToIso8601(),
+                                                        ETag                       = EVSE.SHA256Hash
                                                     }
                                              });
 
@@ -3828,7 +3857,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            LastModified               = newOrUpdatedEVSE.LastUpdated.ToIso8601(),
+                                                            ETag                       = newOrUpdatedEVSE.SHA256Hash
                                                         }
                                                     };
 
@@ -3852,7 +3883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                         out CountryCode?          CountryCode,
                                                                         out Party_Id?             PartyId,
                                                                         out Location_Id?          LocationId,
-                                                                        out Location              OldLocation,
+                                                                        out Location              ExistingLocation,
                                                                         out EVSE_UId?             EVSEUId,
                                                                         out EVSE                  ExistingEVSE,
                                                                         out OCPIResponse.Builder  OCPIResponseBuilder,
@@ -3871,22 +3902,43 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
-                                         //ToDo: Handle update errors
-                                         var patchedEVSE = CommonAPI.PatchEVSE(ExistingEVSE,
-                                                                               EVSEPatch);
+                                         var patchedEVSE = await CommonAPI.TryPatchEVSE(ExistingLocation,
+                                                                                        ExistingEVSE,
+                                                                                        EVSEPatch);
 
+                                         //ToDo: Handle update errors!
+                                         if (patchedEVSE.IsSuccess)
+                                         {
 
-                                         return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = patchedEVSE.ToJSON(),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            LastModified               = patchedEVSE.LastUpdated.ToIso8601(),
-                                                        }
-                                                    };
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = patchedEVSE.PatchedData.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = patchedEVSE.PatchedData.LastUpdated.ToIso8601(),
+                                                                ETag                       = patchedEVSE.PatchedData.SHA256Hash
+                                                            }
+                                                        };
+
+                                         }
+
+                                         else
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = patchedEVSE.ErrorResponse,
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
+
+                                         }
 
                                      });
 
@@ -3957,6 +4009,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.PUT,
+                                                                                         HTTPMethod.PATCH,
+                                                                                         HTTPMethod.DELETE
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -4000,7 +4062,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = Connector.LastUpdated.ToIso8601()
+                                                        LastModified               = Connector.LastUpdated.ToIso8601(),
+                                                        ETag                       = Connector.SHA256Hash
                                                     }
                                              });
 
@@ -4098,7 +4161,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            LastModified               = newOrUpdatedConnector.LastUpdated.ToIso8601(),
+                                                            ETag                       = newOrUpdatedConnector.SHA256Hash
                                                         }
                                                     };
 
@@ -4122,9 +4187,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                  out CountryCode?          CountryCode,
                                                                                  out Party_Id?             PartyId,
                                                                                  out Location_Id?          LocationId,
-                                                                                 out Location              OldLocation,
+                                                                                 out Location              ExistingLocation,
                                                                                  out EVSE_UId?             EVSEUId,
-                                                                                 out EVSE                  OldEVSE,
+                                                                                 out EVSE                  ExistingEVSE,
                                                                                  out Connector_Id?         ConnectorId,
                                                                                  out Connector             ExistingConnector,
                                                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
@@ -4143,22 +4208,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #endregion
 
 
-                                         //ToDo: Handle update errors
-                                         var patchedConnector = CommonAPI.PatchConnector(ExistingConnector,
-                                                                                         ConnectorPatch);
+                                         var patchedConnector = await CommonAPI.TryPatchConnector(ExistingLocation,
+                                                                                                  ExistingEVSE,
+                                                                                                  ExistingConnector,
+                                                                                                  ConnectorPatch);
 
+                                         //ToDo: Handle update errors!
+                                         if (patchedConnector.IsSuccess)
+                                         {
 
-                                         return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = patchedConnector.ToJSON(),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            LastModified               = patchedConnector.LastUpdated.ToIso8601(),
-                                                        }
-                                                    };
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = patchedConnector.PatchedData.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = patchedConnector.PatchedData.LastUpdated.ToIso8601(),
+                                                                ETag                       = patchedConnector.PatchedData.SHA256Hash
+                                                            }
+                                                        };
+
+                                         }
+
+                                         else
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = patchedConnector.ErrorResponse,
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
+
+                                         }
 
                                      });
 
@@ -4356,6 +4443,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, DELETE",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.PUT,
+                                                                                         HTTPMethod.DELETE
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -4395,7 +4491,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = Tariff.LastUpdated.ToIso8601()
+                                                        LastModified               = Tariff.LastUpdated.ToIso8601(),
+                                                        ETag                       = Tariff.SHA256Hash
                                                     }
                                              });
 
@@ -4493,7 +4590,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            LastModified               = newOrUpdatedTariff.LastUpdated.ToIso8601(),
+                                                            ETag                       = newOrUpdatedTariff.SHA256Hash
                                                         }
                                                     };
 
@@ -4691,6 +4790,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.PUT,
+                                                                                         HTTPMethod.PATCH,
+                                                                                         HTTPMethod.DELETE
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -4707,13 +4816,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
-                                         #region Check existing session
+                                         #region Check session
 
                                          if (!Request.ParseSession(this,
                                                                    out CountryCode?          CountryCode,
                                                                    out Party_Id?             PartyId,
                                                                    out Session_Id?           SessionId,
-                                                                   out Session               ExistingSession,
+                                                                   out Session               Session,
                                                                    out OCPIResponse.Builder  OCPIResponseBuilder,
                                                                    FailOnMissingSession: true))
                                          {
@@ -4726,12 +4835,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              new OCPIResponse.Builder(Request) {
                                                     StatusCode           = 1000,
                                                     StatusMessage        = "Hello world!",
-                                                    Data                 = ExistingSession.ToJSON(),
+                                                    Data                 = Session.ToJSON(),
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = ExistingSession.LastUpdated.ToIso8601()
+                                                        LastModified               = Session.LastUpdated.ToIso8601(),
+                                                        ETag                       = Session.SHA256Hash
                                                     }
                                              });
 
@@ -4829,7 +4939,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            LastModified               = newOrUpdatedSession.LastUpdated.ToIso8601(),
+                                                            ETag                       = newOrUpdatedSession.SHA256Hash
                                                         }
                                                     };
 
@@ -4853,7 +4965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                    out CountryCode?          CountryCode,
                                                                    out Party_Id?             PartyId,
                                                                    out Session_Id?           SessionId,
-                                                                   out Session               OldSession,
+                                                                   out Session               ExistingSession,
                                                                    out OCPIResponse.Builder  OCPIResponseBuilder,
                                                                    FailOnMissingSession: true))
                                          {
@@ -4864,29 +4976,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #region Parse and apply Session JSON patch
 
-                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONPatch, out OCPIResponseBuilder))
+                                         if (!Request.TryParseJObjectRequestBody(out JObject SessionPatch, out OCPIResponseBuilder))
                                              return OCPIResponseBuilder;
-
-                                         var patchedSession = OldSession.Patch(JSONPatch);
 
                                          #endregion
 
 
-                                         //ToDo: Handle update errors
-                                         CommonAPI.UpdateSession(patchedSession);
+                                         var patchedSession = await CommonAPI.TryPatchSession(ExistingSession,
+                                                                                              SessionPatch);
 
+                                         //ToDo: Handle update errors!
+                                         if (patchedSession.IsSuccess)
+                                         {
 
-                                         return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = patchedSession.ToJSON(),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            LastModified               = patchedSession.LastUpdated.ToIso8601(),
-                                                        }
-                                                    };
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = patchedSession.PatchedData.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = patchedSession.PatchedData.LastUpdated.ToIso8601(),
+                                                                ETag                       = patchedSession.PatchedData.SHA256Hash
+                                                            }
+                                                        };
+
+                                         }
+
+                                         else
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = patchedSession.ErrorResponse,
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
+
+                                         }
 
                                      });
 
@@ -5088,7 +5219,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.Created,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
+                                                            AccessControlAllowHeaders  = "Authorization",
+                                                            LastModified               = newCDR.LastUpdated.ToIso8601(),
+                                                            ETag                       = newCDR.SHA256Hash
                                                         }
                                                     };
 
@@ -5154,6 +5287,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.DELETE
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });
@@ -5176,7 +5317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                out CountryCode?          CountryCode,
                                                                out Party_Id?             PartyId,
                                                                out CDR_Id?               CDRId,
-                                                               out CDR                   ExistingCDR,
+                                                               out CDR                   CDR,
                                                                out OCPIResponse.Builder  OCPIResponseBuilder,
                                                                FailOnMissingCDR: true))
                                          {
@@ -5189,12 +5330,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              new OCPIResponse.Builder(Request) {
                                                     StatusCode           = 1000,
                                                     StatusMessage        = "Hello world!",
-                                                    Data                 = ExistingCDR.ToJSON(),
+                                                    Data                 = CDR.ToJSON(),
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = ExistingCDR.LastUpdated.ToIso8601()
+                                                        LastModified               = CDR.LastUpdated.ToIso8601(),
+                                                        ETag                       = CDR.SHA256Hash
                                                     }
                                              });
 
@@ -5251,6 +5393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+
             #region ~/tokens
 
             #region OPTIONS  ~/tokens
@@ -5267,6 +5410,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.GET,
+                                                                                         HTTPMethod.POST
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                              });

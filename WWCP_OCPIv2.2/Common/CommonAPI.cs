@@ -1503,49 +1503,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryPatchLocation      (Location,  Patch, out PatchedLocation, out ErrorResponse)
+        #region TryPatchLocation(Location,                  LocationPatch)
 
-        public Boolean TryPatchLocation(Location      Location,
-                                        JObject       Patch,
-                                        out Location  PatchedLocation,
-                                        out String    ErrorResponse)
+        public async Task<PatchResult<Location>> TryPatchLocation(Location  Location,
+                                                                  JObject   LocationPatch)
         {
 
-            PatchedLocation = Location;
-
             if (Location is null)
-            {
-                ErrorResponse = "The given location must not be null!";
-                return false;
-            }
+                return PatchResult<Location>.Failed(Location,
+                                                    "The given location must not be null!");
 
-            if (Patch is null || !Patch.HasValues)
-            {
-                ErrorResponse = "The given location patch must not be null or empty!";
-                return false;
-            }
+            if (LocationPatch is null || !LocationPatch.HasValues)
+                return PatchResult<Location>.Failed(Location,
+                                                    "The given location patch must not be null or empty!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
             lock (Locations)
             {
 
                 if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
                     parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
-                    locations.ContainsKey(Location.Id))
+                    locations.TryGetValue(Location.Id,          out Location                                                location))
                 {
 
-                    Location.TryPatch(Patch, out PatchedLocation, out ErrorResponse);
+                    var patchResult = location.TryPatch(LocationPatch);
 
-                    locations[Location.Id] = PatchedLocation;
+                    if (patchResult.IsSuccess)
+                        locations[Location.Id] = patchResult.PatchedData;
 
-                    return true;
+                    return PatchResult<Location>.Success(patchResult.PatchedData,
+                                                         patchResult.ErrorResponse);
 
                 }
 
                 else
-                {
-                    ErrorResponse = "The given location does not exist!";
-                    return false;
-                }
+                    return PatchResult<Location>.Failed(Location,
+                                                        "The given location does not exist!");
 
             }
 
@@ -1553,49 +1548,96 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PatchEVSE             (EVSE,      Patch)
+        #region TryPatchEVSE    (Location, EVSE,            EVSEPatch)
 
-        public EVSE PatchEVSE(EVSE     EVSE,
-                              JObject  Patch)
+        public async Task<PatchResult<EVSE>> TryPatchEVSE(Location  Location,
+                                                          EVSE      EVSE,
+                                                          JObject   EVSEPatch)
         {
 
+            if (Location is null)
+                return PatchResult<EVSE>.Failed(EVSE,
+                                                "The given location must not be null!");
+
             if (EVSE is null)
-                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
+                return PatchResult<EVSE>.Failed(EVSE,
+                                                "The given EVSE must not be null!");
 
-            //if (Patch is null || !Patch.HasValues)
-                return EVSE;
+            if (EVSEPatch is null || !EVSEPatch.HasValues)
+                return PatchResult<EVSE>.Failed(EVSE,
+                                                "The given EVSE patch must not be null or empty!");
 
-        //    lock (Locations)
-        //    {
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
-        //        var patchedEVSE = EVSE.Patch(Patch);
-        //        var builder = EVSE.ParentLocation.To
+            lock (Locations)
+            {
 
-        //    }
+                var patchResult = EVSE.TryPatch(EVSEPatch);
+
+                if (patchResult.IsSuccess)
+                {
+
+                    Location.SetEVSE(patchResult.PatchedData);
+
+                    //ToDo: Update Location timestamp!
+
+                }
+
+                return PatchResult<EVSE>.Success(patchResult.PatchedData,
+                                                 patchResult.ErrorResponse);
+
+            }
 
         }
 
         #endregion
 
-        #region PatchConnector        (Connector, Patch)
+        #region PatchConnector  (Location, EVSE, Connector, ConnectorPatch)
 
-        public Connector PatchConnector(Connector  Connector,
-                                        JObject    Patch)
+        public async Task<PatchResult<Connector>> TryPatchConnector(Location   Location,
+                                                                    EVSE       EVSE,
+                                                                    Connector  Connector,
+                                                                    JObject    ConnectorPatch)
         {
 
+            if (Location is null)
+                return PatchResult<Connector>.Failed(Connector,
+                                                     "The given location must not be null!");
+
+            if (EVSE is null)
+                return PatchResult<Connector>.Failed(Connector,
+                                                     "The given EVSE must not be null!");
+
             if (Connector is null)
-                throw new ArgumentNullException(nameof(Connector), "The given connector must not be null!");
+                return PatchResult<Connector>.Failed(Connector,
+                                                     "The given connector must not be null!");
 
-            //if (Patch is null || !Patch.HasValues)
-                return Connector;
+            if (ConnectorPatch is null || !ConnectorPatch.HasValues)
+                return PatchResult<Connector>.Failed(Connector,
+                                                     "The given connector patch must not be null or empty!");
 
-        //    lock (Locations)
-        //    {
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
-        //        var patchedEVSE = EVSE.Patch(Patch);
-        //        var builder = EVSE.ParentLocation.To
+            lock (Locations)
+            {
 
-        //    }
+                var patchResult = Connector.TryPatch(ConnectorPatch);
+
+                if (patchResult.IsSuccess)
+                {
+
+                    EVSE.SetConnector(patchResult.PatchedData);
+
+                    //ToDo: Update EVSE and Location timestamp!
+
+                }
+
+                return PatchResult<Connector>.Success(patchResult.PatchedData,
+                                                      patchResult.ErrorResponse);
+
+            }
 
         }
 
@@ -1965,37 +2007,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region PatchTariff         (Tariff, Patch)
+        #region TryPatchTariff      (Tariff, TariffPatch)
 
-        public Tariff PatchTariff(Tariff   Tariff,
-                                  JObject  Patch)
+        public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff   Tariff,
+                                                              JObject  TariffPatch)
         {
 
             if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
+                return PatchResult<Tariff>.Failed(Tariff,
+                                                  "The given charging tariff must not be null!");
 
-            if (Patch is null || !Patch.HasValues)
-                return Tariff;
+            if (TariffPatch is null || !TariffPatch.HasValues)
+                return PatchResult<Tariff>.Failed(Tariff,
+                                                  "The given charging tariff patch must not be null or empty!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
             lock (Tariffs)
             {
 
                 if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
                     parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
-                    tariffs.ContainsKey(Tariff.Id))
+                    tariffs.TryGetValue(Tariff.Id,          out Tariff                                              tariff))
                 {
 
-                    var patchedTariff = Tariff.Patch(Patch);
+                    var patchResult = tariff.TryPatch(TariffPatch);
 
-                    tariffs[Tariff.Id] = patchedTariff;
+                    if (patchResult.IsSuccess)
+                        tariffs[Tariff.Id] = patchResult.PatchedData;
 
-                    return patchedTariff;
+                    return PatchResult<Tariff>.Success(patchResult.PatchedData,
+                                                       patchResult.ErrorResponse);
 
                 }
 
-            }
+                else
+                    return PatchResult<Tariff>.Failed(Tariff,
+                                                      "The given charging tariff does not exist!");
 
-            return Tariff;
+            }
 
         }
 
@@ -2365,37 +2416,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region PatchSession         (Session, Patch)
+        #region TryPatchSession      (Session, SessionPatch)
 
-        public Session PatchSession(Session  Session,
-                                    JObject  Patch)
+        public async Task<PatchResult<Session>> TryPatchSession(Session  Session,
+                                                                JObject  SessionPatch)
         {
 
             if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
+                return PatchResult<Session>.Failed(Session,
+                                                   "The given charging session must not be null!");
 
-            if (Patch is null || !Patch.HasValues)
-                return Session;
+            if (SessionPatch is null || !SessionPatch.HasValues)
+                return PatchResult<Session>.Failed(Session,
+                                                   "The given charging session patch must not be null or empty!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
             lock (Sessions)
             {
 
                 if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
                     parties. TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
-                    sessions.ContainsKey(Session.Id))
+                    sessions.TryGetValue(Session.Id,          out Session                                               session))
                 {
 
-                    var patchedSession = Session.Patch(Patch);
+                    var patchResult = session.TryPatch(SessionPatch);
 
-                    sessions[Session.Id] = patchedSession;
+                    if (patchResult.IsSuccess)
+                        sessions[Session.Id] = patchResult.PatchedData;
 
-                    return patchedSession;
+                    return PatchResult<Session>.Success(patchResult.PatchedData,
+                                                        patchResult.ErrorResponse);
 
                 }
 
-            }
+                else
+                    return PatchResult<Session>.Failed(Session,
+                                                       "The given charging session does not exist!");
 
-            return Session;
+            }
 
         }
 

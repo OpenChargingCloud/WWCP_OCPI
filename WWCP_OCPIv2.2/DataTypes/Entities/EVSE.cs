@@ -19,7 +19,9 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
 
@@ -50,9 +52,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
-
+        /// <summary>
+        /// The parent location of this EVSE.
+        /// </summary>
         public Location                          ParentLocation             { get; internal set; }
-
 
         /// <summary>
         /// Uniquely identifies the EVSE within the CPOs platform.
@@ -140,6 +143,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                          LastUpdated                { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this EVSE.
+        /// </summary>
+        public String                            SHA256Hash                 { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -147,6 +155,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new EVSE.
         /// </summary>
+        /// <param name="ParentLocation">The parent location of this EVSE.</param>
+        /// 
         /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
         /// <param name="Status">Indicates the current status of the EVSE.</param>
         /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
@@ -160,6 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
         /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
         /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+        /// 
         /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
         internal EVSE(Location                          ParentLocation,
 
@@ -181,6 +192,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
+            this.ParentLocation        = ParentLocation;
+
             this.UId                   = UId;
             this.Status                = Status;
             this.Connectors            = Connectors?.         Distinct() ?? new Connector[0];
@@ -200,6 +213,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (Connectors != null)
                 foreach (var connector in Connectors)
                     connector.ParentEVSE = this;
+
+            CalcSHA256Hash();
 
         }
 
@@ -700,13 +715,143 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (internal) Patch(EVSEPatch)
-
-        internal EVSE Patch(JObject EVSEPatch)
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
         {
 
-            if (!EVSEPatch.HasValues)
-                return this;
+            foreach (var property in Patch)
+            {
+
+                if (property.Key == "uid")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'unique identification' of an EVSE is not allowed!");
+
+                else if (property.Key == "connectors")
+                {
+
+                    if (property.Value == null)
+                        return PatchResult<JObject>.Failed(JSON,
+                                                           "Patching the 'connectors' array of a location to 'null' is not allowed!");
+
+                    else if (property.Value is JArray ConnectorsArray)
+                    {
+
+                        if (ConnectorsArray.Count == 0)
+                            return PatchResult<JObject>.Failed(JSON,
+                                                               "Patching the 'connectors' array of a location to '[]' is not allowed!");
+
+                        else
+                        {
+                            foreach (var connector in ConnectorsArray)
+                            {
+
+                                //ToDo: What to do with multiple EVSE objects having the same EVSEUId?
+                                if (connector is JObject ConnectorObject)
+                                {
+
+                                    if (ConnectorObject.ParseMandatory("id",
+                                                                       "connector identification",
+                                                                       Connector_Id.TryParse,
+                                                                       out Connector_Id  ConnectorId,
+                                                                       out String        ErrorResponse))
+                                    {
+
+                                        return PatchResult<JObject>.Failed(JSON,
+                                                                           "Patching the 'connectors' array of a location led to an error: " + ErrorResponse);
+
+                                    }
+
+                                    if (TryGetConnector(ConnectorId, out Connector Connector))
+                                    {
+                                        //Connector.Patch(ConnectorObject);
+                                    }
+                                    else
+                                    {
+
+                                        //ToDo: Create this "new" Connector!
+                                        return PatchResult<JObject>.Failed(JSON,
+                                                                           "Unknown connector identification!");
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    return PatchResult<JObject>.Failed(JSON,
+                                                                       "Invalid JSON merge patch for 'connectors' array of a location: Data within the 'connectors' array is not a valid connector object!");
+                                }
+
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        return PatchResult<JObject>.Failed(JSON,
+                                                           "Invalid JSON merge patch for 'connectors' array of a location: JSON property 'connectors' is not an array!");
+                    }
+
+                }
+
+                else if (property.Value is null)
+                {
+                    //if (JSON.ContainsKey(property.Key))
+                    JSON.Remove(property.Key);
+                }
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
+
+                    else
+                    {
+                        JSON.Add(property.Key, subObject);
+                    }
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            return PatchResult<JObject>.Success(JSON);
+
+        }
+
+
+
+        #region TryPatch(EVSEPatch)
+
+        public PatchResult<EVSE> TryPatch(JObject EVSEPatch)
+        {
+
+            if (EVSEPatch == null)
+                return PatchResult<EVSE>.Failed(this,
+                                                "The given EVSE patch must not be null!");
 
             lock (patchLock)
             {
@@ -714,27 +859,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (EVSEPatch["last_updated"] is null)
                     EVSEPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                //ToDo: Also update 'last_updated' of the location!
+                var patchResult = TryPrivatePatch(ToJSON(), EVSEPatch);
 
-                if (TryParse(PatchObject.Apply(ToJSON(), EVSEPatch),
-                             out EVSE    patchedEVSE,
+                if (patchResult.IsFailed)
+                    return PatchResult<EVSE>.Failed(this,
+                                                    patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out EVSE    PatchedEVSE,
                              out String  ErrorResponse))
                 {
 
-                    patchedEVSE.ParentLocation = ParentLocation;
-
-                    return patchedEVSE;
+                    return PatchResult<EVSE>.Success(PatchedEVSE,
+                                                     ErrorResponse);
 
                 }
 
                 else
-                    return null;
+                    return PatchResult<EVSE>.Failed(this,
+                                                    patchResult.ErrorResponse);
 
             }
 
         }
 
         #endregion
+
+
 
         #region (internal) SetConnector(Connector)
 
@@ -792,6 +943,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public IEnumerator<Connector> GetEnumerator()
             => Connectors.GetEnumerator();
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this EVSE in HEX.
+        /// </summary>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<EVSE>            CustomEVSESerializer             = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>  CustomStatusScheduleSerializer   = null,
+                                     CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>     CustomDisplayTextSerializer      = null,
+                                     CustomJObjectSerializerDelegate<Image>           CustomImageSerializer            = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomEVSESerializer,
+                                                                         CustomStatusScheduleSerializer,
+                                                                         CustomConnectorSerializer,
+                                                                         CustomDisplayTextSerializer,
+                                                                         CustomImageSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
+
+            }
+
+        }
 
         #endregion
 

@@ -19,7 +19,9 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
 
@@ -253,6 +255,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                            LastUpdated                 { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this charge detail record.
+        /// </summary>
+        public String                              SHA256Hash                  { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -297,12 +304,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            #region Initial checks
-
             if (!ChargingPeriods.SafeAny())
                 throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration of charging periods must not be null or empty!");
-
-            #endregion
 
             this.CountryCode              = CountryCode;
             this.PartyId                  = PartyId;
@@ -337,6 +340,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.CreditReferenceId        = CreditReferenceId;
 
             this.LastUpdated              = LastUpdated ?? DateTime.Now;
+
+            CalcSHA256Hash();
 
         }
 
@@ -970,11 +975,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static Boolean TryParse(String                                Text,
+        public static Boolean TryParse(String                            Text,
                                        out CDR                           CDR,
-                                       out String                            ErrorResponse,
-                                       CountryCode?                          CountryCodeURL        = null,
-                                       Party_Id?                             PartyIdURL            = null,
+                                       out String                        ErrorResponse,
+                                       CountryCode?                      CountryCodeURL    = null,
+                                       Party_Id?                         PartyIdURL        = null,
                                        CDR_Id?                           CDRIdURL          = null,
                                        CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
         {
@@ -993,7 +998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                CDR        = null;
+                CDR            = null;
                 ErrorResponse  = "The given text representation of a CDR is invalid: " + e.Message;
                 return false;
             }
@@ -1138,6 +1143,71 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             return CustomCDRSerializer != null
                        ? CustomCDRSerializer(this, JSON)
                        : JSON;
+
+        }
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomCDRSerializer = null, CustomCDRTokenSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
+        /// </summary>
+        /// <param name="CustomCDRSerializer">A delegate to serialize custom CDR JSON objects.</param>
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
+        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<CDR>                   CustomCDRSerializer                    = null,
+                                     CustomJObjectSerializerDelegate<CDRToken>              CustomCDRTokenSerializer               = null,
+                                     CustomJObjectSerializerDelegate<CDRLocation>           CustomCDRLocationSerializer            = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter>           CustomEnergyMeterSerializer            = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftware>  CustomTransparencySoftwareSerializer   = null,
+                                     CustomJObjectSerializerDelegate<Tariff>                CustomTariffSerializer                 = null,
+                                     CustomJObjectSerializerDelegate<TariffElement>         CustomTariffElementSerializer          = null,
+                                     CustomJObjectSerializerDelegate<PriceComponent>        CustomPriceComponentSerializer         = null,
+                                     CustomJObjectSerializerDelegate<TariffRestrictions>    CustomTariffRestrictionsSerializer     = null,
+                                     CustomJObjectSerializerDelegate<ChargingPeriod>        CustomChargingPeriodSerializer         = null,
+                                     CustomJObjectSerializerDelegate<CDRDimension>          CustomCDRDimensionSerializer           = null,
+                                     CustomJObjectSerializerDelegate<SignedData>            CustomSignedDataSerializer             = null,
+                                     CustomJObjectSerializerDelegate<SignedValue>           CustomSignedValueSerializer            = null,
+                                     CustomJObjectSerializerDelegate<Price>                 CustomPriceSerializer                  = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomCDRSerializer,
+                                                                         CustomCDRTokenSerializer,
+                                                                         CustomCDRLocationSerializer,
+                                                                         CustomEnergyMeterSerializer,
+                                                                         CustomTransparencySoftwareSerializer,
+                                                                         CustomTariffSerializer,
+                                                                         CustomTariffElementSerializer,
+                                                                         CustomPriceComponentSerializer,
+                                                                         CustomTariffRestrictionsSerializer,
+                                                                         CustomChargingPeriodSerializer,
+                                                                         CustomCDRDimensionSerializer,
+                                                                         CustomSignedDataSerializer,
+                                                                         CustomSignedValueSerializer,
+                                                                         CustomPriceSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
+
+            }
 
         }
 

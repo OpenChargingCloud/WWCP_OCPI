@@ -19,7 +19,9 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
 
@@ -147,6 +149,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                         LastUpdated             { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this charging tariff.
+        /// </summary>
+        public String                           SHA256Hash              { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -206,6 +213,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.EnergyMix       = EnergyMix;
 
             this.LastUpdated     = LastUpdated ?? DateTime.Now;
+
+            CalcSHA256Hash();
 
         }
 
@@ -703,13 +712,85 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Patch(TariffPatch)
 
-        public Tariff Patch(JObject TariffPatch)
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
         {
 
-            if (!TariffPatch.HasValues)
-                return this;
+            foreach (var property in Patch)
+            {
+
+                if (property.Key == "country_code")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'country code' of a charging tariff is not allowed!");
+
+                else if (property.Key == "party_id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'party identification' of a charging tariff is not allowed!");
+
+                else if (property.Key == "id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'identification' of a charging tariff is not allowed!");
+
+                else if (property.Value is null)
+                {
+                    //if (JSON.ContainsKey(property.Key))
+                    JSON.Remove(property.Key);
+                }
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
+
+                    else
+                    {
+                        JSON.Add(property.Key, subObject);
+                    }
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            return PatchResult<JObject>.Success(JSON);
+
+        }
+
+
+
+        #region TryPatch(TariffPatch)
+
+        public PatchResult<Tariff> TryPatch(JObject TariffPatch)
+        {
+
+            if (TariffPatch == null)
+                return PatchResult<Tariff>.Failed(this,
+                                                  "The given charging tariff patch must not be null!");
 
             lock (patchLock)
             {
@@ -717,15 +798,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (TariffPatch["last_updated"] is null)
                     TariffPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                if (TryParse(PatchObject.Apply(ToJSON(), TariffPatch),
-                             out Tariff patchedTariff,
-                             out String ErrorResponse))
+                var patchResult = TryPrivatePatch(ToJSON(), TariffPatch);
+
+                if (patchResult.IsFailed)
+                    return PatchResult<Tariff>.Failed(this,
+                                                      patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out Tariff  PatchedTariff,
+                             out String  ErrorResponse))
                 {
-                    return patchedTariff;
+
+                    return PatchResult<Tariff>.Success(PatchedTariff,
+                                                       ErrorResponse);
+
                 }
 
                 else
-                    return null;
+                    return PatchResult<Tariff>.Failed(this,
+                                                      patchResult.ErrorResponse);
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomTariffSerializer = null, CustomTariffElementSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
+        /// </summary>
+        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Tariff>              CustomTariffSerializer               = null,
+                                     CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
+                                     CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
+                                     CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomTariffSerializer,
+                                                                         CustomTariffElementSerializer,
+                                                                         CustomPriceComponentSerializer,
+                                                                         CustomTariffRestrictionsSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
 
             }
 

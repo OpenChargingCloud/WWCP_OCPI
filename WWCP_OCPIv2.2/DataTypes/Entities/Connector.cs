@@ -19,7 +19,9 @@
 
 using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
 
@@ -47,8 +49,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Properties
 
+        /// <summary>
+        /// The parent EVSE of this connector.
+        /// </summary>
         public EVSE                    ParentEVSE            { get; internal set; }
-
 
         /// <summary>
         /// Identifier of the connector within the EVSE.
@@ -116,6 +120,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public DateTime                LastUpdated           { get; }
 
+        /// <summary>
+        /// The SHA256 hash of the JSON representation of this connector.
+        /// </summary>
+        public String                  SHA256Hash            { get; private set; }
+
         #endregion
 
         #region Constructor(s)
@@ -123,15 +132,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// A connector is the socket or cable available for the electric vehicle to make use of.
         /// </summary>
+        /// <param name="ParentEVSE">The parent EVSE of this connector.</param>
+        /// 
         /// <param name="Id">Identifier of the connector within the EVSE.</param>
         /// <param name="Standard">The standard of the installed connector.</param>
         /// <param name="Format">The format (socket/cable) of the installed connector.</param>
         /// <param name="PowerType">The type of powert at the connector.</param>
         /// <param name="MaxVoltage">Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
         /// <param name="MaxAmperage">Maximum amperage of the connector, in ampere [A].</param>
+        /// 
         /// <param name="MaxElectricPower">Maximum electric power that can be delivered by this connector, in Watts (W).</param>
         /// <param name="TariffIds">Identifiers of the currently valid charging tariffs.</param>
         /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
+        /// 
         /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
         internal Connector(EVSE                    ParentEVSE,
 
@@ -150,6 +163,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
+            this.ParentEVSE          = ParentEVSE;
+
             this.Id                  = Id;
             this.Standard            = Standard;
             this.Format              = Format;
@@ -162,6 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.TermsAndConditions  = TermsAndConditions?.Trim();
 
             this.LastUpdated         = LastUpdated ?? DateTime.Now;
+
+            CalcSHA256Hash();
 
         }
 
@@ -547,13 +564,76 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (internal) Patch(EVSEPatch)
 
-        internal Connector Patch(JObject ConnectorPatch)
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
         {
 
-            if (!ConnectorPatch.HasValues)
-                return this;
+            foreach (var property in Patch)
+            {
+
+                if (property.Key == "id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'identification' of a connector is not allowed!");
+
+                else if (property.Value is null)
+                {
+                    //if (JSON.ContainsKey(property.Key))
+                    JSON.Remove(property.Key);
+                }
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
+
+                    else
+                    {
+                        JSON.Add(property.Key, subObject);
+                    }
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            return PatchResult<JObject>.Success(JSON);
+
+        }
+
+
+        #region TryPatch(ConnectorPatch)
+
+        public PatchResult<Connector> TryPatch(JObject ConnectorPatch)
+        {
+
+            if (ConnectorPatch == null)
+                return PatchResult<Connector>.Failed(this,
+                                                     "The given connector patch must not be null!");
 
             lock (patchLock)
             {
@@ -561,22 +641,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (ConnectorPatch["last_updated"] is null)
                     ConnectorPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                //ToDo: Also update 'last_updated' of the EVSE!
-                //      Also update 'last_updated' of the location!
+                var patchResult = TryPrivatePatch(ToJSON(), ConnectorPatch);
 
-                if (TryParse(PatchObject.Apply(ToJSON(), ConnectorPatch),
-                             out Connector  patchedConnector,
+                if (patchResult.IsFailed)
+                    return PatchResult<Connector>.Failed(this,
+                                                         patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out Connector  PatchedConnector,
                              out String     ErrorResponse))
                 {
 
-                    patchedConnector.ParentEVSE = ParentEVSE;
-
-                    return patchedConnector;
+                    return PatchResult<Connector>.Success(PatchedConnector,
+                                                          ErrorResponse);
 
                 }
 
                 else
-                    return null;
+                    return PatchResult<Connector>.Failed(this,
+                                                         patchResult.ErrorResponse);
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CalcSHA256Hash(CustomConnectorSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
+        /// </summary>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Connector> CustomConnectorSerializer = null)
+        {
+
+            using (var SHA256 = new SHA256Managed())
+            {
+
+                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
+                                                                  ToJSON(CustomConnectorSerializer).
+                                                                  ToString(Newtonsoft.Json.Formatting.None)
+                                                              )).
+                                                  Select(value => String.Format("{0:x2}", value)).
+                                                  Aggregate();
 
             }
 

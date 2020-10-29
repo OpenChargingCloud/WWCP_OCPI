@@ -54,6 +54,7 @@
     <Compile Include="CPO\CPOAPILogger.cs" />
     <Compile Include="DataTypes\Commands\ClearProfileResult.cs" />
     <Compile Include="DataTypes\Commands\ChargingProfileResult.cs" />
+    <Compile Include="DataTypes\Complex\PatchResult.cs" />
     <Compile Include="DataTypes\Complex\RemoteAccessInfo.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfile.cs" />
     <Compile Include="DataTypes\Complex\ActiveChargingProfile.cs" />
