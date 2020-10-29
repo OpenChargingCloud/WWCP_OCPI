@@ -89,6 +89,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public HTTPPath?                     AdditionalURLPathPrefix    { get; }
 
         /// <summary>
+        /// Allow anonymous access to locations as Open Data.
+        /// </summary>
+        public Boolean                       LocationsAsOpenData        { get; }
+
+        /// <summary>
         /// (Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.
         /// OCPI v2.2 does not define any behaviour for this.
         /// </summary>
@@ -265,9 +270,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
         /// <param name="ServiceName">An optional HTTP service name.</param>
-        /// 
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
+        /// 
+        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public CommonAPI(URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
 
@@ -280,6 +286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          DNSClient                     DNSClient                 = null,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
+                         Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null)
 
             : base(HTTPHostname,
@@ -298,6 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.OurVersionsURL           = OurVersionsURL;
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
             this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
@@ -327,6 +335,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
+        /// 
+        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
+        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public CommonAPI(URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
 
@@ -337,6 +348,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          String                        ServiceName               = DefaultHTTPServerName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
+                         Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null)
 
             : base(HTTPServer,
@@ -353,6 +365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.OurVersionsURL           = OurVersionsURL;
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
             this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
@@ -396,6 +409,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.GET
+                                                                                  },
                                                      AccessControlAllowHeaders  = "Authorization",
                                                      Connection                 = "close"
                                                  }.AsImmutable);
@@ -458,7 +475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS     ~/versions
 
             // ----------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2000/versions
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions
             // ----------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.OPTIONS,
@@ -470,6 +487,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.GET
+                                                                                  },
                                                      AccessControlAllowHeaders  = "Authorization"
                                                  }
                                              });
@@ -481,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET         ~/versions
 
             // ----------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/versions
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.GET,
@@ -535,10 +556,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
             #region OPTIONS     ~/versions/{id}
 
             // --------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2000/versions/{id}
+            // curl -v -X OPTIONS http://127.0.0.1:2502/versions/{id}
             // --------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.OPTIONS,
@@ -550,6 +572,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.GET
+                                                                                  },
                                                      AccessControlAllowHeaders  = "Authorization"
                                                  }
                                              });
@@ -560,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET         ~/versions/{id}
 
             // ---------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/versions/{id}
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/{id}
             // ---------------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.GET,
@@ -705,7 +731,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          #region The other side is an EMP or unauthenticated (Open Data Access)...
 
                                          if (accessInfo.Roles?.Any(role => role.Role == Roles.EMSP)     == true ||
-                                             accessInfo.Roles?.Any(role => role.Role == Roles.OpenData) == true)
+                                             accessInfo.Roles?.Any(role => role.Role == Roles.OpenData) == true ||
+                                            (accessInfo.Roles == null && LocationsAsOpenData))
                                          {
 
                                              endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
@@ -785,7 +812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS     ~/2.2/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2000/2.2/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/2.2/credentials
             // ----------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.OPTIONS,
@@ -797,6 +824,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.GET,
+                                                                                      HTTPMethod.POST,
+                                                                                      HTTPMethod.PUT,
+                                                                                      HTTPMethod.DELETE
+                                                                                  },
                                                      AccessControlAllowHeaders  = "Authorization"
                                                  }
                                              });
@@ -808,7 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET         ~/2.2/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.GET,
@@ -856,7 +890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // -----------------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.POST,
@@ -909,7 +943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.PUT,
@@ -959,7 +993,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2000/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
             HTTPServer.AddOCPIMethod(Hostname,
                                      HTTPMethod.DELETE,
