@@ -682,7 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            TariffElements.SafeAny()
-                               ? new JProperty("tariff_alt_text",  new JArray(TariffElements.Select(tariffElement => tariffElement.ToJSON(CustomTariffElementSerializer,
+                               ? new JProperty("tariff_elements",  new JArray(TariffElements.Select(tariffElement => tariffElement.ToJSON(CustomTariffElementSerializer,
                                                                                                                                           CustomPriceComponentSerializer,
                                                                                                                                           CustomTariffRestrictionsSerializer))))
                                : null,
