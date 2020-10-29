@@ -3605,7 +3605,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          // Validation-Checks for PATCHes
                                          // (E-Tag, Timestamp, ...)
 
-
                                          var patchedLocation = await CommonAPI.TryPatchLocation(ExistingLocation,
                                                                                                 LocationPatch);
 

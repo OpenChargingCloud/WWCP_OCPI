@@ -414,14 +414,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("type",         Type.     ToString()),
-                           new JProperty("price",        Price.    ToString("0.00")),
+                           new JProperty("type",       Type.     ToString()),
+                           new JProperty("price",      Price.    ToString("0.00")),
 
                            VAT.HasValue
-                               ? new JProperty("price",  VAT.Value.ToString("0.00"))
+                               ? new JProperty("vat",  VAT.Value.ToString("0.00"))
                                : null,
 
-                           new JProperty("step_size",    StepSize)
+                           new JProperty("step_size",  StepSize)
 
                        );
 
