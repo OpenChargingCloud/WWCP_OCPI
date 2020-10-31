@@ -80,12 +80,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               Tariff_Id?                 TariffId   = null)
         {
 
-            #region Initial checks
-
             if (!Dimensions.SafeAny())
                 throw new ArgumentNullException(nameof(Dimensions), "The given enumeration of relevant values for this charging period must not be null or empty!");
-
-            #endregion
 
             this.StartTimestamp  = StartTimestamp;
             this.Dimensions      = Dimensions?.Distinct();
@@ -486,8 +482,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ChargingPeriod">An object to compare with.</param>
         public Int32 CompareTo(ChargingPeriod ChargingPeriod)
+        {
 
-            => StartTimestamp.CompareTo(ChargingPeriod.StartTimestamp);
+            var c = StartTimestamp.CompareTo(ChargingPeriod.StartTimestamp);
+
+            if (c == 0 && TariffId.HasValue && ChargingPeriod.TariffId.HasValue)
+                c = TariffId.Value.CompareTo(ChargingPeriod.TariffId.HasValue);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -518,9 +522,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(ChargingPeriod ChargingPeriod)
 
-            => StartTimestamp.             Equals(ChargingPeriod.StartTimestamp)              &&
-               Dimensions.Count().Equals(ChargingPeriod.Dimensions.Count()) &&
-               Dimensions.All(dimension => ChargingPeriod.Dimensions.Contains(dimension));
+            => StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601())         &&
+
+               Dimensions.Count().        Equals(ChargingPeriod.Dimensions.    Count())             &&
+               Dimensions.All(dimension =>       ChargingPeriod.Dimensions.    Contains(dimension)) &&
+
+            ((!TariffId.HasValue && !ChargingPeriod.TariffId.HasValue) ||
+              (TariffId.HasValue &&  ChargingPeriod.TariffId.HasValue && TariffId.Value.Equals(ChargingPeriod.TariffId.Value)));
 
         #endregion
 
@@ -536,8 +544,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
+
                 return StartTimestamp.GetHashCode() * 3 ^
-                       Dimensions.Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode());
+
+                       Dimensions.Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode()) ^
+
+                       (TariffId.HasValue
+                            ? TariffId.GetHashCode()
+                            : 0);
+
             }
         }
 
@@ -551,9 +566,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(StartTimestamp,
+
                              " -> ",
+
                              Dimensions.OrderBy(dimension => dimension.Type).
-                                        AggregateWith(", "));
+                                        AggregateWith(", "),
+
+                             TariffId.HasValue
+                                 ? ", tariff: " + TariffId.ToString()
+                                 : "");
 
         #endregion
 

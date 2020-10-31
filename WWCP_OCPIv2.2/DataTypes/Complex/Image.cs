@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   Type,
                                   Category,
                                   Width,
-                                  Width,
+                                  Height,
                                   Thumbnail);
 
 

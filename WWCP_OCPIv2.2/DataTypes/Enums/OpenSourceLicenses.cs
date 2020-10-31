@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         GPL2,
 
-        GPS3,
+        GPL3,
 
         APGL
 

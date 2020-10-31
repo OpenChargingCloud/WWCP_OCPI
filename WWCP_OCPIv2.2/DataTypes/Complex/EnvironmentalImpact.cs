@@ -18,7 +18,7 @@
 #region Usings
 
 using System;
-
+using System.Globalization;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Hermod;
@@ -259,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
                            new JProperty("category",  Category.ToString()),
-                           new JProperty("amount",    Amount.  ToString())
+                           new JProperty("amount",    Amount)
                        );
 
             return CustomEnvironmentalImpactSerializer != null
@@ -394,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var c = Category.CompareTo(EnvironmentalImpact.Category);
 
             if (c == 0)
-                c = Amount.CompareTo(EnvironmentalImpact.Amount);
+                c = Amount.  CompareTo(EnvironmentalImpact.Amount);
 
             return c;
 
@@ -430,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(EnvironmentalImpact EnvironmentalImpact)
 
             => Category.Equals(EnvironmentalImpact.Category) &&
-               Amount.Equals(EnvironmentalImpact.Amount);
+               Amount.  Equals(EnvironmentalImpact.Amount);
 
         #endregion
 
@@ -448,7 +448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 return Category.GetHashCode() * 3 ^
-                       Amount.GetHashCode();
+                       Amount.  GetHashCode();
 
             }
         }

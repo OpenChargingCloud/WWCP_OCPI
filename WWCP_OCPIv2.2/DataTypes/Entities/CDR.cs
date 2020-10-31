@@ -756,7 +756,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalFixedCosts,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -781,7 +782,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalEnergyCost,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -819,7 +821,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? TotalParkingTimeHours,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -1100,13 +1103,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("total_fixed_cost",          TotalFixedCosts.       Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                           new JProperty("total_energy",                    TotalEnergy.                 ToString()),
+                           new JProperty("total_energy",                    TotalEnergy),
 
                            TotalEnergyCost.HasValue
                                ? new JProperty("total_energy_cost",         TotalEnergyCost.       Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                           new JProperty("total_time",                      TotalTime.                   ToString()),
+                           new JProperty("total_time",                      TotalTime.                   TotalHours),
 
                            TotalTimeCost.HasValue
                                ? new JProperty("total_time_cost",           TotalTimeCost.         Value.ToJSON(CustomPriceSerializer))
@@ -1126,6 +1129,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            Remark.IsNotNullOrEmpty()
                                ? new JProperty("remark",                    Remark)
+                               : null,
+
+                           InvoiceReferenceId.HasValue
+                               ? new JProperty("invoice_reference_id",      InvoiceReferenceId.    Value.ToString())
                                : null,
 
                            Credit.HasValue

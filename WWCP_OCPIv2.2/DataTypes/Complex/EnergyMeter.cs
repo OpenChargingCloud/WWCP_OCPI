@@ -248,15 +248,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PublicKey                 [mandatory]
+                #region Parse PublicKey                 [optional]
 
-                if (!JSON.ParseMandatory("public_key",
-                                         "energy meter identification",
-                                         OCPIv2_2.PublicKey.TryParse,
-                                         out PublicKey PublicKey,
-                                         out ErrorResponse))
+                if (JSON.ParseOptional("public_key",
+                                       "energy meter public key",
+                                       OCPIv2_2.PublicKey.TryParse,
+                                       out PublicKey? PublicKey,
+                                       out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -358,7 +359,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("vendor",                  Vendor.              ToString())
                                : null,
 
-                           new JProperty("public_key",                    PublicKey.           ToString()),
+                           PublicKey.HasValue
+                               ? new JProperty("public_key",              PublicKey.           ToString())
+                               : null,
 
                            PublicKeyCertificate.IsNotNullOrEmpty()
                                ? new JProperty("public_key_certificate",  PublicKeyCertificate.ToString())

@@ -235,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (JSON.ParseOptional("public_key",
                                        "public key",
                                        OCPIv2_2.PublicKey.TryParse,
-                                       out PublicKey PublicKey,
+                                       out PublicKey? PublicKey,
                                        out ErrorResponse))
                 {
 

@@ -300,7 +300,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out URL? Logo,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -313,7 +314,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out URL? HowToUse,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -326,7 +328,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out URL? MoreInformation,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -339,7 +342,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out URL? SourceCodeRepository,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -662,7 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
               (HowToUse.            HasValue &&  TransparencySoftware.HowToUse.            HasValue && HowToUse.            Value.Equals(TransparencySoftware.HowToUse.            Value))) &&
 
             ((!MoreInformation.     HasValue && !TransparencySoftware.MoreInformation.     HasValue) ||
-              (MoreInformation.     HasValue &&  TransparencySoftware.MoreInformation.     HasValue && HowToUse.            Value.Equals(TransparencySoftware.MoreInformation.     Value))) &&
+              (MoreInformation.     HasValue &&  TransparencySoftware.MoreInformation.     HasValue && MoreInformation.     Value.Equals(TransparencySoftware.MoreInformation.     Value))) &&
 
             ((!SourceCodeRepository.HasValue && !TransparencySoftware.SourceCodeRepository.HasValue) ||
               (SourceCodeRepository.HasValue &&  TransparencySoftware.SourceCodeRepository.HasValue && SourceCodeRepository.Value.Equals(TransparencySoftware.SourceCodeRepository.Value)));

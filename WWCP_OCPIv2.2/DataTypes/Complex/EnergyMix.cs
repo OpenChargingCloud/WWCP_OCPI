@@ -422,10 +422,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                IsGreenEnergy.Equals(EnergyMix.IsGreenEnergy) &&
 
-               EnergySources.       Count().Equals(EnergyMix.EnergySources.Count())                &&
-               EnvironmentalImpacts.Count().Equals(EnergyMix.EnvironmentalImpacts.Count())         &&
-               EnergySources.       All(source => EnergyMix.EnergySources.       Contains(source)) &&
-               EnvironmentalImpacts.All(impact => EnergyMix.EnvironmentalImpacts.Contains(impact)) &&
+               EnergySources.       Count().Equals(EnergyMix.EnergySources.Count())                 &&
+               EnvironmentalImpacts.Count().Equals(EnergyMix.EnvironmentalImpacts.Count())          &&
+               EnergySources.       All(source =>  EnergyMix.EnergySources.       Contains(source)) &&
+               EnvironmentalImpacts.All(impact =>  EnergyMix.EnvironmentalImpacts.Contains(impact)) &&
 
                ((SupplierName.     IsNullOrEmpty()         && EnergyMix.SupplierName.     IsNullOrEmpty()) ||
                 (SupplierName.     IsNeitherNullNorEmpty() && EnergyMix.SupplierName.     IsNeitherNullNorEmpty() && SupplierName.     Equals(EnergyMix.SupplierName))) &&

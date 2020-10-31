@@ -33,16 +33,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
     /// <summary>
     /// Unit tests for locations.
-    /// https://github.com/ocpi/ocpi/blob/master/mod_tariffs.md#54-tariffrestrictions-class
+    /// https://github.com/ocpi/ocpi/blob/master/mod_locations.asciidoc
     /// </summary>
     [TestFixture]
     public static class LocationTests
     {
 
-        #region LocationTest0001()
+        #region Location_SerializeDeserialize_Test01()
 
+        /// <summary>
+        /// Location serialize, deserialize and compare test.
+        /// </summary>
         [Test]
-        public static void LocationTest0001()
+        public static void Location_SerializeDeserialize_Test01()
         {
 
             var LocationA = new Location(CountryCode.Parse("DE"),
@@ -80,10 +83,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                          30,
                                                          12,
                                                          new Tariff_Id[] {
-                                                             Tariff_Id.Parse("DE*GEF*T0001")
+                                                             Tariff_Id.Parse("DE*GEF*T0001"),
+                                                             Tariff_Id.Parse("DE*GEF*T0002")
                                                          },
                                                          "Public money, public code!",
                                                          DateTime.Parse("2020-09-21")
+                                                     ),
+                                                     new Connector(
+                                                         Connector_Id.Parse("2"),
+                                                         ConnectorTypes.IEC_62196_T2_COMBO,
+                                                         ConnectorFormats.CABLE,
+                                                         PowerTypes.AC_3_PHASE,
+                                                         400,
+                                                         20,
+                                                         8,
+                                                         new Tariff_Id[] {
+                                                             Tariff_Id.Parse("DE*GEF*T0003"),
+                                                             Tariff_Id.Parse("DE*GEF*T0004")
+                                                         },
+                                                         "More public money, more public code!",
+                                                         DateTime.Parse("2020-09-22")
                                                      )
                                                  },
                                                  EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
@@ -141,8 +160,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                  URL.Parse("http://www.graphdefined.com/logo.png"),
                                                  ImageFileType.png,
                                                  ImageCategories.OPERATOR,
-                                                 1000,
-                                                 1500,
+                                                 2000,
+                                                 3000,
                                                  URL.Parse("http://www.graphdefined.com/logo_small.png")
                                              )
                                          ),
@@ -153,8 +172,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                  URL.Parse("http://ahzf.de/logo.gif"),
                                                  ImageFileType.gif,
                                                  ImageCategories.OWNER,
-                                                 1000,
-                                                 1000,
+                                                 3000,
+                                                 4500,
                                                  URL.Parse("http://ahzf.de/logo_small.gif")
                                              )
                                          ),
@@ -203,25 +222,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                                EnergySourceCategories.WIND,
                                                                20
                                                            )
-                                                       },
+                                                       } as IEnumerable<EnergySource>,
                                                        new EnvironmentalImpact[] {
                                                            new EnvironmentalImpact(
                                                                EnvironmentalImpactCategories.CARBON_DIOXIDE,
                                                                0.1
                                                            )
-                                                       },
+                                                       } as IEnumerable<EnvironmentalImpact>,
                                                        "Stadtwerke Jena-Ost",
                                                        "Bio 3000"),
                                          DateTime.Parse("2020-09-12")
                                      );
 
             var JSON = LocationA.ToJSON();
-            Assert.IsTrue(Location.TryParse(JSON, out Location LocationB, out _));
 
-            Assert.AreEqual(LocationA.CountryCode,  LocationB.CountryCode);
-            Assert.AreEqual(LocationA.PartyId,      LocationB.PartyId);
-            Assert.AreEqual(LocationA.Id,           LocationB.Id);
-            Assert.AreEqual(LocationA.Publish,      LocationB.Publish);
+            Assert.AreEqual("DE",                               JSON["country_code"].Value<String>());
+            Assert.AreEqual("GEF",                              JSON["party_id"].    Value<String>());
+            Assert.AreEqual("LOC0001",                          JSON["id"].          Value<String>());
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location LocationB, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(LocationA.CountryCode,              LocationB.CountryCode);
+            Assert.AreEqual(LocationA.PartyId,                  LocationB.PartyId);
+            Assert.AreEqual(LocationA.Id,                       LocationB.Id);
+
+            Assert.AreEqual(LocationA.Publish,                  LocationB.Publish);
+            Assert.AreEqual(LocationA.Address,                  LocationB.Address);
+            Assert.AreEqual(LocationA.City,                     LocationB.City);
+            Assert.AreEqual(LocationA.Country,                  LocationB.Country);
+            Assert.AreEqual(LocationA.Coordinates,              LocationB.Coordinates);
+            Assert.AreEqual(LocationA.Timezone,                 LocationB.Timezone);
+
+            Assert.AreEqual(LocationA.PublishAllowedTo,         LocationB.PublishAllowedTo);
+            Assert.AreEqual(LocationA.Name,                     LocationB.Name);
+            Assert.AreEqual(LocationA.PostalCode,               LocationB.PostalCode);
+            Assert.AreEqual(LocationA.State,                    LocationB.State);
+            Assert.AreEqual(LocationA.RelatedLocations,         LocationB.RelatedLocations);
+            Assert.AreEqual(LocationA.ParkingType,              LocationB.ParkingType);
+            //Assert.AreEqual(LocationA.EVSEs,                    LocationB.EVSEs);
+            Assert.AreEqual(LocationA.Directions,               LocationB.Directions);
+            Assert.AreEqual(LocationA.Operator,                 LocationB.Operator);
+            Assert.AreEqual(LocationA.SubOperator,              LocationB.SubOperator);
+            Assert.AreEqual(LocationA.Owner,                    LocationB.Owner);
+            Assert.AreEqual(LocationA.Facilities,               LocationB.Facilities);
+            //Assert.AreEqual(LocationA.OpeningTimes,             LocationB.OpeningTimes);
+            Assert.AreEqual(LocationA.ChargingWhenClosed,       LocationB.ChargingWhenClosed);
+            Assert.AreEqual(LocationA.Images,                   LocationB.Images);
+            Assert.AreEqual(LocationA.EnergyMix,                LocationB.EnergyMix);
+
+            Assert.AreEqual(LocationA.LastUpdated.ToIso8601(),  LocationB.LastUpdated.ToIso8601());
 
         }
 

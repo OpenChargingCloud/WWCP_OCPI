@@ -53,6 +53,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LocationIdTests.cs" />
+    <Compile Include="CDRTests.cs" />
+    <Compile Include="ConnectorTests.cs" />
+    <Compile Include="EVSETests.cs" />
     <Compile Include="TariffTests.cs" />
     <Compile Include="LocationTests.cs" />
     <Compile Include="OCPITests.cs" />

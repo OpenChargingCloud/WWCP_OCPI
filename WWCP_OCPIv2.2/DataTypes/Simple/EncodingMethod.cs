@@ -159,37 +159,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Proposed by SAFE.
         /// </summary>
-        public static EncodingMethod OCMF           = EncodingMethod.Parse("OCMF");
+        public static EncodingMethod OCMF           = Parse("OCMF");
 
         /// <summary>
         /// Alfen Eichrecht encoding / implementation.
         /// </summary>
-        public static EncodingMethod Alfen          = EncodingMethod.Parse("Alfen Eichrecht");
+        public static EncodingMethod Alfen          = Parse("Alfen Eichrecht");
 
         /// <summary>
         /// eBee smart technologies implementation.
         /// </summary>
-        public static EncodingMethod eBee           = EncodingMethod.Parse("EDL40 E-Mobility Extension");
+        public static EncodingMethod eBee           = Parse("EDL40 E-Mobility Extension");
 
         /// <summary>
         /// Mennekes implementation.
         /// </summary>
-        public static EncodingMethod Mennekes       = EncodingMethod.Parse("EDL40 Mennekes");
+        public static EncodingMethod Mennekes       = Parse("EDL40 Mennekes");
+
+        /// <summary>
+        /// GraphDefiened implementation.
+        /// </summary>
+        public static EncodingMethod GraphDefiened  = Parse("GraphDefiened");
 
         /// <summary>
         /// chargeIT Mobility implementation.
         /// </summary>
-        public static EncodingMethod ChargeIT       = EncodingMethod.Parse("chargeIT Mobility");
+        public static EncodingMethod chargeIT       = Parse("chargeIT Mobility");
 
         /// <summary>
         /// ChargePoint implementation.
         /// </summary>
-        public static EncodingMethod ChargePoint    = EncodingMethod.Parse("ChargePoint");
+        public static EncodingMethod ChargePoint    = Parse("ChargePoint");
 
         /// <summary>
         /// Porsche implementation.
         /// </summary>
-        public static EncodingMethod Porsche        = EncodingMethod.Parse("Porsche");
+        public static EncodingMethod Porsche        = Parse("Porsche");
 
         #endregion
 

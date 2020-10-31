@@ -307,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("type",    Type),
+                           new JProperty("type",    Type.ToString()),
                            new JProperty("volume",  Volume)
                        );
 
