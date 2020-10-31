@@ -121,7 +121,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// not supported then the CPO is free to choose its own language.
         /// </summary>
         [Optional]
-        public Language_Id?                 UILanguage                  { get; }
+        public Languages?                   UILanguage                  { get; }
 
         /// <summary>
         /// The default charging preference. When this is provided, and a charging session
@@ -170,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                      String           VisualNumber     = null,
                      Group_Id?        GroupId          = null,
-                     Language_Id?     UILanguage         = null,
+                     Languages?       UILanguage       = null,
                      ProfileTypes?    DefaultProfile   = null,
                      EnergyContract?  EnergyContract   = null,
 
@@ -491,11 +491,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse UILanguage            [optional]
 
-                if (JSON.ParseOptional("language",
-                                       "user-interface language",
-                                       Language_Id.TryParse,
-                                       out Language_Id? UILanguage,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalEnum("language",
+                                           "user-interface language",
+                                           out Languages? UILanguage,
+                                           out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)

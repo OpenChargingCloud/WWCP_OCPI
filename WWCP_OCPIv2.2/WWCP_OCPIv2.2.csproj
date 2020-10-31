@@ -74,6 +74,7 @@
     <Compile Include="DataTypes\Commands\StartSessionCommand.cs" />
     <Compile Include="DataTypes\Commands\UnlockConnectorCommand.cs" />
     <Compile Include="DataTypes\Complex\Time.cs" />
+    <Compile Include="DataTypes\Enums\Languages.cs" />
     <Compile Include="DataTypes\Enums\RemoteAccessStatus.cs" />
     <Compile Include="DataTypes\Enums\ChargingProfileResponseTypes.cs" />
     <Compile Include="DataTypes\Enums\ChargingRateUnit.cs" />
@@ -134,7 +135,6 @@
     <Compile Include="DataTypes\Simple\CreditReference_Id.cs" />
     <Compile Include="DataTypes\Simple\InvoiceReference_Id.cs" />
     <Compile Include="DataTypes\Simple\Correlation_Id.cs" />
-    <Compile Include="DataTypes\Simple\Language_Id.cs" />
     <Compile Include="DataTypes\Simple\Reservation_Id.cs" />
     <Compile Include="DataTypes\Simple\Request_Id.cs" />
     <Compile Include="DataTypes\Simple\PublicKey.cs" />

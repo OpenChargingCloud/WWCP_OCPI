@@ -314,9 +314,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.End                      = End;
             this.CDRToken                 = CDRToken;
             this.AuthMethod               = AuthMethod;
-            this.Location                 = Location ?? throw new ArgumentNullException(nameof(Location),  "The given charging location must not be null!");
+            this.Location                 = Location              ?? throw new ArgumentNullException(nameof(Location),  "The given charging location must not be null!");
             this.Currency                 = Currency;
-            this.ChargingPeriods          = ChargingPeriods;
+            this.ChargingPeriods          = ChargingPeriods       ?? new ChargingPeriod[0];
             this.TotalCosts               = TotalCosts;
             this.TotalEnergy              = TotalEnergy;
             this.TotalTime                = TotalTime;
@@ -325,8 +325,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.AuthorizationReference   = AuthorizationReference;
             this.MeterId                  = MeterId;
             this.EnergyMeter              = EnergyMeter;
-            this.TransparencySoftwares    = TransparencySoftwares;
-            this.Tariffs                  = Tariffs;
+            this.TransparencySoftwares    = TransparencySoftwares ?? new TransparencySoftware[0];
+            this.Tariffs                  = Tariffs               ?? new Tariff[0];
             this.SignedData               = SignedData;
             this.TotalFixedCosts          = TotalFixedCosts;
             this.TotalEnergyCost          = TotalEnergyCost;
@@ -339,7 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Credit                   = Credit;
             this.CreditReferenceId        = CreditReferenceId;
 
-            this.LastUpdated              = LastUpdated ?? DateTime.Now;
+            this.LastUpdated              = LastUpdated           ?? DateTime.Now;
 
             CalcSHA256Hash();
 
