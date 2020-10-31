@@ -825,7 +825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Tariff>.Failed(this,
-                                                      ErrorResponse);
+                                                      "Invalid JSON merge patch of a charging tariff: " + ErrorResponse);
 
             }
 

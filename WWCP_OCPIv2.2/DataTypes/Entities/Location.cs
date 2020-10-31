@@ -27,6 +27,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -295,24 +296,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Coordinates          = Coordinates;
             this.Timezone             = Timezone;
 
-            this.PublishAllowedTo     = PublishAllowedTo;
+            this.PublishAllowedTo     = PublishAllowedTo  ?? new PublishTokenType[0];
             this.Name                 = Name;
             this.PostalCode           = PostalCode;
             this.State                = State;
-            this.RelatedLocations     = RelatedLocations;
+            this.RelatedLocations     = RelatedLocations  ?? new AdditionalGeoLocation[0];
             this.ParkingType          = ParkingType;
             this.EVSEs                = EVSEs?.Distinct() ?? new EVSE[0];
-            this.Directions           = Directions;
+            this.Directions           = Directions        ?? new DisplayText[0];
             this.Operator             = Operator;
             this.SubOperator          = SubOperator;
             this.Owner                = Owner;
-            this.Facilities           = Facilities;
+            this.Facilities           = Facilities        ?? new Facilities[0];
             this.OpeningTimes         = OpeningTimes;
             this.ChargingWhenClosed   = ChargingWhenClosed;
-            this.Images               = Images;
+            this.Images               = Images            ?? new Image[0];
             this.EnergyMix            = EnergyMix;
 
-            this.LastUpdated          = LastUpdated ?? DateTime.Now;
+            this.LastUpdated          = LastUpdated       ?? DateTime.Now;
 
             if (EVSEs != null)
                 foreach (var evse in EVSEs)
@@ -747,10 +748,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Facilities            [optional]
 
-                if (JSON.ParseOptionalEnums("facilities",
-                                            "facilities",
-                                            out IEnumerable<Facilities> Facilities,
-                                            out ErrorResponse))
+                if (JSON.ParseOptionalStruct("facilities",
+                                             "facilities",
+                                             OCPIv2_2.Facilities.TryParse,
+                                             out IEnumerable<Facilities> Facilities,
+                                             out ErrorResponse))
                 {
 
                     if (ErrorResponse != null)
@@ -858,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Operator,
                                         Suboperator,
                                         Owner,
-                                        Facilities?.      Distinct(),
+                                        Facilities,
                                         OpeningTimes,
                                         ChargingWhenClosed,
                                         Images?.          Distinct(),
@@ -1222,7 +1224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Location>.Failed(this,
-                                                        ErrorResponse);
+                                                        "Invalid JSON merge patch of a location: " + ErrorResponse);
 
             }
 

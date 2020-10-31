@@ -877,7 +877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<EVSE>.Failed(this,
-                                                    ErrorResponse);
+                                                    "Invalid JSON merge patch of an EVSE: " + ErrorResponse);
 
             }
 

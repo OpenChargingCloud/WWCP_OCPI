@@ -933,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Session>.Failed(this,
-                                                       ErrorResponse);
+                                                       "Invalid JSON merge patch of a charging session: " + ErrorResponse);
 
             }
 

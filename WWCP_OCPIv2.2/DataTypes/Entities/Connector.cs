@@ -669,7 +669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Connector>.Failed(this,
-                                                         ErrorResponse);
+                                                         "Invalid JSON merge patch of a connector: " + ErrorResponse);
 
             }
 

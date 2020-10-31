@@ -651,7 +651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("issuer",                      Issuer),
 
                            GroupId.HasValue
-                               ? new JProperty("group_id",              GroupId)
+                               ? new JProperty("group_id",              GroupId.             ToString())
                                : null,
 
                            new JProperty("valid",                       IsValid),
@@ -777,7 +777,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Token>.Failed(this,
-                                                     ErrorResponse);
+                                                     "Invalid JSON merge patch of a token: " + ErrorResponse);
 
             }
 

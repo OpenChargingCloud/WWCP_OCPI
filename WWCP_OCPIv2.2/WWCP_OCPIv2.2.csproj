@@ -84,6 +84,7 @@
     <Compile Include="DataTypes\Enums\OpenSourceLicenses.cs" />
     <Compile Include="DataTypes\Enums\LegalStatus.cs" />
     <Compile Include="DataTypes\Patch.cs" />
+    <Compile Include="DataTypes\Simple\Facilities.cs" />
     <Compile Include="EMSP\EMSPAPILogger.cs" />
     <Compile Include="IO\OCPIAPILogger.cs" />
     <Compile Include="IO\OCPIRequestLogHandler.cs" />
@@ -123,7 +124,6 @@
     <Compile Include="DataTypes\Enums\ChargingPreferencesResponses.cs" />
     <Compile Include="DataTypes\Enums\ProfileTypes.cs" />
     <Compile Include="DataTypes\Enums\AllowedTypes.cs" />
-    <Compile Include="DataTypes\Enums\Facilities.cs" />
     <Compile Include="DataTypes\Enums\WhitelistTypes.cs" />
     <Compile Include="DataTypes\Enums\TokenTypes.cs" />
     <Compile Include="DataTypes\Simple\AuthorizationReference.cs" />
