@@ -42,20 +42,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Type of tariff dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimensions  Type        { get; }
+        public TariffDimensions  Type           { get; }
 
         /// <summary>
         /// Price per unit (excl. VAT) for this tariff dimension.
         /// </summary>
         [Mandatory]
-        public Decimal           Price       { get; }
+        public Decimal           Price          { get; }
 
         /// <summary>
         /// Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.
         /// Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.
         /// </summary>
         [Optional]
-        public Decimal?          VAT         { get; }
+        public Decimal?          VAT            { get; }
 
         /// <summary>
         /// Minimum amount to be billed. This unit will be billed in this step_size blocks.
@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
         [Mandatory]
-        public UInt32            StepSize    { get; }
+        public UInt32            StepSize       { get; }
 
         #endregion
 
@@ -76,75 +76,75 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Type">Type of tariff dimension.</param>
         /// <param name="Price">Price per unit (excl. VAT) for this tariff dimension.</param>
-        /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
         public PriceComponent(TariffDimensions  Type,
                               Decimal           Price,
-                              Decimal?          VAT        = null,
-                              UInt32            StepSize   = 1)
+                              Decimal?          VAT_percentage   = null,
+                              UInt32            StepSize         = 1)
         {
 
-            this.Type      = Type;
-            this.Price     = Price;
-            this.VAT       = VAT;
-            this.StepSize  = StepSize;
+            this.Type            = Type;
+            this.Price           = Price;
+            this.VAT  = VAT_percentage;
+            this.StepSize        = StepSize;
 
         }
 
         #endregion
 
 
-        #region Flat                          (Price, VAT = null)
+        #region Flat                          (Price, VAT_percentage = null)
 
         /// <summary>
         /// Create a new flat rate price component.
         /// </summary>
         /// <param name="Price">Flat rate price (excl. VAT).</param>
-        /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent FlatRate(Decimal   Price,
-                                              Decimal?  VAT = null)
+                                              Decimal?  VAT_percentage = null)
 
             => new PriceComponent(TariffDimensions.FLAT,
                                   Price,
-                                  VAT,
+                                  VAT_percentage,
                                   1);
 
         #endregion
 
-        #region ChargingTime(BillingIncrement, Price, VAT = null)
+        #region ChargingTime(BillingIncrement, Price, VAT_percentage = null)
 
         /// <summary>
         /// Create a new time-based charging price component.
         /// </summary>
         /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
         /// <param name="Price">Price per time span (excl. VAT).</param>
-        /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent ChargingTime(TimeSpan  BillingIncrement,
                                                   Decimal   Price,
-                                                  Decimal?  VAT = null)
+                                                  Decimal?  VAT_percentage = null)
 
             => new PriceComponent(TariffDimensions.TIME,
                                   Price,
-                                  VAT,
+                                  VAT_percentage,
                                   (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         #endregion
 
-        #region ParkingTime (BillingIncrement, Price, VAT = null)
+        #region ParkingTime (BillingIncrement, Price, VAT_percentage = null)
 
         /// <summary>
         /// Create a new time-based parking price component.
         /// </summary>
         /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
         /// <param name="Price">Price per time span (excl. VAT).</param>
-        /// <param name="VAT">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent ParkingTime(TimeSpan  BillingIncrement,
                                                  Decimal   Price,
-                                                 Decimal?  VAT = null)
+                                                 Decimal?  VAT_percentage = null)
 
             => new PriceComponent(TariffDimensions.PARKING_TIME,
                                   Price,
-                                  VAT,
+                                  VAT_percentage,
                                   (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         #endregion
@@ -414,11 +414,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("type",       Type.     ToString()),
-                           new JProperty("price",      Price.    ToString("0.00")),
+                           new JProperty("type",       Type.ToString()),
+                           new JProperty("price",      Price),
 
                            VAT.HasValue
-                               ? new JProperty("vat",  VAT.Value.ToString("0.00"))
+                               ? new JProperty("vat",  VAT. Value)
                                : null,
 
                            new JProperty("step_size",  StepSize)

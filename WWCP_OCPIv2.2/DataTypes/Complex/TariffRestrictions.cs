@@ -315,7 +315,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Time? StartTime,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -328,7 +329,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Time? EndTime,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -340,7 +342,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? StartDate,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -352,7 +355,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? EndDate,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -364,7 +368,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MinKWh,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -376,7 +381,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MaxKWh,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -388,7 +394,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MinCurrent,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -400,7 +407,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MaxCurrent,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -412,7 +420,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MinPower,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -424,7 +433,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MaxPower,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -436,7 +446,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? MinDurationSec,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -448,7 +459,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? MaxDurationSec,
                                        out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -462,7 +474,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             out IEnumerable<DayOfWeek> DayOfWeek,
                                             out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -474,7 +487,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ReservationRestrictionTypes? Reservation,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
@@ -594,11 +608,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            MinkWh.     HasValue
-                               ? new JProperty("min_kWh",       MinkWh.     Value)
+                               ? new JProperty("min_kwh",       MinkWh.     Value)
                                : null,
 
                            MaxkWh.     HasValue
-                               ? new JProperty("max_kWh",       MaxkWh.     Value)
+                               ? new JProperty("max_kwh",       MaxkWh.     Value)
                                : null,
 
                            MinCurrent. HasValue

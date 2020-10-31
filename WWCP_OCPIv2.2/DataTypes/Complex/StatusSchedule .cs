@@ -422,14 +422,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(StatusSchedule StatusSchedule)
         {
 
-            var c = Begin. CompareTo(StatusSchedule.Begin);
+            var c = Begin.ToIso8601().CompareTo(StatusSchedule.Begin.ToIso8601());
 
             if (c == 0)
-                c = Status.CompareTo(StatusSchedule.Status);
+                c = Status.           CompareTo(StatusSchedule.Status);
 
             if (c == 0)
                 c = End.HasValue && StatusSchedule.End.HasValue
-                        ? End.Value.CompareTo(StatusSchedule.End.Value)
+                        ? End.Value.ToIso8601().CompareTo(StatusSchedule.End.Value.ToIso8601())
                         : 0;
 
             return c;
@@ -465,11 +465,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(StatusSchedule StatusSchedule)
 
-            => Begin. Equals(StatusSchedule.Begin)  &&
-               Status.Equals(StatusSchedule.Status) &&
+            => Begin. ToIso8601().Equals(StatusSchedule.Begin.ToIso8601()) &&
+               Status.            Equals(StatusSchedule.Status)            &&
 
                ((!End.HasValue && !StatusSchedule.End.HasValue) ||
-                 (End.HasValue &&  StatusSchedule.End.HasValue && End.Value.Equals(StatusSchedule.End.Value)));
+                 (End.HasValue &&  StatusSchedule.End.HasValue && End.Value.ToIso8601().Equals(StatusSchedule.End.Value.ToIso8601())));
 
         #endregion
 
@@ -486,11 +486,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Begin. GetHashCode() * 5 ^
-                       Status.GetHashCode() * 3 ^
+                return Begin. ToIso8601().GetHashCode() * 5 ^
+                       Status.            GetHashCode() * 3 ^
 
                        (End.HasValue
-                            ? End.Value.GetHashCode()
+                            ? End.Value.ToIso8601().GetHashCode()
                             : 0);
 
             }

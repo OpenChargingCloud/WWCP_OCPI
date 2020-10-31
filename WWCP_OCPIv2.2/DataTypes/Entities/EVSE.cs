@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// information on how to reach the EVSE from the location is required.
         /// </summary>
         [Optional]
-        public DisplayText?                      Directions                 { get; }
+        public IEnumerable<DisplayText>          Directions                 { get; }
 
         /// <summary>
         /// Optional restrictions that apply to the parking spot.
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                       String                            FloorLevel            = null,
                       GeoCoordinate?                    Coordinates           = null,
                       String                            PhysicalReference     = null,
-                      DisplayText?                      Directions            = null,
+                      IEnumerable<DisplayText>          Directions            = null,
                       IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
                       IEnumerable<Image>                Images                = null,
 
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     String                            FloorLevel            = null,
                     GeoCoordinate?                    Coordinates           = null,
                     String                            PhysicalReference     = null,
-                    DisplayText?                      Directions            = null,
+                    IEnumerable<DisplayText>          Directions            = null,
                     IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
                     IEnumerable<Image>                Images                = null,
 
@@ -511,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (JSON.ParseOptionalJSON("directions",
                                            "directions",
                                            DisplayText.TryParse,
-                                           out DisplayText? Directions,
+                                           out IEnumerable<DisplayText> Directions,
                                            out ErrorResponse))
                 {
 
@@ -574,10 +574,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                 EVSEId,
                                 StatusSchedule?.     Distinct(),
                                 Capabilities?.       Distinct(),
-                                FloorLevel?.       Trim(),
+                                FloorLevel?.         Trim(),
                                 Coordinates,
-                                PhysicalReference?.Trim(),
-                                Directions,
+                                PhysicalReference?.  Trim(),
+                                Directions?.         Distinct(),
                                 ParkingRestrictions?.Distinct(),
                                 Images?.             Distinct(),
 
@@ -660,7 +660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var JSON = JSONObject.Create(
 
                            new JProperty("uid",                         UId.   ToString()),
-                           new JProperty("evse_id",                     EVSEId.    ToString()),
+                           new JProperty("evse_id",                     EVSEId.ToString()),
                            new JProperty("status",                      Status.ToString()),
 
                            StatusSchedule.SafeAny()
@@ -690,16 +690,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("physical_reference",    PhysicalReference)
                                : null,
 
-                           Directions.HasValue
-                               ? new JProperty("directions",            Directions.Value.ToJSON(CustomDisplayTextSerializer))
+                           Directions.SafeAny()
+                               ? new JProperty("directions",            new JArray(Directions.         Select(direction => direction.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingRestrictions.SafeAny()
-                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select(parking => parking.ToString())))
+                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select(parking   => parking.  ToString())))
                                : null,
 
                            Images.SafeAny()
-                               ? new JProperty("images",                new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",                new JArray(Images.             Select(image     => image.    ToJSON(CustomImageSerializer))))
                                : null,
 
                            new JProperty("last_updated",                LastUpdated.ToIso8601())
@@ -877,7 +877,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<EVSE>.Failed(this,
-                                                    patchResult.ErrorResponse);
+                                                    ErrorResponse);
 
             }
 

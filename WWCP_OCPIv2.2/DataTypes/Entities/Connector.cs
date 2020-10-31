@@ -52,44 +52,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The parent EVSE of this connector.
         /// </summary>
-        public EVSE                    ParentEVSE            { get; internal set; }
+        public EVSE                    ParentEVSE               { get; internal set; }
 
         /// <summary>
         /// Identifier of the connector within the EVSE.
         /// Two connectors may have the same id as long as they do not belong to the same EVSE object.
         /// </summary>
         [Mandatory]
-        public Connector_Id            Id                    { get; }
+        public Connector_Id            Id                       { get; }
 
         /// <summary>
         /// The standard of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorTypes          Standard              { get; }
+        public ConnectorTypes          Standard                 { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorFormats        Format                { get; }
+        public ConnectorFormats        Format                   { get; }
 
         /// <summary>
         /// The type of powert at the connector.
         /// </summary>
         [Mandatory]
-        public PowerTypes              PowerType             { get; }
+        public PowerTypes              PowerType                { get; }
 
         /// <summary>
         /// Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].
         /// </summary>
         [Mandatory]
-        public UInt16                  MaxVoltage            { get; }
+        public UInt16                  MaxVoltage               { get; }
 
         /// <summary>
         /// Maximum amperage of the connector, in ampere [A].
         /// </summary>
         [Mandatory]
-        public UInt16                  MaxAmperage           { get; }
+        public UInt16                  MaxAmperage              { get; }
 
         /// <summary>
         /// Maximum electric power that can be delivered by this connector, in Watts (W).
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// and amperage, this value should be set.
         /// </summary>
         [Optional]
-        public UInt16?                 MaxElectricPower      { get; }
+        public UInt16?                 MaxElectricPower         { get; }
 
         /// <summary>
         /// Identifiers of the currently valid charging tariffs. Multiple tariffs are possible,
@@ -106,24 +106,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// and end_date_time period not overlapping.
         /// </summary>
         [Optional]
-        public IEnumerable<Tariff_Id>  TariffIds             { get; }
+        public IEnumerable<Tariff_Id>  TariffIds                { get; }
 
         /// <summary>
         /// Optional URL to the operator's terms and conditions.
         /// </summary>
         [Optional]
-        public String                  TermsAndConditions    { get; }
+        public URL?                    TermsAndConditionsURL    { get; }
 
         /// <summary>
         /// Timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                LastUpdated           { get; }
+        public DateTime                LastUpdated              { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this connector.
         /// </summary>
-        public String                  SHA256Hash            { get; private set; }
+        public String                  SHA256Hash               { get; private set; }
 
         #endregion
 
@@ -143,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// 
         /// <param name="MaxElectricPower">Maximum electric power that can be delivered by this connector, in Watts (W).</param>
         /// <param name="TariffIds">Identifiers of the currently valid charging tariffs.</param>
-        /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
+        /// <param name="TermsAndConditionsURL">Optional URL to the operator's terms and conditions.</param>
         /// 
         /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
         internal Connector(EVSE                    ParentEVSE,
@@ -155,28 +155,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            UInt16                  MaxVoltage,
                            UInt16                  MaxAmperage,
 
-                           UInt16?                 MaxElectricPower     = null,
-                           IEnumerable<Tariff_Id>  TariffIds            = null,
-                           String                  TermsAndConditions   = null,
+                           UInt16?                 MaxElectricPower        = null,
+                           IEnumerable<Tariff_Id>  TariffIds               = null,
+                           URL?                    TermsAndConditionsURL   = null,
 
-                           DateTime?               LastUpdated          = null)
+                           DateTime?               LastUpdated             = null)
 
         {
 
-            this.ParentEVSE          = ParentEVSE;
+            this.ParentEVSE             = ParentEVSE;
 
-            this.Id                  = Id;
-            this.Standard            = Standard;
-            this.Format              = Format;
-            this.PowerType           = PowerType;
-            this.MaxVoltage          = MaxVoltage;
-            this.MaxAmperage         = MaxAmperage;
+            this.Id                     = Id;
+            this.Standard               = Standard;
+            this.Format                 = Format;
+            this.PowerType              = PowerType;
+            this.MaxVoltage             = MaxVoltage;
+            this.MaxAmperage            = MaxAmperage;
 
-            this.MaxElectricPower    = MaxElectricPower;
-            this.TariffIds           = TariffIds?.Distinct() ?? new Tariff_Id[0];
-            this.TermsAndConditions  = TermsAndConditions?.Trim();
+            this.MaxElectricPower       = MaxElectricPower;
+            this.TariffIds              = TariffIds?.Distinct() ?? new Tariff_Id[0];
+            this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
-            this.LastUpdated         = LastUpdated ?? DateTime.Now;
+            this.LastUpdated            = LastUpdated ?? DateTime.Now;
 
             CalcSHA256Hash();
 
@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="MaxAmperage">Maximum amperage of the connector, in ampere [A].</param>
         /// <param name="MaxElectricPower">Maximum electric power that can be delivered by this connector, in Watts (W).</param>
         /// <param name="TariffIds">Identifiers of the currently valid charging tariffs.</param>
-        /// <param name="TermsAndConditions">Optional URL to the operator's terms and conditions.</param>
+        /// <param name="TermsAndConditionsURL">Optional URL to the operator's terms and conditions.</param>
         /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
         public Connector(Connector_Id            Id,
                          ConnectorTypes          Standard,
@@ -203,11 +203,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          UInt16                  MaxVoltage,
                          UInt16                  MaxAmperage,
 
-                         UInt16?                 MaxElectricPower     = null,
-                         IEnumerable<Tariff_Id>  TariffIds            = null,
-                         String                  TermsAndConditions   = null,
+                         UInt16?                 MaxElectricPower        = null,
+                         IEnumerable<Tariff_Id>  TariffIds               = null,
+                         URL?                    TermsAndConditionsURL   = null,
 
-                         DateTime?               LastUpdated          = null)
+                         DateTime?               LastUpdated             = null)
 
             : this(null,
 
@@ -220,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                    MaxElectricPower,
                    TariffIds,
-                   TermsAndConditions,
+                   TermsAndConditionsURL,
 
                    LastUpdated)
 
@@ -432,9 +432,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region TermsAndConditions        [optional]
+                #region TermsAndConditionsURL     [optional]
 
-                var TermsAndConditions = JSON.GetString("terms_and_conditions");
+                if (JSON.ParseOptional("terms_and_conditions",
+                                       "terms and conditions",
+                                       URL.TryParse,
+                                       out URL? TermsAndConditionsURL,
+                                       out ErrorResponse))
+                {
+
+                    if (ErrorResponse != null)
+                        return false;
+
+                }
 
                 #endregion
 
@@ -460,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                                           MaxElectricPower,
                                           TariffIds?.Distinct(),
-                                          TermsAndConditions,
+                                          TermsAndConditionsURL,
 
                                           LastUpdated);
 
@@ -547,8 +557,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("tariff_ids",            new JArray(TariffIds.Select(tarifId => tarifId.ToString())))
                                : null,
 
-                           TermsAndConditions.IsNotNullOrEmpty()
-                               ? new JProperty("terms_and_conditions",  TermsAndConditions)
+                           TermsAndConditionsURL.HasValue
+                               ? new JProperty("terms_and_conditions",  TermsAndConditionsURL.ToString())
                                : null,
 
                            new JProperty("last_updated",                LastUpdated.ToIso8601())
@@ -659,7 +669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Connector>.Failed(this,
-                                                         patchResult.ErrorResponse);
+                                                         ErrorResponse);
 
             }
 

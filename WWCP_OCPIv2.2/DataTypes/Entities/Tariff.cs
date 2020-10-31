@@ -94,7 +94,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// in human readable form.
         /// </summary>
         [Optional]
-        public String                           TariffAltURL            { get; }
+        public URL?                             TariffAltURL            { get; }
 
         /// <summary>
         /// When this field is set, a charging session with this tariff will at least cost
@@ -184,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                       TariffTypes?                TariffType      = null,
                       IEnumerable<DisplayText>    TariffAltText   = null,
-                      String                      TariffAltURL    = null,
+                      URL?                        TariffAltURL    = null,
                       Price?                      MinPrice        = null,
                       Price?                      MaxPrice        = null,
                       DateTime?                   Start           = null,
@@ -463,7 +463,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse TariffAltURL          [optional]
 
-                var TariffAltURL = JSON.GetString("tariff_alt_url");
+                if (JSON.ParseOptional("tariff_alt_url",
+                                       "tariff alternative URL",
+                                       URL.TryParse,
+                                       out URL? TariffAltURL,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
 
                 #endregion
 
@@ -666,11 +675,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            TariffAltText.SafeAny()
-                               ? new JProperty("tariff_alt_text",  new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToString())))
+                               ? new JProperty("tariff_alt_text",  new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON())))
                                : null,
 
-                           TariffAltURL.IsNotNullOrEmpty()
-                               ? new JProperty("tariff_alt_url",   TariffAltURL)
+                           TariffAltURL.HasValue
+                               ? new JProperty("tariff_alt_url",   TariffAltURL.  ToString())
                                : null,
 
                            MinPrice.HasValue
@@ -816,7 +825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Tariff>.Failed(this,
-                                                      patchResult.ErrorResponse);
+                                                      ErrorResponse);
 
             }
 

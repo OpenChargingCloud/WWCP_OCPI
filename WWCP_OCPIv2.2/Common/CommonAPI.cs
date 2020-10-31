@@ -1567,8 +1567,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (patchResult.IsSuccess)
                         locations[Location.Id] = patchResult.PatchedData;
 
-                    return PatchResult<Location>.Success(patchResult.PatchedData,
-                                                         patchResult.ErrorResponse);
+                    return patchResult;
 
                 }
 
@@ -1618,8 +1617,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return PatchResult<EVSE>.Success(patchResult.PatchedData,
-                                                 patchResult.ErrorResponse);
+                return patchResult;
 
             }
 
@@ -1668,8 +1666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return PatchResult<Connector>.Success(patchResult.PatchedData,
-                                                      patchResult.ErrorResponse);
+                return patchResult;
 
             }
 
@@ -2071,8 +2068,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (patchResult.IsSuccess)
                         tariffs[Tariff.Id] = patchResult.PatchedData;
 
-                    return PatchResult<Tariff>.Success(patchResult.PatchedData,
-                                                       patchResult.ErrorResponse);
+                    return patchResult;
 
                 }
 
@@ -2480,8 +2476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (patchResult.IsSuccess)
                         sessions[Session.Id] = patchResult.PatchedData;
 
-                    return PatchResult<Session>.Success(patchResult.PatchedData,
-                                                        patchResult.ErrorResponse);
+                    return patchResult;
 
                 }
 
@@ -2835,38 +2830,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region PatchToken         (Token, Patch)
+        #region TryPatchToken      (Token, TokenPatch)
 
-        public Token PatchToken(Token    Token,
-                                JObject  Patch)
+        public async Task<PatchResult<Token>> TryPatchToken(Token    Token,
+                                                            JObject  TokenPatch)
         {
 
             if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+                return PatchResult<Token>.Failed(Token,
+                                                 "The given token must not be null!");
 
-            if (Patch is null || !Patch.HasValues)
-                return Token;
+            if (TokenPatch is null || !TokenPatch.HasValues)
+                return PatchResult<Token>.Failed(Token,
+                                                 "The given token patch must not be null or empty!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
             lock (Tokens)
             {
 
                 if (Tokens. TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties) &&
-                    parties.TryGetValue(Token.PartyId,     out                      Dictionary<Token_Id, TokenStatus>  tokens)  &&
-                    tokens. TryGetValue(Token.Id,          out                                           TokenStatus   tokenStatus))
+                    parties.TryGetValue(Token.PartyId,     out                      Dictionary<Token_Id, TokenStatus>  tokens) &&
+                    tokens. TryGetValue(Token.Id,          out TokenStatus                                             tokenStatus))
                 {
 
-                    var patchedToken = Token.Patch(Patch);
+                    var patchResult = tokenStatus.Token.TryPatch(TokenPatch);
 
-                    tokens[Token.Id] = new TokenStatus(patchedToken,
-                                                       tokenStatus.Status);
+                    if (patchResult.IsSuccess)
+                        tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,
+                                                           tokenStatus.Status);
 
-                    return patchedToken;
+                    return patchResult;
 
                 }
 
-            }
+                else
+                    return PatchResult<Token>.Failed(Token,
+                                                      "The given charging token does not exist!");
 
-            return Token;
+            }
 
         }
 

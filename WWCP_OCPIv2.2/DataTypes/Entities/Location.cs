@@ -1222,7 +1222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Location>.Failed(this,
-                                                        patchResult.ErrorResponse);
+                                                        ErrorResponse);
 
             }
 

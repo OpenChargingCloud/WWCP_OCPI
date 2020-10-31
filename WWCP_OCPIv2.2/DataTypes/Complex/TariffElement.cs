@@ -80,12 +80,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                              IEnumerable<TariffRestrictions>  TariffRestrictions = null)
         {
 
-            #region Initial checks
-
             if (!PriceComponents.SafeAny())
                 throw new ArgumentNullException(nameof(PriceComponents),  "The given enumeration of price components must not be null or empty!");
-
-            #endregion
 
             this.PriceComponents     = PriceComponents.    Distinct();
             this.TariffRestrictions  = TariffRestrictions?.Distinct() ?? new TariffRestrictions[0];
@@ -105,15 +101,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                              TariffRestrictions  TariffRestriction)
         {
 
-            #region Initial checks
-
             if (PriceComponent    == null)
                 throw new ArgumentNullException(nameof(PriceComponent),     "The given price component must not be null!");
 
             if (TariffRestriction == null)
                 throw new ArgumentNullException(nameof(TariffRestriction),  "The given charging tariff restriction must not be null!");
 
-            #endregion
 
             this.PriceComponents     = new PriceComponent[]     { PriceComponent };
             this.TariffRestrictions  = new TariffRestrictions[] { TariffRestriction };

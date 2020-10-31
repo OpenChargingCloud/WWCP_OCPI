@@ -682,13 +682,76 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Patch(TokenPatch)
-
-        public Token Patch(JObject TokenPatch)
+        private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
+                                                     JObject  Patch)
         {
 
-            if (!TokenPatch.HasValues)
-                return this;
+            foreach (var property in Patch)
+            {
+
+                if (property.Key == "id")
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'unique identification' of a token is not allowed!");
+
+                else if (property.Value is null)
+                {
+                    //if (JSON.ContainsKey(property.Key))
+                    JSON.Remove(property.Key);
+                }
+
+                else if (property.Value is JObject subObject)
+                {
+
+                    if (JSON.ContainsKey(property.Key))
+                    {
+
+                        if (JSON[property.Key] is JObject oldSubObject)
+                        {
+
+                            //ToDo: Perhaps use a more generic JSON patch here!
+                            // PatchObject.Apply(ToJSON(), EVSEPatch),
+                            var patchResult = TryPrivatePatch(oldSubObject, subObject);
+
+                            if (patchResult.IsSuccess)
+                                JSON[property.Key] = patchResult.PatchedData;
+
+                        }
+
+                        else
+                            JSON[property.Key] = subObject;
+
+                    }
+
+                    else
+                    {
+                        JSON.Add(property.Key, subObject);
+                    }
+
+                }
+
+                //else if (property.Value is JArray subArray)
+                //{
+                //}
+
+                else
+                    JSON[property.Key] = property.Value;
+
+            }
+
+            return PatchResult<JObject>.Success(JSON);
+
+        }
+
+
+
+        #region TryPatch(TokenPatch)
+
+        public PatchResult<Token> TryPatch(JObject TokenPatch)
+        {
+
+            if (TokenPatch == null)
+                return PatchResult<Token>.Failed(this,
+                                                 "The given token patch must not be null!");
 
             lock (patchLock)
             {
@@ -696,15 +759,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (TokenPatch["last_updated"] is null)
                     TokenPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
-                if (TryParse(PatchObject.Apply(ToJSON(), TokenPatch),
-                             out Token   patchedToken,
+                var patchResult = TryPrivatePatch(ToJSON(), TokenPatch);
+
+                if (patchResult.IsFailed)
+                    return PatchResult<Token>.Failed(this,
+                                                     patchResult.ErrorResponse);
+
+                if (TryParse(patchResult.PatchedData,
+                             out Token   PatchedToken,
                              out String  ErrorResponse))
                 {
-                    return patchedToken;
+
+                    return PatchResult<Token>.Success(PatchedToken,
+                                                      ErrorResponse);
+
                 }
 
                 else
-                    return null;
+                    return PatchResult<Token>.Failed(this,
+                                                     ErrorResponse);
 
             }
 

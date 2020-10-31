@@ -1855,21 +1855,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         //ToDo: await..., handle update errors!
-                                         var patchedToken = CommonAPI.PatchToken(ExistingTokenStatus.Token,
-                                                                                 TokenPatch);
 
+                                         // Validation-Checks for PATCHes
+                                         // (E-Tag, Timestamp, ...)
 
-                                         return new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 1000,
-                                                    StatusMessage        = "Hello world!",
-                                                    Data                 = patchedToken.ToJSON(),
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                                };
+                                         var patchedToken = await CommonAPI.TryPatchToken(ExistingTokenStatus.Token,
+                                                                                          TokenPatch);
+
+                                         //ToDo: Handle update errors!
+                                         if (patchedToken.IsSuccess)
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = patchedToken.PatchedData.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = patchedToken.PatchedData.LastUpdated.ToIso8601(),
+                                                                ETag                       = patchedToken.PatchedData.SHA256Hash
+                                                            }
+                                                        };
+
+                                         }
+
+                                         else
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = patchedToken.ErrorResponse,
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
+
+                                         }
 
                                      });
 
