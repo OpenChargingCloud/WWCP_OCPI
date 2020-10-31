@@ -2798,6 +2798,555 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         #endregion
 
 
+
+        #region Location_DeserializeGitHub_Test01()
+
+        /// <summary>
+        /// Tries to deserialize a location example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example.json
+        /// </summary>
+        [Test]
+        public static void Location_DeserializeGitHub_Test01()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""BE"",
+                           ""party_id"": ""BEC"",
+                           ""id"": ""LOC1"",
+                           ""publish"": true,
+                           ""name"": ""Gent Zuid"",
+                           ""address"": ""F.Rooseveltlaan 3A"",
+                           ""city"": ""Gent"",
+                           ""postal_code"": ""9000"",
+                           ""country"": ""BEL"",
+                           ""coordinates"": {
+                             ""latitude"": ""51.047599"",
+                             ""longitude"": ""3.729944""
+                           },
+                           ""parking_type"": ""ON_STREET"",
+                           ""evses"": [{
+                             ""uid"": ""3256"",
+                             ""evse_id"": ""BE*BEC*E041503001"",
+                             ""status"": ""AVAILABLE"",
+                             ""status_schedule"": [],
+                             ""capabilities"": [
+                               ""RESERVABLE""
+                             ],
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""CABLE"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 220,
+                               ""amperage"": 16,
+                               ""tariff_ids"": [""11""],
+                               ""last_updated"": ""2015-03-16T10:10:02Z""
+                             }, {
+                               ""id"": ""2"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 220,
+                               ""amperage"": 16,
+                               ""tariff_ids"": [""13""],
+                               ""last_updated"": ""2015-03-18T08:12:01Z""
+                             }],
+                             ""physical_reference"": ""1"",
+                             ""floor_level"": ""-1"",
+                             ""last_updated"": ""2015-06-28T08:12:01Z""
+                           }, {
+                             ""uid"": ""3257"",
+                             ""evse_id"": ""BE*BEC*E041503002"",
+                             ""status"": ""RESERVED"",
+                             ""capabilities"": [
+                               ""RESERVABLE""
+                             ],
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 220,
+                               ""amperage"": 16,
+                               ""tariff_ids"": [""12""],
+                               ""last_updated"": ""2015-06-29T20:39:09Z""
+                             }],
+                             ""physical_reference"": ""2"",
+                             ""floor_level"": ""-2"",
+                             ""last_updated"": ""2015-06-29T20:39:09Z""
+                           }],
+                           ""operator"": {
+                             ""name"": ""BeCharged""
+                           },
+                           ""time_zone"": ""Europe/Brussels"",
+                           ""last_updated"": ""2015-06-29T20:39:09Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("BE"),                                    parsedLocation.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("BEC"),                                   parsedLocation.PartyId);
+            Assert.AreEqual(Location_Id.Parse("LOC1"),                                  parsedLocation.Id);
+            Assert.AreEqual(true,                                                       parsedLocation.Publish);
+            //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
+            //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
+            //Assert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
+            //Assert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
+            //Assert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
+            //Assert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
+            //Assert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
+            //Assert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
+            //Assert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
+            //Assert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
+            //Assert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //Assert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
+            //Assert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
+            //Assert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
+            //Assert.AreEqual(Location1.Status,                                           parsedLocation.Status);
+            //Assert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_DeserializeGitHub_Test02()
+
+        /// <summary>
+        /// Tries to deserialize a location example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_parking_garage_opening_hours.json
+        /// </summary>
+        [Test]
+        public static void Location_DeserializeGitHub_Test02()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""SE"",
+                           ""party_id"": ""EVC"",
+                           ""id"": ""cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"",
+                           ""publish"": true,
+                           ""name"": ""P-Huset Leonard"",
+                           ""address"": ""Claesgatan 6"",
+                           ""city"": ""Malmö"",
+                           ""postal_code"": ""214 26"",
+                           ""country"": ""SWE"",
+                           ""coordinates"": {
+                             ""latitude"": ""55.590325"",
+                             ""longitude"": ""13.008307""
+                           },
+                           ""parking_type"": ""PARKING_GARAGE"",
+                           ""evses"": [{
+                             ""uid"": ""eccb8dd9-4189-433e-b100-cc0945dd17dc"",
+                             ""evse_id"": ""SE*EVC*E000000123"",
+                             ""status"": ""AVAILABLE"",
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 230,
+                               ""amperage"": 32,
+                               ""last_updated"": ""2017-03-07T02:21:22Z""
+                             }],
+                             ""last_updated"": ""2017-03-07T02:21:22Z""
+                           }],
+                           ""time_zone"": ""Europe/Stockholm"",
+                           ""opening_times"": {
+                             ""twentyfourseven"": false,
+                             ""regular_hours"": [{
+                               ""weekday"": 1,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             }, {
+                               ""weekday"": 2,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             },{
+                               ""weekday"": 3,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             },{
+                               ""weekday"": 4,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             },{
+                               ""weekday"": 5,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             },{
+                               ""weekday"": 6,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             },{
+                               ""weekday"": 7,
+                               ""period_begin"": ""07:00"",
+                               ""period_end"": ""18:00""
+                             }]
+                           },
+                           ""charging_when_closed"": true,
+                           ""last_updated"": ""2017-03-07T02:21:22Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("SE"),                                    parsedLocation.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("EVC"),                                   parsedLocation.PartyId);
+            Assert.AreEqual(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"),  parsedLocation.Id);
+            Assert.AreEqual(true,                                                       parsedLocation.Publish);
+            //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
+            //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
+            //Assert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
+            //Assert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
+            //Assert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
+            //Assert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
+            //Assert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
+            //Assert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
+            //Assert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
+            //Assert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
+            //Assert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //Assert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
+            //Assert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
+            //Assert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
+            //Assert.AreEqual(Location1.Status,                                           parsedLocation.Status);
+            //Assert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_DeserializeGitHub_Test03()
+
+        /// <summary>
+        /// Tries to deserialize a location example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc2_destination_charger.json
+        /// </summary>
+        [Test]
+        public static void Location_DeserializeGitHub_Test03()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""NL"",
+                           ""party_id"": ""ALF"",
+                           ""id"": ""3e7b39c2-10d0-4138-a8b3-8509a25f9920"",
+                           ""publish"": true,
+                           ""name"": ""ihomer"",
+                           ""address"": ""Tamboerijn 7"",
+                           ""city"": ""Etten-Leur"",
+                           ""postal_code"": ""4876 BS"",
+                           ""country"": ""NLD"",
+                           ""coordinates"": {
+                             ""latitude"": ""51.562787"",
+                             ""longitude"": ""4.638975""
+                           },
+                           ""parking_type"": ""PARKING_LOT"",
+                           ""evses"": [{
+                             ""uid"": ""fd855359-bc81-47bb-bb89-849ae3dac89e"",
+                             ""evse_id"": ""NL*ALF*E000000001"",
+                             ""status"": ""AVAILABLE"",
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 220,
+                               ""amperage"": 16,
+                               ""last_updated"": ""2019-07-01T12:12:11Z""
+                             }],
+                             ""parking_restrictions"": ""CUSTOMERS"",
+                             ""last_updated"": ""2019-07-01T12:12:11Z""
+                           }],
+                           ""time_zone"": ""Europe/Amsterdam"",
+                           ""last_updated"": ""2019-07-01T12:12:11Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
+            Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
+            Assert.AreEqual(true,                                                       parsedLocation.Publish);
+            //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
+            //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
+            //Assert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
+            //Assert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
+            //Assert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
+            //Assert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
+            //Assert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
+            //Assert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
+            //Assert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
+            //Assert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
+            //Assert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //Assert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
+            //Assert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
+            //Assert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
+            //Assert.AreEqual(Location1.Status,                                           parsedLocation.Status);
+            //Assert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_DeserializeGitHub_Test04()
+
+        /// <summary>
+        /// Tries to deserialize a location example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc3_destination_charger_not_published.json
+        /// </summary>
+        [Test]
+        public static void Location_DeserializeGitHub_Test04()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""NL"",
+                           ""party_id"": ""ALF"",
+                           ""id"": ""3e7b39c2-10d0-4138-a8b3-8509a25f9920"",
+                           ""publish"": false,
+                           ""name"": ""ihomer"",
+                           ""address"": ""Tamboerijn 7"",
+                           ""city"": ""Etten-Leur"",
+                           ""postal_code"": ""4876 BS"",
+                           ""country"": ""NLD"",
+                           ""coordinates"": {
+                             ""latitude"": ""51.562787"",
+                             ""longitude"": ""4.638975""
+                           },
+                           ""evses"": [{
+                             ""uid"": ""fd855359-bc81-47bb-bb89-849ae3dac89e"",
+                             ""evse_id"": ""NL*ALF*E000000001"",
+                             ""status"": ""AVAILABLE"",
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 220,
+                               ""amperage"": 16,
+                               ""last_updated"": ""2019-07-01T12:12:11Z""
+                             }],
+                             ""parking_restrictions"": ""CUSTOMERS"",
+                             ""last_updated"": ""2019-07-01T12:12:11Z""
+                           }],
+                           ""time_zone"": ""Europe/Amsterdam"",
+                           ""last_updated"": ""2019-07-01T12:12:11Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
+            Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
+            Assert.AreEqual(false,                                                      parsedLocation.Publish);
+            //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
+            //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
+            //Assert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
+            //Assert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
+            //Assert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
+            //Assert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
+            //Assert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
+            //Assert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
+            //Assert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
+            //Assert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
+            //Assert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //Assert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
+            //Assert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
+            //Assert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
+            //Assert.AreEqual(Location1.Status,                                           parsedLocation.Status);
+            //Assert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_DeserializeGitHub_Test05()
+
+        /// <summary>
+        /// Tries to deserialize a location example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc3_destination_charger_not_published.json
+        /// </summary>
+        [Test]
+        public static void Location_DeserializeGitHub_Test05()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""NL"",
+                           ""party_id"": ""ALL"",
+                           ""id"": ""f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"",
+                           ""publish"": false,
+                           ""publish_allowed_to"": [{
+                             ""visual_number"": ""12345-67"",
+                             ""issuer"": ""NewMotion""
+                           }, {
+                             ""visual_number"": ""0055375624"",
+                             ""issuer"": ""ANWB""
+                           }, {
+                             ""uid"": ""12345678905880"",
+                             ""type"": ""RFID""
+                           }],
+                           ""name"": ""Water State"",
+                           ""address"": ""Taco van der Veenplein 12"",
+                           ""city"": ""Leeuwarden"",
+                           ""postal_code"": ""8923 EM"",
+                           ""country"": ""NLD"",
+                           ""coordinates"": {
+                             ""latitude"": ""53.213763"",
+                             ""longitude"": ""5.804638""
+                           },
+                           ""parking_type"": ""UNDERGROUND_GARAGE"",
+                           ""evses"": [{
+                             ""uid"": ""8c1b3487-61ac-40a7-a367-21eee99dbd90"",
+                             ""evse_id"": ""NL*ALL*EGO0000013"",
+                             ""status"": ""AVAILABLE"",
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_3_PHASE"",
+                               ""voltage"": 230,
+                               ""amperage"": 16,
+                               ""last_updated"": ""2019-09-27T00:19:45Z""
+                             }],
+                             ""last_updated"": ""2019-09-27T00:19:45Z""
+                           }],
+                           ""time_zone"": ""Europe/Amsterdam"",
+                           ""last_updated"": ""2019-09-27T00:19:45Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
+            Assert.AreEqual(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"),  parsedLocation.Id);
+            Assert.AreEqual(false,                                                      parsedLocation.Publish);
+            //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
+            //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
+            //Assert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
+            //Assert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
+            //Assert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
+            //Assert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
+            //Assert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
+            //Assert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
+            //Assert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
+            //Assert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
+            //Assert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //Assert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
+            //Assert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
+            //Assert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
+            //Assert.AreEqual(Location1.Status,                                           parsedLocation.Status);
+            //Assert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Location_DeserializeGitHub_Test06()
+
+        /// <summary>
+        /// Tries to deserialize a location example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/location_example_uc5_home_charge_point.json
+        /// </summary>
+        [Test]
+        public static void Location_DeserializeGitHub_Test06()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""DE"",
+                           ""party_id"": ""ALL"",
+                           ""id"": ""a5295927-09b9-4a71-b4b9-a5fffdfa0b77"",
+                           ""publish"": false,
+                           ""publish_allowed_to"": [{
+                             ""visual_number"": ""0123456-99"",
+                             ""issuer"": ""MoveMove""
+                           }],
+                           ""address"": ""Krautwigstraße 283A"",
+                           ""city"": ""Köln"",
+                           ""postal_code"": ""50931"",
+                           ""country"": ""DEU"",
+                           ""coordinates"": {
+                             ""latitude"": ""50.931826"",
+                             ""longitude"": ""6.964043""
+                           },
+                           ""parking_type"": ""ON_DRIVEWAY"",
+                           ""evses"": [{
+                             ""uid"": ""4534ad5f-45be-428b-bfd0-fa489dda932d"",
+                             ""evse_id"": ""DE*ALL*EGO0000001"",
+                             ""status"": ""AVAILABLE"",
+                             ""connectors"": [{
+                               ""id"": ""1"",
+                               ""standard"": ""IEC_62196_T2"",
+                               ""format"": ""SOCKET"",
+                               ""power_type"": ""AC_1_PHASE"",
+                               ""voltage"": 230,
+                               ""amperage"": 8,
+                               ""last_updated"": ""2019-04-05T17:17:56Z""
+                             }],
+                             ""last_updated"": ""2019-04-05T17:17:56Z""
+                           }],
+                           ""time_zone"": ""Europe/Berlin"",
+                           ""last_updated"": ""2019-04-05T17:17:56Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("DE"),                                    parsedLocation.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
+            Assert.AreEqual(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77"),  parsedLocation.Id);
+            Assert.AreEqual(false,                                                      parsedLocation.Publish);
+            //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
+            //Assert.AreEqual(Location1.End.Value.ToIso8601(),                            parsedLocation.End.Value.ToIso8601());
+            //Assert.AreEqual(Location1.kWh,                                              parsedLocation.kWh);
+            //Assert.AreEqual(Location1.CDRToken,                                         parsedLocation.CDRToken);
+            //Assert.AreEqual(Location1.AuthMethod,                                       parsedLocation.AuthMethod);
+            //Assert.AreEqual(Location1.AuthorizationReference,                           parsedLocation.AuthorizationReference);
+            //Assert.AreEqual(Location1.LocationId,                                       parsedLocation.LocationId);
+            //Assert.AreEqual(Location1.EVSEUId,                                          parsedLocation.EVSEUId);
+            //Assert.AreEqual(Location1.ConnectorId,                                      parsedLocation.ConnectorId);
+            //Assert.AreEqual(Location1.MeterId,                                          parsedLocation.MeterId);
+            //Assert.AreEqual(Location1.EnergyMeter,                                      parsedLocation.EnergyMeter);
+            //Assert.AreEqual(Location1.TransparencySoftwares,                            parsedLocation.TransparencySoftwares);
+            //Assert.AreEqual(Location1.Currency,                                         parsedLocation.Currency);
+            //Assert.AreEqual(Location1.ChargingPeriods,                                  parsedLocation.ChargingPeriods);
+            //Assert.AreEqual(Location1.TotalCosts,                                       parsedLocation.TotalCosts);
+            //Assert.AreEqual(Location1.Status,                                           parsedLocation.Status);
+            //Assert.AreEqual(Location1.LastUpdated.ToIso8601(),                          parsedLocation.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
     }
 
 }

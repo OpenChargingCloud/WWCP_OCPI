@@ -350,6 +350,118 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
         #endregion
 
+
+        #region CDR_DeserializeGitHub_Test01()
+
+        /// <summary>
+        /// Tries to deserialize a charge detail record example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/cdr_example.json
+        /// </summary>
+        [Test]
+        public static void CDR_DeserializeGitHub_Test01()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"": ""BE"",
+                           ""party_id"": ""BEC"",
+                           ""id"": ""12345"",
+                           ""start_date_time"": ""2015-06-29T21:39:09Z"",
+                           ""end_date_time"": ""2015-06-29T23:37:32Z"",
+                           ""cdr_token"": {
+                             ""uid"": ""012345678"",
+                             ""type"": ""RFID"",
+                             ""contract_id"": ""DE8ACC12E46L89""
+                           },
+                           ""auth_method"": ""WHITELIST"",
+                           ""cdr_location"": {
+                             ""id"": ""LOC1"",
+                             ""name"": ""Gent Zuid"",
+                             ""address"": ""F.Rooseveltlaan 3A"",
+                             ""city"": ""Gent"",
+                             ""postal_code"": ""9000"",
+                             ""country"": ""BEL"",
+                             ""coordinates"": {
+                               ""latitude"": ""3.729944"",
+                               ""longitude"": ""51.047599""
+                             },
+                             ""evse_uid"": ""3256"",
+                             ""evse_id"": ""BE*BEC*E041503003"",
+                             ""connector_id"": ""1"",
+                             ""connector_standard"": ""IEC_62196_T2"",
+                             ""connector_format"": ""SOCKET"",
+                             ""connector_power_type"": ""AC_1_PHASE""
+                           },
+                           ""currency"": ""EUR"",
+                           ""tariffs"": [{
+                             ""country_code"": ""BE"",
+                             ""party_id"": ""BEC"",
+                             ""id"": ""12"",
+                             ""currency"": ""EUR"",
+                             ""elements"": [{
+                               ""price_components"": [{
+                                 ""type"": ""TIME"",
+                                 ""price"": 2.00,
+                                 ""vat"": 10.0,
+                                 ""step_size"": 300
+                               }]
+                             }],
+                             ""last_updated"": ""2015-02-02T14:15:01Z""
+                           }],
+                           ""charging_periods"": [{
+                             ""start_date_time"": ""2015-06-29T21:39:09Z"",
+                             ""dimensions"": [{
+                               ""type"": ""TIME"",
+                               ""volume"": 1.973
+                             }],
+                             ""tariff_id"": ""12""
+                           }],
+                           ""total_cost"": {
+                             ""excl_vat"": 4.00,
+                             ""incl_vat"": 4.40
+                           },
+                           ""total_energy"": 15.342,
+                           ""total_time"": 1.973,
+                           ""total_time_cost"": {
+                             ""excl_vat"": 4.00,
+                             ""incl_vat"": 4.40
+                           },
+                           ""last_updated"": ""2015-06-29T22:01:13Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(CDR.TryParse(JSON, out CDR parsedCDR, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("BE"),                               parsedCDR.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("BEC"),                              parsedCDR.PartyId);
+            Assert.AreEqual(CDR_Id.Parse("12345"),                                 parsedCDR.Id);
+            //Assert.AreEqual(true,                                                  parsedCDR.Publish);
+            //Assert.AreEqual(CDR1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());
+            //Assert.AreEqual(CDR1.End.Value.ToIso8601(),                            parsedCDR.End.Value.ToIso8601());
+            //Assert.AreEqual(CDR1.kWh,                                              parsedCDR.kWh);
+            //Assert.AreEqual(CDR1.CDRToken,                                         parsedCDR.CDRToken);
+            //Assert.AreEqual(CDR1.AuthMethod,                                       parsedCDR.AuthMethod);
+            //Assert.AreEqual(CDR1.AuthorizationReference,                           parsedCDR.AuthorizationReference);
+            //Assert.AreEqual(CDR1.CDRId,                                            parsedCDR.CDRId);
+            //Assert.AreEqual(CDR1.EVSEUId,                                          parsedCDR.EVSEUId);
+            //Assert.AreEqual(CDR1.ConnectorId,                                      parsedCDR.ConnectorId);
+            //Assert.AreEqual(CDR1.MeterId,                                          parsedCDR.MeterId);
+            //Assert.AreEqual(CDR1.EnergyMeter,                                      parsedCDR.EnergyMeter);
+            //Assert.AreEqual(CDR1.TransparencySoftwares,                            parsedCDR.TransparencySoftwares);
+            //Assert.AreEqual(CDR1.Currency,                                         parsedCDR.Currency);
+            //Assert.AreEqual(CDR1.ChargingPeriods,                                  parsedCDR.ChargingPeriods);
+            //Assert.AreEqual(CDR1.TotalCosts,                                       parsedCDR.TotalCosts);
+            //Assert.AreEqual(CDR1.Status,                                           parsedCDR.Status);
+            //Assert.AreEqual(CDR1.LastUpdated.ToIso8601(),                          parsedCDR.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+
     }
 
 }

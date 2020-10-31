@@ -193,6 +193,167 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
         #endregion
 
+
+
+
+        #region Session_DeserializeGitHub_Test01()
+
+        /// <summary>
+        /// Tries to deserialize a session example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/session_example_1_simple_start.json
+        /// </summary>
+        [Test]
+        public static void Session_DeserializeGitHub_Test01()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"":    ""NL"",
+                           ""party_id"":        ""STK"",
+                           ""id"":              ""101"",
+                           ""start_date_time"": ""2020-03-09T10:17:09Z"",
+                           ""kwh"":               0.0,
+                           ""cdr_token"": {
+                               ""uid"":         ""123abc"",
+                               ""type"":        ""RFID"",
+                               ""contract_id"": ""NL-TST-C12345678-S""
+                           },
+                           ""auth_method"":     ""WHITELIST"",
+                           ""location_id"":     ""LOC1"",
+                           ""evse_uid"":        ""3256"",
+                           ""connector_id"":    ""1"",
+                           ""currency"":        ""EUR"",
+                           ""total_cost"": {
+                               ""excl_vat"":      2.5
+                           },
+                           ""status"":          ""PENDING"",
+                           ""last_updated"":    ""2020-03-09T10:17:09Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Session.TryParse(JSON, out Session parsedSession, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                   parsedSession.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("STK"),                  parsedSession.PartyId);
+            Assert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
+            //Assert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
+            //Assert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
+            //Assert.AreEqual(Session1.kWh,                      parsedSession.kWh);
+            //Assert.AreEqual(Session1.CDRToken,                 parsedSession.CDRToken);
+            //Assert.AreEqual(Session1.AuthMethod,               parsedSession.AuthMethod);
+            //Assert.AreEqual(Session1.AuthorizationReference,   parsedSession.AuthorizationReference);
+            //Assert.AreEqual(Session1.LocationId,               parsedSession.LocationId);
+            //Assert.AreEqual(Session1.EVSEUId,                  parsedSession.EVSEUId);
+            //Assert.AreEqual(Session1.ConnectorId,              parsedSession.ConnectorId);
+            //Assert.AreEqual(Session1.MeterId,                  parsedSession.MeterId);
+            //Assert.AreEqual(Session1.EnergyMeter,              parsedSession.EnergyMeter);
+            //Assert.AreEqual(Session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
+            //Assert.AreEqual(Session1.Currency,                 parsedSession.Currency);
+            //Assert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
+            //Assert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
+            //Assert.AreEqual(Session1.Status,                   parsedSession.Status);
+            //Assert.AreEqual(Session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
+        #region Session_DeserializeGitHub_Test02()
+
+        /// <summary>
+        /// Tries to deserialize a session example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/session_example_2_short_finished.json
+        /// </summary>
+        [Test]
+        public static void Session_DeserializeGitHub_Test02()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""country_code"":        ""BE"",
+                           ""party_id"":            ""BEC"",
+                           ""id"":                  ""101"",
+                           ""start_date_time"":     ""2015-06-29T22:39:09Z"",
+                           ""end_date_time"":       ""2015-06-29T23:50:16Z"",
+                           ""kwh"": 41.00,
+                            ""cdr_token"": {
+                                 ""uid"":           ""123abc"",
+                                 ""type"":          ""RFID"",
+                                 ""contract_id"":   ""NL-TST-C12345678-S""
+                             },
+                           ""auth_method"":         ""WHITELIST"",
+                           ""location_id"":         ""LOC1"",
+                           ""evse_uid"":            ""3256"",
+                           ""connector_id"":        ""1"",
+                           ""currency"":            ""EUR"",
+                           ""charging_periods"": [{
+                             ""start_date_time"":   ""2015-06-29T22:39:09Z"",
+                             ""dimensions"": [{
+                               ""type"":            ""ENERGY"",
+                               ""volume"":            120
+                             }, {
+                               ""type"":            ""MAX_CURRENT"",
+                               ""volume"":            30
+                             }]
+                           }, {
+                             ""start_date_time"":   ""2015-06-29T22:40:54Z"",
+                             ""dimensions"": [{
+                               ""type"":            ""ENERGY"",
+                               ""volume"":            41000
+                             }, {
+                               ""type"":            ""MIN_CURRENT"",
+                               ""volume"":            34
+                             }]
+                           }, {
+                             ""start_date_time"":   ""2015-06-29T23:07:09Z"",
+                             ""dimensions"": [{
+                               ""type"":            ""PARKING_TIME"",
+                               ""volume"":            0.718
+                             }],
+                             ""tariff_id"":         ""12""
+                           }],
+                           ""total_cost"": {
+                             ""excl_vat"":            8.50,
+                             ""incl_vat"":            9.35
+                           },
+                           ""status"":              ""COMPLETED"",
+                           ""last_updated"":        ""2015-06-29T23:50:17Z""
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Session.TryParse(JSON, out Session parsedSession, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("BEC"),                  parsedSession.PartyId);
+            Assert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
+            //Assert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
+            //Assert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
+            //Assert.AreEqual(Session1.kWh,                      parsedSession.kWh);
+            //Assert.AreEqual(Session1.CDRToken,                 parsedSession.CDRToken);
+            //Assert.AreEqual(Session1.AuthMethod,               parsedSession.AuthMethod);
+            //Assert.AreEqual(Session1.AuthorizationReference,   parsedSession.AuthorizationReference);
+            //Assert.AreEqual(Session1.LocationId,               parsedSession.LocationId);
+            //Assert.AreEqual(Session1.EVSEUId,                  parsedSession.EVSEUId);
+            //Assert.AreEqual(Session1.ConnectorId,              parsedSession.ConnectorId);
+            //Assert.AreEqual(Session1.MeterId,                  parsedSession.MeterId);
+            //Assert.AreEqual(Session1.EnergyMeter,              parsedSession.EnergyMeter);
+            //Assert.AreEqual(Session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
+            //Assert.AreEqual(Session1.Currency,                 parsedSession.Currency);
+            //Assert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
+            //Assert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
+            //Assert.AreEqual(Session1.Status,                   parsedSession.Status);
+            //Assert.AreEqual(Session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
+
+        }
+
+        #endregion
+
     }
 
 }

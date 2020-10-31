@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse ExcludingVAT      [mandatory]
+                #region Parse ExcludingVAT    [mandatory]
 
                 if (!JSON.ParseMandatory("excl_vat",
                                          "price excluding VAT",
@@ -227,14 +227,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse IncludingVAT      [mandatory]
+                #region Parse IncludingVAT    [optional]
 
-                if (!JSON.ParseMandatory("incl_vat",
-                                         "price including VAT",
-                                         out Double IncludingVAT,
-                                         out ErrorResponse))
+                if (JSON.ParseOptional("incl_vat",
+                                       "price including VAT",
+                                       out Double? IncludingVAT,
+                                       out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
