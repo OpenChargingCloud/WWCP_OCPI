@@ -292,7 +292,71 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
         #endregion
 
+        #region Credentials_DeserializeGitHub_Test04()
 
+        /// <summary>
+        /// Tries to deserialize a charge detail record example from GitHub.
+        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/credentials_example4.json
+        /// </summary>
+        [Test]
+        public static void Credentials_DeserializeGitHub_Test04()
+        {
+
+            #region Define JSON
+
+            var JSON = @"{
+                           ""token"":  ""9e80aca8-28be-11e9-b210-d663bd873d93"",
+                           ""url"":    ""https://ocpi.example.com/versions/"",
+                           ""roles"": [{
+                               ""role"":         ""CPO"",
+                               ""party_id"":     ""EXO"",
+                               ""country_code"": ""NL"",
+                               ""business_details"": {
+                                   ""name"":     ""Excellent Operator""
+                               }
+                           }, {
+                               ""role"":         ""CPO"",
+                               ""party_id"":     ""PFC"",
+                               ""country_code"": ""NL"",
+                               ""business_details"": {
+                                   ""name"":     ""Plug Flex Charging""
+                               }
+                           }, {
+                               ""role"":         ""CPO"",
+                               ""party_id"":     ""CGP"",
+                               ""country_code"": ""NL"",
+                               ""business_details"": {
+                                   ""name"":     ""Charging Green Power""
+                               }
+                           }]
+                         }";
+
+            #endregion
+
+            Assert.IsTrue(Credentials.TryParse(JSON, out Credentials parsedCredentials, out String ErrorResponse));
+            Assert.IsNull(ErrorResponse);
+
+            Assert.AreEqual(AccessToken.Parse("9e80aca8-28be-11e9-b210-d663bd873d93"),  parsedCredentials.Token);
+            Assert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.        First().CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("EXO"),                                   parsedCredentials.Roles.        First().PartyId);
+            Assert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.        First().Role);
+            Assert.AreEqual("Excellent Operator",                                       parsedCredentials.Roles.        First().BusinessDetails.Name);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(1).First().CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("PFC"),                                   parsedCredentials.Roles.Skip(1).First().PartyId);
+            Assert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.Skip(1).First().Role);
+            Assert.AreEqual("Plug Flex Charging",                                       parsedCredentials.Roles.Skip(1).First().BusinessDetails.Name);
+
+            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedCredentials.Roles.Skip(2).First().CountryCode);
+            Assert.AreEqual(Party_Id.   Parse("CGP"),                                   parsedCredentials.Roles.Skip(2).First().PartyId);
+            Assert.AreEqual(Roles.CPO,                                                  parsedCredentials.Roles.Skip(2).First().Role);
+            Assert.AreEqual("Charging Green Power",                                     parsedCredentials.Roles.Skip(2).First().BusinessDetails.Name);
+
+        }
+
+        #endregion
     }
 
 }
