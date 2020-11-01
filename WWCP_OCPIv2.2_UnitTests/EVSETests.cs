@@ -47,6 +47,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
         public static void EVSE_SerializeDeserialize_Test01()
         {
 
+            #region Define EVSE1
+
             var EVSE1 = new EVSE(
                             EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
                             StatusTypes.AVAILABLE,
@@ -130,6 +132,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                             },
                             DateTime.Parse("2020-09-18T00:00:00Z")
                         );
+
+            #endregion
 
             var JSON = EVSE1.ToJSON();
 
