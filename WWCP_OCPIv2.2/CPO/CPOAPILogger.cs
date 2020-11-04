@@ -144,7 +144,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.CPOAPI = CPOAPI ?? throw new ArgumentNullException(nameof(CPOAPI), "The given CPO API must not be null!");
 
+            #region Tariffs
 
+            RegisterEvent("PutTariffRequest",
+                          handler => CPOAPI.OnPutTariffRequest += handler,
+                          handler => CPOAPI.OnPutTariffRequest -= handler,
+                          "PutTariff", "Tariffs", "Put", "Request",  "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("PutTariffResponse",
+                          handler => CPOAPI.OnPutTariffResponse += handler,
+                          handler => CPOAPI.OnPutTariffResponse -= handler,
+                          "PutTariff", "Tariffs", "Put", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("PatchTariffRequest",
+                          handler => CPOAPI.OnPatchTariffRequest += handler,
+                          handler => CPOAPI.OnPatchTariffRequest -= handler,
+                          "PatchTariff", "Tariffs", "Patch", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("PatchTariffResponse",
+                          handler => CPOAPI.OnPatchTariffResponse += handler,
+                          handler => CPOAPI.OnPatchTariffResponse -= handler,
+                          "PatchTariff", "Tariffs", "Patch", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("DeleteTariffRequest",
+                          handler => CPOAPI.OnDeleteTariffRequest += handler,
+                          handler => CPOAPI.OnDeleteTariffRequest -= handler,
+                          "DeleteTariff", "Tariffs", "Delete", "Request",  "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("DeleteTariffResponse",
+                          handler => CPOAPI.OnDeleteTariffResponse += handler,
+                          handler => CPOAPI.OnDeleteTariffResponse -= handler,
+                          "DeleteTariff", "Tariffs", "Delete", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            #endregion
 
         }
 
