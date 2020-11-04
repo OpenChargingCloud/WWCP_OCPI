@@ -33,13 +33,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// Receive charging stations downstream from an OICP partner...
+    /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
-    public class OICPCSOAdapter : ACryptoEMobilityEntity<CSORoamingProvider_Id>,
+    public class OCPICSOAdapter : ACryptoEMobilityEntity<CSORoamingProvider_Id>,
                                   ICSORoamingProvider,
                                   //ISendAuthenticationData,
-                                  IEquatable<OICPCSOAdapter>,
-                                  IComparable<OICPCSOAdapter>,
+                                  IEquatable<OCPICSOAdapter>,
+                                  IComparable<OCPICSOAdapter>,
                                   IComparable
 
     {
@@ -87,13 +87,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public event OnGetCDRsRequestDelegate             OnGetChargeDetailRecordsRequest;
-        public event OnGetCDRsResponseDelegate            OnGetChargeDetailRecordsResponse;
+        public event org.GraphDefined.WWCP.OnGetCDRsRequestDelegate   OnGetChargeDetailRecordsRequest;
+        public event org.GraphDefined.WWCP.OnGetCDRsResponseDelegate  OnGetChargeDetailRecordsResponse;
 
         #endregion
 
 
-        public OICPCSOAdapter(CSORoamingProvider_Id  Id,
+        public OCPICSOAdapter(CSORoamingProvider_Id  Id,
                               I18NString             Name,
                               RoamingNetwork         RoamingNetwork)
 
@@ -197,20 +197,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public int CompareTo(OICPCSOAdapter other)
+        public int CompareTo(OCPICSOAdapter other)
 
             => other is null
-                   ? throw new ArgumentException("The given object is not an OICP CSO adapter!")
+                   ? throw new ArgumentException("The given object is not an OCPI CSO adapter!")
                    : Id.CompareTo(other.Id);
 
         public override int CompareTo(Object other)
 
-            => other is OICPCSOAdapter oicpCSOAdapter
-                   ? Id.CompareTo(oicpCSOAdapter.Id)
-                   : throw new ArgumentException("The given object is not an OICP CSO adapter!");
+            => other is OCPICSOAdapter OCPICSOAdapter
+                   ? Id.CompareTo(OCPICSOAdapter.Id)
+                   : throw new ArgumentException("The given object is not an OCPI CSO adapter!");
 
 
-        public Boolean Equals(OICPCSOAdapter other)
+        public Boolean Equals(OCPICSOAdapter other)
 
             => !(other is null) &&
                    Id.Equals(other.Id);

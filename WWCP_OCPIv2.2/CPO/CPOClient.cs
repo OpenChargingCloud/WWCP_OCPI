@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The CPO client.
     /// </summary>
-    public class CPOClient : CommonClient
+    public partial class CPOClient : CommonClient
     {
 
         public class CPOCounters

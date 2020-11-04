@@ -34,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// 
     /// </summary>
-    public static class OICPMapper
+    public static class OCPIMapper
     {
 
         #region AsWWCPEVSEStatus(this EVSEStatus)

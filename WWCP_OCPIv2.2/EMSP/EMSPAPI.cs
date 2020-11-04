@@ -3262,7 +3262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // Receiver Interface for eMSPs and NSPs
 
-            #region ~/locations/{country_code}/{party_id}       [NonStandard]
+            #region ~/locations/{country_code}/{party_id}                               [NonStandard]
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}      [NonStandard]
 
@@ -4301,8 +4301,110 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status  [NonStandard]
 
-            #region ~/tariffs/{country_code}/{party_id}             [NonStandard]
+            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status     [NonStandard]
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        Allow                      = new List<HTTPMethod> {
+                                                                                         HTTPMethod.OPTIONS,
+                                                                                         HTTPMethod.POST
+                                                                                     },
+                                                        AcceptPatch                = new List<HTTPContentType> {
+                                                                                         HTTPContentType.JSONMergePatch_UTF8
+                                                                                     },
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status     [NonStandard]
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   PutEVSERequest,
+                                     OCPIResponseLogger:  PutEVSEResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check existing EVSE
+
+                                         if (!Request.ParseLocationEVSE(this,
+                                                                        out CountryCode?          CountryCode,
+                                                                        out Party_Id?             PartyId,
+                                                                        out Location_Id?          LocationId,
+                                                                        out Location              ExistingLocation,
+                                                                        out EVSE_UId?             EVSEUId,
+                                                                        out EVSE                  ExistingEVSE,
+                                                                        out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                        FailOnMissingEVSE: false))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse EVSE status JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject EVSEStatusJSON, out OCPIResponseBuilder))
+                                             return OCPIResponseBuilder;
+
+                                         //if (!EVSE.TryParse(EVSEJSON,
+                                         //                   out EVSE    newOrUpdatedEVSE,
+                                         //                   out String  ErrorResponse,
+                                         //                   EVSEUId))
+                                         //{
+
+                                         //    return new OCPIResponse.Builder(Request) {
+                                         //               StatusCode           = 2001,
+                                         //               StatusMessage        = "Could not parse the given EVSE JSON: " + ErrorResponse,
+                                         //               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                         //                   HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                         //                   AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                         //                   AccessControlAllowHeaders  = "Authorization"
+                                         //               }
+                                         //           };
+
+                                         //}
+
+                                         #endregion
+
+                                         //ToDo: Handle AddOrUpdate errors
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 1000,
+                                                        StatusMessage        = "Hello world!",
+                                                        //Data                 = newOrUpdatedEVSE.ToJSON(),
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.OK,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+
+
+            #region ~/tariffs/{country_code}/{party_id}                                 [NonStandard]
 
             #region OPTIONS  ~/tariffs/{country_code}/{party_id}            [NonStandard]
 
@@ -4649,7 +4751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region ~/sessions/{country_code}/{party_id}                 [NonStandard]
+            #region ~/sessions/{country_code}/{party_id}                                [NonStandard]
 
             #region OPTIONS  ~/sessions/{country_code}/{party_id}                [NonStandard]
 
@@ -5072,7 +5174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-            #region ~/cdrs/{country_code}/{party_id}            [NonStandard]
+            #region ~/cdrs/{country_code}/{party_id}                                    [NonStandard]
 
             #region OPTIONS  ~/cdrs/{country_code}/{party_id}           [NonStandard]
 

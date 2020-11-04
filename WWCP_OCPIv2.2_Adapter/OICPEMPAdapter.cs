@@ -34,12 +34,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// Send charging stations upstream towards an OICP partner...
+    /// Send charging stations upstream towards an OCPI partner...
     /// </summary>
-    public class OICPEMPAdapter : ACryptoEMobilityEntity<EMPRoamingProvider_Id>,
+    public class OCPIEMPAdapter : ACryptoEMobilityEntity<EMPRoamingProvider_Id>,
                                   IEMPRoamingProvider,
-                                  IEquatable<OICPEMPAdapter>,
-                                  IComparable<OICPEMPAdapter>,
+                                  IEquatable<OCPIEMPAdapter>,
+                                  IComparable<OCPIEMPAdapter>,
                                   IComparable
 
     {
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        public OICPEMPAdapter(EMPRoamingProvider_Id  Id,
+        public OCPIEMPAdapter(EMPRoamingProvider_Id  Id,
                               I18NString             Name,
                               RoamingNetwork         RoamingNetwork)
 
@@ -368,13 +368,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public int CompareTo(OICPEMPAdapter other)
+        public int CompareTo(OCPIEMPAdapter other)
         {
             throw new NotImplementedException();
         }
 
 
-        public bool Equals(OICPEMPAdapter other)
+        public bool Equals(OCPIEMPAdapter other)
         {
             throw new NotImplementedException();
         }

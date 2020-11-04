@@ -246,6 +246,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         }
 
+        public Boolean TryParseJArrayRequestBody(out JArray               JSON,
+                                                 out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                 Boolean                   AllowEmptyHTTPBody = false,
+                                                 String                    JSONLDContext      = null)
+        {
+
+            var result = HTTPRequest.TryParseJArrayRequestBody(out JSON,
+                                                               out HTTPResponse.Builder HTTPResponseBuilder,
+                                                               AllowEmptyHTTPBody,
+                                                               JSONLDContext);
+
+            if (HTTPResponseBuilder != null)
+            {
+                HTTPResponseBuilder.Set("X-Request-ID",      RequestId).
+                                    Set("X-Correlation-ID",  CorrelationId);
+            }
+
+            OCPIResponseBuilder = new OCPIResponse.Builder(this) {
+                StatusCode           = result ? 1000 : 2001,
+                StatusMessage        = result ? ""   : "Could not parse JSON array in HTTP request body!",
+                HTTPResponseBuilder  = HTTPResponseBuilder
+            };
+
+            return result;
+
+        }
+
 
         public static OCPIRequest Parse(HTTPRequest HTTPRequest)
 

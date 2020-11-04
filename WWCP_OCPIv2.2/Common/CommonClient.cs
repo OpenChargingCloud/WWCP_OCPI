@@ -612,7 +612,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 try
                 {
 
-                    //var startTime      = DateTime.UtcNow;
                     var requestId      = RequestId     ?? Request_Id.Random();
                     var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
