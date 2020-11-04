@@ -121,12 +121,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
     #endregion
 
-    #region OnGetEVSEByIdRequest/-Response
+    #region OnGetEVSEByUIdRequest/-Response
 
     /// <summary>
     /// A delegate called whenever a get EVSE by its identification request will be send.
     /// </summary>
-    public delegate Task OnGetEVSEByIdRequestDelegate (DateTime                                    LogTimestamp,
+    public delegate Task OnGetEVSEByUIdRequestDelegate (DateTime                                    LogTimestamp,
                                                            DateTime                                    RequestTimestamp,
                                                            CommonClient                                Sender,
                                                            String                                      SenderId,
@@ -140,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A delegate called whenever a response to a get EVSE by its identification request had been received.
     /// </summary>
-    public delegate Task OnGetEVSEByIdResponseDelegate(DateTime                                    LogTimestamp,
+    public delegate Task OnGetEVSEByUIdResponseDelegate(DateTime                                    LogTimestamp,
                                                            DateTime                                    RequestTimestamp,
                                                            CommonClient                                Sender,
                                                            String                                      SenderId,
@@ -659,27 +659,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region OnGetEVSEByIdRequest/-Response
+        #region OnGetEVSEByUIdRequest/-Response
 
         /// <summary>
         /// An event fired whenever a request getting a EVSE by its identification will be send.
         /// </summary>
-        public event OnGetEVSEByIdRequestDelegate   OnGetEVSEByIdRequest;
+        public event OnGetEVSEByUIdRequestDelegate   OnGetEVSEByUIdRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a EVSE by its identification will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetEVSEByIdHTTPRequest;
+        public event ClientRequestLogHandler        OnGetEVSEByUIdHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a EVSE by its identification HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetEVSEByIdHTTPResponse;
+        public event ClientResponseLogHandler       OnGetEVSEByUIdHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a EVSE by its identification request had been received.
         /// </summary>
-        public event OnGetEVSEByIdResponseDelegate  OnGetEVSEByIdResponse;
+        public event OnGetEVSEByUIdResponseDelegate  OnGetEVSEByUIdResponse;
 
         #endregion
 
@@ -1067,7 +1067,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (LocationsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (LocationsURL.Hostname,
                                                              RemotePort:  LocationsURL.Port ?? IPPort.HTTP,
@@ -1081,8 +1081,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                LocationsURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? LocationsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1177,7 +1176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<Location>>>
+        public async Task<OCPIResponse<Location>>
 
             GetLocationById(Location_Id         LocationId,
                             Version_Id?         VersionId           = null,
@@ -1191,7 +1190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            OCPIResponse<IEnumerable<Location>> response;
+            OCPIResponse<Location> response;
 
             #region Send OnGetLocationByIdRequest event
 
@@ -1260,7 +1259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
 
-                URL LocationsURL   = default;
+                URL LocationsURL = default;
 
                 if (versionId.HasValue &&
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
@@ -1274,7 +1273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (LocationsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (LocationsURL.Hostname,
                                                              RemotePort:  LocationsURL.Port ?? IPPort.HTTP,
@@ -1288,8 +1287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                LocationsURL.Path + LocationId.ToString(),
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? LocationsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1305,21 +1303,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<Location>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => Location.Parse(json));
+                response = OCPIResponse<Location>.ParseJObject(HTTPResponse,
+                                                               requestId,
+                                                               correlationId,
+                                                               json => Location.Parse(json));
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<Location>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                response = new OCPIResponse<String, Location>("",
+                                                              default,
+                                                              -1,
+                                                              e.Message,
+                                                              e.StackTrace);
 
             }
 
@@ -1375,7 +1373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetEVSEById(...)
+        #region GetEVSEByUId(...)
 
         /// <summary>
         /// Start a charging session.
@@ -1384,23 +1382,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<EVSE>>>
+        public async Task<OCPIResponse<EVSE>>
 
-            GetEVSEById(EVSE_Id         EVSEId,
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+            GetEVSEByUId(Location_Id         LocationId,
+                         EVSE_UId            EVSEUId,
+                         Version_Id?         VersionId           = null,
+                         Request_Id?         RequestId           = null,
+                         Correlation_Id?     CorrelationId       = null,
 
-                            DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                         DateTime?           Timestamp           = null,
+                         CancellationToken?  CancellationToken   = null,
+                         EventTracking_Id    EventTrackingId     = null,
+                         TimeSpan?           RequestTimeout      = null)
 
         {
 
-            OCPIResponse<IEnumerable<EVSE>> response;
+            OCPIResponse<EVSE> response;
 
-            #region Send OnGetEVSEByIdRequest event
+            #region Send OnGetEVSEByUIdRequest event
 
             var StartTime = DateTime.UtcNow;
 
@@ -1433,7 +1432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                e.Log(nameof(EMSPClient) + "." + nameof(OnGetEVSEByIdRequest));
+                e.Log(nameof(EMSPClient) + "." + nameof(OnGetEVSEByUIdRequest));
             }
 
             #endregion
@@ -1467,13 +1466,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
 
-                URL EVSEsURL   = default;
+                URL LocationsURL = default;
 
                 if (versionId.HasValue &&
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    EVSEsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -1481,29 +1480,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (LocationsURL.Protocol == HTTPProtocols.http
 
-                                           ? new HTTPClient (EVSEsURL.Hostname,
-                                                             RemotePort:  EVSEsURL.Port ?? IPPort.HTTP,
+                                           ? new HTTPClient (LocationsURL.Hostname,
+                                                             RemotePort:  LocationsURL.Port ?? IPPort.HTTP,
                                                              DNSClient:   DNSClient)
 
-                                           : new HTTPSClient(EVSEsURL.Hostname,
+                                           : new HTTPSClient(LocationsURL.Hostname,
                                                              RemoteCertificateValidator,
-                                                             RemotePort:  EVSEsURL.Port ?? IPPort.HTTPS,
+                                                             RemotePort:  LocationsURL.Port ?? IPPort.HTTPS,
                                                              DNSClient:   DNSClient)).
 
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                               EVSEsURL.Path + EVSEId.ToString(),
+                                                                               LocationsURL.Path + LocationId.ToString() + EVSEUId.ToString(),
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? EVSEsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
                                                                                }),
 
-                                              RequestLogDelegate:   OnGetEVSEByIdHTTPRequest,
-                                              ResponseLogDelegate:  OnGetEVSEByIdHTTPResponse,
+                                              RequestLogDelegate:   OnGetEVSEByUIdHTTPRequest,
+                                              ResponseLogDelegate:  OnGetEVSEByUIdHTTPResponse,
                                               CancellationToken:    CancellationToken,
                                               EventTrackingId:      EventTrackingId,
                                               RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
@@ -1512,21 +1510,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<EVSE>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => EVSE.Parse(json));
+                response = OCPIResponse<EVSE>.ParseJObject(HTTPResponse,
+                                                           requestId,
+                                                           correlationId,
+                                                           json => EVSE.Parse(json));
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<EVSE>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                response = new OCPIResponse<String, EVSE>("",
+                                                          default,
+                                                          -1,
+                                                          e.Message,
+                                                          e.StackTrace);
 
             }
 
@@ -1571,7 +1569,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                e.Log(nameof(EMSPClient) + "." + nameof(OnGetEVSEByIdResponse));
+                e.Log(nameof(EMSPClient) + "." + nameof(OnGetEVSEByUIdResponse));
             }
 
             #endregion
@@ -1591,21 +1589,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<Connector>>>
+        public async Task<OCPIResponse<Connector>>
 
-            GetConnectorById(Connector_Id         ConnectorId,
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+            GetConnectorById(Location_Id         LocationId,
+                             EVSE_Id             EVSEId,
+                             Connector_Id        ConnectorId,
+                             Version_Id?         VersionId           = null,
+                             Request_Id?         RequestId           = null,
+                             Correlation_Id?     CorrelationId       = null,
 
-                            DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                             DateTime?           Timestamp           = null,
+                             CancellationToken?  CancellationToken   = null,
+                             EventTracking_Id    EventTrackingId     = null,
+                             TimeSpan?           RequestTimeout      = null)
 
         {
 
-            OCPIResponse<IEnumerable<Connector>> response;
+            OCPIResponse<Connector> response;
 
             #region Send OnGetConnectorByIdRequest event
 
@@ -1674,13 +1674,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
 
-                URL ConnectorsURL   = default;
+                URL LocationsURL   = default;
 
                 if (versionId.HasValue &&
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    ConnectorsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -1688,22 +1688,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (LocationsURL.Protocol == HTTPProtocols.http
 
-                                           ? new HTTPClient (ConnectorsURL.Hostname,
-                                                             RemotePort:  ConnectorsURL.Port ?? IPPort.HTTP,
+                                           ? new HTTPClient (LocationsURL.Hostname,
+                                                             RemotePort:  LocationsURL.Port ?? IPPort.HTTP,
                                                              DNSClient:   DNSClient)
 
-                                           : new HTTPSClient(ConnectorsURL.Hostname,
+                                           : new HTTPSClient(LocationsURL.Hostname,
                                                              RemoteCertificateValidator,
-                                                             RemotePort:  ConnectorsURL.Port ?? IPPort.HTTPS,
+                                                             RemotePort:  LocationsURL.Port ?? IPPort.HTTPS,
                                                              DNSClient:   DNSClient)).
 
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                               ConnectorsURL.Path + ConnectorId.ToString(),
+                                                                               LocationsURL.Path + LocationId.ToString() + EVSEId.ToString() + ConnectorId.ToString(),
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? ConnectorsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1719,21 +1718,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<Connector>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => Connector.Parse(json));
+                response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
+                                                                requestId,
+                                                                correlationId,
+                                                                json => Connector.Parse(json));
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<Connector>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                response = new OCPIResponse<String, Connector>("",
+                                                               default,
+                                                               -1,
+                                                               e.Message,
+                                                               e.StackTrace);
 
             }
 
@@ -1802,13 +1801,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
             GetTariffs(Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                       Request_Id?         RequestId           = null,
+                       Correlation_Id?     CorrelationId       = null,
 
-                         DateTime?           Timestamp           = null,
-                         CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                       DateTime?           Timestamp           = null,
+                       CancellationToken?  CancellationToken   = null,
+                       EventTracking_Id    EventTrackingId     = null,
+                       TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -1888,14 +1887,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 {
 
                     TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Tariffs &&
-                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+                                                                                     endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
 
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (TariffsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (TariffsURL.Hostname,
                                                              RemotePort:  TariffsURL.Port ?? IPPort.HTTP,
@@ -1909,8 +1908,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                TariffsURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? TariffsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2008,14 +2006,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<Tariff>>>
 
             GetTariffById(Tariff_Id         TariffId,
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+                          Version_Id?         VersionId           = null,
+                          Request_Id?         RequestId           = null,
+                          Correlation_Id?     CorrelationId       = null,
 
-                            DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                          DateTime?           Timestamp           = null,
+                          CancellationToken?  CancellationToken   = null,
+                          EventTracking_Id    EventTrackingId     = null,
+                          TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -2102,7 +2100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (TariffsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (TariffsURL.Hostname,
                                                              RemotePort:  TariffsURL.Port ?? IPPort.HTTP,
@@ -2116,8 +2114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                TariffsURL.Path + TariffId.ToString(),
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? TariffsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2216,13 +2213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<Session>>>
 
             GetSessions(Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                        Request_Id?         RequestId           = null,
+                        Correlation_Id?     CorrelationId       = null,
 
-                         DateTime?           Timestamp           = null,
-                         CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                        DateTime?           Timestamp           = null,
+                        CancellationToken?  CancellationToken   = null,
+                        EventTracking_Id    EventTrackingId     = null,
+                        TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -2309,7 +2306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (SessionsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (SessionsURL.Hostname,
                                                              RemotePort:  SessionsURL.Port ?? IPPort.HTTP,
@@ -2323,8 +2320,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                SessionsURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? SessionsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2516,7 +2512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (SessionsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (SessionsURL.Hostname,
                                                              RemotePort:  SessionsURL.Port ?? IPPort.HTTP,
@@ -2530,8 +2526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                SessionsURL.Path + SessionId.ToString(),
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? SessionsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2632,13 +2627,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
             GetCDRs(Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                    Request_Id?         RequestId           = null,
+                    Correlation_Id?     CorrelationId       = null,
 
-                         DateTime?           Timestamp           = null,
-                         CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                    DateTime?           Timestamp           = null,
+                    CancellationToken?  CancellationToken   = null,
+                    EventTracking_Id    EventTrackingId     = null,
+                    TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -2725,7 +2720,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (CDRsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (CDRsURL.Hostname,
                                                              RemotePort:  CDRsURL.Port ?? IPPort.HTTP,
@@ -2739,8 +2734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                CDRsURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? CDRsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2838,14 +2832,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<CDR>>>
 
             GetCDRById(CDR_Id         CDRId,
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+                       Version_Id?         VersionId           = null,
+                       Request_Id?         RequestId           = null,
+                       Correlation_Id?     CorrelationId       = null,
 
-                            DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                       DateTime?           Timestamp           = null,
+                       CancellationToken?  CancellationToken   = null,
+                       EventTracking_Id    EventTrackingId     = null,
+                       TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -2932,7 +2926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (CDRsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (CDRsURL.Hostname,
                                                              RemotePort:  CDRsURL.Port ?? IPPort.HTTP,
@@ -2946,8 +2940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                CDRsURL.Path + CDRId.ToString(),
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? CDRsURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3046,13 +3039,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<Token>>>
 
             GetToken(Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                     Request_Id?         RequestId           = null,
+                     Correlation_Id?     CorrelationId       = null,
 
-                         DateTime?           Timestamp           = null,
-                         CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                     DateTime?           Timestamp           = null,
+                     CancellationToken?  CancellationToken   = null,
+                     EventTracking_Id    EventTrackingId     = null,
+                     TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -3131,15 +3124,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    TokenURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
-                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+                    TokenURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Tokens &&
+                                                                                   endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
 
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (TokenURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (TokenURL.Hostname,
                                                              RemotePort:  TokenURL.Port ?? IPPort.HTTP,
@@ -3153,8 +3146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                TokenURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? TokenURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3252,13 +3244,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<Token>>>
 
             PutToken(Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                     Request_Id?         RequestId           = null,
+                     Correlation_Id?     CorrelationId       = null,
 
-                         DateTime?           Timestamp           = null,
-                         CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                     DateTime?           Timestamp           = null,
+                     CancellationToken?  CancellationToken   = null,
+                     EventTracking_Id    EventTrackingId     = null,
+                     TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -3337,15 +3329,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    TokenURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
-                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+                    TokenURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Tokens &&
+                                                                                   endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
 
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (TokenURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (TokenURL.Hostname,
                                                              RemotePort:  TokenURL.Port ?? IPPort.HTTP,
@@ -3359,8 +3351,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                TokenURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? TokenURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3458,13 +3449,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<IEnumerable<Token>>>
 
             PatchToken(Version_Id?         VersionId           = null,
-                         Request_Id?         RequestId           = null,
-                         Correlation_Id?     CorrelationId       = null,
+                       Request_Id?         RequestId           = null,
+                       Correlation_Id?     CorrelationId       = null,
 
-                         DateTime?           Timestamp           = null,
-                         CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
-                         TimeSpan?           RequestTimeout      = null)
+                       DateTime?           Timestamp           = null,
+                       CancellationToken?  CancellationToken   = null,
+                       EventTracking_Id    EventTrackingId     = null,
+                       TimeSpan?           RequestTimeout      = null)
 
         {
 
@@ -3543,15 +3534,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    TokenURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
-                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+                    TokenURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Tokens &&
+                                                                                   endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
 
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (RemoteCertificateValidator == null
+                var HTTPResponse = await (TokenURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (TokenURL.Hostname,
                                                              RemotePort:  TokenURL.Port ?? IPPort.HTTP,
@@ -3565,8 +3556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                TokenURL.Path,
                                                                                requestbuilder => {
-                                                                                   requestbuilder.Host           = VirtualHostname ?? TokenURL.Hostname;
-                                                                                   requestbuilder.Authorization  = new HTTPTokenAuthentication(AccessToken.ToString());
+                                                                                   requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);

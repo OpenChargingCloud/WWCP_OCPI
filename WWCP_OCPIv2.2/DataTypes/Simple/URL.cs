@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     switch (elements[0])
                     {
 
-                        case "http":
+                        case "http:":
                             protocol = HTTPProtocols.http;
                             break;
 

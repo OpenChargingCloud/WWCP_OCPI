@@ -193,8 +193,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.FromPartyId      = Request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
 
 
-            if      (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                OCPIv2_2.AccessToken.TryParse(StringExtensions.FromBase64(TokenAuth.Token), out AccessToken accessToken))
+            if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
+                TokenAuth.Token.TryDecodeBase64(out String DecodedToken)   &&
+                OCPIv2_2.AccessToken.TryParse(DecodedToken, out AccessToken accessToken))
             {
                 this.AccessToken = accessToken;
             }

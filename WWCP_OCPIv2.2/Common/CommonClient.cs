@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             this.AccessToken                 = AccessToken;
-            this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().ToBase64());
+            this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
             this.VersionsURL                 = VersionsURL;
             this.Hostname                    = VersionsURL.Hostname;
             this.RemotePort                  = VersionsURL.Port   ?? DefaultRemotePort;
@@ -634,7 +634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                   VersionsURL.Path,
                                                                                   requestbuilder => {
-                                                                                      requestbuilder.Host           = VirtualHostname ?? Hostname;
+                                                                                      //requestbuilder.Host           = VirtualHostname ?? Hostname;
                                                                                       requestbuilder.Authorization  = TokenAuth;
                                                                                       requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
@@ -817,7 +817,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                   Versions[VersionId].Path,
                                                                                   requestbuilder => {
-                                                                                      requestbuilder.Host           = Versions[VersionId].Hostname;
+                                                                                      //requestbuilder.Host           = HTTPHostname.Parse(Versions[VersionId].Hostname + (Versions[VersionId].Port.HasValue ? Versions[VersionId].Port.Value.ToString() : ""));
                                                                                       requestbuilder.Authorization  = TokenAuth;
                                                                                       requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                       requestbuilder.Set("X-Request-ID",      requestId);
