@@ -2327,46 +2327,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // https://example.com/ocpi/2.2/cpo/sessions/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "sessions",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequest: Request => {
+                                     HTTPMethod.GET,
+                                     URLPathPrefix + "sessions",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
 
-                                             var filters                = Request.GetDateAndPaginationFilters();
+                                         var filters                = Request.GetDateAndPaginationFilters();
 
-                                             var allSessions            = CommonAPI.GetSessions(DefaultCountryCode,
-                                                                                                DefaultPartyId).
-                                                                                    ToArray();
+                                         var allSessions            = CommonAPI.GetSessions(DefaultCountryCode,
+                                                                                            DefaultPartyId).
+                                                                                ToArray();
 
-                                             var allSessionsCount       = allSessions.Length;
-
-
-                                             var filteredSessions       = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
-                                                                                      Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
-                                                                                      ToArray();
-
-                                             var filteredSessionsCount  = filteredSessions.Length;
+                                         var allSessionsCount       = allSessions.Length;
 
 
-                                             return Task.FromResult(
-                                                 new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = new JArray(filteredSessions.SkipTakeFilter(filters.Offset,
-                                                                                                                          filters.Limit).
-                                                                                                           SafeSelect(session => session.ToJSON())),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                            //LastModified               = ?
-                                                        }.
-                                                        Set("X-Total-Count", filteredSessionsCount)
-                                                        // X-Limit               The maximum number of objects that the server WILL return.
-                                                        // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                                 });
+                                         var filteredSessions       = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
+                                                                                  Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
+                                                                                  ToArray();
 
-                                         });
+                                         var filteredSessionsCount  = filteredSessions.Length;
+
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = new JArray(filteredSessions.SkipTakeFilter(filters.Offset,
+                                                                                                                      filters.Limit).
+                                                                                                       SafeSelect(session => session.ToJSON())),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                        //LastModified               = ?
+                                                    }.
+                                                    Set("X-Total-Count", filteredSessionsCount)
+                                                    // X-Limit               The maximum number of objects that the server WILL return.
+                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                                             });
+
+                                     });
 
             #endregion
 
@@ -2445,9 +2445,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            #region ~/CDRs
+            #region ~/cdrs
 
-            #region OPTIONS  ~/CDRs
+            #region OPTIONS  ~/cdrs
 
             // https://example.com/ocpi/2.2/cpo/CDRs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
@@ -2469,12 +2469,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET      ~/CDRs
+            #region GET      ~/cdrs
 
-            // https://example.com/ocpi/2.2/cpo/CDRs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
+            // https://example.com/ocpi/2.2/cpo/cdrs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
-                                     URLPathPrefix + "CDRs",
+                                     URLPathPrefix + "cdrs",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
@@ -2518,13 +2518,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region ~/CDRs/{CDRId}
+            #region ~/cdrs/{CDRId}
 
-            #region OPTIONS  ~/CDRs/{CDRId}
+            #region OPTIONS  ~/cdrs/{CDRId}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "CDRs/{CDRId}",
+                                     URLPathPrefix + "cdrs/{CDRId}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
@@ -2541,11 +2541,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET      ~/CDRs/{CDRId}
+            #region GET      ~/cdrs/{CDRId}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
-                                     URLPathPrefix + "CDRs/{CDRId}",
+                                     URLPathPrefix + "cdrs/{CDRId}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 

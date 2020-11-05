@@ -18,23 +18,18 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Net.Security;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
-
-using org.GraphDefined.WWCP;
-
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -962,11 +957,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region GetLocations(...)
+        #region GetLocations    (...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get all locations.
         /// </summary>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1027,6 +1027,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -1064,6 +1066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -1167,11 +1170,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetLocationById(...)
+        #region GetLocationById (LocationId, ...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get the location specified by the given location identification.
         /// </summary>
+        /// <param name="LocationId">The identification of the requested location.</param>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1179,6 +1188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<Location>>
 
             GetLocationById(Location_Id         LocationId,
+
                             Version_Id?         VersionId           = null,
                             Request_Id?         RequestId           = null,
                             Correlation_Id?     CorrelationId       = null,
@@ -1233,6 +1243,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -1270,6 +1282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -1373,11 +1386,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetEVSEByUId(...)
+        #region GetEVSEByUId    (LocationId, EVSEUId, ...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get the EVSE specified by the given location and EVSE identification.
         /// </summary>
+        /// <param name="LocationId">The identification of the requested location.</param>
+        /// <param name="EVSEUId">The unique identification of the EVSE location.</param>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1440,6 +1460,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -1477,6 +1499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -1580,11 +1603,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetConnectorById(...)
+        #region GetConnectorById(LocationId, EVSEUId, ConnectorId, ...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get the connector specified by the given location, EVSE and connector identification.
         /// </summary>
+        /// <param name="LocationId">The identification of the requested location.</param>
+        /// <param name="EVSEUId">The unique identification of the EVSE location.</param>
+        /// <param name="ConnectorId">The identification of the requested connector.</param>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1592,7 +1623,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public async Task<OCPIResponse<Connector>>
 
             GetConnectorById(Location_Id         LocationId,
-                             EVSE_Id             EVSEId,
+                             EVSE_UId            EVSEUId,
                              Connector_Id        ConnectorId,
                              Version_Id?         VersionId           = null,
                              Request_Id?         RequestId           = null,
@@ -1648,6 +1679,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -1685,6 +1718,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -1700,7 +1734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                              DNSClient:   DNSClient)).
 
                                         Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                               LocationsURL.Path + LocationId.ToString() + EVSEId.ToString() + ConnectorId.ToString(),
+                                                                               LocationsURL.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
@@ -1789,11 +1823,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region GetTariffs(...)
+        #region GetTariffs   (...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get all tariffs.
         /// </summary>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1854,6 +1893,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -1891,6 +1932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -1925,9 +1967,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
                 response = OCPIResponse<Tariff>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => Tariff.Parse(json));
+                                                            requestId,
+                                                            correlationId,
+                                                            json => Tariff.Parse(json));
 
             }
 
@@ -1935,10 +1977,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 response = new OCPIResponse<String, IEnumerable<Tariff>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                                                                         default,
+                                                                         -1,
+                                                                         e.Message,
+                                                                         e.StackTrace);
 
             }
 
@@ -1994,18 +2036,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetTariffById(...)
+        #region GetTariffById(TariffId, ...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get the tariff specified by the given tariff identification.
         /// </summary>
+        /// <param name="TariffId">The identification of the requested tariff.</param>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<Tariff>>>
+        public async Task<OCPIResponse<Tariff>>
 
-            GetTariffById(Tariff_Id         TariffId,
+            GetTariffById(Tariff_Id           TariffId,
                           Version_Id?         VersionId           = null,
                           Request_Id?         RequestId           = null,
                           Correlation_Id?     CorrelationId       = null,
@@ -2017,7 +2065,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            OCPIResponse<IEnumerable<Tariff>> response;
+            OCPIResponse<Tariff> response;
 
             #region Send OnGetTariffByIdRequest event
 
@@ -2060,6 +2108,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -2097,6 +2147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -2130,21 +2181,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<Tariff>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => Tariff.Parse(json));
+                response = OCPIResponse<Tariff>.ParseJObject(HTTPResponse,
+                                                             requestId,
+                                                             correlationId,
+                                                             json => Tariff.Parse(json));
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<Tariff>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                response = new OCPIResponse<String, Tariff>("",
+                                                            default,
+                                                            -1,
+                                                            e.Message,
+                                                            e.StackTrace);
 
             }
 
@@ -2201,11 +2252,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region GetSessions(...)
+        #region GetSessions   (...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get all sessions.
         /// </summary>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -2266,6 +2322,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -2303,6 +2361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -2337,9 +2396,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
                 response = OCPIResponse<Session>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => Session.Parse(json));
+                                                             requestId,
+                                                             correlationId,
+                                                             json => Session.Parse(json));
 
             }
 
@@ -2347,10 +2406,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 response = new OCPIResponse<String, IEnumerable<Session>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                                                                          default,
+                                                                          -1,
+                                                                          e.Message,
+                                                                          e.StackTrace);
 
             }
 
@@ -2406,30 +2465,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetSessionById(...)
+        #region GetSessionById(SessionId, ...)
 
         /// <summary>
-        /// Start a charging session.
+        /// Get the session specified by the given session identification.
         /// </summary>
+        /// <param name="SessionId">The identification of the requested session.</param>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<Session>>>
+        public async Task<OCPIResponse<Session>>
 
-            GetSessionById(Session_Id         SessionId,
-                            Version_Id?         VersionId           = null,
-                            Request_Id?         RequestId           = null,
-                            Correlation_Id?     CorrelationId       = null,
+            GetSessionById(Session_Id          SessionId,
 
-                            DateTime?           Timestamp           = null,
-                            CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
-                            TimeSpan?           RequestTimeout      = null)
+                           Version_Id?         VersionId           = null,
+                           Request_Id?         RequestId           = null,
+                           Correlation_Id?     CorrelationId       = null,
+
+                           DateTime?           Timestamp           = null,
+                           CancellationToken?  CancellationToken   = null,
+                           EventTracking_Id    EventTrackingId     = null,
+                           TimeSpan?           RequestTimeout      = null)
 
         {
 
-            OCPIResponse<IEnumerable<Session>> response;
+            OCPIResponse<Session> response;
 
             #region Send OnGetSessionByIdRequest event
 
@@ -2472,6 +2538,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -2509,6 +2577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -2542,7 +2611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<Session>.ParseJArray(HTTPResponse,
+                response = OCPIResponse<Session>.ParseJObject(HTTPResponse,
                                                               requestId,
                                                               correlationId,
                                                               json => Session.Parse(json));
@@ -2552,11 +2621,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<Session>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                response = new OCPIResponse<String, Session>("",
+                                                             default,
+                                                             -1,
+                                                             e.Message,
+                                                             e.StackTrace);
 
             }
 
@@ -2615,11 +2684,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // PUT     ~/sessions/{session_id}/charging_preferences
 
 
-        #region GetCDRs(...)
+        #region GetCDRs   (...)
 
         /// <summary>
-        /// Start a charging CDR.
+        /// Get all charge detail records.
         /// </summary>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -2680,6 +2754,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -2706,17 +2782,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
 
-                URL CDRsURL   = default;
+                URL CDRsURL = default;
 
                 if (versionId.HasValue &&
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
                     CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.CDRs &&
-                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+                                                                                  endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -2751,9 +2828,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
                 response = OCPIResponse<CDR>.ParseJArray(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => CDR.Parse(json));
+                                                         requestId,
+                                                         correlationId,
+                                                         json => CDR.Parse(json));
 
             }
 
@@ -2761,10 +2838,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 response = new OCPIResponse<String, IEnumerable<CDR>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                                                                      default,
+                                                                      -1,
+                                                                      e.Message,
+                                                                      e.StackTrace);
 
             }
 
@@ -2820,18 +2897,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region GetCDRById(...)
+        #region GetCDRById(CDRId, ...)
 
         /// <summary>
-        /// Start a charging CDR.
+        /// Get the charge detail record specified by the given location identification.
         /// </summary>
+        /// <param name="CDRId">The identification of the requested charge detail record.</param>
+        /// 
+        /// <param name="VersionId">An optional OCPI version identification.</param>
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<CDR>>>
+        public async Task<OCPIResponse<CDR>>
 
-            GetCDRById(CDR_Id         CDRId,
+            GetCDRById(CDR_Id              CDRId,
                        Version_Id?         VersionId           = null,
                        Request_Id?         RequestId           = null,
                        Correlation_Id?     CorrelationId       = null,
@@ -2843,7 +2926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            OCPIResponse<IEnumerable<CDR>> response;
+            OCPIResponse<CDR> response;
 
             #region Send OnGetCDRByIdRequest event
 
@@ -2886,6 +2969,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -2919,10 +3004,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 {
 
                     CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.CDRs &&
-                                                                                       endpoint.Role       == InterfaceRoles.SENDER).URL;
+                                                                                  endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -2956,7 +3042,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                response = OCPIResponse<CDR>.ParseJArray(HTTPResponse,
+                response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
                                                               requestId,
                                                               correlationId,
                                                               json => CDR.Parse(json));
@@ -2966,11 +3052,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<CDR>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
+                response = new OCPIResponse<String, CDR>("",
+                                                         default,
+                                                         -1,
+                                                         e.Message,
+                                                         e.StackTrace);
 
             }
 
@@ -3092,6 +3178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -3129,6 +3217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -3297,6 +3386,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -3334,6 +3425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
@@ -3502,6 +3594,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
+                #region Set versionId, requestId, correlationId
+
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
@@ -3539,6 +3633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 }
 
+                #endregion
 
                 #region Upstream HTTP request...
 
