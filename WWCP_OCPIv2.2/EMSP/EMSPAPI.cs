@@ -3514,56 +3514,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Check whether the new location is "newer" than the existing location
 
-                                         var bbb = Request.QueryString.GetBoolean("forceDowngrade") ??
-                                                   // ToDo: Check AccessToken
-                                                   AllowDowngrades;
+                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation,
+                                                                                                     AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
-                                         if (AllowDowngrades == false &&
-                                             // ToDo: Check AccessToken
-                                             newOrUpdatedLocation.LastUpdated < ExistingLocation.LastUpdated &&
-                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
-                                         {
 
+                                         if (addOrUpdateResult.IsSuccess)
                                              return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 2000,
-                                                        StatusMessage        = "LastUpdated must ne newer then the existing one!",
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.FailedDependency,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                        }
-                                                    };
-
-                                         }
-
-                                         #endregion
-
-
-                                         var wasCreated = CommonAPI.LocationExists(newOrUpdatedLocation.CountryCode,
-                                                                                   newOrUpdatedLocation.PartyId,
-                                                                                   newOrUpdatedLocation.Id);
-
-
-                                         //ToDo: Handle AddOrUpdate errors
-                                         CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation);
-
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = newOrUpdatedLocation.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = addOrUpdateResult.WasCreated == true
+                                                                                                 ? HTTPStatusCode.Created
+                                                                                                 : HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = newOrUpdatedLocation.LastUpdated.ToIso8601(),
+                                                                ETag                       = newOrUpdatedLocation.SHA256Hash
+                                                            }
+                                                        };
 
                                          return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = newOrUpdatedLocation.ToJSON(),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = wasCreated
-                                                                                             ? HTTPStatusCode.Created
-                                                                                             : HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            LastModified               = newOrUpdatedLocation.LastUpdated.ToIso8601(),
-                                                            ETag                       = newOrUpdatedLocation.SHA256Hash
-                                                        }
-                                                    };
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
+                                                    Data                 = newOrUpdatedLocation.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
 
                                      });
 
@@ -3820,39 +3801,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Check whether the new EVSE is "newer" than the existing EVSE
 
-                                         if (newOrUpdatedEVSE.LastUpdated < ExistingEVSE.LastUpdated &&
-                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
-                                         {
+                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateEVSE(ExistingLocation,
+                                                                                                 newOrUpdatedEVSE,
+                                                                                                 AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
+                                         if (addOrUpdateResult.IsSuccess)
                                              return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 2000,
-                                                        StatusMessage        = "LastUpdated must ne newer then the existing one!",
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.FailedDependency,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                        }
-                                                    };
-
-                                         }
-
-                                         #endregion
-
-
-                                         //ToDo: Handle AddOrUpdate errors
-                                         //CommonAPI.AddOrUpdate(newOrUpdatedLocation);
-
-                                         var wasCreated = true;
-
-
-                                         return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 1000,
                                                         StatusMessage        = "Hello world!",
                                                         Data                 = newOrUpdatedEVSE.ToJSON(),
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = wasCreated
+                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -3861,6 +3821,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             ETag                       = newOrUpdatedEVSE.SHA256Hash
                                                         }
                                                     };
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
+                                                    Data                 = newOrUpdatedEVSE.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
 
                                      });
 
@@ -4086,9 +4057,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                  out CountryCode?          CountryCode,
                                                                                  out Party_Id?             PartyId,
                                                                                  out Location_Id?          LocationId,
-                                                                                 out Location              Location,
+                                                                                 out Location              ExistingLocation,
                                                                                  out EVSE_UId?             EVSEUId,
-                                                                                 out EVSE                  EVSE,
+                                                                                 out EVSE                  ExistingEVSE,
                                                                                  out Connector_Id?         ConnectorId,
                                                                                  out Connector             ExistingConnector,
                                                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
@@ -4124,39 +4095,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Check whether the new connector is "newer" than the existing connector
 
-                                         if (newOrUpdatedConnector.LastUpdated < ExistingConnector.LastUpdated &&
-                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
-                                         {
+                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateConnector(ExistingLocation,
+                                                                                                      ExistingEVSE,
+                                                                                                      newOrUpdatedConnector,
+                                                                                                      AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
+
+                                         if (addOrUpdateResult.IsSuccess)
                                              return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 2000,
-                                                        StatusMessage        = "LastUpdated must ne newer then the existing one!",
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.FailedDependency,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                        }
-                                                    };
-
-                                         }
-
-                                         #endregion
-
-
-                                         //ToDo: Handle AddOrUpdate errors
-                                         //CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation);
-
-                                         var wasCreated = true;
-
-
-                                         return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 1000,
                                                         StatusMessage        = "Hello world!",
                                                         Data                 = newOrUpdatedConnector.ToJSON(),
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = wasCreated
+                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                              ? HTTPStatusCode.Created
                                                                                              : HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -4165,6 +4117,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             ETag                       = newOrUpdatedConnector.SHA256Hash
                                                         }
                                                     };
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
+                                                    Data                 = newOrUpdatedConnector.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
 
                                      });
 

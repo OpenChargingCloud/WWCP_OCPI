@@ -721,6 +721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
 
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
                                                      JObject  Patch)
@@ -729,7 +730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             foreach (var property in Patch)
             {
 
-                if (property.Key == "country_code")
+                if      (property.Key == "country_code")
                     return PatchResult<JObject>.Failed(JSON,
                                                        "Patching the 'country code' of a charging tariff is not allowed!");
 
@@ -742,10 +743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        "Patching the 'identification' of a charging tariff is not allowed!");
 
                 else if (property.Value is null)
-                {
-                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
-                }
 
                 else if (property.Value is JObject subObject)
                 {
@@ -771,9 +769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                    {
                         JSON.Add(property.Key, subObject);
-                    }
 
                 }
 
@@ -790,11 +786,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
+        #region TryPatch(TariffPatch, AllowDowngrades = false)
 
-        #region TryPatch(TariffPatch)
-
-        public PatchResult<Tariff> TryPatch(JObject TariffPatch)
+        /// <summary>
+        /// Try to patch the JSON representaion of this charging tariff.
+        /// </summary>
+        /// <param name="TariffPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<Tariff> TryPatch(JObject  TariffPatch,
+                                            Boolean  AllowDowngrades = false)
         {
 
             if (TariffPatch == null)
@@ -807,7 +809,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (TariffPatch["last_updated"] is null)
                     TariffPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
+                else if (AllowDowngrades == false &&
+                        TariffPatch["last_updated"].Type == JTokenType.Date &&
+                       (TariffPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<Tariff>.Failed(this,
+                                                      "The 'lastUpdated' timestamp of the charging tariff patch must be newer then the timestamp of the existing charging tariff!");
+                }
+
+
                 var patchResult = TryPrivatePatch(ToJSON(), TariffPatch);
+
 
                 if (patchResult.IsFailed)
                     return PatchResult<Tariff>.Failed(this,

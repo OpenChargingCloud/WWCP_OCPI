@@ -681,6 +681,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
+
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
                                                      JObject  Patch)
         {
@@ -693,10 +695,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        "Patching the 'unique identification' of a token is not allowed!");
 
                 else if (property.Value is null)
-                {
-                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
-                }
 
                 else if (property.Value is JObject subObject)
                 {
@@ -722,9 +721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                    {
                         JSON.Add(property.Key, subObject);
-                    }
 
                 }
 
@@ -741,11 +738,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
+        #region TryPatch(TokenPatch, AllowDowngrades = false)
 
-        #region TryPatch(TokenPatch)
-
-        public PatchResult<Token> TryPatch(JObject TokenPatch)
+        /// <summary>
+        /// Try to patch the JSON representaion of this token.
+        /// </summary>
+        /// <param name="TokenPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<Token> TryPatch(JObject  TokenPatch,
+                                           Boolean  AllowDowngrades = false)
         {
 
             if (TokenPatch == null)
@@ -758,7 +761,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (TokenPatch["last_updated"] is null)
                     TokenPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
+                else if (AllowDowngrades == false &&
+                        TokenPatch["last_updated"].Type == JTokenType.Date &&
+                       (TokenPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<Token>.Failed(this,
+                                                     "The 'lastUpdated' timestamp of the token patch must be newer then the timestamp of the existing token!");
+                }
+
+
                 var patchResult = TryPrivatePatch(ToJSON(), TokenPatch);
+
 
                 if (patchResult.IsFailed)
                     return PatchResult<Token>.Failed(this,

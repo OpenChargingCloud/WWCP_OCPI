@@ -150,13 +150,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Optional]
         public IEnumerable<EVSE>                   EVSEs                    { get; private set; }
 
-        ///// <summary>
-        ///// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
-        ///// present within this charging station.
-        ///// </summary>
-        //[Optional]
-        //public IEnumerable<EVSE_Id>                EVSEIds
-        //    => EVSEs.SafeSelect(evse => evse.EVSEId);
+        /// <summary>
+        /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
+        /// present within this charging station.
+        /// </summary>
+        [Optional]
+        public IEnumerable<EVSE_Id>                EVSEIds
+            => EVSEs.Where(evse => evse.EVSEId.HasValue).Select(evse => evse.EVSEId.Value);
 
         /// <summary>
         /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
@@ -1054,6 +1054,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
+
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
                                                      JObject  Patch)
         {
@@ -1061,7 +1063,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             foreach (var property in Patch)
             {
 
-                if (property.Key == "country_code")
+                if      (property.Key == "country_code")
                     return PatchResult<JObject>.Failed(JSON,
                                                        "Patching the 'country code' of a location is not allowed!");
 
@@ -1074,77 +1076,76 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        "Patching the 'identification' of a location is not allowed!");
 
                 else if (property.Key == "evses")
-                {
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'evses' array of a location is not allowed!");
+                //{
 
-                    if (property.Value == null)
-                        return PatchResult<JObject>.Failed(JSON,
-                                                           "Patching the 'evses' array of a location to 'null' is not allowed!");
+                //    if (property.Value == null)
+                //        return PatchResult<JObject>.Failed(JSON,
+                //                                           "Patching the 'evses' array of a location to 'null' is not allowed!");
 
-                    else if (property.Value is JArray EVSEArray)
-                    {
+                //    else if (property.Value is JArray EVSEArray)
+                //    {
 
-                        if (EVSEArray.Count == 0)
-                            return PatchResult<JObject>.Failed(JSON,
-                                                               "Patching the 'evses' array of a location to '[]' is not allowed!");
+                //        if (EVSEArray.Count == 0)
+                //            return PatchResult<JObject>.Failed(JSON,
+                //                                               "Patching the 'evses' array of a location to '[]' is not allowed!");
 
-                        else
-                        {
-                            foreach (var evse in EVSEArray)
-                            {
+                //        else
+                //        {
+                //            foreach (var evse in EVSEArray)
+                //            {
 
-                                //ToDo: What to do with multiple EVSE objects having the same EVSEUId?
-                                if (evse is JObject EVSEObject)
-                                {
+                //                //ToDo: What to do with multiple EVSE objects having the same EVSEUId?
+                //                if (evse is JObject EVSEObject)
+                //                {
 
-                                    if (EVSEObject.ParseMandatory("uid",
-                                                                  "internal EVSE identification",
-                                                                  EVSE_UId.TryParse,
-                                                                  out EVSE_UId  EVSEUId,
-                                                                  out String    ErrorResponse))
-                                    {
+                //                    if (EVSEObject.ParseMandatory("uid",
+                //                                                  "internal EVSE identification",
+                //                                                  EVSE_UId.TryParse,
+                //                                                  out EVSE_UId  EVSEUId,
+                //                                                  out String    ErrorResponse))
+                //                    {
 
-                                        return PatchResult<JObject>.Failed(JSON,
-                                                                           "Patching the 'evses' array of a location led to an error: " + ErrorResponse);
+                //                        return PatchResult<JObject>.Failed(JSON,
+                //                                                           "Patching the 'evses' array of a location led to an error: " + ErrorResponse);
 
-                                    }
+                //                    }
 
-                                    if (TryGetEVSE(EVSEUId, out EVSE EVSE))
-                                    {
-                                        //EVSE.Patch(EVSEObject);
-                                    }
-                                    else
-                                    {
+                //                    if (TryGetEVSE(EVSEUId, out EVSE EVSE))
+                //                    {
+                //                        //EVSE.Patch(EVSEObject);
+                //                    }
+                //                    else
+                //                    {
 
-                                        //ToDo: Create this "new" EVSE!
-                                        return PatchResult<JObject>.Failed(JSON,
-                                                                           "Unknown EVSE UId!");
+                //                        //ToDo: Create this "new" EVSE!
+                //                        return PatchResult<JObject>.Failed(JSON,
+                //                                                           "Unknown EVSE UId!");
 
-                                    }
+                //                    }
 
-                                }
-                                else
-                                {
-                                    return PatchResult<JObject>.Failed(JSON,
-                                                                       "Invalid JSON merge patch for 'evses' array of a location: Data within the 'evses' array is not a valid EVSE object!");
-                                }
+                //                }
+                //                else
+                //                {
+                //                    return PatchResult<JObject>.Failed(JSON,
+                //                                                       "Invalid JSON merge patch for 'evses' array of a location: Data within the 'evses' array is not a valid EVSE object!");
+                //                }
 
-                            }
-                        }
-                    }
+                //            }
+                //        }
+                //    }
 
-                    else
-                    {
-                        return PatchResult<JObject>.Failed(JSON,
-                                                           "Invalid JSON merge patch for 'evses' array of a location: JSON property 'evses' is not an array!");
-                    }
+                //    else
+                //    {
+                //        return PatchResult<JObject>.Failed(JSON,
+                //                                           "Invalid JSON merge patch for 'evses' array of a location: JSON property 'evses' is not an array!");
+                //    }
 
-                }
+                //}
 
                 else if (property.Value is null)
-                {
-                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
-                }
 
                 else if (property.Value is JObject subObject)
                 {
@@ -1170,9 +1171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                    {
                         JSON.Add(property.Key, subObject);
-                    }
 
                 }
 
@@ -1189,11 +1188,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
+        #region TryPatch(LocationPatch, AllowDowngrades = false)
 
-        #region TryPatch(LocationPatch)
-
-        public PatchResult<Location> TryPatch(JObject LocationPatch)
+        /// <summary>
+        /// Try to patch the JSON representaion of this location.
+        /// </summary>
+        /// <param name="LocationPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<Location> TryPatch(JObject  LocationPatch,
+                                              Boolean  AllowDowngrades = false)
         {
 
             if (LocationPatch == null)
@@ -1206,7 +1211,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (LocationPatch["last_updated"] is null)
                     LocationPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
+                else if (AllowDowngrades == false &&
+                        LocationPatch["last_updated"].Type == JTokenType.Date &&
+                       (LocationPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<Location>.Failed(this,
+                                                        "The 'lastUpdated' timestamp of the location patch must be newer then the timestamp of the existing location!");
+                }
+
+
                 var patchResult = TryPrivatePatch(ToJSON(), LocationPatch);
+
 
                 if (patchResult.IsFailed)
                     return PatchResult<Location>.Failed(this,
@@ -1255,6 +1270,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region EVSEExists(EVSEUId)
+
+        /// <summary>
+        /// Checks whether any EVSE having the given EVSE identification exists.
+        /// </summary>
+        /// <param name="EVSEUId">An EVSE identification.</param>
+        public Boolean EVSEExists(EVSE_UId EVSEUId)
+        {
+
+            lock (EVSEs)
+            {
+                foreach (var evse in EVSEs)
+                {
+                    if (evse.UId == EVSEUId)
+                        return true;
+                }
+            }
+
+            return false;
+
+        }
+
+        #endregion
+
         #region TryGetEVSE(EVSEUId, out EVSE)
 
         /// <summary>
@@ -1266,39 +1305,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   out EVSE  EVSE)
         {
 
-            foreach (var evse in EVSEs)
+            lock (EVSEs)
             {
-                if (evse.UId == EVSEUId)
+                foreach (var evse in EVSEs)
                 {
-                    EVSE = evse;
-                    return true;
-                }
-            }
-
-            EVSE = null;
-            return false;
-
-        }
-
-        #endregion
-
-        #region TryGetEVSE(EVSEId, out EVSE)
-
-        /// <summary>
-        /// Try to return the EVSE having the given EVSE identification.
-        /// </summary>
-        /// <param name="EVSEId">An EVSE identification.</param>
-        /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
-        public Boolean TryGetEVSE(EVSE_Id   EVSEId,
-                                  out EVSE  EVSE)
-        {
-
-            foreach (var evse in EVSEs)
-            {
-                if (evse.EVSEId == EVSEId)
-                {
-                    EVSE = evse;
-                    return true;
+                    if (evse.UId == EVSEUId)
+                    {
+                        EVSE = evse;
+                        return true;
+                    }
                 }
             }
 
@@ -1316,6 +1331,61 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public IEnumerator<EVSE> GetEnumerator()
             => EVSEs.GetEnumerator();
+
+        #endregion
+
+
+        #region EVSEExists(EVSEId)
+
+        /// <summary>
+        /// Checks whether any EVSE having the given EVSE identification exists.
+        /// </summary>
+        /// <param name="EVSEId">An EVSE identification.</param>
+        public Boolean EVSEExists(EVSE_Id EVSEId)
+        {
+
+            lock (EVSEs)
+            {
+                foreach (var evse in EVSEs)
+                {
+                    if (evse.EVSEId == EVSEId)
+                        return true;
+                }
+            }
+
+            return false;
+
+        }
+
+        #endregion
+
+        #region TryGetEVSE(EVSEId, out EVSE)
+
+        /// <summary>
+        /// Try to return the EVSE having the given EVSE identification.
+        /// </summary>
+        /// <param name="EVSEId">An EVSE identification.</param>
+        /// <param name="EVSE">The EVSE having the given EVSE identification.</param>
+        public Boolean TryGetEVSE(EVSE_Id   EVSEId,
+                                  out EVSE  EVSE)
+        {
+
+            lock (EVSEs)
+            {
+                foreach (var evse in EVSEs)
+                {
+                    if (evse.EVSEId == EVSEId)
+                    {
+                        EVSE = evse;
+                        return true;
+                    }
+                }
+            }
+
+            EVSE = null;
+            return false;
+
+        }
 
         #endregion
 
@@ -1564,6 +1634,358 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => Id.ToString();
+
+        #endregion
+
+
+        #region ToBuilder(NewLocationId = null)
+
+        /// <summary>
+        /// Return a builder for this location.
+        /// </summary>
+        /// <param name="NewLocationId">An optional new location identification.</param>
+        public Builder ToBuilder(Location_Id? NewLocationId = null)
+
+            => new Builder(CountryCode,
+                           PartyId,
+                           NewLocationId ?? Id,
+                           Publish,
+                           Address,
+                           City,
+                           Country,
+                           Coordinates,
+                           Timezone,
+
+                           PublishAllowedTo,
+                           Name,
+                           PostalCode,
+                           State,
+                           RelatedLocations,
+                           ParkingType,
+                           EVSEs,
+                           Directions,
+                           Operator,
+                           SubOperator,
+                           Owner,
+                           Facilities,
+                           OpeningTimes,
+                           ChargingWhenClosed,
+                           Images,
+                           EnergyMix,
+
+                           LastUpdated);
+
+        #endregion
+
+        #region (class) Builder
+
+        /// <summary>
+        /// A location builder.
+        /// </summary>
+        public class Builder
+        {
+
+            #region Properties
+
+            /// <summary>
+            /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this location.
+            /// </summary>
+            public CountryCode?                    CountryCode              { get; set; }
+
+            /// <summary>
+            /// The Id of the CPO that 'owns' this location (following the ISO-15118 standard).
+            /// </summary>
+            public Party_Id?                       PartyId                  { get; set; }
+
+            /// <summary>
+            /// The identification of the location within the CPOs platform (and suboperator platforms). 
+            /// </summary>
+            public Location_Id?                    Id                       { get; set; }
+
+            /// <summary>
+            /// Whether this location may be published on an website or app etc., or not.
+            /// </summary>
+            public Boolean?                        Publish                  { get; set; }
+
+            /// <summary>
+            /// This field may only be used when the publish field is set to false.
+            /// Only owners of Tokens that match all the set fields of one PublishToken in the list are allowed to be shown this location.
+            /// </summary>
+            public HashSet<PublishTokenType>       PublishAllowedTo         { get; }
+
+            /// <summary>
+            /// Display name of the location. // 255
+            /// </summary>
+            public String                          Name                     { get; set; }
+
+            /// <summary>
+            /// Address of the location. // 45
+            /// </summary>
+            public String                          Address                  { get; set; }
+
+            /// <summary>
+            /// Address of the location. // 45
+            /// </summary>
+            public String                          City                     { get; set; }
+
+            /// <summary>
+            /// Address of the location. // 10
+            /// </summary>
+            public String                          PostalCode               { get; set; }
+
+            /// <summary>
+            /// Address of the location. // 20
+            /// </summary>
+            public String                          State                    { get; set; }
+
+            /// <summary>
+            /// Address of the location. // 3
+            /// </summary>
+            public String                          Country                  { get; set; }
+
+            /// <summary>
+            /// The geographical location of this location.
+            /// </summary>
+            public GeoCoordinate?                  Coordinates              { get; set; }
+
+            /// <summary>
+            /// Geographical location of related geo coordinates relevant to the ev customer.
+            /// </summary>
+            public HashSet<AdditionalGeoLocation>  RelatedLocations         { get; }
+
+            /// <summary>
+            /// The general type of parking at the charge point location.
+            /// </summary>
+            public ParkingTypes?                   ParkingType              { get; set; }
+
+            /// <summary>
+            /// All Electric Vehicle Supply Equipments (EVSE) present
+            /// within this charging station.
+            /// </summary>
+            public HashSet<EVSE>                   EVSEs                    { get; }
+
+            /// <summary>
+            /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
+            /// present within this charging station.
+            /// </summary>
+            [Optional]
+            public IEnumerable<EVSE_Id>                EVSEIds
+                => EVSEs.Where(evse => evse.EVSEId.HasValue).Select(evse => evse.EVSEId.Value);
+
+            /// <summary>
+            /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
+            /// present within this charging station.
+            /// </summary>
+            [Optional]
+            public IEnumerable<EVSE_UId>               EVSEUIds
+                => EVSEs.Select(evse => evse.UId);
+
+            /// <summary>
+            /// Human-readable directions on how to reach the location.
+            /// </summary>
+            public HashSet<DisplayText>            Directions               { get; }
+
+            /// <summary>
+            /// Information of the charging station operator.
+            /// </summary>
+            /// <remarks>When not specified, the information retrieved from the Credentials module should be used instead.</remarks>
+            public BusinessDetails                 Operator                 { get; set; }
+
+            /// <summary>
+            /// Information of the suboperator if available.
+            /// </summary>
+            public BusinessDetails                 SubOperator              { get; set; }
+
+            /// <summary>
+            /// Information of the suboperator if available.
+            /// </summary>
+            public BusinessDetails                 Owner                    { get; set; }
+
+            /// <summary>
+            /// Information of the suboperator if available.
+            /// </summary>
+            public HashSet<Facilities>             Facilities               { get; }
+
+            /// <summary>
+            /// One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).
+            /// </summary>
+            /// <example>"Europe/Oslo", "Europe/Zurich"</example>
+            public String                          Timezone                 { get; set; }
+
+            /// <summary>
+            /// Information of the Charging Station Operator. When not specified,
+            /// the information retreived from the api_info endpoint
+            /// should be used instead.
+            /// </summary>
+            public Hours                           OpeningTimes             { get; set; }
+
+            /// <summary>
+            /// Indicates if the EVSEs are still charging outside the opening
+            /// hours of the location. E.g. when the parking garage closes its
+            /// barriers over night, is it allowed to charge till the next
+            /// morning? [Default: true]
+            /// </summary>
+            public Boolean?                        ChargingWhenClosed       { get; set; }
+
+            /// <summary>
+            /// Links to images related to the location such as photos or logos.
+            /// </summary>
+            public HashSet<Image>                  Images                   { get; }
+
+            /// <summary>
+            /// Links to images related to the location such as photos or logos.
+            /// </summary>
+            public EnergyMix                       EnergyMix                { get; set; }
+
+            /// <summary>
+            /// Timestamp when this location was last updated (or created).
+            /// </summary>
+            public DateTime?                       LastUpdated              { get; set; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            /// <summary>
+            /// The Location object describes the location and its properties
+            /// where a group of EVSEs that belong together are installed.
+            /// </summary>
+            /// <param name="Id">Uniquely identifies the location within the CPOs platform (and suboperator platforms).</param>
+            /// <param name="Operator">Information of the evse operator.</param>
+            /// <param name="SubOperator">Information of the evse suboperator if available.</param>
+            public Builder(CountryCode?                        CountryCode          = null,
+                           Party_Id?                           PartyId              = null,
+                           Location_Id?                        Id                   = null,
+                           Boolean?                            Publish              = null,
+                           String                              Address              = null,
+                           String                              City                 = null,
+                           String                              Country              = null,
+                           GeoCoordinate?                      Coordinates          = null,
+                           String                              Timezone             = null,
+
+                           IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
+                           String                              Name                 = null,
+                           String                              PostalCode           = null,
+                           String                              State                = null,
+                           IEnumerable<AdditionalGeoLocation>  RelatedLocations     = null,
+                           ParkingTypes?                       ParkingType          = null,
+                           IEnumerable<EVSE>                   EVSEs                = null,
+                           IEnumerable<DisplayText>            Directions           = null,
+                           BusinessDetails                     Operator             = null,
+                           BusinessDetails                     SubOperator          = null,
+                           BusinessDetails                     Owner                = null,
+                           IEnumerable<Facilities>             Facilities           = null,
+                           Hours                               OpeningTimes         = null,
+                           Boolean?                            ChargingWhenClosed   = null,
+                           IEnumerable<Image>                  Images               = null,
+                           EnergyMix                           EnergyMix            = null,
+
+                           DateTime?                           LastUpdated          = null)
+
+            {
+
+                this.CountryCode         = CountryCode;
+                this.PartyId             = PartyId;
+                this.Id                  = Id;
+                this.Publish             = Publish;
+                this.Address             = Address;
+                this.City                = City;
+                this.Country             = Country;
+                this.Coordinates         = Coordinates;
+                this.Timezone            = Timezone;
+
+                this.PublishAllowedTo    = PublishAllowedTo != null ? new HashSet<PublishTokenType>     (PublishAllowedTo) : new HashSet<PublishTokenType>();
+                this.Name                = Name;
+                this.PostalCode          = PostalCode;
+                this.State               = State;
+                this.RelatedLocations    = RelatedLocations != null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : new HashSet<AdditionalGeoLocation>();
+                this.ParkingType         = ParkingType;
+                this.EVSEs               = EVSEs            != null ? new HashSet<EVSE>                 (EVSEs)            : new HashSet<EVSE>();
+                this.Directions          = Directions       != null ? new HashSet<DisplayText>          (Directions)       : new HashSet<DisplayText>();
+                this.Operator            = Operator;
+                this.SubOperator         = SubOperator;
+                this.Owner               = Owner;
+                this.Facilities          = Facilities       != null ? new HashSet<Facilities>           (Facilities)       : new HashSet<Facilities>();
+                this.OpeningTimes        = OpeningTimes;
+                this.ChargingWhenClosed  = ChargingWhenClosed;
+                this.Images              = Images           != null ? new HashSet<Image>                (Images)           : new HashSet<Image>();
+                this.EnergyMix           = EnergyMix;
+
+                this.LastUpdated         = LastUpdated;
+
+            }
+
+            #endregion
+
+            #region ToImmutable
+
+            /// <summary>
+            /// Return an immutable version of the location.
+            /// </summary>
+            public static implicit operator Location(Builder Builder)
+
+                => Builder?.ToImmutable;
+
+
+            /// <summary>
+            /// Return an immutable version of the location.
+            /// </summary>
+            public Location ToImmutable
+            {
+                get
+                {
+
+                    if (!CountryCode.HasValue)
+                        throw new ArgumentNullException(nameof(CountryCode),  "The country code must not be null or empty!");
+
+                    if (!PartyId.HasValue)
+                        throw new ArgumentNullException(nameof(PartyId),      "The party identification must not be null or empty!");
+
+                    if (!Id.HasValue)
+                        throw new ArgumentNullException(nameof(Id),           "The identification code must not be null or empty!");
+
+                    if (!Publish.HasValue)
+                        throw new ArgumentNullException(nameof(Publish),      "The publish parameter must not be null or empty!");
+
+                    if (!Coordinates.HasValue)
+                        throw new ArgumentNullException(nameof(Coordinates),  "The geo coordinates must not be null or empty!");
+
+
+                    return new Location(CountryCode.Value,
+                                        PartyId.    Value,
+                                        Id.         Value,
+                                        Publish.    Value,
+                                        Address,
+                                        City,
+                                        Country,
+                                        Coordinates.Value,
+                                        Timezone,
+
+                                        PublishAllowedTo,
+                                        Name,
+                                        PostalCode,
+                                        State,
+                                        RelatedLocations,
+                                        ParkingType,
+                                        EVSEs,
+                                        Directions,
+                                        Operator,
+                                        SubOperator,
+                                        Owner,
+                                        Facilities,
+                                        OpeningTimes,
+                                        ChargingWhenClosed,
+                                        Images,
+                                        EnergyMix,
+
+                                        LastUpdated);
+
+                }
+            }
+
+            #endregion
+
+        }
 
         #endregion
 

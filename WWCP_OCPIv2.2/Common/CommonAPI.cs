@@ -1034,7 +1034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              #region Validations
 
-                                             if (accessInfo.VersionsURL.HasValue)
+                                             if (!accessInfo.VersionsURL.HasValue)
                                                  return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 2000,
                                                             StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
@@ -1496,36 +1496,69 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddOrUpdateLocation   (Location)
+        #region AddOrUpdateLocation   (newOrUpdatedLocation)
 
-        public Location AddOrUpdateLocation(Location Location)
+        private AddOrUpdateResult<Location> __addOrUpdateLocation(Location  newOrUpdatedLocation,
+                                                                  Boolean?  AllowDowngrades = false)
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
+            if (newOrUpdatedLocation is null)
+                return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
+                                                          "The given location must not be null!");
+
+
+            if (!Locations.TryGetValue(newOrUpdatedLocation.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+            {
+                parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
+                Locations.Add(newOrUpdatedLocation.CountryCode, parties);
+            }
+
+            if (!parties.TryGetValue(newOrUpdatedLocation.PartyId, out Dictionary<Location_Id, Location> locations))
+            {
+                locations = new Dictionary<Location_Id, Location>();
+                parties.Add(newOrUpdatedLocation.PartyId, locations);
+            }
+
+            if (locations.TryGetValue(newOrUpdatedLocation.Id, out Location existingLocation))
+            {
+
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    newOrUpdatedLocation.LastUpdated < existingLocation.LastUpdated)
+                {
+                    return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
+                                                              "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
+                }
+
+                locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
+
+                return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
+                                                           WasCreated: false);
+
+            }
+
+            locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
+
+            return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
+                                                       WasCreated: true);
+
+        }
+
+        public async Task<AddOrUpdateResult<Location>> AddOrUpdateLocation(Location  newOrUpdatedLocation,
+                                                                           Boolean?  AllowDowngrades = false)
+        {
+
+            if (newOrUpdatedLocation is null)
+                return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
+                                                          "The given location must not be null!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
 
             lock (Locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    Locations.Add(Location.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
-                {
-                    locations = new Dictionary<Location_Id, Location>();
-                    parties.Add(Location.PartyId, locations);
-                }
-
-                if (locations.ContainsKey(Location.Id))
-                {
-                    locations.Remove(Location.Id);
-                }
-
-                locations.Add(Location.Id, Location);
-                return Location;
+                return __addOrUpdateLocation(newOrUpdatedLocation,
+                                             AllowDowngrades);
 
             }
 
@@ -1561,10 +1594,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryPatchLocation(Location,                  LocationPatch)
+        #region TryPatchLocation(Location,                  LocationPatch, AllowDowngrades = false)
 
         public async Task<PatchResult<Location>> TryPatchLocation(Location  Location,
-                                                                  JObject   LocationPatch)
+                                                                  JObject   LocationPatch,
+                                                                  Boolean?  AllowDowngrades = false)
         {
 
             if (Location is null)
@@ -1583,10 +1617,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
                     parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
-                    locations.TryGetValue(Location.Id,          out Location                                                location))
+                    locations.TryGetValue(Location.Id,          out Location                                                existingLocation))
                 {
 
-                    var patchResult = location.TryPatch(LocationPatch);
+                    var patchResult = existingLocation.TryPatch(LocationPatch,
+                                                                AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
                         locations[Location.Id] = patchResult.PatchedData;
@@ -1605,11 +1640,84 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region TryPatchEVSE    (Location, EVSE,            EVSEPatch)
+
+        #region AddOrUpdateEVSE    (Location, newOrUpdatedEVSE, AllowDowngrades = false)
+
+        private AddOrUpdateResult<EVSE> __addOrUpdateEVSE(Location  Location,
+                                                          EVSE      newOrUpdatedEVSE,
+                                                          Boolean?  AllowDowngrades = false)
+        {
+
+            if (Location is null)
+                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
+                                                      "The given location must not be null!");
+
+            if (newOrUpdatedEVSE is null)
+                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
+                                                      "The given EVSE must not be null!");
+
+
+            var EVSEExistedBefore = Location.TryGetEVSE(newOrUpdatedEVSE.UId, out EVSE existingEVSE);
+
+            if (existingEVSE != null)
+            {
+                if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                    newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
+                {
+                    return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
+                                                          "The 'lastUpdated' timestamp of the new EVSE must be newer then the timestamp of the existing EVSE!");
+                }
+            }
+
+
+            Location.SetEVSE(newOrUpdatedEVSE);
+
+            // Update location timestamp!
+            var builder = Location.ToBuilder();
+            builder.LastUpdated = newOrUpdatedEVSE.LastUpdated;
+            __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
+
+
+            return AddOrUpdateResult<EVSE>.Success(newOrUpdatedEVSE,
+                                                   WasCreated: !EVSEExistedBefore);
+
+        }
+
+        public async Task<AddOrUpdateResult<EVSE>> AddOrUpdateEVSE(Location  Location,
+                                                                   EVSE      newOrUpdatedEVSE,
+                                                                   Boolean?  AllowDowngrades = false)
+        {
+
+            if (Location is null)
+                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
+                                                      "The given location must not be null!");
+
+            if (newOrUpdatedEVSE is null)
+                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
+                                                      "The given EVSE must not be null!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
+
+            lock (Locations)
+            {
+
+                return __addOrUpdateEVSE(Location,
+                                         newOrUpdatedEVSE,
+                                         (AllowDowngrades ?? this.AllowDowngrades) == false);
+
+            }
+
+        }
+
+        #endregion
+
+        #region TryPatchEVSE    (Location, EVSE,            EVSEPatch, AllowDowngrades = false)
 
         public async Task<PatchResult<EVSE>> TryPatchEVSE(Location  Location,
                                                           EVSE      EVSE,
-                                                          JObject   EVSEPatch)
+                                                          JObject   EVSEPatch,
+                                                          Boolean?  AllowDowngrades = false)
         {
 
             if (Location is null)
@@ -1630,14 +1738,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                var patchResult = EVSE.TryPatch(EVSEPatch);
+                var patchResult = EVSE.TryPatch(EVSEPatch,
+                                                AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                 if (patchResult.IsSuccess)
                 {
 
                     Location.SetEVSE(patchResult.PatchedData);
 
-                    //ToDo: Update Location timestamp!
+                    // Update location timestamp!
+                    var builder = Location.ToBuilder();
+                    builder.LastUpdated = patchResult.PatchedData.LastUpdated;
+                    __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
 
                 }
 
@@ -1649,12 +1761,69 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PatchConnector  (Location, EVSE, Connector, ConnectorPatch)
+
+        #region AddOrUpdateConnector    (Location, EVSE, newOrUpdatedConnector, AllowDowngrades = false)
+
+        public async Task<AddOrUpdateResult<Connector>> AddOrUpdateConnector(Location   Location,
+                                                                             EVSE       EVSE,
+                                                                             Connector  newOrUpdatedConnector,
+                                                                             Boolean?   AllowDowngrades = false)
+        {
+
+            if (Location is null)
+                return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
+                                                           "The given location must not be null!");
+
+            if (EVSE     is null)
+                return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
+                                                           "The given EVSE must not be null!");
+
+            if (newOrUpdatedConnector is null)
+                return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
+                                                           "The given connector must not be null!");
+
+            // ToDo: Remove me and add a proper 'lock' mechanism!
+            await Task.Delay(1);
+
+            lock (Locations)
+            {
+
+                var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out Connector existingConnector);
+
+                if (existingConnector != null)
+                {
+                    if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
+                        newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
+                    {
+                        return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
+                                                                   "The 'lastUpdated' timestamp of the new connector must be newer then the timestamp of the existing connector!");
+                    }
+                }
+
+                EVSE.SetConnector(newOrUpdatedConnector);
+
+                // Update EVSE/location timestamps!
+                var evseBuilder     = EVSE.ToBuilder();
+                evseBuilder.LastUpdated = newOrUpdatedConnector.LastUpdated;
+                __addOrUpdateEVSE    (Location, evseBuilder,     (AllowDowngrades ?? this.AllowDowngrades) == false);
+
+
+                return AddOrUpdateResult<Connector>.Success(newOrUpdatedConnector,
+                                                            WasCreated: !ConnectorExistedBefore);
+
+            }
+
+        }
+
+        #endregion
+
+        #region TryPatchConnector  (Location, EVSE, Connector, ConnectorPatch, AllowDowngrades = false)
 
         public async Task<PatchResult<Connector>> TryPatchConnector(Location   Location,
                                                                     EVSE       EVSE,
                                                                     Connector  Connector,
-                                                                    JObject    ConnectorPatch)
+                                                                    JObject    ConnectorPatch,
+                                                                    Boolean?   AllowDowngrades = false)
         {
 
             if (Location is null)
@@ -1679,14 +1848,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                var patchResult = Connector.TryPatch(ConnectorPatch);
+                var patchResult = Connector.TryPatch(ConnectorPatch,
+                                                     AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                 if (patchResult.IsSuccess)
                 {
 
                     EVSE.SetConnector(patchResult.PatchedData);
 
-                    //ToDo: Update EVSE and Location timestamp!
+                    // Update EVSE/location timestamps!
+                    var evseBuilder     = EVSE.ToBuilder();
+                    evseBuilder.LastUpdated = patchResult.PatchedData.LastUpdated;
+                    __addOrUpdateEVSE    (Location, evseBuilder,     (AllowDowngrades ?? this.AllowDowngrades) == false);
 
                 }
 
@@ -2062,10 +2235,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryPatchTariff      (Tariff, TariffPatch)
+        #region TryPatchTariff      (Tariff, TariffPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff   Tariff,
-                                                              JObject  TariffPatch)
+        public async Task<PatchResult<Tariff>> TryPatchTariff(Tariff    Tariff,
+                                                              JObject   TariffPatch,
+                                                              Boolean?  AllowDowngrades = false)
         {
 
             if (Tariff is null)
@@ -2087,7 +2261,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     tariffs.TryGetValue(Tariff.Id,          out Tariff                                              tariff))
                 {
 
-                    var patchResult = tariff.TryPatch(TariffPatch);
+                    var patchResult = tariff.TryPatch(TariffPatch,
+                                                      AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
                         tariffs[Tariff.Id] = patchResult.PatchedData;
@@ -2470,10 +2645,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryPatchSession      (Session, SessionPatch)
+        #region TryPatchSession      (Session, SessionPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Session>> TryPatchSession(Session  Session,
-                                                                JObject  SessionPatch)
+        public async Task<PatchResult<Session>> TryPatchSession(Session   Session,
+                                                                JObject   SessionPatch,
+                                                                Boolean?  AllowDowngrades = false)
         {
 
             if (Session is null)
@@ -2495,7 +2671,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     sessions.TryGetValue(Session.Id,          out Session                                               session))
                 {
 
-                    var patchResult = session.TryPatch(SessionPatch);
+                    var patchResult = session.TryPatch(SessionPatch,
+                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
                         sessions[Session.Id] = patchResult.PatchedData;
@@ -2854,10 +3031,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region TryPatchToken      (Token, TokenPatch)
+        #region TryPatchToken      (Token, TokenPatch, AllowDowngrades = false)
 
-        public async Task<PatchResult<Token>> TryPatchToken(Token    Token,
-                                                            JObject  TokenPatch)
+        public async Task<PatchResult<Token>> TryPatchToken(Token     Token,
+                                                            JObject   TokenPatch,
+                                                            Boolean?  AllowDowngrades = false)
         {
 
             if (Token is null)
@@ -2879,7 +3057,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     tokens. TryGetValue(Token.Id,          out TokenStatus                                             tokenStatus))
                 {
 
-                    var patchResult = tokenStatus.Token.TryPatch(TokenPatch);
+                    var patchResult = tokenStatus.Token.TryPatch(TokenPatch,
+                                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
                         tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,

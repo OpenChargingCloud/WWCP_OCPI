@@ -140,7 +140,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => IsSuccess.    Equals(PatchResult.IsSuccess)   &&
                PatchedData.  Equals(PatchResult.PatchedData) &&
-               ErrorResponse.Equals(PatchResult.ErrorResponse);
+
+             ((ErrorResponse.IsNullOrEmpty()    && PatchResult.ErrorResponse.IsNullOrEmpty()) ||
+              (ErrorResponse.IsNotNullOrEmpty() && PatchResult.ErrorResponse.IsNotNullOrEmpty() && ErrorResponse.Equals(PatchResult.ErrorResponse)));
 
         #endregion
 
@@ -159,7 +161,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 return IsSuccess.    GetHashCode() * 5 ^
                        PatchedData.  GetHashCode() * 3 ^
-                       ErrorResponse.GetHashCode();
+
+                      (ErrorResponse.IsNotNullOrEmpty()
+                           ? ErrorResponse.GetHashCode()
+                           : 0);
 
             }
         }

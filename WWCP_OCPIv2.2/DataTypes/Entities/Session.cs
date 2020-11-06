@@ -834,6 +834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
 
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
                                                      JObject  Patch)
@@ -842,7 +843,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             foreach (var property in Patch)
             {
 
-                if (property.Key == "country_code")
+                if      (property.Key == "country_code")
                     return PatchResult<JObject>.Failed(JSON,
                                                        "Patching the 'country code' of a charging session is not allowed!");
 
@@ -855,10 +856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        "Patching the 'identification' of a charging session is not allowed!");
 
                 else if (property.Value is null)
-                {
-                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
-                }
 
                 else if (property.Value is JObject subObject)
                 {
@@ -884,9 +882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                    {
                         JSON.Add(property.Key, subObject);
-                    }
 
                 }
 
@@ -903,11 +899,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
+        #region TryPatch(SessionPatch, AllowDowngrades = false)
 
-        #region TryPatch(SessionPatch)
-
-        public PatchResult<Session> TryPatch(JObject SessionPatch)
+        /// <summary>
+        /// Try to patch the JSON representaion of this charging session.
+        /// </summary>
+        /// <param name="SessionPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<Session> TryPatch(JObject  SessionPatch,
+                                             Boolean  AllowDowngrades = false)
         {
 
             if (SessionPatch == null)
@@ -920,7 +922,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (SessionPatch["last_updated"] is null)
                     SessionPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
+                else if (AllowDowngrades == false &&
+                        SessionPatch["last_updated"].Type == JTokenType.Date &&
+                       (SessionPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<Session>.Failed(this,
+                                                       "The 'lastUpdated' timestamp of the charging session patch must be newer then the timestamp of the existing charging session!");
+                }
+
+
                 var patchResult = TryPrivatePatch(ToJSON(), SessionPatch);
+
 
                 if (patchResult.IsFailed)
                     return PatchResult<Session>.Failed(this,

@@ -204,7 +204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.FloorLevel            = FloorLevel;
             this.Coordinates           = Coordinates;
             this.PhysicalReference     = PhysicalReference;
-            this.Directions            = Directions;
+            this.Directions            = Directions?.         Distinct() ?? new DisplayText[0];
             this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? new ParkingRestrictions[0];
             this.Images                = Images?.             Distinct() ?? new Image[0];
 
@@ -715,6 +715,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
+
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
                                                      JObject  Patch)
         {
@@ -727,77 +729,76 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        "Patching the 'unique identification' of an EVSE is not allowed!");
 
                 else if (property.Key == "connectors")
-                {
+                    return PatchResult<JObject>.Failed(JSON,
+                                                       "Patching the 'connectors' array of an EVSE is not allowed!");
+                //{
 
-                    if (property.Value == null)
-                        return PatchResult<JObject>.Failed(JSON,
-                                                           "Patching the 'connectors' array of a location to 'null' is not allowed!");
+                //    if (property.Value == null)
+                //        return PatchResult<JObject>.Failed(JSON,
+                //                                           "Patching the 'connectors' array of a location to 'null' is not allowed!");
 
-                    else if (property.Value is JArray ConnectorsArray)
-                    {
+                //    else if (property.Value is JArray ConnectorsArray)
+                //    {
 
-                        if (ConnectorsArray.Count == 0)
-                            return PatchResult<JObject>.Failed(JSON,
-                                                               "Patching the 'connectors' array of a location to '[]' is not allowed!");
+                //        if (ConnectorsArray.Count == 0)
+                //            return PatchResult<JObject>.Failed(JSON,
+                //                                               "Patching the 'connectors' array of a location to '[]' is not allowed!");
 
-                        else
-                        {
-                            foreach (var connector in ConnectorsArray)
-                            {
+                //        else
+                //        {
+                //            foreach (var connector in ConnectorsArray)
+                //            {
 
-                                //ToDo: What to do with multiple EVSE objects having the same EVSEUId?
-                                if (connector is JObject ConnectorObject)
-                                {
+                //                //ToDo: What to do with multiple EVSE objects having the same EVSEUId?
+                //                if (connector is JObject ConnectorObject)
+                //                {
 
-                                    if (ConnectorObject.ParseMandatory("id",
-                                                                       "connector identification",
-                                                                       Connector_Id.TryParse,
-                                                                       out Connector_Id  ConnectorId,
-                                                                       out String        ErrorResponse))
-                                    {
+                //                    if (ConnectorObject.ParseMandatory("id",
+                //                                                       "connector identification",
+                //                                                       Connector_Id.TryParse,
+                //                                                       out Connector_Id  ConnectorId,
+                //                                                       out String        ErrorResponse))
+                //                    {
 
-                                        return PatchResult<JObject>.Failed(JSON,
-                                                                           "Patching the 'connectors' array of a location led to an error: " + ErrorResponse);
+                //                        return PatchResult<JObject>.Failed(JSON,
+                //                                                           "Patching the 'connectors' array of a location led to an error: " + ErrorResponse);
 
-                                    }
+                //                    }
 
-                                    if (TryGetConnector(ConnectorId, out Connector Connector))
-                                    {
-                                        //Connector.Patch(ConnectorObject);
-                                    }
-                                    else
-                                    {
+                //                    if (TryGetConnector(ConnectorId, out Connector Connector))
+                //                    {
+                //                        //Connector.Patch(ConnectorObject);
+                //                    }
+                //                    else
+                //                    {
 
-                                        //ToDo: Create this "new" Connector!
-                                        return PatchResult<JObject>.Failed(JSON,
-                                                                           "Unknown connector identification!");
+                //                        //ToDo: Create this "new" Connector!
+                //                        return PatchResult<JObject>.Failed(JSON,
+                //                                                           "Unknown connector identification!");
 
-                                    }
+                //                    }
 
-                                }
-                                else
-                                {
-                                    return PatchResult<JObject>.Failed(JSON,
-                                                                       "Invalid JSON merge patch for 'connectors' array of a location: Data within the 'connectors' array is not a valid connector object!");
-                                }
+                //                }
+                //                else
+                //                {
+                //                    return PatchResult<JObject>.Failed(JSON,
+                //                                                       "Invalid JSON merge patch for 'connectors' array of a location: Data within the 'connectors' array is not a valid connector object!");
+                //                }
 
-                            }
-                        }
-                    }
+                //            }
+                //        }
+                //    }
 
-                    else
-                    {
-                        return PatchResult<JObject>.Failed(JSON,
-                                                           "Invalid JSON merge patch for 'connectors' array of a location: JSON property 'connectors' is not an array!");
-                    }
+                //    else
+                //    {
+                //        return PatchResult<JObject>.Failed(JSON,
+                //                                           "Invalid JSON merge patch for 'connectors' array of a location: JSON property 'connectors' is not an array!");
+                //    }
 
-                }
+                //}
 
                 else if (property.Value is null)
-                {
-                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
-                }
 
                 else if (property.Value is JObject subObject)
                 {
@@ -823,9 +824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                    {
                         JSON.Add(property.Key, subObject);
-                    }
 
                 }
 
@@ -842,11 +841,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
+        #region TryPatch(EVSEPatch, AllowDowngrades = false)
 
-        #region TryPatch(EVSEPatch)
-
-        public PatchResult<EVSE> TryPatch(JObject EVSEPatch)
+        /// <summary>
+        /// Try to patch the JSON representaion of this EVSE.
+        /// </summary>
+        /// <param name="EVSEPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<EVSE> TryPatch(JObject  EVSEPatch,
+                                          Boolean  AllowDowngrades = false)
         {
 
             if (EVSEPatch == null)
@@ -859,7 +864,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (EVSEPatch["last_updated"] is null)
                     EVSEPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
+                else if (AllowDowngrades == false &&
+                        EVSEPatch["last_updated"].Type == JTokenType.Date &&
+                       (EVSEPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<EVSE>.Failed(this,
+                                                    "The 'lastUpdated' timestamp of the EVSE patch must be newer then the timestamp of the existing EVSE!");
+                }
+
+
                 var patchResult = TryPrivatePatch(ToJSON(), EVSEPatch);
+
 
                 if (patchResult.IsFailed)
                     return PatchResult<EVSE>.Failed(this,
@@ -886,7 +901,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-
         #region (internal) SetConnector(Connector)
 
         internal void SetConnector(Connector Connector)
@@ -909,6 +923,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region ConnectorExists(ConnectorId)
+
+        /// <summary>
+        /// Checks whether any connector having the given connector identification exists.
+        /// </summary>
+        /// <param name="ConnectorId">A connector identification.</param>
+        public Boolean ConnectorExists(Connector_Id ConnectorId)
+        {
+
+            lock (Connectors)
+            {
+                foreach (var connector in Connectors)
+                {
+                    if (connector.Id == ConnectorId)
+                        return true;
+                }
+            }
+
+            return false;
+
+        }
+
+        #endregion
+
         #region TryGetConnector(ConnectorId, out Connector)
 
         /// <summary>
@@ -920,12 +958,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Connector  Connector)
         {
 
-            foreach (var connector in Connectors)
+            lock (Connectors)
             {
-                if (connector.Id == ConnectorId)
+                foreach (var connector in Connectors)
                 {
-                    Connector = connector;
-                    return true;
+                    if (connector.Id == ConnectorId)
+                    {
+                        Connector = connector;
+                        return true;
+                    }
                 }
             }
 
@@ -1176,6 +1217,240 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => EVSEId.ToString();
+
+        #endregion
+
+
+        #region ToBuilder(NewEVSEUId = null)
+
+        /// <summary>
+        /// Return a builder for this EVSE.
+        /// </summary>
+        /// <param name="NewEVSEUId">An optional new EVSE identification.</param>
+        public Builder ToBuilder(EVSE_UId? NewEVSEUId = null)
+
+            => new Builder(ParentLocation,
+
+                           NewEVSEUId ?? UId,
+                           Status,
+                           Connectors,
+
+                           EVSEId,
+                           StatusSchedule,
+                           Capabilities,
+                           FloorLevel,
+                           Coordinates,
+                           PhysicalReference,
+                           Directions,
+                           ParkingRestrictions,
+                           Images,
+
+                           LastUpdated);
+
+        #endregion
+
+        #region (class) Builder
+
+        /// <summary>
+        /// A EVSE builder.
+        /// </summary>
+        public class Builder
+        {
+
+            #region Properties
+
+            /// <summary>
+            /// The parent location of this EVSE.
+            /// </summary>
+            public Location                      ParentLocation             { get; internal set; }
+
+            /// <summary>
+            /// Uniquely identifies the EVSE within the CPOs platform.
+            /// </summary>
+            public EVSE_UId?                     UId                        { get; set; }
+
+            /// <summary>
+            /// Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".
+            /// </summary>
+            public EVSE_Id?                      EVSEId                     { get; set; }
+
+            /// <summary>
+            /// Indicates the current status of the EVSE.
+            /// </summary>
+            public StatusTypes?                  Status                     { get; set; }
+
+            /// <summary>
+            /// Indicates a planned status in the future of the EVSE.
+            /// </summary>
+            public HashSet<StatusSchedule>       StatusSchedule             { get; }
+
+            /// <summary>
+            /// Enumeration of functionalities that the EVSE is capable of.
+            /// </summary>
+            public HashSet<CapabilityTypes>      Capabilities               { get; }
+
+            /// <summary>
+            /// Enumeration of available connectors at this EVSE.
+            /// </summary>
+            public HashSet<Connector>            Connectors                 { get; }
+
+            /// <summary>
+            /// The unique identifications of all connectors at this EVSE.
+            /// </summary>
+            public IEnumerable<Connector_Id>     ConnectorIds
+                => Connectors.SafeSelect(connector => connector.Id);
+
+            /// <summary>
+            /// Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.  // 4
+            /// </summary>
+            public String                        FloorLevel                 { get; set; }
+
+            /// <summary>
+            /// An optional geographical location of this EVSE.
+            /// </summary>
+            public GeoCoordinate?                Coordinates                { get; set; }
+
+            /// <summary>
+            /// An optional number/string printed on the outside of the EVSE for visual identification. // 16
+            /// </summary>
+            public String                        PhysicalReference          { get; set; }
+
+            /// <summary>
+            /// Optional multi-language human-readable directions when more detailed
+            /// information on how to reach the EVSE from the location is required.
+            /// </summary>
+            public HashSet<DisplayText>          Directions                 { get; }
+
+            /// <summary>
+            /// Optional restrictions that apply to the parking spot.
+            /// </summary>
+            public HashSet<ParkingRestrictions>  ParkingRestrictions        { get; }
+
+            /// <summary>
+            /// Optional links to images related to the EVSE such as photos or logos.
+            /// </summary>
+            public HashSet<Image>                Images                     { get; }
+
+            /// <summary>
+            /// Timestamp when this EVSE was last updated (or created).
+            /// </summary>
+            public DateTime?                     LastUpdated                { get; set; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            /// <summary>
+            /// Create a new EVSE.
+            /// </summary>
+            /// <param name="ParentLocation">The parent location of this EVSE.</param>
+            /// 
+            /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
+            /// <param name="Status">Indicates the current status of the EVSE.</param>
+            /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
+            /// 
+            /// <param name="EVSEId">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
+            /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
+            /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
+            /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
+            /// <param name="Coordinates">An optional geographical location of this EVSE.</param>
+            /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
+            /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
+            /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
+            /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+            /// 
+            /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
+            internal Builder(Location                          ParentLocation,
+
+                             EVSE_UId?                         UId                   = null,
+                             StatusTypes?                      Status                = null,
+                             IEnumerable<Connector>            Connectors            = null,
+
+                             EVSE_Id?                          EVSEId                = null,
+                             IEnumerable<StatusSchedule>       StatusSchedule        = null,
+                             IEnumerable<CapabilityTypes>      Capabilities          = null,
+                             String                            FloorLevel            = null,
+                             GeoCoordinate?                    Coordinates           = null,
+                             String                            PhysicalReference     = null,
+                             IEnumerable<DisplayText>          Directions            = null,
+                             IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
+                             IEnumerable<Image>                Images                = null,
+
+                             DateTime?                         LastUpdated           = null)
+
+            {
+
+                this.ParentLocation        = ParentLocation;
+
+                this.UId                   = UId;
+                this.Status                = Status;
+                this.Connectors            = Connectors          != null ? new HashSet<Connector>          (Connectors)          : new HashSet<Connector>();
+
+                this.EVSEId                = EVSEId;
+                this.StatusSchedule        = StatusSchedule      != null ? new HashSet<StatusSchedule>     (StatusSchedule)      : new HashSet<StatusSchedule>();
+                this.Capabilities          = Capabilities        != null ? new HashSet<CapabilityTypes>    (Capabilities)        : new HashSet<CapabilityTypes>();
+                this.FloorLevel            = FloorLevel;
+                this.Coordinates           = Coordinates;
+                this.PhysicalReference     = PhysicalReference;
+                this.Directions            = Directions          != null ? new HashSet<DisplayText>        (Directions)          : new HashSet<DisplayText>();
+                this.ParkingRestrictions   = ParkingRestrictions != null ? new HashSet<ParkingRestrictions>(ParkingRestrictions) : new HashSet<ParkingRestrictions>();
+                this.Images                = Images              != null ? new HashSet<Image>              (Images)              : new HashSet<Image>();
+
+                this.LastUpdated           = LastUpdated;
+
+            }
+
+            #endregion
+
+            #region ToImmutable
+
+            /// <summary>
+            /// Return an immutable version of the EVSE.
+            /// </summary>
+            public static implicit operator EVSE(Builder Builder)
+
+                => Builder?.ToImmutable;
+
+
+            /// <summary>
+            /// Return an immutable version of the EVSE.
+            /// </summary>
+            public EVSE ToImmutable
+            {
+                get
+                {
+
+                    if (!UId.HasValue)
+                        throw new ArgumentNullException(nameof(UId),     "The unique identification must not be null or empty!");
+
+                    if (!Status.HasValue)
+                        throw new ArgumentNullException(nameof(Status),  "The status must not be null or empty!");
+
+
+                    return new EVSE(ParentLocation,
+
+                                    UId.   Value,
+                                    Status.Value,
+                                    Connectors,
+
+                                    EVSEId,
+                                    StatusSchedule,
+                                    Capabilities,
+                                    FloorLevel,
+                                    Coordinates,
+                                    PhysicalReference,
+                                    Directions,
+                                    ParkingRestrictions,
+                                    Images,
+
+                                    LastUpdated);
+
+                }
+            }
+
+            #endregion
+
+        }
 
         #endregion
 

@@ -574,6 +574,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (private) TryPrivatePatch(JSON, Patch)
 
         private PatchResult<JObject> TryPrivatePatch(JObject  JSON,
                                                      JObject  Patch)
@@ -587,10 +588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        "Patching the 'identification' of a connector is not allowed!");
 
                 else if (property.Value is null)
-                {
-                    //if (JSON.ContainsKey(property.Key))
                     JSON.Remove(property.Key);
-                }
 
                 else if (property.Value is JObject subObject)
                 {
@@ -616,9 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                    {
                         JSON.Add(property.Key, subObject);
-                    }
 
                 }
 
@@ -635,10 +631,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
-        #region TryPatch(ConnectorPatch)
+        #region TryPatch(ConnectorPatch, AllowDowngrades = false))
 
-        public PatchResult<Connector> TryPatch(JObject ConnectorPatch)
+        /// <summary>
+        /// Try to patch the JSON representaion of this connector.
+        /// </summary>
+        /// <param name="ConnectorPatch">The JSON merge patch.</param>
+        /// <param name="AllowDowngrades">Allow to set the 'lastUpdated' timestamp to an earlier value.</param>
+        public PatchResult<Connector> TryPatch(JObject  ConnectorPatch,
+                                               Boolean  AllowDowngrades = false)
         {
 
             if (ConnectorPatch == null)
@@ -651,7 +654,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (ConnectorPatch["last_updated"] is null)
                     ConnectorPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
 
+                else if (AllowDowngrades == false &&
+                        ConnectorPatch["last_updated"].Type == JTokenType.Date &&
+                       (ConnectorPatch["last_updated"].Value<DateTime>().ToIso8601().CompareTo(LastUpdated.ToIso8601()) < 1))
+                {
+                    return PatchResult<Connector>.Failed(this,
+                                                         "The 'lastUpdated' timestamp of the connector patch must be newer then the timestamp of the existing connector!");
+                }
+
+
                 var patchResult = TryPrivatePatch(ToJSON(), ConnectorPatch);
+
 
                 if (patchResult.IsFailed)
                     return PatchResult<Connector>.Failed(this,
