@@ -1663,49 +1663,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Events
 
-        #region (protected internal) PutTariffRequest    (Request)
+        #region (protected internal) PutTokenRequest    (Request)
 
         /// <summary>
-        /// An event sent whenever a put tariff request was received.
+        /// An event sent whenever a put token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutTariffRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPutTokenRequest = new OCPIRequestLogEvent();
 
         /// <summary>
-        /// An event sent whenever a put tariff request was received.
+        /// An event sent whenever a put token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PutTariffRequest(DateTime     Timestamp,
+        protected internal Task PutTokenRequest(DateTime     Timestamp,
                                                  HTTPAPI      API,
                                                  OCPIRequest  Request)
 
-            => OnPutTariffRequest?.WhenAll(Timestamp,
+            => OnPutTokenRequest?.WhenAll(Timestamp,
                                            API ?? this,
                                            Request);
 
         #endregion
 
-        #region (protected internal) PutTariffResponse   (Response)
+        #region (protected internal) PutTokenResponse   (Response)
 
         /// <summary>
-        /// An event sent whenever a put tariff response was sent.
+        /// An event sent whenever a put token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutTariffResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPutTokenResponse = new OCPIResponseLogEvent();
 
         /// <summary>
-        /// An event sent whenever a put tariff response was sent.
+        /// An event sent whenever a put token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PutTariffResponse(DateTime      Timestamp,
+        protected internal Task PutTokenResponse(DateTime      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
                                                   HTTPResponse  Response)
 
-            => OnPutTariffResponse?.WhenAll(Timestamp,
+            => OnPutTokenResponse?.WhenAll(Timestamp,
                                             API ?? this,
                                             Request,
                                             Response);
@@ -1713,49 +1713,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region (protected internal) PatchTariffRequest  (Request)
+        #region (protected internal) PatchTokenRequest  (Request)
 
         /// <summary>
-        /// An event sent whenever a patch tariff request was received.
+        /// An event sent whenever a patch token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPatchTariffRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPatchTokenRequest = new OCPIRequestLogEvent();
 
         /// <summary>
-        /// An event sent whenever a patch tariff request was received.
+        /// An event sent whenever a patch token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task PatchTariffRequest(DateTime     Timestamp,
+        protected internal Task PatchTokenRequest(DateTime     Timestamp,
                                                    HTTPAPI      API,
                                                    OCPIRequest  Request)
 
-            => OnPatchTariffRequest?.WhenAll(Timestamp,
+            => OnPatchTokenRequest?.WhenAll(Timestamp,
                                              API ?? this,
                                              Request);
 
         #endregion
 
-        #region (protected internal) PatchTariffResponse (Response)
+        #region (protected internal) PatchTokenResponse (Response)
 
         /// <summary>
-        /// An event sent whenever a patch tariff response was sent.
+        /// An event sent whenever a patch token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPatchTariffResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPatchTokenResponse = new OCPIResponseLogEvent();
 
         /// <summary>
-        /// An event sent whenever a patch tariff response was sent.
+        /// An event sent whenever a patch token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task PatchTariffResponse(DateTime      Timestamp,
+        protected internal Task PatchTokenResponse(DateTime      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
                                                     HTTPResponse  Response)
 
-            => OnPatchTariffResponse?.WhenAll(Timestamp,
+            => OnPatchTokenResponse?.WhenAll(Timestamp,
                                               API ?? this,
                                               Request,
                                               Response);
@@ -1763,49 +1763,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region (protected internal) DeleteTariffRequest (Request)
+        #region (protected internal) DeleteTokenRequest (Request)
 
         /// <summary>
-        /// An event sent whenever a delete tariff request was received.
+        /// An event sent whenever a delete token request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteTariffRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnDeleteTokenRequest = new OCPIRequestLogEvent();
 
         /// <summary>
-        /// An event sent whenever a delete tariff request was received.
+        /// An event sent whenever a delete token request was received.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
-        protected internal Task DeleteTariffRequest(DateTime     Timestamp,
+        protected internal Task DeleteTokenRequest(DateTime     Timestamp,
                                                     HTTPAPI      API,
                                                     OCPIRequest  Request)
 
-            => OnDeleteTariffRequest?.WhenAll(Timestamp,
+            => OnDeleteTokenRequest?.WhenAll(Timestamp,
                                               API ?? this,
                                               Request);
 
         #endregion
 
-        #region (protected internal) DeleteTariffResponse(Response)
+        #region (protected internal) DeleteTokenResponse(Response)
 
         /// <summary>
-        /// An event sent whenever a delete tariff response was sent.
+        /// An event sent whenever a delete token response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteTariffResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnDeleteTokenResponse = new OCPIResponseLogEvent();
 
         /// <summary>
-        /// An event sent whenever a delete tariff response was sent.
+        /// An event sent whenever a delete token response was sent.
         /// </summary>
         /// <param name="Timestamp">The timestamp of the request.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
-        protected internal Task DeleteTariffResponse(DateTime      Timestamp,
+        protected internal Task DeleteTokenResponse(DateTime      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
                                                      HTTPResponse  Response)
 
-            => OnDeleteTariffResponse?.WhenAll(Timestamp,
+            => OnDeleteTokenResponse?.WhenAll(Timestamp,
                                                API ?? this,
                                                Request,
                                                Response);
@@ -2236,7 +2236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region ~/tariffs/{tariffId}
+            #region ~/tariffs/{tariffId}        [NonStandard]
 
             #region OPTIONS  ~/tariffs/{tariffId}
 
@@ -2372,7 +2372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region ~/sessions/{sessionId}
+            #region ~/sessions/{sessionId}      [NonStandard]
 
             #region OPTIONS  ~/sessions/{sessionId}
 
@@ -2541,7 +2541,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET      ~/cdrs/{CDRId}
+            #region GET      ~/cdrs/{CDRId}     // The concrete URL is not specified by OCPI! m(
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
@@ -2581,13 +2581,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            #region ~/tariffs/{country_code}/{party_id}       [NonStandard]
+            #region ~/tokens/{country_code}/{party_id}       [NonStandard]
 
-            #region OPTIONS  ~/tariffs/{country_code}/{party_id}      [NonStandard]
+            #region OPTIONS  ~/tokens/{country_code}/{party_id}      [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                     URLPathPrefix + "tokens/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
@@ -2604,11 +2604,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET      ~/tariffs/{country_code}/{party_id}      [NonStandard]
+            #region GET      ~/tokens/{country_code}/{party_id}      [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
-                                     URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                     URLPathPrefix + "tokens/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
@@ -2633,8 +2633,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
                                          var filteredTokens       = CommonAPI.GetTokens().
-                                                                           Where(tariffStatus => !filters.From.HasValue || tariffStatus.Token.LastUpdated >  filters.From.Value).
-                                                                           Where(tariffStatus => !filters.To.  HasValue || tariffStatus.Token.LastUpdated <= filters.To.  Value).
+                                                                           Where(tokenStatus => !filters.From.HasValue || tokenStatus.Token.LastUpdated >  filters.From.Value).
+                                                                           Where(tokenStatus => !filters.To.  HasValue || tokenStatus.Token.LastUpdated <= filters.To.  Value).
                                                                            ToArray();
 
                                          var filteredTokensCount  = filteredTokens.Count();
@@ -2647,7 +2647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         StatusMessage        = "Hello world!",
                                                         Data                 = new JArray(filteredTokens.SkipTakeFilter(filters.Offset,
                                                                                                                         filters.Limit).
-                                                                                                         SafeSelect(tariff => tariff.ToJSON())),
+                                                                                                         SafeSelect(token => token.ToJSON())),
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.OK,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
@@ -2663,11 +2663,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE   ~/tariffs/{country_code}/{party_id}      [NonStandard]
+            #region DELETE   ~/tokens/{country_code}/{party_id}      [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.DELETE,
-                                         URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}",
                                          HTTPContentType.JSON_UTF8,
                                          OCPIRequest: async Request => {
 
@@ -2704,17 +2704,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region ~/tariffs/{country_code}/{party_id}/{tariffId}
+            #region ~/tokens/{country_code}/{party_id}/{tokenId}
 
-            #region GET     ~/tariffs/{country_code}/{party_id}/{tariffId}?type={type}
+            #region GET     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
-                                     URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                     URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequest: Request => {
 
-                                         #region Check tariff
+                                         #region Check token
 
                                          if (!Request.ParseToken(this,
                                                                  out CountryCode?          CountryCode,
@@ -2750,17 +2750,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PUT     ~/tariffs/{country_code}/{party_id}/{tariffId}?type={type}
+            #region PUT     ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.PUT,
-                                         URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                          HTTPContentType.JSON_UTF8,
-                                         OCPIRequestLogger:   PutTariffRequest,
-                                         OCPIResponseLogger:  PutTariffResponse,
+                                         OCPIRequestLogger:   PutTokenRequest,
+                                         OCPIResponseLogger:  PutTokenResponse,
                                          OCPIRequest:   async Request => {
 
-                                             #region Check tariff
+                                             #region Check token
 
                                              if (!Request.ParseToken(this,
                                                                       out CountryCode?          CountryCode,
@@ -2775,7 +2775,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              #endregion
 
-                                             #region Parse new or updated tariff JSON
+                                             #region Parse new or updated token JSON
 
                                              if (!Request.TryParseJObjectRequestBody(out JObject TokenJSON, out OCPIResponseBuilder))
                                                  return OCPIResponseBuilder;
@@ -2790,7 +2790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 2001,
-                                                        StatusMessage        = "Could not parse the given tariff JSON: " + ErrorResponse,
+                                                        StatusMessage        = "Could not parse the given token JSON: " + ErrorResponse,
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -2802,7 +2802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                              #endregion
 
-                                             #region Check whether the new tariff is "newer" than the existing location
+                                             #region Check whether the new token is "newer" than the existing location
 
                                              var bbb = Request.QueryString.GetBoolean("forceDowngrade") ??
                                                        // ToDo: Check AccessToken
@@ -2856,17 +2856,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PATCH   ~/tariffs/{country_code}/{party_id}/{tariffId}?type={type}
+            #region PATCH   ~/tokens/{country_code}/{party_id}/{tokenId}?type={type}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PATCH,
-                                     URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                     URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequestLogger:   PatchTariffRequest,
-                                     OCPIResponseLogger:  PatchTariffResponse,
+                                     OCPIRequestLogger:   PatchTokenRequest,
+                                     OCPIResponseLogger:  PatchTokenResponse,
                                      OCPIRequest:   async Request => {
 
-                                         #region Check tariff
+                                         #region Check token
 
                                          if (!Request.ParseToken(this,
                                                                   out CountryCode?          CountryCode,
@@ -2935,17 +2935,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE  ~/tariffs/{country_code}/{party_id}/{tariffId}        [NonStandard]
+            #region DELETE  ~/tokens/{country_code}/{party_id}/{tokenId}        [NonStandard]
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                          HTTPMethod.DELETE,
-                                         URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                         URLPathPrefix + "tokens/{country_code}/{party_id}/{tokenId}",
                                          HTTPContentType.JSON_UTF8,
-                                         OCPIRequestLogger:   DeleteTariffRequest,
-                                         OCPIResponseLogger:  DeleteTariffResponse,
+                                         OCPIRequestLogger:   DeleteTokenRequest,
+                                         OCPIResponseLogger:  DeleteTokenResponse,
                                          OCPIRequest:   async Request => {
 
-                                             #region Check tariff
+                                             #region Check token
 
                                              if (!Request.ParseToken(this,
                                                                      out CountryCode?          CountryCode,

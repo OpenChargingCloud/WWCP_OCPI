@@ -144,49 +144,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.CPOAPI = CPOAPI ?? throw new ArgumentNullException(nameof(CPOAPI), "The given CPO API must not be null!");
 
-            #region Tariffs
+            #region Tokens
 
-            RegisterEvent("PutTariffRequest",
-                          handler => CPOAPI.OnPutTariffRequest += handler,
-                          handler => CPOAPI.OnPutTariffRequest -= handler,
-                          "PutTariff", "Tariffs", "Put", "Request",  "All").
+            RegisterEvent("PutTokenRequest",
+                          handler => CPOAPI.OnPutTokenRequest += handler,
+                          handler => CPOAPI.OnPutTokenRequest -= handler,
+                          "PutToken", "Tokens", "Put", "Request",  "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
-            RegisterEvent("PutTariffResponse",
-                          handler => CPOAPI.OnPutTariffResponse += handler,
-                          handler => CPOAPI.OnPutTariffResponse -= handler,
-                          "PutTariff", "Tariffs", "Put", "Response", "All").
-                RegisterDefaultConsoleLogTarget(this).
-                RegisterDefaultDiscLogTarget(this);
-
-
-            RegisterEvent("PatchTariffRequest",
-                          handler => CPOAPI.OnPatchTariffRequest += handler,
-                          handler => CPOAPI.OnPatchTariffRequest -= handler,
-                          "PatchTariff", "Tariffs", "Patch", "Request", "All").
-                RegisterDefaultConsoleLogTarget(this).
-                RegisterDefaultDiscLogTarget(this);
-
-            RegisterEvent("PatchTariffResponse",
-                          handler => CPOAPI.OnPatchTariffResponse += handler,
-                          handler => CPOAPI.OnPatchTariffResponse -= handler,
-                          "PatchTariff", "Tariffs", "Patch", "Response", "All").
+            RegisterEvent("PutTokenResponse",
+                          handler => CPOAPI.OnPutTokenResponse += handler,
+                          handler => CPOAPI.OnPutTokenResponse -= handler,
+                          "PutToken", "Tokens", "Put", "Response", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
-            RegisterEvent("DeleteTariffRequest",
-                          handler => CPOAPI.OnDeleteTariffRequest += handler,
-                          handler => CPOAPI.OnDeleteTariffRequest -= handler,
-                          "DeleteTariff", "Tariffs", "Delete", "Request",  "All").
+            RegisterEvent("PatchTokenRequest",
+                          handler => CPOAPI.OnPatchTokenRequest += handler,
+                          handler => CPOAPI.OnPatchTokenRequest -= handler,
+                          "PatchToken", "Tokens", "Patch", "Request", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
-            RegisterEvent("DeleteTariffResponse",
-                          handler => CPOAPI.OnDeleteTariffResponse += handler,
-                          handler => CPOAPI.OnDeleteTariffResponse -= handler,
-                          "DeleteTariff", "Tariffs", "Delete", "Response", "All").
+            RegisterEvent("PatchTokenResponse",
+                          handler => CPOAPI.OnPatchTokenResponse += handler,
+                          handler => CPOAPI.OnPatchTokenResponse -= handler,
+                          "PatchToken", "Tokens", "Patch", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("DeleteTokenRequest",
+                          handler => CPOAPI.OnDeleteTokenRequest += handler,
+                          handler => CPOAPI.OnDeleteTokenRequest -= handler,
+                          "DeleteToken", "Tokens", "Delete", "Request",  "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("DeleteTokenResponse",
+                          handler => CPOAPI.OnDeleteTokenResponse += handler,
+                          handler => CPOAPI.OnDeleteTokenResponse -= handler,
+                          "DeleteToken", "Tokens", "Delete", "Response", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 

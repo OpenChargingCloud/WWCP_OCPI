@@ -2113,6 +2113,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Events
 
+        #region Locations
+
         #region (protected internal) DeleteLocationsRequest (Request)
 
         /// <summary>
@@ -2313,7 +2315,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #endregion
 
+        #region EVSEs
 
         #region (protected internal) PutEVSERequest    (Request)
 
@@ -2464,7 +2468,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #endregion
 
+        #region Connectors
 
         #region (protected internal) PutConnectorRequest    (Request)
 
@@ -2615,8 +2621,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #endregion
 
-
+        #region Tariffs
 
         #region (protected internal) DeleteTariffsRequest (Request)
 
@@ -2719,6 +2726,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region (protected internal) PatchTariffRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a patch tariff request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPatchTariffRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch tariff request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PatchTariffRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnPatchTariffRequest?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
+
+        #endregion
+
+        #region (protected internal) PatchTariffResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a patch tariff response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPatchTariffResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a patch tariff response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PatchTariffResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    HTTPResponse  Response)
+
+            => OnPatchTariffResponse?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
+
+        #endregion
+
+
         #region (protected internal) DeleteTariffRequest (Request)
 
         /// <summary>
@@ -2768,8 +2825,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #endregion
 
-
+        #region Sessions
 
         #region (protected internal) DeleteSessionsRequest (Request)
 
@@ -2971,8 +3029,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #endregion
 
-
+        #region CDRs
 
         #region (protected internal) DeleteCDRsRequest (Request)
 
@@ -3123,8 +3182,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #endregion
 
-
+        #region Tokens
 
         #region (protected internal) PostTokenRequest (Request)
 
@@ -3172,6 +3232,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             API ?? this,
                                             Request,
                                             Response);
+
+        #endregion
 
         #endregion
 
@@ -4664,6 +4726,83 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+            #region PATCH    ~/tariffs/{country_code}/{party_id}/{tariffId}      [NonStandard]
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.PATCH,
+                                     URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:   PatchTariffRequest,
+                                     OCPIResponseLogger:  PatchTariffResponse,
+                                     OCPIRequest:   async Request => {
+
+                                         #region Check tariff
+
+                                         if (!Request.ParseTariff(this,
+                                                                    out CountryCode?          CountryCode,
+                                                                    out Party_Id?             PartyId,
+                                                                    out Tariff_Id?            TariffId,
+                                                                    out Tariff                ExistingTariff,
+                                                                    out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                    FailOnMissingTariff: true))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse and apply Tariff JSON patch
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject TariffPatch, out OCPIResponseBuilder))
+                                             return OCPIResponseBuilder;
+
+                                         #endregion
+
+
+                                         // Validation-Checks for PATCHes
+                                         // (E-Tag, Timestamp, ...)
+
+                                         var patchedTariff = await CommonAPI.TryPatchTariff(ExistingTariff,
+                                                                                            TariffPatch);
+
+                                         //ToDo: Handle update errors!
+                                         if (patchedTariff.IsSuccess)
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 1000,
+                                                            StatusMessage        = "Hello world!",
+                                                            Data                 = patchedTariff.PatchedData.ToJSON(),
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization",
+                                                                LastModified               = patchedTariff.PatchedData.LastUpdated.ToIso8601(),
+                                                                ETag                       = patchedTariff.PatchedData.SHA256Hash
+                                                            }
+                                                        };
+
+                                         }
+
+                                         else
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                            StatusCode           = 2000,
+                                                            StatusMessage        = patchedTariff.ErrorResponse,
+                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                                AccessControlAllowHeaders  = "Authorization"
+                                                            }
+                                                        };
+
+                                         }
+
+                                     });
+
+            #endregion
+
             #region DELETE   ~/tariffs/{country_code}/{party_id}/{tariffId}
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
@@ -5223,7 +5362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region POST     ~/cdrs/{country_code}/{party_id}
+            #region POST     ~/cdrs/{country_code}/{party_id}       <= Unclear if this URL is correct!
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
@@ -5276,12 +5415,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          CommonAPI.AddCDR(newCDR);
 
 
+                                         // https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/mod_cdrs.asciidoc#mod_cdrs_post_method
+                                         // The response should contain the URL to the just created CDR object in the eMSP’s system.
+                                         //
+                                         // Parameter    Location
+                                         // Datatype     URL
+                                         // Required     yes
+                                         // Description  URL to the newly created CDR in the eMSP’s system, can be used by the CPO system to perform a GET on the same CDR.
+                                         // Example      https://www.server.com/ocpi/emsp/2.2/cdrs/123456
+
                                          return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 1000,
                                                         StatusMessage        = "Hello world!",
                                                         Data                 = newCDR.ToJSON(),
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.Created,
+                                                            Location                   = URLPathPrefix + "2.2" + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString(),
                                                             AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                             AccessControlAllowHeaders  = "Authorization",
                                                             LastModified               = newCDR.LastUpdated.ToIso8601(),
@@ -5367,7 +5516,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET      ~/cdrs/{country_code}/{party_id}/{cdrId}
+            #region GET      ~/cdrs/{country_code}/{party_id}/{cdrId}       // The concrete URL is not specified by OCPI! m(
 
             HTTPServer.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,

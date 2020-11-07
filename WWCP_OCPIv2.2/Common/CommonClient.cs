@@ -184,6 +184,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         protected readonly Dictionary<Version_Id, VersionDetail> VersionDetails  = new Dictionary<Version_Id, VersionDetail>();
 
 
+        protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
+
         #endregion
 
         #region Properties
@@ -370,6 +372,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
         #endregion
+
+
+
+        public async Task<URL?> GetRemoteURL(Version_Id?     VersionId,
+                                             ModuleIDs       ModuleId,
+                                             InterfaceRoles  InterfaceRole)
+        {
+
+            var versionId = VersionId ?? SelectedOCPIVersionId;
+
+            if (!versionId.HasValue)
+            {
+
+                if (VersionDetails.Any())
+                    versionId = VersionDetails.Keys.OrderByDescending(id => id).First();
+
+                else
+                {
+
+                    await GetVersions();
+
+                    if (Versions.Any())
+                    {
+                        versionId = Versions.Keys.OrderByDescending(id => id).First();
+                        await GetVersionDetails(versionId.Value);
+                    }
+
+                }
+
+            }
+
+            if (versionId.     HasValue &&
+                VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+            {
+                foreach (var endpoint in versionDetails.Endpoints)
+                {
+                    if (endpoint.Identifier == ModuleId &&
+                        endpoint.Role       == InterfaceRole)
+                    {
+                        return endpoint.URL;
+                    }
+
+                }
+            }
+
+            return new URL?();
+
+        }
+
 
 
         #region Register(AccessToken,
