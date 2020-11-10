@@ -1602,6 +1602,81 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+        #region ParseCommandId              (this Request, CPOAPI, out CommandId,                                                                      out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the command identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="CPOAPI">The CPO API.</param>
+        /// <param name="CommandId">The parsed unique command identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseCommandId(this OCPIRequest          Request,
+                                             CPOAPI                    CPOAPI,
+                                             out Command_Id?           CommandId,
+                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (CPOAPI  == null)
+                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
+
+            #endregion
+
+            CommandId            = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing command identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CommandId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid command identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
     }
 
 
@@ -1677,12 +1752,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PutTokenRequest(DateTime     Timestamp,
-                                                 HTTPAPI      API,
-                                                 OCPIRequest  Request)
+                                                HTTPAPI      API,
+                                                OCPIRequest  Request)
 
             => OnPutTokenRequest?.WhenAll(Timestamp,
-                                           API ?? this,
-                                           Request);
+                                          API ?? this,
+                                          Request);
 
         #endregion
 
@@ -1696,19 +1771,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put token response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutTokenResponse(DateTime      Timestamp,
-                                                  HTTPAPI       API,
-                                                  OCPIRequest   Request,
-                                                  HTTPResponse  Response)
+                                                 HTTPAPI       API,
+                                                 OCPIRequest   Request,
+                                                 OCPIResponse  Response)
 
             => OnPutTokenResponse?.WhenAll(Timestamp,
-                                            API ?? this,
-                                            Request,
-                                            Response);
+                                           API ?? this,
+                                           Request,
+                                           Response);
 
         #endregion
 
@@ -1727,12 +1802,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task PatchTokenRequest(DateTime     Timestamp,
-                                                   HTTPAPI      API,
-                                                   OCPIRequest  Request)
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
 
             => OnPatchTokenRequest?.WhenAll(Timestamp,
-                                             API ?? this,
-                                             Request);
+                                            API ?? this,
+                                            Request);
 
         #endregion
 
@@ -1746,19 +1821,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a patch token response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchTokenResponse(DateTime      Timestamp,
-                                                    HTTPAPI       API,
-                                                    OCPIRequest   Request,
-                                                    HTTPResponse  Response)
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   OCPIResponse  Response)
 
             => OnPatchTokenResponse?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request,
-                                              Response);
+                                             API ?? this,
+                                             Request,
+                                             Response);
 
         #endregion
 
@@ -1777,12 +1852,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         protected internal Task DeleteTokenRequest(DateTime     Timestamp,
-                                                    HTTPAPI      API,
-                                                    OCPIRequest  Request)
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
 
             => OnDeleteTokenRequest?.WhenAll(Timestamp,
-                                              API ?? this,
-                                              Request);
+                                             API ?? this,
+                                             Request);
 
         #endregion
 
@@ -1796,19 +1871,271 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete token response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTokenResponse(DateTime      Timestamp,
-                                                     HTTPAPI       API,
-                                                     OCPIRequest   Request,
-                                                     HTTPResponse  Response)
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
 
             => OnDeleteTokenResponse?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
+
+        #endregion
+
+
+        // Commands
+
+        #region (protected internal) ReserveNowRequest        (Request)
+
+        /// <summary>
+        /// An event sent whenever a reserve now command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnReserveNowRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a reserve now command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task ReserveNowRequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnReserveNowRequest?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) ReserveNowResponse       (Response)
+
+        /// <summary>
+        /// An event sent whenever a reserve now command response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnReserveNowResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a reserve now command response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task ReserveNowResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   OCPIResponse  Response)
+
+            => OnReserveNowResponse?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+        #region (protected internal) CancelReservationRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnCancelReservationRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task CancelReservationRequest(DateTime     Timestamp,
+                                                         HTTPAPI      API,
+                                                         OCPIRequest  Request)
+
+            => OnCancelReservationRequest?.WhenAll(Timestamp,
+                                                   API ?? this,
+                                                   Request);
+
+        #endregion
+
+        #region (protected internal) CancelReservationResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation command response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnCancelReservationResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation command response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task CancelReservationResponse(DateTime      Timestamp,
+                                                          HTTPAPI       API,
+                                                          OCPIRequest   Request,
+                                                          OCPIResponse  Response)
+
+            => OnCancelReservationResponse?.WhenAll(Timestamp,
+                                                    API ?? this,
+                                                    Request,
+                                                    Response);
+
+        #endregion
+
+
+        #region (protected internal) StartSessionRequest      (Request)
+
+        /// <summary>
+        /// An event sent whenever a start session command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnStartSessionRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a start session command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task StartSessionRequest(DateTime     Timestamp,
+                                                    HTTPAPI      API,
+                                                    OCPIRequest  Request)
+
+            => OnStartSessionRequest?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
+
+        #endregion
+
+        #region (protected internal) StartSessionResponse     (Response)
+
+        /// <summary>
+        /// An event sent whenever a start session command response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnStartSessionResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a start session command response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task StartSessionResponse(DateTime      Timestamp,
+                                                     HTTPAPI       API,
+                                                     OCPIRequest   Request,
+                                                     OCPIResponse  Response)
+
+            => OnStartSessionResponse?.WhenAll(Timestamp,
                                                API ?? this,
                                                Request,
                                                Response);
+
+        #endregion
+
+
+        #region (protected internal) StopSessionRequest      (Request)
+
+        /// <summary>
+        /// An event sent whenever a stop session command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnStopSessionRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a stop session command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task StopSessionRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnStopSessionRequest?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
+
+        #endregion
+
+        #region (protected internal) StopSessionResponse     (Response)
+
+        /// <summary>
+        /// An event sent whenever a stop session command response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnStopSessionResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a stop session command response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task StopSessionResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
+
+            => OnStopSessionResponse?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
+
+        #endregion
+
+
+        #region (protected internal) UnlockConnectorRequest  (Request)
+
+        /// <summary>
+        /// An event sent whenever a unlock connector command was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnUnlockConnectorRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a unlock connector command was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task UnlockConnectorRequest(DateTime     Timestamp,
+                                                       HTTPAPI      API,
+                                                       OCPIRequest  Request)
+
+            => OnUnlockConnectorRequest?.WhenAll(Timestamp,
+                                                 API ?? this,
+                                                 Request);
+
+        #endregion
+
+        #region (protected internal) UnlockConnectorResponse (Response)
+
+        /// <summary>
+        /// An event sent whenever a unlock connector command response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnUnlockConnectorResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a unlock connector command response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the command response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task UnlockConnectorResponse(DateTime      Timestamp,
+                                                        HTTPAPI       API,
+                                                        OCPIRequest   Request,
+                                                        OCPIResponse  Response)
+
+            => OnUnlockConnectorResponse?.WhenAll(Timestamp,
+                                                  API ?? this,
+                                                  Request,
+                                                  Response);
 
         #endregion
 
@@ -2979,6 +3306,450 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     };
 
                                          });
+
+            #endregion
+
+            #endregion
+
+
+            // Commands
+
+            #region ~/commands/RESERVE_NOW
+
+            #region OPTIONS  ~/commands/RESERVE_NOW
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/RESERVE_NOW",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/RESERVE_NOW
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/RESERVE_NOW",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  ReserveNowRequest,
+                                     OCPIResponseLogger: ReserveNowResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Parse ReserveNow command JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!ReserveNowCommand.TryParse(JSONCDR,
+                                                                         out ReserveNowCommand  reserveNowCommand,
+                                                                         out String             ErrorResponse
+                                                                         //CountryCode,
+                                                                         //PartyId
+                                                                         ))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'RESERVE_NOW' command JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+
+                                         // ToDo: ReserveNow!
+                                         var commandResponse  = new CommandResponse(
+                                                                    CommandResponseTypes.NOT_SUPPORTED,
+                                                                    Timeout: TimeSpan.FromSeconds(15),
+                                                                    Message: new DisplayText[] {
+                                                                                 new DisplayText(Languages.en, "Not supported!")
+                                                                             }
+                                                                );
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = commandResponse.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/CANCEL_RESERVATION
+
+            #region OPTIONS  ~/commands/CANCEL_RESERVATION
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/CANCEL_RESERVATION
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  CancelReservationRequest,
+                                     OCPIResponseLogger: CancelReservationResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Parse CancelReservation command JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!CancelReservationCommand.TryParse(JSONCDR,
+                                                                                out CancelReservationCommand  cancelReservationCommand,
+                                                                                out String                    ErrorResponse
+                                                                                //CountryCode,
+                                                                                //PartyId
+                                                                                ))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'CANCEL_RESERVATION' command JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: ReserveNow!
+                                         var commandResponse  = new CommandResponse(
+                                                                    CommandResponseTypes.NOT_SUPPORTED,
+                                                                    Timeout: TimeSpan.FromSeconds(15),
+                                                                    Message: new DisplayText[] {
+                                                                                 new DisplayText(Languages.en, "Not supported!")
+                                                                             }
+                                                                );
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = commandResponse.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/START_SESSION
+
+            #region OPTIONS  ~/commands/START_SESSION
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/START_SESSION",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/START_SESSION
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/START_SESSION",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  StartSessionRequest,
+                                     OCPIResponseLogger: StartSessionResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Parse StartSession command JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!StartSessionCommand.TryParse(JSONCDR,
+                                                                           out StartSessionCommand  startSessionCommand,
+                                                                           out String               ErrorResponse
+                                                                           //CountryCode,
+                                                                           //PartyId
+                                                                           ))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'START_SESSION' command JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: ReserveNow!
+                                         var commandResponse  = new CommandResponse(
+                                                                    CommandResponseTypes.NOT_SUPPORTED,
+                                                                    Timeout: TimeSpan.FromSeconds(15),
+                                                                    Message: new DisplayText[] {
+                                                                                 new DisplayText(Languages.en, "Not supported!")
+                                                                             }
+                                                                );
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = commandResponse.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/STOP_SESSION
+
+            #region OPTIONS  ~/commands/STOP_SESSION
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/STOP_SESSION",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/STOP_SESSION
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/STOP_SESSION",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  StopSessionRequest,
+                                     OCPIResponseLogger: StopSessionResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Parse StopSession command JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!StopSessionCommand.TryParse(JSONCDR,
+                                                                           out StopSessionCommand  stopSessionCommand,
+                                                                           out String              ErrorResponse
+                                                                           //CountryCode,
+                                                                           //PartyId
+                                                                           ))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'STOP_SESSION' command JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: ReserveNow!
+                                         var commandResponse  = new CommandResponse(
+                                                                    CommandResponseTypes.NOT_SUPPORTED,
+                                                                    Timeout: TimeSpan.FromSeconds(15),
+                                                                    Message: new DisplayText[] {
+                                                                                 new DisplayText(Languages.en, "Not supported!")
+                                                                             }
+                                                                );
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = commandResponse.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/UNLOCK_CONNECTOR
+
+            #region OPTIONS  ~/commands/UNLOCK_CONNECTOR
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/UNLOCK_CONNECTOR
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  UnlockConnectorRequest,
+                                     OCPIResponseLogger: UnlockConnectorResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Parse UnlockConnector command JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!UnlockConnectorCommand.TryParse(JSONCDR,
+                                                                              out UnlockConnectorCommand  unlockConnectorCommand,
+                                                                              out String                  ErrorResponse
+                                                                              //CountryCode,
+                                                                              //PartyId
+                                                                              ))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'UNLOCK_CONNECTOR' command JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: ReserveNow!
+                                         var commandResponse  = new CommandResponse(
+                                                                    CommandResponseTypes.NOT_SUPPORTED,
+                                                                    Timeout: TimeSpan.FromSeconds(15),
+                                                                    Message: new DisplayText[] {
+                                                                                 new DisplayText(Languages.en, "Not supported!")
+                                                                             }
+                                                                );
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    StatusMessage        = "Hello world!",
+                                                    Data                 = commandResponse.ToJSON(),
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
 
             #endregion
 

@@ -88,6 +88,7 @@
     <Compile Include="DataTypes\Enums\LegalStatus.cs" />
     <Compile Include="DataTypes\Patch.cs" />
     <Compile Include="DataTypes\Simple\Facilities.cs" />
+    <Compile Include="DataTypes\Simple\Command_Id.cs" />
     <Compile Include="EMSP\EMSPClientLogger.cs" />
     <Compile Include="EMSP\EMSPAPILogger.cs" />
     <Compile Include="IO\OCPIAPILogger.cs" />

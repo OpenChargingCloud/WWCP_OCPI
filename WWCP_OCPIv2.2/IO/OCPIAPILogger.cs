@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     public delegate Task   OCPIRequestLoggerDelegate (String Context, String LogEventName, OCPIRequest Request);
-    public delegate Task   OCPIResponseLoggerDelegate(String Context, String LogEventName, OCPIRequest Request, HTTPResponse HTTPResponse);
+    public delegate Task   OCPIResponseLoggerDelegate(String Context, String LogEventName, OCPIRequest Request, OCPIResponse Response);
 
     public static class OCPIAPILoggerExtentions
     {
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          OCPIAPILogger                            Logger)
 
             => RequestLogger.RegisterLogTarget(LogTargets.Console,
-                                               Logger.Default_LogHTTPRequest_toConsole);
+                                               Logger.Default_LogOCPIRequest_toConsole);
 
         #endregion
 
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                           OCPIAPILogger                             Logger)
 
             => ResponseLogger.RegisterLogTarget(LogTargets.Console,
-                                                Logger.Default_LogHTTPResponse_toConsole);
+                                                Logger.Default_LogOCPIResponse_toConsole);
 
         #endregion
 
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                       OCPIAPILogger                            Logger)
 
             => RequestLogger.RegisterLogTarget(LogTargets.Disc,
-                                               Logger.Default_LogHTTPRequest_toDisc);
+                                               Logger.Default_LogOCPIRequest_toDisc);
 
         #endregion
 
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                        OCPIAPILogger                             Logger)
 
             => ResponseLogger.RegisterLogTarget(LogTargets.Disc,
-                                                Logger.Default_LogHTTPResponse_toDisc);
+                                                Logger.Default_LogOCPIResponse_toDisc);
 
         #endregion
 
@@ -656,15 +656,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         // Default logging delegates
 
-        #region Default_LogHTTPRequest_toConsole (Context, LogEventName, Request)
+        #region Default_LogOCPIRequest_toConsole (Context, LogEventName, Request)
 
         /// <summary>
-        /// A default delegate for logging incoming HTTP requests to console.
+        /// A default delegate for logging incoming OCPI requests to console.
         /// </summary>
         /// <param name="Context">The context of the log request.</param>
         /// <param name="LogEventName">The name of the log event.</param>
         /// <param name="Request">The HTTP request to log.</param>
-        public async Task Default_LogHTTPRequest_toConsole(String       Context,
+        public async Task Default_LogOCPIRequest_toConsole(String       Context,
                                                            String       LogEventName,
                                                            OCPIRequest  Request)
         {
@@ -698,19 +698,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region Default_LogHTTPResponse_toConsole(Context, LogEventName, Request, Response)
+        #region Default_LogOCPIResponse_toConsole(Context, LogEventName, Request, Response)
 
         /// <summary>
-        /// A default delegate for logging HTTP requests/-responses to console.
+        /// A default delegate for logging OCPI requests/-responses to console.
         /// </summary>
         /// <param name="Context">The context of the log request.</param>
         /// <param name="LogEventName">The name of the log event.</param>
-        /// <param name="Request">The HTTP request to log.</param>
-        /// <param name="Response">The HTTP response to log.</param>
-        public async Task Default_LogHTTPResponse_toConsole(String        Context,
+        /// <param name="Request">The OCPI request to log.</param>
+        /// <param name="Response">The OCPI response to log.</param>
+        public async Task Default_LogOCPIResponse_toConsole(String        Context,
                                                             String        LogEventName,
                                                             OCPIRequest   Request,
-                                                            HTTPResponse  Response)
+                                                            OCPIResponse  Response)
         {
 
             lock (LockObject)
@@ -727,17 +727,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.Write(String.Concat(" from ", Request.HTTPRequest.HTTPSource != null ? Request.HTTPRequest.HTTPSource.ToString() : "<local>", " => "));
 
-                if (Response.HTTPStatusCode == HTTPStatusCode.OK ||
-                    Response.HTTPStatusCode == HTTPStatusCode.Created)
+                if (Response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.OK ||
+                    Response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.Created)
                     Console.ForegroundColor = ConsoleColor.Green;
 
-                else if (Response.HTTPStatusCode == HTTPStatusCode.NoContent)
+                else if (Response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.NoContent)
                     Console.ForegroundColor = ConsoleColor.Yellow;
 
                 else
                     Console.ForegroundColor = ConsoleColor.Red;
 
-                Console.Write(Response.HTTPStatusCode);
+                Console.Write(Response.HTTPResponse.HTTPStatusCode);
 
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine(String.Concat(" in ", Math.Round((Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds), "ms"));
@@ -750,15 +750,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region Default_LogHTTPRequest_toDisc (Context, LogEventName, Request)
+        #region Default_LogOCPIRequest_toDisc    (Context, LogEventName, Request)
 
         /// <summary>
-        /// A default delegate for logging incoming HTTP requests to disc.
+        /// A default delegate for logging incoming OCPI requests to disc.
         /// </summary>
         /// <param name="Context">The context of the log request.</param>
         /// <param name="LogEventName">The name of the log event.</param>
         /// <param name="Request">The HTTP request to log.</param>
-        public async Task Default_LogHTTPRequest_toDisc(String       Context,
+        public async Task Default_LogOCPIRequest_toDisc(String       Context,
                                                         String       LogEventName,
                                                         OCPIRequest  Request)
         {
@@ -840,19 +840,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region Default_LogHTTPResponse_toDisc(Context, LogEventName, Request, Response)
+        #region Default_LogOCPIResponse_toDisc   (Context, LogEventName, Request, Response)
 
         /// <summary>
-        /// A default delegate for logging HTTP requests/-responses to disc.
+        /// A default delegate for logging OCPI requests/-responses to disc.
         /// </summary>
         /// <param name="Context">The context of the log request.</param>
         /// <param name="LogEventName">The name of the log event.</param>
-        /// <param name="Request">The HTTP request to log.</param>
-        /// <param name="Response">The HTTP response to log.</param>
-        public async Task Default_LogHTTPResponse_toDisc(String        Context,
+        /// <param name="Request">The OCPI request to log.</param>
+        /// <param name="Response">The OCPI response to log.</param>
+        public async Task Default_LogOCPIResponse_toDisc(String        Context,
                                                          String        LogEventName,
                                                          OCPIRequest   Request,
-                                                         HTTPResponse  Response)
+                                                         OCPIResponse  Response)
         {
 
             //ToDo: Can we have a lock per logfile?
@@ -883,7 +883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              Response.Timestamp.ToIso8601(),
                                                                  " -> ",
                                                                  (Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds, "ms runtime",        Environment.NewLine,
-                                                             Response.EntirePDU,                                                                  Environment.NewLine,
+                                                             Response.HTTPResponse.EntirePDU,                                                     Environment.NewLine,
                                                              "--------------------------------------------------------------------------------",  Environment.NewLine),
                                                Encoding.UTF8);
 
@@ -1044,19 +1044,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region Set default delegates
 
             if (LogHTTPRequest_toConsole  == null)
-                LogHTTPRequest_toConsole   = Default_LogHTTPRequest_toConsole;
+                LogHTTPRequest_toConsole   = Default_LogOCPIRequest_toConsole;
 
             if (LogHTTPRequest_toDisc     == null)
-                LogHTTPRequest_toDisc      = Default_LogHTTPRequest_toDisc;
+                LogHTTPRequest_toDisc      = Default_LogOCPIRequest_toDisc;
 
             if (LogHTTPRequest_toDisc     == null)
-                LogHTTPRequest_toDisc      = Default_LogHTTPRequest_toDisc;
+                LogHTTPRequest_toDisc      = Default_LogOCPIRequest_toDisc;
 
             if (LogHTTPResponse_toConsole == null)
-                LogHTTPResponse_toConsole  = Default_LogHTTPResponse_toConsole;
+                LogHTTPResponse_toConsole  = Default_LogOCPIResponse_toConsole;
 
             if (LogHTTPResponse_toDisc    == null)
-                LogHTTPResponse_toDisc     = Default_LogHTTPResponse_toDisc;
+                LogHTTPResponse_toDisc     = Default_LogOCPIResponse_toDisc;
 
             this.LogfileCreator = LogfileCreator != null
                                       ? LogfileCreator

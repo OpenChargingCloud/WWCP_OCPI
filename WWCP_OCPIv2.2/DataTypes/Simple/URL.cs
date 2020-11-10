@@ -329,6 +329,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region Operator  + (URL, PathSuffix)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="URL">A uniform resource location.</param>
+        /// <param name="PathSuffix">A path suffix which will be added to the existing path.</param>
+        /// <returns>true|false</returns>
+        public static URL operator + (URL       URL,
+                                      HTTPPath  PathSuffix)
+
+            => new URL(URL.InternalId + "/" + PathSuffix.ToString(),
+                       URL.Protocol,
+                       URL.Hostname,
+                       URL.Port,
+                       URL.Path + PathSuffix);
+
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="URL">A uniform resource location.</param>
+        /// <param name="PathSuffix">A path suffix which will be added to the existing path.</param>
+        /// <returns>true|false</returns>
+        public static URL operator + (URL     URL,
+                                      String  PathSuffix)
+
+            => new URL(URL.InternalId + "/" + PathSuffix,
+                       URL.Protocol,
+                       URL.Hostname,
+                       URL.Port,
+                       URL.Path + PathSuffix);
+
+        #endregion
+
         #endregion
 
         #region IComparable<URL> Members

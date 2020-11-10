@@ -465,6 +465,84 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+            #region Command callbacks
+
+            RegisterEvent("ReserveNowCallbackRequest",
+                          handler => EMSPAPI.OnReserveNowCallbackRequest += handler,
+                          handler => EMSPAPI.OnReserveNowCallbackRequest -= handler,
+                          "ReserveNowCallback", "ReservationCallbacks", "Callbacks", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("ReserveNowCallbackResponse",
+                          handler => EMSPAPI.OnReserveNowCallbackResponse += handler,
+                          handler => EMSPAPI.OnReserveNowCallbackResponse -= handler,
+                          "ReserveNowCallback", "ReservationCallbacks", "Callbacks", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("CancelReservationCallbackRequest",
+                          handler => EMSPAPI.OnCancelReservationCallbackRequest += handler,
+                          handler => EMSPAPI.OnCancelReservationCallbackRequest -= handler,
+                          "CancelReservationCallback", "ReservationCallbacks", "Callbacks", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("CancelReservationCallbackResponse",
+                          handler => EMSPAPI.OnCancelReservationCallbackResponse += handler,
+                          handler => EMSPAPI.OnCancelReservationCallbackResponse -= handler,
+                          "CancelReservationCallback", "ReservationCallbacks", "Callbacks", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("StartSessionCallbackRequest",
+                          handler => EMSPAPI.OnStartSessionCallbackRequest += handler,
+                          handler => EMSPAPI.OnStartSessionCallbackRequest -= handler,
+                          "StartSessionCallback", "SessionCallbacks", "Callbacks", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("StartSessionCallbackResponse",
+                          handler => EMSPAPI.OnStartSessionCallbackResponse += handler,
+                          handler => EMSPAPI.OnStartSessionCallbackResponse -= handler,
+                          "StartSessionCallback", "SessionCallbacks", "Callbacks", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("StopSessionCallbackRequest",
+                          handler => EMSPAPI.OnStopSessionCallbackRequest += handler,
+                          handler => EMSPAPI.OnStopSessionCallbackRequest -= handler,
+                          "StopSessionCallback", "SessionCallbacks", "Callbacks", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("StopSessionCallbackResponse",
+                          handler => EMSPAPI.OnStopSessionCallbackResponse += handler,
+                          handler => EMSPAPI.OnStopSessionCallbackResponse -= handler,
+                          "StopSessionCallback", "SessionCallbacks", "CaCallbackslback", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("UnlockConnectorCallbackRequest",
+                          handler => EMSPAPI.OnUnlockConnectorCallbackRequest += handler,
+                          handler => EMSPAPI.OnUnlockConnectorCallbackRequest -= handler,
+                          "UnlockConnectorCallback", "Callbacks", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("UnlockConnectorCallbackResponse",
+                          handler => EMSPAPI.OnUnlockConnectorCallbackResponse += handler,
+                          handler => EMSPAPI.OnUnlockConnectorCallbackResponse -= handler,
+                          "UnlockConnectorCallback", "Callbacks", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            #endregion
+
         }
 
         #endregion

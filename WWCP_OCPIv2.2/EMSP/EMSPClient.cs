@@ -41,7 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A delegate called whenever a get locations request will be send.
     /// </summary>
-    public delegate Task OnGetLocationsRequestDelegate(DateTime                                    LogTimestamp,
+    public delegate Task OnGetLocationsRequestDelegate (DateTime                                    LogTimestamp,
                                                         DateTime                                    RequestTimestamp,
                                                         CommonClient                                Sender,
                                                         String                                      SenderId,
@@ -122,31 +122,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// A delegate called whenever a get EVSE by its identification request will be send.
     /// </summary>
     public delegate Task OnGetEVSEByUIdRequestDelegate (DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
-                                                           CommonClient                                Sender,
-                                                           String                                      SenderId,
-                                                           EventTracking_Id                            EventTrackingId,
+                                                        DateTime                                    RequestTimestamp,
+                                                        CommonClient                                Sender,
+                                                        String                                      SenderId,
+                                                        EventTracking_Id                            EventTrackingId,
 
-                                                           //Partner_Id                                  PartnerId,
-                                                           EVSE_Id                                 EVSEId,
+                                                        //Partner_Id                                  PartnerId,
+                                                        EVSE_Id                                     EVSEId,
 
-                                                           TimeSpan                                    RequestTimeout);
+                                                        TimeSpan                                    RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a get EVSE by its identification request had been received.
     /// </summary>
     public delegate Task OnGetEVSEByUIdResponseDelegate(DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
-                                                           CommonClient                                Sender,
-                                                           String                                      SenderId,
-                                                           EventTracking_Id                            EventTrackingId,
+                                                        DateTime                                    RequestTimestamp,
+                                                        CommonClient                                Sender,
+                                                        String                                      SenderId,
+                                                        EventTracking_Id                            EventTrackingId,
 
-                                                           //Partner_Id                                  PartnerId,
-                                                           EVSE_Id                                 EVSEId,
+                                                        //Partner_Id                                  PartnerId,
+                                                        EVSE_Id                                     EVSEId,
 
-                                                           TimeSpan                                    RequestTimeout,
-                                                           //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                           TimeSpan                                    Duration);
+                                                        TimeSpan                                    RequestTimeout,
+                                                        //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                        TimeSpan                                    Duration);
 
     #endregion
 
@@ -190,44 +190,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A delegate called whenever a get tariffs request will be send.
     /// </summary>
-    public delegate Task OnGetTariffsRequestDelegate(DateTime                                    LogTimestamp,
-                                                        DateTime                                    RequestTimestamp,
-                                                        CommonClient                                Sender,
-                                                        String                                      SenderId,
-                                                        EventTracking_Id                            EventTrackingId,
+    public delegate Task OnGetTariffsRequestDelegate (DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
 
-                                                        //Partner_Id                                  PartnerId,
-                                                        //Operator_Id                                 OperatorId,
-                                                        //ChargingPool_Id                             ChargingPoolId,
-                                                        //DateTime                                    StatusEventDate,
-                                                        //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                        //Transaction_Id?                             TransactionId,
-                                                        //DateTime?                                   AvailabilityStatusUntil,
-                                                        //String                                      AvailabilityStatusComment,
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
 
-                                                        TimeSpan                                    RequestTimeout);
+                                                      TimeSpan                                    RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a get tariffs request had been received.
     /// </summary>
     public delegate Task OnGetTariffsResponseDelegate(DateTime                                    LogTimestamp,
-                                                        DateTime                                    RequestTimestamp,
-                                                        CommonClient                                Sender,
-                                                        String                                      SenderId,
-                                                        EventTracking_Id                            EventTrackingId,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
 
-                                                        //Partner_Id                                  PartnerId,
-                                                        //Operator_Id                                 OperatorId,
-                                                        //ChargingPool_Id                             ChargingPoolId,
-                                                        //DateTime                                    StatusEventDate,
-                                                        //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                        //Transaction_Id?                             TransactionId,
-                                                        //DateTime?                                   AvailabilityStatusUntil,
-                                                        //String                                      AvailabilityStatusComment,
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
 
-                                                        TimeSpan                                    RequestTimeout,
-                                                        //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                        TimeSpan                                    Duration);
+                                                      TimeSpan                                    RequestTimeout,
+                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                      TimeSpan                                    Duration);
 
     #endregion
 
@@ -237,31 +237,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// A delegate called whenever a get tariff by its identification request will be send.
     /// </summary>
     public delegate Task OnGetTariffByIdRequestDelegate (DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
-                                                           CommonClient                                Sender,
-                                                           String                                      SenderId,
-                                                           EventTracking_Id                            EventTrackingId,
+                                                         DateTime                                    RequestTimestamp,
+                                                         CommonClient                                Sender,
+                                                         String                                      SenderId,
+                                                         EventTracking_Id                            EventTrackingId,
 
-                                                           //Partner_Id                                  PartnerId,
-                                                           Tariff_Id                                 TariffId,
+                                                         //Partner_Id                                  PartnerId,
+                                                         Tariff_Id                                 TariffId,
 
-                                                           TimeSpan                                    RequestTimeout);
+                                                         TimeSpan                                    RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a get tariff by its identification request had been received.
     /// </summary>
     public delegate Task OnGetTariffByIdResponseDelegate(DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
-                                                           CommonClient                                Sender,
-                                                           String                                      SenderId,
-                                                           EventTracking_Id                            EventTrackingId,
+                                                         DateTime                                    RequestTimestamp,
+                                                         CommonClient                                Sender,
+                                                         String                                      SenderId,
+                                                         EventTracking_Id                            EventTrackingId,
 
-                                                           //Partner_Id                                  PartnerId,
-                                                           Tariff_Id                                 TariffId,
+                                                         //Partner_Id                                  PartnerId,
+                                                         Tariff_Id                                 TariffId,
 
-                                                           TimeSpan                                    RequestTimeout,
-                                                           //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                           TimeSpan                                    Duration);
+                                                         TimeSpan                                    RequestTimeout,
+                                                         //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                         TimeSpan                                    Duration);
 
     #endregion
 
@@ -567,6 +567,237 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     #endregion
 
 
+    #region OnReserveNowRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a reserve now command request will be send.
+    /// </summary>
+    public delegate Task OnReserveNowRequestDelegate (DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a reserve now command request had been received.
+    /// </summary>
+    public delegate Task OnReserveNowResponseDelegate(DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout,
+                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                      TimeSpan                                    Duration);
+
+    #endregion
+
+    #region OnCancelReservationRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a cancel reservation command request will be send.
+    /// </summary>
+    public delegate Task OnCancelReservationRequestDelegate (DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a cancel reservation command request had been received.
+    /// </summary>
+    public delegate Task OnCancelReservationResponseDelegate(DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout,
+                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                      TimeSpan                                    Duration);
+
+    #endregion
+
+    #region OnStartSessionRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a start session command request will be send.
+    /// </summary>
+    public delegate Task OnStartSessionRequestDelegate (DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a start session command request had been received.
+    /// </summary>
+    public delegate Task OnStartSessionResponseDelegate(DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout,
+                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                      TimeSpan                                    Duration);
+
+    #endregion
+
+    #region OnStopSessionRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a stop session command request will be send.
+    /// </summary>
+    public delegate Task OnStopSessionRequestDelegate (DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a stop session command request had been received.
+    /// </summary>
+    public delegate Task OnStopSessionResponseDelegate(DateTime                                    LogTimestamp,
+                                                      DateTime                                    RequestTimestamp,
+                                                      CommonClient                                Sender,
+                                                      String                                      SenderId,
+                                                      EventTracking_Id                            EventTrackingId,
+
+                                                      //Partner_Id                                  PartnerId,
+                                                      //Operator_Id                                 OperatorId,
+                                                      //ChargingPool_Id                             ChargingPoolId,
+                                                      //DateTime                                    StatusEventDate,
+                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                      //Transaction_Id?                             TransactionId,
+                                                      //DateTime?                                   AvailabilityStatusUntil,
+                                                      //String                                      AvailabilityStatusComment,
+
+                                                      TimeSpan                                    RequestTimeout,
+                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                      TimeSpan                                    Duration);
+
+    #endregion
+
+    #region OnUnlockConnectorRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever an unlock connector command request will be send.
+    /// </summary>
+    public delegate Task OnUnlockConnectorRequestDelegate (DateTime                                    LogTimestamp,
+                                                           DateTime                                    RequestTimestamp,
+                                                           CommonClient                                Sender,
+                                                           String                                      SenderId,
+                                                           EventTracking_Id                            EventTrackingId,
+
+                                                           //Partner_Id                                  PartnerId,
+                                                           //Operator_Id                                 OperatorId,
+                                                           //ChargingPool_Id                             ChargingPoolId,
+                                                           //DateTime                                    StatusEventDate,
+                                                           //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                           //Transaction_Id?                             TransactionId,
+                                                           //DateTime?                                   AvailabilityStatusUntil,
+                                                           //String                                      AvailabilityStatusComment,
+
+                                                           TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to an unlock connector command request had been received.
+    /// </summary>
+    public delegate Task OnUnlockConnectorResponseDelegate(DateTime                                    LogTimestamp,
+                                                           DateTime                                    RequestTimestamp,
+                                                           CommonClient                                Sender,
+                                                           String                                      SenderId,
+                                                           EventTracking_Id                            EventTrackingId,
+
+                                                           //Partner_Id                                  PartnerId,
+                                                           //Operator_Id                                 OperatorId,
+                                                           //ChargingPool_Id                             ChargingPoolId,
+                                                           //DateTime                                    StatusEventDate,
+                                                           //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                           //Transaction_Id?                             TransactionId,
+                                                           //DateTime?                                   AvailabilityStatusUntil,
+                                                           //String                                      AvailabilityStatusComment,
+
+                                                           TimeSpan                                    RequestTimeout,
+                                                           //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                           TimeSpan                                    Duration);
+
+    #endregion
+
+
     /// <summary>
     /// The EMSP client.
     /// </summary>
@@ -595,14 +826,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
-
-        #region Data
-
-        #endregion
-
-        #region Properties
-
-        #endregion
 
         #region Events
 
@@ -664,12 +887,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// An event fired whenever a HTTP request getting a EVSE by its identification will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetEVSEByUIdHTTPRequest;
+        public event ClientRequestLogHandler         OnGetEVSEByUIdHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a EVSE by its identification HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetEVSEByUIdHTTPResponse;
+        public event ClientResponseLogHandler        OnGetEVSEByUIdHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a EVSE by its identification request had been received.
@@ -713,12 +936,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// An event fired whenever a HTTP request getting all tariffs will be send.
         /// </summary>
-        public event ClientRequestLogHandler         OnGetTariffsHTTPRequest;
+        public event ClientRequestLogHandler       OnGetTariffsHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting all tariffs HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler        OnGetTariffsHTTPResponse;
+        public event ClientResponseLogHandler      OnGetTariffsHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting all tariffs request had been received.
@@ -737,12 +960,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// An event fired whenever a HTTP request getting a tariff by it identification will be send.
         /// </summary>
-        public event ClientRequestLogHandler         OnGetTariffByIdHTTPRequest;
+        public event ClientRequestLogHandler       OnGetTariffByIdHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a tariff by it identification HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler        OnGetTariffByIdHTTPResponse;
+        public event ClientResponseLogHandler      OnGetTariffByIdHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a tariff by it identification request had been received.
@@ -922,6 +1145,129 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        // Commands
+
+        #region OnReserveNowRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a ReserveNow request will be send.
+        /// </summary>
+        public event OnReserveNowRequestDelegate   OnReserveNowRequest;
+
+        /// <summary>
+        /// An event fired whenever a ReserveNow HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler       OnReserveNowHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a ReserveNow HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler      OnReserveNowHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a ReserveNow request had been received.
+        /// </summary>
+        public event OnReserveNowResponseDelegate  OnReserveNowResponse;
+
+        #endregion
+
+        #region OnCancelReservationRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a CancelReservation request will be send.
+        /// </summary>
+        public event OnCancelReservationRequestDelegate   OnCancelReservationRequest;
+
+        /// <summary>
+        /// An event fired whenever a CancelReservation HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler              OnCancelReservationHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a CancelReservation HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler             OnCancelReservationHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a CancelReservation request had been received.
+        /// </summary>
+        public event OnCancelReservationResponseDelegate  OnCancelReservationResponse;
+
+        #endregion
+
+        #region OnStartSessionRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a StartSession request will be send.
+        /// </summary>
+        public event OnStartSessionRequestDelegate   OnStartSessionRequest;
+
+        /// <summary>
+        /// An event fired whenever a StartSession HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler         OnStartSessionHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a StartSession HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler        OnStartSessionHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a StartSession request had been received.
+        /// </summary>
+        public event OnStartSessionResponseDelegate  OnStartSessionResponse;
+
+        #endregion
+
+        #region OnStopSessionRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a StopSession request will be send.
+        /// </summary>
+        public event OnStopSessionRequestDelegate   OnStopSessionRequest;
+
+        /// <summary>
+        /// An event fired whenever a StopSession HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler        OnStopSessionHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a StopSession HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler       OnStopSessionHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a StopSession request had been received.
+        /// </summary>
+        public event OnStopSessionResponseDelegate  OnStopSessionResponse;
+
+        #endregion
+
+        #region OnUnlockConnectorRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a UnlockConnector request will be send.
+        /// </summary>
+        public event OnUnlockConnectorRequestDelegate   OnUnlockConnectorRequest;
+
+        /// <summary>
+        /// An event fired whenever a UnlockConnector HTTP request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler            OnUnlockConnectorHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a UnlockConnector HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler           OnUnlockConnectorHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a UnlockConnector request had been received.
+        /// </summary>
+        public event OnUnlockConnectorResponseDelegate  OnUnlockConnectorResponse;
+
+        #endregion
+
         #endregion
 
         #region Constructor(s)
@@ -930,14 +1276,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new EMSP client.
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
-        /// <param name="URL">The remote URL to connect to.</param>
+        /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
+        /// <param name="MyCommandsURL">The local URL of the COMMANDS endpoint.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public EMSPClient(AccessToken                          AccessToken,
-                          URL                                  URL,
+                          URL                                  RemoteVersionsURL,
+                          URL                                  MyCommandsURL,
                           HTTPHostname?                        VirtualHostname              = null,
                           RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                           TimeSpan?                            RequestTimeout               = null,
@@ -945,7 +1293,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                           DNSClient                            DNSClient                    = null)
 
             : base(AccessToken,
-                   URL,
+                   RemoteVersionsURL,
+                   MyCommandsURL,
                    VirtualHostname,
                    RemoteCertificateValidator,
                    RequestTimeout,
@@ -3684,6 +4033,989 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 e.Log(nameof(EMSPClient) + "." + nameof(OnPatchTokenResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+
+        // Commands
+
+        #region ReserveNow       (Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CommandResponse>>
+
+            ReserveNow(Token                    Token,
+                       DateTime                 ExpiryDate,
+                       Reservation_Id           ReservationId,
+                       Location_Id              LocationId,
+                       EVSE_UId?                EVSEUId,
+                       AuthorizationReference?  AuthorizationReference,
+
+                       Request_Id?              RequestId           = null,
+                       Correlation_Id?          CorrelationId       = null,
+                       Version_Id?              VersionId           = null,
+
+                       DateTime?                Timestamp           = null,
+                       CancellationToken?       CancellationToken   = null,
+                       EventTracking_Id         EventTrackingId     = null,
+                       TimeSpan?                RequestTimeout      = null)
+
+        {
+
+            OCPIResponse<CommandResponse> response;
+
+            var Command = new ReserveNowCommand(Token,
+                                                ExpiryDate,
+                                                ReservationId,
+                                                LocationId,
+                                                EVSEUId,
+                                                AuthorizationReference,
+                                                MyCommandsURL + "RESERVE_NOW" + random.RandomString(50));
+
+            #region Send OnReserveNowRequest event
+
+            var StartTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.ReserveNow.IncRequests();
+
+                //if (OnReserveNowRequest != null)
+                //    await Task.WhenAll(OnReserveNowRequest.GetInvocationList().
+                //                       Cast<OnReserveNowRequestDelegate>().
+                //                       Select(e => e(StartTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnReserveNowRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Commands,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
+
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
+
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + "RESERVE_NOW",
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      RequestLogDelegate:   OnReserveNowHTTPRequest,
+                                                      ResponseLogDelegate:  OnReserveNowHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
+                                                                          requestId,
+                                                                          correlationId,
+                                                                          json => CommandResponse.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, CommandResponse>("",
+                                                                         default,
+                                                                         -1,
+                                                                         "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, CommandResponse>("",
+                                                                     default,
+                                                                     -1,
+                                                                     e.Message,
+                                                                     e.StackTrace);
+
+            }
+
+
+            #region Send OnReserveNowResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnReserveNowResponse != null)
+                //    await Task.WhenAll(OnReserveNowResponse.GetInvocationList().
+                //                       Cast<OnReserveNowResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StartTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnReserveNowResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+        #region CancelReservation(ReservationId, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CommandResponse>>
+
+            CancelReservation(Reservation_Id      ReservationId,
+
+                              Request_Id?         RequestId           = null,
+                              Correlation_Id?     CorrelationId       = null,
+                              Version_Id?         VersionId           = null,
+
+                              DateTime?           Timestamp           = null,
+                              CancellationToken?  CancellationToken   = null,
+                              EventTracking_Id    EventTrackingId     = null,
+                              TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            OCPIResponse<CommandResponse> response;
+
+            var Command = new CancelReservationCommand(ReservationId,
+                                                       MyCommandsURL + "CANCEL_RESERVATION" + random.RandomString(50));
+
+            #region Send OnCancelReservationRequest event
+
+            var StartTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.CancelReservation.IncRequests();
+
+                //if (OnCancelReservationRequest != null)
+                //    await Task.WhenAll(OnCancelReservationRequest.GetInvocationList().
+                //                       Cast<OnCancelReservationRequestDelegate>().
+                //                       Select(e => e(StartTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnCancelReservationRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Commands,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
+
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
+
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + "CANCEL_RESERVATION",
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      RequestLogDelegate:   OnCancelReservationHTTPRequest,
+                                                      ResponseLogDelegate:  OnCancelReservationHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
+                                                                          requestId,
+                                                                          correlationId,
+                                                                          json => CommandResponse.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, CommandResponse>("",
+                                                                         default,
+                                                                         -1,
+                                                                         "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, CommandResponse>("",
+                                                                     default,
+                                                                     -1,
+                                                                     e.Message,
+                                                                     e.StackTrace);
+
+            }
+
+
+            #region Send OnCancelReservationResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnCancelReservationResponse != null)
+                //    await Task.WhenAll(OnCancelReservationResponse.GetInvocationList().
+                //                       Cast<OnCancelReservationResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StartTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnCancelReservationResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+        #region StartSession     (Token, LocationId, EVSEUId, AuthorizationReference, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CommandResponse>>
+
+            StartSession(Token                    Token,
+                         Location_Id              LocationId,
+                         EVSE_UId?                EVSEUId,
+                         AuthorizationReference?  AuthorizationReference,
+
+                         Request_Id?              RequestId           = null,
+                         Correlation_Id?          CorrelationId       = null,
+                         Version_Id?              VersionId           = null,
+
+                         DateTime?                Timestamp           = null,
+                         CancellationToken?       CancellationToken   = null,
+                         EventTracking_Id         EventTrackingId     = null,
+                         TimeSpan?                RequestTimeout      = null)
+
+        {
+
+            OCPIResponse<CommandResponse> response;
+
+            var Command = new StartSessionCommand(Token,
+                                                  LocationId,
+                                                  EVSEUId,
+                                                  AuthorizationReference,
+                                                  MyCommandsURL + "START_SESSION" + random.RandomString(50));
+
+            #region Send OnStartSessionRequest event
+
+            var StartTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.StartSession.IncRequests();
+
+                //if (OnStartSessionRequest != null)
+                //    await Task.WhenAll(OnStartSessionRequest.GetInvocationList().
+                //                       Cast<OnStartSessionRequestDelegate>().
+                //                       Select(e => e(StartTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnStartSessionRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Commands,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
+
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
+
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + "START_SESSION",
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      RequestLogDelegate:   OnStartSessionHTTPRequest,
+                                                      ResponseLogDelegate:  OnStartSessionHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
+                                                                          requestId,
+                                                                          correlationId,
+                                                                          json => CommandResponse.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, CommandResponse>("",
+                                                                         default,
+                                                                         -1,
+                                                                         "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, CommandResponse>("",
+                                                                     default,
+                                                                     -1,
+                                                                     e.Message,
+                                                                     e.StackTrace);
+
+            }
+
+
+            #region Send OnStartSessionResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnStartSessionResponse != null)
+                //    await Task.WhenAll(OnStartSessionResponse.GetInvocationList().
+                //                       Cast<OnStartSessionResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StartTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnStartSessionResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+        #region StopSession      (SessionId, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CommandResponse>>
+
+            StopSession(Session_Id          SessionId,
+
+                        Request_Id?         RequestId           = null,
+                        Correlation_Id?     CorrelationId       = null,
+                        Version_Id?         VersionId           = null,
+
+                        DateTime?           Timestamp           = null,
+                        CancellationToken?  CancellationToken   = null,
+                        EventTracking_Id    EventTrackingId     = null,
+                        TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            OCPIResponse<CommandResponse> response;
+
+            var Command = new StopSessionCommand(SessionId,
+                                                 MyCommandsURL + "STOP_SESSION" + random.RandomString(50));
+
+            #region Send OnStopSessionRequest event
+
+            var StopTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.StopSession.IncRequests();
+
+                //if (OnStopSessionRequest != null)
+                //    await Task.WhenAll(OnStopSessionRequest.GetInvocationList().
+                //                       Cast<OnStopSessionRequestDelegate>().
+                //                       Select(e => e(StopTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnStopSessionRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Commands,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
+
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
+
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + "STOP_SESSION",
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      RequestLogDelegate:   OnStopSessionHTTPRequest,
+                                                      ResponseLogDelegate:  OnStopSessionHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
+                                                                          requestId,
+                                                                          correlationId,
+                                                                          json => CommandResponse.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, CommandResponse>("",
+                                                                         default,
+                                                                         -1,
+                                                                         "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, CommandResponse>("",
+                                                                     default,
+                                                                     -1,
+                                                                     e.Message,
+                                                                     e.StackTrace);
+
+            }
+
+
+            #region Send OnStopSessionResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnStopSessionResponse != null)
+                //    await Task.WhenAll(OnStopSessionResponse.GetInvocationList().
+                //                       Cast<OnStopSessionResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StopTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnStopSessionResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+        #region UnlockConnector  (LocationId, EVSEUId, ConnectorId, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CommandResponse>>
+
+            UnlockConnector(Location_Id             LocationId,
+                            EVSE_UId                EVSEUId,
+                            Connector_Id            ConnectorId,
+
+                            Request_Id?             RequestId           = null,
+                            Correlation_Id?         CorrelationId       = null,
+                            Version_Id?             VersionId           = null,
+
+                            DateTime?               Timestamp           = null,
+                            CancellationToken?      CancellationToken   = null,
+                            EventTracking_Id        EventTrackingId     = null,
+                            TimeSpan?               RequestTimeout      = null)
+
+        {
+
+            OCPIResponse<CommandResponse> response;
+
+            var Command = new UnlockConnectorCommand(LocationId,
+                                                     EVSEUId,
+                                                     ConnectorId,
+                                                     MyCommandsURL + "UNLOCK_CONNECTOR" + random.RandomString(50));
+
+            #region Send OnUnlockConnectorRequest event
+
+            var StopTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.UnlockConnector.IncRequests();
+
+                //if (OnUnlockConnectorRequest != null)
+                //    await Task.WhenAll(OnUnlockConnectorRequest.GetInvocationList().
+                //                       Cast<OnUnlockConnectorRequestDelegate>().
+                //                       Select(e => e(StopTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnUnlockConnectorRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Commands,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
+
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
+
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + "UNLOCK_CONNECTOR",
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      RequestLogDelegate:   OnUnlockConnectorHTTPRequest,
+                                                      ResponseLogDelegate:  OnUnlockConnectorHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
+                                                                          requestId,
+                                                                          correlationId,
+                                                                          json => CommandResponse.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, CommandResponse>("",
+                                                                         default,
+                                                                         -1,
+                                                                         "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, CommandResponse>("",
+                                                                     default,
+                                                                     -1,
+                                                                     e.Message,
+                                                                     e.StackTrace);
+
+            }
+
+
+            #region Send OnUnlockConnectorResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnUnlockConnectorResponse != null)
+                //    await Task.WhenAll(OnUnlockConnectorResponse.GetInvocationList().
+                //                       Cast<OnUnlockConnectorResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StopTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnUnlockConnectorResponse));
             }
 
             #endregion

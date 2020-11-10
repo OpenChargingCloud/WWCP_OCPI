@@ -2052,6 +2052,82 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+
+        #region ParseCommandId              (this Request, EMSPAPI, out CommandId,                                                                     out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the command identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="Request">A HTTP request.</param>
+        /// <param name="EMSPAPI">The EMSP API.</param>
+        /// <param name="CommandId">The parsed unique command identification.</param>
+        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
+        /// <returns>True, when user identification was found; false else.</returns>
+        public static Boolean ParseCommandId(this OCPIRequest          Request,
+                                             EMSPAPI                   EMSPAPI,
+                                             out Command_Id?           CommandId,
+                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        {
+
+            #region Initial checks
+
+            if (Request == null)
+                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
+
+            if (EMSPAPI  == null)
+                throw new ArgumentNullException(nameof(EMSPAPI),  "The given CPO API must not be null!");
+
+            #endregion
+
+            CommandId            = default;
+            OCPIResponseBuilder  = default;
+
+            if (Request.ParsedURLParameters.Length < 1)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Missing command identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            CommandId = Command_Id.TryParse(Request.ParsedURLParameters[0]);
+
+            if (!CommandId.HasValue)
+            {
+
+                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                    StatusCode           = 2001,
+                    StatusMessage        = "Invalid command identification!",
+                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                        AccessControlAllowHeaders  = "Authorization"
+                    }
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
     }
 
 
@@ -2148,14 +2224,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete locations response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteLocationsResponse(DateTime      Timestamp,
                                                         HTTPAPI       API,
                                                         OCPIRequest   Request,
-                                                        HTTPResponse  Response)
+                                                        OCPIResponse  Response)
 
             => OnDeleteLocationsResponse?.WhenAll(Timestamp,
                                                   API ?? this,
@@ -2199,14 +2275,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put location response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutLocationResponse(DateTime      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
-                                                    HTTPResponse  Response)
+                                                    OCPIResponse  Response)
 
             => OnPutLocationResponse?.WhenAll(Timestamp,
                                               API ?? this,
@@ -2249,14 +2325,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a patch location response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchLocationResponse(DateTime      Timestamp,
                                                       HTTPAPI       API,
                                                       OCPIRequest   Request,
-                                                      HTTPResponse  Response)
+                                                      OCPIResponse  Response)
 
             => OnPatchLocationResponse?.WhenAll(Timestamp,
                                                 API ?? this,
@@ -2299,14 +2375,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete location response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteLocationResponse(DateTime      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
-                                                       HTTPResponse  Response)
+                                                       OCPIResponse  Response)
 
             => OnDeleteLocationResponse?.WhenAll(Timestamp,
                                                  API ?? this,
@@ -2352,14 +2428,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put EVSE response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutEVSEResponse(DateTime      Timestamp,
                                                 HTTPAPI       API,
                                                 OCPIRequest   Request,
-                                                HTTPResponse  Response)
+                                                OCPIResponse  Response)
 
             => OnPutEVSEResponse?.WhenAll(Timestamp,
                                           API ?? this,
@@ -2402,14 +2478,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a patch EVSE response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchEVSEResponse(DateTime      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
-                                                  HTTPResponse  Response)
+                                                  OCPIResponse  Response)
 
             => OnPatchEVSEResponse?.WhenAll(Timestamp,
                                             API ?? this,
@@ -2452,14 +2528,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete EVSE response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteEVSEResponse(DateTime      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
-                                                   HTTPResponse  Response)
+                                                   OCPIResponse  Response)
 
             => OnDeleteEVSEResponse?.WhenAll(Timestamp,
                                              API ?? this,
@@ -2505,14 +2581,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put connector response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutConnectorResponse(DateTime      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
-                                                     HTTPResponse  Response)
+                                                     OCPIResponse  Response)
 
             => OnPutConnectorResponse?.WhenAll(Timestamp,
                                                API ?? this,
@@ -2555,14 +2631,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a patch connector response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchConnectorResponse(DateTime      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
-                                                       HTTPResponse  Response)
+                                                       OCPIResponse  Response)
 
             => OnPatchConnectorResponse?.WhenAll(Timestamp,
                                                  API ?? this,
@@ -2605,14 +2681,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete connector response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteConnectorResponse(DateTime      Timestamp,
                                                         HTTPAPI       API,
                                                         OCPIRequest   Request,
-                                                        HTTPResponse  Response)
+                                                        OCPIResponse  Response)
 
             => OnDeleteConnectorResponse?.WhenAll(Timestamp,
                                                   API ?? this,
@@ -2658,14 +2734,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete tariffs response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTariffsResponse(DateTime      Timestamp,
                                                       HTTPAPI       API,
                                                       OCPIRequest   Request,
-                                                      HTTPResponse  Response)
+                                                      OCPIResponse  Response)
 
             => OnDeleteTariffsResponse?.WhenAll(Timestamp,
                                                 API ?? this,
@@ -2709,14 +2785,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put tariff response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutTariffResponse(DateTime      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
-                                                  HTTPResponse  Response)
+                                                  OCPIResponse  Response)
 
             => OnPutTariffResponse?.WhenAll(Timestamp,
                                             API ?? this,
@@ -2759,14 +2835,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a patch tariff response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchTariffResponse(DateTime      Timestamp,
                                                     HTTPAPI       API,
                                                     OCPIRequest   Request,
-                                                    HTTPResponse  Response)
+                                                    OCPIResponse  Response)
 
             => OnPatchTariffResponse?.WhenAll(Timestamp,
                                               API ?? this,
@@ -2809,14 +2885,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete tariff response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteTariffResponse(DateTime      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
-                                                     HTTPResponse  Response)
+                                                     OCPIResponse  Response)
 
             => OnDeleteTariffResponse?.WhenAll(Timestamp,
                                                API ?? this,
@@ -2862,14 +2938,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete sessions response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteSessionsResponse(DateTime      Timestamp,
                                                        HTTPAPI       API,
                                                        OCPIRequest   Request,
-                                                       HTTPResponse  Response)
+                                                       OCPIResponse  Response)
 
             => OnDeleteSessionsResponse?.WhenAll(Timestamp,
                                                  API ?? this,
@@ -2913,14 +2989,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a put session response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PutSessionResponse(DateTime      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
-                                                   HTTPResponse  Response)
+                                                   OCPIResponse  Response)
 
             => OnPutSessionResponse?.WhenAll(Timestamp,
                                              API ?? this,
@@ -2963,14 +3039,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a patch session response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PatchSessionResponse(DateTime      Timestamp,
                                                      HTTPAPI       API,
                                                      OCPIRequest   Request,
-                                                     HTTPResponse  Response)
+                                                     OCPIResponse  Response)
 
             => OnPatchSessionResponse?.WhenAll(Timestamp,
                                                API ?? this,
@@ -3013,14 +3089,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete session response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteSessionResponse(DateTime      Timestamp,
                                                       HTTPAPI       API,
                                                       OCPIRequest   Request,
-                                                      HTTPResponse  Response)
+                                                      OCPIResponse  Response)
 
             => OnDeleteSessionResponse?.WhenAll(Timestamp,
                                                 API ?? this,
@@ -3066,14 +3142,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete CDRs response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteCDRsResponse(DateTime      Timestamp,
                                                    HTTPAPI       API,
                                                    OCPIRequest   Request,
-                                                   HTTPResponse  Response)
+                                                   OCPIResponse  Response)
 
             => OnDeleteCDRsResponse?.WhenAll(Timestamp,
                                              API ?? this,
@@ -3116,14 +3192,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a post CDR response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PostCDRResponse(DateTime      Timestamp,
                                                 HTTPAPI       API,
                                                 OCPIRequest   Request,
-                                                HTTPResponse  Response)
+                                                OCPIResponse  Response)
 
             => OnPostCDRResponse?.WhenAll(Timestamp,
                                           API ?? this,
@@ -3166,14 +3242,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a delete CDR response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task DeleteCDRResponse(DateTime      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
-                                                  HTTPResponse  Response)
+                                                  OCPIResponse  Response)
 
             => OnDeleteCDRResponse?.WhenAll(Timestamp,
                                             API ?? this,
@@ -3219,14 +3295,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// An event sent whenever a post token response was sent.
         /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="Timestamp">The timestamp of the response.</param>
         /// <param name="API">The EMSP API.</param>
         /// <param name="Request">An OCPI request.</param>
         /// <param name="Response">An OCPI response.</param>
         protected internal Task PostTokenResponse(DateTime      Timestamp,
                                                   HTTPAPI       API,
                                                   OCPIRequest   Request,
-                                                  HTTPResponse  Response)
+                                                  OCPIResponse  Response)
 
             => OnPostTokenResponse?.WhenAll(Timestamp,
                                             API ?? this,
@@ -3234,6 +3310,258 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             Response);
 
         #endregion
+
+        #endregion
+
+
+        // Command callbacks
+
+        #region (protected internal) ReserveNowCallbackRequest        (Request)
+
+        /// <summary>
+        /// An event sent whenever a reserve now callback was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnReserveNowCallbackRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a reserve now callback was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task ReserveNowCallbackRequest(DateTime     Timestamp,
+                                                          HTTPAPI      API,
+                                                          OCPIRequest  Request)
+
+            => OnReserveNowCallbackRequest?.WhenAll(Timestamp,
+                                                    API ?? this,
+                                                    Request);
+
+        #endregion
+
+        #region (protected internal) ReserveNowCallbackResponse       (Response)
+
+        /// <summary>
+        /// An event sent whenever a reserve now callback response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnReserveNowCallbackResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a reserve now callback response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task ReserveNowCallbackResponse(DateTime      Timestamp,
+                                                           HTTPAPI       API,
+                                                           OCPIRequest   Request,
+                                                           OCPIResponse  Response)
+
+            => OnReserveNowCallbackResponse?.WhenAll(Timestamp,
+                                                     API ?? this,
+                                                     Request,
+                                                     Response);
+
+        #endregion
+
+
+        #region (protected internal) CancelReservationCallbackRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation callback was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnCancelReservationCallbackRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation callback was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task CancelReservationCallbackRequest(DateTime     Timestamp,
+                                                                 HTTPAPI      API,
+                                                                 OCPIRequest  Request)
+
+            => OnCancelReservationCallbackRequest?.WhenAll(Timestamp,
+                                                           API ?? this,
+                                                           Request);
+
+        #endregion
+
+        #region (protected internal) CancelReservationCallbackResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation callback response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnCancelReservationCallbackResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a cancel reservation callback response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task CancelReservationCallbackResponse(DateTime      Timestamp,
+                                                                  HTTPAPI       API,
+                                                                  OCPIRequest   Request,
+                                                                  OCPIResponse  Response)
+
+            => OnCancelReservationCallbackResponse?.WhenAll(Timestamp,
+                                                            API ?? this,
+                                                            Request,
+                                                            Response);
+
+        #endregion
+
+
+        #region (protected internal) StartSessionCallbackRequest      (Request)
+
+        /// <summary>
+        /// An event sent whenever a start session callback was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnStartSessionCallbackRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a start session callback was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task StartSessionCallbackRequest(DateTime     Timestamp,
+                                                            HTTPAPI      API,
+                                                            OCPIRequest  Request)
+
+            => OnStartSessionCallbackRequest?.WhenAll(Timestamp,
+                                                      API ?? this,
+                                                      Request);
+
+        #endregion
+
+        #region (protected internal) StartSessionCallbackResponse     (Response)
+
+        /// <summary>
+        /// An event sent whenever a start session callback response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnStartSessionCallbackResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a start session callback response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task StartSessionCallbackResponse(DateTime      Timestamp,
+                                                             HTTPAPI       API,
+                                                             OCPIRequest   Request,
+                                                             OCPIResponse  Response)
+
+            => OnStartSessionCallbackResponse?.WhenAll(Timestamp,
+                                                       API ?? this,
+                                                       Request,
+                                                       Response);
+
+        #endregion
+
+
+        #region (protected internal) StopSessionCallbackRequest       (Request)
+
+        /// <summary>
+        /// An event sent whenever a stop session callback was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnStopSessionCallbackRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a stop session callback was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task StopSessionCallbackRequest(DateTime     Timestamp,
+                                                           HTTPAPI      API,
+                                                           OCPIRequest  Request)
+
+            => OnStopSessionCallbackRequest?.WhenAll(Timestamp,
+                                                     API ?? this,
+                                                     Request);
+
+        #endregion
+
+        #region (protected internal) StopSessionCallbackResponse      (Response)
+
+        /// <summary>
+        /// An event sent whenever a stop session callback response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnStopSessionCallbackResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a stop session callback response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task StopSessionCallbackResponse(DateTime      Timestamp,
+                                                            HTTPAPI       API,
+                                                            OCPIRequest   Request,
+                                                            OCPIResponse  Response)
+
+            => OnStopSessionCallbackResponse?.WhenAll(Timestamp,
+                                                      API ?? this,
+                                                      Request,
+                                                      Response);
+
+        #endregion
+
+
+        #region (protected internal) UnlockConnectorCallbackRequest   (Request)
+
+        /// <summary>
+        /// An event sent whenever a unlock connector callback was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnUnlockConnectorCallbackRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a unlock connector callback was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task UnlockConnectorCallbackRequest(DateTime     Timestamp,
+                                                               HTTPAPI      API,
+                                                               OCPIRequest  Request)
+
+            => OnUnlockConnectorCallbackRequest?.WhenAll(Timestamp,
+                                                         API ?? this,
+                                                         Request);
+
+        #endregion
+
+        #region (protected internal) UnlockConnectorCallbackResponse  (Response)
+
+        /// <summary>
+        /// An event sent whenever a unlock connector callback response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnUnlockConnectorCallbackResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a unlock connector callback response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the callback response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task UnlockConnectorCallbackResponse(DateTime      Timestamp,
+                                                                HTTPAPI       API,
+                                                                OCPIRequest   Request,
+                                                                OCPIResponse  Response)
+
+            => OnUnlockConnectorCallbackResponse?.WhenAll(Timestamp,
+                                                          API ?? this,
+                                                          Request,
+                                                          Response);
 
         #endregion
 
@@ -5785,6 +6113,445 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.OK,
                                                         AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+
+
+            // Commands
+
+            #region ~/commands/RESERVE_NOW/{commandId}
+
+            #region OPTIONS  ~/commands/RESERVE_NOW/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/RESERVE_NOW/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  ReserveNowCallbackRequest,
+                                     OCPIResponseLogger: ReserveNowCallbackResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Check command identification
+
+                                         if (!Request.ParseCommandId(this,
+                                                                     out Command_Id?           CommandId,
+                                                                     out OCPIResponse.Builder  OCPIResponseBuilder))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse command result JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!CommandResult.TryParse(JSONCDR,
+                                                                     out CommandResult  commandResult,
+                                                                     out String         ErrorResponse))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: Process callback!
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/CANCEL_RESERVATION/{commandId}
+
+            #region OPTIONS  ~/commands/CANCEL_RESERVATION/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/CANCEL_RESERVATION/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  CancelReservationCallbackRequest,
+                                     OCPIResponseLogger: CancelReservationCallbackResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Check command identification
+
+                                         if (!Request.ParseCommandId(this,
+                                                                     out Command_Id?           CommandId,
+                                                                     out OCPIResponse.Builder  OCPIResponseBuilder))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse command result JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!CommandResult.TryParse(JSONCDR,
+                                                                     out CommandResult  commandResult,
+                                                                     out String         ErrorResponse))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: Process callback!
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/START_SESSION/{commandId}
+
+            #region OPTIONS  ~/commands/START_SESSION/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/START_SESSION/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  StartSessionCallbackRequest,
+                                     OCPIResponseLogger: StartSessionCallbackResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Check command identification
+
+                                         if (!Request.ParseCommandId(this,
+                                                                     out Command_Id?           CommandId,
+                                                                     out OCPIResponse.Builder  OCPIResponseBuilder))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse command result JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!CommandResult.TryParse(JSONCDR,
+                                                                     out CommandResult  commandResult,
+                                                                     out String         ErrorResponse))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: Process callback!
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/STOP_SESSION/{commandId}
+
+            #region OPTIONS  ~/commands/STOP_SESSION/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/STOP_SESSION/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/STOP_SESSION/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/STOP_SESSION/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  StopSessionCallbackRequest,
+                                     OCPIResponseLogger: StopSessionCallbackResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Check command identification
+
+                                         if (!Request.ParseCommandId(this,
+                                                                     out Command_Id?           CommandId,
+                                                                     out OCPIResponse.Builder  OCPIResponseBuilder))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse command result JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!CommandResult.TryParse(JSONCDR,
+                                                                     out CommandResult  commandResult,
+                                                                     out String         ErrorResponse))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: Process callback!
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                };
+
+                                     });
+
+            #endregion
+
+            #endregion
+
+            #region ~/commands/UNLOCK_CONNECTOR/{commandId}
+
+            #region OPTIONS  ~/commands/UNLOCK_CONNECTOR/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.OPTIONS,
+                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequest: Request => {
+
+                                         return Task.FromResult(
+                                             new OCPIResponse.Builder(Request) {
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                             });
+
+                                     });
+
+            #endregion
+
+            #region POST     ~/commands/UNLOCK_CONNECTOR/{commandId}
+
+            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+                                     HTTPMethod.POST,
+                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
+                                     HTTPContentType.JSON_UTF8,
+                                     OCPIRequestLogger:  UnlockConnectorCallbackRequest,
+                                     OCPIResponseLogger: UnlockConnectorCallbackResponse,
+                                     OCPIRequest:  async Request => {
+
+                                         #region Check command identification
+
+                                         if (!Request.ParseCommandId(this,
+                                                                     out Command_Id?           CommandId,
+                                                                     out OCPIResponse.Builder  OCPIResponseBuilder))
+                                         {
+                                             return OCPIResponseBuilder;
+                                         }
+
+                                         #endregion
+
+                                         #region Parse command result JSON
+
+                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                             return OCPIResponse;
+
+                                         if (!CommandResult.TryParse(JSONCDR,
+                                                                     out CommandResult  commandResult,
+                                                                     out String         ErrorResponse))
+                                         {
+
+                                             return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            AccessControlAllowMethods  = "OPTIONS, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
+
+                                         }
+
+                                         #endregion
+
+
+                                         // ToDo: Process callback!
+
+
+                                         return new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 1000,
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.OK,
+                                                        AccessControlAllowMethods  = "OPTIONS, POST",
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 };

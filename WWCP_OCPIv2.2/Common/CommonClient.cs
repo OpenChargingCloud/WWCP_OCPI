@@ -186,6 +186,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
 
+        protected static readonly Random random = new Random(DateTime.Now.Millisecond);
+
         #endregion
 
         #region Properties
@@ -203,6 +205,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The remote URL of the VERSIONS endpoint to connect to.
         /// </summary>
         public URL                                  VersionsURL                   { get; }
+
+        /// <summary>
+        /// The local URL of the COMMANDS endpoint.
+        /// </summary>
+        public URL                                  MyCommandsURL                 { get; }
 
         /// <summary>
         /// The remote hostname.
@@ -341,14 +348,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new EMSP client.
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
-        /// <param name="VersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
+        /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
+        /// <param name="MyCommandsURL">The local URL of the COMMANDS endpoint.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public CommonClient(AccessToken                          AccessToken,
-                            URL                                  VersionsURL,
+                            URL                                  RemoteVersionsURL,
+                            URL                                  MyCommandsURL,
                             HTTPHostname?                        VirtualHostname              = null,
                             RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                             TimeSpan?                            RequestTimeout               = null,
@@ -358,9 +367,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.AccessToken                 = AccessToken;
             this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
-            this.VersionsURL                 = VersionsURL;
-            this.Hostname                    = VersionsURL.Hostname;
-            this.RemotePort                  = VersionsURL.Port   ?? DefaultRemotePort;
+            this.VersionsURL                 = RemoteVersionsURL;
+            this.Hostname                    = RemoteVersionsURL.Hostname;
+            this.RemotePort                  = RemoteVersionsURL.Port   ?? DefaultRemotePort;
+            this.MyCommandsURL               = MyCommandsURL;
             this.VirtualHostname             = VirtualHostname;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
             this.RequestTimeout              = RequestTimeout     ?? DefaultRequestTimeout;

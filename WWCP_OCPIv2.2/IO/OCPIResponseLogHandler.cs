@@ -32,11 +32,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// </summary>
     /// <param name="Timestamp">The timestamp of the incoming request.</param>
     /// <param name="OCPIAPI">The sending OCPI/HTTP API.</param>
-    /// <param name="Request">The incoming request.</param>
-    /// <param name="Response">The outgoing response.</param>
+    /// <param name="Request">The incoming OCPI/HTTP request.</param>
+    /// <param name="Response">The outgoing OCPI/HTTP response.</param>
     public delegate Task OCPIResponseLogHandler(DateTime      Timestamp,
                                                 HTTPAPI       OCPIAPI,
                                                 OCPIRequest   Request,
-                                                HTTPResponse  Response);
+                                                OCPIResponse  Response);
 
 }

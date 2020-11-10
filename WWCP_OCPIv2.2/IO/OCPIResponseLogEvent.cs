@@ -142,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public async Task InvokeAsync(DateTime      ServerTimestamp,
                                       HTTPAPI       OCPIAPI,
                                       OCPIRequest   Request,
-                                      HTTPResponse  Response)
+                                      OCPIResponse  Response)
         {
 
             OCPIResponseLogHandler[] _invocationList;
@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public Task WhenAny(DateTime      ServerTimestamp,
                             HTTPAPI       OCPIAPI,
                             OCPIRequest   Request,
-                            HTTPResponse  Response,
+                            OCPIResponse  Response,
                             TimeSpan?     Timeout = null)
         {
 
@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public Task<T> WhenFirst<T>(DateTime           ServerTimestamp,
                                     HTTPAPI            OCPIAPI,
                                     OCPIRequest        Request,
-                                    HTTPResponse       Response,
+                                    OCPIResponse       Response,
                                     Func<T, Boolean>   VerifyResult,
                                     TimeSpan?          Timeout        = null,
                                     Func<TimeSpan, T>  DefaultResult  = null)
@@ -292,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public Task WhenAll(DateTime      ServerTimestamp,
                             HTTPAPI       OCPIAPI,
                             OCPIRequest   Request,
-                            HTTPResponse  Response)
+                            OCPIResponse  Response)
         {
 
             Task[] _invocationList;
@@ -300,8 +300,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (subscribers)
             {
                 _invocationList = subscribers.
-                                        Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
-                                        ToArray();
+                                      Select(callback => callback(ServerTimestamp, OCPIAPI, Request, Response)).
+                                      ToArray();
             }
 
             return Task.WhenAll(_invocationList);

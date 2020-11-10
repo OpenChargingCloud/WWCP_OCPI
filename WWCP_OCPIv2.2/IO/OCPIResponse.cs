@@ -249,6 +249,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 HTTPResponseBuilder.Set("X-Request-ID",      Request.RequestId).
                                     Set("X-Correlation-ID",  Request.CorrelationId);
 
+                HTTPResponseBuilder.SubprotocolResponse = this;
+
                 return HTTPResponseBuilder;
 
             }

@@ -18,21 +18,9 @@
 #region Usings
 
 using System;
-using System.IO;
-using System.Linq;
-using System.Net.Security;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Collections.Generic;
-
-using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
-
-using org.GraphDefined.WWCP;
 
 using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
@@ -58,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <summary>
             /// The default context for this logger.
             /// </summary>
-            public const String DefaultContext = "OCPIEMSPClient";
+            public const String  DefaultContext  = "OCPIEMSPClient";
 
             #endregion
 
@@ -81,9 +69,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="EMSPClient">A EMSP client.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public EMSPClientLogger(EMSPClient            EMSPClient,
-                                      String                  Context         = DefaultContext,
-                                      LogfileCreatorDelegate  LogfileCreator  = null)
+            public EMSPClientLogger(EMSPClient              EMSPClient,
+                                    String                  Context         = DefaultContext,
+                                    LogfileCreatorDelegate  LogfileCreator  = null)
 
                 : this(EMSPClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -122,25 +110,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP client sent events source.</param>
             /// 
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public EMSPClientLogger(EMSPClient                EMSPClient,
-                                      String                      Context,
+            public EMSPClientLogger(EMSPClient                  EMSPClient,
+                                    String                      Context,
 
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
+                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
+                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
+                                    HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                                    HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                                    HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                                    HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                                      LogfileCreatorDelegate      LogfileCreator              = null)
+                                    LogfileCreatorDelegate      LogfileCreator              = null)
 
                 : base(EMSPClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -170,22 +158,294 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Register log events
 
-                //RegisterEvent("SendHeartbeatRequest",
-                //              handler => CPOClient.OnSendHeartbeatSOAPRequest  += handler,
-                //              handler => CPOClient.OnSendHeartbeatSOAPRequest  -= handler,
-                //              "SendHeartbeat", "Heartbeat", "Request", "All").
-                //    RegisterDefaultConsoleLogTarget(this).
-                //    RegisterDefaultDiscLogTarget(this);
+                #region Locations
 
-                //RegisterEvent("SendHeartbeatResponse",
-                //              handler => CPOClient.OnSendHeartbeatSOAPResponse += handler,
-                //              handler => CPOClient.OnSendHeartbeatSOAPResponse -= handler,
-                //              "SendHeartbeat", "Heartbeat", "Response", "All").
-                //    RegisterDefaultConsoleLogTarget(this).
-                //    RegisterDefaultDiscLogTarget(this);
+                RegisterEvent("GetLocationsRequest",
+                              handler => EMSPClient.OnGetLocationsHTTPRequest += handler,
+                              handler => EMSPClient.OnGetLocationsHTTPRequest -= handler,
+                              "GetLocations", "Locations", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
 
+                RegisterEvent("GetLocationsResponse",
+                              handler => EMSPClient.OnGetLocationsHTTPResponse += handler,
+                              handler => EMSPClient.OnGetLocationsHTTPResponse -= handler,
+                              "GetLocations", "Locations", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetLocationByIdRequest",
+                              handler => EMSPClient.OnGetLocationByIdHTTPRequest += handler,
+                              handler => EMSPClient.OnGetLocationByIdHTTPRequest -= handler,
+                              "GetLocationById", "Locations", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetLocationByIdResponse",
+                              handler => EMSPClient.OnGetLocationByIdHTTPResponse += handler,
+                              handler => EMSPClient.OnGetLocationByIdHTTPResponse -= handler,
+                              "GetLocationById", "Locations", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetEVSEByUIdRequest",
+                              handler => EMSPClient.OnGetEVSEByUIdHTTPRequest += handler,
+                              handler => EMSPClient.OnGetEVSEByUIdHTTPRequest -= handler,
+                              "GetEVSEByUId", "EVSEs", "Locations", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetEVSEByUIdResponse",
+                              handler => EMSPClient.OnGetEVSEByUIdHTTPResponse += handler,
+                              handler => EMSPClient.OnGetEVSEByUIdHTTPResponse -= handler,
+                              "GetEVSEByUId", "EVSEs", "Locations", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetConnectorByIdRequest",
+                              handler => EMSPClient.OnGetConnectorByIdHTTPRequest += handler,
+                              handler => EMSPClient.OnGetConnectorByIdHTTPRequest -= handler,
+                              "GetConnectorById", "Connectors", "Locations", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetConnectorByIdResponse",
+                              handler => EMSPClient.OnGetConnectorByIdHTTPResponse += handler,
+                              handler => EMSPClient.OnGetConnectorByIdHTTPResponse -= handler,
+                              "GetConnectorById", "Connectors", "Locations", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                #endregion
+
+                #region Tariffs
+
+                RegisterEvent("GetTariffsRequest",
+                              handler => EMSPClient.OnGetTariffsHTTPRequest += handler,
+                              handler => EMSPClient.OnGetTariffsHTTPRequest -= handler,
+                              "GetTariffs", "Tariffs", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetTariffsResponse",
+                              handler => EMSPClient.OnGetTariffsHTTPResponse += handler,
+                              handler => EMSPClient.OnGetTariffsHTTPResponse -= handler,
+                              "GetTariffs", "Tariffs", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetTariffByIdRequest",
+                              handler => EMSPClient.OnGetTariffByIdHTTPRequest += handler,
+                              handler => EMSPClient.OnGetTariffByIdHTTPRequest -= handler,
+                              "GetTariffById", "Tariffs", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetTariffByIdResponse",
+                              handler => EMSPClient.OnGetTariffByIdHTTPResponse += handler,
+                              handler => EMSPClient.OnGetTariffByIdHTTPResponse -= handler,
+                              "GetTariffById", "Tariffs", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                #endregion
+
+                #region Sessions
+
+                RegisterEvent("GetSessionsRequest",
+                              handler => EMSPClient.OnGetSessionsHTTPRequest += handler,
+                              handler => EMSPClient.OnGetSessionsHTTPRequest -= handler,
+                              "GetSessions", "Sessions", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetSessionsResponse",
+                              handler => EMSPClient.OnGetSessionsHTTPResponse += handler,
+                              handler => EMSPClient.OnGetSessionsHTTPResponse -= handler,
+                              "GetSessions", "Sessions", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetSessionByIdRequest",
+                              handler => EMSPClient.OnGetSessionByIdHTTPRequest += handler,
+                              handler => EMSPClient.OnGetSessionByIdHTTPRequest -= handler,
+                              "GetSessionById", "Sessions", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetSessionByIdResponse",
+                              handler => EMSPClient.OnGetSessionByIdHTTPResponse += handler,
+                              handler => EMSPClient.OnGetSessionByIdHTTPResponse -= handler,
+                              "GetSessionById", "Sessions", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                #endregion
+
+                #region CDRs
+
+                RegisterEvent("GetCDRsRequest",
+                              handler => EMSPClient.OnGetCDRsHTTPRequest += handler,
+                              handler => EMSPClient.OnGetCDRsHTTPRequest -= handler,
+                              "GetCDRs", "CDRs", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetCDRsResponse",
+                              handler => EMSPClient.OnGetCDRsHTTPResponse += handler,
+                              handler => EMSPClient.OnGetCDRsHTTPResponse -= handler,
+                              "GetCDRs", "CDRs", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetCDRByIdRequest",
+                              handler => EMSPClient.OnGetCDRByIdHTTPRequest += handler,
+                              handler => EMSPClient.OnGetCDRByIdHTTPRequest -= handler,
+                              "GetCDRById", "CDRs", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetCDRByIdResponse",
+                              handler => EMSPClient.OnGetCDRByIdHTTPResponse += handler,
+                              handler => EMSPClient.OnGetCDRByIdHTTPResponse -= handler,
+                              "GetCDRById", "CDRs", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                #endregion
+
+                #region Sessions
+
+                RegisterEvent("GetTokenRequest",
+                              handler => EMSPClient.OnGetTokenHTTPRequest += handler,
+                              handler => EMSPClient.OnGetTokenHTTPRequest -= handler,
+                              "GetToken", "Tokens", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetTokenResponse",
+                              handler => EMSPClient.OnGetTokenHTTPResponse += handler,
+                              handler => EMSPClient.OnGetTokenHTTPResponse -= handler,
+                              "GetToken", "Tokens", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("PutTokenRequest",
+                              handler => EMSPClient.OnPutTokenHTTPRequest += handler,
+                              handler => EMSPClient.OnPutTokenHTTPRequest -= handler,
+                              "PutToken", "Tokens", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("PutTokenResponse",
+                              handler => EMSPClient.OnPutTokenHTTPResponse += handler,
+                              handler => EMSPClient.OnPutTokenHTTPResponse -= handler,
+                              "PutToken", "Tokens", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("PatchTokenRequest",
+                              handler => EMSPClient.OnPatchTokenHTTPRequest += handler,
+                              handler => EMSPClient.OnPatchTokenHTTPRequest -= handler,
+                              "PatchToken", "Tokens", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("PatchTokenResponse",
+                              handler => EMSPClient.OnPatchTokenHTTPResponse += handler,
+                              handler => EMSPClient.OnPatchTokenHTTPResponse -= handler,
+                              "PatchToken", "Tokens", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                #endregion
+
+                #region Commands
+
+                RegisterEvent("ReserveNowRequest",
+                              handler => EMSPClient.OnReserveNowHTTPRequest += handler,
+                              handler => EMSPClient.OnReserveNowHTTPRequest -= handler,
+                              "ReserveNow", "Reservations", "Commands", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("ReserveNowResponse",
+                              handler => EMSPClient.OnReserveNowHTTPResponse += handler,
+                              handler => EMSPClient.OnReserveNowHTTPResponse -= handler,
+                              "ReserveNow", "Reservations", "ReserveNow", "Commands", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("CancelReservationRequest",
+                              handler => EMSPClient.OnCancelReservationHTTPRequest += handler,
+                              handler => EMSPClient.OnCancelReservationHTTPRequest -= handler,
+                              "CancelReservation", "Reservations", "Commands", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("CancelReservationResponse",
+                              handler => EMSPClient.OnCancelReservationHTTPResponse += handler,
+                              handler => EMSPClient.OnCancelReservationHTTPResponse -= handler,
+                              "CancelReservation", "Reservations", "Commands", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+
+                RegisterEvent("StartSessionRequest",
+                              handler => EMSPClient.OnStartSessionHTTPRequest += handler,
+                              handler => EMSPClient.OnStartSessionHTTPRequest -= handler,
+                              "StartSession", "StartStopSessions", "Commands", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("StartSessionResponse",
+                              handler => EMSPClient.OnStartSessionHTTPResponse += handler,
+                              handler => EMSPClient.OnStartSessionHTTPResponse -= handler,
+                              "StartSession", "StartStopSessions", "Commands", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("StopSessionRequest",
+                              handler => EMSPClient.OnStopSessionHTTPRequest += handler,
+                              handler => EMSPClient.OnStopSessionHTTPRequest -= handler,
+                              "StopSession", "StopStopSessions", "Commands", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("StopSessionResponse",
+                              handler => EMSPClient.OnStopSessionHTTPResponse += handler,
+                              handler => EMSPClient.OnStopSessionHTTPResponse -= handler,
+                              "StopSession", "StopStopSessions", "Commands", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+
+                RegisterEvent("UnlockConnectorRequest",
+                              handler => EMSPClient.OnUnlockConnectorHTTPRequest += handler,
+                              handler => EMSPClient.OnUnlockConnectorHTTPRequest -= handler,
+                              "UnlockConnector", "Commands", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("UnlockConnectorResponse",
+                              handler => EMSPClient.OnUnlockConnectorHTTPResponse += handler,
+                              handler => EMSPClient.OnUnlockConnectorHTTPResponse -= handler,
+                              "UnlockConnector", "Commands", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
 
                 #endregion
 

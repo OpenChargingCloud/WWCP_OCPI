@@ -1010,6 +1010,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     #endregion
 
 
+    #region OnSetChargingProfileRequest/-Response
+
+    /// <summary>
+    /// A delegate called whenever a set charging profile request will be send.
+    /// </summary>
+    public delegate Task OnSetChargingProfileRequestDelegate(DateTime                                    LogTimestamp,
+                                                             DateTime                                    RequestTimestamp,
+                                                             CommonClient                                Sender,
+                                                             String                                      SenderId,
+                                                             EventTracking_Id                            EventTrackingId,
+
+                                                             //Partner_Id                                  PartnerId,
+                                                             //Operator_Id                                 OperatorId,
+                                                             //ChargingPool_Id                             ChargingPoolId,
+                                                             //DateTime                                    StatusEventDate,
+                                                             //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                             //Transaction_Id?                             TransactionId,
+                                                             //DateTime?                                   AvailabilityStatusUntil,
+                                                             //String                                      AvailabilityStatusComment,
+
+                                                             TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a set charging profile request had been received.
+    /// </summary>
+    public delegate Task OnSetChargingProfileResponseDelegate(DateTime                                    LogTimestamp,
+                                                              DateTime                                    RequestTimestamp,
+                                                              CommonClient                                Sender,
+                                                              String                                      SenderId,
+                                                              EventTracking_Id                            EventTrackingId,
+
+                                                              //Partner_Id                                  PartnerId,
+                                                              //Operator_Id                                 OperatorId,
+                                                              //ChargingPool_Id                             ChargingPoolId,
+                                                              //DateTime                                    StatusEventDate,
+                                                              //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                              //Transaction_Id?                             TransactionId,
+                                                              //DateTime?                                   AvailabilityStatusUntil,
+                                                              //String                                      AvailabilityStatusComment,
+
+                                                              TimeSpan                                    RequestTimeout,
+                                                              //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                              TimeSpan                                    Duration);
+
+    #endregion
+
+
+
     /// <summary>
     /// The CPO client.
     /// </summary>
@@ -1040,14 +1088,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
-
-        #region Data
-
-        #endregion
-
-        #region Properties
-
-        #endregion
 
         #region Events
 
@@ -1565,6 +1605,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region OnSetChargingProfileRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a request setting a charging profile will be send.
+        /// </summary>
+        public event OnSetChargingProfileRequestDelegate   OnSetChargingProfileRequest;
+
+        /// <summary>
+        /// An event fired whenever a HTTP request setting a charging profile will be send.
+        /// </summary>
+        public event ClientRequestLogHandler               OnSetChargingProfileHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a set charging profile HTTP request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler              OnSetChargingProfileHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a set charging profile request had been received.
+        /// </summary>
+        public event OnSetChargingProfileResponseDelegate  OnSetChargingProfileResponse;
+
+        #endregion
+
         #endregion
 
         #region Constructor(s)
@@ -1573,14 +1638,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new EMSP client.
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
-        /// <param name="URL">The remote URL to connect to.</param>
+        /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
+        /// <param name="MyCommandsURL">The local URL of the COMMANDS endpoint.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public CPOClient(AccessToken                          AccessToken,
-                         URL                                  URL,
+                         URL                                  RemoteVersionsURL,
+                         URL                                  MyCommandsURL,
                          HTTPHostname?                        VirtualHostname              = null,
                          RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                          TimeSpan?                            RequestTimeout               = null,
@@ -1588,7 +1655,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          DNSClient                            DNSClient                    = null)
 
             : base(AccessToken,
-                   URL,
+                   RemoteVersionsURL,
+                   MyCommandsURL,
                    VirtualHostname,
                    RemoteCertificateValidator,
                    RequestTimeout,
@@ -5649,6 +5717,202 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 e.Log(nameof(CPOClient) + "." + nameof(OnPostTokenResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+
+        // Commands
+
+        #region SetChargingProfile(Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+
+        /// <summary>
+        /// Put/store the given token on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<ChargingProfileResponse>>
+
+            SetChargingProfile(Session_Id          SessionId,
+                               ChargingProfile     ChargingProfile,
+
+                               Request_Id?         RequestId           = null,
+                               Correlation_Id?     CorrelationId       = null,
+                               Version_Id?         VersionId           = null,
+
+                               DateTime?           Timestamp           = null,
+                               CancellationToken?  CancellationToken   = null,
+                               EventTracking_Id    EventTrackingId     = null,
+                               TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            OCPIResponse<ChargingProfileResponse> response;
+
+            var Command = new SetChargingProfileCommand(ChargingProfile,
+                                                        MyCommandsURL + "SET_CHARGING_PROFILE" + random.RandomString(50));
+
+            #region Send OnSetChargingProfileRequest event
+
+            var StartTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.SetChargingProfile.IncRequests();
+
+                //if (OnSetChargingProfileRequest != null)
+                //    await Task.WhenAll(OnSetChargingProfileRequest.GetInvocationList().
+                //                       Cast<OnSetChargingProfileRequestDelegate>().
+                //                       Select(e => e(StartTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnSetChargingProfileRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.ChargingProfiles,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
+
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
+
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.PUT,
+                                                                                     remoteURL.Value.Path + SessionId.ToString(),
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      //RequestLogDelegate:   OnSetChargingProfileHTTPRequest,
+                                                      //ResponseLogDelegate:  OnSetChargingProfileHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<ChargingProfileResponse>.ParseJObject(HTTPResponse,
+                                                                                  requestId,
+                                                                                  correlationId,
+                                                                                  json => ChargingProfileResponse.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, ChargingProfileResponse>("",
+                                                                                 default,
+                                                                                 -1,
+                                                                                 "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, ChargingProfileResponse>("",
+                                                                             default,
+                                                                             -1,
+                                                                             e.Message,
+                                                                             e.StackTrace);
+
+            }
+
+
+            #region Send OnSetChargingProfileResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnSetChargingProfileResponse != null)
+                //    await Task.WhenAll(OnSetChargingProfileResponse.GetInvocationList().
+                //                       Cast<OnSetChargingProfileResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StartTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                e.Log(nameof(EMSPClient) + "." + nameof(OnSetChargingProfileResponse));
             }
 
             #endregion

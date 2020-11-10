@@ -72,8 +72,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public event OnReserveResponseDelegate            OnReserveResponse;
         public event OnNewReservationDelegate             OnNewReservation;
 
-        public event OnCancelReservationRequestDelegate   OnCancelReservationRequest;
-        public event OnCancelReservationResponseDelegate  OnCancelReservationResponse;
+        public event org.GraphDefined.WWCP.OnCancelReservationRequestDelegate   OnCancelReservationRequest;
+        public event org.GraphDefined.WWCP.OnCancelReservationResponseDelegate  OnCancelReservationResponse;
         public event OnReservationCanceledDelegate        OnReservationCanceled;
 
         public event OnRemoteStartRequestDelegate         OnRemoteStartRequest;
