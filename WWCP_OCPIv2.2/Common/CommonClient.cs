@@ -134,8 +134,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     #endregion
 
 
+    #region OnRegisterRequest/-Response
+
     /// <summary>
-    /// The common client.
+    /// A delegate called whenever a registration request will be send.
+    /// </summary>
+    public delegate Task OnRegisterRequestDelegate (DateTime                                    LogTimestamp,
+                                                    DateTime                                    RequestTimestamp,
+                                                    CommonClient                                Sender,
+                                                    String                                      SenderId,
+                                                    EventTracking_Id                            EventTrackingId,
+                                                   
+                                                    //Partner_Id                                  PartnerId,
+                                                    //Operator_Id                                 OperatorId,
+                                                    //ChargingPool_Id                             ChargingPoolId,
+                                                    //DateTime                                    StatusEventDate,
+                                                    //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                    //Transaction_Id?                             TransactionId,
+                                                    //DateTime?                                   AvailabilityStatusUntil,
+                                                    //String                                      AvailabilityStatusComment,
+
+                                                    TimeSpan                                    RequestTimeout);
+
+    /// <summary>
+    /// A delegate called whenever a response to a registration request had been received.
+    /// </summary>
+    public delegate Task OnRegisterResponseDelegate(DateTime                                    LogTimestamp,
+                                                    DateTime                                    RequestTimestamp,
+                                                    CommonClient                                Sender,
+                                                    String                                      SenderId,
+                                                    EventTracking_Id                            EventTrackingId,
+
+                                                    //Partner_Id                                  PartnerId,
+                                                    //Operator_Id                                 OperatorId,
+                                                    //ChargingPool_Id                             ChargingPoolId,
+                                                    //DateTime                                    StatusEventDate,
+                                                    //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
+                                                    //Transaction_Id?                             TransactionId,
+                                                    //DateTime?                                   AvailabilityStatusUntil,
+                                                    //String                                      AvailabilityStatusComment,
+
+                                                    TimeSpan                                    RequestTimeout,
+                                                    //SetChargingPoolAvailabilityStatusResponse   Result,
+                                                    TimeSpan                                    Duration);
+
+    #endregion
+
+
+    /// <summary>
+    /// The OCPI common client.
     /// </summary>
     public partial class CommonClient : IHTTPClient
     {
@@ -207,9 +254,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public URL                                  VersionsURL                   { get; }
 
         /// <summary>
-        /// The local URL of the COMMANDS endpoint.
+        /// My Common API.
         /// </summary>
-        public URL                                  MyCommandsURL                 { get; }
+        public CommonAPI                            MyCommonAPI                   { get; }
 
         /// <summary>
         /// The remote hostname.
@@ -255,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The attached eMIP CPO client (HTTP/SOAP client) logger.
         /// </summary>
-        public CommonClientLogger                   Logger                        { get; }
+        public Logger                               HTTPLogger                    { get; }
 
         /// <summary>
         /// The maximum number of transmission retries.
@@ -315,6 +362,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region OnRegisterRequest/-Response
+
+        /// <summary>
+        /// An event fired whenever a registration request will be send.
+        /// </summary>
+        public event OnRegisterRequestDelegate   OnRegisterRequest;
+
+        /// <summary>
+        /// An event fired whenever a HTTP registration request will be send.
+        /// </summary>
+        public event ClientRequestLogHandler     OnRegisterHTTPRequest;
+
+        /// <summary>
+        /// An event fired whenever a response to a HTTP registration request had been received.
+        /// </summary>
+        public event ClientResponseLogHandler    OnRegisterHTTPResponse;
+
+        /// <summary>
+        /// An event fired whenever a response to a registration request had been received.
+        /// </summary>
+        public event OnRegisterResponseDelegate  OnRegisterResponse;
+
+        #endregion
+
         #region OnPostCredentialsRequest/-Response
 
         /// <summary>
@@ -339,7 +410,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-
         #endregion
 
         #region Constructor(s)
@@ -349,7 +419,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="MyCommandsURL">The local URL of the COMMANDS endpoint.</param>
+        /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
@@ -357,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public CommonClient(AccessToken                          AccessToken,
                             URL                                  RemoteVersionsURL,
-                            URL                                  MyCommandsURL,
+                            CommonAPI                            MyCommonAPI,
                             HTTPHostname?                        VirtualHostname              = null,
                             RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                             TimeSpan?                            RequestTimeout               = null,
@@ -370,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.VersionsURL                 = RemoteVersionsURL;
             this.Hostname                    = RemoteVersionsURL.Hostname;
             this.RemotePort                  = RemoteVersionsURL.Port   ?? DefaultRemotePort;
-            this.MyCommandsURL               = MyCommandsURL;
+            this.MyCommonAPI                 = MyCommonAPI;
             this.VirtualHostname             = VirtualHostname;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
             this.RequestTimeout              = RequestTimeout     ?? DefaultRequestTimeout;
@@ -378,12 +448,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.DNSClient                   = DNSClient;
 
             this.Counters                    = new CommonCounters();
+            this.HTTPLogger                  = new Logger(this);
 
         }
 
         #endregion
 
 
+        #region GetRemoteURL(VersionId, ModuleId, InterfaceRole)
 
         public async Task<URL?> GetRemoteURL(Version_Id?     VersionId,
                                              ModuleIDs       ModuleId,
@@ -431,9 +503,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        #endregion
 
 
-        #region Register(AccessToken,
+        #region Register(VersionId, ...)
 
         //  1. We create <CREDENTIALS_TOKEN_A> and associate it with <CountryCode> + <PartyId>.
         //  2. We send <CREDENTIALS_TOKEN_A> and <VERSIONS endpoint> to the other party... e.g. via e-mail.
@@ -460,61 +533,213 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Post the given credentials.
         /// </summary>
-        /// <param name="CredentialTokenA"></param>
-        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<RemoteStartResult>
+        public async Task<OCPIResponse<Credentials>>
 
-            Register(//AccessToken         CredentialTokenA,
-                     //URL                 VersionsEndpoint,
+            Register(Version_Id?                   VersionId           = null,
+                     URL?                          MyVersionsURL       = null,
+                     IEnumerable<CredentialsRole>  MyRoles             = null,
+                     AccessToken?                  CredentialTokenB    = null,
 
-                     DateTime?           Timestamp           = null,
-                     CancellationToken?  CancellationToken   = null,
-                     EventTracking_Id    EventTrackingId     = null,
-                     TimeSpan?           RequestTimeout      = null)
+                     Request_Id?                   RequestId           = null,
+                     Correlation_Id?               CorrelationId       = null,
+
+                     DateTime?                     Timestamp           = null,
+                     CancellationToken?            CancellationToken   = null,
+                     EventTracking_Id              EventTrackingId     = null,
+                     TimeSpan?                     RequestTimeout      = null)
         {
 
-            #region Initial checks
+            OCPIResponse<Credentials> response;
 
-            //if (CredentialTokenA is null)
-            //    throw new ArgumentNullException(nameof(CredentialTokenA), "The given credentials must not be null!");
+            #region Send OnRegisterRequest event
+
+            var StartTime = DateTime.UtcNow;
+
+            //try
+            //{
+
+            //    //Counters.GetLocations.IncRequests();
+
+            //    //if (OnGetLocationsRequest != null)
+            //    //    await Task.WhenAll(OnGetLocationsRequest.GetInvocationList().
+            //    //                       Cast<OnGetLocationsRequestDelegate>().
+            //    //                       Select(e => e(StartTime,
+            //    //                                     Request.Timestamp.Value,
+            //    //                                     this,
+            //    //                                     ClientId,
+            //    //                                     Request.EventTrackingId,
+
+            //    //                                     Request.PartnerId,
+            //    //                                     Request.OperatorId,
+            //    //                                     Request.ChargingPoolId,
+            //    //                                     Request.StatusEventDate,
+            //    //                                     Request.AvailabilityStatus,
+            //    //                                     Request.TransactionId,
+            //    //                                     Request.AvailabilityStatusUntil,
+            //    //                                     Request.AvailabilityStatusComment,
+
+            //    //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+            //    //                       ConfigureAwait(false);
+
+            //}
+            //catch (Exception e)
+            //{
+            //    e.Log(nameof(EMSPClient) + "." + nameof(OnGetLocationsRequest));
+            //}
 
             #endregion
 
 
-            var getVersion_HTTPResponse  = await GetVersions();
-
-            if (getVersion_HTTPResponse.StatusCode == 1000)
+            try
             {
 
-                var filteredVersions    = getVersion_HTTPResponse.Data.Where(version => version.Id.ToString() == "2.2").ToArray();
+                var versionId      = VersionId     ?? SelectedOCPIVersionId;
+                var myVersionsURL  = MyVersionsURL ?? MyCommonAPI?.OurVersionsURL;
+                var myRoles        = MyRoles       ?? MyCommonAPI?.OurCredentialRoles;
 
-                if (filteredVersions.Length == 1)
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Credentials,
+                                                        InterfaceRoles.RECEIVER);
+
+                if (!versionId.HasValue)
+                    response = new OCPIResponse<String, Credentials>("",
+                                                                     default,
+                                                                     -1,
+                                                                     "No versionId available!");
+
+                else if (!myVersionsURL.HasValue)
+                    response = new OCPIResponse<String, Credentials>("",
+                                                                     default,
+                                                                     -1,
+                                                                     "No my versions URL available!");
+
+                else if (!myRoles.SafeAny())
+                    response = new OCPIResponse<String, Credentials>("",
+                                                                     default,
+                                                                     -1,
+                                                                     "No credential roles available!");
+
+                else if (!remoteURL.HasValue)
+                    response = new OCPIResponse<String, Credentials>("",
+                                                                     default,
+                                                                     -1,
+                                                                     "No remote URL available!");
+
+                else
                 {
 
-                    var versionV2_2                        = filteredVersions.First();
+                    var requestId      = RequestId     ?? Request_Id.Random();
+                    var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                    var credentials    = new Credentials(CredentialTokenB ?? AccessToken.Random(),
+                                                         myVersionsURL.Value,
+                                                         myRoles);
 
-                    var getVersionDetails2_2_HTTPResponse  = await GetVersionDetails(Version_Id.Parse("2.2"));
+                    #region Upstream HTTP request...
 
+                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
 
+                                                  ? new HTTPClient (remoteURL.Value.Hostname,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
+                                                                    DNSClient:   DNSClient)
 
-                    var credentialTokenB  = AccessToken.Random();
+                                                  : new HTTPSClient(remoteURL.Value.Hostname,
+                                                                    RemoteCertificateValidator,
+                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
+                                                                    DNSClient:   DNSClient)).
 
-                    //var 
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path,
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = credentials.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
 
+                                                      RequestLogDelegate:   OnRegisterHTTPRequest,
+                                                      ResponseLogDelegate:  OnRegisterHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      EventTrackingId,
+                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<Credentials>.ParseJObject(HTTPResponse,
+                                                                      requestId,
+                                                                      correlationId,
+                                                                      json => Credentials.Parse(json));
+
+                    SelectedOCPIVersionId = versionId;
 
                 }
-                else
-                    return null; // Proper error message!
 
             }
-            else
-                return null; // Proper error message!
 
-            return null;
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, Credentials>("",
+                                                                 default,
+                                                                 -1,
+                                                                 e.Message,
+                                                                 e.StackTrace);
+
+            }
+
+            #region Send OnGetLocationsResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            //try
+            //{
+
+            //    // Update counters
+            //    //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+            //    //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+            //    //else
+            //    //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+            //    //if (OnGetLocationsResponse != null)
+            //    //    await Task.WhenAll(OnGetLocationsResponse.GetInvocationList().
+            //    //                       Cast<OnGetLocationsResponseDelegate>().
+            //    //                       Select(e => e(Endtime,
+            //    //                                     Request.Timestamp.Value,
+            //    //                                     this,
+            //    //                                     ClientId,
+            //    //                                     Request.EventTrackingId,
+
+            //    //                                     Request.PartnerId,
+            //    //                                     Request.OperatorId,
+            //    //                                     Request.ChargingPoolId,
+            //    //                                     Request.StatusEventDate,
+            //    //                                     Request.AvailabilityStatus,
+            //    //                                     Request.TransactionId,
+            //    //                                     Request.AvailabilityStatusUntil,
+            //    //                                     Request.AvailabilityStatusComment,
+
+            //    //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+            //    //                                     result.Content,
+            //    //                                     Endtime - StartTime))).
+            //    //                       ConfigureAwait(false);
+
+            //}
+            //catch (Exception e)
+            //{
+            //    e.Log(nameof(EMSPClient) + "." + nameof(OnGetLocationsResponse));
+            //}
+
+            #endregion
+
+            return response;
 
         }
 

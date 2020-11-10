@@ -26,19 +26,19 @@ using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// The EMSP client.
+    /// The OCPI EMSP client.
     /// </summary>
     public partial class EMSPClient : IHTTPClient
     {
 
         /// <summary>
-        /// The EMSP client (HTTP client) logger.
+        /// The OCPI EMSP client (HTTP client) logger.
         /// </summary>
-        public class EMSPClientLogger : HTTPClientLogger
+        public new class Logger : CommonClient.Logger
         {
 
             #region Data
@@ -61,7 +61,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Constructor(s)
 
-            #region EMSPClientLogger(EMSPClient, Context = DefaultContext, LogfileCreator = null)
+            #region Logger(EMSPClient, Context = DefaultContext, LogfileCreator = null)
 
             /// <summary>
             /// Create a new EMSP client logger using the default logging delegates.
@@ -69,9 +69,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="EMSPClient">A EMSP client.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public EMSPClientLogger(EMSPClient              EMSPClient,
-                                    String                  Context         = DefaultContext,
-                                    LogfileCreatorDelegate  LogfileCreator  = null)
+            public Logger(EMSPClient              EMSPClient,
+                          String                  Context         = DefaultContext,
+                          LogfileCreatorDelegate  LogfileCreator  = null)
 
                 : this(EMSPClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #endregion
 
-            #region EMSPClientLogger(EMSPClient, Context, ... Logging delegates ...)
+            #region Logger(EMSPClient, Context, ... Logging delegates ...)
 
             /// <summary>
             /// Create a new EMSP client logger using the given logging delegates.
@@ -110,25 +110,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP client sent events source.</param>
             /// 
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public EMSPClientLogger(EMSPClient                  EMSPClient,
-                                    String                      Context,
+            public Logger(EMSPClient                  EMSPClient,
+                          String                      Context,
 
-                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
-                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
-                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
-                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
-                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
-                                    HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
-                                    HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                                    HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
-                                    HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
-                                    HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
-                                    HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                                    LogfileCreatorDelegate      LogfileCreator              = null)
+                          LogfileCreatorDelegate      LogfileCreator              = null)
 
                 : base(EMSPClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -152,12 +152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             {
 
-                #region Initial checks
-
                 this.EMSPClient = EMSPClient ?? throw new ArgumentNullException(nameof(EMSPClient), "The given EMSP client must not be null!");
-
-                #endregion
-
 
                 #region Locations
 

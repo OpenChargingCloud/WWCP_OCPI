@@ -28,6 +28,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Text;
 
 #endregion
 
@@ -394,6 +395,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
         #endregion
+
+
+        public URL GetURL(ModuleIDs ModuleId)
+        {
+
+            switch (ModuleId)
+            {
+
+                case ModuleIDs.Credentials:
+                    return URL.Parse(OurVersionsURL.ToString().Replace("/versions", "")) + "credentials";
+
+                default:
+                    return OurVersionsURL;
+
+            }
+
+        }
 
 
         #region (private) RegisterURLTemplates()
@@ -1093,7 +1111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private async Task<OCPIResponse.Builder> POSTOrPUTCredentials(OCPIRequest Request)
         {
 
-            var CREDENTIALS_TOKEN_A = Request.AccessToken;
+            var CREDENTIALS_TOKEN_A     = Request.AccessToken;
 
             #region Parse JSON
 
@@ -1167,7 +1185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             var commonClient            = new CommonClient(receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
                                                            receivedCredentials.URL,
-                                                           URL.Parse("https://localhost:1234/commands"),
+                                                           this,
                                                            DNSClient: HTTPServer.DNSClient);
 
             var otherVersions           = await commonClient.GetVersions();

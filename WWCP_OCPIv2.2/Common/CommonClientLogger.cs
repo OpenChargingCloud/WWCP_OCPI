@@ -42,15 +42,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The common client.
+    /// The OCPI common client.
     /// </summary>
     public partial class CommonClient : IHTTPClient
     {
 
         /// <summary>
-        /// The common client (HTTP client) logger.
+        /// The OCPI common client (HTTP client) logger.
         /// </summary>
-        public class CommonClientLogger : HTTPClientLogger
+        public class Logger : HTTPClientLogger
         {
 
             #region Data
@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Constructor(s)
 
-            #region CommonClientLogger(CommonClient, Context = DefaultContext, LogfileCreator = null)
+            #region Logger(CommonClient, Context = DefaultContext, LogfileCreator = null)
 
             /// <summary>
             /// Create a new common client logger using the default logging delegates.
@@ -81,9 +81,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="CommonClient">A common client.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public CommonClientLogger(CommonClient            CommonClient,
-                                      String                  Context         = DefaultContext,
-                                      LogfileCreatorDelegate  LogfileCreator  = null)
+            public Logger(CommonClient            CommonClient,
+                          String                  Context         = DefaultContext,
+                          LogfileCreatorDelegate  LogfileCreator  = null)
 
                 : this(CommonClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #endregion
 
-            #region CommonClientLogger(CommonClient, Context, ... Logging delegates ...)
+            #region Logger(CommonClient, Context, ... Logging delegates ...)
 
             /// <summary>
             /// Create a new common client logger using the given logging delegates.
@@ -122,25 +122,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP client sent events source.</param>
             /// 
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public CommonClientLogger(CommonClient                CommonClient,
-                                      String                      Context,
+            public Logger(CommonClient                CommonClient,
+                          String                      Context,
 
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
-                                      HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
-                                      HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                                      LogfileCreatorDelegate      LogfileCreator              = null)
+                          LogfileCreatorDelegate      LogfileCreator              = null)
 
                 : base(CommonClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -164,28 +164,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             {
 
-                #region Initial checks
-
                 this.CommonClient = CommonClient ?? throw new ArgumentNullException(nameof(CommonClient), "The given common client must not be null!");
+
+                #region Versions
+
+                RegisterEvent("GetVersionsRequest",
+                              handler => CommonClient.OnGetVersionsHTTPRequest += handler,
+                              handler => CommonClient.OnGetVersionsHTTPRequest -= handler,
+                              "GetVersions", "Versions", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetVersionsResponse",
+                              handler => CommonClient.OnGetVersionsHTTPResponse += handler,
+                              handler => CommonClient.OnGetVersionsHTTPResponse -= handler,
+                              "GetVersions", "Versions", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetVersionDetailsRequest",
+                              handler => CommonClient.OnGetVersionDetailsHTTPRequest += handler,
+                              handler => CommonClient.OnGetVersionDetailsHTTPRequest -= handler,
+                              "GetVersionDetails", "Versions", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetVersionDetailsResponse",
+                              handler => CommonClient.OnGetVersionDetailsHTTPRequest += handler,
+                              handler => CommonClient.OnGetVersionDetailsHTTPRequest -= handler,
+                              "GetVersionDetails", "Versions", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
 
                 #endregion
 
-                #region Register log events
+                #region Credentials
 
-                //RegisterEvent("SendHeartbeatRequest",
-                //              handler => CPOClient.OnSendHeartbeatSOAPRequest  += handler,
-                //              handler => CPOClient.OnSendHeartbeatSOAPRequest  -= handler,
-                //              "SendHeartbeat", "Heartbeat", "Request", "All").
-                //    RegisterDefaultConsoleLogTarget(this).
-                //    RegisterDefaultDiscLogTarget(this);
+                RegisterEvent("RegisterRequest",
+                              handler => CommonClient.OnRegisterHTTPRequest += handler,
+                              handler => CommonClient.OnRegisterHTTPRequest -= handler,
+                              "Register", "Credentials", "Request", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
 
-                //RegisterEvent("SendHeartbeatResponse",
-                //              handler => CPOClient.OnSendHeartbeatSOAPResponse += handler,
-                //              handler => CPOClient.OnSendHeartbeatSOAPResponse -= handler,
-                //              "SendHeartbeat", "Heartbeat", "Response", "All").
-                //    RegisterDefaultConsoleLogTarget(this).
-                //    RegisterDefaultDiscLogTarget(this);
-
+                RegisterEvent("RegisterResponse",
+                              handler => CommonClient.OnRegisterHTTPResponse += handler,
+                              handler => CommonClient.OnRegisterHTTPResponse -= handler,
+                              "Register", "Credentials", "Response", "All").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
 
                 #endregion
 

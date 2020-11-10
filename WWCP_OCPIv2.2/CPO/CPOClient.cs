@@ -33,7 +33,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
 
@@ -1089,6 +1089,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
 
+        #region Properties
+
+        /// <summary>
+        /// The EMSP client (HTTP client) logger.
+        /// </summary>
+        public new CommonClient.Logger  HTTPLogger    { get; }
+
+        #endregion
+
         #region Events
 
         #region OnGetLocationRequest/-Response
@@ -1639,7 +1648,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="MyCommandsURL">The local URL of the COMMANDS endpoint.</param>
+        /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
@@ -1647,7 +1656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public CPOClient(AccessToken                          AccessToken,
                          URL                                  RemoteVersionsURL,
-                         URL                                  MyCommandsURL,
+                         CommonAPI                            MyCommonAPI,
                          HTTPHostname?                        VirtualHostname              = null,
                          RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                          TimeSpan?                            RequestTimeout               = null,
@@ -1656,7 +1665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             : base(AccessToken,
                    RemoteVersionsURL,
-                   MyCommandsURL,
+                   MyCommonAPI,
                    VirtualHostname,
                    RemoteCertificateValidator,
                    RequestTimeout,
@@ -5758,7 +5767,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             OCPIResponse<ChargingProfileResponse> response;
 
             var Command = new SetChargingProfileCommand(ChargingProfile,
-                                                        MyCommandsURL + "SET_CHARGING_PROFILE" + random.RandomString(50));
+                                                        MyCommonAPI.GetURL(ModuleIDs.Commands) + "SET_CHARGING_PROFILE" + random.RandomString(50));
 
             #region Send OnSetChargingProfileRequest event
 

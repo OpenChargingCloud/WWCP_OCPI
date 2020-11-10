@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             #endregion
 
 
-            public HTTPResponse.Builder UpdateHTTPResponseBuilder()
+            public HTTPResponse.Builder ToHTTPResponseBuilder()
             {
 
                 if (!Timestamp.HasValue)
@@ -263,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                     StatusMessage,
                                     AdditionalInformation,
                                     Timestamp ?? DateTime.UtcNow,
-                                    UpdateHTTPResponseBuilder().AsImmutable);
+                                    ToHTTPResponseBuilder().AsImmutable);
 
 
         }

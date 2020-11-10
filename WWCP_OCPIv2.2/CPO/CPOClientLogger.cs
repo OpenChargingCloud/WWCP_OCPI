@@ -38,19 +38,19 @@ using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// The CPO client.
+    /// The OCPI CPO client.
     /// </summary>
     public partial class CPOClient : IHTTPClient
     {
 
         /// <summary>
-        /// The CPO client (HTTP client) logger.
+        /// The OCPI CPO client (HTTP client) logger.
         /// </summary>
-        public class CPOClientLogger : HTTPClientLogger
+        public new class Logger : CommonClient.Logger
         {
 
             #region Data
@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Constructor(s)
 
-            #region CPOClientLogger(CPOClient, Context = DefaultContext, LogfileCreator = null)
+            #region Logger(CPOClient, Context = DefaultContext, LogfileCreator = null)
 
             /// <summary>
             /// Create a new CPO client logger using the default logging delegates.
@@ -81,9 +81,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="CPOClient">A CPO client.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public CPOClientLogger(CPOClient               CPOClient,
-                                   String                  Context         = DefaultContext,
-                                   LogfileCreatorDelegate  LogfileCreator  = null)
+            public Logger(CPOClient               CPOClient,
+                          String                  Context         = DefaultContext,
+                          LogfileCreatorDelegate  LogfileCreator  = null)
 
                 : this(CPOClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #endregion
 
-            #region CPOClientLogger(CPOClient, Context, ... Logging delegates ...)
+            #region Logger(CPOClient, Context, ... Logging delegates ...)
 
             /// <summary>
             /// Create a new CPO client logger using the given logging delegates.
@@ -122,25 +122,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP client sent events source.</param>
             /// 
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-            public CPOClientLogger(CPOClient                   CPOClient,
-                                   String                      Context,
+            public Logger(CPOClient                   CPOClient,
+                          String                      Context,
 
-                                   HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
-                                   HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
-                                   HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
-                                   HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                                   HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
-                                   HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
-                                   HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
-                                   HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                          HTTPRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                          HTTPResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                                   HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
-                                   HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
-                                   HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
-                                   HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                          HTTPResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                                   LogfileCreatorDelegate      LogfileCreator              = null)
+                          LogfileCreatorDelegate      LogfileCreator              = null)
 
                 : base(CPOClient,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,

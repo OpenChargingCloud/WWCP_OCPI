@@ -33,7 +33,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     #region OnGetLocationsRequest/-Response
@@ -799,7 +799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
     /// <summary>
-    /// The EMSP client.
+    /// The OCPI EMSP client.
     /// </summary>
     public partial class EMSPClient : CommonClient
     {
@@ -826,6 +826,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+
+        #region Properties
+
+        /// <summary>
+        /// The EMSP client (HTTP client) logger.
+        /// </summary>
+        public new Logger  HTTPLogger    { get; }
+
+        #endregion
 
         #region Events
 
@@ -1277,7 +1286,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
-        /// <param name="MyCommandsURL">The local URL of the COMMANDS endpoint.</param>
+        /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
@@ -1285,7 +1294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="DNSClient">An optional DNS client to use.</param>
         public EMSPClient(AccessToken                          AccessToken,
                           URL                                  RemoteVersionsURL,
-                          URL                                  MyCommandsURL,
+                          CommonAPI                            MyCommonAPI,
                           HTTPHostname?                        VirtualHostname              = null,
                           RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                           TimeSpan?                            RequestTimeout               = null,
@@ -1294,14 +1303,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             : base(AccessToken,
                    RemoteVersionsURL,
-                   MyCommandsURL,
+                   MyCommonAPI,
                    VirtualHostname,
                    RemoteCertificateValidator,
                    RequestTimeout,
                    MaxNumberOfRetries,
                    DNSClient)
 
-        { }
+        {
+
+            this.HTTPLogger = new Logger(this);
+
+        }
 
         #endregion
 
@@ -4083,7 +4096,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                 LocationId,
                                                 EVSEUId,
                                                 AuthorizationReference,
-                                                MyCommandsURL + "RESERVE_NOW" + random.RandomString(50));
+                                                MyCommonAPI.GetURL(ModuleIDs.Commands) + "RESERVE_NOW" + random.RandomString(50));
 
             #region Send OnReserveNowRequest event
 
@@ -4275,7 +4288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             OCPIResponse<CommandResponse> response;
 
             var Command = new CancelReservationCommand(ReservationId,
-                                                       MyCommandsURL + "CANCEL_RESERVATION" + random.RandomString(50));
+                                                       MyCommonAPI.GetURL(ModuleIDs.Commands) + "CANCEL_RESERVATION" + random.RandomString(50));
 
             #region Send OnCancelReservationRequest event
 
@@ -4473,7 +4486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                   LocationId,
                                                   EVSEUId,
                                                   AuthorizationReference,
-                                                  MyCommandsURL + "START_SESSION" + random.RandomString(50));
+                                                  MyCommonAPI.GetURL(ModuleIDs.Commands) + "START_SESSION" + random.RandomString(50));
 
             #region Send OnStartSessionRequest event
 
@@ -4665,7 +4678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             OCPIResponse<CommandResponse> response;
 
             var Command = new StopSessionCommand(SessionId,
-                                                 MyCommandsURL + "STOP_SESSION" + random.RandomString(50));
+                                                 MyCommonAPI.GetURL(ModuleIDs.Commands) + "STOP_SESSION" + random.RandomString(50));
 
             #region Send OnStopSessionRequest event
 
@@ -4861,7 +4874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var Command = new UnlockConnectorCommand(LocationId,
                                                      EVSEUId,
                                                      ConnectorId,
-                                                     MyCommandsURL + "UNLOCK_CONNECTOR" + random.RandomString(50));
+                                                     MyCommonAPI.GetURL(ModuleIDs.Commands) + "UNLOCK_CONNECTOR" + random.RandomString(50));
 
             #region Send OnUnlockConnectorRequest event
 

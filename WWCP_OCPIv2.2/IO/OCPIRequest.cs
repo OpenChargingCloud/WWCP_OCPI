@@ -101,7 +101,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                  ? HTTP.OCPIRequest.Parse(httpRequest) // When no OCPIRequestLogger was used!
                                                                                  : httpRequest.SubprotocolRequest as OCPIRequest);
 
-                                             return OCPIResponseBuilder.UpdateHTTPResponseBuilder();
+                                             var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
+                                             httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
+                                                                                                        OCPIResponseBuilder.StatusCode,
+                                                                                                        OCPIResponseBuilder.StatusMessage,
+                                                                                                        OCPIResponseBuilder.AdditionalInformation,
+                                                                                                        OCPIResponseBuilder.Timestamp ?? DateTime.UtcNow,
+                                                                                                        httpResponseBuilder.AsImmutable);
+
+                                             return httpResponseBuilder;
 
                                          },
                                          AllowReplacement);
