@@ -18,11 +18,10 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Net.Security;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
@@ -34,11 +33,9 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 
 using org.GraphDefined.WWCP;
 
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
-
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     #region OnGetVersionsRequest/-Response
@@ -302,7 +299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The attached eMIP CPO client (HTTP/SOAP client) logger.
         /// </summary>
-        public Logger                               HTTPLogger                    { get; }
+        public Logger                               HTTPLogger                    { get; protected set; }
 
         /// <summary>
         /// The maximum number of transmission retries.

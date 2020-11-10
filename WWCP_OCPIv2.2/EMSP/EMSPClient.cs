@@ -1313,11 +1313,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             this.HTTPLogger = new Logger(this);
+            base.HTTPLogger = HTTPLogger;
 
         }
 
         #endregion
-
 
 
         #region GetLocations    (...)

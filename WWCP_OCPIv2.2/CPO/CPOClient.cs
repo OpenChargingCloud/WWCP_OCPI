@@ -1672,10 +1672,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    MaxNumberOfRetries,
                    DNSClient)
 
-        { }
+        {
+
+            this.HTTPLogger = new Logger(this);
+            base.HTTPLogger = HTTPLogger;
+
+        }
 
         #endregion
-
 
 
         #region GetLocation    (CountryCode, PartyId, LocationId, ...)
