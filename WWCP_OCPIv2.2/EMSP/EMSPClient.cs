@@ -4096,7 +4096,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                 LocationId,
                                                 EVSEUId,
                                                 AuthorizationReference,
-                                                MyCommonAPI.GetURL(ModuleIDs.Commands) + "RESERVE_NOW" + random.RandomString(50));
+                                                MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "RESERVE_NOW" + random.RandomString(50));
 
             #region Send OnReserveNowRequest event
 
@@ -4288,7 +4288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             OCPIResponse<CommandResponse> response;
 
             var Command = new CancelReservationCommand(ReservationId,
-                                                       MyCommonAPI.GetURL(ModuleIDs.Commands) + "CANCEL_RESERVATION" + random.RandomString(50));
+                                                       MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "CANCEL_RESERVATION" + random.RandomString(50));
 
             #region Send OnCancelReservationRequest event
 
@@ -4486,7 +4486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                   LocationId,
                                                   EVSEUId,
                                                   AuthorizationReference,
-                                                  MyCommonAPI.GetURL(ModuleIDs.Commands) + "START_SESSION" + random.RandomString(50));
+                                                  MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "START_SESSION" + random.RandomString(50));
 
             #region Send OnStartSessionRequest event
 
@@ -4678,7 +4678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             OCPIResponse<CommandResponse> response;
 
             var Command = new StopSessionCommand(SessionId,
-                                                 MyCommonAPI.GetURL(ModuleIDs.Commands) + "STOP_SESSION" + random.RandomString(50));
+                                                 MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "STOP_SESSION" + random.RandomString(50));
 
             #region Send OnStopSessionRequest event
 
@@ -4874,7 +4874,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             var Command = new UnlockConnectorCommand(LocationId,
                                                      EVSEUId,
                                                      ConnectorId,
-                                                     MyCommonAPI.GetURL(ModuleIDs.Commands) + "UNLOCK_CONNECTOR" + random.RandomString(50));
+                                                     MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "UNLOCK_CONNECTOR" + random.RandomString(50));
 
             #region Send OnUnlockConnectorRequest event
 

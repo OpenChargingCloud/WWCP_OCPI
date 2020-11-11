@@ -150,25 +150,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             {
 
-                #region Initial checks
-
                 this.CPOClient = CPOClient ?? throw new ArgumentNullException(nameof(CPOClient), "The given CPO client must not be null!");
-
-                #endregion
 
                 #region Register log events
 
                 //RegisterEvent("SendHeartbeatRequest",
                 //              handler => CPOClient.OnSendHeartbeatSOAPRequest  += handler,
                 //              handler => CPOClient.OnSendHeartbeatSOAPRequest  -= handler,
-                //              "SendHeartbeat", "Heartbeat", "Request", "All").
+                //              "SendHeartbeat", "Heartbeat", "requests", "all").
                 //    RegisterDefaultConsoleLogTarget(this).
                 //    RegisterDefaultDiscLogTarget(this);
 
                 //RegisterEvent("SendHeartbeatResponse",
                 //              handler => CPOClient.OnSendHeartbeatSOAPResponse += handler,
                 //              handler => CPOClient.OnSendHeartbeatSOAPResponse -= handler,
-                //              "SendHeartbeat", "Heartbeat", "Response", "All").
+                //              "SendHeartbeat", "Heartbeat", "Response", "all").
                 //    RegisterDefaultConsoleLogTarget(this).
                 //    RegisterDefaultDiscLogTarget(this);
 

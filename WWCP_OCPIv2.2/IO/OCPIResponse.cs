@@ -406,7 +406,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                         timestamp      = timestamp.Value.ToUniversalTime();
 
-                    if (Response.HTTPStatusCode == HTTPStatusCode.OK)
+                    if (Response.HTTPStatusCode == HTTPStatusCode.OK ||
+                        Response.HTTPStatusCode == HTTPStatusCode.Created)
                     {
 
                         var Items          = new List<TResponse>();
@@ -505,7 +506,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                         timestamp      = timestamp.Value.ToUniversalTime();
 
-                    if (Response.HTTPStatusCode == HTTPStatusCode.OK)
+                    if (Response.HTTPStatusCode == HTTPStatusCode.OK ||
+                        Response.HTTPStatusCode == HTTPStatusCode.Created)
                     {
 
                         if (JSON["data"] is JObject JSONObject)

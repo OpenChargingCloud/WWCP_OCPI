@@ -1897,6 +1897,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null");
+
             OCPIResponse<Location> response;
 
             #region Send OnPutLocationRequest event
@@ -2090,6 +2093,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                           TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (LocationPatch is null)
+                throw new ArgumentNullException(nameof(LocationPatch), "The given location patch must not be null");
 
             OCPIResponse<Location> response;
 
@@ -2457,6 +2463,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Put/store the given EVSE on/within the remote API.
         /// </summary>
+        /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -2475,6 +2483,111 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (EVSE.ParentLocation is null)
+                throw new ArgumentNullException(nameof(EVSE.ParentLocation), "The parent location of the given EVSE must not be null");
+
+            return await PutEVSE(EVSE,
+                                 EVSE.ParentLocation.CountryCode,
+                                 EVSE.ParentLocation.PartyId,
+                                 EVSE.ParentLocation.Id,
+
+                                 RequestId,
+                                 CorrelationId,
+                                 VersionId,
+
+                                 Timestamp,
+                                 CancellationToken,
+                                 EventTrackingId,
+                                 RequestTimeout);
+
+        }
+
+        #endregion
+
+        #region PutEVSE        (EVSE, Location, ...)
+
+        /// <summary>
+        /// Put/store the given EVSE on/within the remote API.
+        /// </summary>
+        /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
+        /// <param name="Location">The location where to store the given EVSE.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<EVSE>>
+
+            PutEVSE(EVSE                EVSE,
+                    Location            Location,
+
+                    Request_Id?         RequestId           = null,
+                    Correlation_Id?     CorrelationId       = null,
+                    Version_Id?         VersionId           = null,
+
+                    DateTime?           Timestamp           = null,
+                    CancellationToken?  CancellationToken   = null,
+                    EventTracking_Id    EventTrackingId     = null,
+                    TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The location of the given EVSE must not be null");
+
+            return await PutEVSE(EVSE,
+                                 Location.CountryCode,
+                                 Location.PartyId,
+                                 Location.Id,
+
+                                 RequestId,
+                                 CorrelationId,
+                                 VersionId,
+
+                                 Timestamp,
+                                 CancellationToken,
+                                 EventTrackingId,
+                                 RequestTimeout);
+
+        }
+
+        #endregion
+
+        #region PutEVSE        (EVSE, CountryCode, PartyId, LocationId, ...)
+
+        /// <summary>
+        /// Put/store the given EVSE on/within the remote API.
+        /// </summary>
+        /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
+        /// <param name="CountryCode">The country code of the location where to store the given EVSE.</param>
+        /// <param name="PartyId">The party identification of the location where to store the given EVSE.</param>
+        /// <param name="LocationId">The identification of the location where to store the given EVSE.</param>
+        /// 
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional location to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<EVSE>>
+
+            PutEVSE(EVSE                EVSE,
+                    CountryCode         CountryCode,
+                    Party_Id            PartyId,
+                    Location_Id         LocationId,
+
+                    Request_Id?         RequestId           = null,
+                    Correlation_Id?     CorrelationId       = null,
+                    Version_Id?         VersionId           = null,
+
+                    DateTime?           Timestamp           = null,
+                    CancellationToken?  CancellationToken   = null,
+                    EventTracking_Id    EventTrackingId     = null,
+                    TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            if (EVSE is null)
+                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null");
 
             OCPIResponse<EVSE> response;
 
@@ -2543,10 +2656,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                     DNSClient:   DNSClient)).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + EVSE.ParentLocation.CountryCode.ToString() +
-                                                                                                            EVSE.ParentLocation.PartyId.    ToString() +
-                                                                                                            EVSE.ParentLocation.Id.         ToString() +
-                                                                                                            EVSE.               UId.        ToString(),
+                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
+                                                                                                            PartyId.    ToString() +
+                                                                                                            LocationId. ToString() +
+                                                                                                            EVSE.UId.   ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
@@ -2671,6 +2784,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                       TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (EVSEPatch is null)
+                throw new ArgumentNullException(nameof(EVSEPatch), "The given EVSE patch must not be null");
 
             OCPIResponse<EVSE> response;
 
@@ -3060,6 +3176,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (Connector is null)
+                throw new ArgumentNullException(nameof(Connector), "The given connector must not be null");
+
             OCPIResponse<Connector> response;
 
             #region Send OnPutConnectorRequest event
@@ -3257,6 +3376,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                            TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (ConnectorPatch is null)
+                throw new ArgumentNullException(nameof(ConnectorPatch), "The given connector patch must not be null");
 
             OCPIResponse<Connector> response;
 
@@ -3644,6 +3766,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null");
+
             OCPIResponse<Tariff> response;
 
             #region Send OnPutTariffRequest event
@@ -3837,6 +3962,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (TariffPatch is null)
+                throw new ArgumentNullException(nameof(TariffPatch), "The given charging tariff patch must not be null");
 
             OCPIResponse<Tariff> response;
 
@@ -4413,6 +4541,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (Session is null)
+                throw new ArgumentNullException(nameof(Session), "The given charging session must not be null");
+
             OCPIResponse<Session> response;
 
             #region Send OnPutSessionRequest event
@@ -4606,6 +4737,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (SessionPatch is null)
+                throw new ArgumentNullException(nameof(SessionPatch), "The given charging session patch must not be null");
 
             OCPIResponse<Session> response;
 
@@ -5182,6 +5316,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null");
+
             OCPIResponse<CDR> response;
 
             #region Send OnPostCDRRequest event
@@ -5566,6 +5703,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null");
+
             OCPIResponse<Token> response;
 
             #region Send OnPostTokenRequest event
@@ -5771,7 +5911,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             OCPIResponse<ChargingProfileResponse> response;
 
             var Command = new SetChargingProfileCommand(ChargingProfile,
-                                                        MyCommonAPI.GetURL(ModuleIDs.Commands) + "SET_CHARGING_PROFILE" + random.RandomString(50));
+                                                        MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "SET_CHARGING_PROFILE" + random.RandomString(50));
 
             #region Send OnSetChargingProfileRequest event
 

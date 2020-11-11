@@ -157,14 +157,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetLocationsRequest",
                               handler => EMSPClient.OnGetLocationsHTTPRequest += handler,
                               handler => EMSPClient.OnGetLocationsHTTPRequest -= handler,
-                              "GetLocations", "Locations", "Request", "All").
+                              "GetLocations", "locations", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetLocationsResponse",
                               handler => EMSPClient.OnGetLocationsHTTPResponse += handler,
                               handler => EMSPClient.OnGetLocationsHTTPResponse -= handler,
-                              "GetLocations", "Locations", "Response", "All").
+                              "GetLocations", "locations", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -172,14 +172,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetLocationByIdRequest",
                               handler => EMSPClient.OnGetLocationByIdHTTPRequest += handler,
                               handler => EMSPClient.OnGetLocationByIdHTTPRequest -= handler,
-                              "GetLocationById", "Locations", "Request", "All").
+                              "GetLocationById", "locations", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetLocationByIdResponse",
                               handler => EMSPClient.OnGetLocationByIdHTTPResponse += handler,
                               handler => EMSPClient.OnGetLocationByIdHTTPResponse -= handler,
-                              "GetLocationById", "Locations", "Response", "All").
+                              "GetLocationById", "locations", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -187,14 +187,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetEVSEByUIdRequest",
                               handler => EMSPClient.OnGetEVSEByUIdHTTPRequest += handler,
                               handler => EMSPClient.OnGetEVSEByUIdHTTPRequest -= handler,
-                              "GetEVSEByUId", "EVSEs", "Locations", "Request", "All").
+                              "GetEVSEByUId", "EVSEs", "locations", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetEVSEByUIdResponse",
                               handler => EMSPClient.OnGetEVSEByUIdHTTPResponse += handler,
                               handler => EMSPClient.OnGetEVSEByUIdHTTPResponse -= handler,
-                              "GetEVSEByUId", "EVSEs", "Locations", "Response", "All").
+                              "GetEVSEByUId", "EVSEs", "locations", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -202,14 +202,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetConnectorByIdRequest",
                               handler => EMSPClient.OnGetConnectorByIdHTTPRequest += handler,
                               handler => EMSPClient.OnGetConnectorByIdHTTPRequest -= handler,
-                              "GetConnectorById", "Connectors", "Locations", "Request", "All").
+                              "GetConnectorById", "connectors", "locations", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetConnectorByIdResponse",
                               handler => EMSPClient.OnGetConnectorByIdHTTPResponse += handler,
                               handler => EMSPClient.OnGetConnectorByIdHTTPResponse -= handler,
-                              "GetConnectorById", "Connectors", "Locations", "Response", "All").
+                              "GetConnectorById", "connectors", "locations", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -220,14 +220,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetTariffsRequest",
                               handler => EMSPClient.OnGetTariffsHTTPRequest += handler,
                               handler => EMSPClient.OnGetTariffsHTTPRequest -= handler,
-                              "GetTariffs", "Tariffs", "Request", "All").
+                              "GetTariffs", "tariffs", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetTariffsResponse",
                               handler => EMSPClient.OnGetTariffsHTTPResponse += handler,
                               handler => EMSPClient.OnGetTariffsHTTPResponse -= handler,
-                              "GetTariffs", "Tariffs", "Response", "All").
+                              "GetTariffs", "tariffs", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -235,14 +235,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetTariffByIdRequest",
                               handler => EMSPClient.OnGetTariffByIdHTTPRequest += handler,
                               handler => EMSPClient.OnGetTariffByIdHTTPRequest -= handler,
-                              "GetTariffById", "Tariffs", "Request", "All").
+                              "GetTariffById", "tariffs", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetTariffByIdResponse",
                               handler => EMSPClient.OnGetTariffByIdHTTPResponse += handler,
                               handler => EMSPClient.OnGetTariffByIdHTTPResponse -= handler,
-                              "GetTariffById", "Tariffs", "Response", "All").
+                              "GetTariffById", "tariffs", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -253,14 +253,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetSessionsRequest",
                               handler => EMSPClient.OnGetSessionsHTTPRequest += handler,
                               handler => EMSPClient.OnGetSessionsHTTPRequest -= handler,
-                              "GetSessions", "Sessions", "Request", "All").
+                              "GetSessions", "sessions", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetSessionsResponse",
                               handler => EMSPClient.OnGetSessionsHTTPResponse += handler,
                               handler => EMSPClient.OnGetSessionsHTTPResponse -= handler,
-                              "GetSessions", "Sessions", "Response", "All").
+                              "GetSessions", "sessions", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -268,14 +268,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetSessionByIdRequest",
                               handler => EMSPClient.OnGetSessionByIdHTTPRequest += handler,
                               handler => EMSPClient.OnGetSessionByIdHTTPRequest -= handler,
-                              "GetSessionById", "Sessions", "Request", "All").
+                              "GetSessionById", "sessions", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetSessionByIdResponse",
                               handler => EMSPClient.OnGetSessionByIdHTTPResponse += handler,
                               handler => EMSPClient.OnGetSessionByIdHTTPResponse -= handler,
-                              "GetSessionById", "Sessions", "Response", "All").
+                              "GetSessionById", "sessions", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -286,14 +286,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetCDRsRequest",
                               handler => EMSPClient.OnGetCDRsHTTPRequest += handler,
                               handler => EMSPClient.OnGetCDRsHTTPRequest -= handler,
-                              "GetCDRs", "CDRs", "Request", "All").
+                              "GetCDRs", "CDRs", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetCDRsResponse",
                               handler => EMSPClient.OnGetCDRsHTTPResponse += handler,
                               handler => EMSPClient.OnGetCDRsHTTPResponse -= handler,
-                              "GetCDRs", "CDRs", "Response", "All").
+                              "GetCDRs", "CDRs", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -301,32 +301,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetCDRByIdRequest",
                               handler => EMSPClient.OnGetCDRByIdHTTPRequest += handler,
                               handler => EMSPClient.OnGetCDRByIdHTTPRequest -= handler,
-                              "GetCDRById", "CDRs", "Request", "All").
+                              "GetCDRById", "CDRs", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetCDRByIdResponse",
                               handler => EMSPClient.OnGetCDRByIdHTTPResponse += handler,
                               handler => EMSPClient.OnGetCDRByIdHTTPResponse -= handler,
-                              "GetCDRById", "CDRs", "Response", "All").
+                              "GetCDRById", "CDRs", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 #endregion
 
-                #region Sessions
+                #region Tokens
 
                 RegisterEvent("GetTokenRequest",
                               handler => EMSPClient.OnGetTokenHTTPRequest += handler,
                               handler => EMSPClient.OnGetTokenHTTPRequest -= handler,
-                              "GetToken", "Tokens", "Request", "All").
+                              "GetToken", "tokens", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetTokenResponse",
                               handler => EMSPClient.OnGetTokenHTTPResponse += handler,
                               handler => EMSPClient.OnGetTokenHTTPResponse -= handler,
-                              "GetToken", "Tokens", "Response", "All").
+                              "GetToken", "tokens", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -334,14 +334,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("PutTokenRequest",
                               handler => EMSPClient.OnPutTokenHTTPRequest += handler,
                               handler => EMSPClient.OnPutTokenHTTPRequest -= handler,
-                              "PutToken", "Tokens", "Request", "All").
+                              "PutToken", "tokens", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("PutTokenResponse",
                               handler => EMSPClient.OnPutTokenHTTPResponse += handler,
                               handler => EMSPClient.OnPutTokenHTTPResponse -= handler,
-                              "PutToken", "Tokens", "Response", "All").
+                              "PutToken", "tokens", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -349,14 +349,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("PatchTokenRequest",
                               handler => EMSPClient.OnPatchTokenHTTPRequest += handler,
                               handler => EMSPClient.OnPatchTokenHTTPRequest -= handler,
-                              "PatchToken", "Tokens", "Request", "All").
+                              "PatchToken", "tokens", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("PatchTokenResponse",
                               handler => EMSPClient.OnPatchTokenHTTPResponse += handler,
                               handler => EMSPClient.OnPatchTokenHTTPResponse -= handler,
-                              "PatchToken", "Tokens", "Response", "All").
+                              "PatchToken", "tokens", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -367,14 +367,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("ReserveNowRequest",
                               handler => EMSPClient.OnReserveNowHTTPRequest += handler,
                               handler => EMSPClient.OnReserveNowHTTPRequest -= handler,
-                              "ReserveNow", "Reservations", "Commands", "Request", "All").
+                              "ReserveNow", "reservations", "commands", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("ReserveNowResponse",
                               handler => EMSPClient.OnReserveNowHTTPResponse += handler,
                               handler => EMSPClient.OnReserveNowHTTPResponse -= handler,
-                              "ReserveNow", "Reservations", "ReserveNow", "Commands", "Response", "All").
+                              "ReserveNow", "reservations", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -382,14 +382,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("CancelReservationRequest",
                               handler => EMSPClient.OnCancelReservationHTTPRequest += handler,
                               handler => EMSPClient.OnCancelReservationHTTPRequest -= handler,
-                              "CancelReservation", "Reservations", "Commands", "Request", "All").
+                              "CancelReservation", "reservations", "commands", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("CancelReservationResponse",
                               handler => EMSPClient.OnCancelReservationHTTPResponse += handler,
                               handler => EMSPClient.OnCancelReservationHTTPResponse -= handler,
-                              "CancelReservation", "Reservations", "Commands", "Response", "All").
+                              "CancelReservation", "reservations", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -398,14 +398,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("StartSessionRequest",
                               handler => EMSPClient.OnStartSessionHTTPRequest += handler,
                               handler => EMSPClient.OnStartSessionHTTPRequest -= handler,
-                              "StartSession", "StartStopSessions", "Commands", "Request", "All").
+                              "StartSession", "StartStopSessions", "commands", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("StartSessionResponse",
                               handler => EMSPClient.OnStartSessionHTTPResponse += handler,
                               handler => EMSPClient.OnStartSessionHTTPResponse -= handler,
-                              "StartSession", "StartStopSessions", "Commands", "Response", "All").
+                              "StartSession", "StartStopSessions", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -413,14 +413,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("StopSessionRequest",
                               handler => EMSPClient.OnStopSessionHTTPRequest += handler,
                               handler => EMSPClient.OnStopSessionHTTPRequest -= handler,
-                              "StopSession", "StopStopSessions", "Commands", "Request", "All").
+                              "StopSession", "StopStopSessions", "commands", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("StopSessionResponse",
                               handler => EMSPClient.OnStopSessionHTTPResponse += handler,
                               handler => EMSPClient.OnStopSessionHTTPResponse -= handler,
-                              "StopSession", "StopStopSessions", "Commands", "Response", "All").
+                              "StopSession", "StopStopSessions", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -429,14 +429,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("UnlockConnectorRequest",
                               handler => EMSPClient.OnUnlockConnectorHTTPRequest += handler,
                               handler => EMSPClient.OnUnlockConnectorHTTPRequest -= handler,
-                              "UnlockConnector", "Commands", "Request", "All").
+                              "UnlockConnector", "commands", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("UnlockConnectorResponse",
                               handler => EMSPClient.OnUnlockConnectorHTTPResponse += handler,
                               handler => EMSPClient.OnUnlockConnectorHTTPResponse -= handler,
-                              "UnlockConnector", "Commands", "Response", "All").
+                              "UnlockConnector", "commands", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 

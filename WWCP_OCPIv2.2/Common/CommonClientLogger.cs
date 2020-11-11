@@ -157,14 +157,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetVersionsRequest",
                               handler => CommonClient.OnGetVersionsHTTPRequest += handler,
                               handler => CommonClient.OnGetVersionsHTTPRequest -= handler,
-                              "GetVersions", "Versions", "Request", "All").
+                              "GetVersions", "versions", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetVersionsResponse",
                               handler => CommonClient.OnGetVersionsHTTPResponse += handler,
                               handler => CommonClient.OnGetVersionsHTTPResponse -= handler,
-                              "GetVersions", "Versions", "Response", "All").
+                              "GetVersions", "versions", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -172,14 +172,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("GetVersionDetailsRequest",
                               handler => CommonClient.OnGetVersionDetailsHTTPRequest += handler,
                               handler => CommonClient.OnGetVersionDetailsHTTPRequest -= handler,
-                              "GetVersionDetails", "Versions", "Request", "All").
+                              "GetVersionDetails", "versions", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("GetVersionDetailsResponse",
                               handler => CommonClient.OnGetVersionDetailsHTTPRequest += handler,
                               handler => CommonClient.OnGetVersionDetailsHTTPRequest -= handler,
-                              "GetVersionDetails", "Versions", "Response", "All").
+                              "GetVersionDetails", "versions", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -190,14 +190,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterEvent("RegisterRequest",
                               handler => CommonClient.OnRegisterHTTPRequest += handler,
                               handler => CommonClient.OnRegisterHTTPRequest -= handler,
-                              "Register", "Credentials", "Request", "All").
+                              "Register", "credentials", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
                 RegisterEvent("RegisterResponse",
                               handler => CommonClient.OnRegisterHTTPResponse += handler,
                               handler => CommonClient.OnRegisterHTTPResponse -= handler,
-                              "Register", "Credentials", "Response", "All").
+                              "Register", "credentials", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 

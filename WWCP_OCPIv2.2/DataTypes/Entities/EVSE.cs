@@ -436,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (JSON.ParseOptional("evse_id",
                                        "offical EVSE identification",
                                        EVSE_Id.TryParse,
-                                       out EVSE_Id EVSEId,
+                                       out EVSE_Id? EVSEId,
                                        out ErrorResponse))
                 {
 
@@ -660,7 +660,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var JSON = JSONObject.Create(
 
                            new JProperty("uid",                         UId.   ToString()),
-                           new JProperty("evse_id",                     EVSEId.ToString()),
+
+                           EVSEId.HasValue
+                               ? new JProperty("evse_id",               EVSEId.ToString())
+                               : null,
+
                            new JProperty("status",                      Status.ToString()),
 
                            StatusSchedule.SafeAny()

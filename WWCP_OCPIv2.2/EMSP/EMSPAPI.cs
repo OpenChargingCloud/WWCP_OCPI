@@ -3913,7 +3913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 1000,
                                                             StatusMessage        = "Hello world!",
-                                                            Data                 = newOrUpdatedLocation.ToJSON(),
+                                                            Data                 = addOrUpdateResult.Data.ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                                  ? HTTPStatusCode.Created
@@ -3965,7 +3965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Parse and apply Location JSON patch
+                                         #region Parse location JSON patch
 
                                          if (!Request.TryParseJObjectRequestBody(out JObject LocationPatch, out OCPIResponseBuilder))
                                              return OCPIResponseBuilder;
@@ -4196,11 +4196,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                  newOrUpdatedEVSE,
                                                                                                  AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
+
                                          if (addOrUpdateResult.IsSuccess)
                                              return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 1000,
                                                         StatusMessage        = "Hello world!",
-                                                        Data                 = newOrUpdatedEVSE.ToJSON(),
+                                                        Data                 = addOrUpdateResult.Data.ToJSON(),
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                              ? HTTPStatusCode.Created
@@ -4254,7 +4255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Parse and apply EVSE JSON patch
+                                         #region Parse EVSE JSON patch
 
                                          if (!Request.TryParseJObjectRequestBody(out JObject EVSEPatch, out OCPIResponseBuilder))
                                              return OCPIResponseBuilder;
@@ -4496,7 +4497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 1000,
                                                         StatusMessage        = "Hello world!",
-                                                        Data                 = newOrUpdatedConnector.ToJSON(),
+                                                        Data                 = addOrUpdateResult.Data.ToJSON(),
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                              ? HTTPStatusCode.Created
@@ -4552,7 +4553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                          #endregion
 
-                                         #region Parse and apply Connector JSON patch
+                                         #region Parse connector JSON patch
 
                                          if (!Request.TryParseJObjectRequestBody(out JObject ConnectorPatch, out OCPIResponseBuilder))
                                              return OCPIResponseBuilder;

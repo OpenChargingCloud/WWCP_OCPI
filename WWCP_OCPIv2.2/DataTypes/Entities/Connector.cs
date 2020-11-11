@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// and amperage, this value should be set.
         /// </summary>
         [Optional]
-        public UInt16?                 MaxElectricPower         { get; }
+        public UInt32?                 MaxElectricPower         { get; }
 
         /// <summary>
         /// Identifiers of the currently valid charging tariffs. Multiple tariffs are possible,
@@ -155,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            UInt16                  MaxVoltage,
                            UInt16                  MaxAmperage,
 
-                           UInt16?                 MaxElectricPower        = null,
+                           UInt32?                 MaxElectricPower        = null,
                            IEnumerable<Tariff_Id>  TariffIds               = null,
                            URL?                    TermsAndConditionsURL   = null,
 
@@ -203,7 +203,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          UInt16                  MaxVoltage,
                          UInt16                  MaxAmperage,
 
-                         UInt16?                 MaxElectricPower        = null,
+                         UInt32?                 MaxElectricPower        = null,
                          IEnumerable<Tariff_Id>  TariffIds               = null,
                          URL?                    TermsAndConditionsURL   = null,
 
@@ -404,8 +404,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #region Parse MaxElectricPower    [optional]
 
                 if (JSON.ParseOptional("max_electric_power",
-                                       "max voltage",
-                                       out UInt16? MaxElectricPower,
+                                       "max electric power",
+                                       out UInt32? MaxElectricPower,
                                        out ErrorResponse))
                 {
 

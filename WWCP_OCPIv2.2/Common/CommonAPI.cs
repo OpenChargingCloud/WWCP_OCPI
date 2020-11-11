@@ -72,6 +72,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public new static readonly HTTPPath  DefaultURLPathPrefix      = HTTPPath.Parse("io/OCPI/");
 
+
+        private readonly URL OurBaseURL;
+
         #endregion
 
         #region Properties
@@ -307,6 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
             this.OurVersionsURL           = OurVersionsURL;
+            this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.VersionsURLusesHTTPS     = VersionsURLusesHTTPS;
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
@@ -369,6 +373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
 
             this.OurVersionsURL           = OurVersionsURL;
+            this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
             this.VersionsURLusesHTTPS     = VersionsURLusesHTTPS;
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
@@ -397,14 +402,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        public URL GetURL(ModuleIDs ModuleId)
+        #region GetModuleURL(ModuleId)
+
+        public URL GetModuleURL(ModuleIDs ModuleId)
         {
 
             switch (ModuleId)
             {
 
+                case ModuleIDs.CDRs:
+                    return OurBaseURL + "cdrs";
+
+                case ModuleIDs.ChargingProfiles:
+                    return OurBaseURL + "chargingprofiles";
+
+                case ModuleIDs.Commands:
+                    return OurBaseURL + "commands";
+
                 case ModuleIDs.Credentials:
-                    return URL.Parse(OurVersionsURL.ToString().Replace("/versions", "")) + "credentials";
+                    return OurBaseURL + "credentials";
+
+                case ModuleIDs.HubClientInfo:
+                    return OurBaseURL + "hubclientinfo";
+
+                case ModuleIDs.Locations:
+                    return OurBaseURL + "locations";
+
+                case ModuleIDs.Sessions:
+                    return OurBaseURL + "sessions";
+
+                case ModuleIDs.Tariffs:
+                    return OurBaseURL + "tariffs";
+
+                case ModuleIDs.Tokens:
+                    return OurBaseURL + "tokens";
 
                 default:
                     return OurVersionsURL;
@@ -412,6 +443,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
 
         }
+
+        #endregion
 
 
         #region (private) RegisterURLTemplates()
