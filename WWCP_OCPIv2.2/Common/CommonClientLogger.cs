@@ -201,6 +201,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
+
+                RegisterEvent("GetCredentialsRequest",
+                              handler => CommonClient.OnGetCredentialsHTTPRequest += handler,
+                              handler => CommonClient.OnGetCredentialsHTTPRequest -= handler,
+                              "GetCredentials", "credentials", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetCredentialsResponse",
+                              handler => CommonClient.OnGetCredentialsHTTPResponse += handler,
+                              handler => CommonClient.OnGetCredentialsHTTPResponse -= handler,
+                              "GetCredentials", "credentials", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("PutCredentialsRequest",
+                              handler => CommonClient.OnPutCredentialsHTTPRequest += handler,
+                              handler => CommonClient.OnPutCredentialsHTTPRequest -= handler,
+                              "PutCredentials", "credentials", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("PutCredentialsResponse",
+                              handler => CommonClient.OnPutCredentialsHTTPResponse += handler,
+                              handler => CommonClient.OnPutCredentialsHTTPResponse -= handler,
+                              "PutCredentials", "credentials", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
                 #endregion
 
             }

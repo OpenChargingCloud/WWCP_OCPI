@@ -820,8 +820,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 => JSONObject.Create(
                        new JProperty("GetLocations", GetLocations.ToJSON())
-
-                    
                    );
 
         }
@@ -3676,6 +3674,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
+        /// <param name="Token">The token to store/put at/onto the remote API.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -3694,6 +3694,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                      TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
             OCPIResponse<Token> response;
 
@@ -3888,6 +3891,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        TimeSpan?           RequestTimeout      = null)
 
         {
+
+            if (TokenPatch is null)
+                throw new ArgumentNullException(nameof(TokenPatch), "The given token patch must not be null!");
 
             OCPIResponse<Token> response;
 

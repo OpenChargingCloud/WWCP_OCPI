@@ -1878,6 +1878,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Put/store the given charging location on/within the remote API.
         /// </summary>
+        /// <param name="Location">The charging location to store/put at/onto the remote API.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -1898,7 +1900,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null");
+                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
             OCPIResponse<Location> response;
 
@@ -2095,7 +2097,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (LocationPatch is null)
-                throw new ArgumentNullException(nameof(LocationPatch), "The given location patch must not be null");
+                throw new ArgumentNullException(nameof(LocationPatch), "The given location patch must not be null!");
 
             OCPIResponse<Location> response;
 
@@ -2485,7 +2487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (EVSE.ParentLocation is null)
-                throw new ArgumentNullException(nameof(EVSE.ParentLocation), "The parent location of the given EVSE must not be null");
+                throw new ArgumentNullException(nameof(EVSE.ParentLocation), "The parent location of the given EVSE must not be null!");
 
             return await PutEVSE(EVSE,
                                  EVSE.ParentLocation.CountryCode,
@@ -2534,7 +2536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The location of the given EVSE must not be null");
+                throw new ArgumentNullException(nameof(Location), "The location of the given EVSE must not be null!");
 
             return await PutEVSE(EVSE,
                                  Location.CountryCode,
@@ -2587,7 +2589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (EVSE is null)
-                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null");
+                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
 
             OCPIResponse<EVSE> response;
 
@@ -2786,7 +2788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (EVSEPatch is null)
-                throw new ArgumentNullException(nameof(EVSEPatch), "The given EVSE patch must not be null");
+                throw new ArgumentNullException(nameof(EVSEPatch), "The given EVSE patch must not be null!");
 
             OCPIResponse<EVSE> response;
 
@@ -3157,6 +3159,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Put/store the given charging connector on/within the remote API.
         /// </summary>
+        /// <param name="Connector">The connector to store/put at/onto the remote API.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional connector to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -3177,7 +3181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (Connector is null)
-                throw new ArgumentNullException(nameof(Connector), "The given connector must not be null");
+                throw new ArgumentNullException(nameof(Connector), "The given connector must not be null!");
 
             OCPIResponse<Connector> response;
 
@@ -3378,7 +3382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (ConnectorPatch is null)
-                throw new ArgumentNullException(nameof(ConnectorPatch), "The given connector patch must not be null");
+                throw new ArgumentNullException(nameof(ConnectorPatch), "The given connector patch must not be null!");
 
             OCPIResponse<Connector> response;
 
@@ -3747,6 +3751,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Put/store the given charging tariff on/within the remote API.
         /// </summary>
+        /// <param name="Tariff">The charging tariff to store/put at/onto the remote API.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional tariff to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -3767,7 +3773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null");
+                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!");
 
             OCPIResponse<Tariff> response;
 
@@ -3964,7 +3970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (TariffPatch is null)
-                throw new ArgumentNullException(nameof(TariffPatch), "The given charging tariff patch must not be null");
+                throw new ArgumentNullException(nameof(TariffPatch), "The given charging tariff patch must not be null!");
 
             OCPIResponse<Tariff> response;
 
@@ -4522,6 +4528,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Put/store the given charging session on/within the remote API.
         /// </summary>
+        /// <param name="Session">The charging session to store/put at/onto the remote API.</param>
+        /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional session to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
@@ -4542,7 +4550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given charging session must not be null");
+                throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!");
 
             OCPIResponse<Session> response;
 
@@ -4739,7 +4747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (SessionPatch is null)
-                throw new ArgumentNullException(nameof(SessionPatch), "The given charging session patch must not be null");
+                throw new ArgumentNullException(nameof(SessionPatch), "The given charging session patch must not be null!");
 
             OCPIResponse<Session> response;
 
@@ -5317,7 +5325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null");
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
             OCPIResponse<CDR> response;
 
@@ -5704,7 +5712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null");
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
             OCPIResponse<Token> response;
 
