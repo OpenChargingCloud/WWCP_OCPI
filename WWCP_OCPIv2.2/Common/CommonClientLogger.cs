@@ -187,21 +187,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 #region Credentials
 
-                RegisterEvent("RegisterRequest",
-                              handler => CommonClient.OnRegisterHTTPRequest += handler,
-                              handler => CommonClient.OnRegisterHTTPRequest -= handler,
-                              "Register", "credentials", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
-
-                RegisterEvent("RegisterResponse",
-                              handler => CommonClient.OnRegisterHTTPResponse += handler,
-                              handler => CommonClient.OnRegisterHTTPResponse -= handler,
-                              "Register", "credentials", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
-
-
                 RegisterEvent("GetCredentialsRequest",
                               handler => CommonClient.OnGetCredentialsHTTPRequest += handler,
                               handler => CommonClient.OnGetCredentialsHTTPRequest -= handler,
@@ -217,6 +202,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     RegisterDefaultDiscLogTarget(this);
 
 
+                RegisterEvent("PostCredentialsRequest",
+                              handler => CommonClient.OnPostCredentialsHTTPRequest += handler,
+                              handler => CommonClient.OnPostCredentialsHTTPRequest -= handler,
+                              "PostCredentials", "credentials", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("PostCredentialsResponse",
+                              handler => CommonClient.OnPostCredentialsHTTPResponse += handler,
+                              handler => CommonClient.OnPostCredentialsHTTPResponse -= handler,
+                              "PostCredentials", "credentials", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
                 RegisterEvent("PutCredentialsRequest",
                               handler => CommonClient.OnPutCredentialsHTTPRequest += handler,
                               handler => CommonClient.OnPutCredentialsHTTPRequest -= handler,
@@ -228,6 +228,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                               handler => CommonClient.OnPutCredentialsHTTPResponse += handler,
                               handler => CommonClient.OnPutCredentialsHTTPResponse -= handler,
                               "PutCredentials", "credentials", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("DeleteCredentialsRequest",
+                              handler => CommonClient.OnDeleteCredentialsHTTPRequest += handler,
+                              handler => CommonClient.OnDeleteCredentialsHTTPRequest -= handler,
+                              "DeleteCredentials", "credentials", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("DeleteCredentialsResponse",
+                              handler => CommonClient.OnDeleteCredentialsHTTPResponse += handler,
+                              handler => CommonClient.OnDeleteCredentialsHTTPResponse -= handler,
+                              "DeleteCredentials", "credentials", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("RegisterRequest",
+                              handler => CommonClient.OnRegisterHTTPRequest += handler,
+                              handler => CommonClient.OnRegisterHTTPRequest -= handler,
+                              "Register", "credentials", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("RegisterResponse",
+                              handler => CommonClient.OnRegisterHTTPResponse += handler,
+                              handler => CommonClient.OnRegisterHTTPResponse -= handler,
+                              "Register", "credentials", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
