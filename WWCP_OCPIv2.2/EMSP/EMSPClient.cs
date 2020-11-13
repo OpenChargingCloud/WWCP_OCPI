@@ -1320,6 +1320,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        public JObject ToJSON()
+            => base.ToJSON(nameof(EMSPClient));
+
 
         #region GetLocations    (...)
 

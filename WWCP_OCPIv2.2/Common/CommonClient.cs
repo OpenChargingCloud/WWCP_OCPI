@@ -699,13 +699,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
             this.RemoteVersionsURL           = RemoteVersionsURL;
             this.Hostname                    = RemoteVersionsURL.Hostname;
-            this.RemotePort                  = RemoteVersionsURL.Port   ?? DefaultRemotePort;
+            this.RemotePort                  = RemoteVersionsURL.Port ?? DefaultRemotePort;
             this.MyCommonAPI                 = MyCommonAPI;
             this.Description                 = Description;
             this.VirtualHostname             = VirtualHostname;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
-            this.RequestTimeout              = RequestTimeout     ?? DefaultRequestTimeout;
-            this.MaxNumberOfRetries          = MaxNumberOfRetries ?? 3;
+            this.RequestTimeout              = RequestTimeout         ?? DefaultRequestTimeout;
+            this.MaxNumberOfRetries          = MaxNumberOfRetries     ?? 3;
             this.DNSClient                   = DNSClient;
 
             this.Counters                    = new CommonCounters();
@@ -716,10 +716,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        public JObject ToJSON()
+        protected JObject ToJSON(String ClientType)
         {
 
             return JSONObject.Create(
+
+                       new JProperty("type",                     ClientType),
 
                        Description.IsNotNullOrEmpty()
                            ? new JProperty("description",        Description)
@@ -747,7 +749,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                            : null,
 
                        VersionDetails.SafeAny()
-                           ? new JProperty("versionDetails",     new JObject(VersionDetails.Select(versionDetail => new JProperty(versionDetail.Key.ToString(), versionDetail.Value.ToJSON()))))
+                           ? new JProperty("versionDetails",     new JArray(VersionDetails.Values.Select(versionDetail => versionDetail.ToJSON())))
                            : null
 
                    );
