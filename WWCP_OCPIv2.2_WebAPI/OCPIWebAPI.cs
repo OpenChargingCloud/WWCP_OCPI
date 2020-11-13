@@ -332,6 +332,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
+            #region GET      ~/clients
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "clients",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             var clients = new List<CommonClient>();
+                                             clients.AddRange(CPOClients);
+                                             clients.AddRange(EMSPClients);
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = new JArray(clients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                     //LastModified               = Location.LastUpdated.ToIso8601(),
+                                                     //ETag                       = Location.SHA256Hash
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
             #region GET      ~/cpoclients
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -342,12 +369,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
 
                                              return Task.FromResult(
-                                                 new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = new JArray(CPOClients.Select(client => client.ToJSON())).ToUTF8Bytes(),
-                                                     AccessControlAllowMethods  = "OPTIONS, GET",
-                                                     AccessControlAllowHeaders  = "Authorization"
+                                                 new HTTPResponse.Builder(Request)
+                                                 {
+                                                     HTTPStatusCode = HTTPStatusCode.OK,
+                                                     ContentType = HTTPContentType.JSON_UTF8,
+                                                     Content = new JArray(CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders = "Authorization"
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
                                                      //ETag                       = Location.SHA256Hash
                                                  }.AsImmutable);
@@ -369,7 +397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = new JArray(EMSPClients.Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     Content                    = new JArray(EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      AccessControlAllowHeaders  = "Authorization"
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),

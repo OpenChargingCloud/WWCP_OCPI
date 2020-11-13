@@ -701,7 +701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.Hostname                    = RemoteVersionsURL.Hostname;
             this.RemotePort                  = RemoteVersionsURL.Port ?? DefaultRemotePort;
             this.MyCommonAPI                 = MyCommonAPI;
-            this.Description                 = Description;
+            this.Description                 = Description            ?? "";
             this.VirtualHostname             = VirtualHostname;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
             this.RequestTimeout              = RequestTimeout         ?? DefaultRequestTimeout;
@@ -715,6 +715,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+        public virtual JObject ToJSON()
+            => ToJSON(nameof(CommonClient));
 
         protected JObject ToJSON(String ClientType)
         {
