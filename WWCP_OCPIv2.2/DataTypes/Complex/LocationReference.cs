@@ -238,7 +238,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<EVSE_UId> EVSEUIds,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion

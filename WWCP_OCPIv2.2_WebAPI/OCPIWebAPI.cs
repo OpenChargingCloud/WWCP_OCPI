@@ -300,10 +300,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region / (HTTPRoot)
 
-            HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                               URLPathPrefix + "/",
-                                               "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
-                                               DefaultFilename: "index.html");
+            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+            //                                   URLPathPrefix + "/",
+            //                                   "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
+            //                                   DefaultFilename: "index.html");
 
             #endregion
 
