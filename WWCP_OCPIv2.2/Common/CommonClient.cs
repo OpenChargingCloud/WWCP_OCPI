@@ -385,8 +385,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 => JSONObject.Create(
                        new JProperty("GetVersions", GetVersions.ToJSON())
-
-                    
                    );
 
         }
@@ -422,6 +420,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Properties
 
         /// <summary>
+        /// An optional description of this client.
+        /// </summary>
+        public String                               Description                   { get; }
+
+        /// <summary>
         /// The access token.
         /// (Might be updated during the REGISTRATION process!)
         /// </summary>
@@ -433,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The remote URL of the VERSIONS endpoint to connect to.
         /// </summary>
-        public URL                                  VersionsURL                   { get; }
+        public URL                                  RemoteVersionsURL             { get; }
 
         /// <summary>
         /// My Common API.
@@ -670,11 +673,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EMSP client.
+        /// Create a new OCPI Common client.
         /// </summary>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
+        /// <param name="Description">An optional description of this client.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
@@ -683,6 +687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CommonClient(AccessToken                          AccessToken,
                             URL                                  RemoteVersionsURL,
                             CommonAPI                            MyCommonAPI,
+                            String                               Description                  = null,
                             HTTPHostname?                        VirtualHostname              = null,
                             RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                             TimeSpan?                            RequestTimeout               = null,
@@ -692,10 +697,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.AccessToken                 = AccessToken;
             this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
-            this.VersionsURL                 = RemoteVersionsURL;
+            this.RemoteVersionsURL           = RemoteVersionsURL;
             this.Hostname                    = RemoteVersionsURL.Hostname;
             this.RemotePort                  = RemoteVersionsURL.Port   ?? DefaultRemotePort;
             this.MyCommonAPI                 = MyCommonAPI;
+            this.Description                 = Description;
             this.VirtualHostname             = VirtualHostname;
             this.RemoteCertificateValidator  = RemoteCertificateValidator;
             this.RequestTimeout              = RequestTimeout     ?? DefaultRequestTimeout;
@@ -708,6 +714,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
+
+
+        public JObject ToJSON()
+        {
+
+            return JSONObject.Create(
+
+                       Description.IsNotNullOrEmpty()
+                           ? new JProperty("description",        Description)
+                           : null,
+
+                       new JProperty("accessToken",              AccessToken.          ToString()),
+                       new JProperty("remoteVersionsURL",        RemoteVersionsURL.    ToString()),
+
+                       VirtualHostname.HasValue
+                           ? new JProperty("virtualHostname",    VirtualHostname.Value.ToString())
+                           : null,
+
+                       RequestTimeout.HasValue
+                           ? new JProperty("requestTimeout",     RequestTimeout. Value.TotalSeconds)
+                           : null,
+
+                       new JProperty("maxNumberOfRetries",       MaxNumberOfRetries),
+
+                       Versions.SafeAny()
+                           ? new JProperty("versions",           new JObject(Versions.Select(version => new JProperty(version.Key.ToString(), version.Value.ToString()))))
+                           : null,
+
+                       SelectedOCPIVersionId.HasValue
+                           ? new JProperty("selectedVersionId",  SelectedOCPIVersionId.ToString())
+                           : null,
+
+                       VersionDetails.SafeAny()
+                           ? new JProperty("versionDetails",     new JObject(VersionDetails.Select(versionDetail => new JProperty(versionDetail.Key.ToString(), versionDetail.Value.ToJSON()))))
+                           : null
+
+                   );
+
+        }
 
 
         #region GetVersions(...)
@@ -787,19 +832,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (VersionsURL.Protocol == HTTPProtocols.http
+                    var HTTPResponse = await (RemoteVersionsURL.Protocol == HTTPProtocols.http
 
-                                                 ? new HTTPClient (VersionsURL.Hostname,
+                                                 ? new HTTPClient (RemoteVersionsURL.Hostname,
                                                                    RemotePort:  RemotePort,
                                                                    DNSClient:   DNSClient)
 
-                                                 : new HTTPSClient(VersionsURL.Hostname,
+                                                 : new HTTPSClient(RemoteVersionsURL.Hostname,
                                                                    RemoteCertificateValidator ?? ((a,b,c,d) => true),
                                                                    RemotePort:  RemotePort,
                                                                    DNSClient:   DNSClient)).
 
                                            Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                  VersionsURL.Path,
+                                                                                  RemoteVersionsURL.Path,
                                                                                   requestbuilder => {
                                                                                       //requestbuilder.Host           = VirtualHostname ?? Hostname;
                                                                                       requestbuilder.Authorization  = TokenAuth;

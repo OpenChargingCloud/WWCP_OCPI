@@ -19,6 +19,8 @@
 
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
@@ -50,7 +52,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
+        public JObject ToJSON()
+        {
 
+            return JSONObject.Create(
+                       new JProperty("accesstoken", Token.      ToString()),
+                       new JProperty("versionsURL", VersionsURL.ToString()),
+                       new JProperty("roles",       new JArray(Roles.Select(role => role.ToJSON()))),
+                       new JProperty("status",      Status.     ToString())
+                );
+
+        }
 
         public Credentials AsCredentials()
 
