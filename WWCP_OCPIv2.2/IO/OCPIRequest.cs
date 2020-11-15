@@ -51,12 +51,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public static class OCPIRequestExtentions
     {
 
-        #region AddOCPIMethod(HTTPServer, Hostname, HTTPMethod, URLTemplate,  HTTPContentType = null, URLAuthentication = false, HTTPMethodAuthentication = false, ContentTypeAuthentication = false, HTTPDelegate = null)
+        #region AddOCPIMethod(CommonAPI, Hostname, HTTPMethod, URLTemplate,  HTTPContentType = null, URLAuthentication = false, HTTPMethodAuthentication = false, ContentTypeAuthentication = false, HTTPDelegate = null)
 
         /// <summary>
         /// Add a method callback for the given URL template.
         /// </summary>
-        /// <param name="HTTPServer">The HTTP server.</param>
+        /// <param name="CommonAPI">The OCPI Common API.</param>
         /// <param name="Hostname">The HTTP hostname.</param>
         /// <param name="HTTPMethod">The HTTP method.</param>
         /// <param name="URLTemplate">The URL template.</param>
@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseLogger">A OCPI response logger.</param>
         /// <param name="DefaultErrorHandler">The default error handler.</param>
         /// <param name="OCPIRequest">The method to call.</param>
-        public static void AddOCPIMethod(this HTTPServer         HTTPServer,
+        public static void AddOCPIMethod(this CommonAPI          CommonAPI,
                                          HTTPHostname            Hostname,
                                          HTTPMethod              HTTPMethod,
                                          HTTPPath                URLTemplate,
@@ -84,35 +84,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            HTTPServer.AddMethodCallback(Hostname,
-                                         HTTPMethod,
-                                         URLTemplate,
-                                         HTTPContentType,
-                                         URLAuthentication,
-                                         HTTPMethodAuthentication,
-                                         ContentTypeAuthentication,
-                                         (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, HTTP.OCPIRequest.Parse(httpRequest)),
-                                         (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
-                                                                                                                                        httpResponse.SubprotocolResponse as OCPIResponse),
-                                         DefaultErrorHandler,
-                                         async httpRequest => {
+            CommonAPI.HTTPServer.
+                      AddMethodCallback(Hostname,
+                                        HTTPMethod,
+                                        URLTemplate,
+                                        HTTPContentType,
+                                        URLAuthentication,
+                                        HTTPMethodAuthentication,
+                                        ContentTypeAuthentication,
+                                        (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, HTTP.OCPIRequest.Parse(httpRequest, CommonAPI)),
+                                        (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
+                                                                                                                                       httpResponse.SubprotocolResponse as OCPIResponse),
+                                        DefaultErrorHandler,
+                                        async httpRequest => {
 
-                                             var OCPIResponseBuilder = await OCPIRequest(httpRequest.SubprotocolRequest is null
-                                                                                 ? HTTP.OCPIRequest.Parse(httpRequest) // When no OCPIRequestLogger was used!
-                                                                                 : httpRequest.SubprotocolRequest as OCPIRequest);
+                                            var OCPIResponseBuilder = await OCPIRequest(httpRequest.SubprotocolRequest is null
+                                                                                ? HTTP.OCPIRequest.Parse(httpRequest, CommonAPI) // When no OCPIRequestLogger was used!
+                                                                                : httpRequest.SubprotocolRequest as OCPIRequest);
 
-                                             var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
-                                             httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
-                                                                                                        OCPIResponseBuilder.StatusCode,
-                                                                                                        OCPIResponseBuilder.StatusMessage,
-                                                                                                        OCPIResponseBuilder.AdditionalInformation,
-                                                                                                        OCPIResponseBuilder.Timestamp ?? DateTime.UtcNow,
-                                                                                                        httpResponseBuilder.AsImmutable);
+                                            var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
+                                            httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
+                                                                                                       OCPIResponseBuilder.StatusCode,
+                                                                                                       OCPIResponseBuilder.StatusMessage,
+                                                                                                       OCPIResponseBuilder.AdditionalInformation,
+                                                                                                       OCPIResponseBuilder.Timestamp ?? DateTime.UtcNow,
+                                                                                                       httpResponseBuilder.AsImmutable);
 
-                                             return httpResponseBuilder;
+                                            return httpResponseBuilder;
 
-                                         },
-                                         AllowReplacement);
+                                        },
+                                        AllowReplacement);
 
         }
 
@@ -154,6 +155,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
+        public CommonAPI        CommonAPI           { get; }
+
         public HTTPRequest      HTTPRequest         { get; }
 
         public Request_Id?      RequestId           { get; }
@@ -165,6 +168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public AccessToken?     AccessToken         { get; }
 
+        public AccessInfo?      AccessInfo          { get; }
 
 
         /// <summary>
@@ -188,7 +192,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        protected OCPIRequest(HTTPRequest Request)
+        protected OCPIRequest(HTTPRequest  Request,
+                              CommonAPI    CommonAPI)
         {
 
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(HTTPRequest), "The given HTTP request must not be null!");
@@ -213,6 +218,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             {
                 this.AccessToken = accessToken;
             }
+
+            if (this.AccessToken.HasValue)
+            {
+
+                if (CommonAPI.TryGetAccessInfo(this.AccessToken.Value, out AccessInfo accessInfo))
+                {
+
+                    this.AccessInfo = accessInfo;
+
+            //        var allTheirCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+
+            //        if (!FromCountryCode.HasValue && allTheirCPORoles.Length == 1)
+            //            this.FromCountryCode = allTheirCPORoles[0].CountryCode;
+
+            //        if (!FromPartyId.    HasValue && allTheirCPORoles.Length == 1)
+            //            this.FromPartyId     = allTheirCPORoles[0].PartyId;
+
+                }
+
+            }
+
+
+            //var allMyCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+
+            //if (!ToCountryCode.HasValue && allMyCPORoles.Length == 1)
+            //    this.ToCountryCode = allMyCPORoles[1].CountryCode;
+
+            //if (!ToPartyId.HasValue && allMyCPORoles.Length == 1)
+            //    this.ToPartyId = allMyCPORoles[1].PartyId;
+
 
             this.HTTPRequest.SubprotocolRequest = this;
 
@@ -283,9 +318,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
 
-        public static OCPIRequest Parse(HTTPRequest HTTPRequest)
+        public static OCPIRequest Parse(HTTPRequest  HTTPRequest,
+                                        CommonAPI    CommonAPI)
 
-            => new OCPIRequest(HTTPRequest);
+            => new OCPIRequest(HTTPRequest,
+                               CommonAPI);
 
 
     }

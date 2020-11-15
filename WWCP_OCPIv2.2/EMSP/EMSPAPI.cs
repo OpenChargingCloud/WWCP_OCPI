@@ -3623,7 +3623,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
-            //HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            //CommonAPI.AddOCPIMethod(HTTPHostname.Any,
             //                             HTTPMethod.GET,
             //                             new HTTPPath[] {
             //                                 URLPathPrefix + "/emsp/index.html",
@@ -3656,7 +3656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "locations/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -3677,7 +3677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/locations/{country_code}/{party_id}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "locations/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -3736,7 +3736,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/locations/{country_code}/{party_id}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -3782,7 +3782,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
@@ -3813,7 +3813,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/locations/{country_code}/{party_id}/{locationId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
@@ -3854,7 +3854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PUT      ~/locations/{country_code}/{party_id}/{locationId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
@@ -3942,7 +3942,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4019,7 +4019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4068,7 +4068,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4099,7 +4099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4141,7 +4141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4230,7 +4230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4307,7 +4307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4357,7 +4357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4390,7 +4390,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4434,7 +4434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4526,7 +4526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4606,7 +4606,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4659,7 +4659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status     [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
                                      HTTPContentType.JSON_UTF8,
@@ -4687,7 +4687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status     [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
                                      HTTPContentType.JSON_UTF8,
@@ -4762,7 +4762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/tariffs/{country_code}/{party_id}            [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -4783,7 +4783,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/tariffs/{country_code}/{party_id}            [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -4842,7 +4842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/tariffs/{country_code}/{party_id}            [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -4887,7 +4887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/tariffs/{country_code}/{party_id}/{tariffId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4917,7 +4917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/tariffs/{country_code}/{party_id}/{tariffId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                      HTTPContentType.JSON_UTF8,
@@ -4957,7 +4957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PUT      ~/tariffs/{country_code}/{party_id}/{tariffId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5057,7 +5057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PATCH    ~/tariffs/{country_code}/{party_id}/{tariffId}      [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5134,7 +5134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/tariffs/{country_code}/{party_id}/{tariffId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5186,7 +5186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/sessions/{country_code}/{party_id}                [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5207,7 +5207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/sessions/{country_code}/{party_id}                [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5266,7 +5266,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/sessions/{country_code}/{party_id}                [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5311,7 +5311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5342,7 +5342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/sessions/{country_code}/{party_id}/{sessionId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5383,7 +5383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PUT      ~/sessions/{country_code}/{party_id}/{sessionId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PUT,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5483,7 +5483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region PATCH    ~/sessions/{country_code}/{party_id}/{sessionId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.PATCH,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5557,7 +5557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5609,7 +5609,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/cdrs/{country_code}/{party_id}           [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5630,7 +5630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/cdrs/{country_code}/{party_id}           [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5693,7 +5693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/cdrs/{country_code}/{party_id}       <= Unclear if this URL is correct!
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5773,7 +5773,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/cdrs/{country_code}/{party_id}           [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
@@ -5818,7 +5818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/cdrs/{country_code}/{party_id}/{cdrId}    [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5847,7 +5847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region GET      ~/cdrs/{country_code}/{party_id}/{cdrId}       // The concrete URL is not specified by OCPI! m(
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5888,7 +5888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region DELETE   ~/cdrs/{country_code}/{party_id}/{cdrId}    [NonStandard]
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.DELETE,
                                      URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                      HTTPContentType.JSON_UTF8,
@@ -5941,7 +5941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS  ~/tokens
 
             // https://example.com/ocpi/2.2/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "tokens",
                                      HTTPContentType.JSON_UTF8,
@@ -5971,7 +5971,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET      ~/tokens
 
             // https://example.com/ocpi/2.2/cpo/tokens/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.GET,
                                      URLPathPrefix + "tokens",
                                      HTTPContentType.JSON_UTF8,
@@ -6020,7 +6020,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // A real-time authorization request
             // https://example.com/ocpi/2.2/emsp/tokens/012345678/authorize?type=RFID
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "tokens/{token_id}/authorize",
                                      HTTPContentType.JSON_UTF8,
@@ -6094,7 +6094,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  locationReference = _locationReference;
 
-                                                 //ToDo: Somehow filter by location reference!
+                                                 if (!Request.FromCountryCode.HasValue || !Request.FromPartyId.HasValue)
+                                                 {
+
+                                                     var allTheirCPORoles = Request.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+
+                                                     if (allTheirCPORoles.Length != 1 ||
+                                                         !CommonAPI.LocationExists(allTheirCPORoles[0].CountryCode,
+                                                                                   allTheirCPORoles[0].PartyId,
+                                                                                   _locationReference.LocationId))
+                                                     {
+
+                                                         return new OCPIResponse.Builder(Request) {
+                                                             StatusCode           = 2001,
+                                                             StatusMessage        = "The given location is unknown!",
+                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                                 AccessControlAllowHeaders  = "Authorization"
+                                                             }
+                                                         };
+
+                                                     }
+
+                                                 }
+
+                                                 if (!CommonAPI.LocationExists(Request.FromCountryCode.Value,
+                                                                               Request.FromPartyId.    Value,
+                                                                               _locationReference.LocationId))
+                                                 {
+
+                                                     return new OCPIResponse.Builder(Request) {
+                                                         StatusCode           = 2001,
+                                                         StatusMessage        = "The given location is unknown!",
+                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                             HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                             AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                             AccessControlAllowHeaders  = "Authorization"
+                                                         }
+                                                     };
+
+                                                 }
+
+
+                                                 //ToDo: Filter by location reference, e.g. via event!
+
 
                                              }
 
@@ -6132,7 +6176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/commands/RESERVE_NOW/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6153,7 +6197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/commands/RESERVE_NOW/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6219,7 +6263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/commands/CANCEL_RESERVATION/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6240,7 +6284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/commands/CANCEL_RESERVATION/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6306,7 +6350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/commands/START_SESSION/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/START_SESSION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6327,7 +6371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/commands/START_SESSION/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "commands/START_SESSION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6393,7 +6437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/commands/STOP_SESSION/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/STOP_SESSION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6414,7 +6458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/commands/STOP_SESSION/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "commands/STOP_SESSION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6480,7 +6524,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS  ~/commands/UNLOCK_CONNECTOR/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
                                      HTTPContentType.JSON_UTF8,
@@ -6501,7 +6545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region POST     ~/commands/UNLOCK_CONNECTOR/{commandId}
 
-            HTTPServer.AddOCPIMethod(HTTPHostname.Any,
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.POST,
                                      URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
                                      HTTPContentType.JSON_UTF8,
