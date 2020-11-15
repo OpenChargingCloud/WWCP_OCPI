@@ -6080,7 +6080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                  return new OCPIResponse.Builder(Request) {
                                                         StatusCode           = 2001,
-                                                        StatusMessage        = "Could not parse the given location JSON: " + ErrorResponse,
+                                                        StatusMessage        = "Could not parse the given location reference JSON: " + ErrorResponse,
                                                         HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             AccessControlAllowMethods  = "OPTIONS, GET, POST",

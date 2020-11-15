@@ -1344,6 +1344,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
         }
 
+        public IEnumerable<AccessInfo> AccessInfos
+            => AccessTokens.Values;
+
+
         public CommonAPI SetAccessToken(AccessToken                   AccessToken,
                                         URL                           VersionsURL,
                                         IEnumerable<CredentialsRole>  Roles,

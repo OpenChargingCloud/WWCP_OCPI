@@ -1,0 +1,29 @@
+﻿@import "defaults/_defaults.scss";
+//@import "../../../UsersAPI/UsersAPI/HTTPRoot/template.scss" as UsersAPI with ( $black: #222, $border-radius: 0.1rem );
+//@import "../../../OpenChargingCloudAPI/OpenChargingCloudAPI/HTTPRoot/template.scss";
+
+
+body {
+    #page {
+        #navigation {
+            #mainmenu {
+                margin-top: 3vh;
+            }
+        }
+    }
+}
+
+
+#serviceTicketsLink
+{
+
+    position:        relative;
+
+    #beta1 {
+        position:       absolute;
+        font-size:      65%;
+        top:            -6px;
+        right:          22px;
+    }
+
+}

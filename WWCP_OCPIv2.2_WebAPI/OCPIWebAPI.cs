@@ -31,6 +31,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.SOAP;
 
 using org.GraphDefined.WWCP;
+using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
 #endregion
 
@@ -156,20 +157,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The HTTP content type for serving OCPI+ XML data.
         /// </summary>
-        public static readonly HTTPContentType                      OCPIPlusXMLContentType      = new HTTPContentType("application", "vnd.OCPIPlus+xml", "utf-8", null, null);
+        public static readonly HTTPContentType                      OCPIPlusJSONContentType     = new HTTPContentType("application", "vnd.OCPIPlus+json", "utf-8", null, null);
 
         /// <summary>
         /// The HTTP content type for serving OCPI+ HTML data.
         /// </summary>
         public static readonly HTTPContentType                      OCPIPlusHTMLContentType     = new HTTPContentType("application", "vnd.OCPIPlus+html", "utf-8", null, null);
 
-
-        private readonly XMLNamespacesDelegate                      XMLNamespaces;
-        //private readonly EVSE2EVSEDataRecordDelegate                EVSE2EVSEDataRecord;
-        //private readonly EVSEStatusUpdate2EVSEStatusRecordDelegate  EVSEStatusUpdate2EVSEStatusRecord;
-        //private readonly EVSEDataRecord2XMLDelegate                 EVSEDataRecord2XML;
-        //private readonly EVSEStatusRecord2XMLDelegate               EVSEStatusRecord2XML;
-        private readonly XMLPostProcessingDelegate                  XMLPostProcessing;
 
         public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse("OCPIDebugLog");
 
@@ -180,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The HTTP server for serving the OCPI+ WebAPI.
         /// </summary>
-        public HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer          { get; }
+        public HTTPServer                                   HTTPServer          { get; }
 
         /// <summary>
         /// The HTTP URI prefix.
@@ -210,17 +204,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         public DNSClient                                    DNSClient           { get; }
 
 
+        public CommonAPI        CommonAPI          { get; set; }
 
-        //private readonly List<WWCPCPOAdapter> _CPOAdapters;
-
-        //public IEnumerable<WWCPCPOAdapter> CPOAdapters
-        //    => _CPOAdapters;
+        public CommonAPILogger  CommonAPILogger    { get; set; }
 
 
-        //private readonly List<WWCPEMPAdapter> _EMPAdapters;
+        public CPOAPI           CPOAPI             { get; set; }
 
-        //public IEnumerable<WWCPEMPAdapter> EMPAdapters
-        //    => _EMPAdapters;
+        public CPOAPILogger     CPOAPILogger       { get; set; }
+
+
+        public EMSPAPI          EMSPAPI            { get; set; }
+
+        public EMSPAPILogger    EMSPAPILogger      { get; set; }
+
+
+        public List<CPOClient>  CPOClients         { get; }
+
+        public List<EMSPClient> EMSPClients        { get; }
 
         #endregion
 
@@ -256,23 +257,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <param name="URLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        /// 
-        /// <param name="XMLNamespaces">An optional delegate to process the XML namespaces.</param>
-        /// <param name="EVSE2EVSEDataRecord">An optional delegate to process an EVSE data record before converting it to XML.</param>
-        /// <param name="EVSEDataRecord2XML">An optional delegate to process an EVSE data record XML before sending it somewhere.</param>
-        /// <param name="EVSEStatusRecord2XML">An optional delegate to process an EVSE status record XML before sending it somewhere.</param>
-        /// <param name="XMLPostProcessing">An optional delegate to process the XML after its final creation.</param>
-        public OCPIWebAPI(HTTPServer<RoamingNetworks, RoamingNetwork>  HTTPServer,
+        public OCPIWebAPI(HTTPServer                                   HTTPServer,
                           HTTPPath?                                    URLPathPrefix                       = null,
                           String                                       HTTPRealm                           = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>    HTTPLogins                          = null,
-
-                          XMLNamespacesDelegate                        XMLNamespaces                       = null,
-                          //EVSE2EVSEDataRecordDelegate                  EVSE2EVSEDataRecord                 = null,
-                          //EVSEStatusUpdate2EVSEStatusRecordDelegate    EVSEStatusUpdate2EVSEStatusRecord   = null,
-                          //EVSEDataRecord2XMLDelegate                   EVSEDataRecord2XML                  = null,
-                          //EVSEStatusRecord2XMLDelegate                 EVSEStatusRecord2XML                = null,
-                          XMLPostProcessingDelegate                    XMLPostProcessing                   = null)
+                          IEnumerable<KeyValuePair<String, String>>    HTTPLogins                          = null)
         {
 
             this.HTTPServer                         = HTTPServer    ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP server must not be null!");
@@ -281,14 +269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             this.HTTPLogins                         = HTTPLogins    ?? new KeyValuePair<String, String>[0];
             this.DNSClient                          = HTTPServer.DNSClient;
 
-            this.XMLNamespaces                      = XMLNamespaces;
-            //this.EVSE2EVSEDataRecord                = EVSE2EVSEDataRecord;
-            //this.EVSEStatusUpdate2EVSEStatusRecord  = EVSEStatusUpdate2EVSEStatusRecord;
-            //this.EVSEDataRecord2XML                 = EVSEDataRecord2XML;
-            //this.EVSEStatusRecord2XML               = EVSEStatusRecord2XML;
-            this.XMLPostProcessing                  = XMLPostProcessing;
-
-            //this._CPOAdapters                       = new List<WWCPCPOAdapter>();
+            this.CPOClients                         = new List<CPOClient>();
+            this.EMSPClients                        = new List<EMSPClient>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -297,12 +279,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             var LogfilePrefix                       = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
-            this.DebugLog                           = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
-                                                                                    URLTemplate:              this.URLPathPrefix + "/DebugLog",
-                                                                                    MaxNumberOfCachedEvents:  10000,
-                                                                                    RetryIntervall:           TimeSpan.FromSeconds(5),
-                                                                                    EnableLogging:            true,
-                                                                                    LogfilePrefix:            LogfilePrefix);
+            //this.DebugLog                           = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
+            //                                                                        URLTemplate:              this.URLPathPrefix + "/DebugLog",
+            //                                                                        MaxNumberOfCachedEvents:  10000,
+            //                                                                        RetryIntervall:           TimeSpan.FromSeconds(5),
+            //                                                                        EnableLogging:            true,
+            //                                                                        LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
 
@@ -318,12 +300,114 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region / (HTTPRoot)
 
-            HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-                                               URLPathPrefix + "/",
-                                               "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
-                                               DefaultFilename: "index.html");
+            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+            //                                   URLPathPrefix + "/",
+            //                                   "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
+            //                                   DefaultFilename: "index.html");
 
             #endregion
+
+
+            #region GET      ~/accesstokens
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "accesstokens",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = new JArray(CommonAPI.AccessInfos.Select(accessinfo => accessinfo.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                     //LastModified               = Location.LastUpdated.ToIso8601(),
+                                                     //ETag                       = Location.SHA256Hash
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region GET      ~/clients
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "clients",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             var clients = new List<CommonClient>();
+                                             clients.AddRange(CPOClients);
+                                             clients.AddRange(EMSPClients);
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = new JArray(clients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                     //LastModified               = Location.LastUpdated.ToIso8601(),
+                                                     //ETag                       = Location.SHA256Hash
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region GET      ~/cpoclients
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "cpoclients",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request)
+                                                 {
+                                                     HTTPStatusCode = HTTPStatusCode.OK,
+                                                     ContentType = HTTPContentType.JSON_UTF8,
+                                                     Content = new JArray(CPOClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders = "Authorization"
+                                                     //LastModified               = Location.LastUpdated.ToIso8601(),
+                                                     //ETag                       = Location.SHA256Hash
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
+            #region GET      ~/emspclients
+
+            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "emspclients",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     ContentType                = HTTPContentType.JSON_UTF8,
+                                                     Content                    = new JArray(EMSPClients.OrderBy(client => client.Description).Select(client => client.ToJSON())).ToUTF8Bytes(),
+                                                     AccessControlAllowMethods  = "OPTIONS, GET",
+                                                     AccessControlAllowHeaders  = "Authorization"
+                                                     //LastModified               = Location.LastUpdated.ToIso8601(),
+                                                     //ETag                       = Location.SHA256Hash
+                                                 }.AsImmutable);
+
+                                         });
+
+            #endregion
+
 
         }
 

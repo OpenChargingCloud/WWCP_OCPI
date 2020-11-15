@@ -1,0 +1,10 @@
+﻿body #page #navigation #mainmenu {
+  margin-top: 3vh; }
+
+#serviceTicketsLink {
+  position: relative; }
+  #serviceTicketsLink #beta1 {
+    position: absolute;
+    font-size: 65%;
+    top: -6px;
+    right: 22px; }

@@ -1649,6 +1649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
+        /// <param name="Description">An optional description of this client.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
         /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
@@ -1657,6 +1658,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CPOClient(AccessToken                          AccessToken,
                          URL                                  RemoteVersionsURL,
                          CommonAPI                            MyCommonAPI,
+                         String                               Description                  = null,
                          HTTPHostname?                        VirtualHostname              = null,
                          RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
                          TimeSpan?                            RequestTimeout               = null,
@@ -1666,6 +1668,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             : base(AccessToken,
                    RemoteVersionsURL,
                    MyCommonAPI,
+                   Description,
                    VirtualHostname,
                    RemoteCertificateValidator,
                    RequestTimeout,
@@ -1680,6 +1683,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
+
+        public override JObject ToJSON()
+            => base.ToJSON(nameof(CPOClient));
 
 
         #region GetLocation    (CountryCode, PartyId, LocationId, ...)
