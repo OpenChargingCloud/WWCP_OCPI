@@ -544,9 +544,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(LocationId,
-                             " -> ",
-                             EVSEUIds.OrderBy(evse_uid => evse_uid).
-                                      AggregateWith(", "));
+                             EVSEUIds.SafeAny()
+                                 ? " -> " + EVSEUIds.OrderBy(evse_uid => evse_uid).
+                                                     AggregateWith(", ")
+                                 : "");
 
         #endregion
 

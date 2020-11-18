@@ -39,6 +39,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         private readonly String InternalId;
 
+        private static readonly Random random = new Random(DateTime.Now.Millisecond);
+
         #endregion
 
         #region Properties
@@ -72,6 +74,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+        #region (static) Random  (Length = 30)
+
+        /// <summary>
+        /// Create a new random authorization reference.
+        /// </summary>
+        /// <param name="Length">The expected length of the authorization reference.</param>
+        public static AuthorizationReference Random(Byte Length = 30)
+
+            => new AuthorizationReference(random.RandomString(Length));
+
+        #endregion
 
         #region (static) Parse   (Text)
 

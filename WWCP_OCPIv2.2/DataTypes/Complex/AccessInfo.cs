@@ -17,15 +17,36 @@
 
 #region Usings
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
+
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
+
+    public static class AccessInfoextentions
+    {
+
+        public static Boolean Is(this AccessInfo?  AccessInfo,
+                                 Roles             Role)
+
+            => AccessInfo.HasValue &&
+               AccessInfo.Value.Is(Role);
+
+        public static Boolean IsNot(this AccessInfo?  AccessInfo,
+                                    Roles             Role)
+
+            => !AccessInfo.HasValue ||
+                AccessInfo.Value.IsNot(Role);
+
+    }
+
 
     public struct AccessInfo
     {
@@ -72,6 +93,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                         role.PartyId,
                                                                         role.Role,
                                                                         role.BusinessDetails)));
+
+
+        public Boolean Is(Roles Role)
+            => Roles.Any(role => role.Role == Role);
+
+        public Boolean IsNot(Roles Role)
+            => !Roles.Any(role => role.Role == Role);
 
     }
 
