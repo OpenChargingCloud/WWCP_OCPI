@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("nature",       Nature),
+                           new JProperty("nature",       Nature.ToString()),
                            new JProperty("plain_data",   PlainData),
                            new JProperty("signed_data",  SignedData)
 

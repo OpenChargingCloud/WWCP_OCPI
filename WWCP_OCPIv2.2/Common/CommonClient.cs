@@ -2215,7 +2215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                       ResponseLogDelegate:  OnRegisterHTTPResponse,
                                                       CancellationToken:    CancellationToken,
                                                       EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      RequestTimeout:       TimeSpan.FromMinutes(5)).// RequestTimeout ?? this.RequestTimeout).
 
                                               ConfigureAwait(false);
 
