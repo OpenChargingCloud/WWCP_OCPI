@@ -2181,11 +2181,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 else
                 {
 
-                    var requestId      = RequestId     ?? Request_Id.Random();
-                    var correlationId  = CorrelationId ?? Correlation_Id.Random();
-                    var credentials    = new Credentials(CredentialTokenB ?? AccessToken.Random(),
-                                                         myVersionsURL.Value,
-                                                         myRoles);
+                    var requestId          = RequestId     ?? Request_Id.Random();
+                    var correlationId      = CorrelationId ?? Correlation_Id.Random();
+                    var credentials        = new Credentials(CredentialTokenB ?? AccessToken.Random(),
+                                                             myVersionsURL.Value,
+                                                             myRoles);
 
                     #region Upstream HTTP request...
 
@@ -2221,12 +2221,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Credentials>.ParseJObject(HTTPResponse,
-                                                                      requestId,
-                                                                      correlationId,
-                                                                      json => Credentials.Parse(json));
+                    response               = OCPIResponse<Credentials>.ParseJObject(HTTPResponse,
+                                                                                    requestId,
+                                                                                    correlationId,
+                                                                                    json => Credentials.Parse(json));
 
-                    SelectedOCPIVersionId = versionId;
+                    SelectedOCPIVersionId  = versionId;
+                    TokenAuth              = new HTTPTokenAuthentication(response.Data.Token.ToString().EncodeBase64());
+
+                    //ToDo: Store the new access token on disc.
+                    //MyCommonAPI.SetRemoteAccessInfo
 
                 }
 

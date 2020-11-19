@@ -70,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Optional display text, additional information to the EV driver.
         /// </summary>
         [Optional]
-        public IEnumerable<DisplayText>  Info                      { get; }
+        public DisplayText?              Info                      { get; }
 
         #endregion
 
@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                  Token                     Token,
                                  LocationReference?        Location                 = null,
                                  AuthorizationReference?   AuthorizationReference   = null,
-                                 IEnumerable<DisplayText>  Info                     = null)
+                                 DisplayText?              Info                     = null)
         {
 
             this.Allowed                 = Allowed;
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (JSON.ParseOptionalJSON("info",
                                            "multi-language information",
                                            DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> Info,
+                                           out DisplayText? Info,
                                            out ErrorResponse))
                 {
 
@@ -354,8 +354,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("authorization_reference",   AuthorizationReference.Value.ToString())
                                : null,
 
-                           Info.SafeAny()
-                               ? new JProperty("info",                      new JArray(Info.Select(info => info.ToJSON(CustomDisplayTextSerializer))))
+                           Info.HasValue
+                               ? new JProperty("info",                      Info.                  Value.ToJSON(CustomDisplayTextSerializer))
                                : null
 
                        );
@@ -444,9 +444,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                Location.              HasValue && AuthorizationInfo.Location.              HasValue && Location.              Value.Equals(AuthorizationInfo.Location.              Value) &&
                AuthorizationReference.HasValue && AuthorizationInfo.AuthorizationReference.HasValue && AuthorizationReference.Value.Equals(AuthorizationInfo.AuthorizationReference.Value) &&
-
-               Info.SafeAny()                  && AuthorizationInfo.Info.SafeAny()                  && Info.Count().                Equals(AuthorizationInfo.Info.Count()) &&
-               Info.SafeAll(info => AuthorizationInfo.Info.Contains(info));
+               Info.                  HasValue && AuthorizationInfo.Info.                  HasValue && Info.                  Value.Equals(AuthorizationInfo.Info.                  Value);
 
         #endregion
 
@@ -474,8 +472,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             ? AuthorizationReference.Value.GetHashCode() *  3
                             : 0) ^
 
-                       (Info.SafeAny()
-                            ? Info.GetHashCode()
+                       (Info.HasValue
+                            ? Info.                  Value.GetHashCode()
                             : 0);
 
             }
