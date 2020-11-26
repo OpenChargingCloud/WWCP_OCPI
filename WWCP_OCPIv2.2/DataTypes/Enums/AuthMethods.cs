@@ -25,12 +25,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     {
 
         /// <summary>
-        /// Authentication request from the eMSP.
+        /// Authentication request has been sent to the eMSP.
         /// </summary>
         AUTH_REQUEST,
 
         /// <summary>
-        /// Whitelist used to authenticate, no request done to the eMSP.
+        /// Command like StartSession or ReserveNow used to start the Session, the Token provided in the Command was used as authorization.
+        /// </summary>
+        COMMAND,
+
+        /// <summary>
+        /// Whitelist used for authentication, no request to the eMSP has been performed.
         /// </summary>
         WHITELIST
 

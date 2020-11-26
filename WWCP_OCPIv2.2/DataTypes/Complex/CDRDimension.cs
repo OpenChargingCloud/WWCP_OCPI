@@ -18,7 +18,7 @@
 #region Usings
 
 using System;
-using System.Management.Instrumentation;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// A charge detail record dimension.
+    /// A charging dimension.
     /// </summary>
     public readonly struct CDRDimension : IEquatable<CDRDimension>,
                                           IComparable<CDRDimension>,
@@ -39,28 +39,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The type of the charge detail record dimension.
+        /// The charging dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimensions  Type      { get; }
+        public CDRDimensions  Type      { get; }
 
         /// <summary>
         /// Volume of the dimension consumed, measured according to the dimension type.
         /// </summary>
         [Mandatory]
-        public Decimal           Volume    { get; }
+        public Decimal        Volume    { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create new charge detail record dimension.
+        /// Create new charging dimension.
         /// </summary>
-        /// <param name="Type">Type of charge detail record dimension.</param>
+        /// <param name="Type">The charging dimension.</param>
         /// <param name="Volume">Volume of the dimension consumed, measured according to the dimension type.</param>
-        public CDRDimension(TariffDimensions  Type,
-                            Decimal           Volume)
+        public CDRDimension(CDRDimensions  Type,
+                            Decimal        Volume)
         {
 
             this.Type    = Type;
@@ -74,12 +74,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (JSON, CustomCDRDimensionParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a charge detail record dimension.
+        /// Parse the given JSON representation of a charging dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
-        public static CDRDimension Parse(JObject                                      JSON,
-                                           CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
+        public static CDRDimension Parse(JObject                                    JSON,
+                                         CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
         {
 
             if (TryParse(JSON,
@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return cdrDimension;
             }
 
-            throw new ArgumentException("The given JSON representation of a charge detail record dimension is invalid: " + ErrorResponse, nameof(JSON));
+            throw new ArgumentException("The given JSON representation of a charging dimension is invalid: " + ErrorResponse, nameof(JSON));
 
         }
 
@@ -99,10 +99,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text, CustomCDRDimensionParser = null)
 
         /// <summary>
-        /// Parse the given text representation of a charge detail record dimension.
+        /// Parse the given text representation of a charging dimension.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
         public static CDRDimension Parse(String                                     Text,
                                          CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
         {
@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return cdrDimension;
             }
 
-            throw new ArgumentException("The given text representation of a charge detail record dimension is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given text representation of a charging dimension is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
@@ -124,10 +124,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(JSON, CustomCDRDimensionParser = null)
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// Try to parse the given JSON representation of a charging dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
         public static CDRDimension? TryParse(JObject                                    JSON,
                                              CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
         {
@@ -149,10 +149,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, CustomCDRDimensionParser = null)
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// Try to parse the given JSON representation of a charging dimension.
         /// </summary>
         /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
         public static CDRDimension? TryParse(String                                     Text,
                                              CustomJObjectParserDelegate<CDRDimension>  CustomCDRDimensionParser   = null)
         {
@@ -176,10 +176,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// Try to parse the given JSON representation of a charging dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CDRDimension">The parsed charge detail record dimension.</param>
+        /// <param name="CDRDimension">The parsed charging dimension.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject           JSON,
                                        out CDRDimension  CDRDimension,
@@ -192,12 +192,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of a charge detail record dimension.
+        /// Try to parse the given JSON representation of a charging dimension.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CDRDimension">The parsed charge detail record dimension.</param>
+        /// <param name="CDRDimension">The parsed charging dimension.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
         public static Boolean TryParse(JObject                                    JSON,
                                        out CDRDimension                           CDRDimension,
                                        out String                                 ErrorResponse,
@@ -218,8 +218,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #region Parse Type      [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("type",
-                                             "tariff dimension type",
-                                             out TariffDimensions Type,
+                                             "charging dimension type",
+                                             out CDRDimensions Type,
                                              out ErrorResponse))
                 {
                     return false;
@@ -254,7 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 CDRDimension   = default;
-                ErrorResponse  = "The given JSON representation of a charge detail record dimension is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a charging dimension is invalid: " + e.Message;
                 return false;
             }
 
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Text">The text to parse.</param>
         /// <param name="CDRDimension">The parsed cdrDimension.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionParser">A delegate to parse custom charging dimension JSON objects.</param>
         public static Boolean TryParse(String                                     Text,
                                        out CDRDimension                           CDRDimension,
                                        out String                                 ErrorResponse,
@@ -289,7 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 CDRDimension   = default;
-                ErrorResponse  = "The given text representation of a charge detail record dimension is invalid: " + e.Message;
+                ErrorResponse  = "The given text representation of a charging dimension is invalid: " + e.Message;
                 return false;
             }
 
@@ -302,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charging dimension JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDRDimension> CustomCDRDimensionSerializer = null)
         {
 
@@ -327,8 +327,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A specification of a charge detail record dimension.</param>
-        /// <param name="CDRDimension2">Another specification of a charge detail record dimension.</param>
+        /// <param name="CDRDimension1">A specification of a charging dimension.</param>
+        /// <param name="CDRDimension2">Another specification of a charging dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -342,8 +342,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A specification of a charge detail record dimension.</param>
-        /// <param name="CDRDimension2">Another specification of a charge detail record dimension.</param>
+        /// <param name="CDRDimension1">A specification of a charging dimension.</param>
+        /// <param name="CDRDimension2">Another specification of a charging dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -357,8 +357,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A specification of a charge detail record dimension.</param>
-        /// <param name="CDRDimension2">Another specification of a charge detail record dimension.</param>
+        /// <param name="CDRDimension1">A specification of a charging dimension.</param>
+        /// <param name="CDRDimension2">Another specification of a charging dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (CDRDimension CDRDimension1,
                                           CDRDimension CDRDimension2)
@@ -372,8 +372,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A specification of a charge detail record dimension.</param>
-        /// <param name="CDRDimension2">Another specification of a charge detail record dimension.</param>
+        /// <param name="CDRDimension1">A specification of a charging dimension.</param>
+        /// <param name="CDRDimension2">Another specification of a charging dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -387,8 +387,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A specification of a charge detail record dimension.</param>
-        /// <param name="CDRDimension2">Another specification of a charge detail record dimension.</param>
+        /// <param name="CDRDimension1">A specification of a charging dimension.</param>
+        /// <param name="CDRDimension2">Another specification of a charging dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (CDRDimension CDRDimension1,
                                           CDRDimension CDRDimension2)
@@ -402,8 +402,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRDimension1">A specification of a charge detail record dimension.</param>
-        /// <param name="CDRDimension2">Another specification of a charge detail record dimension.</param>
+        /// <param name="CDRDimension1">A specification of a charging dimension.</param>
+        /// <param name="CDRDimension2">Another specification of a charging dimension.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (CDRDimension CDRDimension1,
                                            CDRDimension CDRDimension2)
@@ -426,7 +426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => Object is CDRDimension CDRDimension
                    ? CompareTo(CDRDimension)
-                   : throw new ArgumentException("The given object is not a charge detail record dimension!",
+                   : throw new ArgumentException("The given object is not a charging dimension!",
                                                  nameof(Object));
 
         #endregion
