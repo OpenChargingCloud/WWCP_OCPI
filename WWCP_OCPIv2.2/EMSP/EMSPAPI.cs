@@ -6288,7 +6288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        Data                 = newCDR.ToJSON(),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Created,
-                                                           Location                   = URLPathPrefix + "2.2" + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString(),
+                                                           Location                   = URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString(),
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newCDR.LastUpdated.ToIso8601(),
@@ -6738,13 +6738,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "The given location is unknown!",
-                                                            Data                 = new AuthorizationInfo(AllowedTypes.NOT_ALLOWED,
-                                                                                                         tokenStatus.Token,
-                                                                                                         _locationReference,
-                                                                                                         null,
-                                                                                                         new DisplayText[] {
-                                                                                                             new DisplayText(Languages.en, "The given location is unknown!")
-                                                                                                         }).ToJSON(),
+                                                            Data                 = new AuthorizationInfo(
+                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       tokenStatus.Token,
+                                                                                       _locationReference,
+                                                                                       null,
+                                                                                       new DisplayText(Languages.en, "The given location is unknown!")
+                                                                                   ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST",
@@ -6765,9 +6765,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "Could not determine the country code and party identification of the given location!",
-                                                            Data                 = new AuthorizationInfo(AllowedTypes.NOT_ALLOWED,
-                                                                                                         tokenStatus.Token,
-                                                                                                         _locationReference).ToJSON(),
+                                                            Data                 = new AuthorizationInfo(
+                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       tokenStatus.Token,
+                                                                                       _locationReference
+                                                                                   ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST",
@@ -6788,13 +6790,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "The given location is unknown!",
-                                                            Data                 = new AuthorizationInfo(AllowedTypes.NOT_ALLOWED,
-                                                                                                         tokenStatus.Token,
-                                                                                                         _locationReference,
-                                                                                                         null,
-                                                                                                         new DisplayText[] {
-                                                                                                             new DisplayText(Languages.en, "The given location is unknown!")
-                                                                                                         }).ToJSON(),
+                                                            Data                 = new AuthorizationInfo(
+                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       tokenStatus.Token,
+                                                                                       _locationReference,
+                                                                                       null,
+                                                                                       new DisplayText(Languages.en, "The given location is unknown!")
+                                                                                   ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST",
@@ -6825,16 +6827,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusMessage        = _locationReference.EVSEUIds.Count() == 1
                                                                                        ? "The EVSE at the given location is unknown!"
                                                                                        : "The EVSEs at the given location are unknown!",
-                                                            Data                 = new AuthorizationInfo(AllowedTypes.NOT_ALLOWED,
-                                                                                                         tokenStatus.Token,
-                                                                                                         _locationReference,
-                                                                                                         null,
-                                                                                                         new DisplayText[] {
-                                                                                                             new DisplayText(Languages.en,
-                                                                                                                             _locationReference.EVSEUIds.Count() == 1
-                                                                                                                                 ? "The EVSE at the given location is unknown!"
-                                                                                                                                 : "The EVSEs at the given location are unknown!")
-                                                                                                         }).ToJSON(),
+                                                            Data                 = new AuthorizationInfo(
+                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       tokenStatus.Token,
+                                                                                       _locationReference,
+                                                                                       null,
+                                                                                       new DisplayText(
+                                                                                           Languages.en,
+                                                                                           _locationReference.EVSEUIds.Count() == 1
+                                                                                               ? "The EVSE at the given location is unknown!"
+                                                                                               : "The EVSEs at the given location are unknown!"
+                                                                                       )
+                                                                                   ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
                                                                 AccessControlAllowMethods  = "OPTIONS, GET, POST",
@@ -6976,13 +6980,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = new AuthorizationInfo(tokenStatus.Status,
-                                                                                                tokenStatus.Token,
-                                                                                                locationReference,
-                                                                                                AuthorizationReference.Random(),
-                                                                                                new DisplayText[] {
-                                                                                                    new DisplayText(Languages.en, responseText)
-                                                                                                }).ToJSON(),
+                                                   Data                 = new AuthorizationInfo(
+                                                                              tokenStatus.Status,
+                                                                              tokenStatus.Token,
+                                                                              locationReference,
+                                                                              AuthorizationReference.Random(), //ToDo: Add AuthorizationReference from delegate response!
+                                                                              new DisplayText(
+                                                                                  tokenStatus.Token.UILanguage ?? Languages.en,
+                                                                                  responseText
+                                                                              )
+                                                                          ).ToJSON(),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST",

@@ -754,8 +754,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #region The other side is a CPO...
 
-                                   if (accessInfo.Roles?.Any(role  => role.Role == Roles.CPO) == true)
-                                   {
+                                   //if (accessInfo.Roles?.Any(role  => role.Role == Roles.CPO) == true)
+                                   //{
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.RECEIVER,
@@ -790,7 +790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                        // hubclientinfo
 
-                                   }
+                                   //}
 
                                    #endregion
 
