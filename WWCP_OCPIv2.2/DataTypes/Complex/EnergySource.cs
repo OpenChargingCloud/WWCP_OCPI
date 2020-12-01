@@ -74,7 +74,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (JSON, CustomEnergySourceParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a hour.
+        /// Parse the given JSON representation of an energy source.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
@@ -90,7 +90,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return energySource;
             }
 
-            throw new ArgumentException("The given JSON representation of a hour is invalid: " + ErrorResponse, nameof(JSON));
+            throw new ArgumentException("The given JSON representation of an energy source is invalid: " + ErrorResponse, nameof(JSON));
 
         }
 
@@ -99,7 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text, CustomEnergySourceParser = null)
 
         /// <summary>
-        /// Parse the given text representation of a hour.
+        /// Parse the given text representation of an energy source.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return energySource;
             }
 
-            throw new ArgumentException("The given text representation of a hour is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given text representation of an energy source is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
@@ -126,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a hour.
+        /// Try to parse the given JSON representation of an energy source.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergySource">The parsed connector.</param>
@@ -142,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of a hour.
+        /// Try to parse the given JSON representation of an energy source.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergySource">The parsed connector.</param>
@@ -204,7 +204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 EnergySource   = default;
-                ErrorResponse  = "The given JSON representation of a hour is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of an energy source is invalid: " + e.Message;
                 return false;
             }
 
@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, out EnergySource, out ErrorResponse, CustomEnergySourceParser = null)
 
         /// <summary>
-        /// Try to parse the given text representation of a hour.
+        /// Try to parse the given text representation of an energy source.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="EnergySource">The parsed connector.</param>
@@ -239,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 EnergySource = default;
-                ErrorResponse  = "The given text representation of a hour is invalid: " + e.Message;
+                ErrorResponse  = "The given text representation of an energy source is invalid: " + e.Message;
                 return false;
             }
 
