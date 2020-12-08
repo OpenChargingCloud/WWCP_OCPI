@@ -1335,8 +1335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-
-
+        #region SetTokens(...)
 
         public Boolean SetTokens(CountryCode          CountryCode,
                                  Party_Id             PartyId,
@@ -1373,8 +1372,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         }
 
+        #endregion
 
+        #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO)
 
+        public EMSPClient GetEMSPClient(CountryCode  CountryCode,
+                                        Party_Id     PartyId,
+                                        Roles        Role = Roles.CPO)
+        {
+
+            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
+                                                                            info.PartyId     == PartyId &&
+                                                                            info.Role        == Role);
+
+            if (remoteAccessInfo?.VersionsURL.HasValue == true)
+                return new EMSPClient(remoteAccessInfo.Token,
+                                      remoteAccessInfo.VersionsURL.Value,
+                                      this,
+                                      RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient (CountryCode, PartyId, Role = Roles.EMSP)
+
+        public CPOClient GetCPOClient(CountryCode  CountryCode,
+                                      Party_Id     PartyId,
+                                      Roles        Role = Roles.EMSP)
+        {
+
+            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
+                                                                            info.PartyId     == PartyId &&
+                                                                            info.Role        == Role);
+
+            if (remoteAccessInfo?.VersionsURL.HasValue == true)
+                return new CPOClient(remoteAccessInfo.Token,
+                                     remoteAccessInfo.VersionsURL.Value,
+                                     this,
+                                     RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
+
+            return null;
+
+        }
+
+        #endregion
 
 
 
@@ -1561,27 +1605,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
-
-
-        public EMSPClient GetClient(CountryCode  CountryCode,
-                                    Party_Id     PartyId,
-                                    Roles        Role)
-        {
-
-            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
-                                                                            info.PartyId     == PartyId &&
-                                                                            info.Role        == Role);
-
-
-            if (remoteAccessInfo.VersionsURL.HasValue)
-                return new EMSPClient(remoteAccessInfo.Token,
-                                      remoteAccessInfo.VersionsURL.Value,
-                                      this,
-                                      RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
-
-            return null;
-
-        }
 
 
 
@@ -3116,6 +3139,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> Tokens;
 
 
+        public delegate Task<TokenStatus> VerifyTokenDelegate(CountryCode  CountryCode,
+                                                              Party_Id     PartyId,
+                                                              Token_Id     TokenId);
+
+        public event VerifyTokenDelegate VerifyToken;
+
+
         #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
 
         public Token AddToken(Token         Token,
@@ -3339,6 +3369,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                 }
 
+                var VerifyTokenLocal = VerifyToken;
+                if (VerifyTokenLocal != null)
+                {
+
+                    var result = VerifyTokenLocal(CountryCode,
+                                                  PartyId,
+                                                  TokenId).Result;
+
+                    TokenWithStatus = result;
+
+                    if (TokenWithStatus != null)
+                        return true;
+
+                }
+
                 TokenWithStatus = default;
                 return false;
 
@@ -3557,6 +3602,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords;
 
 
+        public delegate Task SendCDRDelegate(CDR CDR);
+
+        public event SendCDRDelegate SendCDR;
+
+
         #region AddCDR           (CDR)
 
         public CDR AddCDR(CDR CDR)
@@ -3582,8 +3632,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (!partyCDRs.ContainsKey(CDR.Id))
                 {
+
                     partyCDRs.Add(CDR.Id, CDR);
+
+                    var SendCDRLocal = SendCDR;
+                    if (SendCDRLocal != null)
+                    {
+                        SendCDRLocal(CDR).Wait();
+                    }
+
                     return CDR;
+
                 }
 
                 throw new ArgumentException("The given charge detail record already exists!");
@@ -3618,7 +3677,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 if (!partyCDRs.ContainsKey(CDR.Id))
+                {
+
                     partyCDRs.Add(CDR.Id, CDR);
+
+                    var SendCDRLocal = SendCDR;
+                    if (SendCDRLocal != null)
+                    {
+                        SendCDRLocal(CDR).Wait();
+                    }
+
+                }
 
                 return CDR;
 
