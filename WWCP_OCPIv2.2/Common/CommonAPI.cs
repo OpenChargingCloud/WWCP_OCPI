@@ -3373,14 +3373,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (VerifyTokenLocal != null)
                 {
 
-                    var result = VerifyTokenLocal(CountryCode,
-                                                  PartyId,
-                                                  TokenId).Result;
+                    try
+                    {
 
-                    TokenWithStatus = result;
+                        var result = VerifyTokenLocal(CountryCode,
+                                                      PartyId,
+                                                      TokenId).Result;
 
-                    if (TokenWithStatus != null)
-                        return true;
+                        TokenWithStatus = result;
+
+                        if (TokenWithStatus != null)
+                            return true;
+
+                    } catch (Exception e)
+                    {
+
+                    }
 
                 }
 
@@ -3638,7 +3646,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     var SendCDRLocal = SendCDR;
                     if (SendCDRLocal != null)
                     {
-                        SendCDRLocal(CDR).Wait();
+                        try
+                        {
+                            SendCDRLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
                     }
 
                     return CDR;
@@ -3684,7 +3699,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     var SendCDRLocal = SendCDR;
                     if (SendCDRLocal != null)
                     {
-                        SendCDRLocal(CDR).Wait();
+                        try
+                        {
+                            SendCDRLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
                     }
 
                 }
