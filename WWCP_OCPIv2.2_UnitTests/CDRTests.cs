@@ -236,17 +236,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                    EncodingMethod.GraphDefiened,
                                    new SignedValue[] {
                                        new SignedValue(
-                                           SignedValueTypes.START,
+                                           SignedValueNature.START,
                                            "PlainStartValue",
                                            "SignedStartValue"
                                        ),
                                        new SignedValue(
-                                           SignedValueTypes.INTERMEDIATE,
+                                           SignedValueNature.INTERMEDIATE,
                                            "PlainIntermediateValue",
                                            "SignedIntermediateValue"
                                        ),
                                        new SignedValue(
-                                           SignedValueTypes.END,
+                                           SignedValueNature.END,
                                            "PlainEndValue",
                                            "SignedEndValue"
                                        )

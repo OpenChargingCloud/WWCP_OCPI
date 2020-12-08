@@ -20,6 +20,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using org.GraphDefined.Vanaheimr.Illias;
+using Newtonsoft.Json.Linq;
 
 #endregion
 
@@ -84,6 +85,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.VersionsURL      = VersionsURL;
             this.VersionIds       = VersionIds;
             this.Status           = Status ?? RemoteAccessStatus.ONLINE;
+
+        }
+
+
+        public JObject ToJSON()
+        {
+
+            var JSON = JSONObject.Create(
+
+                           new JProperty("countryCode",            CountryCode.    ToString()),
+                           new JProperty("partyId",                PartyId.        ToString()),
+                           new JProperty("role",                   Role.           ToString()),
+
+                           BusinessDetails != null
+                               ? new JProperty("businessDetails",  BusinessDetails.ToJSON())
+                               : null,
+
+                           new JProperty("token",                  Token.          ToString()),
+                           new JProperty("versionsURL",            VersionsURL.    ToString()),
+
+                           VersionIds.SafeAny()
+                               ? new JProperty("versionIds",       new JArray(VersionIds.Select(versionId => versionId.ToString())))
+                               : null,
+
+                           new JProperty("status",                 Status.         ToString())
+
+                       );
+
+            return JSON;
 
         }
 

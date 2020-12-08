@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright (c) 2014-2020 GraphDefined GmbH
- * This file is part of WWCP Core <https://github.com/OpenChargingCloud/WWCP_Core>
+ * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
