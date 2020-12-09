@@ -373,18 +373,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomStartSessionCommandSerializer = null)
+        #region ToJSON(CustomStartSessionCommandSerializer = null, CustomTokenSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomStartSessionCommandSerializer">A delegate to serialize custom 'start session' command JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<StartSessionCommand> CustomStartSessionCommandSerializer = null)
+        /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
+        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<StartSessionCommand>  CustomStartSessionCommandSerializer   = null,
+                              CustomJObjectSerializerDelegate<Token>                CustomTokenSerializer                 = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>       CustomEnergyContractSerializer        = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",                          Token.                 ToString()),
+                           new JProperty("token",                          Token.                 ToJSON(CustomTokenSerializer,
+                                                                                                         CustomEnergyContractSerializer)),
                            new JProperty("location_id",                    LocationId.            ToString()),
 
                            EVSEUId.HasValue

@@ -305,11 +305,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomSetChargingProfileSerializer">A delegate to serialize custom 'set charging profile' command JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<SetChargingProfileCommand> CustomSetChargingProfileSerializer = null)
+        /// <param name="CustomChargingProfileSerializer">A delegate to serialize custom charging profile JSON objects.</param>
+        /// <param name="CustomChargingProfilePeriodSerializer">A delegate to serialize custom charging profile period JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<SetChargingProfileCommand>  CustomSetChargingProfileSerializer      = null,
+                              CustomJObjectSerializerDelegate<ChargingProfile>            CustomChargingProfileSerializer         = null,
+                              CustomJObjectSerializerDelegate<ChargingProfilePeriod>      CustomChargingProfilePeriodSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("charging_profile",  ChargingProfile.ToString()),
+                           new JProperty("charging_profile",  ChargingProfile.ToJSON(CustomChargingProfileSerializer,
+                                                                                     CustomChargingProfilePeriodSerializer)),
                            new JProperty("response_url",      ResponseURL.    ToString())
                        );
 
