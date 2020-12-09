@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Text;
+using System.IO;
 
 #endregion
 
@@ -74,6 +75,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
         private readonly URL OurBaseURL;
+
+
+        public const String LogfileName = "OCPICommonAPI.log";
 
         #endregion
 
@@ -1300,10 +1304,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             var CREDENTIALS_TOKEN_C = AccessToken.Random();
 
-            SetAccessToken(CREDENTIALS_TOKEN_C,
-                           receivedCredentials.URL,
-                           receivedCredentials.Roles,
-                           AccessStatus.ALLOWED);
+            SetIncomingAccessToken(CREDENTIALS_TOKEN_C,
+                                   receivedCredentials.URL,
+                                   receivedCredentials.Roles,
+                                   AccessStatus.ALLOWED);
 
 
             RemoveAccessToken(CREDENTIALS_TOKEN_A.Value);
@@ -1330,6 +1334,94 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+
+        #region SetTokens(...)
+
+        public Boolean SetTokens(CountryCode          CountryCode,
+                                 Party_Id             PartyId,
+                                 Roles                Role,
+                                 BusinessDetails      BusinessDetails,
+
+                                 AccessToken          IncomingAccessToken,
+
+                                 AccessToken          RemoteAccessToken,
+                                 URL?                 RemoteVersionsURL,
+                                 Version_Id           RemoteVersionId,
+
+                                 AccessStatus         AccessStatus   = AccessStatus.ALLOWED,
+                                 RemoteAccessStatus?  RemoteStatus   = RemoteAccessStatus.ONLINE)
+        {
+
+            return SetIncomingAccessToken(CountryCode,
+                                          PartyId,
+                                          Role,
+                                          BusinessDetails,
+
+                                          IncomingAccessToken,
+                                          AccessStatus) &&
+
+            SetRemoteAccessInfo(CountryCode,
+                                PartyId,
+                                Role,
+                                BusinessDetails,
+
+                                RemoteAccessToken,
+                                RemoteVersionsURL,
+                                RemoteVersionId,
+                                RemoteStatus);
+
+        }
+
+        #endregion
+
+        #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO)
+
+        public EMSPClient GetEMSPClient(CountryCode  CountryCode,
+                                        Party_Id     PartyId,
+                                        Roles        Role = Roles.CPO)
+        {
+
+            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
+                                                                            info.PartyId     == PartyId &&
+                                                                            info.Role        == Role);
+
+            if (remoteAccessInfo?.VersionsURL.HasValue == true)
+                return new EMSPClient(remoteAccessInfo.Token,
+                                      remoteAccessInfo.VersionsURL.Value,
+                                      this,
+                                      RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient (CountryCode, PartyId, Role = Roles.EMSP)
+
+        public CPOClient GetCPOClient(CountryCode  CountryCode,
+                                      Party_Id     PartyId,
+                                      Roles        Role = Roles.EMSP)
+        {
+
+            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
+                                                                            info.PartyId     == PartyId &&
+                                                                            info.Role        == Role);
+
+            if (remoteAccessInfo?.VersionsURL.HasValue == true)
+                return new CPOClient(remoteAccessInfo.Token,
+                                     remoteAccessInfo.VersionsURL.Value,
+                                     this,
+                                     RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
+
+            return null;
+
+        }
+
+        #endregion
+
+
+
         //ToDo: Wrap the following into a plugable interface!
 
         #region AccessTokens
@@ -1348,10 +1440,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             => AccessTokens.Values;
 
 
-        public CommonAPI SetAccessToken(AccessToken                   AccessToken,
-                                        URL                           VersionsURL,
-                                        IEnumerable<CredentialsRole>  Roles,
-                                        AccessStatus                  AccessStatus   = AccessStatus.ALLOWED)
+        public CommonAPI SetIncomingAccessToken(AccessToken                   AccessToken,
+                                                URL                           VersionsURL,
+                                                IEnumerable<CredentialsRole>  Roles,
+                                                AccessStatus                  AccessStatus   = AccessStatus.ALLOWED)
         {
             lock (AccessTokens)
             {
@@ -1370,12 +1462,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
         }
 
-        public Boolean SetAccessToken(AccessToken   AccessToken,
-                                      CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Roles         Role,
-                                      String        BusinessName   = null,
-                                      AccessStatus  AccessStatus   = AccessStatus.ALLOWED)
+        public Boolean SetIncomingAccessToken(CountryCode      CountryCode,
+                                              Party_Id         PartyId,
+                                              Roles            Role,
+                                              BusinessDetails  BusinessDetails,
+
+                                              AccessToken      AccessToken,
+                                              AccessStatus     AccessStatus   = AccessStatus.ALLOWED)
         {
             lock (AccessTokens)
             {
@@ -1393,14 +1486,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 AccessTokens.Add(AccessToken,
                                  new AccessInfo(AccessToken,
                                                 AccessStatus,
-                                                null,
+                                                null, //VersionsURL
                                                 new CredentialsRole[] {
                                                     new CredentialsRole(CountryCode,
                                                                         PartyId,
                                                                         Role,
-                                                                        BusinessName.IsNotNullOrEmpty()
-                                                                            ? new BusinessDetails(BusinessName)
-                                                                            : null)
+                                                                        BusinessDetails)
                                                 }));
 
                 return true;
@@ -1429,6 +1520,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                            BusinessDetails          BusinessDetails,
                                            AccessToken              Token,
                                            URL?                     VersionsURL,
+                                           Version_Id               VersionId,
+                                           RemoteAccessStatus?      Status       = RemoteAccessStatus.ONLINE)
+
+            => SetRemoteAccessInfo(CountryCode,
+                                   PartyId,
+                                   Role,
+                                   BusinessDetails,
+                                   Token,
+                                   VersionsURL,
+                                   new Version_Id[] { VersionId },
+                                   Status);
+
+
+        public Boolean SetRemoteAccessInfo(CountryCode              CountryCode,
+                                           Party_Id                 PartyId,
+                                           Roles                    Role,
+                                           BusinessDetails          BusinessDetails,
+                                           AccessToken              Token,
+                                           URL?                     VersionsURL,
                                            IEnumerable<Version_Id>  VersionIds   = null,
                                            RemoteAccessStatus?      Status       = RemoteAccessStatus.ONLINE)
         {
@@ -1439,18 +1549,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                           info.PartyId     == PartyId &&
                                                                           info.Role        == Role).ToArray();
 
-                foreach (var info in existingAccessInfos)
-                    RemoteAccessInfos.Remove(info);
+                foreach (var remoteAccessInfo in existingAccessInfos)
+                    RemoteAccessInfos.Remove(remoteAccessInfo);
 
 
-                RemoteAccessInfos.Add(new RemoteAccessInfo(CountryCode,
-                                                           PartyId,
-                                                           Role,
-                                                           BusinessDetails,
-                                                           Token,
-                                                           VersionsURL,
-                                                           VersionIds,
-                                                           Status));
+                var newRemoteAccessInfo = new RemoteAccessInfo(CountryCode,
+                                                               PartyId,
+                                                               Role,
+                                                               BusinessDetails,
+                                                               Token,
+                                                               VersionsURL,
+                                                               VersionIds,
+                                                               Status);
+
+                RemoteAccessInfos.Add(newRemoteAccessInfo);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteAccessInfo", newRemoteAccessInfo.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
 
                 return true;
 
@@ -1476,8 +1590,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                           info.PartyId     == PartyId &&
                                                                           info.Role        == Role).ToArray();
 
-                foreach (var info in existingAccessInfos)
-                    RemoteAccessInfos.Remove(info);
+                foreach (var remoteAccessInfo in existingAccessInfos)
+                {
+
+                    RemoteAccessInfos.Remove(remoteAccessInfo);
+
+                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeRemoteAccessInfo", remoteAccessInfo.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+
+                }
 
                 return true;
 
@@ -1485,6 +1605,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
+
 
 
         // Add last modified timestamp to locations!
@@ -3018,6 +3139,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> Tokens;
 
 
+        public delegate Task<TokenStatus> VerifyTokenDelegate(CountryCode  CountryCode,
+                                                              Party_Id     PartyId,
+                                                              Token_Id     TokenId);
+
+        public event VerifyTokenDelegate VerifyToken;
+
+
         #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
 
         public Token AddToken(Token         Token,
@@ -3241,6 +3369,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                 }
 
+                var VerifyTokenLocal = VerifyToken;
+                if (VerifyTokenLocal != null)
+                {
+
+                    try
+                    {
+
+                        var result = VerifyTokenLocal(CountryCode,
+                                                      PartyId,
+                                                      TokenId).Result;
+
+                        TokenWithStatus = result;
+
+                        if (TokenWithStatus != null)
+                            return true;
+
+                    } catch (Exception e)
+                    {
+
+                    }
+
+                }
+
                 TokenWithStatus = default;
                 return false;
 
@@ -3459,6 +3610,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords;
 
 
+        public delegate Task SendCDRDelegate(CDR CDR);
+
+        public event SendCDRDelegate SendCDR;
+
+
         #region AddCDR           (CDR)
 
         public CDR AddCDR(CDR CDR)
@@ -3484,8 +3640,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (!partyCDRs.ContainsKey(CDR.Id))
                 {
+
                     partyCDRs.Add(CDR.Id, CDR);
+
+                    var SendCDRLocal = SendCDR;
+                    if (SendCDRLocal != null)
+                    {
+                        try
+                        {
+                            SendCDRLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return CDR;
+
                 }
 
                 throw new ArgumentException("The given charge detail record already exists!");
@@ -3520,7 +3692,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 if (!partyCDRs.ContainsKey(CDR.Id))
+                {
+
                     partyCDRs.Add(CDR.Id, CDR);
+
+                    var SendCDRLocal = SendCDR;
+                    if (SendCDRLocal != null)
+                    {
+                        try
+                        {
+                            SendCDRLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
+                }
 
                 return CDR;
 

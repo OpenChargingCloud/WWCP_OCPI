@@ -95,7 +95,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (JSON, CustomChargingPeriodParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of an charging period.
+        /// Parse the given JSON representation of a charging period.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return chargingPeriod;
             }
 
-            throw new ArgumentException("The given JSON representation of an charging period is invalid: " + ErrorResponse, nameof(JSON));
+            throw new ArgumentException("The given JSON representation of a charging period is invalid: " + ErrorResponse, nameof(JSON));
 
         }
 
@@ -120,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text, CustomChargingPeriodParser = null)
 
         /// <summary>
-        /// Parse the given text representation of an charging period.
+        /// Parse the given text representation of a charging period.
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return chargingPeriod;
             }
 
-            throw new ArgumentException("The given text representation of an charging period is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given text representation of a charging period is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
@@ -197,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of an charging period.
+        /// Try to parse the given JSON representation of a charging period.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ChargingPeriod">The parsed charging period.</param>
@@ -213,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of an charging period.
+        /// Try to parse the given JSON representation of a charging period.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ChargingPeriod">The parsed charging period.</param>
@@ -251,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #region Parse Dimensions        [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("dimensions",
-                                             "charge detail record dimensions",
+                                             "charging dimensions",
                                              CDRDimension.TryParse,
                                              out IEnumerable<CDRDimension> Dimensions,
                                              out ErrorResponse))
@@ -291,7 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 ChargingPeriod  = default;
-                ErrorResponse   = "The given JSON representation of an charging period is invalid: " + e.Message;
+                ErrorResponse   = "The given JSON representation of a charging period is invalid: " + e.Message;
                 return false;
             }
 
@@ -326,7 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 ChargingPeriod  = default;
-                ErrorResponse   = "The given text representation of an charging period is invalid: " + e.Message;
+                ErrorResponse   = "The given text representation of a charging period is invalid: " + e.Message;
                 return false;
             }
 

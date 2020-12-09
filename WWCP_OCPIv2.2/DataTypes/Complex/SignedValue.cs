@@ -43,19 +43,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Nature of the value, in other words, the event this value belongs to.
         /// </summary>
         [Mandatory]
-        public SignedValueTypes  Nature         { get; }
+        public SignedValueNature  Nature         { get; }
 
         /// <summary>
         /// The unencoded string of data. The format of the content depends on the EncodingMethod field.
         /// </summary>
         [Mandatory]
-        public String            PlainData      { get; }
+        public String             PlainData      { get; }
 
         /// <summary>
         /// Blob of signed data, base64 encoded. The format of the content depends on the EncodingMethod field.
         /// </summary>
         [Mandatory]
-        public String            SignedData     { get; }
+        public String             SignedData     { get; }
 
         #endregion
 
@@ -68,9 +68,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Nature">Nature of the value, in other words, the event this value belongs to.</param>
         /// <param name="PlainData">The unencoded string of data. The format of the content depends on the EncodingMethod field.</param>
         /// <param name="SignedData">Blob of signed data, base64 encoded. The format of the content depends on the EncodingMethod field.</param>
-        public SignedValue(SignedValueTypes  Nature,
-                           String            PlainData,
-                           String            SignedData)
+        public SignedValue(SignedValueNature  Nature,
+                           String             PlainData,
+                           String             SignedData)
         {
 
             if (PlainData. IsNullOrEmpty())
@@ -184,10 +184,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Nature            [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("nature",
-                                             "signed value nature",
-                                             out SignedValueTypes Nature,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("nature",
+                                         "signed value nature",
+                                         SignedValueNature.TryParse,
+                                         out SignedValueNature Nature,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

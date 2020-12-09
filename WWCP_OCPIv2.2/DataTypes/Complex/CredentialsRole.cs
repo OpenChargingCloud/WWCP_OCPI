@@ -341,14 +341,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",            CountryCode.    ToString()),
-                           new JProperty("party_id",                PartyId.        ToString()),
-                           new JProperty("role",                    Role.           ToString()),
-                           new JProperty("business_details",        BusinessDetails.ToJSON(CustomBusinessDetailsSerializer)),
+                           new JProperty("country_code",      CountryCode.    ToString()),
+                           new JProperty("party_id",          PartyId.        ToString()),
+                           new JProperty("role",              Role.           ToString()),
+                           new JProperty("business_details",  BusinessDetails.ToJSON(CustomBusinessDetailsSerializer))
 
-                           AllowDowngrades.HasValue
-                               ? new JProperty("allow_downgrades",  AllowDowngrades.Value)
-                               : null
+                           //AllowDowngrades.HasValue
+                           //    ? new JProperty("allow_downgrades",  AllowDowngrades.Value)
+                           //    : null
 
                        );
 

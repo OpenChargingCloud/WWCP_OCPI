@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               TariffDimensions.ENERGY,
+                                               CDRDimensions.ENERGY,
                                                1.33M
                                            )
                                        },
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               TariffDimensions.TIME,
+                                               CDRDimensions.TIME,
                                                5.12M
                                            )
                                        },
@@ -236,17 +236,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                    EncodingMethod.GraphDefiened,
                                    new SignedValue[] {
                                        new SignedValue(
-                                           SignedValueTypes.START,
+                                           SignedValueNature.START,
                                            "PlainStartValue",
                                            "SignedStartValue"
                                        ),
                                        new SignedValue(
-                                           SignedValueTypes.INTERMEDIATE,
+                                           SignedValueNature.INTERMEDIATE,
                                            "PlainIntermediateValue",
                                            "SignedIntermediateValue"
                                        ),
                                        new SignedValue(
-                                           SignedValueTypes.END,
+                                           SignedValueNature.END,
                                            "PlainEndValue",
                                            "SignedEndValue"
                                        )

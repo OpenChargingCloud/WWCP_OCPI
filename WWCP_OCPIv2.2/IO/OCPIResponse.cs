@@ -587,7 +587,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             DateTime?        Timestamp               = null,
 
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null)
+                            Correlation_Id?  CorrelationId           = null,
+                            HTTPResponse     Response                = null)
 
             : base(Data,
                    StatusCode,
@@ -596,7 +597,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    Timestamp,
 
                    RequestId,
-                   CorrelationId)
+                   CorrelationId,
+                   Response)
 
         {
 
@@ -615,10 +617,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                                  Func<JObject, TResponse>  Parser)
         {
 
-            var r = OCPIResponse <TResponse>.ParseJArray(Response,
-                                                         RequestId,
-                                                         CorrelationId,
-                                                         Parser);
+            var r = ParseJArray(Response,
+                                RequestId,
+                                CorrelationId,
+                                Parser);
 
             return new OCPIResponse<TRequest, IEnumerable<TResponse>>(Request,
                                                                       r.Data,
@@ -627,7 +629,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                       r.AdditionalInformation,
                                                                       r.Timestamp,
                                                                       r.RequestId,
-                                                                      r.CorrelationId);
+                                                                      r.CorrelationId,
+                                                                      r.HTTPResponse);
 
         }
 
@@ -639,10 +642,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                      Func<JObject, TResponse>  Parser)
         {
 
-            var r = OCPIResponse<TResponse>.ParseJObject(Response,
-                                                         RequestId,
-                                                         CorrelationId,
-                                                         Parser);
+            var r = ParseJObject(Response,
+                                 RequestId,
+                                 CorrelationId,
+                                 Parser);
 
             return new OCPIResponse<TRequest, TResponse>(Request,
                                                          r.Data,
@@ -651,7 +654,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                          r.AdditionalInformation,
                                                          r.Timestamp,
                                                          r.RequestId,
-                                                         r.CorrelationId);
+                                                         r.CorrelationId,
+                                                         r.HTTPResponse);
 
         }
 
