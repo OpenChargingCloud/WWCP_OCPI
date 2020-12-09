@@ -417,19 +417,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomReserveNowCommandSerializer = null)
+        #region ToJSON(CustomReserveNowCommandSerializer = null, CustomTokenSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomReserveNowCommandSerializer">A delegate to serialize custom 'reserve now' command JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ReserveNowCommand> CustomReserveNowCommandSerializer = null)
+        /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
+        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ReserveNowCommand>  CustomReserveNowCommandSerializer   = null,
+                              CustomJObjectSerializerDelegate<Token>              CustomTokenSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>     CustomEnergyContractSerializer      = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",                          Token.                 ToString()),
-                           new JProperty("expiry_date",                    ExpiryDate.            ToString()),
+                           new JProperty("token",                          Token.                 ToJSON(CustomTokenSerializer,
+                                                                                                         CustomEnergyContractSerializer)),
+                           new JProperty("expiry_date",                    ExpiryDate.            ToIso8601()),
                            new JProperty("reservation_id",                 ReservationId.         ToString()),
                            new JProperty("location_id",                    LocationId.            ToString()),
 

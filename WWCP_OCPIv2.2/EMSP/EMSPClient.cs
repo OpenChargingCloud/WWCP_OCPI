@@ -4478,17 +4478,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             StartSession(Token                    Token,
                          Location_Id              LocationId,
-                         EVSE_UId?                EVSEUId,
-                         AuthorizationReference?  AuthorizationReference,
+                         EVSE_UId?                EVSEUId                  = null,
+                         AuthorizationReference?  AuthorizationReference   = null,
 
-                         Request_Id?              RequestId           = null,
-                         Correlation_Id?          CorrelationId       = null,
-                         Version_Id?              VersionId           = null,
+                         Request_Id?              RequestId                = null,
+                         Correlation_Id?          CorrelationId            = null,
+                         Version_Id?              VersionId                = null,
 
-                         DateTime?                Timestamp           = null,
-                         CancellationToken?       CancellationToken   = null,
-                         EventTracking_Id         EventTrackingId     = null,
-                         TimeSpan?                RequestTimeout      = null)
+                         DateTime?                Timestamp                = null,
+                         CancellationToken?       CancellationToken        = null,
+                         EventTracking_Id         EventTrackingId          = null,
+                         TimeSpan?                RequestTimeout           = null)
 
         {
 
