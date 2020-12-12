@@ -32,103 +32,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public class RemoteAccessInfo
     {
 
-        /// <summary>
-        /// ISO-3166 alpha-2 country code of the country this party is operating in.
-        /// </summary>
         [Mandatory]
-        public CountryCode              CountryCode         { get; }
-
-        /// <summary>
-        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
-        /// </summary>
-        [Mandatory]
-        public Party_Id                 PartyId             { get; }
-
-        /// <summary>
-        /// The type of the role.
-        /// </summary>
-        [Mandatory]
-        public Roles                    Role                { get; }
-
-        /// <summary>
-        /// Business details of this party.
-        /// </summary>
-        [Mandatory]
-        public BusinessDetails          BusinessDetails     { get; }
+        public AccessToken              AccessToken          { get; }
 
         [Mandatory]
-        public AccessToken              Token               { get; }
+        public URL                      VersionsURL          { get; }
+
+
+        public IEnumerable<Version_Id>  VersionIds           { get; }
+
+
+        public Version_Id?              SelectedVersionId    { get; }
 
         [Mandatory]
-        public URL?                     VersionsURL         { get; }
+        public RemoteAccessStatus       Status               { get; set; }
 
 
-        public IEnumerable<Version_Id>  VersionIds          { get; }
 
-        [Mandatory]
-        public RemoteAccessStatus       Status              { get; set; }
-
-
-        public RemoteAccessInfo(CountryCode              CountryCode,
-                                Party_Id                 PartyId,
-                                Roles                    Role,
-                                BusinessDetails          BusinessDetails,
-                                AccessToken              Token,
-                                URL?                     VersionsURL,
-                                IEnumerable<Version_Id>  VersionIds   = null,
-                                RemoteAccessStatus?      Status       = RemoteAccessStatus.ONLINE)
+        public RemoteAccessInfo(AccessToken              AccessToken,
+                                URL                      VersionsURL,
+                                IEnumerable<Version_Id>  VersionIds          = null,
+                                Version_Id?              SelectedVersionId   = null,
+                                RemoteAccessStatus?      Status              = RemoteAccessStatus.ONLINE)
         {
 
-            this.CountryCode      = CountryCode;
-            this.PartyId          = PartyId;
-            this.Role             = Role;
-            this.BusinessDetails  = BusinessDetails;
-            this.Token            = Token;
-            this.VersionsURL      = VersionsURL;
-            this.VersionIds       = VersionIds;
-            this.Status           = Status ?? RemoteAccessStatus.ONLINE;
+            this.AccessToken        = AccessToken;
+            this.VersionsURL        = VersionsURL;
+            this.VersionIds         = VersionIds;
+            this.SelectedVersionId  = SelectedVersionId;
+            this.Status             = Status ?? RemoteAccessStatus.ONLINE;
 
         }
-
 
         public JObject ToJSON()
         {
 
-            var JSON = JSONObject.Create(
-
-                           new JProperty("countryCode",            CountryCode.    ToString()),
-                           new JProperty("partyId",                PartyId.        ToString()),
-                           new JProperty("role",                   Role.           ToString()),
-
-                           BusinessDetails != null
-                               ? new JProperty("businessDetails",  BusinessDetails.ToJSON())
-                               : null,
-
-                           new JProperty("token",                  Token.          ToString()),
-                           new JProperty("versionsURL",            VersionsURL.    ToString()),
-
-                           VersionIds.SafeAny()
-                               ? new JProperty("versionIds",       new JArray(VersionIds.Select(versionId => versionId.ToString())))
-                               : null,
-
-                           new JProperty("status",                 Status.         ToString())
-
-                       );
-
-            return JSON;
+            return JSONObject.Create(
+                       new JProperty("accesstoken",        AccessToken.      ToString()),
+                       new JProperty("versionsURL",        VersionsURL.      ToString()),
+                       new JProperty("versionIds",         new JArray(VersionIds.Select(versionId => versionId.ToString()))),
+                       new JProperty("selectedVersionId",  SelectedVersionId.ToString()),
+                       new JProperty("status",             Status.           ToString())
+                   );
 
         }
 
-
-
-        //public Credentials AsCredentials()
-
-        //    => new Credentials(Token,
-        //                       VersionsURL.Value,
-        //                       Roles.Select(role => new CredentialsRole(role.CountryCode,
-        //                                                                role.PartyId,
-        //                                                                role.Role,
-        //                                                                role.BusinessDetails)));
 
     }
 

@@ -7186,83 +7186,83 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS  ~/commands/START_SESSION/{commandId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "commands/START_SESSION/{commandId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequest: Request => {
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, POST",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, POST",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
             #region POST     ~/commands/START_SESSION/{commandId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.POST,
-                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestLogger:  StartSessionCallbackRequest,
-                                     OCPIResponseLogger: StartSessionCallbackResponse,
-                                     OCPIRequest:  async Request => {
+                                    HTTPMethod.POST,
+                                    URLPathPrefix + "commands/START_SESSION/{commandId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestLogger:  StartSessionCallbackRequest,
+                                    OCPIResponseLogger: StartSessionCallbackResponse,
+                                    OCPIRequest:  async Request => {
 
-                                         #region Check command identification
+                                        #region Check command identification
 
-                                         if (!Request.ParseCommandId(this,
-                                                                     out Command_Id?           CommandId,
-                                                                     out OCPIResponse.Builder  OCPIResponseBuilder))
-                                         {
-                                             return OCPIResponseBuilder;
-                                         }
+                                        if (!Request.ParseCommandId(this,
+                                                                    out Command_Id?           CommandId,
+                                                                    out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        {
+                                            return OCPIResponseBuilder;
+                                        }
 
-                                         #endregion
+                                        #endregion
 
-                                         #region Parse command result JSON
+                                        #region Parse command result JSON
 
-                                         if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
-                                             return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                            return OCPIResponse;
 
-                                         if (!CommandResult.TryParse(JSONCDR,
-                                                                     out CommandResult  commandResult,
-                                                                     out String         ErrorResponse))
-                                         {
+                                        if (!CommandResult.TryParse(JSONCDR,
+                                                                    out CommandResult  commandResult,
+                                                                    out String         ErrorResponse))
+                                        {
 
-                                             return new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 2001,
-                                                        StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            AccessControlAllowMethods  = "OPTIONS, POST",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                        }
-                                                    };
+                                            return new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2001,
+                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                           AccessControlAllowMethods  = "OPTIONS, POST",
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
+                                                   };
 
-                                         }
+                                        }
 
-                                         #endregion
-
-
-                                         // ToDo: Process callback!
+                                        #endregion
 
 
-                                         return new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 1000,
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, POST",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                                };
+                                        // ToDo: Process callback!
 
-                                     });
+
+                                        return new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, POST",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                               };
+
+                                    });
 
             #endregion
 

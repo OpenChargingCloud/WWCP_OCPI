@@ -47,6 +47,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
     }
 
+    public readonly struct AccessInfo2
+    {
+
+        public AccessToken?  Token     { get; }
+        public AccessStatus  Status    { get; }
+
+
+        public AccessInfo2(AccessToken? Token,
+                           AccessStatus Status)
+        {
+
+            this.Token   = Token;
+            this.Status  = Status;
+
+        }
+
+        public JObject ToJSON()
+        {
+            return JSONObject.Create(
+                       new JProperty("token",   Token. ToString()),
+                       new JProperty("status",  Status.ToString())
+                   );
+        }
+
+    }
+
+
 
     public struct AccessInfo
     {

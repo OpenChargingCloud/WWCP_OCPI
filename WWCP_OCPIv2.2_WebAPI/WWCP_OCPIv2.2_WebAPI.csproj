@@ -7,8 +7,8 @@
     <ProjectGuid>{439BE8CF-A416-4FA1-BBEF-8EA4A4794D87}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.GraphDefined.WWCP.OCPIv2_1</RootNamespace>
-    <AssemblyName>org.GraphDefined.WWCP.OCPIv2_2.WebAPI</AssemblyName>
+    <RootNamespace>cloud.charging.open.protocols.OCPIv2_2.WebAPI</RootNamespace>
+    <AssemblyName>cloud.charging.open.protocols.OCPIv2_2.WebAPI</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\org.GraphDefined.WWCP.OCPIv2_2.WebAPI.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\cloud.charging.open.protocols.OCPIv2_2.WebAPI.xml</DocumentationFile>
     <CodeAnalysisRuleSet>..\..\WWCP_Core\WWCP.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

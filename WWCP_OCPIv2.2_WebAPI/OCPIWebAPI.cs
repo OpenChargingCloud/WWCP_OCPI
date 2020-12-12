@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 {
 
     /// <summary>
-    /// OCPI+ HTTP API extention methods.
+    /// OCPI Web API extention methods.
     /// </summary>
     public static class ExtentionMethods
     {
@@ -135,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
 
     /// <summary>
-    /// A HTTP API providing OCPI+ data structures.
+    /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
     public class OCPIWebAPI
     {
@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The default HTTP URI prefix.
         /// </summary>
-        public static readonly HTTPPath                             DefaultURLPathPrefix        = HTTPPath.Parse("/ext/OCPIPlus");
+        public static readonly HTTPPath                             DefaultURLPathPrefix        = HTTPPath.Parse("webapi");
 
         /// <summary>
         /// The default HTTP realm, if HTTP Basic Authentication is used.
@@ -179,6 +179,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
+        public HTTPPath?                                    URLPathPrefix1      { get; }
+
+        /// <summary>
+        /// The HTTP URI prefix.
+        /// </summary>
         public HTTPPath                                     URLPathPrefix       { get; }
 
         /// <summary>
@@ -204,30 +209,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         public DNSClient                                    DNSClient           { get; }
 
 
-        public CommonAPI        CommonAPI          { get; set; }
+        public CommonAPI                                    CommonAPI          { get; set; }
 
-        public CommonAPILogger  CommonAPILogger    { get; set; }
-
-
-        public CPOAPI           CPOAPI             { get; set; }
-
-        public CPOAPILogger     CPOAPILogger       { get; set; }
+        public CommonAPILogger                              CommonAPILogger    { get; set; }
 
 
-        public EMSPAPI          EMSPAPI            { get; set; }
+        public CPOAPI                                       CPOAPI             { get; set; }
 
-        public EMSPAPILogger    EMSPAPILogger      { get; set; }
+        public CPOAPILogger                                 CPOAPILogger       { get; set; }
 
 
-        public List<CPOClient>  CPOClients         { get; }
+        public EMSPAPI                                      EMSPAPI            { get; set; }
 
-        public List<EMSPClient> EMSPClients        { get; }
+        public EMSPAPILogger                                EMSPAPILogger      { get; set; }
+
+
+        public List<CPOClient>                              CPOClients         { get; }
+
+        public List<EMSPClient>                             EMSPClients        { get; }
 
         #endregion
 
         #region Events
 
-        #region Generic HTTP/SOAP server logging
+        #region Generic HTTP server logging
 
         /// <summary>
         /// An event called whenever a HTTP request came in.
@@ -258,12 +263,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
         public OCPIWebAPI(HTTPServer                                   HTTPServer,
+                          HTTPPath?                                    URLPathPrefix1                      = null,
                           HTTPPath?                                    URLPathPrefix                       = null,
                           String                                       HTTPRealm                           = DefaultHTTPRealm,
                           IEnumerable<KeyValuePair<String, String>>    HTTPLogins                          = null)
         {
 
             this.HTTPServer                         = HTTPServer    ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP server must not be null!");
+            this.URLPathPrefix1                     = URLPathPrefix1;
             this.URLPathPrefix                      = URLPathPrefix ?? DefaultURLPathPrefix;
             this.HTTPRealm                          = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
             this.HTTPLogins                         = HTTPLogins    ?? new KeyValuePair<String, String>[0];
@@ -305,14 +312,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             //                                   "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
             //                                   DefaultFilename: "index.html");
 
+            if (URLPathPrefix1.HasValue)
+                HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             URLPathPrefix1.Value,
+                                             HTTPContentType.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         Content                    = ("<html><body>" +
+                                                                                          "This is an Open Charge Point Interface HTTP service!<br /><br />" +
+                                                                                          "<ul>" +
+                                                                                              "<li><a href=\"versions\">Versions</a></li>" +
+                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/remoteParties\">Remote Parties</a></li>" +
+                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/clients\">Clients</a></li>" +
+                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/cpoclients\">CPO Clients</a></li>" +
+                                                                                              "<li><a href=\"" + URLPathPrefix.ToString() + "/emspclients\">EMSP Clients</a></li>" +
+                                                                                       "</ul><body></html>").ToUTF8Bytes(),
+                                                         Connection                 = "close"
+                                                     }.AsImmutable);
+
+                                             });
+
             #endregion
 
 
-            #region GET      ~/accesstokens
+            #region GET      ~/remoteParties
 
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
-                                         URLPathPrefix + "accesstokens",
+                                         URLPathPrefix + "remoteParties",
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
@@ -321,7 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = new JArray(CommonAPI.AccessInfos.Select(accessinfo => accessinfo.ToJSON())).ToUTF8Bytes(),
+                                                     Content                    = new JArray(CommonAPI.RemoteParties.Select(party => party.ToJSON())).ToUTF8Bytes(),
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      AccessControlAllowHeaders  = "Authorization"
                                                      //LastModified               = Location.LastUpdated.ToIso8601(),
@@ -408,6 +445,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
+
+        }
+
+        #endregion
+
+
+
+
+        #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO)
+
+        public EMSPClient GetEMSPClient(CountryCode  CountryCode,
+                                        Party_Id     PartyId,
+                                        Roles        Role = Roles.CPO)
+        {
+
+            var _party = CommonAPI.RemoteParties.FirstOrDefault(party => party.CountryCode == CountryCode &&
+                                                                   party.PartyId     == PartyId &&
+                                                                   party.Role        == Role);
+
+            if (_party?.RemoteAccessInfos?.Any() == true)
+                return EMSPClients.AddAndReturnElement(
+                    new EMSPClient(_party.RemoteAccessInfos.First().AccessToken,
+                                   _party.RemoteAccessInfos.First().VersionsURL,
+                                   CommonAPI,
+                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetCPOClient (CountryCode, PartyId, Role = Roles.EMSP)
+
+        public CPOClient GetCPOClient(CountryCode  CountryCode,
+                                      Party_Id     PartyId,
+                                      Roles        Role = Roles.EMSP)
+        {
+
+            var _party = CommonAPI.RemoteParties.FirstOrDefault(party => party.CountryCode == CountryCode &&
+                                                                   party.PartyId     == PartyId &&
+                                                                   party.Role        == Role);
+
+            if (_party?.RemoteAccessInfos?.Any() == true)
+                return CPOClients.AddAndReturnElement(
+                    new CPOClient(_party.RemoteAccessInfos.First().AccessToken,
+                                  _party.RemoteAccessInfos.First().VersionsURL,
+                                  CommonAPI,
+                                  RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+
+            return null;
 
         }
 

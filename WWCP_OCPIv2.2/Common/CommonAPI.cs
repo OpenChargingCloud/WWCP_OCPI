@@ -321,8 +321,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
-            this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
-            this.RemoteAccessInfos        = new List<RemoteAccessInfo>();
+            this._RemoteParties                 = new List<Party>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
@@ -384,13 +383,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
-            this.AccessTokens             = new Dictionary<AccessToken, AccessInfo>();
-            this.RemoteAccessInfos        = new List<RemoteAccessInfo>();
+            this._RemoteParties                 = new List<Party>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
             this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this.ChargeDetailRecords                     = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -406,40 +404,41 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region GetModuleURL(ModuleId)
+        #region GetModuleURL(ModuleId, Stuff = "")
 
-        public URL GetModuleURL(ModuleIDs ModuleId)
+        public URL GetModuleURL(ModuleIDs  ModuleId,
+                                String     Stuff   = "")
         {
 
             switch (ModuleId)
             {
 
                 case ModuleIDs.CDRs:
-                    return OurBaseURL + "cdrs";
+                    return OurBaseURL + Stuff + "cdrs";
 
                 case ModuleIDs.ChargingProfiles:
-                    return OurBaseURL + "chargingprofiles";
+                    return OurBaseURL + Stuff + "chargingprofiles";
 
                 case ModuleIDs.Commands:
-                    return OurBaseURL + "commands";
+                    return OurBaseURL + Stuff + "commands";
 
                 case ModuleIDs.Credentials:
-                    return OurBaseURL + "credentials";
+                    return OurBaseURL + Stuff + "credentials";
 
                 case ModuleIDs.HubClientInfo:
-                    return OurBaseURL + "hubclientinfo";
+                    return OurBaseURL + Stuff + "hubclientinfo";
 
                 case ModuleIDs.Locations:
-                    return OurBaseURL + "locations";
+                    return OurBaseURL + Stuff + "locations";
 
                 case ModuleIDs.Sessions:
-                    return OurBaseURL + "sessions";
+                    return OurBaseURL + Stuff + "sessions";
 
                 case ModuleIDs.Tariffs:
-                    return OurBaseURL + "tariffs";
+                    return OurBaseURL + Stuff + "tariffs";
 
                 case ModuleIDs.Tokens:
-                    return OurBaseURL + "tokens";
+                    return OurBaseURL + Stuff + "tokens";
 
                 default:
                     return OurVersionsURL;
@@ -510,9 +509,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             //                             });
 
+            #region Text
+
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix,
+                                         HTTPContentType.TEXT_UTF8,
                                          HTTPDelegate: Request => {
 
                                              return Task.FromResult(
@@ -529,6 +531,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  }.AsImmutable);
 
                                          });
+
+            #endregion
+
+
+
 
             #endregion
 
@@ -573,9 +580,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #region Check access token
 
-                                   if (Request.AccessToken.HasValue &&
-                                       AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
-                                       accessInfo.Status != AccessStatus.ALLOWED)
+                                   if (Request.AccessInfo2.HasValue &&
+                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -658,11 +664,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #region Check access token
 
-                                   AccessInfo accessInfo = default;
-
-                                   if (Request.AccessToken.HasValue &&
-                                       AccessTokens.TryGetValue(Request.AccessToken.Value, out accessInfo) &&
-                                       accessInfo.Status != AccessStatus.ALLOWED)
+                                   if (Request.AccessInfo2.HasValue &&
+                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
@@ -758,8 +761,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #region The other side is a CPO...
 
-                                   //if (accessInfo.Roles?.Any(role  => role.Role == Roles.CPO) == true)
-                                   //{
+                                   if (Request.RemoteParty?.Role == Roles.CPO)
+                                   {
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.RECEIVER,
@@ -794,15 +797,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                        // hubclientinfo
 
-                                   //}
+                                   }
 
                                    #endregion
 
                                    #region The other side is an EMP or unauthenticated (Open Data Access)...
 
-                                   if (accessInfo.Roles?.Any(role => role.Role == Roles.EMSP)     == true ||
-                                       accessInfo.Roles?.Any(role => role.Role == Roles.OpenData) == true ||
-                                      (accessInfo.Roles == null && LocationsAsOpenData))
+                                   if (Request.RemoteParty?.Role == Roles.EMSP ||
+                                       Request.RemoteParty?.Role == Roles.OpenData ||
+                                      (Request.RemoteParty == null && LocationsAsOpenData))
                                    {
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
@@ -816,7 +819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #region The other side is an EMP...
 
-                                   if (accessInfo.Roles?.Any(role => role.Role == Roles.EMSP) == true)
+                                   if (Request.RemoteParty?.Role == Roles.EMSP)
                                    {
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
@@ -934,17 +937,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequest: Request => {
 
-                                   if (Request.AccessToken.HasValue &&
-                                       AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
-                                       accessInfo.VersionsURL.HasValue &&
-                                       accessInfo.Status == AccessStatus.ALLOWED)
+                                   if (Request.AccessInfo.HasValue &&
+                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
                                            new OCPIResponse.Builder(Request) {
                                                StatusCode           = 1000,
                                                StatusMessage        = "Hello world!",
-                                               Data                 = accessInfo.AsCredentials().ToJSON(),
+                                               Data                 = Request.AccessInfo.Value.AsCredentials().ToJSON(),
                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                    HTTPStatusCode             = HTTPStatusCode.OK,
                                                    AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -986,12 +987,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
-                                   if (CREDENTIALS_TOKEN_A.HasValue &&
-                                       AccessTokens.TryGetValue(CREDENTIALS_TOKEN_A.Value, out AccessInfo accessInfo) &&
-                                       accessInfo.Status == AccessStatus.ALLOWED)
+                                   if (Request.RemoteParty != null  &&
+                                       Request.AccessInfo.HasValue &&
+                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
-                                       if (accessInfo.VersionsURL.HasValue)
+                                       if (Request.AccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
                                                       StatusMessage        = "The given access token '" + CREDENTIALS_TOKEN_A.Value.ToString() + "' is already registered!",
@@ -1033,16 +1034,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPMethod.PUT,
                                URLPathPrefix + "2.2/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestLogger:   PutCredentialsRequest,
-                               OCPIResponseLogger:  PutCredentialsResponse,
-                               OCPIRequest:   async Request => {
+                               OCPIRequestLogger:  PutCredentialsRequest,
+                               OCPIResponseLogger: PutCredentialsResponse,
+                               OCPIRequest:        async Request => {
 
-                                   if (Request.AccessToken.HasValue &&
-                                       AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
-                                       accessInfo.Status == AccessStatus.ALLOWED)
+                                   if (Request.AccessInfo.HasValue &&
+                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
-                                       if (!accessInfo.VersionsURL.HasValue)
+                                       if (!Request.AccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
                                                       StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!",
@@ -1083,29 +1083,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPMethod.DELETE,
                                URLPathPrefix + "2.2/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequestLogger:   DeleteCredentialsRequest,
-                               OCPIResponseLogger:  DeleteCredentialsResponse,
-                               OCPIRequest:   async Request => {
+                               OCPIRequestLogger:  DeleteCredentialsRequest,
+                               OCPIResponseLogger: DeleteCredentialsResponse,
+                               OCPIRequest:        async Request => {
 
-                                   if (Request.AccessToken.HasValue &&
-                                       AccessTokens.TryGetValue(Request.AccessToken.Value, out AccessInfo accessInfo) &&
-                                       accessInfo.Status == AccessStatus.ALLOWED)
+                                   if (Request.AccessInfo.HasValue &&
+                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
                                        #region Validations
 
-                                             if (!accessInfo.VersionsURL.HasValue)
-                                                 return new OCPIResponse.Builder(Request) {
-                                                            StatusCode           = 2000,
-                                                            StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                                AccessControlAllowHeaders  = "Authorization"
-                                                            }
-                                                        };
+                                       if (!Request.AccessInfo.Value.VersionsURL.HasValue)
+                                           return new OCPIResponse.Builder(Request) {
+                                                      StatusCode           = 2000,
+                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not registered!",
+                                                      HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                          HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+                                                          AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                                          AccessControlAllowHeaders  = "Authorization"
+                                                      }
+                                                  };
 
-                                             #endregion
+                                       #endregion
 
 
                                        //ToDo: await...
@@ -1174,48 +1173,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Additional security checks... (Non-Standard)
 
-            lock (AccessTokens)
-            {
-                foreach (var credentialsRole in receivedCredentials.Roles)
-                {
+            //lock (AccessTokens)
+            //{
+            //    foreach (var credentialsRole in receivedCredentials.Roles)
+            //    {
 
-                    var result = AccessTokens.Values.Where(accessToken => accessToken.Roles.Any(role => role.CountryCode == credentialsRole.CountryCode &&
-                                                                                                        role.PartyId     == credentialsRole.PartyId &&
-                                                                                                        role.Role        == credentialsRole.Role)).ToArray();
+            //        var result = AccessTokens.Values.Where(accessToken => accessToken.Roles.Any(role => role.CountryCode == credentialsRole.CountryCode &&
+            //                                                                                            role.PartyId     == credentialsRole.PartyId &&
+            //                                                                                            role.Role        == credentialsRole.Role)).ToArray();
 
-                    if (result.Length == 0)
-                    {
+            //        if (result.Length == 0)
+            //        {
 
-                        return new OCPIResponse.Builder(Request) {
-                                   StatusCode           = 2000,
-                                   StatusMessage        = "The given combination of country code, party identification and role is unknown!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                       AccessControlAllowHeaders  = "Authorization"
-                                   }
-                               };
+            //            return new OCPIResponse.Builder(Request) {
+            //                       StatusCode           = 2000,
+            //                       StatusMessage        = "The given combination of country code, party identification and role is unknown!",
+            //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+            //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+            //                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+            //                           AccessControlAllowHeaders  = "Authorization"
+            //                       }
+            //                   };
 
-                    }
+            //        }
 
-                    if (result.Length > 0 &&
-                        result.First().VersionsURL.HasValue)
-                    {
+            //        if (result.Length > 0 &&
+            //            result.First().VersionsURL.HasValue)
+            //        {
 
-                        return new OCPIResponse.Builder(Request) {
-                                   StatusCode           = 2000,
-                                   StatusMessage        = "The given combination of country code, party identification and role is already registered!",
-                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                       HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
-                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                       AccessControlAllowHeaders  = "Authorization"
-                                   }
-                               };
+            //            return new OCPIResponse.Builder(Request) {
+            //                       StatusCode           = 2000,
+            //                       StatusMessage        = "The given combination of country code, party identification and role is already registered!",
+            //                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+            //                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
+            //                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+            //                           AccessControlAllowHeaders  = "Authorization"
+            //                       }
+            //                   };
 
-                    }
+            //        }
 
-                }
-            }
+            //    }
+            //}
 
             #endregion
 
@@ -1290,24 +1289,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            // Store credential of the other side!
-            foreach (var role in receivedCredentials.Roles)
-                SetRemoteAccessInfo(role.CountryCode,
-                                    role.PartyId,
-                                    role.Role,
-                                    role.BusinessDetails,
-                                    receivedCredentials.Token,
-                                    receivedCredentials.URL,
-                                    otherVersions.Data.Select(version => version.Id),
-                                    RemoteAccessStatus.ONLINE);
-
 
             var CREDENTIALS_TOKEN_C = AccessToken.Random();
 
-            SetIncomingAccessToken(CREDENTIALS_TOKEN_C,
-                                   receivedCredentials.URL,
-                                   receivedCredentials.Roles,
-                                   AccessStatus.ALLOWED);
+            // Store credential of the other side!
+            foreach (var role in receivedCredentials.Roles)
+                AddOrUpdateRemoteParty(role.CountryCode,
+                                 role.PartyId,
+                                 role.Role,
+                                 role.BusinessDetails,
+
+                                 CREDENTIALS_TOKEN_C, // -------------------------------------------------- !!!
+                                 AccessStatus.ALLOWED,
+
+                                 receivedCredentials.Token,
+                                 receivedCredentials.URL,
+                                 otherVersions.Data.Select(version => version.Id),
+                                 version2_2,
+
+                                 PartyStatus.ENABLED,
+                                 RemoteAccessStatus.ONLINE);
+
+            //SetIncomingAccessToken(CREDENTIALS_TOKEN_C,
+            //                       receivedCredentials.URL,
+            //                       receivedCredentials.Roles,
+            //                       AccessStatus.ALLOWED);
 
 
             RemoveAccessToken(CREDENTIALS_TOKEN_A.Value);
@@ -1337,88 +1343,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region SetTokens(...)
 
-        public Boolean SetTokens(CountryCode          CountryCode,
-                                 Party_Id             PartyId,
-                                 Roles                Role,
-                                 BusinessDetails      BusinessDetails,
+        //public Boolean SetTokens(CountryCode          CountryCode,
+        //                         Party_Id             PartyId,
+        //                         Roles                Role,
+        //                         BusinessDetails      BusinessDetails,
 
-                                 AccessToken          IncomingAccessToken,
+        //                         AccessToken          IncomingAccessToken,
 
-                                 AccessToken          RemoteAccessToken,
-                                 URL?                 RemoteVersionsURL,
-                                 Version_Id           RemoteVersionId,
+        //                         AccessToken          RemoteAccessToken,
+        //                         URL?                 RemoteVersionsURL,
+        //                         Version_Id           RemoteVersionId,
 
-                                 AccessStatus         AccessStatus   = AccessStatus.ALLOWED,
-                                 RemoteAccessStatus?  RemoteStatus   = RemoteAccessStatus.ONLINE)
-        {
+        //                         PartyStatus          PartyStatus    = PartyStatus.ENABLED,
+        //                         AccessStatus         AccessStatus   = AccessStatus.ALLOWED,
+        //                         RemoteAccessStatus?  RemoteStatus   = RemoteAccessStatus.ONLINE)
+        //{
 
-            return SetIncomingAccessToken(CountryCode,
-                                          PartyId,
-                                          Role,
-                                          BusinessDetails,
+        //    return SetIncomingAccessToken(CountryCode,
+        //                                  PartyId,
+        //                                  Role,
+        //                                  BusinessDetails,
 
-                                          IncomingAccessToken,
-                                          AccessStatus) &&
+        //                                  IncomingAccessToken,
+        //                                  AccessStatus) &&
 
-            SetRemoteAccessInfo(CountryCode,
-                                PartyId,
-                                Role,
-                                BusinessDetails,
+        //    AddOrUpdateParty(CountryCode,
+        //                     PartyId,
+        //                     Role,
+        //                     BusinessDetails,
 
-                                RemoteAccessToken,
-                                RemoteVersionsURL,
-                                RemoteVersionId,
-                                RemoteStatus);
+        //                     RemoteAccessToken,
+        //                     RemoteVersionsURL,
+        //                     RemoteVersionId,
 
-        }
+        //                     PartyStatus,
+        //                     RemoteStatus);
 
-        #endregion
-
-        #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO)
-
-        public EMSPClient GetEMSPClient(CountryCode  CountryCode,
-                                        Party_Id     PartyId,
-                                        Roles        Role = Roles.CPO)
-        {
-
-            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
-                                                                            info.PartyId     == PartyId &&
-                                                                            info.Role        == Role);
-
-            if (remoteAccessInfo?.VersionsURL.HasValue == true)
-                return new EMSPClient(remoteAccessInfo.Token,
-                                      remoteAccessInfo.VersionsURL.Value,
-                                      this,
-                                      RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
-
-            return null;
-
-        }
+        //}
 
         #endregion
 
-        #region GetCPOClient (CountryCode, PartyId, Role = Roles.EMSP)
-
-        public CPOClient GetCPOClient(CountryCode  CountryCode,
-                                      Party_Id     PartyId,
-                                      Roles        Role = Roles.EMSP)
-        {
-
-            var remoteAccessInfo = RemoteAccessInfos.FirstOrDefault(info => info.CountryCode == CountryCode &&
-                                                                            info.PartyId     == PartyId &&
-                                                                            info.Role        == Role);
-
-            if (remoteAccessInfo?.VersionsURL.HasValue == true)
-                return new CPOClient(remoteAccessInfo.Token,
-                                     remoteAccessInfo.VersionsURL.Value,
-                                     this,
-                                     RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true);
-
-            return null;
-
-        }
-
-        #endregion
 
 
 
@@ -1426,177 +1390,244 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AccessTokens
 
-        private readonly Dictionary<AccessToken, AccessInfo> AccessTokens;
+        //private readonly Dictionary<AccessToken, AccessInfo> AccessTokens;
 
-        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfo AccessInfo)
-        {
-            lock (AccessTokens)
-            {
-                return AccessTokens.TryGetValue(AccessToken, out AccessInfo);
-            }
-        }
+        //public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfo AccessInfo)
+        //{
+        //    lock (AccessTokens)
+        //    {
+        //        return AccessTokens.TryGetValue(AccessToken, out AccessInfo);
+        //    }
+        //}
 
-        public IEnumerable<AccessInfo> AccessInfos
-            => AccessTokens.Values;
+        //public IEnumerable<AccessInfo> AccessInfos
+        //    => AccessTokens.Values;
 
 
-        public CommonAPI SetIncomingAccessToken(AccessToken                   AccessToken,
-                                                URL                           VersionsURL,
-                                                IEnumerable<CredentialsRole>  Roles,
-                                                AccessStatus                  AccessStatus   = AccessStatus.ALLOWED)
-        {
-            lock (AccessTokens)
-            {
+        //public CommonAPI SetIncomingAccessToken(AccessToken                   AccessToken,
+        //                                        URL                           VersionsURL,
+        //                                        IEnumerable<CredentialsRole>  Roles,
+        //                                        AccessStatus                  AccessStatus   = AccessStatus.ALLOWED)
+        //{
+        //    lock (AccessTokens)
+        //    {
 
-                if (AccessTokens.ContainsKey(AccessToken))
-                    AccessTokens.Remove(AccessToken);
+        //        if (AccessTokens.ContainsKey(AccessToken))
+        //            AccessTokens.Remove(AccessToken);
 
-                AccessTokens.Add(AccessToken,
-                                 new AccessInfo(AccessToken,
-                                                AccessStatus,
-                                                VersionsURL,
-                                                Roles));
+        //        AccessTokens.Add(AccessToken,
+        //                         new AccessInfo(AccessToken,
+        //                                        AccessStatus,
+        //                                        VersionsURL,
+        //                                        Roles));
 
-                return this;
+        //        return this;
 
-            }
-        }
+        //    }
+        //}
 
-        public Boolean SetIncomingAccessToken(CountryCode      CountryCode,
-                                              Party_Id         PartyId,
-                                              Roles            Role,
-                                              BusinessDetails  BusinessDetails,
+        //public Boolean SetIncomingAccessToken(CountryCode      CountryCode,
+        //                                      Party_Id         PartyId,
+        //                                      Roles            Role,
+        //                                      BusinessDetails  BusinessDetails,
 
-                                              AccessToken      AccessToken,
-                                              AccessStatus     AccessStatus   = AccessStatus.ALLOWED)
-        {
-            lock (AccessTokens)
-            {
+        //                                      AccessToken      AccessToken,
+        //                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED)
+        //{
+        //    lock (AccessTokens)
+        //    {
 
-                if (AccessTokens.ContainsKey(AccessToken))
-                    AccessTokens.Remove(AccessToken);
+        //        if (AccessTokens.ContainsKey(AccessToken))
+        //            AccessTokens.Remove(AccessToken);
 
-                var alreadyExists = AccessTokens.Where(accessToken => accessToken.Value.Roles.Any(role => role.CountryCode == CountryCode &&
-                                                                                                          role.PartyId     == PartyId &&
-                                                                                                          role.Role        == Role)).ToArray();
+        //        var alreadyExists = AccessTokens.Where(accessToken => accessToken.Value.Roles.Any(role => role.CountryCode == CountryCode &&
+        //                                                                                                  role.PartyId     == PartyId &&
+        //                                                                                                  role.Role        == Role)).ToArray();
 
-                if (alreadyExists.Length > 0)
-                    return false;
+        //        if (alreadyExists.Length > 0)
+        //            return false;
 
-                AccessTokens.Add(AccessToken,
-                                 new AccessInfo(AccessToken,
-                                                AccessStatus,
-                                                null, //VersionsURL
-                                                new CredentialsRole[] {
-                                                    new CredentialsRole(CountryCode,
-                                                                        PartyId,
-                                                                        Role,
-                                                                        BusinessDetails)
-                                                }));
+        //        AccessTokens.Add(AccessToken,
+        //                         new AccessInfo(AccessToken,
+        //                                        AccessStatus,
+        //                                        null, //VersionsURL
+        //                                        new CredentialsRole[] {
+        //                                            new CredentialsRole(CountryCode,
+        //                                                                PartyId,
+        //                                                                Role,
+        //                                                                BusinessDetails)
+        //                                        }));
 
-                return true;
+        //        return true;
 
-            }
-        }
+        //    }
+        //}
 
-        public CommonAPI RemoveAccessToken(AccessToken AccessToken)
-        {
-            lock (AccessTokens)
-            {
-                AccessTokens.Remove(AccessToken);
-                return this;
-            }
-        }
+        //public CommonAPI RemoveAccessToken(AccessToken AccessToken)
+        //{
+        //    lock (AccessTokens)
+        //    {
+        //        AccessTokens.Remove(AccessToken);
+        //        return this;
+        //    }
+        //}
 
         #endregion
 
-        #region RemoteAccessInfos
+        #region RemoteParties
 
-        private readonly List<RemoteAccessInfo> RemoteAccessInfos;
+        private readonly List<Party> _RemoteParties;
 
-        public Boolean SetRemoteAccessInfo(CountryCode              CountryCode,
-                                           Party_Id                 PartyId,
-                                           Roles                    Role,
-                                           BusinessDetails          BusinessDetails,
-                                           AccessToken              Token,
-                                           URL?                     VersionsURL,
-                                           Version_Id               VersionId,
-                                           RemoteAccessStatus?      Status       = RemoteAccessStatus.ONLINE)
+        public IEnumerable<Party> RemoteParties
+            => _RemoteParties;
 
-            => SetRemoteAccessInfo(CountryCode,
-                                   PartyId,
-                                   Role,
-                                   BusinessDetails,
-                                   Token,
-                                   VersionsURL,
-                                   new Version_Id[] { VersionId },
-                                   Status);
+        public Boolean AddOrUpdateRemoteParty(CountryCode          CountryCode,
+                                              Party_Id             PartyId,
+                                              Roles                Role,
+                                              BusinessDetails      BusinessDetails,
+
+                                              AccessToken          RemoteAccessToken,
+                                              URL?                 RemoteVersionsURL,
+                                              Version_Id           RemoteVersionId,
+
+                                              PartyStatus          PartyStatus    = PartyStatus.ENABLED,
+                                              RemoteAccessStatus?  RemoteStatus   = RemoteAccessStatus.ONLINE)
+
+            => AddOrUpdateRemoteParty(CountryCode,
+                                      PartyId,
+                                      Role,
+                                      BusinessDetails,
+
+                                      null,
+                                      AccessStatus.ALLOWED,
+
+                                      RemoteAccessToken,
+                                      RemoteVersionsURL,
+                                      new Version_Id[] { RemoteVersionId },
+                                      RemoteVersionId,
+
+                                      PartyStatus,
+                                      RemoteStatus);
 
 
-        public Boolean SetRemoteAccessInfo(CountryCode              CountryCode,
-                                           Party_Id                 PartyId,
-                                           Roles                    Role,
-                                           BusinessDetails          BusinessDetails,
-                                           AccessToken              Token,
-                                           URL?                     VersionsURL,
-                                           IEnumerable<Version_Id>  VersionIds   = null,
-                                           RemoteAccessStatus?      Status       = RemoteAccessStatus.ONLINE)
+        public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
+                                              Party_Id                 PartyId,
+                                              Roles                    Role,
+                                              BusinessDetails          BusinessDetails,
+
+                                              AccessToken?             AccessToken         = null,
+                                              AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
+
+                                              AccessToken?             RemoteAccessToken   = null,
+                                              URL?                     RemoteVersionsURL   = null,
+                                              IEnumerable<Version_Id>  RemoteVersionIds    = null,
+                                              Version_Id?              SelectedVersionId   = null,
+
+                                              PartyStatus              PartyStatus         = PartyStatus.ENABLED,
+                                              RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE)
         {
-            lock (RemoteAccessInfos)
+            lock (_RemoteParties)
             {
 
-                var existingAccessInfos = RemoteAccessInfos.Where(info => info.CountryCode == CountryCode &&
-                                                                          info.PartyId     == PartyId &&
-                                                                          info.Role        == Role).ToArray();
+                var existingAccessInfos = _RemoteParties.Where(party => party.CountryCode == CountryCode &&
+                                                                        party.PartyId     == PartyId     &&
+                                                                        party.Role        == Role).ToArray();
 
                 foreach (var remoteAccessInfo in existingAccessInfos)
-                    RemoteAccessInfos.Remove(remoteAccessInfo);
+                    _RemoteParties.Remove(remoteAccessInfo);
 
 
-                var newRemoteAccessInfo = new RemoteAccessInfo(CountryCode,
-                                                               PartyId,
-                                                               Role,
-                                                               BusinessDetails,
-                                                               Token,
-                                                               VersionsURL,
-                                                               VersionIds,
-                                                               Status);
+                var newRemoteAccessInfo = new Party(CountryCode,
+                                                    PartyId,
+                                                    Role,
+                                                    BusinessDetails,
+                                                    PartyStatus,
 
-                RemoteAccessInfos.Add(newRemoteAccessInfo);
+                                                    AccessToken,
+                                                    AccessStatus,
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteAccessInfo", newRemoteAccessInfo.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+                                                    RemoteAccessToken,
+                                                    RemoteVersionsURL,
+                                                    RemoteVersionIds,
+                                                    SelectedVersionId,
+                                                    RemoteStatus);
+
+                _RemoteParties.Add(newRemoteAccessInfo);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteAccessInfo.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
 
                 return true;
 
             }
         }
 
-        public Boolean RemoveRemoteAccessInfo(RemoteAccessInfo RemoteAccessInfo)
+        public Boolean RemoveRemoteParty(Party Party)
         {
-            lock (RemoteAccessInfos)
+            lock (_RemoteParties)
             {
-                return RemoteAccessInfos.Remove(RemoteAccessInfo);
+                return _RemoteParties.Remove(Party);
             }
         }
 
-        public Boolean RemoveRemoteAccessInfos(CountryCode  CountryCode,
-                                               Party_Id     PartyId,
-                                               Roles        Role)
+        public Boolean RemoveRemoteParty(CountryCode  CountryCode,
+                                         Party_Id     PartyId)
         {
-            lock (RemoteAccessInfos)
+            lock (_RemoteParties)
             {
 
-                var existingAccessInfos = RemoteAccessInfos.Where(info => info.CountryCode == CountryCode &&
-                                                                          info.PartyId     == PartyId &&
-                                                                          info.Role        == Role).ToArray();
+                var parties = _RemoteParties.Where(party => party.CountryCode == CountryCode &&
+                                                            party.PartyId     == PartyId).ToArray();
 
-                foreach (var remoteAccessInfo in existingAccessInfos)
+                foreach (var party in parties)
                 {
+                    _RemoteParties.Remove(party);
+                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeParty", party.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+                }
 
-                    RemoteAccessInfos.Remove(remoteAccessInfo);
+                return true;
 
-                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeRemoteAccessInfo", remoteAccessInfo.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+            }
+        }
 
+        public Boolean RemoveRemoteParty(CountryCode  CountryCode,
+                                         Party_Id     PartyId,
+                                         Roles        Role)
+        {
+            lock (_RemoteParties)
+            {
+
+                var parties = _RemoteParties.Where(party => party.CountryCode == CountryCode &&
+                                                            party.PartyId     == PartyId     &&
+                                                            party.Role        == Role).ToArray();
+
+                foreach (var party in parties)
+                {
+                    _RemoteParties.Remove(party);
+                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeParty", party.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+                }
+
+                return true;
+
+            }
+        }
+
+        public Boolean RemoveRemoteParty(CountryCode  CountryCode,
+                                         Party_Id     PartyId,
+                                         Roles        Role,
+                                         AccessToken  Token)
+        {
+            lock (_RemoteParties)
+            {
+
+                var parties = _RemoteParties.Where(party => party.CountryCode == CountryCode &&
+                                                            party.PartyId     == PartyId     &&
+                                                            party.Role        == Role        &&
+                                                            party.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == Token)).ToArray();
+
+                foreach (var party in parties)
+                {
+                    _RemoteParties.Remove(party);
+                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeParty", party.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
                 }
 
                 return true;
@@ -1606,6 +1637,126 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        public CommonAPI RemoveAccessToken(AccessToken AccessToken)
+        {
+            lock (_RemoteParties)
+            {
+
+                var parties = _RemoteParties.Where(party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).ToArray();
+
+                foreach (var party in parties)
+                {
+
+                    if (party.AccessInfo.Count() <= 1)
+                    {
+                        _RemoteParties.Remove(party);
+                        File.AppendAllText(LogfileName, new JObject(new JProperty("removeParty", party.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+                    }
+
+                    else
+                    {
+                        _RemoteParties.Remove(party);
+                        _RemoteParties.Add(new Party(party.CountryCode,
+                                               party.PartyId,
+                                               party.Role,
+                                               party.BusinessDetails,
+                                               party.AccessInfo.Where(accessInfo => accessInfo.Token != AccessToken),
+                                               party.RemoteAccessInfos,
+                                               party.PartyStatus));
+                        File.AppendAllText(LogfileName, new JObject(new JProperty("updateParty", party.ToJSON())).ToString(Newtonsoft.Json.Formatting.None));
+                    }
+
+                }
+
+                return this;
+
+            }
+        }
+
+
+        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfo2 AccessInfo)
+        {
+            lock (_RemoteParties)
+            {
+
+                var accessInfos = _RemoteParties.Where     (party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                                 SelectMany(party => party.AccessInfo).
+                                                 ToArray();
+
+                if (accessInfos.Length == 1)
+                {
+                    AccessInfo = accessInfos.First();
+                    return true;
+                }
+
+                AccessInfo = default;
+                return false;
+
+            }
+        }
+
+        public IEnumerable<AccessInfo2> GetAccessInfos(AccessToken AccessToken)
+        {
+            lock (_RemoteParties)
+            {
+
+                return _RemoteParties.Where     (party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                      SelectMany(party => party.AccessInfo).
+                                      ToArray();
+
+            }
+        }
+
+        public IEnumerable<AccessInfo2> GetAccessInfos(AccessToken   AccessToken,
+                                                       AccessStatus  AccessStatus)
+        {
+            lock (_RemoteParties)
+            {
+
+                return _RemoteParties.Where     (party => party.AccessInfo.Any(accessInfo => accessInfo.Token  == AccessToken &&
+                                                                                             accessInfo.Status == AccessStatus)).
+                                      SelectMany(party => party.AccessInfo).
+                                      ToArray();
+
+            }
+        }
+
+        public IEnumerable<Party> GetParties(AccessToken AccessToken)
+        {
+            lock (_RemoteParties)
+            {
+
+                return _RemoteParties.Where(party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                      ToArray();
+
+            }
+        }
+
+        public Boolean TryGetParties(AccessToken AccessToken, out IEnumerable<Party> Parties)
+        {
+            lock (_RemoteParties)
+            {
+
+                Parties =  _RemoteParties.Where(party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                          ToArray();
+
+                return Parties.Any();
+
+            }
+        }
+
+        public IEnumerable<Party> GetParties(AccessToken   AccessToken,
+                                             AccessStatus  AccessStatus)
+        {
+            lock (_RemoteParties)
+            {
+
+                return _RemoteParties.Where(party => party.AccessInfo.Any(accessInfo => accessInfo.Token  == AccessToken &&
+                                                                                        accessInfo.Status == AccessStatus)).
+                                      ToArray();
+
+            }
+        }
 
 
         // Add last modified timestamp to locations!

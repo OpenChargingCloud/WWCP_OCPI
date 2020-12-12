@@ -1818,19 +1818,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         foreach (var role in response.Data.Roles)
                         {
 
-                            MyCommonAPI.SetTokens(CountryCode:          role.CountryCode,
-                                                  PartyId:              role.PartyId,
-                                                  Role:                 role.Role,
-                                                  BusinessDetails:      role.BusinessDetails,
+                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
+                                                         PartyId:            role.PartyId,
+                                                         Role:               role.Role,
+                                                         BusinessDetails:    role.BusinessDetails,
 
-                                                  IncomingAccessToken:  Credentials.Token,
+                                                         AccessToken:        Credentials.Token,
+                                                         AccessStatus:       AccessStatus.ALLOWED,
 
-                                                  RemoteAccessToken:    response.Data.Token,
-                                                  RemoteVersionsURL:    response.Data.URL,
-                                                  RemoteVersionId:      Version_Id.Parse("2.2"),
+                                                         RemoteAccessToken:  response.Data.Token,
+                                                         RemoteVersionsURL:  response.Data.URL,
+                                                         RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
+                                                         SelectedVersionId:  Version_Id.Parse("2.2"),
 
-                                                  AccessStatus:         AccessStatus.ALLOWED,
-                                                  RemoteStatus:         RemoteAccessStatus.ONLINE);
+                                                         PartyStatus:        PartyStatus.ENABLED,
+                                                         RemoteStatus:       RemoteAccessStatus.ONLINE);
 
                         }
 
@@ -2303,19 +2305,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         foreach (var role in response.Data.Roles)
                         {
 
-                            MyCommonAPI.SetTokens(CountryCode:          role.CountryCode,
-                                                  PartyId:              role.PartyId,
-                                                  Role:                 role.Role,
-                                                  BusinessDetails:      role.BusinessDetails,
+                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
+                                                         PartyId:            role.PartyId,
+                                                         Role:               role.Role,
+                                                         BusinessDetails:    role.BusinessDetails,
 
-                                                  IncomingAccessToken:  credentialTokenB,
+                                                         AccessToken:        credentialTokenB,
+                                                         AccessStatus:       AccessStatus.ALLOWED,
 
-                                                  RemoteAccessToken:    response.Data.Token,
-                                                  RemoteVersionsURL:    response.Data.URL,
-                                                  RemoteVersionId:      Version_Id.Parse("2.2"),
+                                                         RemoteAccessToken:  response.Data.Token,
+                                                         RemoteVersionsURL:  response.Data.URL,
+                                                         RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
+                                                         SelectedVersionId:  Version_Id.Parse("2.2"),
 
-                                                  AccessStatus:         AccessStatus.ALLOWED,
-                                                  RemoteStatus:         RemoteAccessStatus.ONLINE);
+                                                         PartyStatus:        PartyStatus.ENABLED,
+                                                         RemoteStatus:       RemoteAccessStatus.ONLINE);
 
                         }
 

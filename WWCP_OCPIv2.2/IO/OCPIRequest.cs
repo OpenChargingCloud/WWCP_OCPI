@@ -170,6 +170,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public AccessInfo?      AccessInfo          { get; }
 
+        public AccessInfo2?     AccessInfo2         { get; }
+
+        public Party            RemoteParty         { get; }
+
 
         /// <summary>
         /// The HTTP query string.
@@ -222,20 +226,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetAccessInfo(this.AccessToken.Value, out AccessInfo accessInfo))
+                if (CommonAPI.TryGetParties(AccessToken.Value, out IEnumerable<Party> Parties))
                 {
 
-                    this.AccessInfo = accessInfo;
+                    if (Parties.Count() == 1)
+                    {
 
-            //        var allTheirCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+                        this.AccessInfo   = new AccessInfo(AccessToken.Value,
+                                                           Parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status);
 
-            //        if (!FromCountryCode.HasValue && allTheirCPORoles.Length == 1)
-            //            this.FromCountryCode = allTheirCPORoles[0].CountryCode;
+                        this.AccessInfo2  = Parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
 
-            //        if (!FromPartyId.    HasValue && allTheirCPORoles.Length == 1)
-            //            this.FromPartyId     = allTheirCPORoles[0].PartyId;
+                        this.RemoteParty  = Parties.First();
+
+                    }
+
+                    else if (Parties.Count() > 1      &&
+                             FromCountryCode.HasValue &&
+                             FromPartyId.    HasValue)
+                    {
+
+                        var filteredParties = Parties.Where(party => party.CountryCode == FromCountryCode.Value &&
+                                                                     party.PartyId     == FromPartyId.    Value).ToArray();
+
+                        if (filteredParties.Count() == 1)
+                        {
+
+                            this.AccessInfo   = new AccessInfo(AccessToken.Value,
+                                                               filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status);
+
+                            this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+
+                            this.RemoteParty  = filteredParties.First();
+
+                        }
+
+                    }
 
                 }
+
+
+            //    if (CommonAPI.TryGetAccessInfo(this.AccessToken.Value, out AccessInfo accessInfo))
+            //    {
+
+            //        this.AccessInfo = accessInfo;
+
+            ////        var allTheirCPORoles = this.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+
+            ////        if (!FromCountryCode.HasValue && allTheirCPORoles.Length == 1)
+            ////            this.FromCountryCode = allTheirCPORoles[0].CountryCode;
+
+            ////        if (!FromPartyId.    HasValue && allTheirCPORoles.Length == 1)
+            ////            this.FromPartyId     = allTheirCPORoles[0].PartyId;
+
+            //    }
 
             }
 

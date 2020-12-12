@@ -56,8 +56,9 @@
     <Compile Include="DataTypes\Commands\ClearProfileResult.cs" />
     <Compile Include="DataTypes\Commands\ChargingProfileResult.cs" />
     <Compile Include="DataTypes\Complex\AddOrUpdateResult.cs" />
-    <Compile Include="DataTypes\Complex\PatchResult.cs" />
     <Compile Include="DataTypes\Complex\RemoteAccessInfo.cs" />
+    <Compile Include="DataTypes\Complex\PatchResult.cs" />
+    <Compile Include="DataTypes\Complex\Party.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfile.cs" />
     <Compile Include="DataTypes\Complex\ActiveChargingProfile.cs" />
     <Compile Include="DataTypes\Commands\ActiveChargingProfileResult.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="DataTypes\Commands\UnlockConnectorCommand.cs" />
     <Compile Include="DataTypes\Complex\Time.cs" />
     <Compile Include="DataTypes\Enums\Languages.cs" />
+    <Compile Include="DataTypes\Enums\PartyStatus.cs" />
     <Compile Include="DataTypes\Enums\RemoteAccessStatus.cs" />
     <Compile Include="DataTypes\Enums\ChargingProfileResponseTypes.cs" />
     <Compile Include="DataTypes\Enums\ChargingRateUnit.cs" />

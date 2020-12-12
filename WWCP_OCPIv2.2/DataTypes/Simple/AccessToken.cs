@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new random access token.
         /// </summary>
         /// <param name="Length">The expected length of the access token.</param>
-        public static AccessToken Random(Byte Length = 30)
+        public static AccessToken Random(Byte Length = 50)
 
             => new AccessToken(random.RandomString(Length));
 

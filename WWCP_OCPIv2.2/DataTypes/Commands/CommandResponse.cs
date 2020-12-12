@@ -260,7 +260,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<DisplayText> Message,
                                            out ErrorResponse))
                 {
-                    return false;
+                    if (ErrorResponse != null)
+                        return false;
                 }
 
                 #endregion
