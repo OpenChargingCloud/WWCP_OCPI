@@ -28,9 +28,12 @@ using Newtonsoft.Json.Linq;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.SOAP;
 
 using org.GraphDefined.WWCP;
+
+using social.OpenData.UsersAPI;
+
+using cloud.charging.open.API;
 using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
 #endregion
@@ -39,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 {
 
     /// <summary>
-    /// OCPI Web API extention methods.
+    /// OCPI WebAPI extention methods.
     /// </summary>
     public static class ExtentionMethods
     {
@@ -137,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
     /// <summary>
     /// A HTTP API providing advanced OCPI data structures.
     /// </summary>
-    public class OCPIWebAPI
+    public class OCPIWebAPI : HTTPAPI
     {
 
         #region Data
@@ -150,7 +153,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The default HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public const           String                               DefaultHTTPRealm            = "Open Charging Cloud OCPIPlus WebAPI";
+        public const String DefaultHTTPRealm = "Open Charging Cloud OCPIPlus WebAPI";
+
+        /// <summary>
+        /// The HTTP root for embedded ressources.
+        /// </summary>
+        public const              String                            HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot.";
+
 
         //ToDo: http://www.iana.org/form/media-types
 
@@ -172,19 +181,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         #region Properties
 
         /// <summary>
-        /// The HTTP server for serving the OCPI+ WebAPI.
-        /// </summary>
-        public HTTPServer                                   HTTPServer          { get; }
-
-        /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
         public HTTPPath?                                    URLPathPrefix1      { get; }
-
-        /// <summary>
-        /// The HTTP URI prefix.
-        /// </summary>
-        public HTTPPath                                     URLPathPrefix       { get; }
 
         /// <summary>
         /// The HTTP realm, if HTTP Basic Authentication is used.
@@ -262,42 +261,63 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <param name="URLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(HTTPServer                                   HTTPServer,
-                          HTTPPath?                                    URLPathPrefix1                      = null,
-                          HTTPPath?                                    URLPathPrefix                       = null,
-                          String                                       HTTPRealm                           = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>    HTTPLogins                          = null)
+        public OCPIWebAPI(HTTPServer                                 HTTPServer,
+                          HTTPPath?                                  URLPathPrefix1   = null,
+                          HTTPPath?                                  URLPathPrefix    = null,
+                          String                                     HTTPRealm        = DefaultHTTPRealm,
+                          IEnumerable<KeyValuePair<String, String>>  HTTPLogins       = null,
+                          String                                     HTMLTemplate     = null)
+
+            : base(HTTPServer,
+                   null,
+                   "",
+                   URLPathPrefix ?? DefaultURLPathPrefix)
+
         {
 
-            this.HTTPServer                         = HTTPServer    ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP server must not be null!");
-            this.URLPathPrefix1                     = URLPathPrefix1;
-            this.URLPathPrefix                      = URLPathPrefix ?? DefaultURLPathPrefix;
-            this.HTTPRealm                          = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
-            this.HTTPLogins                         = HTTPLogins    ?? new KeyValuePair<String, String>[0];
-            this.DNSClient                          = HTTPServer.DNSClient;
+            this.URLPathPrefix1      = URLPathPrefix1;
+            this.HTTPRealm           = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
+            this.HTTPLogins          = HTTPLogins    ?? new KeyValuePair<String, String>[0];
+            this.DNSClient           = HTTPServer.DNSClient;
 
-            this.CPOClients                         = new List<CPOClient>();
-            this.EMSPClients                        = new List<EMSPClient>();
+            this.CPOClients          = new List<CPOClient>();
+            this.EMSPClients         = new List<EMSPClient>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
             HTTPServer.ResponseLog  += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             HTTPServer.ErrorLog     += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            var LogfilePrefix                       = "HTTPSSEs" + Path.DirectorySeparatorChar;
+            var LogfilePrefix        = "HTTPSSEs" + Path.DirectorySeparatorChar;
 
-            //this.DebugLog                           = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
-            //                                                                        URLTemplate:              this.URLPathPrefix + "/DebugLog",
-            //                                                                        MaxNumberOfCachedEvents:  10000,
-            //                                                                        RetryIntervall:           TimeSpan.FromSeconds(5),
-            //                                                                        EnableLogging:            true,
-            //                                                                        LogfilePrefix:            LogfilePrefix);
+            //this.DebugLog            = HTTPServer.AddJSONEventSource(EventIdentification:      DebugLogId,
+            //                                                         URLTemplate:              this.URLPathPrefix + "/DebugLog",
+            //                                                         MaxNumberOfCachedEvents:  10000,
+            //                                                         RetryIntervall:           TimeSpan.FromSeconds(5),
+            //                                                         EnableLogging:            true,
+            //                                                         LogfilePrefix:            LogfilePrefix);
 
             RegisterURITemplates();
+
+            this.HTMLTemplate = HTMLTemplate ?? GetResourceString(typeof(OCPIWebAPI).Assembly, HTTPRoot + "template.html");
 
         }
 
         #endregion
+
+
+        #region (private) MixWithHTMLTemplate    (ResourceName)
+
+        protected String MixWithHTMLTemplate(String ResourceName)
+
+            => MixWithHTMLTemplate(ResourceName,
+                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.          HTTPRoot, typeof(OCPIWebAPI).          Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(OpenChargingCloudAPI.HTTPRoot, typeof(OpenChargingCloudAPI).Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.            HTTPRoot, typeof(UsersAPI).            Assembly));
+
+        #endregion
+
+
 
 
         #region (private) RegisterURITemplates()
@@ -307,10 +327,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region / (HTTPRoot)
 
-            //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/",
-            //                                   "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
-            //                                   DefaultFilename: "index.html");
+            HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+                                               URLPathPrefix,
+                                               "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
+                                               DefaultFilename: "index.html");
 
             if (URLPathPrefix1.HasValue)
                 HTTPServer.AddMethodCallback(HTTPHostname.Any,
@@ -341,6 +361,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      }.AsImmutable);
 
                                              });
+
+            if (URLPathPrefix1.HasValue)
+                HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             URLPathPrefix1.Value + "versions",
+                                             HTTPContentType.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("versions.versions.shtml").ToUTF8Bytes(),
+                                                         Connection                 = "close",
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
+
+            if (URLPathPrefix1.HasValue)
+                HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                                             HTTPMethod.GET,
+                                             URLPathPrefix1.Value + "versions/{id}",
+                                             HTTPContentType.HTML_UTF8,
+                                             HTTPDelegate: Request => {
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         //Server                     = DefaultHTTPServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "OPTIONS, GET",
+                                                         AccessControlAllowHeaders  = "Authorization",
+                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("versions.versionDetails.shtml").ToUTF8Bytes(),
+                                                         Connection                 = "close",
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             });
+
 
             #endregion
 

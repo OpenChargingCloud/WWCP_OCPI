@@ -60,9 +60,21 @@
       <Project>{477efd16-3627-4473-957d-44ca9a9dfb79}</Project>
       <Name>Hermod</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\OpenChargingCloudAPI\OpenChargingCloudAPI\OpenChargingCloudAPI.csproj">
+      <Project>{85949a33-de77-4d57-a5cf-7cf2d29b8a68}</Project>
+      <Name>OpenChargingCloudAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SMSAPI\smsapi\SMSAPI2.csproj">
+      <Project>{05c2a720-2cd1-401b-a832-9ce85313c248}</Project>
+      <Name>SMSAPI2</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
       <Project>{af76ecc0-2ca5-4cff-9e1e-ff5478c4b6e4}</Project>
       <Name>Styx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UsersAPI\UsersAPI\UsersAPI.csproj">
+      <Project>{4d5da5f5-0dce-4620-bce5-74a27e5cfc47}</Project>
+      <Name>UsersAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj">
       <Project>{33836742-af1d-4aa4-963f-b0a8e60e6480}</Project>
@@ -82,8 +94,36 @@
     <None Include="compilerconfig.json.defaults">
       <DependentUpon>compilerconfig.json</DependentUpon>
     </None>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js">
+      <DependentUpon>dashboard.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js.map">
+      <DependentUpon>dashboard.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.scss" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js">
+      <DependentUpon>defaults.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js">
+      <DependentUpon>versionDetails.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js.map">
+      <DependentUpon>versionDetails.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js">
+      <DependentUpon>versions.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js.map">
+      <DependentUpon>versions.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
+    <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map">
+      <DependentUpon>defaults.ts</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HTTPRoot\favicon.png" />
     <EmbeddedResource Include="HTTPRoot\template.html" />
   </ItemGroup>
@@ -104,9 +144,49 @@
       <DependentUpon>template.css</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.css">
+      <DependentUpon>dashboard.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.min.css">
+      <DependentUpon>dashboard.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.css">
+      <DependentUpon>versionDetails.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.min.css">
+      <DependentUpon>versionDetails.css</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.shtml" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.css">
+      <DependentUpon>versions.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.min.css">
+      <DependentUpon>versions.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>tsc</PreBuildEvent>
   </PropertyGroup>
 </Project>

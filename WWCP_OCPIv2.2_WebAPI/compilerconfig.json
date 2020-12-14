@@ -2,5 +2,21 @@
   {
     "outputFile": "HTTPRoot/template.css",
     "inputFile": "HTTPRoot/template.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/defaults/dashboard/dashboard.css",
+    "inputFile": "HTTPRoot/defaults/dashboard/dashboard.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/dashboard/dashboard.css",
+    "inputFile": "HTTPRoot/dashboard/dashboard.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/versions/versions.css",
+    "inputFile": "HTTPRoot/versions/versions.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/versions/versionDetails.css",
+    "inputFile": "HTTPRoot/versions/versionDetails.scss"
   }
 ]

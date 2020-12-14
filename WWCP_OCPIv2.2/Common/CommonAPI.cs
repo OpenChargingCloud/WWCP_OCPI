@@ -559,7 +559,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                 HTTPMethod.OPTIONS,
                                                                                 HTTPMethod.GET
                                                                             },
-                                               AccessControlAllowHeaders  = "Authorization"
+                                               AccessControlAllowHeaders  = "Authorization",
+                                               Vary                       = "Accept"
                                            }
                                        });
 
@@ -616,7 +617,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
                                                AccessControlAllowMethods  = "OPTIONS, GET",
-                                               AccessControlAllowHeaders  = "Authorization"
+                                               AccessControlAllowHeaders  = "Authorization",
+                                               Vary                       = "Accept"
                                            }
                                        });
 
@@ -644,7 +646,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                 HTTPMethod.OPTIONS,
                                                                                 HTTPMethod.GET
                                                                             },
-                                               AccessControlAllowHeaders  = "Authorization"
+                                               AccessControlAllowHeaders  = "Authorization",
+                                               Vary                       = "Accept"
                                            }
                                        });
                                });
@@ -887,7 +890,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                   AccessControlAllowMethods  = "OPTIONS, GET",
-                                                  AccessControlAllowHeaders  = "Authorization"
+                                                  AccessControlAllowHeaders  = "Authorization",
+                                                  Vary                       = "Accept"
                                               }
                                           });
 
