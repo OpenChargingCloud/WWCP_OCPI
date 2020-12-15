@@ -1263,7 +1263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             {
 
                 if (VersionDetails.Any())
-                    versionId = VersionDetails.Keys.OrderByDescending(id => id).First();
+                    SelectedOCPIVersionId = versionId = VersionDetails.Keys.OrderByDescending(id => id).First();
 
                 else
                 {
@@ -1272,7 +1272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     if (Versions.Any())
                     {
-                        versionId = Versions.Keys.OrderByDescending(id => id).First();
+                        SelectedOCPIVersionId = versionId = Versions.Keys.OrderByDescending(id => id).First();
                         await GetVersionDetails(versionId.Value);
                     }
 
@@ -1290,7 +1290,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     {
                         return endpoint.URL;
                     }
-
                 }
             }
 
@@ -2306,20 +2305,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         {
 
                             MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
-                                                         PartyId:            role.PartyId,
-                                                         Role:               role.Role,
-                                                         BusinessDetails:    role.BusinessDetails,
+                                                               PartyId:            role.PartyId,
+                                                               Role:               role.Role,
+                                                               BusinessDetails:    role.BusinessDetails,
 
-                                                         AccessToken:        credentialTokenB,
-                                                         AccessStatus:       AccessStatus.ALLOWED,
+                                                               AccessToken:        credentialTokenB,
+                                                               AccessStatus:       AccessStatus.ALLOWED,
 
-                                                         RemoteAccessToken:  response.Data.Token,
-                                                         RemoteVersionsURL:  response.Data.URL,
-                                                         RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
-                                                         SelectedVersionId:  Version_Id.Parse("2.2"),
+                                                               RemoteAccessToken:  response.Data.Token,
+                                                               RemoteVersionsURL:  response.Data.URL,
+                                                               RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
+                                                               SelectedVersionId:  Version_Id.Parse("2.2"),
 
-                                                         PartyStatus:        PartyStatus.ENABLED,
-                                                         RemoteStatus:       RemoteAccessStatus.ONLINE);
+                                                               PartyStatus:        PartyStatus.ENABLED,
+                                                               RemoteStatus:       RemoteAccessStatus.ONLINE);
 
                         }
 
