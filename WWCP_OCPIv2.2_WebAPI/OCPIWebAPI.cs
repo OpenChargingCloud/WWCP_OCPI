@@ -421,16 +421,73 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                          HTTPContentType.JSON_UTF8,
                                          HTTPDelegate: Request => {
 
+                                             #region Get HTTP user and its organizations
+
+                                             //// Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //}
+
+                                             #endregion
+
+                                             var withMetadata                 = Request.QueryString.GetBoolean("withMetadata", false);
+                                             var matchFilter                  = Request.QueryString.CreateStringFilter<RemoteParty>("match",
+                                                                                                                                    (remoteParty, pattern) => remoteParty.Id.         ToString().Contains(pattern) ||
+                                                                                                                                                              remoteParty.BusinessDetails?.Name. Contains(pattern) == true);
+                                             var skip                         = Request.QueryString.GetUInt64 ("skip");
+                                             var take                         = Request.QueryString.GetUInt64 ("take");
+                                             var matchStatusFilter            = Request.QueryString.CreateMultiEnumFilter<PartyStatus>("matchStatus");
+                                             var includeCryptoHash            = Request.QueryString.GetBoolean("includeCryptoHash", true);
+
+                                             var allRemoteParties             = CommonAPI.RemoteParties.
+                                                                                    //Where(remoteParty => HTTPOrganizations.Contains(remoteParty.Owner) ||
+                                                                                    //                           Admins.InEdges(HTTPUser).
+                                                                                    //                                  Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)).
+                                                                                    ToArray();
+                                             var totalCount                   = allRemoteParties.ULongCount();
+
+                                             var filteredRemoteParties        = allRemoteParties.
+                                                                                    Where(matchFilter).
+                                                                                    Where(remoteParty => matchStatusFilter(remoteParty.PartyStatus)).
+                                                                                    ToArray();
+                                             var filteredCount                = filteredRemoteParties.ULongCount();
+
+                                             var JSONResults                  = filteredRemoteParties.
+                                                                                    OrderBy(remoteParty => remoteParty.Id).
+                                                                                    ToJSON (skip,
+                                                                                            take,
+                                                                                            false, //Embedded
+                                                                                            null,
+                                                                                            null,
+                                                                                            null,  //GetDefibrillatorSerializator(Request, HTTPUser),
+                                                                                            includeCryptoHash);
+
 
                                              return Task.FromResult(
                                                  new HTTPResponse.Builder(Request) {
-                                                     HTTPStatusCode             = HTTPStatusCode.OK,
-                                                     ContentType                = HTTPContentType.JSON_UTF8,
-                                                     Content                    = new JArray(CommonAPI.RemoteParties.Select(party => party.ToJSON())).ToUTF8Bytes(),
-                                                     AccessControlAllowMethods  = "OPTIONS, GET",
-                                                     AccessControlAllowHeaders  = "Authorization"
-                                                     //LastModified               = Location.LastUpdated.ToIso8601(),
-                                                     //ETag                       = Location.SHA256Hash
+                                                     HTTPStatusCode                = HTTPStatusCode.OK,
+                                                     Server                        = HTTPServer.DefaultServerName,
+                                                     Date                          = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin      = "*",
+                                                     AccessControlAllowMethods     = "GET, OPTIONS",
+                                                     AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
+                                                     //ETag                          = "1",
+                                                     ContentType                   = HTTPContentType.JSON_UTF8,
+                                                     Content                       = withMetadata
+                                                                                         ? JSONObject.Create(
+                                                                                               new JProperty("totalCount",      totalCount),
+                                                                                               new JProperty("filteredCount",   filteredCount),
+                                                                                               new JProperty("defibrillators",  JSONResults)
+                                                                                           ).ToUTF8Bytes()
+                                                                                         : JSONResults.ToUTF8Bytes(),
+                                                     X_ExpectedTotalNumberOfItems  = filteredCount,
+                                                     Connection                    = "close",
+                                                     Vary                          = "Accept"
                                                  }.AsImmutable);
 
                                          });

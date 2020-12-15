@@ -58,7 +58,7 @@
     <Compile Include="DataTypes\Complex\AddOrUpdateResult.cs" />
     <Compile Include="DataTypes\Complex\RemoteAccessInfo.cs" />
     <Compile Include="DataTypes\Complex\PatchResult.cs" />
-    <Compile Include="DataTypes\Complex\Party.cs" />
+    <Compile Include="DataTypes\Complex\RemoteParty.cs" />
     <Compile Include="DataTypes\Complex\ChargingProfile.cs" />
     <Compile Include="DataTypes\Complex\ActiveChargingProfile.cs" />
     <Compile Include="DataTypes\Commands\ActiveChargingProfileResult.cs" />
@@ -92,6 +92,7 @@
     <Compile Include="DataTypes\Patch.cs" />
     <Compile Include="DataTypes\Simple\Facilities.cs" />
     <Compile Include="DataTypes\Simple\Command_Id.cs" />
+    <Compile Include="DataTypes\Simple\RemoteParty_Id.cs" />
     <Compile Include="EMSP\EMSPClientLogger.cs" />
     <Compile Include="EMSP\EMSPAPILogger.cs" />
     <Compile Include="IO\OCPIAPILogger.cs" />

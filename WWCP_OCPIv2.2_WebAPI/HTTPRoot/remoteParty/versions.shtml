@@ -1,0 +1,25 @@
+﻿
+<link href="webapi/versions/versions.min.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
+<script type="text/javascript" src="webapi/versions/versions.js"></script>
+
+<div id="versionInfos" class="entity">
+
+    <div id="versionInfos2">
+
+        <div id="description">
+            Versions
+        </div>
+
+        <div id="versions">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    StartVersions();
+</script>

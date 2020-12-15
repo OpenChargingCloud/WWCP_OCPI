@@ -172,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public AccessInfo2?     AccessInfo2         { get; }
 
-        public Party            RemoteParty         { get; }
+        public RemoteParty            RemoteParty         { get; }
 
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetParties(AccessToken.Value, out IEnumerable<Party> Parties))
+                if (CommonAPI.TryGetParties(AccessToken.Value, out IEnumerable<RemoteParty> Parties))
                 {
 
                     if (Parties.Count() == 1)

@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The unique identification of a party.
     /// </summary>
-    public struct Party_Id : IId<Party_Id>
+    public readonly struct Party_Id : IId<Party_Id>
     {
 
         #region Data

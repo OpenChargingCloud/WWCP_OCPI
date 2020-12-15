@@ -118,6 +118,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.js.map">
+      <DependentUpon>versions.ts</DependentUpon>
+    </EmbeddedResource>
     <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +188,27 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.css">
+      <DependentUpon>versions.scss</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.min.css">
+      <DependentUpon>versions.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.js">
+      <DependentUpon>versions.ts</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
