@@ -232,11 +232,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.Id                  = RemoteParty_Id.Parse(
                                            String.Concat(CountryCode.ToString(),
-                                                         "*",
+                                                         "-",
                                                          PartyId.    ToString(),
-                                                         " (",
-                                                         Role.       ToString(),
-                                                         ")"));
+                                                         "-",
+                                                         Role.       ToString()));
 
             this.CountryCode         = CountryCode;
             this.PartyId             = PartyId;

@@ -134,6 +134,162 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #endregion
 
+
+        #region ParseRemotePartyId(this HTTPRequest, OCPIWebAPI, out RemotePartyId,                  out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the defibrillator identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="OCPIWebAPI">The OCPI WebAPI.</param>
+        /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when defibrillator identification was found; false else.</returns>
+        public static Boolean ParseRemotePartyId(this HTTPRequest          HTTPRequest,
+                                                 OCPIWebAPI                OCPIWebAPI,
+                                                 out RemoteParty_Id?       RemotePartyId,
+                                                 out HTTPResponse.Builder  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (OCPIWebAPI  == null)
+                throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
+
+            #endregion
+
+            RemotePartyId  = null;
+            HTTPResponse   = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 1)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            RemotePartyId = RemoteParty_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!RemotePartyId.HasValue)
+            {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+        #region ParseRemoteParty  (this HTTPRequest, OCPIWebAPI, out RemotePartyId, out RemoteParty, out HTTPResponse)
+
+        /// <summary>
+        /// Parse the given HTTP request and return the defibrillator identification
+        /// for the given HTTP hostname and HTTP query parameter
+        /// or an HTTP error response.
+        /// </summary>
+        /// <param name="HTTPRequest">A HTTP request.</param>
+        /// <param name="OCPIWebAPI">The OCPI WebAPI.</param>
+        /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
+        /// <param name="RemoteParty">The resolved defibrillator.</param>
+        /// <param name="HTTPResponse">A HTTP error response.</param>
+        /// <returns>True, when defibrillator identification was found; false else.</returns>
+        public static Boolean ParseRemoteParty(this HTTPRequest          HTTPRequest,
+                                               OCPIWebAPI                OCPIWebAPI,
+                                               out RemoteParty_Id?       RemotePartyId,
+                                               out RemoteParty           RemoteParty,
+                                               out HTTPResponse.Builder  HTTPResponse)
+        {
+
+            #region Initial checks
+
+            if (HTTPRequest == null)
+                throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
+
+            if (OCPIWebAPI  == null)
+                throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
+
+            #endregion
+
+            RemotePartyId  = null;
+            RemoteParty    = null;
+            HTTPResponse   = null;
+
+            if (HTTPRequest.ParsedURLParameters.Length < 1) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            RemotePartyId = RemoteParty_Id.TryParse(HTTPRequest.ParsedURLParameters[0]);
+
+            if (!RemotePartyId.HasValue) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.BadRequest,
+                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            if (!OCPIWebAPI.CommonAPI.TryGetRemoteParty(RemotePartyId.Value, out RemoteParty)) {
+
+                HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
+                    HTTPStatusCode  = HTTPStatusCode.NotFound,
+                    Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
+                    Date            = DateTime.UtcNow,
+                    ContentType     = HTTPContentType.JSON_UTF8,
+                    Content         = @"{ ""description"": ""Unknown remote party identification!"" }".ToUTF8Bytes(),
+                    Connection      = "close"
+                };
+
+                return false;
+
+            }
+
+            return true;
+
+        }
+
+        #endregion
+
+
     }
 
 
@@ -413,8 +569,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             #endregion
 
 
-            #region GET      ~/remoteParties
+            #region ~/remoteParties
 
+            #region OPTIONS          ~/remoteParties
+
+            // --------------------------------------------------------
+            // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties
+            // --------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.OPTIONS,
+                                         URLPathPrefix + "remoteParties",
+                                         HTTPDelegate: Request => {
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET, OPTIONS",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.POST
+                                                                                  },
+                                                     AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                     Connection                 = "close"
+                                                 }.AsImmutable);
+
+                                         }, AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #region GET              ~/remoteParties
+
+            // ---------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
+            // ---------------------------------------------------------------------------
             HTTPServer.AddMethodCallback(HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties",
@@ -434,6 +624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //}
 
                                              #endregion
+
 
                                              var withMetadata                 = Request.QueryString.GetBoolean("withMetadata", false);
                                              var matchFilter                  = Request.QueryString.CreateStringFilter<RemoteParty>("match",
@@ -464,7 +655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                                             false, //Embedded
                                                                                             null,
                                                                                             null,
-                                                                                            null,  //GetDefibrillatorSerializator(Request, HTTPUser),
+                                                                                            null,  //GetRemotePartySerializator(Request, HTTPUser),
                                                                                             includeCryptoHash);
 
 
@@ -480,9 +671,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      ContentType                   = HTTPContentType.JSON_UTF8,
                                                      Content                       = withMetadata
                                                                                          ? JSONObject.Create(
-                                                                                               new JProperty("totalCount",      totalCount),
-                                                                                               new JProperty("filteredCount",   filteredCount),
-                                                                                               new JProperty("defibrillators",  JSONResults)
+                                                                                               new JProperty("totalCount",     totalCount),
+                                                                                               new JProperty("filteredCount",  filteredCount),
+                                                                                               new JProperty("remoteParties",  JSONResults)
                                                                                            ).ToUTF8Bytes()
                                                                                          : JSONResults.ToUTF8Bytes(),
                                                      X_ExpectedTotalNumberOfItems  = filteredCount,
@@ -493,6 +684,119 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                          });
 
             #endregion
+
+
+            #region OPTIONS          ~/remoteParties/{remotePartyId}
+
+            // -------------------------------------------------------------------
+            // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO
+            // -------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.OPTIONS,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}",
+                                         HTTPDelegate: Request => {
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET, OPTIONS",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.POST
+                                                                                  },
+                                                     AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                     Connection                 = "close"
+                                                 }.AsImmutable);
+
+                                         }, AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #region GET              ~/remoteParties/{remotePartyId}
+
+            // --------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/214080158
+            // --------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return Task.FromResult(HTTPResponse.AsImmutable);
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //}
+
+                                             #endregion
+
+
+                                             var includeCryptoHash  = Request.QueryString.GetBoolean("includeCryptoHash", true);
+
+                                             return Task.FromResult(
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = "1",
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false).
+                                                                                                    ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable);
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+
+            #endregion
+
 
             #region GET      ~/clients
 

@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetParties(AccessToken.Value, out IEnumerable<RemoteParty> Parties))
+                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out IEnumerable<RemoteParty> Parties))
                 {
 
                     if (Parties.Count() == 1)
