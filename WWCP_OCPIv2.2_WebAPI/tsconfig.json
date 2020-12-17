@@ -20,7 +20,11 @@
     "HTTPRoot/dashboard/dashboard.ts",
 
     "HTTPRoot/versions/versions.ts",
-    "HTTPRoot/versions/versionDetails.ts"
+    "HTTPRoot/versions/versionDetails.ts",
+
+    "HTTPRoot/remoteParty/remoteParties.ts",
+    "HTTPRoot/remoteParty/remoteParty.ts",
+    "HTTPRoot/remoteParty/unlockConnector.ts"
 
   ]
 }

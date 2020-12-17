@@ -291,7 +291,7 @@ body {
 
                             display:                flex;
                             align-items:            center;
-                            padding-bottom:         30px;
+                            padding:                1vh 0px 2vh 0px;
                             color:                  #999;
 
                             #logo {
@@ -368,9 +368,8 @@ body {
                         padding:                1vh 1vw;
 
                         #about {
-                            padding:            2vh 1vw 3vh 1vw;
-                            font-size:          95%;
-                            color:              #777;
+                            color:                  #333;
+                            padding:                1vh 0vh 2vh 1vh;
                         }
 
                         #upperButtons
@@ -620,32 +619,21 @@ body {
 
                             display:            flex;
                             flex-direction:     row;
-                            margin:             1vh 1vw;
-
-       /*                     button {
-                                border:             0;
-                                white-space:        nowrap;
-                                color:              #6b6b6b;
-                                padding:            8px 14px;
-                                margin:             10px 0 15px 0;
-                                border-radius:      5px;
-                                font-size:          70%;
-                                text-decoration:    none;
-                            }*/
+                            margin:             2vh 0;
 
                             /* Also used for 'a'-tags which should behave like a button! */
+                            button, .button {
 
-                            .button {
-
-                                background:                 #ffba83;
-                                background-image:           linear-gradient(to bottom, #ffc99e, #ffba83);
-                                color:                      #b36630;
-                                padding:                    10px 20px;
-                                margin-left:                5px;
+                                padding:                    .5vh 1.2vh;
+                                background-color:           #456ca7;
                                 border-radius:              4px;
-                                border:                     0px;
+                                border:                     0;
+                                color:                      #d6e0ee;
+
+                                //background-image:           linear-gradient(to bottom, #ffc99e, #ffba83);
+                                margin-left:                5px;
                                 box-shadow:                 2px 2px 6px #999;
-                                font-size:                  70%;
+                                //font-size:                  70%;
                                 white-space:                nowrap;
                                 text-decoration:            none;
 
@@ -664,14 +652,10 @@ body {
 
                             }
 
-                         /*   button:hover {
-                                background-color:   #fdcca4;
-                            }*/
-
-                            .button:hover {
-                                background-color:           #fbd1af;
-                                background-image:           linear-gradient(to bottom, #ffe5d1, #fbd1af);
-                                color:                      #cb8f64;
+                            button:hover, .button:hover {
+                                background-color:           #668ac1;
+                                //background-image:           linear-gradient(to bottom, #ffe5d1, #fbd1af);
+                                color:                      #e4eaf3;
                             }
 
     /*                        button i:first-child {
@@ -679,18 +663,16 @@ body {
                                 font-size:          75%;
                             }*/
 
-
-
-                            .button:active {
+                            button:active, .button:active {
                                 box-shadow:                 0 1px 2px #999;
                                 transform:                  translateY(4px);
                             }
 
-                            .button:focus {
+                            button:focus, .button:focus {
                                 outline:                    0px;
                             }
 
-                            .button:disabled {
+                            button:disabled, .button:disabled {
                                 background-color:           rgb(238, 226, 215);
                                 background-image:           none;
                                 color:                      #ceb9aa;

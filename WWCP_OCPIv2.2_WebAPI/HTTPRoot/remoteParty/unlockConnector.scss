@@ -1,0 +1,33 @@
+﻿@import "../defaults/_defaults.scss";
+
+body {
+    #page {
+        #bottom {
+            #right {
+                #text {
+                    #remotePartyInfos {
+
+                        #commands {
+
+                            padding: 2vh 0;
+
+                            button {
+                                padding:            .5vh 1.2vh;
+                                background-color:   #456ca7;
+                                border-radius:      4px;
+                                border:             0;
+                                color:              #d6e0ee;
+                            }
+
+                            button:hover {
+                                background-color:   #668ac1;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}

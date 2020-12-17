@@ -145,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The current status of the party.
         /// </summary>
-        public PartyStatus              PartyStatus          { get; }
+        public PartyStatus              Status               { get; }
 
         /// <summary>
         /// Timestamp when this remote party was last updated (or created).
@@ -175,6 +175,77 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Constructor(s)
 
+        #region RemoteParty(..., AccessToken, AccessStatus = ALLOWED, ...)
+
+        public RemoteParty(CountryCode      CountryCode,
+                           Party_Id         PartyId,
+                           Roles            Role,
+                           BusinessDetails  BusinessDetails,
+
+                           AccessToken      AccessToken,
+                           AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+                           PartyStatus      Status         = PartyStatus.ENABLED,
+
+                           DateTime?        LastUpdated    = null)
+
+            : this(CountryCode,
+                   PartyId,
+                   Role,
+                   BusinessDetails,
+                   new AccessInfo2[] {
+                       new AccessInfo2(
+                           AccessToken,
+                           AccessStatus
+                       )
+                   },
+                   null,
+                   Status,
+                   LastUpdated)
+
+        { }
+
+        #endregion
+
+        #region RemoteParty(..., RemoteAccessToken, RemoteVersionsURL, ...)
+
+        public RemoteParty(CountryCode              CountryCode,
+                           Party_Id                 PartyId,
+                           Roles                    Role,
+                           BusinessDetails          BusinessDetails,
+
+                           AccessToken              RemoteAccessToken,
+                           URL                      RemoteVersionsURL,
+                           IEnumerable<Version_Id>  RemoteVersionIds    = null,
+                           Version_Id?              SelectedVersionId   = null,
+
+                           RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
+                           PartyStatus              Status              = PartyStatus.ENABLED,
+
+                           DateTime?                LastUpdated         = null)
+
+            : this(CountryCode,
+                   PartyId,
+                   Role,
+                   BusinessDetails,
+                   null,
+                   new RemoteAccessInfo[] {
+                       new RemoteAccessInfo(
+                           RemoteAccessToken,
+                           RemoteVersionsURL,
+                           RemoteVersionIds,
+                           SelectedVersionId,
+                           RemoteStatus
+                       )
+                   },
+                   Status,
+                   LastUpdated)
+
+        { }
+
+        #endregion
+
+        #region RemoteParty(...)
+
         public RemoteParty(CountryCode              CountryCode,
                            Party_Id                 PartyId,
                            Roles                    Role,
@@ -189,7 +260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
                            RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                           PartyStatus              PartyStatus         = PartyStatus.ENABLED,
+                           PartyStatus              Status              = PartyStatus.ENABLED,
 
                            DateTime?                LastUpdated         = null)
 
@@ -212,10 +283,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            RemoteStatus
                        )
                    },
-                   PartyStatus,
+                   Status,
                    LastUpdated)
 
         { }
+
 
         public RemoteParty(CountryCode                    CountryCode,
                            Party_Id                       PartyId,
@@ -225,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            IEnumerable<AccessInfo2>       AccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus                    PartyStatus   = PartyStatus.ENABLED,
+                           PartyStatus                    Status   = PartyStatus.ENABLED,
                            DateTime?                      LastUpdated   = null)
 
         {
@@ -234,18 +306,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            String.Concat(CountryCode.ToString(),
                                                          "-",
                                                          PartyId.    ToString(),
-                                                         "-",
+                                                         "_",
                                                          Role.       ToString()));
 
             this.CountryCode         = CountryCode;
             this.PartyId             = PartyId;
             this.Role                = Role;
             this.BusinessDetails     = BusinessDetails;
-            this.PartyStatus         = PartyStatus;
+            this.Status         = Status;
             this.LastUpdated         = LastUpdated ?? DateTime.UtcNow;
 
-            this._AccessInfo         = AccessInfos.      IsNullOrEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
-            this._RemoteAccessInfos  = RemoteAccessInfos.IsNullOrEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
+            this._AccessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
+            this._RemoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
 
             CalcSHA256Hash();
 
@@ -253,6 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #endregion
 
 
         #region ToJSON(Embedded, CustomRemotePartySerializer = null, CustomBusinessDetailsSerializer = null, IncludeCryptoHash = false)
@@ -272,19 +345,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
+                           Id.ToJSON("@id"),
+
                            Embedded
-                               ? new JProperty("@context",           CountryCode.ToString())
+                               ? new JProperty("@context",           DefaultJSONLDContext.ToString())
                                : null,
 
-                           new JProperty("countryCode",              CountryCode.    ToString()),
-                           new JProperty("partyId",                  PartyId.        ToString()),
-                           new JProperty("role",                     Role.           ToString()),
+                           new JProperty("countryCode",              CountryCode.         ToString()),
+                           new JProperty("partyId",                  PartyId.             ToString()),
+                           new JProperty("role",                     Role.                ToString()),
+                           new JProperty("partyStatus",              Status.         ToString()),
 
                            BusinessDetails != null
-                               ? new JProperty("businessDetails",    BusinessDetails.ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("businessDetails",    BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer))
                                : null,
-
-                           new JProperty("partyStatus",              PartyStatus.    ToString()),
 
                            _AccessInfo.SafeAny()
                                ? new JProperty("accessInfos",        new JArray(_AccessInfo.       SafeSelect(accessInfo       => accessInfo.      ToJSON())))
@@ -294,7 +368,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("remoteAccessInfos",  new JArray(_RemoteAccessInfos.SafeSelect(remoteAccessInfo => remoteAccessInfo.ToJSON())))
                                : null,
 
-                           new JProperty("last_updated",             LastUpdated.ToIso8601())
+                           new JProperty("last_updated",             LastUpdated.         ToIso8601()),
+
+                           IncludeCryptoHash
+                               ? new JProperty("sha256Hash",         SHA256Hash)
+                               : null
 
                        );
 

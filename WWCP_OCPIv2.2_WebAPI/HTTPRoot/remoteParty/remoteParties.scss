@@ -5,9 +5,9 @@ body {
         #bottom {
             #right {
                 #text {
-                    #versionInfos {
+                    #remotePartiesInfos {
 
-                        #versionInfos2 {
+                        #remoteParties2 {
 
                             padding:            1vh 2vw;
                             border-radius:      6px;
@@ -18,13 +18,13 @@ body {
                                 padding-bottom:     .6vh;
                             }
 
-                            #versions {
+                            #remoteParties {
 
                                 display:                flex;
                                 flex-direction:         column;
                                 border-top:             none;
 
-                                a.version {
+                                a.remoteParty {
 
                                     padding:                1vh 2vw;
                                     display:                inline-block;
@@ -34,25 +34,47 @@ body {
                                     text-decoration:        none;
                                     border-top:             1px solid #ebebeb;
 
-                                    .versionLink {
+                                    .partyHeadline {
+                                        padding-bottom:         0.3vh;
+                                    }
+
+                                    .remoteTokens {
+
                                         font-size:              85%;
                                         font-weight:            normal;
+                                        padding-bottom:         0.2vh;
+
+                                        i {
+                                            padding-right:          5px;
+                                        }
+
+                                    }
+
+                                    .accessTokens {
+
+                                        font-size:              85%;
+                                        font-weight:            normal;
+
+                                        i {
+                                            padding-right:          5px;
+                                        }
+
                                     }
 
                                 }
 
-                                a.version:hover {
+                                a.remoteParty:hover {
                                     background-color:       #bcc9dd;
                                 }
 
                             }
 
-                            #versions a.version:first-child {
+                            #remoteParties a.remoteParty:first-child {
                                 border-top-left-radius:         6px;
                                 border-top-right-radius:        6px;
                             }
 
-                            #versions a.version:last-child {
+                            #remoteParties a.remoteParty:last-child {
                                 border-bottom-left-radius:      6px;
                                 border-bottom-right-radius:     6px;
                             }

@@ -1435,6 +1435,100 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region AddOrUpdateRemoteParty(...)
+
+        public Boolean AddOrUpdateRemoteParty(CountryCode      CountryCode,
+                                              Party_Id         PartyId,
+                                              Roles            Role,
+                                              BusinessDetails  BusinessDetails,
+
+                                              AccessToken      AccessToken,
+                                              AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+
+                                              PartyStatus      PartyStatus    = PartyStatus.ENABLED)
+        {
+            lock (_RemoteParties)
+            {
+
+                var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                                                                         party.PartyId     == PartyId     &&
+                                                                         party.Role        == Role).ToArray();
+
+                foreach (var remoteParty in remoteParties)
+                    _RemoteParties.Remove(remoteParty.Id);
+
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     AccessToken,
+                                                     AccessStatus,
+
+                                                     PartyStatus);
+
+                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+
+                return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AddOrUpdateRemoteParty(...)
+
+        public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
+                                              Party_Id                 PartyId,
+                                              Roles                    Role,
+                                              BusinessDetails          BusinessDetails,
+
+                                              AccessToken              RemoteAccessToken,
+                                              URL                      RemoteVersionsURL,
+                                              IEnumerable<Version_Id>  RemoteVersionIds    = null,
+                                              Version_Id?              SelectedVersionId   = null,
+
+                                              RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
+                                              PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+        {
+            lock (_RemoteParties)
+            {
+
+                var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                                                                         party.PartyId     == PartyId     &&
+                                                                         party.Role        == Role).ToArray();
+
+                foreach (var remoteParty in remoteParties)
+                    _RemoteParties.Remove(remoteParty.Id);
+
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     RemoteAccessToken,
+                                                     RemoteVersionsURL,
+                                                     RemoteVersionIds,
+                                                     SelectedVersionId,
+
+                                                     RemoteStatus,
+                                                     PartyStatus);
+
+                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+
+                return true;
+
+            }
+        }
+
+        #endregion
+
 
         #region ContainsRemoteParty      (RemotePartyId)
 
@@ -1645,7 +1739,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  remoteParty.BusinessDetails,
                                                  remoteParty.AccessInfo.Where(accessInfo => accessInfo.Token != AccessToken),
                                                  remoteParty.RemoteAccessInfos,
-                                                 remoteParty.PartyStatus
+                                                 remoteParty.Status
                                              );
 
                         _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);

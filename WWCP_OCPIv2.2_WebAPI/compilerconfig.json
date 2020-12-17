@@ -18,5 +18,17 @@
   {
     "outputFile": "HTTPRoot/versions/versionDetails.css",
     "inputFile": "HTTPRoot/versions/versionDetails.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/remoteParties.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteParties.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/remoteParty.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteParty.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/unlockConnector.css",
+    "inputFile": "HTTPRoot/remoteParty/unlockConnector.scss"
   }
 ]

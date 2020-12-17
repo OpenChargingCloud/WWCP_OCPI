@@ -32,22 +32,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public class RemoteAccessInfo
     {
 
+        #region Properties
+
         [Mandatory]
         public AccessToken              AccessToken          { get; }
 
         [Mandatory]
         public URL                      VersionsURL          { get; }
 
-
+        [Optional]
         public IEnumerable<Version_Id>  VersionIds           { get; }
 
-
+        [Optional]
         public Version_Id?              SelectedVersionId    { get; }
 
         [Mandatory]
         public RemoteAccessStatus       Status               { get; set; }
 
+        #endregion
 
+        #region Constructor(s)
 
         public RemoteAccessInfo(AccessToken              AccessToken,
                                 URL                      VersionsURL,
@@ -64,19 +68,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
-        public JObject ToJSON()
+        #endregion
+
+
+        #region ToJSON(CustomBusinessDetailsSerializer = null)
+
+        /// <summary>
+        /// Return a JSON representation of this object.
+        /// </summary>
+        /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access info JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<RemoteAccessInfo>  CustomRemoteAccessInfoSerializer   = null)
         {
 
-            return JSONObject.Create(
-                       new JProperty("accesstoken",        AccessToken.      ToString()),
-                       new JProperty("versionsURL",        VersionsURL.      ToString()),
-                       new JProperty("versionIds",         new JArray(VersionIds.Select(versionId => versionId.ToString()))),
-                       new JProperty("selectedVersionId",  SelectedVersionId.ToString()),
-                       new JProperty("status",             Status.           ToString())
-                   );
+            var JSON = JSONObject.Create(
+                           new JProperty("token",              AccessToken.      ToString()),
+                           new JProperty("versionsURL",        VersionsURL.      ToString()),
+                           new JProperty("versionIds",         new JArray(VersionIds.Select(versionId => versionId.ToString()))),
+                           new JProperty("selectedVersionId",  SelectedVersionId.ToString()),
+                           new JProperty("status",             Status.           ToString())
+                       );
+
+            return CustomRemoteAccessInfoSerializer != null
+                       ? CustomRemoteAccessInfoSerializer(this, JSON)
+                       : JSON;
 
         }
 
+        #endregion
 
     }
 

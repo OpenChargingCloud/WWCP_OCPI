@@ -104,6 +104,18 @@
     <EmbeddedResource Include="HTTPRoot\defaults\defaults.js">
       <DependentUpon>defaults.ts</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js">
+      <DependentUpon>remoteParty.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js.map">
+      <DependentUpon>remoteParty.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.js">
+      <DependentUpon>unlockConnector.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.js.map">
+      <DependentUpon>unlockConnector.ts</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js">
       <DependentUpon>versionDetails.ts</DependentUpon>
     </EmbeddedResource>
@@ -118,10 +130,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.js.map">
-      <DependentUpon>versions.ts</DependentUpon>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js.map">
+      <DependentUpon>remoteParties.ts</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.scss" />
     <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -190,24 +204,50 @@
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.css">
-      <DependentUpon>versions.scss</DependentUpon>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.css">
+      <DependentUpon>remoteParties.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.min.css">
+      <DependentUpon>remoteParties.css</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.min.css">
-      <DependentUpon>versions.css</DependentUpon>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js">
+      <DependentUpon>remoteParties.ts</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.shtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.ts" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\versions.js">
-      <DependentUpon>versions.ts</DependentUpon>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.css">
+      <DependentUpon>remoteParty.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.min.css">
+      <DependentUpon>remoteParty.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.css">
+      <DependentUpon>unlockConnector.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.min.css">
+      <DependentUpon>unlockConnector.css</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
