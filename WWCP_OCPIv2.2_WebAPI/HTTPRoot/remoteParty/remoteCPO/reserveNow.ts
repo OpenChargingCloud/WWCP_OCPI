@@ -1,6 +1,6 @@
-﻿///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
+﻿///<reference path="../../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
 
-function StartUnlockConnector(versionId: string) {
+function StartReserveNow(versionId: string) {
 
     const pathElements             = window.location.pathname.split("/");
     const remotePartyId            = pathElements[pathElements.length - 2];
@@ -16,7 +16,7 @@ function StartUnlockConnector(versionId: string) {
     const EVSEUId                  = remotePartyDataDiv. querySelector("#EVSEUId")                   as HTMLInputElement;
     const connectorId              = remotePartyDataDiv. querySelector("#connectorId")               as HTMLInputElement;
 
-    const lowerButtonsDiv          = unlockConnectorDiv. querySelector("#lowerButtons")              as HTMLDivElement;
+    const lowerButtonsDiv          = unlockConnectorDiv. querySelector(".lowerButtons")              as HTMLDivElement;
     const unlockConnectorButton    = lowerButtonsDiv.    querySelector("#unlockConnector")           as HTMLButtonElement;
 
     unlockConnectorButton.onclick = () => {
@@ -32,7 +32,7 @@ function StartUnlockConnector(versionId: string) {
             _connectorId !== "")
         {
 
-            HTTP("UnlockConnector",
+            HTTP("ReserveNow",
                  "../" + remotePartyId,
                  {
                      "locationId":  _locationId,

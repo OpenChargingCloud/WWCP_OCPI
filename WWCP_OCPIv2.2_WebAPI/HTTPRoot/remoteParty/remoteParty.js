@@ -17,15 +17,22 @@ function StartRemoteParty(versionId) {
     const remoteAccessInfos = remoteAccessInfosDiv.querySelector("#remoteAccessInfos");
     const accessInfosDiv = remotePartyDiv.querySelector("#accessInfosDiv");
     const accessInfos = accessInfosDiv.querySelector("#accessInfos");
-    const lowerButtonsDiv = remotePartyDiv.querySelector("#lowerButtons");
+    const lowerButtonsDiv = remotePartyDiv.querySelector(".lowerButtons");
+    const registerButton = lowerButtonsDiv.querySelector("#register");
+    const registrationUpdateButton = lowerButtonsDiv.querySelector("#registrationUpdate");
+    const reserveNowButton = lowerButtonsDiv.querySelector("#reserveNow");
+    const cancelReservationButton = lowerButtonsDiv.querySelector("#cancelReservation");
     const startSessionButton = lowerButtonsDiv.querySelector("#startSession");
     const stopSessionButton = lowerButtonsDiv.querySelector("#stopSession");
     const unlockConnectorButton = lowerButtonsDiv.querySelector("#unlockConnector");
-    const registerButton = lowerButtonsDiv.querySelector("#register");
+    registerButton.onclick = () => { document.location.href = document.location.href + "/register"; };
+    registrationUpdateButton.onclick = () => { document.location.href = document.location.href + "/registrationUpdate"; };
+    // Remote CPOs
+    reserveNowButton.onclick = () => { document.location.href = document.location.href + "/reserveNow"; };
+    cancelReservationButton.onclick = () => { document.location.href = document.location.href + "/cancelReservation"; };
     startSessionButton.onclick = () => { document.location.href = document.location.href + "/startSession"; };
     stopSessionButton.onclick = () => { document.location.href = document.location.href + "/stopSession"; };
     unlockConnectorButton.onclick = () => { document.location.href = document.location.href + "/unlockConnector"; };
-    registerButton.onclick = () => { document.location.href = document.location.href + "/register"; };
     HTTPGet("../remoteParties/" + remotePartyId, (status, response) => {
         var _a, _b, _c;
         try {

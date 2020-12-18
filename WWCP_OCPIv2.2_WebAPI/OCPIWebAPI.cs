@@ -332,10 +332,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         public static readonly HTTPEventSource_Id                   DebugLogId                  = HTTPEventSource_Id.Parse("OCPIDebugLog");
 
+        #endregion
 
-        public static readonly HTTPMethod HTTP_StartSession     = HTTPMethod.Create("StartSession");
-        public static readonly HTTPMethod HTTP_StopSession      = HTTPMethod.Create("StopSession");
-        public static readonly HTTPMethod HTTP_UnlockConnector  = HTTPMethod.Create("UnlockConnector");
+        #region Special HTTP methods
+
+        /// <summary>
+        /// HTTP method for creating a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_ReserveNow           = HTTPMethod.Create("ReserveNow");
+
+        /// <summary>
+        /// HTTP method for canceling a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_CancelReservation    = HTTPMethod.Create("CancelReservation");
+
+        /// <summary>
+        /// HTTP method for starting a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_StartSession         = HTTPMethod.Create("StartSession");
+
+        /// <summary>
+        /// HTTP method for stopping a charging reservation.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_StopSession          = HTTPMethod.Create("StopSession");
+
+        /// <summary>
+        /// HTTP method for unlocking a charging connector.
+        /// </summary>
+        public static readonly HTTPMethod HTTP_UnlockConnector      = HTTPMethod.Create("UnlockConnector");
 
         #endregion
 
@@ -576,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region ~/remoteParties
 
-            #region OPTIONS          ~/remoteParties
+            #region OPTIONS            ~/remoteParties
 
             // --------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties
@@ -592,10 +616,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      Server                     = HTTPServer.DefaultServerName,
                                                      Date                       = DateTime.UtcNow,
                                                      AccessControlAllowOrigin   = "*",
-                                                     AccessControlAllowMethods  = "OPTIONS, GET, StartSession, StopSession, UnlockConnector",
+                                                     AccessControlAllowMethods  = "OPTIONS, GET, ReserveNow, CancelReservation, StartSession, StopSession, UnlockConnector",
                                                      Allow                      = new List<HTTPMethod> {
                                                                                       HTTPMethod.OPTIONS,
                                                                                       HTTPMethod.POST,
+                                                                                      HTTP_ReserveNow,
+                                                                                      HTTP_CancelReservation,
                                                                                       HTTP_StartSession,
                                                                                       HTTP_StopSession,
                                                                                       HTTP_UnlockConnector
@@ -608,7 +634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region GET              ~/remoteParties
+            #region GET                ~/remoteParties
 
             #region JSON
 
@@ -741,7 +767,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             #endregion
 
 
-            #region OPTIONS          ~/remoteParties/{remotePartyId}
+            #region OPTIONS            ~/remoteParties/{remotePartyId}
 
             // -------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO
@@ -770,7 +796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region GET              ~/remoteParties/{remotePartyId}
+            #region GET                ~/remoteParties/{remotePartyId}
 
             #region JSON
 
@@ -931,7 +957,813 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             #endregion
 
 
-            #region OPTIONS          ~/remoteParties/{remotePartyId}/startSession
+            #region OPTIONS            ~/remoteParties/{remotePartyId}/reserveNow
+
+            // ------------------------------------------------------------------------------
+            // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/reserveNow
+            // ------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.OPTIONS,
+                                         URLPathPrefix + "/{remotePartyId}/reserveNow",
+                                         HTTPDelegate: Request => {
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET, OPTIONS",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.POST
+                                                                                  },
+                                                     AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                     Connection                 = "close"
+                                                 }.AsImmutable);
+
+                                         }, AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #region GET                ~/remoteParties/{remotePartyId}/reserveNow
+
+            #region JSON
+
+            // ---------------------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/reserveNow
+            // ---------------------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}/reserveNow",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return Task.FromResult(HTTPResponse.AsImmutable);
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //}
+
+                                             #endregion
+
+
+                                             var includeCryptoHash  = Request.QueryString.GetBoolean("includeCryptoHash", true);
+
+                                             return Task.FromResult(
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false,
+                                                                                                                  null,
+                                                                                                                  null,
+                                                                                                                  includeCryptoHash).
+                                                                                                           ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable);
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #region HTML
+
+            // --------------------------------------------------------------------------------------------
+            // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/reserveNow
+            // --------------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}/reserveNow",
+                                         HTTPContentType.HTML_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             #region Get HTTP user and its organizations
+
+                                             //// Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //}
+
+                                             #endregion
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return Task.FromResult(HTTPResponse.AsImmutable);
+                                             }
+
+                                             #endregion
+
+
+                                             //if (HTTPOrganizations.Contains(Defibrillator.Owner) ||
+                                             //    Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin))
+                                             //{
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET",
+                                                         AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.reserveNow.shtml").ToUTF8Bytes(),
+                                                         Connection                 = "close",
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             //}
+
+                                             //return Task.FromResult(
+                                             //           new HTTPResponse.Builder(Request) {
+                                             //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Date                       = DateTime.UtcNow,
+                                             //               AccessControlAllowOrigin   = "*",
+                                             //               AccessControlAllowMethods  = "GET",
+                                             //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                             //               Connection                 = "close",
+                                             //               Vary                       = "Accept"
+                                             //           }.AsImmutable);
+
+                                         }, AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #endregion
+
+            #region ReserveNow         ~/remoteParties/{remotePartyId}
+
+            // --------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
+            // --------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTP_ReserveNow,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return HTTPResponse.AsImmutable;
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Response.AsImmutable;
+                                             //}
+
+                                             #endregion
+
+
+                                             #region Parse JSON, Token, ExpirationTimestamp, ...
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                                 return HTTPResponse.AsImmutable;
+
+                                             #region Parse Token                     [mandatory]
+
+                                             if (!JSON.ParseMandatoryJSON2("token",
+                                                                           "token",
+                                                                           OCPIv2_2.Token.TryParse,
+                                                                           out Token  Token,
+                                                                           out String ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           ErrorResponse).
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse ExpirationTimestamp       [mandatory]
+
+                                             if (!JSON.ParseMandatory("expiryTimestamp",
+                                                                      "expiry timestamp",
+                                                                      out DateTime ExpirationTimestamp,
+                                                                      out          ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           ErrorResponse).
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse ReservationId             [mandatory]
+
+                                             if (!JSON.ParseMandatory("reservationId",
+                                                                      "reservation identification",
+                                                                      Reservation_Id.TryParse,
+                                                                      out Reservation_Id ReservationId,
+                                                                      out                ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           ErrorResponse).
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse LocationId                [mandatory]
+
+                                             if (!JSON.ParseMandatory("locationId",
+                                                                      "location identification",
+                                                                      Location_Id.TryParse,
+                                                                      out Location_Id LocationId,
+                                                                      out             ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           ErrorResponse).
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse EVSEUId                   [optional]
+
+                                             if (JSON.ParseOptional("EVSEUId",
+                                                                    "EVSE unique identification",
+                                                                    EVSE_UId.TryParse,
+                                                                    out EVSE_UId? EVSEUId,
+                                                                    out           ErrorResponse))
+                                             {
+
+                                                 if (ErrorResponse != null)
+                                                     return new HTTPResponse.Builder(Request) {
+                                                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                                Server                     = HTTPServer.DefaultServerName,
+                                                                Date                       = DateTime.UtcNow,
+                                                                AccessControlAllowOrigin   = "*",
+                                                                AccessControlAllowMethods  = "GET, SET",
+                                                                AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                               ErrorResponse).
+                                                                                                        ToJSON().
+                                                                                                        ToUTF8Bytes(),
+                                                                Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse AuthorizationReference    [optional]
+
+                                             if (JSON.ParseOptional("authorizationReference",
+                                                                    "authorization reference",
+                                                                    OCPIv2_2.AuthorizationReference.TryParse,
+                                                                    out AuthorizationReference? AuthorizationReference,
+                                                                    out                         ErrorResponse))
+                                             {
+
+                                                 if (ErrorResponse != null)
+                                                     return new HTTPResponse.Builder(Request) {
+                                                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                                Server                     = HTTPServer.DefaultServerName,
+                                                                Date                       = DateTime.UtcNow,
+                                                                AccessControlAllowOrigin   = "*",
+                                                                AccessControlAllowMethods  = "GET, SET",
+                                                                AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                               ErrorResponse).
+                                                                                                        ToJSON().
+                                                                                                        ToUTF8Bytes(),
+                                                                Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #endregion
+
+                                             #region Get EMSP client
+
+                                             var emspClient = GetEMSPClient(RemoteParty);
+
+                                             if (emspClient == null)
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadGateway,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                      }.AsImmutable;
+
+                                             #endregion
+
+
+                                             var reserveNowResult = await emspClient.ReserveNow(Token,
+                                                                                                ExpirationTimestamp,
+                                                                                                ReservationId,
+                                                                                                LocationId,
+                                                                                                EVSEUId,
+                                                                                                AuthorizationReference);
+
+                                             return 
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false,
+                                                                                                                  null,
+                                                                                                                  null,
+                                                                                                                  false).
+                                                                                                           ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+
+            #region OPTIONS            ~/remoteParties/{remotePartyId}/cancelReservation
+
+            // -------------------------------------------------------------------------------------
+            // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/cancelReservation
+            // -------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.OPTIONS,
+                                         URLPathPrefix + "/{remotePartyId}/cancelReservation",
+                                         HTTPDelegate: Request => {
+
+                                             return Task.FromResult(
+                                                 new HTTPResponse.Builder(Request) {
+                                                     HTTPStatusCode             = HTTPStatusCode.OK,
+                                                     Server                     = HTTPServer.DefaultServerName,
+                                                     Date                       = DateTime.UtcNow,
+                                                     AccessControlAllowOrigin   = "*",
+                                                     AccessControlAllowMethods  = "GET, OPTIONS",
+                                                     Allow                      = new List<HTTPMethod> {
+                                                                                      HTTPMethod.OPTIONS,
+                                                                                      HTTPMethod.POST
+                                                                                  },
+                                                     AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                     Connection                 = "close"
+                                                 }.AsImmutable);
+
+                                         }, AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #region GET                ~/remoteParties/{remotePartyId}/cancelReservation
+
+            #region JSON
+
+            // --------------------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/cancelReservation
+            // --------------------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}/cancelReservation",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return Task.FromResult(HTTPResponse.AsImmutable);
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //}
+
+                                             #endregion
+
+
+                                             var includeCryptoHash  = Request.QueryString.GetBoolean("includeCryptoHash", true);
+
+                                             return Task.FromResult(
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false,
+                                                                                                                  null,
+                                                                                                                  null,
+                                                                                                                  includeCryptoHash).
+                                                                                                           ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable);
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #region HTML
+
+            // -------------------------------------------------------------------------------------------
+            // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/cancelReservation
+            // -------------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.GET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}/cancelReservation",
+                                         HTTPContentType.HTML_UTF8,
+                                         HTTPDelegate: Request => {
+
+                                             #region Get HTTP user and its organizations
+
+                                             //// Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Task.FromResult(Response.AsImmutable);
+                                             //}
+
+                                             #endregion
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return Task.FromResult(HTTPResponse.AsImmutable);
+                                             }
+
+                                             #endregion
+
+
+                                             //if (HTTPOrganizations.Contains(Defibrillator.Owner) ||
+                                             //    Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin))
+                                             //{
+
+                                                 return Task.FromResult(
+                                                     new HTTPResponse.Builder(Request) {
+                                                         HTTPStatusCode             = HTTPStatusCode.OK,
+                                                         Server                     = HTTPServer.DefaultServerName,
+                                                         Date                       = DateTime.UtcNow,
+                                                         AccessControlAllowOrigin   = "*",
+                                                         AccessControlAllowMethods  = "GET",
+                                                         AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                         ContentType                = HTTPContentType.HTML_UTF8,
+                                                         Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.cancelReservation.shtml").ToUTF8Bytes(),
+                                                         Connection                 = "close",
+                                                         Vary                       = "Accept"
+                                                     }.AsImmutable);
+
+                                             //}
+
+                                             //return Task.FromResult(
+                                             //           new HTTPResponse.Builder(Request) {
+                                             //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                             //               Server                     = HTTPServer.DefaultServerName,
+                                             //               Date                       = DateTime.UtcNow,
+                                             //               AccessControlAllowOrigin   = "*",
+                                             //               AccessControlAllowMethods  = "GET",
+                                             //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                             //               Connection                 = "close",
+                                             //               Vary                       = "Accept"
+                                             //           }.AsImmutable);
+
+                                         }, AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #endregion
+
+            #region CancelReservation  ~/remoteParties/{remotePartyId}
+
+            // --------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
+            // --------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTP_CancelReservation,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return HTTPResponse.AsImmutable;
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Response.AsImmutable;
+                                             //}
+
+                                             #endregion
+
+
+                                             #region Parse JSON and ReservationId
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                                 return HTTPResponse.AsImmutable;
+
+                                             #region Parse ReservationId    [mandatory]
+
+                                             if (!JSON.ParseMandatory("reservationId",
+                                                                      "reservation identification",
+                                                                      Reservation_Id.TryParse,
+                                                                      out Reservation_Id ReservationId,
+                                                                      out String         ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           ErrorResponse).
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #endregion
+
+                                             #region Get EMSP client
+
+                                             var emspClient = GetEMSPClient(RemoteParty);
+
+                                             if (emspClient == null)
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadGateway,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                      }.AsImmutable;
+
+                                             #endregion
+
+
+                                             var cancelReservationResult = await emspClient.CancelReservation(ReservationId);
+
+                                             return 
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false,
+                                                                                                                  null,
+                                                                                                                  null,
+                                                                                                                  false).
+                                                                                                           ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+
+            #region OPTIONS            ~/remoteParties/{remotePartyId}/startSession
 
             // --------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/startSession
@@ -960,7 +1792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region GET              ~/remoteParties/{remotePartyId}/startSession
+            #region GET                ~/remoteParties/{remotePartyId}/startSession
 
             #region JSON
 
@@ -1095,7 +1927,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                          ContentType                = HTTPContentType.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("remoteParty.startSession.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.startSession.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -1120,9 +1952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region StartSession     ~/remoteParties/{remotePartyId}
-
-            #region JSON
+            #region StartSession       ~/remoteParties/{remotePartyId}
 
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
@@ -1350,10 +2180,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #endregion
 
-
-            #region OPTIONS          ~/remoteParties/{remotePartyId}/stopSession
+            #region OPTIONS            ~/remoteParties/{remotePartyId}/stopSession
 
             // -------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/stopSession
@@ -1382,7 +2210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region GET              ~/remoteParties/{remotePartyId}/stopSession
+            #region GET                ~/remoteParties/{remotePartyId}/stopSession
 
             #region JSON
 
@@ -1517,7 +2345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                          ContentType                = HTTPContentType.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("remoteParty.stopSession.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.stopSession.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -1542,9 +2370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region StopSession      ~/remoteParties/{remotePartyId}
-
-            #region JSON
+            #region StopSession        ~/remoteParties/{remotePartyId}
 
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
@@ -1660,11 +2486,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
-                                                                                               RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  false).
-                                                                                                           ToUTF8Bytes(),
+                                                                                               stopSessionResult.ToJSON(commandResponse => commandResponse.ToJSON()).
+                                                                                                                 ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
@@ -1684,10 +2507,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #endregion
 
-
-            #region OPTIONS          ~/remoteParties/{remotePartyId}/unlockConnector
+            #region OPTIONS            ~/remoteParties/{remotePartyId}/unlockConnector
 
             // -----------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/unlockConnector
@@ -1716,7 +2537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region GET              ~/remoteParties/{remotePartyId}/unlockConnector
+            #region GET                ~/remoteParties/{remotePartyId}/unlockConnector
 
             #region JSON
 
@@ -1851,7 +2672,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                          ContentType                = HTTPContentType.HTML_UTF8,
-                                                         Content                    = MixWithHTMLTemplate("remoteParty.unlockConnector.shtml").ToUTF8Bytes(),
+                                                         Content                    = MixWithHTMLTemplate("remoteParty.remoteCPO.unlockConnector.shtml").ToUTF8Bytes(),
                                                          Connection                 = "close",
                                                          Vary                       = "Accept"
                                                      }.AsImmutable);
@@ -1876,9 +2697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
-            #region UnlockConnector  ~/remoteParties/{remotePartyId}
-
-            #region JSON
+            #region UnlockConnector    ~/remoteParties/{remotePartyId}
 
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
@@ -2052,11 +2871,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
-                                                                                               RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  false).
-                                                                                                           ToUTF8Bytes(),
+                                                                                               unlockConnectorResult.ToJSON(commandResponse => commandResponse.ToJSON()).
+                                                                                                                     ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
                                                             }.AsImmutable
@@ -2073,8 +2889,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                          },
                                          AllowReplacement: URLReplacement.Allow);
-
-            #endregion
 
             #endregion
 

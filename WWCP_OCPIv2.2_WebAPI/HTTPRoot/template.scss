@@ -372,7 +372,7 @@ body {
                             padding:                1vh 0vh 2vh 1vh;
                         }
 
-                        #upperButtons
+                        .upperButtons
                         {
 
                             display:            flex;
@@ -524,16 +524,16 @@ body {
                                     }
 
                                     input:focus, textarea:focus {
-                                        outline-color:      $NavigationBackground;
-                                        border-color:       $NavigationBackground;
-                                        box-shadow:         0 0 6px $NavigationBackground;
-                                        background:         rgb(245, 238, 227);
+                                        outline-color:      #bdcee9;
+                                        border-color:       #456ca7;
+                                        box-shadow:         0 0 6px #a3b9db;
+                                        background:         #d7e1f0;
                                     }
 
                                     input::placeholder {
-                                        font-size:          90%;
+                                        font-size:          95%;
                                         font-style:         italic;
-                                        color:              rgb(172, 172, 172);
+                                        color:              rgb(154, 154, 154);
                                         opacity:            1;      /* Firefox fix */
                                     }
 
@@ -608,14 +608,9 @@ body {
                                 margin-top:             10px;
                             }
 
-                            #pairedWith {
-                                // Workaround as padding-top does not work!
-                             /*   border-top:             15px solid transparent;*/
-                            }
-
                         }
 
-                        #lowerButtons {
+                        .lowerButtons {
 
                             display:            flex;
                             flex-direction:     row;
@@ -673,9 +668,9 @@ body {
                             }
 
                             button:disabled, .button:disabled {
-                                background-color:           rgb(238, 226, 215);
+                                background-color:           #dfdfdf;
                                 background-image:           none;
-                                color:                      #ceb9aa;
+                                color:                      #bdbdbd;
                                 box-shadow:                 none;
                             }
 

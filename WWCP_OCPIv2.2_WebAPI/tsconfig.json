@@ -24,7 +24,12 @@
 
     "HTTPRoot/remoteParty/remoteParties.ts",
     "HTTPRoot/remoteParty/remoteParty.ts",
-    "HTTPRoot/remoteParty/unlockConnector.ts"
+
+    "HTTPRoot/remoteParty/remoteCPO/reserveNow.ts",
+    "HTTPRoot/remoteParty/remoteCPO/cancelReservation.ts",
+    "HTTPRoot/remoteParty/remoteCPO/startSession.ts",
+    "HTTPRoot/remoteParty/remoteCPO/stopSession.ts",
+    "HTTPRoot/remoteParty/remoteCPO/unlockConnector.ts"
 
   ]
 }

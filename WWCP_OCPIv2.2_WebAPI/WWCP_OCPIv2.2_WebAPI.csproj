@@ -110,10 +110,22 @@
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js.map">
       <DependentUpon>remoteParty.ts</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.js">
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js">
+      <DependentUpon>reserveNow.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map">
+      <DependentUpon>reserveNow.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js">
+      <DependentUpon>startSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js.map">
+      <DependentUpon>startSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js">
       <DependentUpon>unlockConnector.ts</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.js.map">
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map">
       <DependentUpon>unlockConnector.ts</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js">
@@ -135,7 +147,17 @@
       <DependentUpon>remoteParties.ts</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.scss" />
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map">
+      <DependentUpon>cancelReservation.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map">
+      <DependentUpon>stopSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
     <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
@@ -237,18 +259,79 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.ts" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.css">
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.css">
       <DependentUpon>unlockConnector.scss</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HTTPRoot\remoteParty\unlockConnector.min.css">
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.min.css">
       <DependentUpon>unlockConnector.css</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.css">
+      <DependentUpon>cancelReservation.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js">
+      <DependentUpon>cancelReservation.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.min.css">
+      <DependentUpon>cancelReservation.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.css">
+      <DependentUpon>stopSession.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js">
+      <DependentUpon>stopSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.min.css">
+      <DependentUpon>stopSession.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.css">
+      <DependentUpon>reserveNow.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.min.css">
+      <DependentUpon>reserveNow.css</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.css">
+      <DependentUpon>startSession.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.min.css">
+      <DependentUpon>startSession.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HTTPRoot\remoteParty\remoteEMSP\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -65,6 +65,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Location_Id              LocationId                { get; }
 
         /// <summary>
+        /// URL that the CommandResult POST should be sent to. This URL might contain an
+        /// unique identification to be able to distinguish between 'reserve now' command requests.
+        /// </summary>
+        [Mandatory]
+        public URL                      ResponseURL               { get; }
+
+        /// <summary>
         /// Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.
         /// </summary>
         [Mandatory]
@@ -77,13 +84,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public AuthorizationReference?  AuthorizationReference    { get; }
 
-        /// <summary>
-        /// URL that the CommandResult POST should be sent to. This URL might contain an
-        /// unique identification to be able to distinguish between 'reserve now' command requests.
-        /// </summary>
-        [Mandatory]
-        public URL                      ResponseURL               { get; }
-
         #endregion
 
         #region Constructor(s)
@@ -95,25 +95,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ExpiryDate">The timestamp when this reservation ends.</param>
         /// <param name="ReservationId">Reservation identification. If the receiver (typically a charge point operator) already has a reservation that matches this reservation identification for that location it will replace the reservation.</param>
         /// <param name="LocationId">Location identification of the location (belonging to the CPO this request is send to) for which to reserve an EVSE.</param>
-        /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
-        /// <param name="AuthorizationReference">Reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant session and/or CDR.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'reserve now' command requests.</param>
+        /// 
+        /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
+        /// <param name="AuthorizationReference">Optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant session and/or CDR.</param>
         public ReserveNowCommand(Token                    Token,
                                  DateTime                 ExpiryDate,
                                  Reservation_Id           ReservationId,
                                  Location_Id              LocationId,
-                                 EVSE_UId?                EVSEUId,
-                                 AuthorizationReference?  AuthorizationReference,
-                                 URL                      ResponseURL)
+                                 URL                      ResponseURL,
+
+                                 EVSE_UId?                EVSEUId                  = null,
+                                 AuthorizationReference?  AuthorizationReference   = null)
         {
 
             this.Token                   = Token;
             this.ExpiryDate              = ExpiryDate;
             this.ReservationId           = ReservationId;
             this.LocationId              = LocationId;
+            this.ResponseURL             = ResponseURL;
+
             this.EVSEUId                 = EVSEUId;
             this.AuthorizationReference  = AuthorizationReference;
-            this.ResponseURL             = ResponseURL;
 
         }
 
@@ -316,6 +319,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse ResponseURL               [mandatory]
+
+                if (!JSON.ParseMandatory("response_url",
+                                         "response URL",
+                                         URL.TryParse,
+                                         out URL ResponseURL,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
                 #region Parse EVSEUId                   [optional]
 
                 if (JSON.ParseOptional("evse_uid",
@@ -342,27 +358,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ResponseURL               [mandatory]
-
-                if (!JSON.ParseMandatory("response_url",
-                                         "response URL",
-                                         URL.TryParse,
-                                         out URL ResponseURL,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
 
                 ReserveNowCommand = new ReserveNowCommand(Token,
                                                           ExpiryDate,
                                                           ReservationId,
                                                           LocationId,
+                                                          ResponseURL,
+
                                                           EVSEUId,
-                                                          AuthorizationReference,
-                                                          ResponseURL);
+                                                          AuthorizationReference);
 
                 if (CustomReserveNowCommandParser != null)
                     ReserveNowCommand = CustomReserveNowCommandParser(JSON,

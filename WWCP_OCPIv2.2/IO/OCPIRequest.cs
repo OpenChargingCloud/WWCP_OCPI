@@ -104,7 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                             var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
                                             httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
-                                                                                                       OCPIResponseBuilder.StatusCode,
+                                                                                                       OCPIResponseBuilder.StatusCode ?? 3000,
                                                                                                        OCPIResponseBuilder.StatusMessage,
                                                                                                        OCPIResponseBuilder.AdditionalInformation,
                                                                                                        OCPIResponseBuilder.Timestamp ?? DateTime.UtcNow,

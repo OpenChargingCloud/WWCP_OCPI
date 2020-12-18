@@ -4071,7 +4071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         // Commands
 
-        #region ReserveNow       (Token, ExpiryTimestamp, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+        #region ReserveNow       (Token, ExpirationTimestamp, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -4083,20 +4083,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public async Task<OCPIResponse<CommandResponse>>
 
             ReserveNow(Token                    Token,
-                       DateTime                 ExpiryTimestamp,
+                       DateTime                 ExpirationTimestamp,
                        Reservation_Id           ReservationId,
                        Location_Id              LocationId,
-                       EVSE_UId?                EVSEUId,
-                       AuthorizationReference?  AuthorizationReference,
+                       EVSE_UId?                EVSEUId                  = null,
+                       AuthorizationReference?  AuthorizationReference   = null,
 
-                       Request_Id?              RequestId           = null,
-                       Correlation_Id?          CorrelationId       = null,
-                       Version_Id?              VersionId           = null,
+                       Request_Id?              RequestId                = null,
+                       Correlation_Id?          CorrelationId            = null,
+                       Version_Id?              VersionId                = null,
 
-                       DateTime?                Timestamp           = null,
-                       CancellationToken?       CancellationToken   = null,
-                       EventTracking_Id         EventTrackingId     = null,
-                       TimeSpan?                RequestTimeout      = null)
+                       DateTime?                Timestamp                = null,
+                       CancellationToken?       CancellationToken        = null,
+                       EventTracking_Id         EventTrackingId          = null,
+                       TimeSpan?                RequestTimeout           = null)
 
         {
 
@@ -4152,13 +4152,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         InterfaceRoles.RECEIVER);
 
                 var Command        = new ReserveNowCommand(Token,
-                                                           ExpiryTimestamp,
+                                                           ExpirationTimestamp,
                                                            ReservationId,
                                                            LocationId,
-                                                           EVSEUId,
-                                                           AuthorizationReference,
                                                            MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                    SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + random.RandomString(50));
+                                                                                    SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + random.RandomString(50),
+                                                           EVSEUId,
+                                                           AuthorizationReference);
 
                 if (remoteURL.HasValue)
                 {
@@ -4549,10 +4549,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 var Command        = new StartSessionCommand(Token,
                                                              LocationId,
-                                                             EVSEUId,
-                                                             AuthorizationReference,
                                                              MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + random.RandomString(50));
+                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + random.RandomString(50),
+                                                             EVSEUId,
+                                                             AuthorizationReference);
 
                 if (remoteURL.HasValue)
                 {

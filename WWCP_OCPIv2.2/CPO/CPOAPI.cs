@@ -834,7 +834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseTariffId               (this Request, CPOAPI, out TariffId,                                                                      out HTTPResponse)
+        #region ParseTariffId               (this Request, CPOAPI, out TariffId,                                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -907,7 +907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseTariff                 (this Request, CPOAPI, out TariffId, out Tariff,                                                        out HTTPResponse)
+        #region ParseTariff                 (this Request, CPOAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1004,7 +1004,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseSessionId              (this Request, CPOAPI, out SessionId,                                                                      out HTTPResponse)
+        #region ParseSessionId              (this Request, CPOAPI, out SessionId,                                                                       out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1077,7 +1077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseSession                (this Request, CPOAPI, out SessionId, out Session,                                                        out HTTPResponse)
+        #region ParseSession                (this Request, CPOAPI, out SessionId, out Session,                                                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1174,7 +1174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseCDRId                  (this Request, CPOAPI, out CDRId,                                                                      out HTTPResponse)
+        #region ParseCDRId                  (this Request, CPOAPI, out CDRId,                                                                           out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the CDR identification
@@ -1247,7 +1247,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseCDR                    (this Request, CPOAPI, out CDRId, out CDR,                                                        out HTTPResponse)
+        #region ParseCDR                    (this Request, CPOAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the CDR identification
@@ -1344,7 +1344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseTokenId                (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,               out HTTPResponse)
+        #region ParseTokenId                (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1461,7 +1461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region ParseToken                  (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,    out HTTPResponse)
+        #region ParseToken                  (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,                                out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1603,7 +1603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseCommandId              (this Request, CPOAPI, out CommandId,                                                                      out HTTPResponse)
+        #region ParseCommandId              (this Request, CPOAPI, out CommandId,                                                                       out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the command identification
@@ -1675,7 +1675,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
         #endregion
-
 
     }
 

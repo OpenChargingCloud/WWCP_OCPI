@@ -18,21 +18,13 @@
 #region Usings
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Net.Security;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
-
-using org.GraphDefined.WWCP;
 
 using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
@@ -48,12 +40,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public OCPIRequest      Request                   { get; }
 
-        public Int32?           StatusCode                { get; }
+        public Int32            StatusCode                { get; }
         public String           StatusMessage             { get; }
-
         public String           AdditionalInformation     { get; }
         public DateTime         Timestamp                 { get; }
-
 
         public Request_Id?      RequestId                 { get; }
         public Correlation_Id?  CorrelationId             { get; }
@@ -66,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public OCPIResponse(OCPIRequest   Request,
 
-                            Int32?        StatusCode,
+                            Int32         StatusCode,
                             String        StatusMessage,
                             String        AdditionalInformation   = null,
                             DateTime?     Timestamp               = null,
@@ -88,9 +78,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         }
 
-
-
-        public OCPIResponse(Int32?           StatusCode,
+        public OCPIResponse(Int32            StatusCode,
                             String           StatusMessage,
                             String           AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
@@ -115,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public static JObject Create(Int32?           StatusCode,
+        public static JObject Create(Int32            StatusCode,
                                      String           StatusMessage,
                                      String           AdditionalInformation   = null,
                                      DateTime?        Timestamp               = null,
@@ -148,40 +136,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("status_code",           StatusCode),
+                           new JProperty("status_code",                   StatusCode),
 
                            StatusMessage.IsNotNullOrEmpty()
-                               ? new JProperty("status_message",  StatusMessage)
+                               ? new JProperty("status_message",          StatusMessage)
                                :  null,
 
-                           new JProperty("timestamp",             Timestamp.ToIso8601())
-
-                       );
-
-            return JSON;
-
-        }
-
-        public static JObject ToJSON(Int32            StatusCode,
-                                     String           StatusMessage           = null,
-                                     JToken           Data                    = null,
-                                     String           AdditionalInformation   = null,
-                                     DateTime?        Timestamp               = null)
-        {
-
-            var JSON = JSONObject.Create(
-
-                           Data != null
-                               ? new JProperty("data",            Data)
+                           AdditionalInformation.IsNotNullOrEmpty()
+                               ? new JProperty("additionalInformation",   AdditionalInformation)
                                : null,
 
-                           new JProperty("status_code",           StatusCode),
+                           RequestId.HasValue
+                               ? new JProperty("requestId",               RequestId.    Value.ToString())
+                               : null,
 
-                           StatusMessage.IsNotNullOrEmpty()
-                               ? new JProperty("status_message",  StatusMessage)
-                               :  null,
+                           CorrelationId.HasValue
+                               ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                               : null,
 
-                           new JProperty("timestamp",             (Timestamp ?? DateTime.UtcNow).ToIso8601())
+                           new JProperty("timestamp",                     Timestamp.          ToIso8601())
 
                        );
 
@@ -236,12 +209,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
 
                     if (HTTPResponseBuilder.Content == null)
-                        HTTPResponseBuilder.Content = ToJSON(
-                                                          StatusCode ?? 2000,
-                                                          StatusMessage,
-                                                          Data,
-                                                          AdditionalInformation,
-                                                          Timestamp
+                        HTTPResponseBuilder.Content = JSONObject.Create(
+
+                                                          Data != null
+                                                              ? new JProperty("data",                    Data)
+                                                              : null,
+
+                                                          new JProperty("status_code",                   StatusCode ?? 2000),
+
+                                                          StatusMessage.IsNotNullOrEmpty()
+                                                              ? new JProperty("status_message",          StatusMessage)
+                                                              :  null,
+
+                                                          AdditionalInformation.IsNotNullOrEmpty()
+                                                              ? new JProperty("additionalInformation",   AdditionalInformation)
+                                                              : null,
+
+                                                          //RequestId.HasValue
+                                                          //    ? new JProperty("requestId",               RequestId.    Value.ToString())
+                                                          //    : null,
+
+                                                          //CorrelationId.HasValue
+                                                          //    ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                                                          //    : null,
+
+                                                          new JProperty("timestamp",                    (Timestamp ?? DateTime.UtcNow).ToIso8601())
+
                                                       ).ToUTF8Bytes();
 
                 }
@@ -259,7 +252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             public OCPIResponse ToImmutable
 
                 => new OCPIResponse(Request,
-                                    StatusCode,
+                                    StatusCode ?? 3000,
                                     StatusMessage,
                                     AdditionalInformation,
                                     Timestamp ?? DateTime.UtcNow,
@@ -285,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         public OCPIResponse(TResponse        Data,
-                            Int32?           StatusCode,
+                            Int32            StatusCode,
                             String           StatusMessage,
                             String           AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
@@ -313,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public static JObject Create(TResponse                Data,
                                      Func<TResponse, JToken>  Serializer,
-                                     Int32?                   StatusCode,
+                                     Int32                    StatusCode,
                                      String                   StatusMessage,
                                      String                   AdditionalInformation   = null,
                                      DateTime?                Timestamp               = null,
@@ -349,14 +342,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("data",                  Serializer?.Invoke(Data)),
-                           new JProperty("status_code",           StatusCode),
+                           new JProperty("data",                          Serializer?.Invoke(Data)),
+                           new JProperty("status_code",                   StatusCode),
 
                            StatusMessage.IsNotNullOrEmpty()
-                               ? new JProperty("status_message",  StatusMessage)
+                               ? new JProperty("status_message",          StatusMessage)
                                :  null,
 
-                           new JProperty("timestamp",             Timestamp.ToIso8601())
+                           AdditionalInformation.IsNotNullOrEmpty()
+                               ? new JProperty("additionalInformation",   AdditionalInformation)
+                               : null,
+
+                           RequestId.HasValue
+                               ? new JProperty("requestId",               RequestId.    Value.ToString())
+                               : null,
+
+                           CorrelationId.HasValue
+                               ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                               : null,
+
+                           new JProperty("timestamp",                     Timestamp.          ToIso8601())
 
                        );
 
@@ -500,7 +505,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                     var JSON           = JObject.Parse(Response.HTTPBody?.ToUTF8String());
 
-                    var statusCode     = JSON["status_code"].    Value<Int32>();
+                    var statusCode     = JSON["status_code"]?.   Value<Int32>();
                     var statusMessage  = JSON["status_message"]?.Value<String>();
                     var timestamp      = JSON["timestamp"]?.     Value<DateTime>();
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
@@ -512,7 +517,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                         if (JSON["data"] is JObject JSONObject)
                             result = new OCPIResponse<TResponse>(Parser(JSONObject),
-                                                                 statusCode,
+                                                                 statusCode ?? 3000,
                                                                  statusMessage,
                                                                  null,
                                                                  timestamp,
@@ -524,7 +529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                     else
                         result = new OCPIResponse<TResponse>(default,
-                                                             statusCode,
+                                                             statusCode ?? 3000,
                                                              statusMessage,
                                                              Response.EntirePDU,
                                                              timestamp,
@@ -581,7 +586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public OCPIResponse(TRequest         Request,
                             TResponse        Data,
-                            Int32?           StatusCode,
+                            Int32            StatusCode,
                             String           StatusMessage,
                             String           AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,

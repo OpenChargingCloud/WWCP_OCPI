@@ -4,10 +4,6 @@
     "inputFile": "HTTPRoot/template.scss"
   },
   {
-    "outputFile": "HTTPRoot/defaults/dashboard/dashboard.css",
-    "inputFile": "HTTPRoot/defaults/dashboard/dashboard.scss"
-  },
-  {
     "outputFile": "HTTPRoot/dashboard/dashboard.css",
     "inputFile": "HTTPRoot/dashboard/dashboard.scss"
   },
@@ -28,7 +24,23 @@
     "inputFile": "HTTPRoot/remoteParty/remoteParty.scss"
   },
   {
-    "outputFile": "HTTPRoot/remoteParty/unlockConnector.css",
-    "inputFile": "HTTPRoot/remoteParty/unlockConnector.scss"
+    "outputFile": "HTTPRoot/remoteParty/remoteCPO/reserveNow.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/reserveNow.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/remoteCPO/cancelReservation.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/cancelReservation.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/remoteCPO/startSession.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/startSession.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/remoteCPO/stopSession.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/stopSession.scss"
+  },
+  {
+    "outputFile": "HTTPRoot/remoteParty/remoteCPO/unlockConnector.css",
+    "inputFile": "HTTPRoot/remoteParty/remoteCPO/unlockConnector.scss"
   }
 ]

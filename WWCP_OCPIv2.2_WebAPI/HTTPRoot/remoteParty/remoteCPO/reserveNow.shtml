@@ -1,10 +1,10 @@
 ﻿
-<link href="../../remoteParty/unlockConnector.min.css" type="text/css" rel="stylesheet" />
+<link href="../../remoteParty/remoteCPO/startSession.min.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript" src="/shared/UsersAPI/js/date.format.js"></script>
-<script type="text/javascript" src="../../remoteParty/unlockConnector.js"></script>
+<script type="text/javascript" src="../../remoteParty/remoteCPO/startSession.js"></script>
 
-<div id="unlockConnectorInfos" class="entity headline">
+<div id="startSessionInfos" class="entity headline">
 
     <div id="headline">
         <div id="title">
@@ -13,10 +13,10 @@
     </div>
 
     <div id="about">
-        Unlock the following connector
+        Start a new charging session
     </div>
 
-    <div id="unlockConnector">
+    <div id="startSession">
 
         <div id="data">
 
@@ -37,8 +37,8 @@
 
         </div>
 
-        <div id="lowerButtons">
-            <button id="unlockConnector">Unlock Connector</button>
+        <div class="lowerButtons">
+            <button id="startSession">Start Session</button>
         </div>
 
     </div>
@@ -46,5 +46,5 @@
 </div>
 
 <script type="text/javascript">
-    StartUnlockConnector();
+    StartStartSession();
 </script>

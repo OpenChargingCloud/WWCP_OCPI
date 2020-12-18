@@ -72,11 +72,17 @@
 
         </div>
 
-        <div id="lowerButtons">
+        <div class="lowerButtons">
+
             <button id="register">Register</button><br />
+            <button id="registrationUpdate">Registration Update</button><br />
+
+            <button id="reserveNow">Reserve Now</button>
+            <button id="cancelReservation">Cancel Reservation</button>
             <button id="startSession">Start Session</button>
             <button id="stopSession">Stop Session</button>
             <button id="unlockConnector">Unlock Connector</button>
+
         </div>
 
     </div>

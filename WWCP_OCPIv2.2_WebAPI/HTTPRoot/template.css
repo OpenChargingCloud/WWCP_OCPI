@@ -228,7 +228,7 @@
             body #page #bottom #right #text .entity #about {
               color: #333;
               padding: 1vh 0vh 2vh 1vh; }
-            body #page #bottom #right #text .entity #upperButtons {
+            body #page #bottom #right #text .entity .upperButtons {
               display: flex;
               flex-direction: row-reverse;
               margin: 1vh 1vw;
@@ -237,7 +237,7 @@
                                 margin-right:       2px;
                                 font-size:          75%;
                             }*/ }
-              body #page #bottom #right #text .entity #upperButtons .button {
+              body #page #bottom #right #text .entity .upperButtons .button {
                 background: #d6d6d6;
                 background-image: linear-gradient(to bottom, #ddd, #c8c8c8);
                 color: #696969;
@@ -249,23 +249,23 @@
                 font-size: 60%;
                 white-space: nowrap;
                 text-decoration: none; }
-                body #page #bottom #right #text .entity #upperButtons .button .text {
+                body #page #bottom #right #text .entity .upperButtons .button .text {
                   display: inline-block; }
-                  body #page #bottom #right #text .entity #upperButtons .button .text .text2 {
+                  body #page #bottom #right #text .entity .upperButtons .button .text .text2 {
                     display: inline-block;
                     padding-left: 8px;
                     vertical-align: top;
                     padding-top: 7px; }
-              body #page #bottom #right #text .entity #upperButtons .button:hover {
+              body #page #bottom #right #text .entity .upperButtons .button:hover {
                 background-color: rgbgb(224, 224, 224);
                 background-image: linear-gradient(to bottom, #eee, #d4d4d4);
                 color: #777; }
-              body #page #bottom #right #text .entity #upperButtons .button:active {
+              body #page #bottom #right #text .entity .upperButtons .button:active {
                 box-shadow: 0 1px 2px #999;
                 transform: translateY(4px); }
-              body #page #bottom #right #text .entity #upperButtons .button:focus {
+              body #page #bottom #right #text .entity .upperButtons .button:focus {
                 outline: 0px; }
-              body #page #bottom #right #text .entity #upperButtons .button:disabled {
+              body #page #bottom #right #text .entity .upperButtons .button:disabled {
                 background-color: rgba(0, 0, 0, 0.1);
                 background-image: none;
                 color: #bbb;
@@ -332,14 +332,14 @@
                   body #page #bottom #right #text .entity #data .row .value input[type=checkbox]:checked {
                     color: #456ca7; }
                   body #page #bottom #right #text .entity #data .row .value input:focus, body #page #bottom #right #text .entity #data .row .value textarea:focus {
-                    outline-color: #456ca7;
+                    outline-color: #bdcee9;
                     border-color: #456ca7;
-                    box-shadow: 0 0 6px #456ca7;
-                    background: #f5eee3; }
+                    box-shadow: 0 0 6px #a3b9db;
+                    background: #d7e1f0; }
                   body #page #bottom #right #text .entity #data .row .value input::placeholder {
-                    font-size: 90%;
+                    font-size: 95%;
                     font-style: italic;
-                    color: #acacac;
+                    color: #9a9a9a;
                     opacity: 1;
                     /* Firefox fix */ }
                   body #page #bottom #right #text .entity #data .row .value input.error {
@@ -382,9 +382,7 @@
                 margin: 15px 0px 1px 0px; }
               body #page #bottom #right #text .entity #data .separator {
                 margin-top: 10px; }
-              body #page #bottom #right #text .entity #data #pairedWith {
-                /*   border-top:             15px solid transparent;*/ }
-            body #page #bottom #right #text .entity #lowerButtons {
+            body #page #bottom #right #text .entity .lowerButtons {
               display: flex;
               flex-direction: row;
               margin: 2vh 0;
@@ -393,7 +391,7 @@
                                 margin-right:       2px;
                                 font-size:          75%;
                             }*/ }
-              body #page #bottom #right #text .entity #lowerButtons button, body #page #bottom #right #text .entity #lowerButtons .button {
+              body #page #bottom #right #text .entity .lowerButtons button, body #page #bottom #right #text .entity .lowerButtons .button {
                 padding: .5vh 1.2vh;
                 background-color: #456ca7;
                 border-radius: 4px;
@@ -403,25 +401,25 @@
                 box-shadow: 2px 2px 6px #999;
                 white-space: nowrap;
                 text-decoration: none; }
-                body #page #bottom #right #text .entity #lowerButtons button .text, body #page #bottom #right #text .entity #lowerButtons .button .text {
+                body #page #bottom #right #text .entity .lowerButtons button .text, body #page #bottom #right #text .entity .lowerButtons .button .text {
                   display: inline-block; }
-                  body #page #bottom #right #text .entity #lowerButtons button .text .text2, body #page #bottom #right #text .entity #lowerButtons .button .text .text2 {
+                  body #page #bottom #right #text .entity .lowerButtons button .text .text2, body #page #bottom #right #text .entity .lowerButtons .button .text .text2 {
                     display: inline-block;
                     padding-left: 8px;
                     vertical-align: top;
                     padding-top: 7px; }
-              body #page #bottom #right #text .entity #lowerButtons button:hover, body #page #bottom #right #text .entity #lowerButtons .button:hover {
+              body #page #bottom #right #text .entity .lowerButtons button:hover, body #page #bottom #right #text .entity .lowerButtons .button:hover {
                 background-color: #668ac1;
                 color: #e4eaf3; }
-              body #page #bottom #right #text .entity #lowerButtons button:active, body #page #bottom #right #text .entity #lowerButtons .button:active {
+              body #page #bottom #right #text .entity .lowerButtons button:active, body #page #bottom #right #text .entity .lowerButtons .button:active {
                 box-shadow: 0 1px 2px #999;
                 transform: translateY(4px); }
-              body #page #bottom #right #text .entity #lowerButtons button:focus, body #page #bottom #right #text .entity #lowerButtons .button:focus {
+              body #page #bottom #right #text .entity .lowerButtons button:focus, body #page #bottom #right #text .entity .lowerButtons .button:focus {
                 outline: 0px; }
-              body #page #bottom #right #text .entity #lowerButtons button:disabled, body #page #bottom #right #text .entity #lowerButtons .button:disabled {
-                background-color: #eee2d7;
+              body #page #bottom #right #text .entity .lowerButtons button:disabled, body #page #bottom #right #text .entity .lowerButtons .button:disabled {
+                background-color: #dfdfdf;
                 background-image: none;
-                color: #ceb9aa;
+                color: #bdbdbd;
                 box-shadow: none; }
             body #page #bottom #right #text .entity #saveButton {
               margin-top: 40px; }

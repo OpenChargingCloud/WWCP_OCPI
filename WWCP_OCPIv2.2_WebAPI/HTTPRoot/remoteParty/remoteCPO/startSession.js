@@ -1,5 +1,5 @@
-///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
-function StartUnlockConnector(versionId) {
+///<reference path="../../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
+function StartStartSession(versionId) {
     const pathElements = window.location.pathname.split("/");
     const remotePartyId = pathElements[pathElements.length - 2];
     const unlockConnectorInfos = document.getElementById("unlockConnectorInfos");
@@ -9,22 +9,18 @@ function StartUnlockConnector(versionId) {
     const remotePartyDataDiv = unlockConnectorDiv.querySelector("#data");
     const locationId = remotePartyDataDiv.querySelector("#locationId");
     const EVSEUId = remotePartyDataDiv.querySelector("#EVSEUId");
-    const connectorId = remotePartyDataDiv.querySelector("#connectorId");
-    const lowerButtonsDiv = unlockConnectorDiv.querySelector("#lowerButtons");
+    const lowerButtonsDiv = unlockConnectorDiv.querySelector(".lowerButtons");
     const unlockConnectorButton = lowerButtonsDiv.querySelector("#unlockConnector");
     unlockConnectorButton.onclick = () => {
-        var _a, _b, _c;
+        var _a, _b;
         unlockConnectorButton.disabled = true;
         const _locationId = (_a = locationId.value) === null || _a === void 0 ? void 0 : _a.trim();
         const _EVSEUId = (_b = EVSEUId.value) === null || _b === void 0 ? void 0 : _b.trim();
-        const _connectorId = (_c = connectorId.value) === null || _c === void 0 ? void 0 : _c.trim();
         if (_locationId !== "" &&
-            _EVSEUId !== "" &&
-            _connectorId !== "") {
-            HTTP("UnlockConnector", "../" + remotePartyId, {
+            _EVSEUId !== "") {
+            HTTP("StartSession", "../" + remotePartyId, {
                 "locationId": _locationId,
-                "EVSEUId": _EVSEUId,
-                "connectorId": _connectorId
+                "EVSEUId": _EVSEUId
             }, (status, response) => {
                 try {
                     const remoteParty = ParseJSON_LD(response);
@@ -82,4 +78,4 @@ function StartUnlockConnector(versionId) {
     });
     //var refresh = setTimeout(StartDashboard, 30000);
 }
-//# sourceMappingURL=unlockConnector.js.map
+//# sourceMappingURL=startSession.js.map

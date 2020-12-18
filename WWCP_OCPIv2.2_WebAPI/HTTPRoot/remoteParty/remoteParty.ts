@@ -2,38 +2,47 @@
 
 function StartRemoteParty(versionId: string) {
 
-    const pathElements             = window.location.pathname.split("/");
-    const remotePartyId            = pathElements[pathElements.length - 1];
+    const pathElements                = window.location.pathname.split("/");
+    const remotePartyId               = pathElements[pathElements.length - 1];
 
-    const remotePartyInfosDiv      = document.getElementById("remotePartyInfos")                      as HTMLDivElement;
-    const remotePartyIdDiv         = remotePartyInfosDiv. querySelector("#id")                        as HTMLDivElement;
-    remotePartyIdDiv.innerText     = remotePartyId;
+    const remotePartyInfosDiv         = document.getElementById("remotePartyInfos")                      as HTMLDivElement;
+    const remotePartyIdDiv            = remotePartyInfosDiv. querySelector("#id")                        as HTMLDivElement;
+    remotePartyIdDiv.innerText        = remotePartyId;
 
-    const remotePartyDiv           = remotePartyInfosDiv. querySelector("#remoteParty")               as HTMLDivElement;
+    const remotePartyDiv              = remotePartyInfosDiv. querySelector("#remoteParty")               as HTMLDivElement;
 
-    const remotePartyDataDiv       = remotePartyDiv.      querySelector("#data")                      as HTMLDivElement;
-    const countryCode              = remotePartyDataDiv.  querySelector("#countryCode")               as HTMLInputElement;
-    const partyId                  = remotePartyDataDiv.  querySelector("#partyId")                   as HTMLInputElement;
-    const role                     = remotePartyDataDiv.  querySelector("#role")                      as HTMLInputElement;
-    const businessDetailsName      = remotePartyDataDiv.  querySelector("#businessDetailsName")       as HTMLInputElement;
-    const businessDetailsWebsite   = remotePartyDataDiv.  querySelector("#businessDetailsWebsite")    as HTMLInputElement;
-    const businessDetailsLogo      = remotePartyDataDiv.  querySelector("#businessDetailsLogo")       as HTMLInputElement;
+    const remotePartyDataDiv          = remotePartyDiv.      querySelector("#data")                      as HTMLDivElement;
+    const countryCode                 = remotePartyDataDiv.  querySelector("#countryCode")               as HTMLInputElement;
+    const partyId                     = remotePartyDataDiv.  querySelector("#partyId")                   as HTMLInputElement;
+    const role                        = remotePartyDataDiv.  querySelector("#role")                      as HTMLInputElement;
+    const businessDetailsName         = remotePartyDataDiv.  querySelector("#businessDetailsName")       as HTMLInputElement;
+    const businessDetailsWebsite      = remotePartyDataDiv.  querySelector("#businessDetailsWebsite")    as HTMLInputElement;
+    const businessDetailsLogo         = remotePartyDataDiv.  querySelector("#businessDetailsLogo")       as HTMLInputElement;
 
-    const remoteAccessInfosDiv     = remotePartyDiv.      querySelector("#remoteAccessInfosDiv")      as HTMLDivElement;
-    const remoteAccessInfos        = remoteAccessInfosDiv.querySelector("#remoteAccessInfos")         as HTMLDivElement;
-    const accessInfosDiv           = remotePartyDiv.      querySelector("#accessInfosDiv")            as HTMLDivElement;
-    const accessInfos              = accessInfosDiv.      querySelector("#accessInfos")               as HTMLDivElement;
+    const remoteAccessInfosDiv        = remotePartyDiv.      querySelector("#remoteAccessInfosDiv")      as HTMLDivElement;
+    const remoteAccessInfos           = remoteAccessInfosDiv.querySelector("#remoteAccessInfos")         as HTMLDivElement;
+    const accessInfosDiv              = remotePartyDiv.      querySelector("#accessInfosDiv")            as HTMLDivElement;
+    const accessInfos                 = accessInfosDiv.      querySelector("#accessInfos")               as HTMLDivElement;
 
-    const lowerButtonsDiv          = remotePartyDiv.      querySelector("#lowerButtons")              as HTMLDivElement;
-    const startSessionButton       = lowerButtonsDiv.     querySelector("#startSession")              as HTMLButtonElement;
-    const stopSessionButton        = lowerButtonsDiv.     querySelector("#stopSession")               as HTMLButtonElement;
-    const unlockConnectorButton    = lowerButtonsDiv.     querySelector("#unlockConnector")           as HTMLButtonElement;
-    const registerButton           = lowerButtonsDiv.     querySelector("#register")                  as HTMLButtonElement;
+    const lowerButtonsDiv             = remotePartyDiv.      querySelector(".lowerButtons")              as HTMLDivElement;
+    const registerButton              = lowerButtonsDiv.     querySelector("#register")                  as HTMLButtonElement;
+    const registrationUpdateButton    = lowerButtonsDiv.     querySelector("#registrationUpdate")        as HTMLButtonElement;
 
-    startSessionButton.onclick     = () => { document.location.href = document.location.href + "/startSession"; };
-    stopSessionButton.onclick      = () => { document.location.href = document.location.href + "/stopSession"; };
-    unlockConnectorButton.onclick  = () => { document.location.href = document.location.href + "/unlockConnector"; };
-    registerButton.onclick         = () => { document.location.href = document.location.href + "/register"; };
+    const reserveNowButton            = lowerButtonsDiv.     querySelector("#reserveNow")                as HTMLButtonElement;
+    const cancelReservationButton     = lowerButtonsDiv.     querySelector("#cancelReservation")         as HTMLButtonElement;
+    const startSessionButton          = lowerButtonsDiv.     querySelector("#startSession")              as HTMLButtonElement;
+    const stopSessionButton           = lowerButtonsDiv.     querySelector("#stopSession")               as HTMLButtonElement;
+    const unlockConnectorButton       = lowerButtonsDiv.     querySelector("#unlockConnector")           as HTMLButtonElement;
+
+    registerButton.onclick            = () => { document.location.href = document.location.href + "/register"; };
+    registrationUpdateButton.onclick  = () => { document.location.href = document.location.href + "/registrationUpdate"; };
+
+    // Remote CPOs
+    reserveNowButton.onclick          = () => { document.location.href = document.location.href + "/reserveNow"; };
+    cancelReservationButton.onclick   = () => { document.location.href = document.location.href + "/cancelReservation"; };
+    startSessionButton.onclick        = () => { document.location.href = document.location.href + "/startSession"; };
+    stopSessionButton.onclick         = () => { document.location.href = document.location.href + "/stopSession"; };
+    unlockConnectorButton.onclick     = () => { document.location.href = document.location.href + "/unlockConnector"; };
 
     HTTPGet("../remoteParties/" + remotePartyId,
 
