@@ -32,21 +32,22 @@ function StartUnlockConnector(versionId: string) {
             _connectorId !== "")
         {
 
-            HTTPSet("unlockConnector",
-                    {
-                        "locationId":  _locationId,
-                        "EVSEUId":     _EVSEUId,
-                        "connectorId": _connectorId
-                    },
+            HTTP("UnlockConnector",
+                 "../" + remotePartyId,
+                 {
+                     "locationId":  _locationId,
+                     "EVSEUId":     _EVSEUId,
+                     "connectorId": _connectorId
+                 },
 
-                    (status, response) => {
+                 (status, response) => {
 
-                        try
-                        {
+                     try
+                     {
 
-                            const remoteParty = ParseJSON_LD<IRemoteParty>(response);
+                         const remoteParty = ParseJSON_LD<IRemoteParty>(response);
 
-                            if (remoteParty != null)
+                         if (remoteParty != null)
                             {
 
                                 //countryCode.value  = remoteParty.countryCode;
@@ -74,14 +75,14 @@ function StartUnlockConnector(versionId: string) {
 
                             }
 
-                        }
-                        catch (exception) {
-                        }
+                     }
+                     catch (exception) {
+                     }
 
-                    },
+                 },
 
-                    (status, statusText, response) => {
-                    }
+                 (status, statusText, response) => {
+                 }
 
                 );
 

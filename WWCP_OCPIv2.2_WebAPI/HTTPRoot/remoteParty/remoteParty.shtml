@@ -73,10 +73,10 @@
         </div>
 
         <div id="lowerButtons">
+            <button id="register">Register</button><br />
             <button id="startSession">Start Session</button>
             <button id="stopSession">Stop Session</button>
             <button id="unlockConnector">Unlock Connector</button>
-            <button id="register">Register</button>
         </div>
 
     </div>

@@ -28,8 +28,8 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using org.GraphDefined.WWCP;
 
@@ -419,10 +419,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
-        //public CountryCode                          CountryCode                   { get; }
-        //public Party_Id                             PartyId                       { get; }
-        //public Roles                                Role                          { get; }
-
         /// <summary>
         /// An optional description of this client.
         /// </summary>
@@ -690,10 +686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
-        public CommonClient(//CountryCode                          CountryCode,
-                            //Party_Id                             PartyId,
-                            //Roles                                Role,
-                            URL                                  RemoteVersionsURL,
+        public CommonClient(URL                                  RemoteVersionsURL,
                             AccessToken                          AccessToken,
                             CommonAPI                            MyCommonAPI,
                             String                               Description                  = null,
@@ -704,9 +697,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             DNSClient                            DNSClient                    = null)
         {
 
-            //this.CountryCode                 = CountryCode;
-            //this.PartyId                     = PartyId;
-            //this.Role                        = Role;
             this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
             this.AccessToken                 = AccessToken;
             this.RemoteVersionsURL           = RemoteVersionsURL;

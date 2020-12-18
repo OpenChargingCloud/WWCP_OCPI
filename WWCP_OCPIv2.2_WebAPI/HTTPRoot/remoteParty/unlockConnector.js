@@ -21,7 +21,7 @@ function StartUnlockConnector(versionId) {
         if (_locationId !== "" &&
             _EVSEUId !== "" &&
             _connectorId !== "") {
-            HTTPSet("unlockConnector", {
+            HTTP("UnlockConnector", "../" + remotePartyId, {
                 "locationId": _locationId,
                 "EVSEUId": _EVSEUId,
                 "connectorId": _connectorId

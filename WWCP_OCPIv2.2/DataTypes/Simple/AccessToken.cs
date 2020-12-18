@@ -96,8 +96,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static AccessToken Parse(String Text)
         {
 
-            if (TryParse(Text, out AccessToken locationId))
-                return locationId;
+            if (TryParse(Text, out AccessToken accessToken))
+                return accessToken;
 
             if (Text.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Text), "The given text representation of an access token must not be null or empty!");
@@ -117,8 +117,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static AccessToken? TryParse(String Text)
         {
 
-            if (TryParse(Text, out AccessToken locationId))
-                return locationId;
+            if (TryParse(Text, out AccessToken accessToken))
+                return accessToken;
 
             return null;
 
@@ -272,8 +272,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is AccessToken locationId
-                   ? CompareTo(locationId)
+            => Object is AccessToken accessToken
+                   ? CompareTo(accessToken)
                    : throw new ArgumentException("The given object is not an access token!",
                                                  nameof(Object));
 
@@ -306,8 +306,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is AccessToken locationId &&
-                   Equals(locationId);
+            => Object is AccessToken accessToken &&
+                   Equals(accessToken);
 
         #endregion
 

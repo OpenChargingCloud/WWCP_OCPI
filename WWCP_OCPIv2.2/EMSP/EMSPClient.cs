@@ -1291,10 +1291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
-        public EMSPClient(//CountryCode                          CountryCode,
-                          //Party_Id                             PartyId,
-                          //Roles                                Role,
-                          URL                                  RemoteVersionsURL,
+        public EMSPClient(URL                                  RemoteVersionsURL,
                           AccessToken                          AccessToken,
                           CommonAPI                            MyCommonAPI,
                           String                               Description                  = null,
@@ -1304,10 +1301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                           Byte?                                MaxNumberOfRetries           = null,
                           DNSClient                            DNSClient                    = null)
 
-            : base(//CountryCode,
-                   //PartyId,
-                   //Role,
-                   RemoteVersionsURL,
+            : base(RemoteVersionsURL,
                    AccessToken,
                    MyCommonAPI,
                    Description,
@@ -4077,7 +4071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         // Commands
 
-        #region ReserveNow       (Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
+        #region ReserveNow       (Token, ExpiryTimestamp, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 
         /// <summary>
         /// Put/store the given token on/within the remote API.
@@ -4089,7 +4083,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public async Task<OCPIResponse<CommandResponse>>
 
             ReserveNow(Token                    Token,
-                       DateTime                 ExpiryDate,
+                       DateTime                 ExpiryTimestamp,
                        Reservation_Id           ReservationId,
                        Location_Id              LocationId,
                        EVSE_UId?                EVSEUId,
@@ -4158,7 +4152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         InterfaceRoles.RECEIVER);
 
                 var Command        = new ReserveNowCommand(Token,
-                                                           ExpiryDate,
+                                                           ExpiryTimestamp,
                                                            ReservationId,
                                                            LocationId,
                                                            EVSEUId,

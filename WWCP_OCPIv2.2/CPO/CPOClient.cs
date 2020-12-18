@@ -1655,10 +1655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
-        public CPOClient(//CountryCode                          CountryCode,
-                         //Party_Id                             PartyId,
-                         //Roles                                Role,
-                         URL                                  RemoteVersionsURL,
+        public CPOClient(URL                                  RemoteVersionsURL,
                          AccessToken                          AccessToken,
                          CommonAPI                            MyCommonAPI,
                          String                               Description                  = null,
@@ -1668,10 +1665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          Byte?                                MaxNumberOfRetries           = null,
                          DNSClient                            DNSClient                    = null)
 
-            : base(//CountryCode,
-                   //PartyId,
-                   //Role,
-                   RemoteVersionsURL,
+            : base(RemoteVersionsURL,
                    AccessToken,
                    MyCommonAPI,
                    Description,
