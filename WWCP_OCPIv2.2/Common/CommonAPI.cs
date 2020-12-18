@@ -1223,8 +1223,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            var commonClient            = new CommonClient(receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
+            var commonClient            = new CommonClient(//receivedCredentials.Roles.First().CountryCode,
+                                                           //receivedCredentials.Roles.First().PartyId,
+                                                           //receivedCredentials.Roles.First().Role,
                                                            receivedCredentials.URL,
+                                                           receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
                                                            this,
                                                            DNSClient: HTTPServer.DNSClient);
 

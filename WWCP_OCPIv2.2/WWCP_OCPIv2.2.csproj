@@ -92,7 +92,7 @@
     <Compile Include="DataTypes\Patch.cs" />
     <Compile Include="DataTypes\Simple\Facilities.cs" />
     <Compile Include="DataTypes\Simple\Command_Id.cs" />
-    <Compile Include="DataTypes\Simple\RemoteParty_Id.cs" />
+    <Compile Include="DataTypes\Complex\RemoteParty_Id.cs" />
     <Compile Include="EMSP\EMSPClientLogger.cs" />
     <Compile Include="EMSP\EMSPAPILogger.cs" />
     <Compile Include="IO\OCPIAPILogger.cs" />

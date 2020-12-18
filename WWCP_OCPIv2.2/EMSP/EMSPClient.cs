@@ -1282,8 +1282,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Create a new EMSP client.
         /// </summary>
-        /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
+        /// <param name="AccessToken">The access token.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="Description">An optional description of this client.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
@@ -1291,8 +1291,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
-        public EMSPClient(AccessToken                          AccessToken,
+        public EMSPClient(//CountryCode                          CountryCode,
+                          //Party_Id                             PartyId,
+                          //Roles                                Role,
                           URL                                  RemoteVersionsURL,
+                          AccessToken                          AccessToken,
                           CommonAPI                            MyCommonAPI,
                           String                               Description                  = null,
                           HTTPHostname?                        VirtualHostname              = null,
@@ -1301,8 +1304,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                           Byte?                                MaxNumberOfRetries           = null,
                           DNSClient                            DNSClient                    = null)
 
-            : base(AccessToken,
+            : base(//CountryCode,
+                   //PartyId,
+                   //Role,
                    RemoteVersionsURL,
+                   AccessToken,
                    MyCommonAPI,
                    Description,
                    VirtualHostname,

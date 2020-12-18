@@ -18,6 +18,7 @@
 #region Usings
 
 using System;
+using System.Text.RegularExpressions;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -34,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Data
 
-        // CiString(3)
+        public static readonly Regex RemotePartyId_RegEx = new Regex("^([a-zA-Z0-9]{2,5})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
 
         /// <summary>
         /// The internal identification.
@@ -59,6 +60,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => (UInt64) (InternalId?.Length ?? 0);
 
+
+        public CountryCode  CountryCode    { get;}
+        public Party_Id     PartyId        { get;}
+        public Roles        Role           { get;}
+
         #endregion
 
         #region Constructor(s)
@@ -66,10 +72,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new remote party identification based on the given string.
         /// </summary>
-        /// <param name="String">The string representation of the remote party identification.</param>
-        private RemoteParty_Id(String String)
+        private RemoteParty_Id(CountryCode  CountryCode,
+                               Party_Id     PartyId,
+                               Roles        Role)
         {
-            this.InternalId  = String;
+
+            this.CountryCode  = CountryCode;
+            this.PartyId      = PartyId;
+            this.Role         = Role;
+            this.InternalId   = String.Concat(CountryCode, "-", PartyId, "_", Role);
+
         }
 
         #endregion
@@ -128,8 +140,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
                 try
                 {
-                    RemotePartyId = new RemoteParty_Id(Text.Trim());
-                    return true;
+
+                    var MatchCollection = RemotePartyId_RegEx.Matches(Text);
+
+                    if (MatchCollection.Count == 1 &&
+                        CountryCode.TryParse(MatchCollection[0].Groups[1].Value, out CountryCode countryCode) &&
+                        Party_Id.   TryParse(MatchCollection[0].Groups[2].Value, out Party_Id    partyId) &&
+                        Enum.       TryParse(MatchCollection[0].Groups[3].Value, out Roles       role))
+                    {
+
+                        RemotePartyId = new RemoteParty_Id(countryCode,
+                                                           partyId,
+                                                           role);
+
+                        return true;
+
+                    }
+
                 }
                 catch (Exception)
                 { }
@@ -150,7 +177,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public RemoteParty_Id Clone
 
             => new RemoteParty_Id(
-                   new String(InternalId?.ToCharArray())
+                   CountryCode.Clone,
+                   PartyId.Clone,
+                   Role
                );
 
         #endregion

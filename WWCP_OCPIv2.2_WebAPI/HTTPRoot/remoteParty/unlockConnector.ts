@@ -23,62 +23,121 @@ function StartUnlockConnector(versionId: string) {
 
         unlockConnectorButton.disabled = true;
 
-        var commandJSON = {
-            "locationId":   locationId.value.trim(),
-            "EVSEUId":      EVSEUId.value.trim(),
-            "connectorId":  connectorId.value.trim()
+        const _locationId   = locationId. value?.trim();
+        const _EVSEUId      = EVSEUId.    value?.trim();
+        const _connectorId  = connectorId.value?.trim();
+
+        if (_locationId  !== "" &&
+            _EVSEUId     !== "" &&
+            _connectorId !== "")
+        {
+
+            HTTPSet("unlockConnector",
+                    {
+                        "locationId":  _locationId,
+                        "EVSEUId":     _EVSEUId,
+                        "connectorId": _connectorId
+                    },
+
+                    (status, response) => {
+
+                        try
+                        {
+
+                            const remoteParty = ParseJSON_LD<IRemoteParty>(response);
+
+                            if (remoteParty != null)
+                            {
+
+                                //countryCode.value  = remoteParty.countryCode;
+                                //partyId.value      = remoteParty.partyId;
+                                //role.value         = remoteParty.role;
+
+                                //if (remoteParty.businessDetails !== undefined) {
+                                //    businessDetailsName.value     = remoteParty.businessDetails.name    ?? "";
+                                //    businessDetailsWebsite.value  = remoteParty.businessDetails.website ?? "";
+                                //    businessDetailsLogo.value     = remoteParty.businessDetails.logo    ?? "";
+                                //}
+
+                                //const versionDetails = OCPIResponse.data as IVersionDetails;
+
+                                //versionIdDiv.innerHTML = "Version " + versionDetails.version;
+
+                                //for (const endpoint of versionDetails.endpoints) {
+
+                                //    const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
+                                //    endpointDiv.className  = "endpoint";
+                                //    endpointDiv.href       = endpoint.url;
+                                //    endpointDiv.innerHTML  = endpoint.identifier + "/" + endpoint.role + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+
+                                //}
+
+                            }
+
+                        }
+                        catch (exception) {
+                        }
+
+                    },
+
+                    (status, statusText, response) => {
+                    }
+
+                );
+
+            //document.location.href = document.location.href + "/unlockConnector";
+
         }
 
-        //document.location.href = document.location.href + "/unlockConnector";
 
     };
 
 
-    HTTPGet("../remoteParties/" + remotePartyId + "/unlockConnector",
+    HTTPGet("unlockConnector",
 
-        (status, response) => {
+            (status, response) => {
 
-            try
-            {
-
-                const remoteParty = ParseJSON_LD<IRemoteParty>(response);
-
-                if (remoteParty != null)
+                try
                 {
 
-                    //countryCode.value  = remoteParty.countryCode;
-                    //partyId.value      = remoteParty.partyId;
-                    //role.value         = remoteParty.role;
+                    const remoteParty = ParseJSON_LD<IRemoteParty>(response);
 
-                    //if (remoteParty.businessDetails !== undefined) {
-                    //    businessDetailsName.value     = remoteParty.businessDetails.name    ?? "";
-                    //    businessDetailsWebsite.value  = remoteParty.businessDetails.website ?? "";
-                    //    businessDetailsLogo.value     = remoteParty.businessDetails.logo    ?? "";
-                    //}
+                    if (remoteParty != null)
+                    {
 
-                    //const versionDetails = OCPIResponse.data as IVersionDetails;
+                        //countryCode.value  = remoteParty.countryCode;
+                        //partyId.value      = remoteParty.partyId;
+                        //role.value         = remoteParty.role;
 
-                    //versionIdDiv.innerHTML = "Version " + versionDetails.version;
+                        //if (remoteParty.businessDetails !== undefined) {
+                        //    businessDetailsName.value     = remoteParty.businessDetails.name    ?? "";
+                        //    businessDetailsWebsite.value  = remoteParty.businessDetails.website ?? "";
+                        //    businessDetailsLogo.value     = remoteParty.businessDetails.logo    ?? "";
+                        //}
 
-                    //for (const endpoint of versionDetails.endpoints) {
+                        //const versionDetails = OCPIResponse.data as IVersionDetails;
 
-                    //    const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
-                    //    endpointDiv.className  = "endpoint";
-                    //    endpointDiv.href       = endpoint.url;
-                    //    endpointDiv.innerHTML  = endpoint.identifier + "/" + endpoint.role + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+                        //versionIdDiv.innerHTML = "Version " + versionDetails.version;
 
-                    //}
+                        //for (const endpoint of versionDetails.endpoints) {
+
+                        //    const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
+                        //    endpointDiv.className  = "endpoint";
+                        //    endpointDiv.href       = endpoint.url;
+                        //    endpointDiv.innerHTML  = endpoint.identifier + "/" + endpoint.role + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+
+                        //}
+
+                    }
 
                 }
+                catch (exception) {
+                }
 
+            },
+
+            (status, statusText, response) => {
             }
-            catch (exception) {
-            }
-
-        },
-
-        (status, statusText, response) => {
-        }
 
     );
 

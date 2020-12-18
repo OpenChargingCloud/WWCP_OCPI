@@ -419,6 +419,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
+        //public CountryCode                          CountryCode                   { get; }
+        //public Party_Id                             PartyId                       { get; }
+        //public Roles                                Role                          { get; }
+
         /// <summary>
         /// An optional description of this client.
         /// </summary>
@@ -677,8 +681,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// Create a new OCPI Common client.
         /// </summary>
-        /// <param name="AccessToken">The access token.</param>
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
+        /// <param name="AccessToken">The access token.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
         /// <param name="Description">An optional description of this client.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
@@ -686,8 +690,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RequestTimeout">An optional request timeout.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
         /// <param name="DNSClient">An optional DNS client to use.</param>
-        public CommonClient(AccessToken                          AccessToken,
+        public CommonClient(//CountryCode                          CountryCode,
+                            //Party_Id                             PartyId,
+                            //Roles                                Role,
                             URL                                  RemoteVersionsURL,
+                            AccessToken                          AccessToken,
                             CommonAPI                            MyCommonAPI,
                             String                               Description                  = null,
                             HTTPHostname?                        VirtualHostname              = null,
@@ -697,8 +704,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             DNSClient                            DNSClient                    = null)
         {
 
-            this.AccessToken                 = AccessToken;
+            //this.CountryCode                 = CountryCode;
+            //this.PartyId                     = PartyId;
+            //this.Role                        = Role;
             this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
+            this.AccessToken                 = AccessToken;
             this.RemoteVersionsURL           = RemoteVersionsURL;
             this.Hostname                    = RemoteVersionsURL.Hostname;
             this.RemotePort                  = RemoteVersionsURL.Port ?? DefaultRemotePort;
@@ -726,14 +736,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             return JSONObject.Create(
 
+                       //new JProperty("countryCode",              CountryCode.ToString()),
+                       //new JProperty("partyId",                  PartyId.    ToString()),
+                       //new JProperty("role",                     Role.       ToString()),
+
                        new JProperty("type",                     ClientType),
 
                        Description.IsNotNullOrEmpty()
                            ? new JProperty("description",        Description)
                            : null,
 
-                       new JProperty("accessToken",              AccessToken.          ToString()),
                        new JProperty("remoteVersionsURL",        RemoteVersionsURL.    ToString()),
+                       new JProperty("accessToken",              AccessToken.          ToString()),
 
                        VirtualHostname.HasValue
                            ? new JProperty("virtualHostname",    VirtualHostname.Value.ToString())

@@ -1242,6 +1242,150 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
+            #region SET              ~/remoteParties/{remotePartyId}/stopSession
+
+            #region JSON
+
+            // --------------------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/stopSession
+            // --------------------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.SET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}/unlockConnector",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return HTTPResponse.AsImmutable;
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Response.AsImmutable;
+                                             //}
+
+                                             #endregion
+
+
+                                             #region Parse JSON and SessionId
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                                 return HTTPResponse.AsImmutable;
+
+                                             #region Parse SessionId    [mandatory]
+
+                                             if (!JSON.ParseMandatory("sessionId",
+                                                                      "session identification",
+                                                                      Session_Id.TryParse,
+                                                                      out Session_Id  SessionId,
+                                                                      out String      ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "The given location identification is invalid or missing!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #endregion
+
+                                             #region Get EMSP client
+
+                                             var emspClient = GetEMSPClient(RemoteParty);
+
+                                             if (emspClient == null)
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadGateway,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                      }.AsImmutable;
+
+                                             #endregion
+
+
+                                             var unlockConnectorResult = await emspClient.StopSession(SessionId);
+
+                                             return 
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false,
+                                                                                                                  null,
+                                                                                                                  null,
+                                                                                                                  false).
+                                                                                                           ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #endregion
+
             #region GET              ~/remoteParties/{remotePartyId}/unlockConnector
 
             #region JSON
@@ -1402,6 +1546,208 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #endregion
 
+            #region SET              ~/remoteParties/{remotePartyId}/unlockConnector
+
+            #region JSON
+
+            // ------------------------------------------------------------------------------------------------------
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/unlockConnector
+            // ------------------------------------------------------------------------------------------------------
+            HTTPServer.AddMethodCallback(Hostname,
+                                         HTTPMethod.SET,
+                                         URLPathPrefix + "remoteParties/{remotePartyId}/unlockConnector",
+                                         HTTPContentType.JSON_UTF8,
+                                         HTTPDelegate: async Request => {
+
+                                             #region Check RemotePartyId URI parameter
+
+                                             if (!Request.ParseRemoteParty(this,
+                                                                           out RemoteParty_Id?       RemotePartyId,
+                                                                           out RemoteParty           RemoteParty,
+                                                                           out HTTPResponse.Builder  HTTPResponse))
+                                             {
+                                                 return HTTPResponse.AsImmutable;
+                                             }
+
+                                             #endregion
+
+                                             #region Get HTTP user and its organizations
+
+                                             // Will return HTTP 401 Unauthorized, when the HTTP user is unknown!
+                                             //if (!TryGetHTTPUser(Request,
+                                             //                    out User                   HTTPUser,
+                                             //                    out HashSet<Organization>  HTTPOrganizations,
+                                             //                    out HTTPResponse.Builder   Response,
+                                             //                    Recursive:                 true))
+                                             //{
+                                             //    return Response.AsImmutable;
+                                             //}
+
+                                             #endregion
+
+
+                                             #region Parse JSON and LocationId, EVSEUId, ConnectorId
+
+                                             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out HTTPResponse))
+                                                 return HTTPResponse.AsImmutable;
+
+                                             #region Parse LocationId    [mandatory]
+
+                                             if (!JSON.ParseMandatory("locationId",
+                                                                      "location identification",
+                                                                      Location_Id.TryParse,
+                                                                      out Location_Id LocationId,
+                                                                      out String      ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "The given location identification is invalid or missing!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse EVSEUId       [mandatory]
+
+                                             if (!JSON.ParseMandatory("EVSEUId",
+                                                                      "EVSE unique identification",
+                                                                      EVSE_UId.TryParse,
+                                                                      out EVSE_UId EVSEUId,
+                                                                      out          ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "The given EVSE unique identification is invalid or missing!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse ConnectorId   [mandatory]
+
+                                             if (!JSON.ParseMandatory("connectorId",
+                                                                      "connector identification",
+                                                                      Connector_Id.TryParse,
+                                                                      out Connector_Id ConnectorId,
+                                                                      out              ErrorResponse))
+                                             {
+
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "The connector identification is invalid or missing!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                        }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #endregion
+
+                                             #region Get EMSP client
+
+                                             var emspClient = GetEMSPClient(RemoteParty);
+
+                                             if (emspClient == null)
+                                                 return new HTTPResponse.Builder(Request) {
+                                                            HTTPStatusCode             = HTTPStatusCode.BadGateway,
+                                                            Server                     = HTTPServer.DefaultServerName,
+                                                            Date                       = DateTime.UtcNow,
+                                                            AccessControlAllowOrigin   = "*",
+                                                            AccessControlAllowMethods  = "GET, SET",
+                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                            ContentType                = HTTPContentType.JSON_UTF8,
+                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                                                           "Could not find a apropriate EMSP client for this request!").
+                                                                                                    ToJSON().
+                                                                                                    ToUTF8Bytes(),
+                                                            Connection                 = "close"
+                                                      }.AsImmutable;
+
+                                             #endregion
+
+
+                                             var unlockConnectorResult = await emspClient.UnlockConnector(LocationId,
+                                                                                                          EVSEUId,
+                                                                                                          ConnectorId);
+
+                                             return 
+                                                        //HTTPOrganizations.Contains(RemoteParty.Owner) ||
+                                                        //Admins.InEdges(HTTPUser).Any(edgelabel => edgelabel == User2GroupEdgeTypes.IsAdmin)
+                                                        1 == 1
+
+                                                            ? new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.OK,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
+                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ContentType                = HTTPContentType.JSON_UTF8,
+                                                                  Content                    = //GetRemotePartySerializator(Request, HTTPUser)
+                                                                                               //        (RemoteParty,
+                                                                                               //         false, //Embedded
+                                                                                               //         includeCryptoHash).
+                                                                                               RemoteParty.ToJSON(false,
+                                                                                                                  null,
+                                                                                                                  null,
+                                                                                                                  false).
+                                                                                                           ToUTF8Bytes(),
+                                                                  Connection                 = "close",
+                                                                  Vary                       = "Accept"
+                                                            }.AsImmutable
+
+                                                            : new HTTPResponse.Builder(Request) {
+                                                                  HTTPStatusCode             = HTTPStatusCode.Unauthorized,
+                                                                  Server                     = HTTPServer.DefaultServerName,
+                                                                  Date                       = DateTime.UtcNow,
+                                                                  AccessControlAllowOrigin   = "*",
+                                                                  AccessControlAllowMethods  = "GET, SET",
+                                                                  AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                  Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                         },
+                                         AllowReplacement: URLReplacement.Allow);
+
+            #endregion
+
+            #endregion
+
             #endregion
 
 
@@ -1496,14 +1842,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                         Roles        Role = Roles.CPO)
         {
 
-            var _party = CommonAPI.RemoteParties.FirstOrDefault(party => party.CountryCode == CountryCode &&
-                                                                   party.PartyId     == PartyId &&
-                                                                   party.Role        == Role);
+            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
+                                                                                     remoteParty.PartyId     == PartyId     &&
+                                                                                     remoteParty.Role        == Role);
 
-            if (_party?.RemoteAccessInfos?.Any() == true)
+            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
                 return EMSPClients.AddAndReturnElement(
-                    new EMSPClient(_party.RemoteAccessInfos.First().AccessToken,
-                                   _party.RemoteAccessInfos.First().VersionsURL,
+                    new EMSPClient(//CountryCode,
+                                   //PartyId,
+                                   //Role,
+                                   _remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                   _remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
 
@@ -1513,6 +1862,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #endregion
 
+        #region GetEMSPClient(RemotePartyd)
+
+        public EMSPClient GetEMSPClient(RemoteParty RemoteParty)
+        {
+
+            if (RemoteParty == null)
+                return null;
+
+            var _EMSPClient = EMSPClients.FirstOrDefault(EMSPClient => EMSPClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                       EMSPClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+
+            if (_EMSPClient != null)
+                return _EMSPClient;
+
+            if (RemoteParty.RemoteAccessInfos?.Any() == true)
+                return EMSPClients.AddAndReturnElement(
+                    new EMSPClient(RemoteParty.RemoteAccessInfos.First().VersionsURL,
+                                   RemoteParty.RemoteAccessInfos.First().AccessToken,
+                                   CommonAPI,
+                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region GetEMSPClient(RemotePartyId)
+
+        public EMSPClient GetEMSPClient(RemoteParty_Id RemotePartyId)
+        {
+
+            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == RemotePartyId.CountryCode &&
+                                                                                     remoteParty.PartyId     == RemotePartyId.PartyId     &&
+                                                                                     remoteParty.Role        == RemotePartyId.Role);
+
+            var _EMSPClient = EMSPClients.FirstOrDefault(EMSPClient => EMSPClient.RemoteVersionsURL == _remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                       EMSPClient.AccessToken       == _remoteParty.RemoteAccessInfos.First().AccessToken);
+
+            if (_EMSPClient != null)
+                return _EMSPClient;
+
+            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
+                return EMSPClients.AddAndReturnElement(
+                    new EMSPClient(_remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                   _remoteParty.RemoteAccessInfos.First().AccessToken,
+                                   CommonAPI,
+                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+
+            return null;
+
+        }
+
+        #endregion
+
+
         #region GetCPOClient (CountryCode, PartyId, Role = Roles.EMSP)
 
         public CPOClient GetCPOClient(CountryCode  CountryCode,
@@ -1520,14 +1925,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                       Roles        Role = Roles.EMSP)
         {
 
-            var _party = CommonAPI.RemoteParties.FirstOrDefault(party => party.CountryCode == CountryCode &&
-                                                                   party.PartyId     == PartyId &&
-                                                                   party.Role        == Role);
+            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
+                                                                                     remoteParty.PartyId     == PartyId     &&
+                                                                                     remoteParty.Role        == Role);
 
-            if (_party?.RemoteAccessInfos?.Any() == true)
+            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
                 return CPOClients.AddAndReturnElement(
-                    new CPOClient(_party.RemoteAccessInfos.First().AccessToken,
-                                  _party.RemoteAccessInfos.First().VersionsURL,
+                    new CPOClient(//CountryCode,
+                                  //PartyId,
+                                  //Role,
+                                  _remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                  _remoteParty.RemoteAccessInfos.First().AccessToken,
                                   CommonAPI,
                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
 
