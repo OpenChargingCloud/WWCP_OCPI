@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("WWCP OCPI v2.2")]
-[assembly: AssemblyDescription("Communication between the World Wide Charging Protocol (WWCP) and the Open ChargePoint Interface v2.2 (OCPI v2.2).")]
+[assembly: AssemblyDescription("Implementation of the Open ChargePoint Interface v2.2 (OCPI v2.2).")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GraphDefined GmbH")]
 [assembly: AssemblyProduct("WWCP OCPI v2.2")]

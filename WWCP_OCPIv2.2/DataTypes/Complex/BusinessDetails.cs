@@ -95,11 +95,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(JSON,
-                         out BusinessDetails additionalGeoLocation,
+                         out BusinessDetails businessDetails,
                          out String          ErrorResponse,
                          CustomBusinessDetailsParser))
             {
-                return additionalGeoLocation;
+                return businessDetails;
             }
 
             throw new ArgumentException("The given JSON representation of a business detail is invalid: " + ErrorResponse, nameof(JSON));
@@ -120,11 +120,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             if (TryParse(Text,
-                         out BusinessDetails additionalGeoLocation,
+                         out BusinessDetails businessDetails,
                          out String          ErrorResponse,
                          CustomBusinessDetailsParser))
             {
-                return additionalGeoLocation;
+                return businessDetails;
             }
 
             throw new ArgumentException("The given text representation of a business detail is invalid: " + ErrorResponse, nameof(Text));
