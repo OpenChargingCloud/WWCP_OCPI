@@ -399,12 +399,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(Version Version)
         {
 
-            var c = Id.CompareTo(Version.Id);
+            var result = Id.CompareTo(Version.Id);
 
-            if (c == 0)
-                c = URL.CompareTo(Version.URL);
+            if (result == 0)
+                result = URL.CompareTo(Version.URL);
 
-            return c;
+            return result;
 
         }
 
@@ -437,8 +437,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Version Version)
 
-            => Id.Equals(Version.Id) &&
-               URL.      Equals(Version.URL, StringComparison.OrdinalIgnoreCase);
+            => Id. Equals(Version.Id) &&
+               URL.Equals(Version.URL);
 
         #endregion
 
@@ -447,16 +447,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region GetHashCode()
 
         /// <summary>
-        /// Return the HashCode of this object.
+        /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The HashCode of this object.</returns>
+        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
         {
             unchecked
             {
 
-                return Id.GetHashCode() * 3 ^
-                       URL.      GetHashCode();
+                return Id. GetHashCode() * 3 ^
+                       URL.GetHashCode();
 
             }
         }

@@ -1047,7 +1047,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(Tariff Tariff)
 
             => !(Tariff is null) &&
-                   Id.Equals(Tariff.Id);
+
+                 Id.Equals(Tariff.Id);
 
         #endregion
 

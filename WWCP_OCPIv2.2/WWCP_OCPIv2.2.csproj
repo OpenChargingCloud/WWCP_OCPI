@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>org.GraphDefined.WWCP.OCPIv2_2</RootNamespace>
     <AssemblyName>org.GraphDefined.WWCP.OCPIv2_2</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -50,6 +51,7 @@
     <Compile Include="Common\CommonClientLogger.cs" />
     <Compile Include="Common\CommonClient.cs" />
     <Compile Include="Common\CommonAPILogger.cs" />
+    <Compile Include="CPO\CPOClientDelegates.cs" />
     <Compile Include="CPO\CPOClient.cs" />
     <Compile Include="CPO\CPOAPILogger.cs" />
     <Compile Include="CPO\CPOClientLogger.cs" />
@@ -122,9 +124,9 @@
     <Compile Include="DataTypes\Enums\ModuleIDs.cs" />
     <Compile Include="DataTypes\Enums\InterfaceRoles.cs" />
     <Compile Include="IO\OCPIResponse.cs" />
-    <Compile Include="DataTypes\Entities\Token.cs" />
-    <Compile Include="DataTypes\Entities\CDR.cs" />
-    <Compile Include="DataTypes\Entities\CDRLocation.cs" />
+    <Compile Include="DataTypes\Token.cs" />
+    <Compile Include="DataTypes\CDR.cs" />
+    <Compile Include="DataTypes\Complex\CDRLocation.cs" />
     <Compile Include="DataTypes\Enums\Roles.cs" />
     <Compile Include="DataTypes\Enums\ConnectionStatus.cs" />
     <Compile Include="DataTypes\Enums\ReservationRestrictionTypes.cs" />
@@ -151,7 +153,7 @@
     <Compile Include="DataTypes\Simple\EVSE_UId.cs" />
     <Compile Include="DataTypes\Simple\EVSE_Id.cs" />
     <Compile Include="DataTypes\Simple\CDR_Id.cs" />
-    <Compile Include="DataTypes\Entities\Connector.cs" />
+    <Compile Include="DataTypes\Connector.cs" />
     <Compile Include="DataTypes\Complex\Credentials.cs" />
     <Compile Include="DataTypes\Enums\ParkingTypes.cs" />
     <Compile Include="DataTypes\Enums\ParkingRestrictions.cs" />
@@ -167,10 +169,10 @@
     <Compile Include="DataTypes\Enums\CapabilityTypes.cs" />
     <Compile Include="DataTypes\Simple\ImageFileType.cs" />
     <Compile Include="DataTypes\Enums\ImageCategories.cs" />
-    <Compile Include="DataTypes\Entities\EVSE.cs" />
+    <Compile Include="DataTypes\EVSE.cs" />
     <Compile Include="DataTypes\Enums\StatusTypes.cs" />
     <Compile Include="DataTypes\Simple\Connector_Id.cs" />
-    <Compile Include="DataTypes\Entities\Location.cs" />
+    <Compile Include="DataTypes\Location.cs" />
     <Compile Include="DataTypes\Simple\Group_Id.cs" />
     <Compile Include="DataTypes\Simple\Version_Id.cs" />
     <Compile Include="DataTypes\Simple\Token_Id.cs" />
@@ -183,7 +185,7 @@
     <Compile Include="DataTypes\Complex\CDRDimension.cs" />
     <Compile Include="DataTypes\Complex\ChargingPeriod.cs" />
     <Compile Include="DataTypes\Simple\Meter_Id.cs" />
-    <Compile Include="DataTypes\Entities\Session.cs" />
+    <Compile Include="DataTypes\Session.cs" />
     <Compile Include="DataTypes\Simple\Auth_Id.cs" />
     <Compile Include="DataTypes\Simple\Session_Id.cs" />
     <Compile Include="DataTypes\Complex\EnvironmentalImpact.cs" />
@@ -195,7 +197,7 @@
     <Compile Include="DataTypes\Complex\TariffRestrictions.cs" />
     <Compile Include="DataTypes\Complex\TariffElement.cs" />
     <Compile Include="DataTypes\Simple\Tariff_Id.cs" />
-    <Compile Include="DataTypes\Entities\Tariff.cs" />
+    <Compile Include="DataTypes\Tariff.cs" />
     <Compile Include="CPO\CPOAPI.cs" />
     <Compile Include="EMSP\EMSPAPI.cs" />
     <Compile Include="Common\CommonAPI.cs" />

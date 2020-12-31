@@ -24,44 +24,44 @@ using Newtonsoft.Json.Linq;
 namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
-    public static class PatchObject
-    {
+    //public static class PatchObject
+    //{
 
-        public static JObject Apply(JObject oldJObject, JObject patch)
-        {
+    //    public static JObject Apply(JObject oldJObject, JObject patch)
+    //    {
 
-            foreach (var property in patch)
-            {
+    //        foreach (var property in patch)
+    //        {
 
-                if (property.Value is null)
-                {
-                    oldJObject.Remove(property.Key);
-                }
+    //            if (property.Value is null)
+    //            {
+    //                oldJObject.Remove(property.Key);
+    //            }
 
-                else if (property.Value is JObject subObject)
-                {
+    //            else if (property.Value is JObject subObject)
+    //            {
 
-                    if (oldJObject[property.Key] is JObject oldSubObject)
-                        oldJObject[property.Key] = Apply(oldSubObject, subObject);
+    //                if (oldJObject[property.Key] is JObject oldSubObject)
+    //                    oldJObject[property.Key] = Apply(oldSubObject, subObject);
 
-                    else
-                        oldJObject[property.Key] = subObject;
+    //                else
+    //                    oldJObject[property.Key] = subObject;
 
-                }
+    //            }
 
-                //else if (property.Value is JArray subArray)
-                //{
-                //}
+    //            //else if (property.Value is JArray subArray)
+    //            //{
+    //            //}
 
-                else
-                    oldJObject[property.Key] = property.Value;
+    //            else
+    //                oldJObject[property.Key] = property.Value;
 
-            }
+    //        }
 
-            return oldJObject;
+    //        return oldJObject;
 
-        }
+    //    }
 
-    }
+    //}
 
 }

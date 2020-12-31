@@ -653,7 +653,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             ? CustomTariffRestrictionsSerializer(this, JSON)
                             : JSON;
 
-
             return JSON2.HasValues
                        ? JSON2
                        : null;

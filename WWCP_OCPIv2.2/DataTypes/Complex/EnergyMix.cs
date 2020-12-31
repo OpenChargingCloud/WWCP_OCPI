@@ -440,26 +440,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region GetHashCode()
 
         /// <summary>
-        /// Return the HashCode of this object.
+        /// Return the hash code of this object.
         /// </summary>
-        /// <returns>The HashCode of this object.</returns>
+        /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
         {
             unchecked
             {
 
-                return IsGreenEnergy.           GetHashCode() * 5 ^
+                return IsGreenEnergy.      GetHashCode()       * 5 ^
 
-                       EnergySources.       Aggregate(0, (hashCode, source) => hashCode ^ source.GetHashCode()) ^
-                       EnvironmentalImpacts.Aggregate(0, (hashCode, impact) => hashCode ^ impact.GetHashCode()) ^
+                       EnergySources.       Aggregate(0, (hashCode, energySource)        => hashCode ^ energySource.       GetHashCode()) ^
+                       EnvironmentalImpacts.Aggregate(0, (hashCode, environmentalImpact) => hashCode ^ environmentalImpact.GetHashCode()) ^
 
-                       (SupplierName.     IsNotNullOrEmpty()
-                            ? SupplierName.     GetHashCode() * 3
-                            : 0) ^
-
-                       (EnergyProductName.IsNotNullOrEmpty()
-                            ? EnergyProductName.GetHashCode()
-                            : 0);
+                       (SupplierName?.     GetHashCode() ?? 0) * 3 ^
+                       (EnergyProductName?.GetHashCode() ?? 0);
 
             }
         }
