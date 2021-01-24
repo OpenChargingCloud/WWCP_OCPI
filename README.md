@@ -12,7 +12,8 @@ since version 2.2 also roaming hubs are defined.
 
 ## Content
 
-- [Implementation Details and Differences](WWCP_OCPIv2.2/README.md) to the official protocol specification. The OCPI specification has unfortunatelly many flaws and security issues. This implementation provides solutions and work-arounds for most of these issues.
+- [Implementation Details and Differences](WWCP_OCPIv2.2/README.md) to the official protocol specification. The OCPI specification has unfortunatelly many flaws and security issues. This implementation provides extentions and work-arounds for most of these issues to simplify the daily operations business, high availability or to support additional concepts/methods like *European General Data Protection Regulation (GDPR)*  and the *German Calibration Law (Eichrecht)*.
+
 - We at Open Charging Cloud love Open Source and [Open Data](OpenData.md). Therefore we provide an extention to the OCPI specification allowing Charge Point Operators (Charging Stations Operators) to provide their charging locations as Open Data.
 
 ### Your participation
