@@ -108,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (TryParse(Text, out Party_Id locationId))
                 return locationId;
 
-            return null;
+            return default;
 
         }
 

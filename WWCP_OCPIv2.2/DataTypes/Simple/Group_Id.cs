@@ -108,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (TryParse(Text, out Group_Id groupId))
                 return groupId;
 
-            return null;
+            return default;
 
         }
 

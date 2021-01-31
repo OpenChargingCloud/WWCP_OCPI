@@ -93,7 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an OCPI correlation identification.
+        /// Parse the given string as a request correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         public static Correlation_Id Parse(String Text)
@@ -114,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as an OCPI correlation identification.
+        /// Try to parse the given text as a request correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         public static Correlation_Id? TryParse(String Text)
@@ -132,7 +132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, out CorrelationId)
 
         /// <summary>
-        /// Try to parse the given text as an OCPI correlation identification.
+        /// Try to parse the given text as a request correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         /// <param name="CorrelationId">The parsed correlation identification.</param>
