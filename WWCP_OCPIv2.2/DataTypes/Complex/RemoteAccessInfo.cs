@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2020 GraphDefined GmbH
+ * Copyright (c) 2015-2021 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,11 +81,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("token",              AccessToken.      ToString()),
-                           new JProperty("versionsURL",        VersionsURL.      ToString()),
-                           new JProperty("versionIds",         new JArray(VersionIds.Select(versionId => versionId.ToString()))),
-                           new JProperty("selectedVersionId",  SelectedVersionId.ToString()),
-                           new JProperty("status",             Status.           ToString())
+
+                           new JProperty("token",                    AccessToken.      ToString()),
+                           new JProperty("versionsURL",              VersionsURL.      ToString()),
+
+                           VersionIds.IsNeitherNullNorEmpty()
+                               ? new JProperty("versionIds",         new JArray(VersionIds.Select(versionId => versionId.ToString())))
+                               : null,
+
+                           SelectedVersionId.HasValue
+                               ? new JProperty("selectedVersionId",  SelectedVersionId.ToString())
+                               : null,
+
+                           new JProperty("status",                   Status.           ToString())
+
                        );
 
             return CustomRemoteAccessInfoSerializer != null

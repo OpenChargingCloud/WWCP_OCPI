@@ -21,7 +21,7 @@ using System;
 
 #endregion
 
-namespace cloud.charging.open.OCPIv2_2.UnitTests
+namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 {
 
     public class OCPITests
