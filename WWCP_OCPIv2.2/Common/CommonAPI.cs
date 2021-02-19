@@ -1382,6 +1382,195 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode              CountryCode,
+                                      Party_Id                 PartyId,
+                                      Roles                    Role,
+                                      BusinessDetails          BusinessDetails,
+
+                                      AccessToken              AccessToken,
+
+                                      AccessToken              RemoteAccessToken,
+                                      URL                      RemoteVersionsURL,
+                                      IEnumerable<Version_Id>  RemoteVersionIds    = null,
+                                      Version_Id?              SelectedVersionId   = null,
+
+                                      AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
+                                      RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
+                                      PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+        {
+            lock (_RemoteParties)
+            {
+
+                //var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                //                                                         party.PartyId     == PartyId     &&
+                //                                                         party.Role        == Role).ToArray();
+
+                //foreach (var remoteParty in remoteParties)
+                //    _RemoteParties.Remove(remoteParty.Id);
+
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     AccessToken,
+
+                                                     RemoteAccessToken,
+                                                     RemoteVersionsURL,
+                                                     RemoteVersionIds,
+                                                     SelectedVersionId,
+
+                                                     AccessStatus,
+                                                     RemoteStatus,
+                                                     PartyStatus);
+
+                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+
+                return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode      CountryCode,
+                                      Party_Id         PartyId,
+                                      Roles            Role,
+                                      BusinessDetails  BusinessDetails,
+
+                                      AccessToken      AccessToken,
+                                      AccessStatus     AccessStatus   = AccessStatus.ALLOWED,
+
+                                      PartyStatus      PartyStatus    = PartyStatus.ENABLED)
+        {
+            lock (_RemoteParties)
+            {
+
+                //var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                //                                                         party.PartyId     == PartyId     &&
+                //                                                         party.Role        == Role).ToArray();
+
+                //foreach (var remoteParty in remoteParties)
+                //    _RemoteParties.Remove(remoteParty.Id);
+
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     AccessToken,
+                                                     AccessStatus,
+
+                                                     PartyStatus);
+
+                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+
+                return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode              CountryCode,
+                                      Party_Id                 PartyId,
+                                      Roles                    Role,
+                                      BusinessDetails          BusinessDetails,
+
+                                      AccessToken              RemoteAccessToken,
+                                      URL                      RemoteVersionsURL,
+                                      IEnumerable<Version_Id>  RemoteVersionIds    = null,
+                                      Version_Id?              SelectedVersionId   = null,
+
+                                      RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.UNKNOWN,
+                                      PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+        {
+            lock (_RemoteParties)
+            {
+
+                //var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                //                                                         party.PartyId     == PartyId     &&
+                //                                                         party.Role        == Role).ToArray();
+
+                //foreach (var remoteParty in remoteParties)
+                //    _RemoteParties.Remove(remoteParty.Id);
+
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     RemoteAccessToken,
+                                                     RemoteVersionsURL,
+                                                     RemoteVersionIds,
+                                                     SelectedVersionId,
+
+                                                     RemoteStatus,
+                                                     PartyStatus);
+
+                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+
+                return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AddRemoteParty(...)
+
+        public Boolean AddRemoteParty(CountryCode                    CountryCode,
+                                      Party_Id                       PartyId,
+                                      Roles                          Role,
+                                      BusinessDetails                BusinessDetails,
+
+                                      IEnumerable<AccessInfo2>       AccessInfos,
+                                      IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
+
+                                      PartyStatus                    Status        = PartyStatus.ENABLED,
+                                      DateTime?                      LastUpdated   = null)
+        {
+            lock (_RemoteParties)
+            {
+
+                var newRemoteParty = new RemoteParty(CountryCode,
+                                                     PartyId,
+                                                     Role,
+                                                     BusinessDetails,
+
+                                                     AccessInfos,
+                                                     RemoteAccessInfos,
+
+                                                     Status,
+                                                     LastUpdated);
+
+                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+
+                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+
+                return true;
+
+            }
+        }
+
+        #endregion
+
+
         #region AddOrUpdateRemoteParty(...)
 
         public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
@@ -1855,6 +2044,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> Locations;
 
 
+        public delegate Task OnLocationChangedDelegate(Location Location);
+
+        public event OnLocationChangedDelegate OnLocationChanged;
+
+
         #region AddLocation           (Location)
 
         public Location AddLocation(Location Location)
@@ -1880,8 +2074,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (!locations.ContainsKey(Location.Id))
                 {
+
                     locations.Add(Location.Id, Location);
+
+                    var OnLocationChangedLocal = OnLocationChanged;
+                    if (OnLocationChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnLocationChangedLocal(Location).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return Location;
+
                 }
 
                 throw new ArgumentException("The given location already exists!");
@@ -1916,7 +2126,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 if (!locations.ContainsKey(Location.Id))
+                {
+
                     locations.Add(Location.Id, Location);
+
+                    var OnLocationChangedLocal = OnLocationChanged;
+                    if (OnLocationChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnLocationChangedLocal(Location).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
+                }
 
                 return Location;
 
@@ -1961,12 +2188,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
 
+                var OnLocationChangedLocal2 = OnLocationChanged;
+                if (OnLocationChangedLocal2 != null)
+                {
+                    try
+                    {
+                        OnLocationChangedLocal2(newOrUpdatedLocation).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
+
                 return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
                                                            WasCreated: false);
 
             }
 
             locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
+
+            var OnLocationChangedLocal = OnLocationChanged;
+            if (OnLocationChangedLocal != null)
+            {
+                try
+                {
+                    OnLocationChangedLocal(newOrUpdatedLocation).Wait();
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
 
             return AddOrUpdateResult<Location>.Success(newOrUpdatedLocation,
                                                        WasCreated: true);
@@ -2054,7 +2307,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
+                    {
+
                         locations[Location.Id] = patchResult.PatchedData;
+
+                        var OnLocationChangedLocal = OnLocationChanged;
+                        if (OnLocationChangedLocal != null)
+                        {
+                            try
+                            {
+                                OnLocationChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+
+                    }
 
                     return patchResult;
 
@@ -2107,6 +2377,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             builder.LastUpdated = newOrUpdatedEVSE.LastUpdated;
             __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
 
+            var OnLocationChangedLocal = OnLocationChanged;
+            if (OnLocationChangedLocal != null)
+            {
+                try
+                {
+                    OnLocationChangedLocal(newOrUpdatedEVSE.ParentLocation).Wait();
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
 
             return AddOrUpdateResult<EVSE>.Success(newOrUpdatedEVSE,
                                                    WasCreated: !EVSEExistedBefore);
@@ -2236,6 +2518,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var evseBuilder     = EVSE.ToBuilder();
                 evseBuilder.LastUpdated = newOrUpdatedConnector.LastUpdated;
                 __addOrUpdateEVSE    (Location, evseBuilder,     (AllowDowngrades ?? this.AllowDowngrades) == false);
+
+
+                var OnLocationChangedLocal = OnLocationChanged;
+                if (OnLocationChangedLocal != null)
+                {
+                    try
+                    {
+                        OnLocationChangedLocal(newOrUpdatedConnector.ParentEVSE.ParentLocation).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
 
 
                 return AddOrUpdateResult<Connector>.Success(newOrUpdatedConnector,
@@ -2529,6 +2825,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> Tariffs;
 
 
+        public delegate Task OnTariffChangedDelegate(Tariff Tariff);
+
+        public event OnTariffChangedDelegate OnTariffChanged;
+
+
         #region AddTariff           (Tariff)
 
         public Tariff AddTariff(Tariff Tariff)
@@ -2554,8 +2855,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (!tariffs.ContainsKey(Tariff.Id))
                 {
+
                     tariffs.Add(Tariff.Id, Tariff);
+
+                    var OnTariffChangedLocal = OnTariffChanged;
+                    if (OnTariffChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnTariffChangedLocal(Tariff).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return Tariff;
+
                 }
 
                 throw new ArgumentException("The given tariff already exists!");
@@ -2590,7 +2907,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 if (!tariffs.ContainsKey(Tariff.Id))
+                {
+
                     tariffs.Add(Tariff.Id, Tariff);
+
+                    var OnTariffChangedLocal = OnTariffChanged;
+                    if (OnTariffChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnTariffChangedLocal(Tariff).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
+                }
 
                 return Tariff;
 
@@ -2636,12 +2970,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
 
+                    var OnTariffChangedLocal2 = OnTariffChanged;
+                    if (OnTariffChangedLocal2 != null)
+                    {
+                        try
+                        {
+                            OnTariffChangedLocal2(newOrUpdatedTariff).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return AddOrUpdateResult<Tariff>.Success(newOrUpdatedTariff,
                                                              WasCreated: false);
 
                 }
 
                 tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
+
+                var OnTariffChangedLocal = OnTariffChanged;
+                if (OnTariffChangedLocal != null)
+                {
+                    try
+                    {
+                        OnTariffChangedLocal(newOrUpdatedTariff).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
 
                 return AddOrUpdateResult<Tariff>.Success(newOrUpdatedTariff,
                                                          WasCreated: true);
@@ -2667,8 +3027,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
                     tariffs.ContainsKey(Tariff.Id))
                 {
+
                     tariffs[Tariff.Id] = Tariff;
+
+                    var OnTariffChangedLocal = OnTariffChanged;
+                    if (OnTariffChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnTariffChangedLocal(Tariff).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return Tariff;
+
                 }
 
                 return null;
@@ -2710,7 +3086,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                       AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
+                    {
+
                         tariffs[Tariff.Id] = patchResult.PatchedData;
+
+                        var OnTariffChangedLocal = OnTariffChanged;
+                        if (OnTariffChangedLocal != null)
+                        {
+                            try
+                            {
+                                OnTariffChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+
+                    }
+
 
                     return patchResult;
 
@@ -2954,6 +3348,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> Sessions;
 
 
+        public delegate Task OnSessionChangedDelegate(Session Session);
+
+        public event OnSessionChangedDelegate OnSessionChanged;
+
+
         #region AddSession           (Session)
 
         public Session AddSession(Session Session)
@@ -2979,8 +3378,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (!sessions.ContainsKey(Session.Id))
                 {
+
                     sessions.Add(Session.Id, Session);
+
+                    var OnSessionChangedLocal = OnSessionChanged;
+                    if (OnSessionChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnSessionChangedLocal(Session).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return Session;
+
                 }
 
                 throw new ArgumentException("The given session already exists!");
@@ -3015,7 +3430,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 if (!sessions.ContainsKey(Session.Id))
+                {
+
                     sessions.Add(Session.Id, Session);
+
+                    var OnSessionChangedLocal = OnSessionChanged;
+                    if (OnSessionChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnSessionChangedLocal(Session).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
+                }
 
                 return Session;
 
@@ -3061,12 +3493,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     sessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
 
+                    var OnSessionChangedLocal2 = OnSessionChanged;
+                    if (OnSessionChangedLocal2 != null)
+                    {
+                        try
+                        {
+                            OnSessionChangedLocal2(newOrUpdatedSession).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return AddOrUpdateResult<Session>.Success(newOrUpdatedSession,
                                                               WasCreated: false);
 
                 }
 
                 sessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
+
+                var OnSessionChangedLocal = OnSessionChanged;
+                if (OnSessionChangedLocal != null)
+                {
+                    try
+                    {
+                        OnSessionChangedLocal(newOrUpdatedSession).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
 
                 return AddOrUpdateResult<Session>.Success(newOrUpdatedSession,
                                                           WasCreated: true);
@@ -3092,8 +3550,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     parties.  TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
                     sessions.ContainsKey(Session.Id))
                 {
+
                     sessions[Session.Id] = Session;
+
+                    var OnSessionChangedLocal = OnSessionChanged;
+                    if (OnSessionChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnSessionChangedLocal(Session).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return Session;
+
                 }
 
                 return null;
@@ -3135,7 +3609,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
+                    {
+
                         sessions[Session.Id] = patchResult.PatchedData;
+
+                        var OnSessionChangedLocal = OnSessionChanged;
+                        if (OnSessionChangedLocal != null)
+                        {
+                            try
+                            {
+                                OnSessionChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+
+                    }
 
                     return patchResult;
 
@@ -3379,11 +3870,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> Tokens;
 
 
-        public delegate Task<TokenStatus> VerifyTokenDelegate(CountryCode  CountryCode,
-                                                              Party_Id     PartyId,
-                                                              Token_Id     TokenId);
+        public delegate Task OnTokenChangedDelegate(Token Token);
 
-        public event VerifyTokenDelegate VerifyToken;
+        public event OnTokenChangedDelegate OnTokenChanged;
+
+
+        public delegate Task<TokenStatus> OnVerifyTokenDelegate(CountryCode  CountryCode,
+                                                                Party_Id     PartyId,
+                                                                Token_Id     TokenId);
+
+        public event OnVerifyTokenDelegate OnVerifyToken;
 
 
         #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
@@ -3412,8 +3908,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (!tokens.ContainsKey(Token.Id))
                 {
+
                     tokens.Add(Token.Id, new TokenStatus(Token, Status));
+
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnTokenChangedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return Token;
+
                 }
 
                 throw new ArgumentException("The given token already exists!");
@@ -3449,7 +3961,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 if (!tokens.ContainsKey(Token.Id))
+                {
+
                     tokens.Add(Token.Id, new TokenStatus(Token, Status));
+
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnTokenChangedLocal(Token).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
+                }
 
                 return Token;
 
@@ -3497,6 +4026,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     _tokenStatus[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
                                                                          Status);
 
+                    var OnTokenChangedLocal2 = OnTokenChanged;
+                    if (OnTokenChangedLocal2 != null)
+                    {
+                        try
+                        {
+                            OnTokenChangedLocal2(newOrUpdatedToken).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return AddOrUpdateResult<Token>.Success(newOrUpdatedToken,
                                                             WasCreated: false);
 
@@ -3504,6 +4046,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _tokenStatus.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
                                                                        Status));
+
+                var OnTokenChangedLocal = OnTokenChanged;
+                if (OnTokenChangedLocal != null)
+                {
+                    try
+                    {
+                        OnTokenChangedLocal(newOrUpdatedToken).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
 
                 return AddOrUpdateResult<Token>.Success(newOrUpdatedToken,
                                                         WasCreated: true);
@@ -3545,8 +4100,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
+                    {
+
                         tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,
                                                            tokenStatus.Status);
+
+                        var OnTokenChangedLocal = OnTokenChanged;
+                        if (OnTokenChangedLocal != null)
+                        {
+                            try
+                            {
+                                OnTokenChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+
+                    }
 
                     return patchResult;
 
@@ -3609,7 +4181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                 }
 
-                var VerifyTokenLocal = VerifyToken;
+                var VerifyTokenLocal = OnVerifyToken;
                 if (VerifyTokenLocal != null)
                 {
 
@@ -3850,9 +4422,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords;
 
 
-        public delegate Task SendCDRDelegate(CDR CDR);
+        public delegate Task OnChargeDetailRecordChangedDelegate(CDR CDR);
 
-        public event SendCDRDelegate SendCDR;
+        public event OnChargeDetailRecordChangedDelegate OnChargeDetailRecordChanged;
 
 
         #region AddCDR           (CDR)
@@ -3883,12 +4455,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     partyCDRs.Add(CDR.Id, CDR);
 
-                    var SendCDRLocal = SendCDR;
-                    if (SendCDRLocal != null)
+                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                    if (OnChargeDetailRecordChangedLocal != null)
                     {
                         try
                         {
-                            SendCDRLocal(CDR).Wait();
+                            OnChargeDetailRecordChangedLocal(CDR).Wait();
                         }
                         catch (Exception e)
                         {
@@ -3936,12 +4508,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     partyCDRs.Add(CDR.Id, CDR);
 
-                    var SendCDRLocal = SendCDR;
-                    if (SendCDRLocal != null)
+                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                    if (OnChargeDetailRecordChangedLocal != null)
                     {
                         try
                         {
-                            SendCDRLocal(CDR).Wait();
+                            OnChargeDetailRecordChangedLocal(CDR).Wait();
                         }
                         catch (Exception e)
                         {
@@ -3995,12 +4567,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     CDRs[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
 
+                    var OnChargeDetailRecordChangedLocal2 = OnChargeDetailRecordChanged;
+                    if (OnChargeDetailRecordChangedLocal2 != null)
+                    {
+                        try
+                        {
+                            OnChargeDetailRecordChangedLocal2(newOrUpdatedCDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return AddOrUpdateResult<CDR>.Success(newOrUpdatedCDR,
                                                           WasCreated: false);
 
                 }
 
                 CDRs.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
+
+                var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                if (OnChargeDetailRecordChangedLocal != null)
+                {
+                    try
+                    {
+                        OnChargeDetailRecordChangedLocal(newOrUpdatedCDR).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                }
 
                 return AddOrUpdateResult<CDR>.Success(newOrUpdatedCDR,
                                                       WasCreated: true);
@@ -4022,12 +4620,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.     TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties)   &&
-                    parties.  TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  partyCDRs) &&
-                    partyCDRs.ContainsKey(CDR.Id))
+                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties)   &&
+                    parties.            TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  partyCDRs) &&
+                    partyCDRs.          ContainsKey(CDR.Id))
                 {
+
                     partyCDRs[CDR.Id] = CDR;
+
+                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                    if (OnChargeDetailRecordChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnChargeDetailRecordChangedLocal(CDR).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+
                     return CDR;
+
                 }
 
                 return null;

@@ -288,6 +288,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         { }
 
+        #endregion
+
+        #region RemoteParty(...)
 
         public RemoteParty(CountryCode                    CountryCode,
                            Party_Id                       PartyId,
@@ -297,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            IEnumerable<AccessInfo2>       AccessInfos,
                            IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
-                           PartyStatus                    Status   = PartyStatus.ENABLED,
+                           PartyStatus                    Status        = PartyStatus.ENABLED,
                            DateTime?                      LastUpdated   = null)
 
         {
@@ -313,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.PartyId             = PartyId;
             this.Role                = Role;
             this.BusinessDetails     = BusinessDetails;
-            this.Status         = Status;
+            this.Status              = Status;
             this.LastUpdated         = LastUpdated ?? DateTime.UtcNow;
 
             this._AccessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
@@ -595,7 +598,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(RemoteParty RemoteParty)
 
             => !(RemoteParty is null) &&
-                   Id.Equals(RemoteParty.Id);
+                 Id.               Equals(RemoteParty.Id) &&
+                 CountryCode.      Equals(RemoteParty.Id) &&
+                 PartyId.          Equals(RemoteParty.Id) &&
+                 Role.             Equals(RemoteParty.Id) &&
+                 BusinessDetails.  Equals(RemoteParty.Id);
+                 //Status.           Equals(RemoteParty.Id);
+                 //LastUpdated.      Equals(RemoteParty.Id);
+
+                 //AccessInfos.      Equals(RemoteParty.Id) &&
+                 //RemoteAccessInfos.Equals(RemoteParty.Id);
 
         #endregion
 

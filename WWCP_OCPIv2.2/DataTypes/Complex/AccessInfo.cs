@@ -95,7 +95,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.Token        = Token;
             this.VersionsURL  = VersionsURL;
-            this.Roles        = Roles?.Distinct();
+            this.Roles        = Roles?.Distinct() ?? new CredentialsRole[0];
             this.Status       = Status;
 
         }

@@ -1437,7 +1437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 #region Upstream HTTP request...
 
-                var HTTPResponse = await (LocationsURL.Protocol == HTTPProtocols.http
+                var client = (LocationsURL.Protocol == HTTPProtocols.http
 
                                            ? new HTTPClient (LocationsURL.Hostname,
                                                              RemotePort:  LocationsURL.Port ?? IPPort.HTTP,
@@ -1446,9 +1446,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                            : new HTTPSClient(LocationsURL.Hostname,
                                                              RemoteCertificateValidator,
                                                              RemotePort:  LocationsURL.Port ?? IPPort.HTTPS,
-                                                             DNSClient:   DNSClient)).
+                                                             DNSClient:   DNSClient));
 
-                                        Execute(client => client.CreateRequest(HTTPMethod.GET,
+                 //client.OnChunkDataRead += async (Timestamp, BytesRead) => {
+                 //    DebugX.Log("Additional " + BytesRead + " chunked bytes read!");
+                 //};
+
+                 //client.OnDataRead += async (Timestamp, BytesRead, BytesExpected) => {
+                 //    DebugX.Log(BytesRead + " bytes of " + (BytesExpected ?? 0) + " read!");
+                 //};
+
+                 //client.OnChunkBlockFound += async (Timestamp, BlockLength) => {
+                 //    DebugX.Log("Chunked encoded block of length " + BlockLength + " bytes found!");
+                 //};
+
+                 var HTTPResponse = await client.Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                LocationsURL.Path,
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
