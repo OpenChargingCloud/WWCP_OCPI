@@ -131,7 +131,7 @@
     <Compile Include="DataTypes\Enums\ConnectionStatus.cs" />
     <Compile Include="DataTypes\Enums\ReservationRestrictionTypes.cs" />
     <Compile Include="DataTypes\Enums\TariffTypes.cs" />
-    <Compile Include="DataTypes\Enums\SignedValueTypes.cs" />
+    <Compile Include="DataTypes\Enums\SignedValueNature.cs" />
     <Compile Include="DataTypes\Enums\ChargingPreferencesResponses.cs" />
     <Compile Include="DataTypes\Enums\ProfileTypes.cs" />
     <Compile Include="DataTypes\Enums\AllowedTypes.cs" />

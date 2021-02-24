@@ -6983,7 +6983,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                    Data                 = new AuthorizationInfo(
                                                                               tokenStatus.Status,
                                                                               tokenStatus.Token,
-                                                                              locationReference,
+                                                                              locationReference ?? new LocationReference(Location_Id.Parse("Fraunhofer-IAO"), new EVSE_UId[] { EVSE_UId.Parse("385") }),
                                                                               AuthorizationReference.Random(), //ToDo: Add AuthorizationReference from delegate response!
                                                                               new DisplayText(
                                                                                   tokenStatus.Token.UILanguage ?? Languages.en,
