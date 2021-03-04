@@ -3348,6 +3348,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> Sessions;
 
 
+        public delegate Task OnSessionCreatedDelegate(Session Session);
+
+        public event OnSessionCreatedDelegate OnSessionCreated;
+
         public delegate Task OnSessionChangedDelegate(Session Session);
 
         public event OnSessionChangedDelegate OnSessionChanged;
@@ -3381,12 +3385,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     sessions.Add(Session.Id, Session);
 
-                    var OnSessionChangedLocal = OnSessionChanged;
-                    if (OnSessionChangedLocal != null)
+                    var OnSessionCreatedLocal = OnSessionCreated;
+                    if (OnSessionCreatedLocal != null)
                     {
                         try
                         {
-                            OnSessionChangedLocal(Session).Wait();
+                            OnSessionCreatedLocal(Session).Wait();
                         }
                         catch (Exception e)
                         {
@@ -3434,12 +3438,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     sessions.Add(Session.Id, Session);
 
-                    var OnSessionChangedLocal = OnSessionChanged;
-                    if (OnSessionChangedLocal != null)
+                    var OnSessionCreatedLocal = OnSessionCreated;
+                    if (OnSessionCreatedLocal != null)
                     {
                         try
                         {
-                            OnSessionChangedLocal(Session).Wait();
+                            OnSessionCreatedLocal(Session).Wait();
                         }
                         catch (Exception e)
                         {
@@ -3493,12 +3497,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     sessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
 
-                    var OnSessionChangedLocal2 = OnSessionChanged;
-                    if (OnSessionChangedLocal2 != null)
+                    var OnSessionChangedLocal = OnSessionChanged;
+                    if (OnSessionChangedLocal != null)
                     {
                         try
                         {
-                            OnSessionChangedLocal2(newOrUpdatedSession).Wait();
+                            OnSessionChangedLocal(newOrUpdatedSession).Wait();
                         }
                         catch (Exception e)
                         {
@@ -3513,12 +3517,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 sessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
 
-                var OnSessionChangedLocal = OnSessionChanged;
-                if (OnSessionChangedLocal != null)
+                var OnSessionCreatedLocal = OnSessionCreated;
+                if (OnSessionCreatedLocal != null)
                 {
                     try
                     {
-                        OnSessionChangedLocal(newOrUpdatedSession).Wait();
+                        OnSessionCreatedLocal(newOrUpdatedSession).Wait();
                     }
                     catch (Exception e)
                     {
