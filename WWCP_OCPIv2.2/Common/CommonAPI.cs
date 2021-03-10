@@ -2044,6 +2044,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> Locations;
 
 
+        public delegate Task OnLocationAddedDelegate(Location Location);
+
+        public event OnLocationAddedDelegate OnLocationAdded;
+
+
         public delegate Task OnLocationChangedDelegate(Location Location);
 
         public event OnLocationChangedDelegate OnLocationChanged;
@@ -2077,12 +2082,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     locations.Add(Location.Id, Location);
 
-                    var OnLocationChangedLocal = OnLocationChanged;
-                    if (OnLocationChangedLocal != null)
+                    var OnLocationAddedLocal = OnLocationAdded;
+                    if (OnLocationAddedLocal != null)
                     {
                         try
                         {
-                            OnLocationChangedLocal(Location).Wait();
+                            OnLocationAddedLocal(Location).Wait();
                         }
                         catch (Exception e)
                         {
@@ -2130,12 +2135,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     locations.Add(Location.Id, Location);
 
-                    var OnLocationChangedLocal = OnLocationChanged;
-                    if (OnLocationChangedLocal != null)
+                    var OnLocationAddedLocal = OnLocationAdded;
+                    if (OnLocationAddedLocal != null)
                     {
                         try
                         {
-                            OnLocationChangedLocal(Location).Wait();
+                            OnLocationAddedLocal(Location).Wait();
                         }
                         catch (Exception e)
                         {
@@ -2188,12 +2193,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
 
-                var OnLocationChangedLocal2 = OnLocationChanged;
-                if (OnLocationChangedLocal2 != null)
+                var OnLocationChangedLocal = OnLocationChanged;
+                if (OnLocationChangedLocal != null)
                 {
                     try
                     {
-                        OnLocationChangedLocal2(newOrUpdatedLocation).Wait();
+                        OnLocationChangedLocal(newOrUpdatedLocation).Wait();
                     }
                     catch (Exception e)
                     {
@@ -2208,12 +2213,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
 
-            var OnLocationChangedLocal = OnLocationChanged;
-            if (OnLocationChangedLocal != null)
+            var OnLocationAddedLocal = OnLocationAdded;
+            if (OnLocationAddedLocal != null)
             {
                 try
                 {
-                    OnLocationChangedLocal(newOrUpdatedLocation).Wait();
+                    OnLocationAddedLocal(newOrUpdatedLocation).Wait();
                 }
                 catch (Exception e)
                 {
@@ -2341,6 +2346,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+
+        public delegate Task OnEVSEAddedDelegate(EVSE EVSE);
+
+        public event OnEVSEAddedDelegate OnEVSEAdded;
+
+
+        public delegate Task OnEVSEChangedDelegate(EVSE EVSE);
+
+        public event OnEVSEChangedDelegate OnEVSEChanged;
+
+
+        public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
+
+        public event OnEVSERemovedDelegate OnEVSERemoved;
+
+
         #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
 
         private AddOrUpdateResult<EVSE> __addOrUpdateEVSE(Location  Location,
@@ -2387,6 +2408,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 catch (Exception e)
                 {
 
+                }
+            }
+
+
+            if (EVSEExistedBefore)
+            {
+                if (newOrUpdatedEVSE.Status != StatusTypes.REMOVED)
+                {
+                    var OnEVSEChangedLocal = OnEVSEChanged;
+                    if (OnEVSEChangedLocal != null)
+                    {
+                        try
+                        {
+                            OnEVSEChangedLocal(newOrUpdatedEVSE).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }
+                else
+                {
+                    var OnEVSERemovedLocal = OnEVSERemoved;
+                    if (OnEVSERemovedLocal != null)
+                    {
+                        try
+                        {
+                            OnEVSERemovedLocal(newOrUpdatedEVSE).Wait();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var OnEVSEAddedLocal = OnEVSEAdded;
+                if (OnEVSEAddedLocal != null)
+                {
+                    try
+                    {
+                        OnEVSEAddedLocal(newOrUpdatedEVSE).Wait();
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
                 }
             }
 
@@ -2456,12 +2527,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (patchResult.IsSuccess)
                 {
 
-                    Location.SetEVSE(patchResult.PatchedData);
+                    if (patchResult.PatchedData.Status != StatusTypes.REMOVED)
+                        Location.SetEVSE   (patchResult.PatchedData);
+                    else
+                        Location.RemoveEVSE(patchResult.PatchedData);
 
                     // Update location timestamp!
                     var builder = Location.ToBuilder();
                     builder.LastUpdated = patchResult.PatchedData.LastUpdated;
                     __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
+
+
+                    if (patchResult.PatchedData.Status != StatusTypes.REMOVED)
+                    {
+
+                        var OnEVSEChangedLocal = OnEVSEChanged;
+                        if (OnEVSEChangedLocal != null)
+                        {
+                            try
+                            {
+                                OnEVSEChangedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+
+                    }
+                    else
+                    {
+
+                        var OnEVSERemovedLocal = OnEVSERemoved;
+                        if (OnEVSERemovedLocal != null)
+                        {
+                            try
+                            {
+                                OnEVSERemovedLocal(patchResult.PatchedData).Wait();
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        }
+
+                    }
 
                 }
 

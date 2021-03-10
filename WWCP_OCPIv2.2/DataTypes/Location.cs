@@ -1259,9 +1259,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             lock (EVSEs)
             {
 
-                EVSEs = EVSEs.
-                            Where(evse => evse.UId != EVSE.UId).
-                            Concat(new EVSE[] { EVSE });
+                EVSEs = EVSEs.Where  (evse => evse.UId != EVSE.UId).
+                              Concat (new EVSE[] { EVSE }).
+                              ToArray();
 
             }
 
@@ -1385,6 +1385,42 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             EVSE = null;
             return false;
 
+        }
+
+        #endregion
+
+
+        #region (internal) RemoveEVSE(EVSE)
+
+        internal void RemoveEVSE(EVSE EVSE)
+        {
+
+            if (EVSE is null)
+                return;
+
+            lock (EVSEs)
+            {
+
+                EVSEs = EVSEs.Where(evse => evse.UId != EVSE.UId).
+                              ToArray();
+
+            }
+
+        }
+
+        #endregion
+
+        #region (internal) RemoveEVSE(EVSEUId)
+
+        internal void RemoveEVSE(EVSE_UId EVSEUId)
+        {
+            lock (EVSEs)
+            {
+
+                EVSEs = EVSEs.Where(evse => evse.UId != EVSEUId).
+                              ToArray();
+
+            }
         }
 
         #endregion

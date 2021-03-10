@@ -3314,6 +3314,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
+
+
+        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         CountryCode,
+                                                                        Party_Id            PartyId,
+                                                                        Token_Id            TokenId,
+                                                                        LocationReference?  LocationReference);
+
+        public event OnRFIDAuthTokenDelegate OnRFIDAuthToken;
+
+
+
         // Command callbacks
 
         #region (protected internal) ReserveNowCallbackRequest        (Request)
@@ -6631,6 +6642,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // A real-time authorization request
             // https://example.com/ocpi/2.2/emsp/tokens/012345678/authorize?type=RFID
+            // curl -X POST http://127.0.0.1:3000/2.2/emsp/tokens/012345678/authorize?type=RFID
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
                                     URLPathPrefix + "tokens/{token_id}/authorize",
@@ -6672,29 +6684,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         var requestedTokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
 
-                                        #region Check existing token
-
-                                        if (!CommonAPI.TryGetToken(Request.ToCountryCode ?? DefaultCountryCode,
-                                                                   Request.ToPartyId     ?? DefaultPartyId,
-                                                                   TokenId.Value,
-                                                                   out TokenStatus tokenStatus) ||
-                                            (tokenStatus.Token.Type != requestedTokenType))
-                                        {
-
-                                            return new OCPIResponse.Builder(Request) {
-                                                       StatusCode           = 2004,
-                                                       StatusMessage        = "Unknown token!",
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, POST",
-                                                           AccessControlAllowHeaders  = "Authorization"
-                                                       }
-                                                   };
-
-                                        }
-
-                                        #endregion
-
                                         #region Parse optional LocationReference JSON
 
                                         LocationReference? locationReference = null;
@@ -6720,10 +6709,80 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                    };
 
                                             }
-                                            else
+
+                                            locationReference = _locationReference;
+
+                                        }
+
+                                        #endregion
+
+
+                                        AuthorizationInfo authorizationInfo = null;
+
+                                        var RFIDAuthTokenLocal = OnRFIDAuthToken;
+                                        if (RFIDAuthTokenLocal != null)
+                                        {
+
+                                            try
                                             {
 
-                                                locationReference = _locationReference;
+                                                var result = RFIDAuthTokenLocal(Request.ToCountryCode ?? DefaultCountryCode,
+                                                                                Request.ToPartyId     ?? DefaultPartyId,
+                                                                                TokenId.Value,
+                                                                                locationReference).Result;
+
+                                                authorizationInfo = result;
+
+                                            }
+                                            catch (Exception e)
+                                            {
+
+                                            }
+
+                                        }
+
+                                        else
+                                        {
+
+                                            #region Check existing token
+
+                                            if (!CommonAPI.TryGetToken(Request.ToCountryCode ?? DefaultCountryCode,
+                                                                       Request.ToPartyId     ?? DefaultPartyId,
+                                                                       TokenId.Value,
+                                                                       out TokenStatus _tokenStatus) ||
+                                                (_tokenStatus.Token.Type != requestedTokenType))
+                                            {
+
+                                                return new OCPIResponse.Builder(Request) {
+                                                           StatusCode           = 2004,
+                                                           StatusMessage        = "Unknown token!",
+                                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                               HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                               AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                               AccessControlAllowHeaders  = "Authorization"
+                                                           }
+                                                       };
+
+                                            }
+
+                                            #endregion
+
+                                            authorizationInfo = new AuthorizationInfo(
+                                                                      _tokenStatus.Status,
+                                                                      _tokenStatus.Token,
+                                                                      _tokenStatus.LocationReference,
+                                                                      AuthorizationReference.Random()
+                                                                      //new DisplayText(
+                                                                      //    _tokenStatus.Token.UILanguage ?? Languages.en,
+                                                                      //    responseText
+                                                                      //)
+                                                                  );
+
+                                            #region Parse optional LocationReference JSON
+
+                                            if (locationReference.HasValue)
+                                            {
+
                                                 Location validLocation = null;
 
                                                 if (Request.FromCountryCode.HasValue && Request.FromPartyId.HasValue)
@@ -6731,7 +6790,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                     if (!CommonAPI.TryGetLocation(Request.FromCountryCode.Value,
                                                                                   Request.FromPartyId.    Value,
-                                                                                  _locationReference.LocationId,
+                                                                                  locationReference.Value.LocationId,
                                                                                   out validLocation))
                                                     {
 
@@ -6740,8 +6799,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusMessage        = "The given location is unknown!",
                                                             Data                 = new AuthorizationInfo(
                                                                                        AllowedTypes.NOT_ALLOWED,
-                                                                                       tokenStatus.Token,
-                                                                                       _locationReference,
+                                                                                       _tokenStatus.Token,
+                                                                                       locationReference.Value,
                                                                                        null,
                                                                                        new DisplayText(Languages.en, "The given location is unknown!")
                                                                                    ).ToJSON(),
@@ -6767,8 +6826,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusMessage        = "Could not determine the country code and party identification of the given location!",
                                                             Data                 = new AuthorizationInfo(
                                                                                        AllowedTypes.NOT_ALLOWED,
-                                                                                       tokenStatus.Token,
-                                                                                       _locationReference
+                                                                                       _tokenStatus.Token,
+                                                                                       locationReference.Value
                                                                                    ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -6783,7 +6842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                     if (!CommonAPI.TryGetLocation(allTheirCPORoles[0].CountryCode,
                                                                                   allTheirCPORoles[0].PartyId,
-                                                                                  _locationReference.LocationId,
+                                                                                  locationReference.Value.LocationId,
                                                                                   out validLocation))
                                                     {
 
@@ -6792,8 +6851,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusMessage        = "The given location is unknown!",
                                                             Data                 = new AuthorizationInfo(
                                                                                        AllowedTypes.NOT_ALLOWED,
-                                                                                       tokenStatus.Token,
-                                                                                       _locationReference,
+                                                                                       _tokenStatus.Token,
+                                                                                       locationReference.Value,
                                                                                        null,
                                                                                        new DisplayText(Languages.en, "The given location is unknown!")
                                                                                    ).ToJSON(),
@@ -6812,29 +6871,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                 //ToDo: Add a event/delegate for addditional location filters!
 
 
-                                                if (_locationReference.EVSEUIds.SafeAny())
+                                                if (locationReference.Value.EVSEUIds.SafeAny())
                                                 {
 
-                                                    locationReference = new LocationReference(_locationReference.LocationId,
-                                                                                              _locationReference.EVSEUIds.
-                                                                                                                 Where(evseuid => validLocation.EVSEExists(evseuid)));
+                                                    locationReference = new LocationReference(locationReference.Value.LocationId,
+                                                                                              locationReference.Value.EVSEUIds.
+                                                                                                                      Where(evseuid => validLocation.EVSEExists(evseuid)));
 
                                                     if (!locationReference.Value.EVSEUIds.SafeAny())
                                                     {
 
                                                         return new OCPIResponse.Builder(Request) {
                                                             StatusCode           = 2001,
-                                                            StatusMessage        = _locationReference.EVSEUIds.Count() == 1
+                                                            StatusMessage        = locationReference.Value.EVSEUIds.Count() == 1
                                                                                        ? "The EVSE at the given location is unknown!"
                                                                                        : "The EVSEs at the given location are unknown!",
                                                             Data                 = new AuthorizationInfo(
                                                                                        AllowedTypes.NOT_ALLOWED,
-                                                                                       tokenStatus.Token,
-                                                                                       _locationReference,
+                                                                                       _tokenStatus.Token,
+                                                                                       locationReference.Value,
                                                                                        null,
                                                                                        new DisplayText(
                                                                                            Languages.en,
-                                                                                           _locationReference.EVSEUIds.Count() == 1
+                                                                                           locationReference.Value.EVSEUIds.Count() == 1
                                                                                                ? "The EVSE at the given location is unknown!"
                                                                                                : "The EVSEs at the given location are unknown!"
                                                                                        )
@@ -6856,9 +6915,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                             }
 
+                                            #endregion
+
                                         }
 
-                                        #endregion
+                                        if (authorizationInfo == null)
+                                            authorizationInfo = new AuthorizationInfo(
+                                                                      AllowedTypes.BLOCKED,
+                                                                      new Token(
+                                                                          CountryCode.Parse("DE"),
+                                                                          Party_Id.Parse("XXX"),
+                                                                          TokenId.Value,
+                                                                          requestedTokenType,
+                                                                          Contract_Id.Parse("DE-XXX-" + TokenId.ToString()),
+                                                                          "Error!",
+                                                                          false,
+                                                                          WhitelistTypes.NEVER
+                                                                      )
+                                                                  );
 
 
                                         // too little information like e.g. no LocationReferences provided:
@@ -6869,108 +6943,121 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         var responseText = "Sorry, charging is not allowed!";
 
-                                        switch (tokenStatus.Status)
+                                        if (!authorizationInfo.Info.HasValue)
                                         {
 
-                                            #region ALLOWED
+                                            switch (authorizationInfo.Allowed)
+                                            {
 
-                                            case AllowedTypes.ALLOWED:
+                                                #region ALLOWED
 
-                                                responseText = "Charging allowed!";
+                                                case AllowedTypes.ALLOWED:
 
-                                                if (tokenStatus.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (tokenStatus.Token.UILanguage.Value)
+                                                    responseText = "Charging allowed!";
+
+                                                    if (authorizationInfo.Token.UILanguage.HasValue)
                                                     {
-                                                        case Languages.de:
-                                                            responseText = "Der Ladevorgang wird gestartet!";
-                                                            break;
+                                                        switch (authorizationInfo.Token.UILanguage.Value)
+                                                        {
+                                                            case Languages.de:
+                                                                responseText = "Der Ladevorgang wird gestartet!";
+                                                                break;
+                                                        }
                                                     }
-                                                }
 
-                                                break;
+                                                    break;
 
-                                            #endregion
+                                                #endregion
 
-                                            #region BLOCKED
+                                                #region BLOCKED
 
-                                            case AllowedTypes.BLOCKED:
+                                                case AllowedTypes.BLOCKED:
 
-                                                responseText = "Sorry, your token is blocked!";
+                                                    responseText = "Sorry, your token is blocked!";
 
-                                                if (tokenStatus.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (tokenStatus.Token.UILanguage.Value)
+                                                    if (authorizationInfo.Token.UILanguage.HasValue)
                                                     {
-                                                        case Languages.de:
-                                                            responseText = "Autorisierung fehlgeschlagen!";
-                                                            break;
+                                                        switch (authorizationInfo.Token.UILanguage.Value)
+                                                        {
+                                                            case Languages.de:
+                                                                responseText = "Autorisierung fehlgeschlagen!";
+                                                                break;
+                                                        }
                                                     }
-                                                }
 
-                                                break;
+                                                    break;
 
-                                            #endregion
+                                                #endregion
 
-                                            #region EXPIRED
+                                                #region EXPIRED
 
-                                            case AllowedTypes.EXPIRED:
+                                                case AllowedTypes.EXPIRED:
 
-                                                responseText = "Sorry, your token has expired!";
+                                                    responseText = "Sorry, your token has expired!";
 
-                                                if (tokenStatus.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (tokenStatus.Token.UILanguage.Value)
+                                                    if (authorizationInfo.Token.UILanguage.HasValue)
                                                     {
-                                                        case Languages.de:
-                                                            responseText = "Autorisierungstoken ungültig!";
-                                                            break;
+                                                        switch (authorizationInfo.Token.UILanguage.Value)
+                                                        {
+                                                            case Languages.de:
+                                                                responseText = "Autorisierungstoken ungültig!";
+                                                                break;
+                                                        }
                                                     }
-                                                }
 
-                                                break;
+                                                    break;
 
-                                            #endregion
+                                                #endregion
 
-                                            #region NO_CREDIT
+                                                #region NO_CREDIT
 
-                                            case AllowedTypes.NO_CREDIT:
+                                                case AllowedTypes.NO_CREDIT:
 
-                                                responseText = "Sorry, your have not enough credits for charging!";
+                                                    responseText = "Sorry, your have not enough credits for charging!";
 
-                                                if (tokenStatus.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (tokenStatus.Token.UILanguage.Value)
+                                                    if (authorizationInfo.Token.UILanguage.HasValue)
                                                     {
-                                                        case Languages.de:
-                                                            responseText = "Nicht genügend Ladeguthaben!";
-                                                            break;
+                                                        switch (authorizationInfo.Token.UILanguage.Value)
+                                                        {
+                                                            case Languages.de:
+                                                                responseText = "Nicht genügend Ladeguthaben!";
+                                                                break;
+                                                        }
                                                     }
-                                                }
 
-                                                break;
+                                                    break;
 
-                                            #endregion
+                                                #endregion
 
-                                            #region NOT_ALLOWED
+                                                #region NOT_ALLOWED
 
-                                            case AllowedTypes.NOT_ALLOWED:
+                                                case AllowedTypes.NOT_ALLOWED:
 
-                                                responseText = "Sorry, charging is not allowed!";
+                                                    responseText = "Sorry, charging is not allowed!";
 
-                                                if (tokenStatus.Token.UILanguage.HasValue)
-                                                {
-                                                    switch (tokenStatus.Token.UILanguage.Value)
+                                                    if (authorizationInfo.Token.UILanguage.HasValue)
                                                     {
-                                                        case Languages.de:
-                                                            responseText = "Autorisierung abgelehnt!";
-                                                            break;
+                                                        switch (authorizationInfo.Token.UILanguage.Value)
+                                                        {
+                                                            case Languages.de:
+                                                                responseText = "Autorisierung abgelehnt!";
+                                                                break;
+                                                        }
                                                     }
-                                                }
 
-                                                break;
+                                                    break;
 
-                                            #endregion
+                                                #endregion
+
+                                                #region default
+
+                                                default:
+                                                    responseText = "An error occured!";
+                                                    break;
+
+                                                    #endregion
+
+                                            }
 
                                         }
 
@@ -6981,14 +7068,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new AuthorizationInfo(
-                                                                              tokenStatus.Status,
-                                                                              tokenStatus.Token,
-                                                                              locationReference ?? new LocationReference(Location_Id.Parse("Fraunhofer-IAO"), new EVSE_UId[] { EVSE_UId.Parse("385") }),
-                                                                              AuthorizationReference.Random(), //ToDo: Add AuthorizationReference from delegate response!
-                                                                              new DisplayText(
-                                                                                  tokenStatus.Token.UILanguage ?? Languages.en,
-                                                                                  responseText
-                                                                              )
+                                                                              authorizationInfo.Allowed,
+                                                                              authorizationInfo.Token,
+                                                                              authorizationInfo.Location,
+                                                                              authorizationInfo.AuthorizationReference ?? AuthorizationReference.Random(),
+                                                                              authorizationInfo.Info                   ?? new DisplayText(
+                                                                                                                              authorizationInfo.Token.UILanguage ?? Languages.en,
+                                                                                                                              responseText
+                                                                                                                          )
                                                                           ).ToJSON(),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,

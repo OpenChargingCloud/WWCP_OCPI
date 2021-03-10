@@ -42,14 +42,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The name of the energy supplier for this token.
         /// </summary>
         [Mandatory]
-        public Token         Token     { get; }
+        public Token               Token                { get; }
 
         /// <summary>
         /// The optional contract identification at the energy supplier, that belongs
         /// to the owner of this token.
         /// </summary>
         [Mandatory]
-        public AllowedTypes  Status    { get; }
+        public AllowedTypes        Status               { get; }
+
+        /// <summary>
+        /// The reference to location details.
+        /// </summary>
+        [Optional]
+        public LocationReference?  LocationReference    { get; }
 
         #endregion
 
@@ -60,15 +66,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Token">The name of the energy supplier for this token.</param>
         /// <param name="Status">The optional contract identification at the energy supplier, that belongs to the owner of this token.</param>
-        public TokenStatus(Token         Token,
-                           AllowedTypes  Status)
+        /// <param name="LocationReference">A reference to location details.</param>
+        public TokenStatus(Token               Token,
+                           AllowedTypes        Status,
+                           LocationReference?  LocationReference   = null)
         {
 
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null or empty!");
 
-            this.Token   = Token;
-            this.Status  = Status;
+            this.Token              = Token;
+            this.Status             = Status;
+            this.LocationReference  = LocationReference;
 
         }
 
@@ -219,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Token     [mandatory]
+                #region Parse Token                     [mandatory]
 
                 if (!JSON.ParseMandatoryJSON2("token",
                                               "token",
@@ -232,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Status    [mandatory]
+                #region Parse Status                    [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("status",
                                              "token status",
@@ -244,9 +253,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse LocationReference         [optional]
+
+                if (JSON.ParseOptionalEnum("locationReference",
+                                           "location reference",
+                                           out LocationReference? LocationReference,
+                                           out ErrorResponse))
+                {
+                    if (ErrorResponse != null)
+                        return false;
+                }
+
+                #endregion
+
 
                 TokenStatus = new TokenStatus(Token,
-                                              Status);
+                                              Status,
+                                              LocationReference);
 
 
                 if (CustomTokenStatusParser != null)
@@ -312,8 +335,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("token",   Token),
-                           new JProperty("status",  Status.ToString())
+
+                           new JProperty("token",                Token),
+                           new JProperty("status",               Status.ToString()),
+
+                           LocationReference.HasValue
+                               ? new JProperty("locationReference",  LocationReference.Value.ToJSON())
+                               : null
+
                        );
 
             return CustomTokenStatusSerializer != null
@@ -445,10 +474,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(TokenStatus TokenStatus)
         {
 
-            var c = Token.CompareTo(TokenStatus.Token);
+            var c = Token.                  CompareTo(TokenStatus.Token);
 
             if (c == 0)
-                c = Status.CompareTo(TokenStatus.Status);
+                c = Status.                 CompareTo(TokenStatus.Status);
+
+            if (c == 0 && LocationReference.HasValue && TokenStatus.LocationReference.HasValue)
+                c = LocationReference.Value.CompareTo(TokenStatus.LocationReference.Value);
 
             return c;
 
@@ -483,8 +515,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(TokenStatus TokenStatus)
 
-            => Token.Equals(TokenStatus.Token) &&
-               Status.  Equals(TokenStatus.Status);
+            => Token.            Equals(TokenStatus.Token)  &&
+               Status.           Equals(TokenStatus.Status) &&
+               LocationReference.Equals(TokenStatus.LocationReference);
 
         #endregion
 
@@ -501,8 +534,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Token.GetHashCode() * 3 ^
-                       Status.  GetHashCode();
+                return Token.              GetHashCode() * 5 ^
+                       Status.             GetHashCode() * 3 ^
+                       (LocationReference?.GetHashCode() ?? 0);
 
             }
         }
@@ -517,7 +551,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(Token,
-                             " (", Status, ")");
+                             " (", Status, ")",
+                             LocationReference.HasValue
+                                 ? " at " +
+                                   LocationReference.Value.LocationId +
+                                  (LocationReference.Value.EVSEUIds.SafeAny()
+                                       ? " (" + LocationReference.Value.EVSEUIds.AggregateWith(", ") + ")"
+                                       : "")
+                                 : "");
 
         #endregion
 
