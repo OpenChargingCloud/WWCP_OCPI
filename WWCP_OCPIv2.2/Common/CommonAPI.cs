@@ -306,6 +306,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    ExternalDNSName,
                    URLPathPrefix  ?? DefaultURLPathPrefix,
                    ServiceName    ?? DefaultHTTPServiceName,
+                   "",
+                   false,
+                   "",
                    DNSClient)
 
         {
