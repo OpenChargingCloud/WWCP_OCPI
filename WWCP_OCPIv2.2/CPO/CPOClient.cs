@@ -22,6 +22,7 @@ using System.Threading;
 using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -626,30 +627,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
-        /// <param name="Description">An optional description of this client.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
+        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="RemoteCertificateValidator">The remote SSL/TLS certificate validator.</param>
+        /// <param name="ClientCert">The SSL/TLS client certificate to use of HTTP authentication.</param>
+        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
-        /// <param name="DNSClient">An optional DNS client to use.</param>
+        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
+        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
+        /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
         public CPOClient(URL                                  RemoteVersionsURL,
                          AccessToken                          AccessToken,
                          CommonAPI                            MyCommonAPI,
-                         String                               Description                  = null,
                          HTTPHostname?                        VirtualHostname              = null,
+                         String                               Description                  = null,
                          RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
+                         X509Certificate                      ClientCert                   = null,
+                         String                               HTTPUserAgent                = null,
                          TimeSpan?                            RequestTimeout               = null,
-                         Byte?                                MaxNumberOfRetries           = null,
+                         TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
+                         UInt16?                              MaxNumberOfRetries           = null,
+                         Boolean                              DisableLogging               = false,
+                         String                               LoggingContext               = null,
+                         LogfileCreatorDelegate               LogfileCreator               = null,
                          DNSClient                            DNSClient                    = null)
 
             : base(RemoteVersionsURL,
                    AccessToken,
                    MyCommonAPI,
-                   Description,
                    VirtualHostname,
+                   Description,
                    RemoteCertificateValidator,
+                   ClientCert,
+                   HTTPUserAgent,
                    RequestTimeout,
+                   TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   DisableLogging,
+                   LoggingContext,
+                   LogfileCreator,
                    DNSClient)
 
         {
@@ -746,16 +765,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -940,16 +962,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + Location.CountryCode.ToString() +
@@ -1137,16 +1162,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -1332,16 +1360,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -1629,16 +1660,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -1828,16 +1862,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -2025,16 +2062,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -2221,16 +2261,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
@@ -2422,16 +2465,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -2619,16 +2665,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -2813,16 +2862,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + Tariff.CountryCode.ToString() +
@@ -3010,16 +3062,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -3203,16 +3258,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.DELETE,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -3396,16 +3454,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -3590,16 +3651,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + Session.CountryCode.ToString() +
@@ -3787,16 +3851,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -3980,16 +4047,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.DELETE,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -4173,16 +4243,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + CountryCode.ToString() +
@@ -4365,16 +4438,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
@@ -4560,16 +4636,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path,
@@ -4752,16 +4831,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + Token.Id.ToString() + "authorize",
@@ -4957,16 +5039,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #region Upstream HTTP request...
 
-                    var HTTPResponse = await (remoteURL.Value.Protocol == HTTPProtocols.http
-
-                                                  ? new HTTPClient (remoteURL.Value.Hostname,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTP,
-                                                                    DNSClient:   DNSClient)
-
-                                                  : new HTTPSClient(remoteURL.Value.Hostname,
-                                                                    RemoteCertificateValidator,
-                                                                    RemotePort:  remoteURL.Value.Port ?? IPPort.HTTPS,
-                                                                    DNSClient:   DNSClient)).
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + SessionId.ToString(),

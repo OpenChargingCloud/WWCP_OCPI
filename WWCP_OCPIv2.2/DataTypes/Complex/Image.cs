@@ -22,6 +22,7 @@ using System;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -210,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("url",
                                          "url",
-                                         OCPIv2_2.URL.TryParse,
+                                         org.GraphDefined.Vanaheimr.Hermod.HTTP.URL.TryParse,
                                          out URL URL,
                                          out ErrorResponse))
                 {

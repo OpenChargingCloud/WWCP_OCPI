@@ -1,6 +1,4 @@
-﻿using org.GraphDefined.Vanaheimr.Aegir;
-using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.WWCP;
+﻿
 /*
  * Copyright (c) 2015-2020 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
@@ -25,6 +23,8 @@ using System.Linq;
 using System.Collections.Generic;
 
 using WWCP = org.GraphDefined.WWCP;
+using org.GraphDefined.Vanaheimr.Illias;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public static IEnumerable<Location> ToOCPI(this IEnumerable<ChargingPool>  ChargingPools)
+        public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools)
 
             => ChargingPools.SafeSelect(pool => {
 
