@@ -32,6 +32,7 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using org.GraphDefined.WWCP;
+using System.Security.Cryptography.X509Certificates;
 
 #endregion
 
@@ -366,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The OCPI common client.
     /// </summary>
-    public partial class CommonClient : IHTTPClient
+    public partial class CommonClient : AHTTPClient
     {
 
         public class CommonCounters
@@ -420,11 +421,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Properties
 
         /// <summary>
-        /// An optional description of this client.
-        /// </summary>
-        public String                               Description                   { get; }
-
-        /// <summary>
         /// The access token.
         /// (Might be updated during the REGISTRATION process!)
         /// </summary>
@@ -446,40 +442,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CommonAPI                            MyCommonAPI                   { get; }
 
         /// <summary>
-        /// The remote hostname.
-        /// </summary>
-        public HTTPHostname                         Hostname                      { get; }
-
-        /// <summary>
-        /// The remote HTTPS port.
-        /// </summary>
-        public IPPort                               RemotePort                    { get; }
-
-        /// <summary>
-        /// The remote virtual hostname.
-        /// </summary>
-        public HTTPHostname?                        VirtualHostname               { get; }
-
-        /// <summary>
-        /// The remote SSL/TLS certificate validator.
-        /// </summary>
-        public RemoteCertificateValidationCallback  RemoteCertificateValidator    { get; }
-
-        /// <summary>
         /// The roaming network identification.
         /// </summary>
         public RoamingNetwork                       RoamingNetwork                { get; }
-
-        /// <summary>
-        /// The request timeout.
-        /// </summary>
-        public TimeSpan?                            RequestTimeout                { get; }
-
-        /// <summary>
-        /// The DNS client to use.
-        /// </summary>
-        public DNSClient                            DNSClient                     { get; }
-
 
         /// <summary>
         /// CPO client event counters.
@@ -487,14 +452,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CommonCounters                       Counters                      { get; }
 
         /// <summary>
-        /// The attached eMIP CPO client (HTTP/SOAP client) logger.
+        /// The attached HTTP client logger.
         /// </summary>
-        public Logger                               HTTPLogger                    { get; protected set; }
-
-        /// <summary>
-        /// The maximum number of transmission retries.
-        /// </summary>
-        public Byte                                 MaxNumberOfRetries            { get; }
+        public new Logger                           HTTPLogger
+            => base.HTTPLogger as Logger;
 
         #endregion
 
@@ -680,38 +641,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RemoteVersionsURL">The remote URL of the VERSIONS endpoint to connect to.</param>
         /// <param name="AccessToken">The access token.</param>
         /// <param name="MyCommonAPI">My Common API.</param>
-        /// <param name="Description">An optional description of this client.</param>
         /// <param name="VirtualHostname">An optional HTTP virtual hostname.</param>
-        /// <param name="RemoteCertificateValidator">An optional remote SSL/TLS certificate validator.</param>
+        /// <param name="Description">An optional description of this CPO client.</param>
+        /// <param name="RemoteCertificateValidator">The remote SSL/TLS certificate validator.</param>
+        /// <param name="ClientCert">The SSL/TLS client certificate to use of HTTP authentication.</param>
+        /// <param name="HTTPUserAgent">The HTTP user agent identification.</param>
         /// <param name="RequestTimeout">An optional request timeout.</param>
-        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries.</param>
-        /// <param name="DNSClient">An optional DNS client to use.</param>
+        /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
+        /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
+        /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingContext">An optional context for logging.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="DNSClient">The DNS client to use.</param>
         public CommonClient(URL                                  RemoteVersionsURL,
                             AccessToken                          AccessToken,
                             CommonAPI                            MyCommonAPI,
-                            String                               Description                  = null,
                             HTTPHostname?                        VirtualHostname              = null,
+                            String                               Description                  = null,
                             RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
+                            X509Certificate                      ClientCert                   = null,
+                            String                               HTTPUserAgent                = null,
                             TimeSpan?                            RequestTimeout               = null,
-                            Byte?                                MaxNumberOfRetries           = null,
+                            TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
+                            UInt16?                              MaxNumberOfRetries           = null,
+                            Boolean                              DisableLogging               = false,
+                            String                               LoggingContext               = null,
+                            LogfileCreatorDelegate               LogfileCreator               = null,
                             DNSClient                            DNSClient                    = null)
+
+            : base(RemoteVersionsURL,
+                   VirtualHostname,
+                   Description,
+                   RemoteCertificateValidator,
+                   null,
+                   ClientCert,
+                   HTTPUserAgent      ?? DefaultHTTPUserAgent,
+                   RequestTimeout,
+                   TransmissionRetryDelay,
+                   MaxNumberOfRetries ?? DefaultMaxNumberOfRetries,
+                   false,
+                   null,
+                   DNSClient)
+
         {
 
-            this.TokenAuth                   = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
-            this.AccessToken                 = AccessToken;
-            this.RemoteVersionsURL           = RemoteVersionsURL;
-            this.Hostname                    = RemoteVersionsURL.Hostname;
-            this.RemotePort                  = RemoteVersionsURL.Port ?? DefaultRemotePort;
-            this.MyCommonAPI                 = MyCommonAPI;
-            this.Description                 = Description            ?? "";
-            this.VirtualHostname             = VirtualHostname;
-            this.RemoteCertificateValidator  = RemoteCertificateValidator;
-            this.RequestTimeout              = RequestTimeout         ?? DefaultRequestTimeout;
-            this.MaxNumberOfRetries          = MaxNumberOfRetries     ?? 3;
-            this.DNSClient                   = DNSClient;
+            this.TokenAuth          = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
+            this.AccessToken        = AccessToken;
+            this.RemoteVersionsURL  = RemoteVersionsURL;
+            this.MyCommonAPI        = MyCommonAPI;
 
-            this.Counters                    = new CommonCounters();
-            this.HTTPLogger                  = new Logger(this);
+            this.Counters           = new CommonCounters();
+
+            base.HTTPLogger         = DisableLogging == false
+                                          ? new Logger(this,
+                                                       LoggingContext,
+                                                       LogfileCreator)
+                                          : null;
 
         }
 

@@ -1,461 +1,461 @@
-﻿/*
- * Copyright (c) 2014-2020 GraphDefined GmbH
- * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+﻿///*
+// * Copyright (c) 2014-2020 GraphDefined GmbH
+// * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
+// *
+// * Licensed under the Apache License, Version 2.0 (the "License");
+// * you may not use this file except in compliance with the License.
+// * You may obtain a copy of the License at
+// *
+// *      *     http://www.apache.org/licenses/LICENSE-2.0
+// *
+// * Unless required by applicable law or agreed to in writing, software
+// * distributed under the License is distributed on an "AS IS" BASIS,
+// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// * See the License for the specific language governing permissions and
+// * limitations under the License.
+// */
 
-#region Usings
+//#region Usings
 
-using System;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Illias;
+//using System;
+//using org.GraphDefined.Vanaheimr.Hermod;
+//using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+//using org.GraphDefined.Vanaheimr.Illias;
 
-#endregion
+//#endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
-{
+//namespace cloud.charging.open.protocols.OCPIv2_2
+//{
 
-    public enum HTTPProtocols
-    {
-        http,
-        https
-    }
+//    public enum HTTPProtocols
+//    {
+//        http,
+//        https
+//    }
 
 
-    /// <summary>
-    /// An uniform resource location (URL).
-    /// </summary>
-    public readonly struct URL : IId<URL>
-    {
+//    /// <summary>
+//    /// An uniform resource location (URL).
+//    /// </summary>
+//    public readonly struct URL : IId<URL>
+//    {
 
-        #region Data
+//        #region Data
 
-        /// <summary>
-        /// The internal identification.
-        /// </summary>
-        private readonly String InternalId;
+//        /// <summary>
+//        /// The internal identification.
+//        /// </summary>
+//        private readonly String InternalId;
 
-        #endregion
+//        #endregion
 
-        #region Properties
+//        #region Properties
 
-        /// <summary>
-        /// Indicates whether this identification is null or empty.
-        /// </summary>
-        public Boolean IsNullOrEmpty
+//        /// <summary>
+//        /// Indicates whether this identification is null or empty.
+//        /// </summary>
+//        public Boolean IsNullOrEmpty
 
-            => InternalId.IsNullOrEmpty();
+//            => InternalId.IsNullOrEmpty();
 
-        /// <summary>
-        /// The length of the uniform resource location.
-        /// </summary>
-        public UInt64 Length
+//        /// <summary>
+//        /// The length of the uniform resource location.
+//        /// </summary>
+//        public UInt64 Length
 
-            => (UInt64) (InternalId?.Length ?? 0);
+//            => (UInt64) (InternalId?.Length ?? 0);
 
-        public HTTPProtocols  Protocol    { get; }
+//        public HTTPProtocols  Protocol    { get; }
 
-        public HTTPHostname   Hostname    { get; }
+//        public HTTPHostname   Hostname    { get; }
 
-        public IPPort?        Port        { get; }
+//        public IPPort?        Port        { get; }
 
-        public HTTPPath       Path        { get; }
+//        public HTTPPath       Path        { get; }
 
-        #endregion
+//        #endregion
 
-        #region Constructor(s)
+//        #region Constructor(s)
 
-        /// <summary>
-        /// Create a new uniform resource location based on the given string.
-        /// </summary>
-        /// <param name="String">The string representation of the uniform resource location.</param>
-        private URL(String         String,
-                    HTTPProtocols  Protocol,
-                    HTTPHostname   Hostname,
-                    IPPort?        Port,
-                    HTTPPath       Path)
-        {
+//        /// <summary>
+//        /// Create a new uniform resource location based on the given string.
+//        /// </summary>
+//        /// <param name="String">The string representation of the uniform resource location.</param>
+//        private URL(String         String,
+//                    HTTPProtocols  Protocol,
+//                    HTTPHostname   Hostname,
+//                    IPPort?        Port,
+//                    HTTPPath       Path)
+//        {
 
-            this.InternalId  = String;
-            this.Protocol    = Protocol;
-            this.Hostname    = Hostname;
-            this.Port        = Port;
-            this.Path        = Path;
+//            this.InternalId  = String;
+//            this.Protocol    = Protocol;
+//            this.Hostname    = Hostname;
+//            this.Port        = Port;
+//            this.Path        = Path;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
 
-        #region (static) Parse   (Text)
+//        #region (static) Parse   (Text)
 
-        /// <summary>
-        /// Parse the given string as an uniform resource location.
-        /// </summary>
-        /// <param name="Text">A text representation of an uniform resource location.</param>
-        public static URL Parse(String Text)
-        {
+//        /// <summary>
+//        /// Parse the given string as an uniform resource location.
+//        /// </summary>
+//        /// <param name="Text">A text representation of an uniform resource location.</param>
+//        public static URL Parse(String Text)
+//        {
 
-            if (TryParse(Text, out URL url))
-                return url;
+//            if (TryParse(Text, out URL url))
+//                return url;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an uniform resource location must not be null or empty!");
+//            if (Text.IsNullOrEmpty())
+//                throw new ArgumentNullException(nameof(Text), "The given text representation of an uniform resource location must not be null or empty!");
 
-            throw new ArgumentException("The given text representation of an uniform resource location is invalid!", nameof(Text));
+//            throw new ArgumentException("The given text representation of an uniform resource location is invalid!", nameof(Text));
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region (static) TryParse(Text)
+//        #region (static) TryParse(Text)
 
-        /// <summary>
-        /// Try to parse the given text as an uniform resource location.
-        /// </summary>
-        /// <param name="Text">A text representation of an uniform resource location.</param>
-        public static URL? TryParse(String Text)
-        {
+//        /// <summary>
+//        /// Try to parse the given text as an uniform resource location.
+//        /// </summary>
+//        /// <param name="Text">A text representation of an uniform resource location.</param>
+//        public static URL? TryParse(String Text)
+//        {
 
-            if (TryParse(Text, out URL url))
-                return url;
+//            if (TryParse(Text, out URL url))
+//                return url;
 
-            return null;
+//            return null;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region (static) TryParse(Text, out URL)
+//        #region (static) TryParse(Text, out URL)
 
-        /// <summary>
-        /// Try to parse the given text as an uniform resource location.
-        /// </summary>
-        /// <param name="Text">A text representation of an uniform resource location.</param>
-        /// <param name="URL">The parsed uniform resource location.</param>
-        public static Boolean TryParse(String Text, out URL URL)
-        {
+//        /// <summary>
+//        /// Try to parse the given text as an uniform resource location.
+//        /// </summary>
+//        /// <param name="Text">A text representation of an uniform resource location.</param>
+//        /// <param name="URL">The parsed uniform resource location.</param>
+//        public static Boolean TryParse(String Text, out URL URL)
+//        {
 
-            Text  = Text?.Trim();
-            URL   = default;
+//            Text  = Text?.Trim();
+//            URL   = default;
 
-            if (Text.IsNotNullOrEmpty())
-            {
-                try
-                {
+//            if (Text.IsNotNullOrEmpty())
+//            {
+//                try
+//                {
 
-                    if (!Text.Contains("://"))
-                        Text = "https://" + Text;
+//                    if (!Text.Contains("://"))
+//                        Text = "https://" + Text;
 
-                    var elements = Text.Split('/');
+//                    var elements = Text.Split('/');
 
-                    HTTPProtocols  protocol  = HTTPProtocols.https;
-                    HTTPHostname   hostname;
-                    IPPort?        port      = default;
-                    HTTPPath?      path      = default;
+//                    HTTPProtocols  protocol  = HTTPProtocols.https;
+//                    HTTPHostname   hostname;
+//                    IPPort?        port      = default;
+//                    HTTPPath?      path      = default;
 
-                    switch (elements[0])
-                    {
+//                    switch (elements[0])
+//                    {
 
-                        case "http:":
-                            protocol = HTTPProtocols.http;
-                            break;
+//                        case "http:":
+//                            protocol = HTTPProtocols.http;
+//                            break;
 
-                        default:
-                            protocol = HTTPProtocols.https;
-                            break;
+//                        default:
+//                            protocol = HTTPProtocols.https;
+//                            break;
 
-                    }
+//                    }
 
-                    // A HTTP(S) port is given...
-                    if (elements[2].Contains(":"))
-                    {
+//                    // A HTTP(S) port is given...
+//                    if (elements[2].Contains(":"))
+//                    {
 
-                        if (!HTTPHostname.TryParse(elements[2].Substring(0, elements[2].IndexOf(":")),  out hostname))
-                            return false;
+//                        if (!HTTPHostname.TryParse(elements[2].Substring(0, elements[2].IndexOf(":")),  out hostname))
+//                            return false;
 
-                        if (IPPort.       TryParse(elements[2].Substring(elements[2].IndexOf(":") + 1), out IPPort _port))
-                            port = _port;
-                        else
-                            return false;
+//                        if (IPPort.       TryParse(elements[2].Substring(elements[2].IndexOf(":") + 1), out IPPort _port))
+//                            port = _port;
+//                        else
+//                            return false;
 
-                    }
+//                    }
 
-                    else if (!HTTPHostname.TryParse(elements[2], out hostname))
-                        return false;
+//                    else if (!HTTPHostname.TryParse(elements[2], out hostname))
+//                        return false;
 
-                    if (elements.Length > 3)
-                        path = HTTPPath.TryParse(elements.Skip(3).AggregateWith("/"));
+//                    if (elements.Length > 3)
+//                        path = HTTPPath.TryParse(elements.Skip(3).AggregateWith("/"));
 
 
-                    URL = new URL(Text,
-                                  protocol,
-                                  hostname,
-                                  port,
-                                  path ?? HTTPPath.Parse("/"));
+//                    URL = new URL(Text,
+//                                  protocol,
+//                                  hostname,
+//                                  port,
+//                                  path ?? HTTPPath.Parse("/"));
 
-                    return true;
+//                    return true;
 
-                }
-                catch (Exception)
-                { }
-            }
+//                }
+//                catch (Exception)
+//                { }
+//            }
 
-            return false;
+//            return false;
 
-        }
+//        }
 
-        #endregion
+//        #endregion
 
-        #region Clone
+//        #region Clone
 
-        /// <summary>
-        /// Clone this uniform resource location.
-        /// </summary>
-        public URL Clone
+//        /// <summary>
+//        /// Clone this uniform resource location.
+//        /// </summary>
+//        public URL Clone
 
-            => new URL(
-                   new String(InternalId?.ToCharArray()),
-                   Protocol,
-                   Hostname,
-                   Port,
-                   Path
-               );
+//            => new URL(
+//                   new String(InternalId?.ToCharArray()),
+//                   Protocol,
+//                   Hostname,
+//                   Port,
+//                   Path
+//               );
 
-        #endregion
+//        #endregion
 
 
-        #region Operator overloading
+//        #region Operator overloading
 
-        #region Operator == (URL1, URL2)
+//        #region Operator == (URL1, URL2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL1">A uniform resource location.</param>
-        /// <param name="URL2">Another uniform resource location.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator == (URL URL1,
-                                           URL URL2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL1">A uniform resource location.</param>
+//        /// <param name="URL2">Another uniform resource location.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator == (URL URL1,
+//                                           URL URL2)
 
-            => URL1.Equals(URL2);
+//            => URL1.Equals(URL2);
 
-        #endregion
+//        #endregion
 
-        #region Operator != (URL1, URL2)
+//        #region Operator != (URL1, URL2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL1">A uniform resource location.</param>
-        /// <param name="URL2">Another uniform resource location.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator != (URL URL1,
-                                           URL URL2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL1">A uniform resource location.</param>
+//        /// <param name="URL2">Another uniform resource location.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator != (URL URL1,
+//                                           URL URL2)
 
-            => !(URL1 == URL2);
+//            => !(URL1 == URL2);
 
-        #endregion
+//        #endregion
 
-        #region Operator <  (URL1, URL2)
+//        #region Operator <  (URL1, URL2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL1">A uniform resource location.</param>
-        /// <param name="URL2">Another uniform resource location.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator < (URL URL1,
-                                          URL URL2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL1">A uniform resource location.</param>
+//        /// <param name="URL2">Another uniform resource location.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator < (URL URL1,
+//                                          URL URL2)
 
-            => URL1.CompareTo(URL2) < 0;
+//            => URL1.CompareTo(URL2) < 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator <= (URL1, URL2)
+//        #region Operator <= (URL1, URL2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL1">A uniform resource location.</param>
-        /// <param name="URL2">Another uniform resource location.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator <= (URL URL1,
-                                           URL URL2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL1">A uniform resource location.</param>
+//        /// <param name="URL2">Another uniform resource location.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator <= (URL URL1,
+//                                           URL URL2)
 
-            => !(URL1 > URL2);
+//            => !(URL1 > URL2);
 
-        #endregion
+//        #endregion
 
-        #region Operator >  (URL1, URL2)
+//        #region Operator >  (URL1, URL2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL1">A uniform resource location.</param>
-        /// <param name="URL2">Another uniform resource location.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator > (URL URL1,
-                                          URL URL2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL1">A uniform resource location.</param>
+//        /// <param name="URL2">Another uniform resource location.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator > (URL URL1,
+//                                          URL URL2)
 
-            => URL1.CompareTo(URL2) > 0;
+//            => URL1.CompareTo(URL2) > 0;
 
-        #endregion
+//        #endregion
 
-        #region Operator >= (URL1, URL2)
+//        #region Operator >= (URL1, URL2)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL1">A uniform resource location.</param>
-        /// <param name="URL2">Another uniform resource location.</param>
-        /// <returns>true|false</returns>
-        public static Boolean operator >= (URL URL1,
-                                           URL URL2)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL1">A uniform resource location.</param>
+//        /// <param name="URL2">Another uniform resource location.</param>
+//        /// <returns>true|false</returns>
+//        public static Boolean operator >= (URL URL1,
+//                                           URL URL2)
 
-            => !(URL1 < URL2);
+//            => !(URL1 < URL2);
 
-        #endregion
+//        #endregion
 
 
-        #region Operator  + (URL, PathSuffix)
+//        #region Operator  + (URL, PathSuffix)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL">A uniform resource location.</param>
-        /// <param name="PathSuffix">A path suffix which will be added to the existing path.</param>
-        /// <returns>true|false</returns>
-        public static URL operator + (URL       URL,
-                                      HTTPPath  PathSuffix)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL">A uniform resource location.</param>
+//        /// <param name="PathSuffix">A path suffix which will be added to the existing path.</param>
+//        /// <returns>true|false</returns>
+//        public static URL operator + (URL       URL,
+//                                      HTTPPath  PathSuffix)
 
-            => new URL(URL.InternalId + "/" + PathSuffix.ToString(),
-                       URL.Protocol,
-                       URL.Hostname,
-                       URL.Port,
-                       URL.Path + PathSuffix);
+//            => new URL(URL.InternalId + "/" + PathSuffix.ToString(),
+//                       URL.Protocol,
+//                       URL.Hostname,
+//                       URL.Port,
+//                       URL.Path + PathSuffix);
 
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL">A uniform resource location.</param>
-        /// <param name="PathSuffix">A path suffix which will be added to the existing path.</param>
-        /// <returns>true|false</returns>
-        public static URL operator + (URL     URL,
-                                      String  PathSuffix)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL">A uniform resource location.</param>
+//        /// <param name="PathSuffix">A path suffix which will be added to the existing path.</param>
+//        /// <returns>true|false</returns>
+//        public static URL operator + (URL     URL,
+//                                      String  PathSuffix)
 
-            => new URL(URL.InternalId + "/" + PathSuffix,
-                       URL.Protocol,
-                       URL.Hostname,
-                       URL.Port,
-                       URL.Path + PathSuffix);
+//            => new URL(URL.InternalId + "/" + PathSuffix,
+//                       URL.Protocol,
+//                       URL.Hostname,
+//                       URL.Port,
+//                       URL.Path + PathSuffix);
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region IComparable<URL> Members
+//        #region IComparable<URL> Members
 
-        #region CompareTo(Object)
+//        #region CompareTo(Object)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="Object">An object to compare with.</param>
+//        public Int32 CompareTo(Object Object)
 
-            => Object is URL url
-                   ? CompareTo(url)
-                   : throw new ArgumentException("The given object is not an uniform resource location!",
-                                                 nameof(Object));
+//            => Object is URL url
+//                   ? CompareTo(url)
+//                   : throw new ArgumentException("The given object is not an uniform resource location!",
+//                                                 nameof(Object));
 
-        #endregion
+//        #endregion
 
-        #region CompareTo(URL)
+//        #region CompareTo(URL)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="URL">An object to compare with.</param>
-        public Int32 CompareTo(URL URL)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="URL">An object to compare with.</param>
+//        public Int32 CompareTo(URL URL)
 
-            => String.Compare(InternalId,
-                              URL.InternalId,
-                              StringComparison.OrdinalIgnoreCase);
+//            => String.Compare(InternalId,
+//                              URL.InternalId,
+//                              StringComparison.OrdinalIgnoreCase);
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region IEquatable<URL> Members
+//        #region IEquatable<URL> Members
 
-        #region Equals(Object)
+//        #region Equals(Object)
 
-        /// <summary>
-        /// Compares two instances of this object.
-        /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+//        /// <summary>
+//        /// Compares two instances of this object.
+//        /// </summary>
+//        /// <param name="Object">An object to compare with.</param>
+//        /// <returns>true|false</returns>
+//        public override Boolean Equals(Object Object)
 
-            => Object is URL url &&
-                   Equals(url);
+//            => Object is URL url &&
+//                   Equals(url);
 
-        #endregion
+//        #endregion
 
-        #region Equals(URL)
+//        #region Equals(URL)
 
-        /// <summary>
-        /// Compares two uniform resource locations for equality.
-        /// </summary>
-        /// <param name="URL">An uniform resource location to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(URL URL)
+//        /// <summary>
+//        /// Compares two uniform resource locations for equality.
+//        /// </summary>
+//        /// <param name="URL">An uniform resource location to compare with.</param>
+//        /// <returns>True if both match; False otherwise.</returns>
+//        public Boolean Equals(URL URL)
 
-            => String.Equals(InternalId,
-                             URL.InternalId,
-                             StringComparison.OrdinalIgnoreCase);
+//            => String.Equals(InternalId,
+//                             URL.InternalId,
+//                             StringComparison.OrdinalIgnoreCase);
 
-        #endregion
+//        #endregion
 
-        #endregion
+//        #endregion
 
-        #region GetHashCode()
+//        #region GetHashCode()
 
-        /// <summary>
-        /// Return the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code of this object.</returns>
-        public override Int32 GetHashCode()
+//        /// <summary>
+//        /// Return the hash code of this object.
+//        /// </summary>
+//        /// <returns>The hash code of this object.</returns>
+//        public override Int32 GetHashCode()
 
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+//            => InternalId?.ToLower().GetHashCode() ?? 0;
 
-        #endregion
+//        #endregion
 
-        #region (override) ToString()
+//        #region (override) ToString()
 
-        /// <summary>
-        /// Return a text representation of this object.
-        /// </summary>
-        public override String ToString()
+//        /// <summary>
+//        /// Return a text representation of this object.
+//        /// </summary>
+//        public override String ToString()
 
-            => InternalId ?? "";
+//            => InternalId ?? "";
 
-        #endregion
+//        #endregion
 
-    }
+//    }
 
-}
+//}
