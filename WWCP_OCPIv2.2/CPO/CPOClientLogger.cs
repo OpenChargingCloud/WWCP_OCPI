@@ -34,7 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     {
 
         /// <summary>
-        /// The OCPI CPO client (HTTP client) logger.
+        /// The OCPI CPO HTTP client logger.
         /// </summary>
         public new class Logger : CommonClient.Logger
         {

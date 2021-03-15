@@ -70,9 +70,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Properties
 
         /// <summary>
-        /// The EMSP client (HTTP client) logger.
+        /// The attached HTTP client logger.
         /// </summary>
-        public new CommonClient.Logger  HTTPLogger    { get; }
+        public new Logger HTTPLogger
+        {
+            get
+            {
+                return base.HTTPLogger as Logger;
+            }
+            set
+            {
+                base.HTTPLogger = value;
+            }
+        }
 
         #endregion
 
@@ -673,8 +683,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.HTTPLogger  = new Logger(this);
-            base.HTTPLogger  = HTTPLogger;
+            base.HTTPLogger = DisableLogging == false
+                                   ? new Logger(this,
+                                                LoggingContext,
+                                                LogfileCreator)
+                                   : null;
 
         }
 
