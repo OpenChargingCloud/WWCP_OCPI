@@ -18,6 +18,7 @@
 #region Usings
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -28,22 +29,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Text;
-using System.IO;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
-
-    /// <summary>
-    /// Extention methods for the Common API.
-    /// </summary>
-    public static class CommonAPIExtentions
-    {
-
-    }
-
 
     /// <summary>
     /// The Common API.
@@ -609,8 +599,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                            StatusCode           = 1000,
                                            StatusMessage        = "Hello world!",
                                            Data                 = new JArray(
-                                                                      new Version[] {
-                                                                          new Version(
+                                                                      new VersionInformation[] {
+                                                                          new VersionInformation(
                                                                               Version_Id.Parse("2.2"),
                                                                               URL.Parse((VersionsURLusesHTTPS ? "https://" : "http://") +
                                                                                         (Request.Host + URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2").Replace("//", "/"))
@@ -2094,7 +2084,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -2147,7 +2139,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -2205,7 +2199,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                     catch (Exception e)
                     {
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationChanged), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
+                    }
+                }
 
+                var OnEVSEChangedLocal = OnEVSEChanged;
+                if (OnEVSEChangedLocal != null)
+                {
+                    try
+                    {
+                        foreach (var evse in newOrUpdatedLocation.EVSEs)
+                            OnEVSEChangedLocal(evse).Wait();
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
 
@@ -2225,7 +2237,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
                 catch (Exception e)
                 {
-
+                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateLocation), " ", nameof(OnLocationAdded), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace);
                 }
             }
 
@@ -2247,10 +2261,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             lock (Locations)
             {
-
                 return __addOrUpdateLocation(newOrUpdatedLocation,
                                              AllowDowngrades);
-
             }
 
         }
@@ -2272,8 +2284,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
                     locations.ContainsKey(Location.Id))
                 {
+
                     locations[Location.Id] = Location;
+
+                    var OnEVSEChangedLocal = OnEVSEChanged;
+                    if (OnEVSEChangedLocal != null)
+                    {
+                        try
+                        {
+                            foreach (var evse in Location.EVSEs)
+                                OnEVSEChangedLocal(evse).Wait();
+                        }
+                        catch (Exception e)
+                        {
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateLocation), " ", nameof(OnEVSEChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
+                        }
+                    }
+
                     return Location;
+
                 }
 
                 return null;
@@ -2328,7 +2359,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             }
                             catch (Exception e)
                             {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchLocation), " ", nameof(OnLocationChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
+                        }
 
+                        //ToDo: MayBe nothing changed here... perhaps test for changes before sending events!
+                        var OnEVSEChangedLocal = OnEVSEChanged;
+                        if (OnEVSEChangedLocal != null)
+                        {
+                            try
+                            {
+                                foreach (var evse in patchResult.PatchedData.EVSEs)
+                                    OnEVSEChangedLocal(evse).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchLocation), " ", nameof(OnEVSEChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                             }
                         }
 
@@ -2410,7 +2460,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
                 catch (Exception e)
                 {
-
+                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnLocationChanged), ": ",
+                                Environment.NewLine, e.Message,
+                                Environment.NewLine, e.StackTrace);
                 }
             }
 
@@ -2428,7 +2480,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
                 }
@@ -2443,7 +2497,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
                 }
@@ -2459,7 +2515,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                     catch (Exception e)
                     {
-
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateEVSE), " ", nameof(OnEVSEAdded), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
             }
@@ -2487,11 +2545,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             lock (Locations)
             {
-
                 return __addOrUpdateEVSE(Location,
                                          newOrUpdatedEVSE,
                                          (AllowDowngrades ?? this.AllowDowngrades) == false);
-
             }
 
         }
@@ -2553,7 +2609,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             }
                             catch (Exception e)
                             {
-
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                             }
                         }
 
@@ -2570,7 +2628,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             }
                             catch (Exception e)
                             {
-
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSERemoved), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                             }
                         }
 
@@ -2642,7 +2702,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                     catch (Exception e)
                     {
-
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateConnector), " ", nameof(OnLocationChanged), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
 
@@ -2938,6 +3000,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> Tariffs;
 
 
+        public delegate Task OnTariffAddedDelegate(Tariff Tariff);
+
+        public event OnTariffAddedDelegate OnTariffAdded;
+
+
         public delegate Task OnTariffChangedDelegate(Tariff Tariff);
 
         public event OnTariffChangedDelegate OnTariffChanged;
@@ -2971,16 +3038,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     tariffs.Add(Tariff.Id, Tariff);
 
-                    var OnTariffChangedLocal = OnTariffChanged;
-                    if (OnTariffChangedLocal != null)
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal != null)
                     {
                         try
                         {
-                            OnTariffChangedLocal(Tariff).Wait();
+                            OnTariffAddedLocal(Tariff).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariff), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3024,16 +3093,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     tariffs.Add(Tariff.Id, Tariff);
 
-                    var OnTariffChangedLocal = OnTariffChanged;
-                    if (OnTariffChangedLocal != null)
+                    var OnTariffAddedLocal = OnTariffAdded;
+                    if (OnTariffAddedLocal != null)
                     {
                         try
                         {
-                            OnTariffChangedLocal(Tariff).Wait();
+                            OnTariffAddedLocal(Tariff).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTariffIfNotExists), " ", nameof(OnTariffAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3083,16 +3154,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
 
-                    var OnTariffChangedLocal2 = OnTariffChanged;
-                    if (OnTariffChangedLocal2 != null)
+                    var OnTariffChangedLocal = OnTariffChanged;
+                    if (OnTariffChangedLocal != null)
                     {
                         try
                         {
-                            OnTariffChangedLocal2(newOrUpdatedTariff).Wait();
+                            OnTariffChangedLocal(newOrUpdatedTariff).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3103,16 +3176,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
 
-                var OnTariffChangedLocal = OnTariffChanged;
-                if (OnTariffChangedLocal != null)
+                var OnTariffAddedLocal = OnTariffAdded;
+                if (OnTariffAddedLocal != null)
                 {
                     try
                     {
-                        OnTariffChangedLocal(newOrUpdatedTariff).Wait();
+                        OnTariffAddedLocal(newOrUpdatedTariff).Wait();
                     }
                     catch (Exception e)
                     {
-
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateTariff), " ", nameof(OnTariffAdded), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
 
@@ -3152,7 +3227,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateTariff), " ", nameof(OnTariffChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3212,7 +3289,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             }
                             catch (Exception e)
                             {
-
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchTariff), " ", nameof(OnTariffChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                             }
                         }
 
@@ -3507,7 +3586,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSession), " ", nameof(OnSessionCreated), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3560,7 +3641,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddSessionIfNotExists), " ", nameof(OnSessionCreated), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3619,7 +3702,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateSession), " ", nameof(OnSessionChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3639,7 +3724,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                     catch (Exception e)
                     {
-
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateSession), " ", nameof(OnSessionCreated), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
 
@@ -3679,7 +3766,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateSession), " ", nameof(OnSessionChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -3739,7 +3828,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             }
                             catch (Exception e)
                             {
-
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchSession), " ", nameof(OnSessionChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                             }
                         }
 
@@ -3987,6 +4078,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> Tokens;
 
 
+        public delegate Task OnTokenAddedDelegate(Token Token);
+
+        public event OnTokenAddedDelegate OnTokenAdded;
+
+
         public delegate Task OnTokenChangedDelegate(Token Token);
 
         public event OnTokenChangedDelegate OnTokenChanged;
@@ -4028,16 +4124,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     tokens.Add(Token.Id, new TokenStatus(Token, Status));
 
-                    var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal != null)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal != null)
                     {
                         try
                         {
-                            OnTokenChangedLocal(Token).Wait();
+                            OnTokenAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddToken), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -4082,16 +4180,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     tokens.Add(Token.Id, new TokenStatus(Token, Status));
 
-                    var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal != null)
+                    var OnTokenAddedLocal = OnTokenAdded;
+                    if (OnTokenAddedLocal != null)
                     {
                         try
                         {
-                            OnTokenChangedLocal(Token).Wait();
+                            OnTokenAddedLocal(Token).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddTokenIfNotExists), " ", nameof(OnTokenAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -4143,16 +4243,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     _tokenStatus[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
                                                                          Status);
 
-                    var OnTokenChangedLocal2 = OnTokenChanged;
-                    if (OnTokenChangedLocal2 != null)
+                    var OnTokenChangedLocal = OnTokenChanged;
+                    if (OnTokenChangedLocal != null)
                     {
                         try
                         {
-                            OnTokenChangedLocal2(newOrUpdatedToken).Wait();
+                            OnTokenChangedLocal(newOrUpdatedToken).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateToken), " ", nameof(OnTokenChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -4164,16 +4266,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 _tokenStatus.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
                                                                        Status));
 
-                var OnTokenChangedLocal = OnTokenChanged;
-                if (OnTokenChangedLocal != null)
+                var OnTokenAddedLocal = OnTokenAdded;
+                if (OnTokenAddedLocal != null)
                 {
                     try
                     {
-                        OnTokenChangedLocal(newOrUpdatedToken).Wait();
+                        OnTokenAddedLocal(newOrUpdatedToken).Wait();
                     }
                     catch (Exception e)
                     {
-
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateToken), " ", nameof(OnTokenAdded), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
 
@@ -4231,7 +4335,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             }
                             catch (Exception e)
                             {
-
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchToken), " ", nameof(OnTokenChanged), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
                             }
                         }
 
@@ -4539,6 +4645,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords;
 
 
+        public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
+
+        public event OnChargeDetailRecordAddedDelegate OnChargeDetailRecordAdded;
+
+
         public delegate Task OnChargeDetailRecordChangedDelegate(CDR CDR);
 
         public event OnChargeDetailRecordChangedDelegate OnChargeDetailRecordChanged;
@@ -4572,16 +4683,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     partyCDRs.Add(CDR.Id, CDR);
 
-                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal != null)
+                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                    if (OnChargeDetailRecordAddedLocal != null)
                     {
                         try
                         {
-                            OnChargeDetailRecordChangedLocal(CDR).Wait();
+                            OnChargeDetailRecordAddedLocal(CDR).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -4625,16 +4738,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     partyCDRs.Add(CDR.Id, CDR);
 
-                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal != null)
+                    var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                    if (OnChargeDetailRecordAddedLocal != null)
                     {
                         try
                         {
-                            OnChargeDetailRecordChangedLocal(CDR).Wait();
+                            OnChargeDetailRecordAddedLocal(CDR).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddCDRIfNotExists), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -4684,16 +4799,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     CDRs[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
 
-                    var OnChargeDetailRecordChangedLocal2 = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal2 != null)
+                    var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
+                    if (OnChargeDetailRecordChangedLocal != null)
                     {
                         try
                         {
-                            OnChargeDetailRecordChangedLocal2(newOrUpdatedCDR).Wait();
+                            OnChargeDetailRecordChangedLocal(newOrUpdatedCDR).Wait();
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 
@@ -4704,16 +4821,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 CDRs.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
 
-                var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                if (OnChargeDetailRecordChangedLocal != null)
+                var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
+                if (OnChargeDetailRecordAddedLocal != null)
                 {
                     try
                     {
-                        OnChargeDetailRecordChangedLocal(newOrUpdatedCDR).Wait();
+                        OnChargeDetailRecordAddedLocal(newOrUpdatedCDR).Wait();
                     }
                     catch (Exception e)
                     {
-
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddOrUpdateCDR), " ", nameof(OnChargeDetailRecordAdded), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
                     }
                 }
 
@@ -4753,7 +4872,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         }
                         catch (Exception e)
                         {
-
+                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(UpdateCDR), " ", nameof(OnChargeDetailRecordChanged), ": ",
+                                        Environment.NewLine, e.Message,
+                                        Environment.NewLine, e.StackTrace);
                         }
                     }
 

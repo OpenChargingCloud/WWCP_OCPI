@@ -108,7 +108,7 @@
     <Compile Include="DataTypes\Complex\AccessInfo.cs" />
     <Compile Include="DataTypes\Complex\VersionEndpoint.cs" />
     <Compile Include="DataTypes\Complex\VersionDetail.cs" />
-    <Compile Include="DataTypes\Complex\Version.cs" />
+    <Compile Include="DataTypes\Complex\VersionInformation.cs" />
     <Compile Include="DataTypes\Complex\DisplayText.cs" />
     <Compile Include="DataTypes\Complex\CDRToken.cs" />
     <Compile Include="DataTypes\Complex\AuthorizationInfo.cs" />
@@ -203,6 +203,7 @@
     <Compile Include="Common\CommonAPI.cs" />
     <Compile Include="EMSP\EMSPClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\BouncyCastle\crypto\crypto.csproj">

@@ -768,7 +768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<IEnumerable<Version>>>
+        public async Task<OCPIResponse<IEnumerable<VersionInformation>>>
 
             GetVersions(Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
@@ -781,7 +781,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             Byte                               TransmissionRetry = 0;
-            OCPIResponse<IEnumerable<Version>> response;
+            OCPIResponse<IEnumerable<VersionInformation>> response;
 
             #region Send OnGetVersionsRequest event
 
@@ -885,10 +885,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Version>.ParseJArray(HTTPResponse,
+                    response = OCPIResponse<VersionInformation>.ParseJArray(HTTPResponse,
                                                                  requestId,
                                                                  correlationId,
-                                                                 json => Version.Parse(json));
+                                                                 json => VersionInformation.Parse(json));
 
                     switch (response.StatusCode)
                     {
@@ -910,7 +910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 catch (Exception e)
                 {
 
-                    response = new OCPIResponse<IEnumerable<Version>>(default,
+                    response = new OCPIResponse<IEnumerable<VersionInformation>>(default,
                                                                       -1,
                                                                       e.Message,
                                                                       e.StackTrace);
