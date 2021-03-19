@@ -175,8 +175,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse VersionId     [mandatory]
 
-                if (!JSON.ParseMandatory("version information",
-                                         "version information identification",
+                if (!JSON.ParseMandatory("version",
+                                         "version identification",
                                          Version_Id.TryParse,
                                          out Version_Id Id,
                                          out ErrorResponse))
@@ -189,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #region Parse URL           [mandatory]
 
                 if (!JSON.ParseMandatory("url",
-                                         "version information URL",
+                                         "version URL",
                                          org.GraphDefined.Vanaheimr.Hermod.HTTP.URL.TryParse,
                                          out URL URL,
                                          out ErrorResponse))
