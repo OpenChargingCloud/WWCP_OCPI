@@ -2,50 +2,66 @@
 
 function StartVersionDetails(versionId: string) {
 
-    const versionDetailInfosDiv  = document.getElementById("versionDetailInfos")             as HTMLDivElement;
-    const versionDetailsDiv      = versionDetailInfosDiv.querySelector("#versionDetails")    as HTMLDivElement;
-    const versionIdDiv           = versionDetailsDiv.    querySelector("#versionId")         as HTMLDivElement;
-    const endpointsDiv           = versionDetailsDiv.    querySelector("#endpoints")         as HTMLDivElement;
+    const versionDetailInfosDiv  = document.getElementById("versionDetailInfos")              as HTMLDivElement;
 
-    HTTPGet("/versions/2.2",
+    const accessTokenInput       = versionDetailInfosDiv.querySelector("#accessToken")        as HTMLInputElement;
+    const accessTokenButton      = versionDetailInfosDiv.querySelector("#accessTokenButton")  as HTMLButtonElement;
 
-        (status, response) => {
+    const versionDetailsDiv      = versionDetailInfosDiv.querySelector("#versionDetails")     as HTMLDivElement;
+    const versionIdDiv           = versionDetailsDiv.    querySelector("#versionId")          as HTMLDivElement;
+    const endpointsDiv           = versionDetailsDiv.    querySelector("#endpoints")          as HTMLDivElement;
 
-            try
-            {
+    accessTokenButton.onclick = () => {
 
-                const OCPIResponse = ParseJSON_LD<IOCPIResponse>(response);
+        var newAccessToken = accessTokenInput.value;
 
-                if (OCPIResponse?.data != undefined &&
-                    OCPIResponse?.data != null)
+        if (newAccessToken !== "")
+            localStorage.setItem("OCPIAccessToken", newAccessToken);
+
+        else
+            localStorage.removeItem("OCPIAccessToken");
+
+        location.reload();
+
+    };
+
+    OCPIGet(window.location.href, // == "/versions/2.2"
+
+            (status, response) => {
+
+                try
                 {
 
-                    const versionDetails = OCPIResponse.data as IVersionDetails;
+                    const OCPIResponse = ParseJSON_LD<IOCPIResponse>(response);
 
-                    versionIdDiv.innerHTML = "Version " + versionDetails.version;
+                    if (OCPIResponse?.data != undefined &&
+                        OCPIResponse?.data != null)
+                    {
 
-                    for (const endpoint of versionDetails.endpoints) {
+                        const versionDetails = OCPIResponse.data as IVersionDetails;
 
-                        const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
-                        endpointDiv.className  = "endpoint";
-                        endpointDiv.href       = endpoint.url;
-                        endpointDiv.innerHTML  = endpoint.identifier + "/" + endpoint.role + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+                        versionIdDiv.innerHTML = "Version " + versionDetails.version;
+
+                        for (const endpoint of versionDetails.endpoints) {
+
+                            const endpointDiv      = endpointsDiv.appendChild(document.createElement('a')) as HTMLAnchorElement;
+                            endpointDiv.className  = "endpoint";
+                            endpointDiv.href       = endpoint.url;
+                            endpointDiv.innerHTML  = endpoint.identifier + "/" + endpoint.role + "<br /><span class=\"url\">" + endpoint.url + "</span>";
+
+                        }
 
                     }
 
                 }
+                catch (exception) {
+                }
 
+            },
+
+            (status, statusText, response) => {
             }
-            catch (exception) {
-            }
-
-        },
-
-        (status, statusText, response) => {
-        }
 
     );
-
-    //var refresh = setTimeout(StartDashboard, 30000);
 
 }

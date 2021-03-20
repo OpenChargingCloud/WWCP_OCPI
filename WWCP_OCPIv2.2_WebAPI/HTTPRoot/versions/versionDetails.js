@@ -1,10 +1,21 @@
 ///<reference path="../../../../UsersAPI/UsersAPI/HTTPRoot/libs/date.format.ts" />
 function StartVersionDetails(versionId) {
     const versionDetailInfosDiv = document.getElementById("versionDetailInfos");
+    const accessTokenInput = versionDetailInfosDiv.querySelector("#accessToken");
+    const accessTokenButton = versionDetailInfosDiv.querySelector("#accessTokenButton");
     const versionDetailsDiv = versionDetailInfosDiv.querySelector("#versionDetails");
     const versionIdDiv = versionDetailsDiv.querySelector("#versionId");
     const endpointsDiv = versionDetailsDiv.querySelector("#endpoints");
-    HTTPGet("/versions/2.2", (status, response) => {
+    accessTokenButton.onclick = () => {
+        var newAccessToken = accessTokenInput.value;
+        if (newAccessToken !== "")
+            localStorage.setItem("OCPIAccessToken", newAccessToken);
+        else
+            localStorage.removeItem("OCPIAccessToken");
+        location.reload();
+    };
+    OCPIGet(window.location.href, // == "/versions/2.2"
+    (status, response) => {
         try {
             const OCPIResponse = ParseJSON_LD(response);
             if ((OCPIResponse === null || OCPIResponse === void 0 ? void 0 : OCPIResponse.data) != undefined &&
@@ -23,6 +34,5 @@ function StartVersionDetails(versionId) {
         }
     }, (status, statusText, response) => {
     });
-    //var refresh = setTimeout(StartDashboard, 30000);
 }
 //# sourceMappingURL=versionDetails.js.map

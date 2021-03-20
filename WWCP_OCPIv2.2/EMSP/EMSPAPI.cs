@@ -3601,12 +3601,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        HTTPHostname?  HTTPHostname      = null,
                        String         ExternalDNSName   = null,
                        HTTPPath?      URLPathPrefix     = null,
+                       HTTPPath?      BasePath          = null,
                        String         ServiceName       = DefaultHTTPServerName)
 
             : base(CommonAPI?.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
                    URLPathPrefix ?? DefaultURLPathPrefix,
+                   BasePath,
                    ServiceName)
 
         {

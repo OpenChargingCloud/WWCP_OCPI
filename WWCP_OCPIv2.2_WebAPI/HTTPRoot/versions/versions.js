@@ -2,7 +2,8 @@
 function StartVersions() {
     const versionInfosDiv = document.getElementById("versionInfos");
     const versionsDiv = versionInfosDiv.querySelector("#versions");
-    HTTPGet("/versions", (status, response) => {
+    OCPIGet(window.location.href, // == "/versions"
+    (status, response) => {
         try {
             const OCPIResponse = ParseJSON_LD(response);
             if ((OCPIResponse === null || OCPIResponse === void 0 ? void 0 : OCPIResponse.data) != undefined &&

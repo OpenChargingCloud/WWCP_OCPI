@@ -449,6 +449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         public OCPIWebAPI(HTTPServer                                 HTTPServer,
                           HTTPPath?                                  URLPathPrefix1   = null,
                           HTTPPath?                                  URLPathPrefix    = null,
+                          HTTPPath?                                  BasePath         = null,
                           String                                     HTTPRealm        = DefaultHTTPRealm,
                           IEnumerable<KeyValuePair<String, String>>  HTTPLogins       = null,
                           String                                     HTMLTemplate     = null)
@@ -456,7 +457,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             : base(HTTPServer,
                    null,
                    "",
-                   URLPathPrefix ?? DefaultURLPathPrefix)
+                   URLPathPrefix ?? DefaultURLPathPrefix,
+                   BasePath)
 
         {
 

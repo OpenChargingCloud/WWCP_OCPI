@@ -6,6 +6,11 @@
 
 <div id="versionDetailInfos" class="entity">
 
+    <div id="accessTokenDiv">
+        <input id="accessToken" name="accessToken">
+        <button id="accessTokenButton">Set OCPI Access Token</button>
+    </div>
+
     <div id="versionDetails">
 
         <div id="versionId">
