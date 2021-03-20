@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Text;
 
 #endregion
 
@@ -1422,7 +1423,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1466,7 +1469,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1516,7 +1521,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1554,7 +1561,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1611,7 +1620,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1655,7 +1666,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1705,7 +1718,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                File.AppendAllText(LogfileName, new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                File.AppendAllText(LogfileName,
+                                   new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                   Encoding.UTF8);
 
                 return true;
 
@@ -1834,7 +1849,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 foreach (var remoteParty in remoteParties)
                 {
                     _RemoteParties.Remove(remoteParty.Id);
-                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                    File.AppendAllText(LogfileName,
+                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                       Encoding.UTF8);
                 }
 
                 return true;
@@ -1856,7 +1873,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 foreach (var remoteParty in remoteParties)
                 {
                     _RemoteParties.Remove(remoteParty.Id);
-                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                    File.AppendAllText(LogfileName,
+                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                       Encoding.UTF8);
                 }
 
                 return true;
@@ -1880,7 +1899,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 foreach (var remoteParty in remoteParties)
                 {
                     _RemoteParties.Remove(remoteParty.Id);
-                    File.AppendAllText(LogfileName, new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                    File.AppendAllText(LogfileName,
+                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                       Encoding.UTF8);
                 }
 
                 return true;
@@ -1909,7 +1930,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (remoteParty.AccessInfo.Count() <= 1)
                     {
                         _RemoteParties.Remove(remoteParty.Id);
-                        File.AppendAllText(LogfileName, new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                        File.AppendAllText(LogfileName,
+                                           new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                           Encoding.UTF8);
                     }
 
                     else
@@ -1929,7 +1952,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
-                        File.AppendAllText(LogfileName, new JObject(new JProperty("updateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None));
+                        File.AppendAllText(LogfileName,
+                                           new JObject(new JProperty("updateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
+                                           Encoding.UTF8);
 
                     }
 
