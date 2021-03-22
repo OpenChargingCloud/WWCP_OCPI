@@ -727,20 +727,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.Write(String.Concat(" from ", Request.HTTPRequest.HTTPSource != null ? Request.HTTPRequest.HTTPSource.ToString() : "<local>", " => "));
 
-                if (Response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.OK ||
-                    Response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.Created)
+                if (Response?.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.OK ||
+                    Response?.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.Created)
                     Console.ForegroundColor = ConsoleColor.Green;
 
-                else if (Response.HTTPResponse.HTTPStatusCode == HTTPStatusCode.NoContent)
+                else if (Response?.HTTPResponse?.HTTPStatusCode == HTTPStatusCode.NoContent)
                     Console.ForegroundColor = ConsoleColor.Yellow;
 
                 else
                     Console.ForegroundColor = ConsoleColor.Red;
 
-                Console.Write(Response.HTTPResponse.HTTPStatusCode);
+                Console.Write((Response?.HTTPResponse?.HTTPStatusCode?.ToString()) ?? "Exception: OCPI Response is null!");
 
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(String.Concat(" in ", Math.Round((Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds), "ms"));
+
+                if (Response != null)
+                    Console.WriteLine(String.Concat(" in ", Math.Round((Response.Timestamp - Request.HTTPRequest.Timestamp).TotalMilliseconds), "ms"));
 
                 Console.ForegroundColor = PreviousColor;
 

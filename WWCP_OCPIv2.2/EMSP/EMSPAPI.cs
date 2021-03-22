@@ -3673,7 +3673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{country_code}/{party_id}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -3694,7 +3694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{country_code}/{party_id}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -3776,7 +3776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteLocationsRequest,
                                     OCPIResponseLogger:  DeleteLocationsResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -3840,7 +3840,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -3871,7 +3871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -3935,7 +3935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutLocationRequest,
                                     OCPIResponseLogger:  PutLocationResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4003,7 +4003,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation,
                                                                                                     AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
-
+                                        //throw new Exception("lala!");
                                         if (addOrUpdateResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
@@ -4043,7 +4043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchLocationRequest,
                                     OCPIResponseLogger:  PatchLocationResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4131,7 +4131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteLocationRequest,
                                     OCPIResponseLogger:  DeleteLocationResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4198,7 +4198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -4229,7 +4229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -4294,7 +4294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutEVSERequest,
                                     OCPIResponseLogger:  PutEVSEResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4403,7 +4403,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchEVSERequest,
                                     OCPIResponseLogger:  PatchEVSEResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4491,7 +4491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteEVSERequest,
                                     OCPIResponseLogger:  DeleteEVSEResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4559,7 +4559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -4592,7 +4592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -4659,7 +4659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutConnectorRequest,
                                     OCPIResponseLogger:  PutConnectorResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4771,7 +4771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchConnectorRequest,
                                     OCPIResponseLogger:  PatchConnectorResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4862,7 +4862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteConnectorRequest,
                                     OCPIResponseLogger:  DeleteConnectorResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -4933,7 +4933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -4963,7 +4963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutEVSERequest,
                                     OCPIResponseLogger:  PutEVSEResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5056,7 +5056,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "tariffs/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -5077,7 +5077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tariffs/{country_code}/{party_id}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -5159,7 +5159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteTariffsRequest,
                                     OCPIResponseLogger:  DeleteTariffsResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5222,7 +5222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -5252,7 +5252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -5315,7 +5315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutTariffRequest,
                                     OCPIResponseLogger:  PutTariffResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5423,7 +5423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchTariffRequest,
                                     OCPIResponseLogger:  PatchTariffResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5520,7 +5520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteTariffRequest,
                                     OCPIResponseLogger:  DeleteTariffResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5590,7 +5590,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -5611,7 +5611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "sessions/{country_code}/{party_id}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -5693,7 +5693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteSessionsRequest,
                                     OCPIResponseLogger:  DeleteSessionsResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5756,7 +5756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -5787,7 +5787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -5851,7 +5851,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutSessionRequest,
                                     OCPIResponseLogger:  PutSessionResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -5959,7 +5959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchSessionRequest,
                                     OCPIResponseLogger:  PatchSessionResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -6044,7 +6044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteSessionRequest,
                                     OCPIResponseLogger:  DeleteSessionResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -6114,7 +6114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -6135,7 +6135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -6221,7 +6221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PostCDRRequest,
                                     OCPIResponseLogger:  PostCDRResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -6321,7 +6321,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRsRequest,
                                     OCPIResponseLogger:  DeleteCDRsResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -6384,7 +6384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -6413,7 +6413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -6477,7 +6477,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRRequest,
                                     OCPIResponseLogger:  DeleteCDRResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -6548,7 +6548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tokens",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -6578,7 +6578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "tokens",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         #region Check access token
 
@@ -6651,7 +6651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PostTokenRequest,
                                     OCPIResponseLogger:  PostTokenResponse,
-                                    OCPIRequest:   async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -7104,7 +7104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -7127,7 +7127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestLogger:  ReserveNowCallbackRequest,
                                      OCPIResponseLogger: ReserveNowCallbackResponse,
-                                     OCPIRequest:  async Request => {
+                                     OCPIRequestHandler:  async Request => {
 
                                          #region Check command identification
 
@@ -7191,7 +7191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -7214,7 +7214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestLogger:  CancelReservationCallbackRequest,
                                      OCPIResponseLogger: CancelReservationCallbackResponse,
-                                     OCPIRequest:  async Request => {
+                                     OCPIRequestHandler:  async Request => {
 
                                          #region Check command identification
 
@@ -7278,7 +7278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequest: Request => {
+                                    OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
@@ -7301,7 +7301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:  StartSessionCallbackRequest,
                                     OCPIResponseLogger: StartSessionCallbackResponse,
-                                    OCPIRequest:  async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check command identification
 
@@ -7365,7 +7365,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/STOP_SESSION/{commandId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -7388,7 +7388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestLogger:  StopSessionCallbackRequest,
                                      OCPIResponseLogger: StopSessionCallbackResponse,
-                                     OCPIRequest:  async Request => {
+                                     OCPIRequestHandler:  async Request => {
 
                                          #region Check command identification
 
@@ -7452,7 +7452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
                                      HTTPContentType.JSON_UTF8,
-                                     OCPIRequest: Request => {
+                                     OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
                                              new OCPIResponse.Builder(Request) {
@@ -7475,7 +7475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestLogger:  UnlockConnectorCallbackRequest,
                                      OCPIResponseLogger: UnlockConnectorCallbackResponse,
-                                     OCPIRequest:  async Request => {
+                                     OCPIRequestHandler:  async Request => {
 
                                          #region Check command identification
 

@@ -546,7 +546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
                                URLPathPrefix + "versions",
-                               OCPIRequest: Request => {
+                               OCPIRequestHandler: Request => {
 
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
@@ -575,7 +575,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPMethod.GET,
                                URLPathPrefix + "versions",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequest: Request => {
+                               OCPIRequestHandler: Request => {
 
                                    #region Check access token
 
@@ -633,7 +633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
                                URLPathPrefix + "versions/{id}",
-                               OCPIRequest: Request => {
+                               OCPIRequestHandler: Request => {
 
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
@@ -661,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPMethod.GET,
                                URLPathPrefix + "versions/{id}",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequest: Request => {
+                               OCPIRequestHandler: Request => {
 
                                    #region Check access token
 
@@ -906,7 +906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
                                URLPathPrefix + "2.2/credentials",
-                               OCPIRequest: Request => {
+                               OCPIRequestHandler: Request => {
 
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
@@ -937,7 +937,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPMethod.GET,
                                URLPathPrefix + "2.2/credentials",
                                HTTPContentType.JSON_UTF8,
-                               OCPIRequest: Request => {
+                               OCPIRequestHandler: Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
@@ -985,7 +985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
-                               OCPIRequest:   async Request => {
+                               OCPIRequestHandler:   async Request => {
 
                                    var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
@@ -1038,7 +1038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  PutCredentialsRequest,
                                OCPIResponseLogger: PutCredentialsResponse,
-                               OCPIRequest:        async Request => {
+                               OCPIRequestHandler:        async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
@@ -1087,7 +1087,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  DeleteCredentialsRequest,
                                OCPIResponseLogger: DeleteCredentialsResponse,
-                               OCPIRequest:        async Request => {
+                               OCPIRequestHandler:        async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)

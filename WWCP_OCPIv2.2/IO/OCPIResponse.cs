@@ -103,26 +103,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public static JObject Create(Int32            StatusCode,
-                                     String           StatusMessage,
-                                     String           AdditionalInformation   = null,
-                                     DateTime?        Timestamp               = null,
+        //public static JObject Create(Int32            StatusCode,
+        //                             String           StatusMessage,
+        //                             String           AdditionalInformation   = null,
+        //                             DateTime?        Timestamp               = null,
 
-                                     Request_Id?      RequestId               = null,
-                                     Correlation_Id?  CorrelationId           = null,
-                                     HTTPResponse     Response                = null)
+        //                             Request_Id?      RequestId               = null,
+        //                             Correlation_Id?  CorrelationId           = null,
+        //                             HTTPResponse     Response                = null)
 
-        {
+        //{
 
-            return new OCPIResponse(StatusCode,
-                                    StatusMessage,
-                                    AdditionalInformation,
-                                    Timestamp,
-                                    RequestId,
-                                    CorrelationId,
-                                    Response).ToJSON();
+        //    return new OCPIResponse(StatusCode,
+        //                            StatusMessage,
+        //                            AdditionalInformation,
+        //                            Timestamp,
+        //                            RequestId,
+        //                            CorrelationId,
+        //                            Response).ToJSON();
 
-        }
+        //}
 
 
         //public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
@@ -178,15 +178,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             public String                AdditionalInformation     { get; set; }
             public DateTime?             Timestamp                 { get; set; }
 
+
+            public Request_Id?           RequestId                 { get; set; }
+            public Correlation_Id?       CorrelationId             { get; set; }
+
+
             public HTTPResponse.Builder  HTTPResponseBuilder       { get; set; }
 
             #endregion
 
             #region Constructor(s)
 
-            public Builder(OCPIRequest Request)
+            public Builder(OCPIRequest      Request,
+                           Int32?           StatusCode              = null,
+                           String           StatusMessage           = null,
+                           String           AdditionalInformation   = null,
+                           DateTime?        Timestamp               = null,
+
+                           Request_Id?      RequestId               = null,
+                           Correlation_Id?  CorrelationId           = null)
             {
+
                 this.Request = Request;
+                this.StatusCode             = StatusCode;
+                this.StatusMessage          = StatusMessage;
+                this.AdditionalInformation  = AdditionalInformation;
+                this.Timestamp              = Timestamp;
+
+                this.RequestId              = RequestId;
+                this.CorrelationId          = CorrelationId;
+
             }
 
             #endregion
@@ -225,13 +246,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                               ? new JProperty("additionalInformation",   AdditionalInformation)
                                                               : null,
 
-                                                          //RequestId.HasValue
-                                                          //    ? new JProperty("requestId",               RequestId.    Value.ToString())
-                                                          //    : null,
+                                                          RequestId.HasValue
+                                                              ? new JProperty("requestId",               RequestId.    Value.ToString())
+                                                              : null,
 
-                                                          //CorrelationId.HasValue
-                                                          //    ? new JProperty("correlationId",           CorrelationId.Value.ToString())
-                                                          //    : null,
+                                                          CorrelationId.HasValue
+                                                              ? new JProperty("correlationId",           CorrelationId.Value.ToString())
+                                                              : null,
 
                                                           new JProperty("timestamp",                    (Timestamp ?? DateTime.UtcNow).ToIso8601())
 

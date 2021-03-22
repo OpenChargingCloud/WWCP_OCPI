@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIRequestLogger">A OCPI request logger.</param>
         /// <param name="OCPIResponseLogger">A OCPI response logger.</param>
         /// <param name="DefaultErrorHandler">The default error handler.</param>
-        /// <param name="OCPIRequest">The method to call.</param>
+        /// <param name="OCPIRequestHandler">The method to call.</param>
         public static void AddOCPIMethod(this CommonAPI          CommonAPI,
                                          HTTPHostname            Hostname,
                                          HTTPMethod              HTTPMethod,
@@ -79,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          OCPIRequestLogHandler   OCPIRequestLogger           = null,
                                          OCPIResponseLogHandler  OCPIResponseLogger          = null,
                                          HTTPDelegate            DefaultErrorHandler         = null,
-                                         OCPIRequestDelegate     OCPIRequest                 = null,
+                                         OCPIRequestDelegate     OCPIRequestHandler          = null,
                                          URLReplacement          AllowReplacement            = URLReplacement.Fail)
 
         {
@@ -94,23 +94,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         ContentTypeAuthentication,
                                         (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, HTTP.OCPIRequest.Parse(httpRequest, CommonAPI)),
                                         (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
-                                                                                                                                       httpResponse.SubprotocolResponse as OCPIResponse),
+                                                                                                                                      (httpResponse.SubprotocolResponse as OCPIResponse) 
+                                                                                                                                           ?? new OCPIResponse(httpRequest.SubprotocolRequest as OCPIRequest,
+                                                                                                                                                               2000,
+                                                                                                                                                               "OCPIResponse is null!",
+                                                                                                                                                               httpResponse.HTTPBodyAsUTF8String,
+                                                                                                                                                               httpResponse.Timestamp,
+                                                                                                                                                               httpResponse)),
                                         DefaultErrorHandler,
                                         async httpRequest => {
 
-                                            var OCPIResponseBuilder = await OCPIRequest(httpRequest.SubprotocolRequest is null
-                                                                                ? HTTP.OCPIRequest.Parse(httpRequest, CommonAPI) // When no OCPIRequestLogger was used!
-                                                                                : httpRequest.SubprotocolRequest as OCPIRequest);
+                                            try
+                                            {
 
-                                            var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
-                                            httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
-                                                                                                       OCPIResponseBuilder.StatusCode ?? 3000,
-                                                                                                       OCPIResponseBuilder.StatusMessage,
-                                                                                                       OCPIResponseBuilder.AdditionalInformation,
-                                                                                                       OCPIResponseBuilder.Timestamp ?? DateTime.UtcNow,
-                                                                                                       httpResponseBuilder.AsImmutable);
+                                                // When no OCPIRequestLogger was used!
+                                                if (httpRequest.SubprotocolRequest is null)
+                                                    httpRequest.SubprotocolRequest = OCPIRequest.Parse(httpRequest, CommonAPI);
 
-                                            return httpResponseBuilder;
+                                                var OCPIResponseBuilder = await OCPIRequestHandler(httpRequest.SubprotocolRequest as OCPIRequest);
+                                                var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
+
+                                                httpResponseBuilder.SubprotocolResponse = new OCPIResponse(OCPIResponseBuilder.Request,
+                                                                                                           OCPIResponseBuilder.StatusCode ?? 3000,
+                                                                                                           OCPIResponseBuilder.StatusMessage,
+                                                                                                           OCPIResponseBuilder.AdditionalInformation,
+                                                                                                           OCPIResponseBuilder.Timestamp  ?? DateTime.UtcNow,
+                                                                                                           httpResponseBuilder.AsImmutable);
+
+                                                return httpResponseBuilder;
+
+                                            }
+                                            catch (Exception e)
+                                            {
+
+                                                return new HTTPResponse.Builder(HTTPStatusCode.InternalServerError) {
+                                                           ContentType  = HTTPContentType.JSON_UTF8,
+                                                           Content      = new OCPIResponse<JObject>(
+                                                                              JSONObject.Create(
+                                                                                  new JProperty("description", e.Message),
+                                                                                  new JProperty("stacktrace",  e.StackTrace.Split(new String[] { Environment.NewLine }, StringSplitOptions.None).ToArray()),
+                                                                                  new JProperty("source",      e.TargetSite.Module.Name),
+                                                                                  new JProperty("type",        e.TargetSite.ReflectedType.Name)
+                                                                              ),
+                                                                              2000,
+                                                                              e.Message,
+                                                                              null,
+                                                                              DateTime.UtcNow,
+                                                                              (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
+                                                                              (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
+                                                                          ).ToJSON(json => json).ToUTF8Bytes(),
+                                                           Connection   = "close"
+                                                       };
+
+                                            }
 
                                         },
                                         AllowReplacement);
