@@ -3316,8 +3316,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         CountryCode,
-                                                                        Party_Id            PartyId,
+        public delegate Task<AuthorizationInfo> OnRFIDAuthTokenDelegate(CountryCode         From_CountryCode,
+                                                                        Party_Id            From_PartyId,
+                                                                        CountryCode         To_CountryCode,
+                                                                        Party_Id            To_PartyId,
                                                                         Token_Id            TokenId,
                                                                         LocationReference?  LocationReference);
 
@@ -6728,8 +6730,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             try
                                             {
 
-                                                var result = RFIDAuthTokenLocal(Request.ToCountryCode ?? DefaultCountryCode,
-                                                                                Request.ToPartyId     ?? DefaultPartyId,
+                                                var result = RFIDAuthTokenLocal(Request.FromCountryCode ?? DefaultCountryCode,
+                                                                                Request.FromPartyId     ?? DefaultPartyId,
+                                                                                Request.ToCountryCode   ?? DefaultCountryCode,
+                                                                                Request.ToPartyId       ?? DefaultPartyId,
                                                                                 TokenId.Value,
                                                                                 locationReference).Result;
 

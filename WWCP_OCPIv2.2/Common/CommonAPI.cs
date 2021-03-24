@@ -90,6 +90,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public HTTPPath?                     AdditionalURLPathPrefix    { get; }
 
         /// <summary>
+        /// Whether to keep or delete EVSEs marked as "REMOVED".
+        /// </summary>
+        public Func<EVSE, Boolean>           KeepRemovedEVSEs           { get; }
+
+        /// <summary>
         /// Allow anonymous access to locations as Open Data.
         /// </summary>
         public Boolean                       LocationsAsOpenData        { get; }
@@ -273,6 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ServiceName">An optional HTTP service name.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
         /// 
+        /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public CommonAPI(URL                           OurVersionsURL,
@@ -287,8 +293,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          String                        ServiceName               = DefaultHTTPServiceName,
                          DNSClient                     DNSClient                 = null,
 
-                    //     Boolean                       VersionsURLusesHTTPS      = true,
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
+                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null)
 
@@ -312,8 +318,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.OurVersionsURL           = OurVersionsURL;
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
-            //this.VersionsURLusesHTTPS     = VersionsURLusesHTTPS;
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
@@ -344,6 +350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="ServiceName">An optional name of the HTTP API service.</param>
         /// 
+        /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         public CommonAPI(URL                           OurVersionsURL,
@@ -356,8 +363,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          HTTPPath?                     BasePath                  = null,
                          String                        ServiceName               = DefaultHTTPServerName,
 
-                    //     Boolean                       VersionsURLusesHTTPS      = true,
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
+                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null)
 
@@ -376,8 +383,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.OurVersionsURL           = OurVersionsURL;
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
             this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
-         //   this.VersionsURLusesHTTPS     = VersionsURLusesHTTPS;
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+            this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
@@ -2498,8 +2505,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             if (EVSEExistedBefore)
             {
+
                 if (newOrUpdatedEVSE.Status != StatusTypes.REMOVED)
                 {
+
                     var OnEVSEChangedLocal = OnEVSEChanged;
                     if (OnEVSEChangedLocal != null)
                     {
@@ -2514,9 +2523,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         Environment.NewLine, e.StackTrace);
                         }
                     }
+
                 }
                 else
                 {
+
+                    if (!KeepRemovedEVSEs(newOrUpdatedEVSE))
+                        Location.RemoveEVSE(newOrUpdatedEVSE);
+
                     var OnEVSERemovedLocal = OnEVSERemoved;
                     if (OnEVSERemovedLocal != null)
                     {
@@ -2531,6 +2545,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         Environment.NewLine, e.StackTrace);
                         }
                     }
+
                 }
             }
             else
@@ -2615,7 +2630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (patchResult.IsSuccess)
                 {
 
-                    if (patchResult.PatchedData.Status != StatusTypes.REMOVED)
+                    if (patchResult.PatchedData.Status != StatusTypes.REMOVED || KeepRemovedEVSEs(EVSE))
                         Location.SetEVSE   (patchResult.PatchedData);
                     else
                         Location.RemoveEVSE(patchResult.PatchedData);
