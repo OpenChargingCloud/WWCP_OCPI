@@ -3585,10 +3585,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Parse ReserveNow command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                        if (!Request.TryParseJObjectRequestBody(out JObject ReserveNowJSON, out OCPIResponse.Builder OCPIResponse))
                                             return OCPIResponse;
 
-                                        if (!ReserveNowCommand.TryParse(JSONCDR,
+                                        if (!ReserveNowCommand.TryParse(ReserveNowJSON,
                                                                         out ReserveNowCommand  reserveNowCommand,
                                                                         out String             ErrorResponse
                                                                         //CountryCode,
@@ -3694,10 +3694,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Parse CancelReservation command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                        if (!Request.TryParseJObjectRequestBody(out JObject CancelReservationJSON, out OCPIResponse.Builder OCPIResponse))
                                             return OCPIResponse;
 
-                                        if (!CancelReservationCommand.TryParse(JSONCDR,
+                                        if (!CancelReservationCommand.TryParse(CancelReservationJSON,
                                                                                out CancelReservationCommand  cancelReservationCommand,
                                                                                out String                    ErrorResponse
                                                                                //CountryCode,
@@ -3802,10 +3802,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Parse StartSession command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                        if (!Request.TryParseJObjectRequestBody(out JObject startSessionJSON, out OCPIResponse.Builder OCPIResponse))
                                             return OCPIResponse;
 
-                                        if (!StartSessionCommand.TryParse(JSONCDR,
+                                        if (!StartSessionCommand.TryParse(startSessionJSON,
                                                                           out StartSessionCommand  startSessionCommand,
                                                                           out String               ErrorResponse
                                                                           //CountryCode,
@@ -3910,10 +3910,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Parse StopSession command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                        if (!Request.TryParseJObjectRequestBody(out JObject stopSessionJSON, out OCPIResponse.Builder OCPIResponse))
                                             return OCPIResponse;
 
-                                        if (!StopSessionCommand.TryParse(JSONCDR,
+                                        if (!StopSessionCommand.TryParse(stopSessionJSON,
                                                                           out StopSessionCommand  stopSessionCommand,
                                                                           out String              ErrorResponse
                                                                           //CountryCode,
@@ -4018,15 +4018,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Parse UnlockConnector command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
+                                        if (!Request.TryParseJObjectRequestBody(out JObject unlockConnectorJSON, out OCPIResponse.Builder OCPIResponse))
                                             return OCPIResponse;
 
-                                        if (!UnlockConnectorCommand.TryParse(JSONCDR,
+                                        if (!UnlockConnectorCommand.TryParse(unlockConnectorJSON,
                                                                              out UnlockConnectorCommand  unlockConnectorCommand,
-                                                                             out String                  ErrorResponse
-                                                                             //CountryCode,
-                                                                             //PartyId
-                                                                             ))
+                                                                             out String                  ErrorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
