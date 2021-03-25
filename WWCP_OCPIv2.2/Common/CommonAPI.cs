@@ -2457,6 +2457,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public event OnEVSEChangedDelegate OnEVSEChanged;
 
+        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusTypes NewEVSEStatus);
+
+        public event OnEVSEStatusChangedDelegate OnEVSEStatusChanged;
+
 
         public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
 
@@ -2636,8 +2640,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                var patchResult = EVSE.TryPatch(EVSEPatch,
-                                                AllowDowngrades ?? this.AllowDowngrades ?? false);
+                var patchResult          = EVSE.TryPatch(EVSEPatch,
+                                                         AllowDowngrades ?? this.AllowDowngrades ?? false);
+
+                var IsJustAStatusChange  = EVSEPatch.Children().Count() == 2 && EVSEPatch.ContainsKey("status") && EVSEPatch.ContainsKey("last_updated");
 
                 if (patchResult.IsSuccess)
                 {
@@ -2656,19 +2662,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (patchResult.PatchedData.Status != StatusTypes.REMOVED)
                     {
 
-                        var OnEVSEChangedLocal = OnEVSEChanged;
-                        if (OnEVSEChangedLocal != null)
+                        if (IsJustAStatusChange)
                         {
-                            try
+
+                            DebugX.Log("EVSE status change: " + EVSE.EVSEId + " => " + patchResult.PatchedData.Status);
+
+                            var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
+                            if (OnEVSEStatusChangedLocal != null)
                             {
-                                OnEVSEChangedLocal(patchResult.PatchedData).Wait();
+                                try
+                                {
+
+                                    OnEVSEStatusChangedLocal(patchResult.PatchedData.LastUpdated,
+                                                             EVSE,
+                                                             patchResult.PatchedData.Status).Wait();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEStatusChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace);
+                                }
                             }
-                            catch (Exception e)
+
+                        }
+                        else
+                        {
+
+                            var OnEVSEChangedLocal = OnEVSEChanged;
+                            if (OnEVSEChangedLocal != null)
                             {
-                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
-                                            Environment.NewLine, e.Message,
-                                            Environment.NewLine, e.StackTrace);
+                                try
+                                {
+                                    OnEVSEChangedLocal(patchResult.PatchedData).Wait();
+                                }
+                                catch (Exception e)
+                                {
+                                    DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryPatchEVSE), " ", nameof(OnEVSEChanged), ": ",
+                                                Environment.NewLine, e.Message,
+                                                Environment.NewLine, e.StackTrace);
+                                }
                             }
+
                         }
 
                     }
