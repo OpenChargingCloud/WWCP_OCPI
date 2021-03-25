@@ -2083,9 +2083,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public event OnLocationChangedDelegate OnLocationChanged;
 
 
-        #region AddLocation           (Location)
+        #region AddLocation           (Location, SkipNotifications = false)
 
-        public Location AddLocation(Location Location)
+        public Location AddLocation(Location  Location,
+                                    Boolean   SkipNotifications   = false)
         {
 
             if (Location is null)
@@ -2111,19 +2112,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     locations.Add(Location.Id, Location);
 
-                    var OnLocationAddedLocal = OnLocationAdded;
-                    if (OnLocationAddedLocal != null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnLocationAddedLocal = OnLocationAdded;
+                        if (OnLocationAddedLocal != null)
                         {
-                            OnLocationAddedLocal(Location).Wait();
+                            try
+                            {
+                                OnLocationAddedLocal(Location).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
+                                            Environment.NewLine, e.Message,
+                                            Environment.NewLine, e.StackTrace);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocation), " ", nameof(OnLocationAdded), ": ",
-                                        Environment.NewLine, e.Message,
-                                        Environment.NewLine, e.StackTrace);
-                        }
+
                     }
 
                     return Location;
@@ -2138,9 +2144,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region AddLocationIfNotExists(Location)
+        #region AddLocationIfNotExists(Location, SkipNotifications = false)
 
-        public Location AddLocationIfNotExists(Location Location)
+        public Location AddLocationIfNotExists(Location  Location,
+                                               Boolean   SkipNotifications   = false)
         {
 
             if (Location is null)
@@ -2166,19 +2173,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     locations.Add(Location.Id, Location);
 
-                    var OnLocationAddedLocal = OnLocationAdded;
-                    if (OnLocationAddedLocal != null)
+                    if (!SkipNotifications)
                     {
-                        try
+
+                        var OnLocationAddedLocal = OnLocationAdded;
+                        if (OnLocationAddedLocal != null)
                         {
-                            OnLocationAddedLocal(Location).Wait();
-                        }
-                        catch (Exception e)
-                        {
-                            DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
+                            try
+                            {
+                                OnLocationAddedLocal(Location).Wait();
+                            }
+                            catch (Exception e)
+                            {
+                                DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(AddLocationIfNotExists), " ", nameof(OnLocationAdded), ": ",
                                             Environment.NewLine, e.Message,
                                             Environment.NewLine, e.StackTrace);
+                            }
                         }
+
                     }
 
                 }
