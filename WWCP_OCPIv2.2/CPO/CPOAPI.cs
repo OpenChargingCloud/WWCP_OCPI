@@ -3614,6 +3614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         // ToDo: ReserveNow!
                                         var commandResponse  = new CommandResponse(
+                                                                   reserveNowCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
                                                                    Message: new DisplayText[] {
@@ -3722,6 +3723,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         // ToDo: ReserveNow!
                                         var commandResponse  = new CommandResponse(
+                                                                   cancelReservationCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
                                                                    Message: new DisplayText[] {
@@ -3830,6 +3832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         // ToDo: ReserveNow!
                                         var commandResponse  = new CommandResponse(
+                                                                   startSessionCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
                                                                    Message: new DisplayText[] {
@@ -3938,6 +3941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         // ToDo: ReserveNow!
                                         var commandResponse  = new CommandResponse(
+                                                                   stopSessionCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
                                                                    Message: new DisplayText[] {
@@ -4043,6 +4047,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         // ToDo: ReserveNow!
                                         var commandResponse  = new CommandResponse(
+                                                                   unlockConnectorCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
                                                                    Timeout: TimeSpan.FromSeconds(15),
                                                                    Message: new DisplayText[] {

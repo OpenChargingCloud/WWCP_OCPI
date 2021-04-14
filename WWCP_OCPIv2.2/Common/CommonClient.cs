@@ -885,10 +885,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<VersionInformation>.ParseJArray(HTTPResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => VersionInformation.Parse(json));
+                    response = OCPIResponse<VersionInformation>.ParseJArray<VersionInformation>(HTTPResponse,
+                                                                                                requestId,
+                                                                                                correlationId,
+                                                                                                json => VersionInformation.Parse(json));
 
                     switch (response.StatusCode)
                     {

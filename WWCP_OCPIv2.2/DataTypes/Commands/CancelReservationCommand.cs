@@ -32,9 +32,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The 'cancel reservation' command.
     /// </summary>
-    public readonly struct CancelReservationCommand : IEquatable<CancelReservationCommand>,
-                                                      IComparable<CancelReservationCommand>,
-                                                      IComparable
+    public class CancelReservationCommand : AOCPICommand<CancelReservationCommand>
     {
 
         #region Properties
@@ -63,8 +61,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ReservationId">Reservation identification unique for this reservation.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'cancel reservation' command requests.</param>
-        public CancelReservationCommand(Reservation_Id  ReservationId,
-                                        URL             ResponseURL)
+        /// 
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        public CancelReservationCommand(Reservation_Id   ReservationId,
+                                        URL              ResponseURL,
+
+                                        Request_Id?      RequestId       = null,
+                                        Correlation_Id?  CorrelationId   = null)
+
+            : base(RequestId,
+                   CorrelationId)
+
         {
 
             this.ReservationId  = ReservationId;
@@ -337,8 +345,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (CancelReservationCommand CancelReservationCommand1,
                                            CancelReservationCommand CancelReservationCommand2)
+        {
 
-            => CancelReservationCommand1.Equals(CancelReservationCommand2);
+            if (Object.ReferenceEquals(CancelReservationCommand1, CancelReservationCommand2))
+                return true;
+
+            if (CancelReservationCommand1 is null || CancelReservationCommand2 is null)
+                return false;
+
+            return CancelReservationCommand1.Equals(CancelReservationCommand2);
+
+        }
 
         #endregion
 
@@ -368,7 +385,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (CancelReservationCommand CancelReservationCommand1,
                                           CancelReservationCommand CancelReservationCommand2)
 
-            => CancelReservationCommand1.CompareTo(CancelReservationCommand2) < 0;
+            => CancelReservationCommand1 is null
+                   ? throw new ArgumentNullException(nameof(CancelReservationCommand1), "The given 'cancel reservation' command must not be null!")
+                   : CancelReservationCommand1.CompareTo(CancelReservationCommand2) < 0;
 
         #endregion
 
@@ -398,7 +417,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (CancelReservationCommand CancelReservationCommand1,
                                           CancelReservationCommand CancelReservationCommand2)
 
-            => CancelReservationCommand1.CompareTo(CancelReservationCommand2) > 0;
+            => CancelReservationCommand1 is null
+                   ? throw new ArgumentNullException(nameof(CancelReservationCommand1), "The given 'cancel reservation' command must not be null!")
+                   : CancelReservationCommand1.CompareTo(CancelReservationCommand2) > 0;
 
         #endregion
 
@@ -427,7 +448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public override Int32 CompareTo(Object Object)
 
             => Object is CancelReservationCommand stopReservationCommand
                    ? CompareTo(stopReservationCommand)
@@ -442,8 +463,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="CancelReservationCommand">An object to compare with.</param>
-        public Int32 CompareTo(CancelReservationCommand CancelReservationCommand)
+        public override Int32 CompareTo(CancelReservationCommand CancelReservationCommand)
         {
+
+            if (CancelReservationCommand is null)
+                throw new ArgumentNullException(nameof(CancelReservationCommand), "The given 'cancel reservation' command must not be null!");
 
             var c = ReservationId.CompareTo(CancelReservationCommand.ReservationId);
 
@@ -481,10 +505,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CancelReservationCommand">An 'cancel reservation' command to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CancelReservationCommand CancelReservationCommand)
+        public override Boolean Equals(CancelReservationCommand CancelReservationCommand)
+        {
 
-            => ReservationId.Equals(CancelReservationCommand.ReservationId) &&
-               ResponseURL.  Equals(CancelReservationCommand.ResponseURL);
+            if (CancelReservationCommand is null)
+                throw new ArgumentNullException(nameof(CancelReservationCommand), "The given 'cancel reservation' command must not be null!");
+
+            return ReservationId.Equals(CancelReservationCommand.ReservationId) &&
+                   ResponseURL.  Equals(CancelReservationCommand.ResponseURL);
+
+        }
 
         #endregion
 

@@ -288,6 +288,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
     public class OCPIResponse<TResponse> : OCPIResponse
+
+        where TResponse : class
+
     {
 
         #region Properties
@@ -391,10 +394,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         }
 
 
-        public static OCPIResponse<IEnumerable<TResponse>> ParseJArray(HTTPResponse              Response,
-                                                                       Request_Id                RequestId,
-                                                                       Correlation_Id            CorrelationId,
-                                                                       Func<JObject, TResponse>  Parser)
+        public static OCPIResponse<IEnumerable<TResponse>> ParseJArray<TElements>(HTTPResponse              Response,
+                                                                                  Request_Id                RequestId,
+                                                                                  Correlation_Id            CorrelationId,
+                                                                                  Func<JObject, TElements>  Parser)
         {
 
             OCPIResponse<IEnumerable<TResponse>> result = default;
@@ -445,7 +448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             {
                                 try
                                 {
-                                    Items.Add(Parser(item));
+                                    Items.Add((TResponse) (Object) Parser(item));
                                 }
                                 catch (Exception e)
                                 {
@@ -532,8 +535,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     if (timestamp.HasValue && timestamp.Value.Kind != DateTimeKind.Utc)
                         timestamp      = timestamp.Value.ToUniversalTime();
 
-                    if (Response.HTTPStatusCode == HTTPStatusCode.OK ||
-                        Response.HTTPStatusCode == HTTPStatusCode.Created)
+                    if ((Response.HTTPStatusCode == HTTPStatusCode.OK ||
+                         Response.HTTPStatusCode == HTTPStatusCode.Created) &&
+                        statusCode >= 1000 &&
+                        statusCode <  2000)
                     {
 
                         if (JSON["data"] is JObject JSONObject)
@@ -549,7 +554,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     }
 
                     else
-                        result = new OCPIResponse<TResponse>(default,
+                        result = new OCPIResponse<TResponse>(null,
                                                              statusCode ?? 3000,
                                                              statusMessage,
                                                              Response.EntirePDU,
@@ -561,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 }
 
                 else
-                    result = new OCPIResponse<TResponse>(default,
+                    result = new OCPIResponse<TResponse>(null,
                                                          -1,
                                                          Response.HTTPStatusCode.Code + " - " + Response.HTTPStatusCode.Description,
                                                          Response.EntirePDU,
@@ -574,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
 
-                result = new OCPIResponse<TResponse>(default,
+                result = new OCPIResponse<TResponse>(null,
                                                      -1,
                                                      e.Message,
                                                      e.StackTrace);
@@ -590,6 +595,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
     public class OCPIResponse<TRequest, TResponse> : OCPIResponse<TResponse>
+
+        where TResponse : class
+
     {
 
         #region Data

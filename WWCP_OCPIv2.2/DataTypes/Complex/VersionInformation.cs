@@ -32,9 +32,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// Version information.
     /// </summary>
-    public readonly struct VersionInformation : IEquatable<VersionInformation>,
-                                                IComparable<VersionInformation>,
-                                                IComparable
+    public class VersionInformation : IEquatable<VersionInformation>,
+                                      IComparable<VersionInformation>,
+                                      IComparable
     {
 
         #region Properties
@@ -292,8 +292,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (VersionInformation VersionInformation1,
                                            VersionInformation VersionInformation2)
+        {
 
-            => VersionInformation1.Equals(VersionInformation2);
+            if (Object.ReferenceEquals(VersionInformation1, VersionInformation2))
+                return true;
+
+            if (VersionInformation1 is null || VersionInformation2 is null)
+                return false;
+
+            return VersionInformation1.Equals(VersionInformation2);
+
+        }
 
         #endregion
 
@@ -323,7 +332,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (VersionInformation VersionInformation1,
                                           VersionInformation VersionInformation2)
 
-            => VersionInformation1.CompareTo(VersionInformation2) < 0;
+            => VersionInformation1 is null
+                   ? throw new ArgumentNullException(nameof(VersionInformation1), "The given version information must not be null!")
+                   : VersionInformation1.CompareTo(VersionInformation2) < 0;
 
         #endregion
 
@@ -353,7 +364,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (VersionInformation VersionInformation1,
                                           VersionInformation VersionInformation2)
 
-            => VersionInformation1.CompareTo(VersionInformation2) > 0;
+            => VersionInformation1 is null
+                   ? throw new ArgumentNullException(nameof(VersionInformation1), "The given version information must not be null!")
+                   : VersionInformation1.CompareTo(VersionInformation2) > 0;
 
         #endregion
 
@@ -400,6 +413,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(VersionInformation VersionInformation)
         {
 
+            if (VersionInformation is null)
+                throw new ArgumentNullException(nameof(VersionInformation), "The given version information must not be null!");
+
             var result = Id.CompareTo(VersionInformation.Id);
 
             if (result == 0)
@@ -437,9 +453,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="VersionInformation">A version information to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(VersionInformation VersionInformation)
+        {
 
-            => Id. Equals(VersionInformation.Id) &&
-               URL.Equals(VersionInformation.URL);
+            if (VersionInformation is null)
+                throw new ArgumentNullException(nameof(VersionInformation), "The given version information must not be null!");
+
+            return Id. Equals(VersionInformation.Id) &&
+                   URL.Equals(VersionInformation.URL);
+
+        }
 
         #endregion
 

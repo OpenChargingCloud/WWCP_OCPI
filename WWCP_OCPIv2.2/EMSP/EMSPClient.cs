@@ -4221,7 +4221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         ModuleIDs.Commands,
                                                         InterfaceRoles.RECEIVER);
 
-                var Command        = new ReserveNowCommand(Token,
+                var command        = new ReserveNowCommand(Token,
                                                            ExpirationTimestamp,
                                                            ReservationId,
                                                            LocationId,
@@ -4254,7 +4254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4273,7 +4273,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
                                                                           requestId,
                                                                           correlationId,
-                                                                          json => CommandResponse.Parse(json));
+                                                                          json => CommandResponse.Parse(command,
+                                                                                                        json));
 
                 }
 
@@ -4423,7 +4424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         ModuleIDs.Commands,
                                                         InterfaceRoles.RECEIVER);
 
-                var Command        = new CancelReservationCommand(ReservationId,
+                var command        = new CancelReservationCommand(ReservationId,
                                                                   MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
                                                                                            SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + random.RandomString(50));
 
@@ -4451,7 +4452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4470,7 +4471,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
                                                                           requestId,
                                                                           correlationId,
-                                                                          json => CommandResponse.Parse(json));
+                                                                          json => CommandResponse.Parse(command,
+                                                                                                        json));
 
                 }
 
@@ -4623,7 +4625,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         ModuleIDs.Commands,
                                                         InterfaceRoles.RECEIVER);
 
-                var Command        = new StartSessionCommand(Token,
+                var command        = new StartSessionCommand(Token,
                                                              LocationId,
                                                              MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
                                                                                       SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + random.RandomString(50),
@@ -4654,7 +4656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4673,7 +4675,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
                                                                           requestId,
                                                                           correlationId,
-                                                                          json => CommandResponse.Parse(json));
+                                                                          json => CommandResponse.Parse(command,
+                                                                                                        json));
 
                 }
 
@@ -4823,7 +4826,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         ModuleIDs.Commands,
                                                         InterfaceRoles.RECEIVER);
 
-                var Command        = new StopSessionCommand(SessionId,
+                var command        = new StopSessionCommand(SessionId,
                                                             MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + random.RandomString(50));
 
@@ -4852,7 +4855,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4871,7 +4874,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
                                                                           requestId,
                                                                           correlationId,
-                                                                          json => CommandResponse.Parse(json));
+                                                                          json => CommandResponse.Parse(command,
+                                                                                                        json));
 
                 }
 
@@ -5023,7 +5027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         ModuleIDs.Commands,
                                                         InterfaceRoles.RECEIVER);
 
-                var Command        = new UnlockConnectorCommand(LocationId,
+                var command        = new UnlockConnectorCommand(LocationId,
                                                                 EVSEUId,
                                                                 ConnectorId,
                                                                 MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
@@ -5054,7 +5058,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -5073,7 +5077,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
                                                                           requestId,
                                                                           correlationId,
-                                                                          json => CommandResponse.Parse(json));
+                                                                          json => CommandResponse.Parse(command,
+                                                                                                        json));
 
                 }
 

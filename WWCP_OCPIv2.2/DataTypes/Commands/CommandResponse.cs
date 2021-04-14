@@ -33,32 +33,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A command response.
     /// </summary>
-    public readonly struct CommandResponse : IEquatable<CommandResponse>,
-                                             IComparable<CommandResponse>,
-                                             IComparable
+    public class CommandResponse : IEquatable<CommandResponse>,
+                                   IComparable<CommandResponse>,
+                                   IComparable
     {
 
         #region Properties
 
         /// <summary>
+        /// The command leading to this response.
+        /// </summary>
+        public IOCPICommand              Command    { get; }
+
+        /// <summary>
         /// Response from the CPO on the command request.
         /// </summary>
         [Mandatory]
-        public CommandResponseTypes      Result     { get; }
+        public CommandResponseTypes      Result         { get; }
 
         /// <summary>
         /// Timeout for this command in seconds. When the Result is not received within
         /// this timeout, the eMSP can assume that the message might never be send.
         /// </summary>
         [Mandatory]
-        public TimeSpan                  Timeout    { get; }
+        public TimeSpan                  Timeout        { get; }
 
         /// <summary>
         /// Human-readable description of the result (if one can be provided),
         /// multiple languages can be provided.
         /// </summary>
         [Mandatory]
-        public IEnumerable<DisplayText>  Message    { get; }
+        public IEnumerable<DisplayText>  Message        { get; }
 
         #endregion
 
@@ -67,14 +72,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create new command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="Result">Response from the CPO on the command request.</param>
         /// <param name="Timeout">Timeout for this command in seconds. When the Result is not received within this timeout, the eMSP can assume that the message might never be send.</param>
         /// <param name="Message">Human-readable description of the result (if one can be provided), multiple languages can be provided.</param>
-        public CommandResponse(CommandResponseTypes      Result,
+        public CommandResponse(IOCPICommand              Command,
+                               CommandResponseTypes      Result,
                                TimeSpan                  Timeout,
                                IEnumerable<DisplayText>  Message)
         {
 
+            this.Command  = Command;
             this.Result   = Result;
             this.Timeout  = Timeout;
             this.Message  = Message?.Distinct() ?? new DisplayText[0];
@@ -84,18 +92,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Parse   (JSON, CustomCommandResponseParser = null)
+        #region (static) Parse   (Command, JSON, CustomCommandResponseParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static CommandResponse Parse(JObject                                       JSON,
+        public static CommandResponse Parse(IOCPICommand                                  Command,
+                                            JObject                                       JSON,
                                             CustomJObjectParserDelegate<CommandResponse>  CustomCommandResponseParser   = null)
         {
 
-            if (TryParse(JSON,
+            if (TryParse(Command,
+                         JSON,
                          out CommandResponse  commandResponse,
                          out String           ErrorResponse,
                          CustomCommandResponseParser))
@@ -109,18 +120,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Parse   (Text, CustomCommandResponseParser = null)
+        #region (static) Parse   (Command, Text, CustomCommandResponseParser = null)
 
         /// <summary>
         /// Parse the given text representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static CommandResponse Parse(String                                        Text,
+        public static CommandResponse Parse(IOCPICommand                                  Command,
+                                            String                                        Text,
                                             CustomJObjectParserDelegate<CommandResponse>  CustomCommandResponseParser   = null)
         {
 
-            if (TryParse(Text,
+            if (TryParse(Command,
+                         Text,
                          out CommandResponse  commandResponse,
                          out String           ErrorResponse,
                          CustomCommandResponseParser))
@@ -134,18 +148,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(JSON, CustomCommandResponseParser = null)
+        #region (static) TryParse(Command, JSON, CustomCommandResponseParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static CommandResponse? TryParse(JObject                                       JSON,
+        public static CommandResponse? TryParse(IOCPICommand                                  Command,
+                                                JObject                                       JSON,
                                                 CustomJObjectParserDelegate<CommandResponse>  CustomCommandResponseParser   = null)
         {
 
-            if (TryParse(JSON,
+            if (TryParse(Command,
+                         JSON,
                          out CommandResponse  commandResponse,
                          out String           ErrorResponse,
                          CustomCommandResponseParser))
@@ -159,18 +176,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, CustomCommandResponseParser = null)
+        #region (static) TryParse(Command, Text, CustomCommandResponseParser = null)
 
         /// <summary>
         /// Try to parse the given JSON representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="Text">The JSON to parse.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static CommandResponse? TryParse(String                                        Text,
+        public static CommandResponse? TryParse(IOCPICommand                                  Command,
+                                                String                                        Text,
                                                 CustomJObjectParserDelegate<CommandResponse>  CustomCommandResponseParser   = null)
         {
 
-            if (TryParse(Text,
+            if (TryParse(Command,
+                         Text,
                          out CommandResponse  commandResponse,
                          out String           ErrorResponse,
                          CustomCommandResponseParser))
@@ -184,21 +204,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(JSON, out CommandResponse, out ErrorResponse, CustomCommandResponseParser = null)
+        #region (static) TryParse(Command, JSON, out CommandResponse, out ErrorResponse, CustomCommandResponseParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
         /// Try to parse the given JSON representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CommandResponse">The parsed command response.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject              JSON,
+        public static Boolean TryParse(IOCPICommand         Command,
+                                       JObject              JSON,
                                        out CommandResponse  CommandResponse,
                                        out String           ErrorResponse)
 
-            => TryParse(JSON,
+            => TryParse(Command,
+                        JSON,
                         out CommandResponse,
                         out ErrorResponse,
                         null);
@@ -207,11 +230,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Try to parse the given JSON representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CommandResponse">The parsed command response.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static Boolean TryParse(JObject                                       JSON,
+        public static Boolean TryParse(IOCPICommand                                  Command,
+                                       JObject                                       JSON,
                                        out CommandResponse                           CommandResponse,
                                        out String                                    ErrorResponse,
                                        CustomJObjectParserDelegate<CommandResponse>  CustomCommandResponseParser   = null)
@@ -267,7 +292,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                CommandResponse = new CommandResponse(Result,
+                CommandResponse = new CommandResponse(Command,
+                                                      Result,
                                                       Timeout,
                                                       Message);
 
@@ -294,11 +320,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Try to parse the given text representation of a command response.
         /// </summary>
+        /// <param name="Command">The command leading to this response.</param>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CommandResponse">The parsed commandResponse.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCommandResponseParser">A delegate to parse custom command response JSON objects.</param>
-        public static Boolean TryParse(String                                        Text,
+        public static Boolean TryParse(IOCPICommand                                  Command,
+                                       String                                        Text,
                                        out CommandResponse                           CommandResponse,
                                        out String                                    ErrorResponse,
                                        CustomJObjectParserDelegate<CommandResponse>  CustomCommandResponseParser   = null)
@@ -307,7 +335,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             try
             {
 
-                return TryParse(JObject.Parse(Text),
+                return TryParse(Command,
+                                JObject.Parse(Text),
                                 out CommandResponse,
                                 out ErrorResponse,
                                 CustomCommandResponseParser);
@@ -367,8 +396,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (CommandResponse CommandResponse1,
                                            CommandResponse CommandResponse2)
+        {
 
-            => CommandResponse1.Equals(CommandResponse2);
+            if (Object.ReferenceEquals(CommandResponse1, CommandResponse2))
+                return true;
+
+            if (CommandResponse1 is null || CommandResponse2 is null)
+                return false;
+
+            return CommandResponse1.Equals(CommandResponse2);
+
+        }
 
         #endregion
 
@@ -398,7 +436,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (CommandResponse CommandResponse1,
                                           CommandResponse CommandResponse2)
 
-            => CommandResponse1.CompareTo(CommandResponse2) < 0;
+            => CommandResponse1 is null
+                   ? throw new ArgumentNullException(nameof(CommandResponse1), "The given command response must not be null!")
+                   : CommandResponse1.CompareTo(CommandResponse2) < 0;
 
         #endregion
 
@@ -428,7 +468,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (CommandResponse CommandResponse1,
                                           CommandResponse CommandResponse2)
 
-            => CommandResponse1.CompareTo(CommandResponse2) > 0;
+            => CommandResponse1 is null
+                   ? throw new ArgumentNullException(nameof(CommandResponse1), "The given command response must not be null!")
+                   : CommandResponse1.CompareTo(CommandResponse2) > 0;
 
         #endregion
 
@@ -475,6 +517,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(CommandResponse CommandResponse)
         {
 
+            if (CommandResponse is null)
+                throw new ArgumentNullException(nameof(CommandResponse), "The given command response must not be null!");
+
             var c = Result.CompareTo(CommandResponse.Result);
 
             if (c == 0)
@@ -512,12 +557,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CommandResponse">A command response to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(CommandResponse CommandResponse)
+        {
 
-            => Result. Equals(CommandResponse.Result)  &&
-               Timeout.Equals(CommandResponse.Timeout) &&
+            if (CommandResponse is null)
+                throw new ArgumentNullException(nameof(CommandResponse), "The given command response must not be null!");
 
-               Message.Count().Equals(CommandResponse.Message.Count()) &&
-               Message.All(message => CommandResponse.Message.Contains(message));
+            return Result. Equals(CommandResponse.Result)  &&
+                   Timeout.Equals(CommandResponse.Timeout) &&
+
+                   Message.Count().Equals(CommandResponse.Message.Count()) &&
+                   Message.All(message => CommandResponse.Message.Contains(message));
+
+        }
 
         #endregion
 

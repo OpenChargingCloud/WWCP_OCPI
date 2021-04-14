@@ -32,9 +32,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The 'set charging profile' command.
     /// </summary>
-    public readonly struct SetChargingProfileCommand : IEquatable<SetChargingProfileCommand>,
-                                                       IComparable<SetChargingProfileCommand>,
-                                                       IComparable
+    public class SetChargingProfileCommand : AOCPICommand<SetChargingProfileCommand>
     {
 
         #region Properties
@@ -61,8 +59,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ChargingProfile">Session identification of the charging session that is requested to be stopped.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'set charging profile' command requests.</param>
+        /// 
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
         public SetChargingProfileCommand(ChargingProfile  ChargingProfile,
-                                         URL              ResponseURL)
+                                         URL              ResponseURL,
+
+                                         Request_Id?      RequestId       = null,
+                                         Correlation_Id?  CorrelationId   = null)
+
+            : base(RequestId,
+                   CorrelationId)
+
         {
 
             this.ChargingProfile  = ChargingProfile;
@@ -340,8 +348,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (SetChargingProfileCommand SetChargingProfile1,
                                            SetChargingProfileCommand SetChargingProfile2)
+        {
 
-            => SetChargingProfile1.Equals(SetChargingProfile2);
+            if (Object.ReferenceEquals(SetChargingProfile1, SetChargingProfile2))
+                return true;
+
+            if (SetChargingProfile1 is null || SetChargingProfile2 is null)
+                return false;
+
+            return SetChargingProfile1.Equals(SetChargingProfile2);
+
+        }
 
         #endregion
 
@@ -371,7 +388,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (SetChargingProfileCommand SetChargingProfile1,
                                           SetChargingProfileCommand SetChargingProfile2)
 
-            => SetChargingProfile1.CompareTo(SetChargingProfile2) < 0;
+            => SetChargingProfile1 is null
+                   ? throw new ArgumentNullException(nameof(SetChargingProfile2), "The given 'set charging profile' command must not be null!")
+                   : SetChargingProfile1.CompareTo(SetChargingProfile2) < 0;
 
         #endregion
 
@@ -401,7 +420,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (SetChargingProfileCommand SetChargingProfile1,
                                           SetChargingProfileCommand SetChargingProfile2)
 
-            => SetChargingProfile1.CompareTo(SetChargingProfile2) > 0;
+            => SetChargingProfile1 is null
+                   ? throw new ArgumentNullException(nameof(SetChargingProfile2), "The given 'set charging profile' command must not be null!")
+                   : SetChargingProfile1.CompareTo(SetChargingProfile2) > 0;
 
         #endregion
 
@@ -430,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public override Int32 CompareTo(Object Object)
 
             => Object is SetChargingProfileCommand setChargingProfile
                    ? CompareTo(setChargingProfile)
@@ -445,8 +466,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="SetChargingProfileCommand">An object to compare with.</param>
-        public Int32 CompareTo(SetChargingProfileCommand SetChargingProfileCommand)
+        public override Int32 CompareTo(SetChargingProfileCommand SetChargingProfileCommand)
         {
+
+            if (SetChargingProfileCommand is null)
+                throw new ArgumentNullException(nameof(SetChargingProfileCommand), "The given 'set charging profile' command must not be null!");
 
             var c = ChargingProfile.CompareTo(SetChargingProfileCommand.ChargingProfile);
 
@@ -484,10 +508,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="SetChargingProfileCommand">An 'set charging profile' command to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(SetChargingProfileCommand SetChargingProfileCommand)
+        public override Boolean Equals(SetChargingProfileCommand SetChargingProfileCommand)
+        {
 
-            => ChargingProfile.Equals(SetChargingProfileCommand.ChargingProfile) &&
-               ResponseURL.    Equals(SetChargingProfileCommand.ResponseURL);
+            if (SetChargingProfileCommand is null)
+                throw new ArgumentNullException(nameof(SetChargingProfileCommand), "The given 'set charging profile' command must not be null!");
+
+            return ChargingProfile.Equals(SetChargingProfileCommand.ChargingProfile) &&
+                   ResponseURL.    Equals(SetChargingProfileCommand.ResponseURL);
+
+        }
 
         #endregion
 

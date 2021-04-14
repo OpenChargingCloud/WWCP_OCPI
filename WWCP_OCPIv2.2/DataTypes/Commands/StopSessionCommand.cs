@@ -32,9 +32,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The 'stop session' command.
     /// </summary>
-    public readonly struct StopSessionCommand : IEquatable<StopSessionCommand>,
-                                                IComparable<StopSessionCommand>,
-                                                IComparable
+    public class StopSessionCommand : AOCPICommand<StopSessionCommand>
     {
 
         #region Properties
@@ -61,8 +59,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="SessionId">Session identification of the charging session that is requested to be stopped.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'stop session' command requests.</param>
-        public StopSessionCommand(Session_Id  SessionId,
-                                  URL         ResponseURL)
+        /// 
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        public StopSessionCommand(Session_Id       SessionId,
+                                  URL              ResponseURL,
+
+                                  Request_Id?      RequestId       = null,
+                                  Correlation_Id?  CorrelationId   = null)
+
+            : base(RequestId,
+                   CorrelationId)
+
         {
 
             this.SessionId    = SessionId;
@@ -335,8 +343,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (StopSessionCommand StopSessionCommand1,
                                            StopSessionCommand StopSessionCommand2)
+        {
 
-            => StopSessionCommand1.Equals(StopSessionCommand2);
+            if (Object.ReferenceEquals(StopSessionCommand1, StopSessionCommand2))
+                return true;
+
+            if (StopSessionCommand1 is null || StopSessionCommand2 is null)
+                return false;
+
+            return StopSessionCommand1.Equals(StopSessionCommand2);
+
+        }
 
         #endregion
 
@@ -366,7 +383,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (StopSessionCommand StopSessionCommand1,
                                           StopSessionCommand StopSessionCommand2)
 
-            => StopSessionCommand1.CompareTo(StopSessionCommand2) < 0;
+            => StopSessionCommand1 is null
+                   ? throw new ArgumentNullException(nameof(StopSessionCommand1), "The given 'stop session' command must not be null!")
+                   : StopSessionCommand1.CompareTo(StopSessionCommand2) > 0;
 
         #endregion
 
@@ -396,7 +415,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (StopSessionCommand StopSessionCommand1,
                                           StopSessionCommand StopSessionCommand2)
 
-            => StopSessionCommand1.CompareTo(StopSessionCommand2) > 0;
+            => StopSessionCommand1 is null
+                   ? throw new ArgumentNullException(nameof(StopSessionCommand1), "The given 'stop session' command must not be null!")
+                   : StopSessionCommand1.CompareTo(StopSessionCommand2) < 0;
 
         #endregion
 
@@ -425,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public override Int32 CompareTo(Object Object)
 
             => Object is StopSessionCommand stopSessionCommand
                    ? CompareTo(stopSessionCommand)
@@ -440,8 +461,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="StopSessionCommand">An object to compare with.</param>
-        public Int32 CompareTo(StopSessionCommand StopSessionCommand)
+        public override Int32 CompareTo(StopSessionCommand StopSessionCommand)
         {
+
+            if (StopSessionCommand is null)
+                throw new ArgumentNullException(nameof(StopSessionCommand), "The given 'stop session' command must not be null!");
 
             var c = SessionId.  CompareTo(StopSessionCommand.SessionId);
 
@@ -479,10 +503,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="StopSessionCommand">An 'stop session' command to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(StopSessionCommand StopSessionCommand)
+        public override Boolean Equals(StopSessionCommand StopSessionCommand)
+        {
 
-            => SessionId.  Equals(StopSessionCommand.SessionId) &&
-               ResponseURL.Equals(StopSessionCommand.ResponseURL);
+            if (StopSessionCommand is null)
+                throw new ArgumentNullException(nameof(StopSessionCommand), "The given 'stop session' command must not be null!");
+
+            return SessionId.  Equals(StopSessionCommand.SessionId) &&
+                   ResponseURL.Equals(StopSessionCommand.ResponseURL);
+
+        }
 
         #endregion
 

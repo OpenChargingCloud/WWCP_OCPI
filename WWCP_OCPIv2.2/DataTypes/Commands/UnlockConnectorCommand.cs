@@ -32,9 +32,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The 'unlock connector' command.
     /// </summary>
-    public readonly struct UnlockConnectorCommand : IEquatable<UnlockConnectorCommand>,
-                                                    IComparable<UnlockConnectorCommand>,
-                                                    IComparable
+    public class UnlockConnectorCommand : AOCPICommand<UnlockConnectorCommand>
     {
 
         #region Properties
@@ -77,10 +75,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="EVSEUId">EVSE identification of the EVSE of this location of which it is requested to unlock the connector.</param>
         /// <param name="ConnectorId">Connector identification of the connector of this location of which it is requested to unlock.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'unlock connector' command requests.</param>
-        public UnlockConnectorCommand(Location_Id   LocationId,
-                                      EVSE_UId      EVSEUId,
-                                      Connector_Id  ConnectorId,
-                                      URL           ResponseURL)
+        /// 
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        public UnlockConnectorCommand(Location_Id      LocationId,
+                                      EVSE_UId         EVSEUId,
+                                      Connector_Id     ConnectorId,
+                                      URL              ResponseURL,
+
+                                      Request_Id?      RequestId       = null,
+                                      Correlation_Id?  CorrelationId   = null)
+
+            : base(RequestId,
+                   CorrelationId)
+
         {
 
             this.LocationId   = LocationId;
@@ -385,8 +393,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (UnlockConnectorCommand UnlockConnectorCommand1,
                                            UnlockConnectorCommand UnlockConnectorCommand2)
+        {
 
-            => UnlockConnectorCommand1.Equals(UnlockConnectorCommand2);
+            if (Object.ReferenceEquals(UnlockConnectorCommand1, UnlockConnectorCommand2))
+                return true;
+
+            if (UnlockConnectorCommand1 is null || UnlockConnectorCommand2 is null)
+                return false;
+
+            return UnlockConnectorCommand1.Equals(UnlockConnectorCommand2);
+
+        }
 
         #endregion
 
@@ -416,7 +433,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (UnlockConnectorCommand UnlockConnectorCommand1,
                                           UnlockConnectorCommand UnlockConnectorCommand2)
 
-            => UnlockConnectorCommand1.CompareTo(UnlockConnectorCommand2) < 0;
+            => UnlockConnectorCommand1 is null
+                   ? throw new ArgumentNullException(nameof(UnlockConnectorCommand1), "The given 'unlock connector' command must not be null!")
+                   : UnlockConnectorCommand1.CompareTo(UnlockConnectorCommand2) < 0;
 
         #endregion
 
@@ -446,7 +465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (UnlockConnectorCommand UnlockConnectorCommand1,
                                           UnlockConnectorCommand UnlockConnectorCommand2)
 
-            => UnlockConnectorCommand1.CompareTo(UnlockConnectorCommand2) > 0;
+            => UnlockConnectorCommand1 is null
+                   ? throw new ArgumentNullException(nameof(UnlockConnectorCommand1), "The given 'unlock connector' command must not be null!")
+                   : UnlockConnectorCommand1.CompareTo(UnlockConnectorCommand2) > 0;
 
         #endregion
 
@@ -475,7 +496,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public override Int32 CompareTo(Object Object)
 
             => Object is UnlockConnectorCommand unlockConnectorCommand
                    ? CompareTo(unlockConnectorCommand)
@@ -490,8 +511,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="UnlockConnectorCommand">An object to compare with.</param>
-        public Int32 CompareTo(UnlockConnectorCommand UnlockConnectorCommand)
+        public override Int32 CompareTo(UnlockConnectorCommand UnlockConnectorCommand)
         {
+
+            if (UnlockConnectorCommand is null)
+                throw new ArgumentNullException(nameof(UnlockConnectorCommand), "The given 'unlock connector' command must not be null!");
 
             var c = LocationId. CompareTo(UnlockConnectorCommand.LocationId);
 
@@ -535,12 +559,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="UnlockConnectorCommand">An 'unlock connector' command to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(UnlockConnectorCommand UnlockConnectorCommand)
+        public override Boolean Equals(UnlockConnectorCommand UnlockConnectorCommand)
+        {
 
-            => LocationId. Equals(UnlockConnectorCommand.LocationId)  &&
-               EVSEUId.    Equals(UnlockConnectorCommand.EVSEUId)     &&
-               ConnectorId.Equals(UnlockConnectorCommand.ConnectorId) &&
-               ResponseURL.Equals(UnlockConnectorCommand.ResponseURL);
+            if (UnlockConnectorCommand is null)
+                throw new ArgumentNullException(nameof(UnlockConnectorCommand), "The given 'unlock connector' command must not be null!");
+
+            return LocationId. Equals(UnlockConnectorCommand.LocationId)  &&
+                   EVSEUId.    Equals(UnlockConnectorCommand.EVSEUId)     &&
+                   ConnectorId.Equals(UnlockConnectorCommand.ConnectorId) &&
+                   ResponseURL.Equals(UnlockConnectorCommand.ResponseURL);
+
+        }
 
         #endregion
 

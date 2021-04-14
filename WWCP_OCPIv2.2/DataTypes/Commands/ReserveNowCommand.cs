@@ -32,9 +32,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The 'reserve now' command.
     /// </summary>
-    public readonly struct ReserveNowCommand : IEquatable<ReserveNowCommand>,
-                                               IComparable<ReserveNowCommand>,
-                                               IComparable
+    public class ReserveNowCommand : AOCPICommand<ReserveNowCommand>
     {
 
         #region Properties
@@ -100,6 +98,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// 
         /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
         /// <param name="AuthorizationReference">Optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant session and/or CDR.</param>
+        /// 
+        /// <param name="RequestId">An optional request identification.</param>
+        /// <param name="CorrelationId">An optional request correlation identification.</param>
         public ReserveNowCommand(Token                    Token,
                                  DateTime                 ExpiryDate,
                                  Reservation_Id           ReservationId,
@@ -107,7 +108,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                  URL                      ResponseURL,
 
                                  EVSE_UId?                EVSEUId                  = null,
-                                 AuthorizationReference?  AuthorizationReference   = null)
+                                 AuthorizationReference?  AuthorizationReference   = null,
+
+                                 Request_Id?              RequestId                = null,
+                                 Correlation_Id?          CorrelationId            = null)
+
+            : base(RequestId,
+                   CorrelationId)
+
         {
 
             this.Token                   = Token;
@@ -476,8 +484,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (ReserveNowCommand ReserveNowCommand1,
                                            ReserveNowCommand ReserveNowCommand2)
+        {
 
-            => ReserveNowCommand1.Equals(ReserveNowCommand2);
+            if (Object.ReferenceEquals(ReserveNowCommand1, ReserveNowCommand2))
+                return true;
+
+            if (ReserveNowCommand1 is null || ReserveNowCommand2 is null)
+                return false;
+
+            return ReserveNowCommand1.Equals(ReserveNowCommand2);
+
+        }
 
         #endregion
 
@@ -507,7 +524,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (ReserveNowCommand ReserveNowCommand1,
                                           ReserveNowCommand ReserveNowCommand2)
 
-            => ReserveNowCommand1.CompareTo(ReserveNowCommand2) < 0;
+            => ReserveNowCommand1 is null
+                   ? throw new ArgumentNullException(nameof(ReserveNowCommand1), "The given 'reserve now' command must not be null!")
+                   : ReserveNowCommand1.CompareTo(ReserveNowCommand2) < 0;
 
         #endregion
 
@@ -537,7 +556,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (ReserveNowCommand ReserveNowCommand1,
                                           ReserveNowCommand ReserveNowCommand2)
 
-            => ReserveNowCommand1.CompareTo(ReserveNowCommand2) > 0;
+            => ReserveNowCommand1 is null
+                   ? throw new ArgumentNullException(nameof(ReserveNowCommand1), "The given 'reserve now' command must not be null!")
+                   : ReserveNowCommand1.CompareTo(ReserveNowCommand2) > 0;
 
         #endregion
 
@@ -566,7 +587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public override Int32 CompareTo(Object Object)
 
             => Object is ReserveNowCommand unlockConnectorCommand
                    ? CompareTo(unlockConnectorCommand)
@@ -581,8 +602,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="ReserveNowCommand">An object to compare with.</param>
-        public Int32 CompareTo(ReserveNowCommand ReserveNowCommand)
+        public override Int32 CompareTo(ReserveNowCommand ReserveNowCommand)
         {
+
+            if (ReserveNowCommand is null)
+                throw new ArgumentNullException(nameof(ReserveNowCommand), "The given 'reserve now' command must not be null!");
 
             var c = Token.        CompareTo(ReserveNowCommand.Token);
 
@@ -635,15 +659,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ReserveNowCommand">An 'reserve now' command to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(ReserveNowCommand ReserveNowCommand)
+        public override Boolean Equals(ReserveNowCommand ReserveNowCommand)
+        {
 
-            => Token.                 Equals(ReserveNowCommand.Token)                  &&
-               ExpiryDate.            Equals(ReserveNowCommand.ExpiryDate)             &&
-               ReservationId.         Equals(ReserveNowCommand.ReservationId)          &&
-               LocationId.            Equals(ReserveNowCommand.LocationId)             &&
-               EVSEUId.               Equals(ReserveNowCommand.EVSEUId)                &&
-               AuthorizationReference.Equals(ReserveNowCommand.AuthorizationReference) &&
-               ResponseURL.           Equals(ReserveNowCommand.ResponseURL);
+            if (ReserveNowCommand is null)
+                throw new ArgumentNullException(nameof(ReserveNowCommand), "The given 'reserve now' command must not be null!");
+
+            return Token.                 Equals(ReserveNowCommand.Token)                  &&
+                   ExpiryDate.            Equals(ReserveNowCommand.ExpiryDate)             &&
+                   ReservationId.         Equals(ReserveNowCommand.ReservationId)          &&
+                   LocationId.            Equals(ReserveNowCommand.LocationId)             &&
+                   EVSEUId.               Equals(ReserveNowCommand.EVSEUId)                &&
+                   AuthorizationReference.Equals(ReserveNowCommand.AuthorizationReference) &&
+                   ResponseURL.           Equals(ReserveNowCommand.ResponseURL);
+
+        }
 
         #endregion
 

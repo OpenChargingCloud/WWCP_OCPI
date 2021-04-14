@@ -31,9 +31,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A charging profile response.
     /// </summary>
-    public readonly struct ChargingProfileResponse : IEquatable<ChargingProfileResponse>,
-                                                     IComparable<ChargingProfileResponse>,
-                                                     IComparable
+    public class ChargingProfileResponse : IEquatable<ChargingProfileResponse>,
+                                           IComparable<ChargingProfileResponse>,
+                                           IComparable
     {
 
         #region Properties
@@ -334,8 +334,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (ChargingProfileResponse ChargingProfileResponse1,
                                            ChargingProfileResponse ChargingProfileResponse2)
+        {
 
-            => ChargingProfileResponse1.Equals(ChargingProfileResponse2);
+            if (Object.ReferenceEquals(ChargingProfileResponse1, ChargingProfileResponse2))
+                return true;
+
+            if (ChargingProfileResponse1 is null || ChargingProfileResponse2 is null)
+                return false;
+
+            return ChargingProfileResponse1.Equals(ChargingProfileResponse2);
+
+        }
 
         #endregion
 
@@ -365,7 +374,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (ChargingProfileResponse ChargingProfileResponse1,
                                           ChargingProfileResponse ChargingProfileResponse2)
 
-            => ChargingProfileResponse1.CompareTo(ChargingProfileResponse2) < 0;
+            => ChargingProfileResponse1 is null
+                   ? throw new ArgumentNullException(nameof(ChargingProfileResponse1), "The given charging profile response must not be null!")
+                   : ChargingProfileResponse1.CompareTo(ChargingProfileResponse2) < 0;
 
         #endregion
 
@@ -395,7 +406,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (ChargingProfileResponse ChargingProfileResponse1,
                                           ChargingProfileResponse ChargingProfileResponse2)
 
-            => ChargingProfileResponse1.CompareTo(ChargingProfileResponse2) > 0;
+            => ChargingProfileResponse1 is null
+                   ? throw new ArgumentNullException(nameof(ChargingProfileResponse1), "The given charging profile response must not be null!")
+                   : ChargingProfileResponse1.CompareTo(ChargingProfileResponse2) > 0;
 
         #endregion
 
@@ -442,6 +455,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(ChargingProfileResponse ChargingProfileResponse)
         {
 
+            if (ChargingProfileResponse is null)
+                throw new ArgumentNullException(nameof(ChargingProfileResponse), "The given charging profile response must not be null!");
+
             var c = Result.CompareTo(ChargingProfileResponse.Result);
 
             if (c == 0)
@@ -479,9 +495,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ChargingProfileResponse">A charging profile response to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(ChargingProfileResponse ChargingProfileResponse)
+        {
 
-            => Result. Equals(ChargingProfileResponse.Result) &&
-               Timeout.Equals(ChargingProfileResponse.Timeout);
+            if (ChargingProfileResponse is null)
+                throw new ArgumentNullException(nameof(ChargingProfileResponse), "The given charging profile response must not be null!");
+
+            return Result. Equals(ChargingProfileResponse.Result) &&
+                   Timeout.Equals(ChargingProfileResponse.Timeout);
+
+        }
 
         #endregion
 

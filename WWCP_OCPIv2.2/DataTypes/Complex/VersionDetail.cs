@@ -34,9 +34,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// Version detail information.
     /// </summary>
-    public readonly struct VersionDetail : IEquatable<VersionDetail>,
-                                           IComparable<VersionDetail>,
-                                           IComparable
+    public class VersionDetail : IEquatable<VersionDetail>,
+                                 IComparable<VersionDetail>,
+                                 IComparable
     {
 
         #region Properties
@@ -294,8 +294,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public static Boolean operator == (VersionDetail VersionDetail1,
                                            VersionDetail VersionDetail2)
+        {
 
-            => VersionDetail1.Equals(VersionDetail2);
+            if (Object.ReferenceEquals(VersionDetail1, VersionDetail2))
+                return true;
+
+            if (VersionDetail1 is null || VersionDetail2 is null)
+                return false;
+
+            return VersionDetail1.Equals(VersionDetail2);
+
+        }
 
         #endregion
 
@@ -325,7 +334,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator < (VersionDetail VersionDetail1,
                                           VersionDetail VersionDetail2)
 
-            => VersionDetail1.CompareTo(VersionDetail2) < 0;
+            => VersionDetail1 is null
+                   ? throw new ArgumentNullException(nameof(VersionDetail1), "The given version detail must not be null!")
+                   : VersionDetail1.CompareTo(VersionDetail2) < 0;
 
         #endregion
 
@@ -355,7 +366,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator > (VersionDetail VersionDetail1,
                                           VersionDetail VersionDetail2)
 
-            => VersionDetail1.CompareTo(VersionDetail2) > 0;
+            => VersionDetail1 is null
+                   ? throw new ArgumentNullException(nameof(VersionDetail1), "The given version detail must not be null!")
+                   : VersionDetail1.CompareTo(VersionDetail2) > 0;
 
         #endregion
 
@@ -400,8 +413,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="VersionDetail">An object to compare with.</param>
         public Int32 CompareTo(VersionDetail VersionDetail)
+        {
 
-            => VersionId.CompareTo(VersionDetail.VersionId);
+            if (VersionDetail is null)
+                throw new ArgumentNullException(nameof(VersionDetail), "The given version detail must not be null!");
+
+            var c = VersionId.CompareTo(VersionDetail.VersionId);
+
+            if (c == 0)
+                c = Endpoints.Count().CompareTo(VersionDetail.Endpoints.Count());
+
+            return c;
+
+        }
 
         #endregion
 
@@ -431,11 +455,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="VersionDetail">A version detail to compare with.</param>
         /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(VersionDetail VersionDetail)
+        {
 
-            => VersionId.Equals(VersionDetail.VersionId) &&
+            if (VersionDetail is null)
+                throw new ArgumentNullException(nameof(VersionDetail), "The given version detail must not be null!");
 
-               Endpoints.Count().Equals(VersionDetail.Endpoints.Count()) &&
-               Endpoints.All(endpoint => VersionDetail.Endpoints.Contains(endpoint));
+            return VersionId.Equals(VersionDetail.VersionId) &&
+
+                   Endpoints.Count().Equals(VersionDetail.Endpoints.Count()) &&
+                   Endpoints.All(endpoint => VersionDetail.Endpoints.Contains(endpoint));
+
+        }
 
         #endregion
 
@@ -452,7 +482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
                 return VersionId.GetHashCode() * 3 ^
-                       Endpoints.    GetHashCode();
+                       Endpoints.GetHashCode();
             }
         }
 
