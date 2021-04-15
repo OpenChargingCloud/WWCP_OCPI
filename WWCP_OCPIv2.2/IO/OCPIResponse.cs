@@ -125,34 +125,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        //public static JObject Create(Int32            StatusCode,
-        //                             String           StatusMessage,
-        //                             String           AdditionalInformation   = null,
-        //                             DateTime?        Timestamp               = null,
-
-        //                             Request_Id?      RequestId               = null,
-        //                             Correlation_Id?  CorrelationId           = null,
-        //                             HTTPResponse     Response                = null)
-
-        //{
-
-        //    return new OCPIResponse(StatusCode,
-        //                            StatusMessage,
-        //                            AdditionalInformation,
-        //                            Timestamp,
-        //                            RequestId,
-        //                            CorrelationId,
-        //                            Response).ToJSON();
-
-        //}
-
-
-        //public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
-        //{
-        //    return new HTTPResponse.Builder(Request);
-        //}
-
-
         public JObject ToJSON()
         {
 
@@ -221,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            Correlation_Id?  CorrelationId           = null)
             {
 
-                this.Request = Request;
+                this.Request                = Request;
                 this.StatusCode             = StatusCode;
                 this.StatusMessage          = StatusMessage;
                 this.AdditionalInformation  = AdditionalInformation;
