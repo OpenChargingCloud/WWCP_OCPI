@@ -39,6 +39,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         private readonly String InternalId;
 
+        private static readonly Random random = new Random();
+
         #endregion
 
         #region Properties
@@ -73,6 +75,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (static) Random  (Length = 50)
+
+        /// <summary>
+        /// Create a new random command identification.
+        /// </summary>
+        /// <param name="Length">The expected length of the command identification.</param>
+        public static Command_Id Random(Byte Length = 50)
+
+            => new Command_Id(random.RandomString(Length));
+
+        #endregion
+
         #region (static) Parse   (Text)
 
         /// <summary>
@@ -106,7 +120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (TryParse(Text, out Command_Id commandId))
                 return commandId;
 
-            return null;
+            return default;
 
         }
 

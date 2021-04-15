@@ -30,6 +30,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Text;
+using System.Collections.Concurrent;
 
 #endregion
 
@@ -67,8 +68,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         private readonly URL OurBaseURL;
 
-
         public const String LogfileName = "OCPICommonAPI.log";
+
+
+        /// <summary>
+        /// The command values store.
+        /// </summary>
+        public readonly ConcurrentDictionary<Command_Id, CommandValues> CommandValueStore = new ConcurrentDictionary<Command_Id, CommandValues>();
 
         #endregion
 
@@ -84,8 +90,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
 
-
-        //public Boolean                       VersionsURLusesHTTPS       { get; }
 
         public HTTPPath?                     AdditionalURLPathPrefix    { get; }
 

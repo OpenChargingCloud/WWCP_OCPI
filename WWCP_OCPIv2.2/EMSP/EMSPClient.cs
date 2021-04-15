@@ -4150,7 +4150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CommandResponse>>
+        public async Task<OCPIResponse<ReserveNowCommand, CommandResponse>>
 
             ReserveNow(Token                    Token,
                        DateTime                 ExpirationTimestamp,
@@ -4159,6 +4159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        EVSE_UId?                EVSEUId                  = null,
                        AuthorizationReference?  AuthorizationReference   = null,
 
+                       Command_Id?              CommandId                = null,
                        Request_Id?              RequestId                = null,
                        Correlation_Id?          CorrelationId            = null,
                        Version_Id?              VersionId                = null,
@@ -4170,7 +4171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<CommandResponse> response;
+            OCPIResponse<ReserveNowCommand, CommandResponse> response;
 
             #region Send OnReserveNowRequest event
 
@@ -4214,6 +4215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
+                var commandId      = CommandId     ?? Command_Id.Random();
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
@@ -4226,9 +4228,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            ReservationId,
                                                            LocationId,
                                                            MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                    SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + random.RandomString(50),
+                                                                                    SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
                                                            EVSEUId,
-                                                           AuthorizationReference);
+                                                           AuthorizationReference,
+                                                           requestId,
+                                                           correlationId);
+
+                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                                                          (id)    => CommandValues.FromCommand(command),
+                                                          (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
+
 
                 if (remoteURL.HasValue)
                 {
@@ -4270,30 +4279,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => CommandResponse.Parse(command,
-                                                                                                        json));
+                    response = OCPIResponse<ReserveNowCommand, CommandResponse>.ParseJObject(command,
+                                                                                             HTTPResponse,
+                                                                                             requestId,
+                                                                                             correlationId,
+                                                                                             json => CommandResponse.Parse(command,
+                                                                                                                           json));
 
                 }
 
                 else
-                    response = new OCPIResponse<String, CommandResponse>("",
-                                                                         default,
-                                                                         -1,
-                                                                         "No remote URL available!");
+                    response = new OCPIResponse<ReserveNowCommand, CommandResponse>(null,
+                                                                                    default,
+                                                                                    -1,
+                                                                                    "No remote URL available!");
+
+
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                    commandValues.Response = response.Data;
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CommandResponse>("",
-                                                                     default,
-                                                                     -1,
-                                                                     e.Message,
-                                                                     e.StackTrace);
+                response = new OCPIResponse<ReserveNowCommand, CommandResponse>(null,
+                                                                                default,
+                                                                                -1,
+                                                                                e.Message,
+                                                                                e.StackTrace);
 
             }
 
@@ -4358,10 +4372,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CommandResponse>>
+        public async Task<OCPIResponse<CancelReservationCommand, CommandResponse>>
 
             CancelReservation(Reservation_Id      ReservationId,
 
+                              Command_Id?         CommandId           = null,
                               Request_Id?         RequestId           = null,
                               Correlation_Id?     CorrelationId       = null,
                               Version_Id?         VersionId           = null,
@@ -4373,7 +4388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<CommandResponse> response;
+            OCPIResponse<CancelReservationCommand, CommandResponse> response;
 
             #region Send OnCancelReservationRequest event
 
@@ -4417,6 +4432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
+                var commandId      = CommandId     ?? Command_Id.Random();
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
@@ -4426,7 +4442,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 var command        = new CancelReservationCommand(ReservationId,
                                                                   MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                           SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + random.RandomString(50));
+                                                                                           SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
+                                                                  requestId,
+                                                                  correlationId);
+
+                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                                                          (id)    => CommandValues.FromCommand(command),
+                                                          (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
+
 
                 if (remoteURL.HasValue)
                 {
@@ -4468,30 +4491,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => CommandResponse.Parse(command,
-                                                                                                        json));
+                    response = OCPIResponse<CancelReservationCommand, CommandResponse>.ParseJObject(command,
+                                                                                                    HTTPResponse,
+                                                                                                    requestId,
+                                                                                                    correlationId,
+                                                                                                    json => CommandResponse.Parse(command,
+                                                                                                                                  json));
 
                 }
 
                 else
-                    response = new OCPIResponse<String, CommandResponse>("",
-                                                                         default,
-                                                                         -1,
-                                                                         "No remote URL available!");
+                    response = new OCPIResponse<CancelReservationCommand, CommandResponse>(null,
+                                                                                           default,
+                                                                                           -1,
+                                                                                           "No remote URL available!");
+
+
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                    commandValues.Response = response.Data;
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CommandResponse>("",
-                                                                     default,
-                                                                     -1,
-                                                                     e.Message,
-                                                                     e.StackTrace);
+                response = new OCPIResponse<CancelReservationCommand, CommandResponse>(null,
+                                                                                       default,
+                                                                                       -1,
+                                                                                       e.Message,
+                                                                                       e.StackTrace);
 
             }
 
@@ -4556,13 +4584,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CommandResponse>>
+        public async Task<OCPIResponse<StartSessionCommand, CommandResponse>>
 
             StartSession(Token                    Token,
                          Location_Id              LocationId,
                          EVSE_UId?                EVSEUId                  = null,
                          AuthorizationReference?  AuthorizationReference   = null,
 
+                         Command_Id?              CommandId                = null,
                          Request_Id?              RequestId                = null,
                          Correlation_Id?          CorrelationId            = null,
                          Version_Id?              VersionId                = null,
@@ -4574,7 +4603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<CommandResponse> response;
+            OCPIResponse<StartSessionCommand, CommandResponse> response;
 
             #region Send OnStartSessionRequest event
 
@@ -4618,6 +4647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
+                var commandId      = CommandId     ?? Command_Id.Random();
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
@@ -4628,9 +4658,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var command        = new StartSessionCommand(Token,
                                                              LocationId,
                                                              MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + random.RandomString(50),
+                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
                                                              EVSEUId,
-                                                             AuthorizationReference);
+                                                             AuthorizationReference,
+                                                             requestId,
+                                                             correlationId);
+
+                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                                                          (id)    => CommandValues.FromCommand(command),
+                                                          (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
+
 
                 if (remoteURL.HasValue)
                 {
@@ -4672,30 +4709,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => CommandResponse.Parse(command,
-                                                                                                        json));
+                    response = OCPIResponse<StartSessionCommand, CommandResponse>.ParseJObject(command,
+                                                                                               HTTPResponse,
+                                                                                               requestId,
+                                                                                               correlationId,
+                                                                                               json => CommandResponse.Parse(command,
+                                                                                                                             json));
 
                 }
 
                 else
-                    response = new OCPIResponse<String, CommandResponse>("",
-                                                                         default,
-                                                                         -1,
-                                                                         "No remote URL available!");
+                    response = new OCPIResponse<StartSessionCommand, CommandResponse>(null,
+                                                                                      default,
+                                                                                      -1,
+                                                                                      "No remote URL available!");
+
+
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                    commandValues.Response = response.Data;
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CommandResponse>("",
-                                                                     default,
-                                                                     -1,
-                                                                     e.Message,
-                                                                     e.StackTrace);
+                response = new OCPIResponse<StartSessionCommand, CommandResponse>(null,
+                                                                                  default,
+                                                                                  -1,
+                                                                                  e.Message,
+                                                                                  e.StackTrace);
 
             }
 
@@ -4760,10 +4802,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CommandResponse>>
+        public async Task<OCPIResponse<StopSessionCommand, CommandResponse>>
 
             StopSession(Session_Id          SessionId,
 
+                        Command_Id?         CommandId           = null,
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
@@ -4775,7 +4818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<CommandResponse> response;
+            OCPIResponse<StopSessionCommand, CommandResponse> response;
 
             #region Send OnStopSessionRequest event
 
@@ -4819,6 +4862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
+                var commandId      = CommandId     ?? Command_Id.Random();
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
@@ -4828,7 +4872,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 var command        = new StopSessionCommand(SessionId,
                                                             MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + random.RandomString(50));
+                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
+                                                            requestId,
+                                                            correlationId);
+
+                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                                                          (id)    => CommandValues.FromCommand(command),
+                                                          (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
 
                 if (remoteURL.HasValue)
@@ -4871,30 +4921,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => CommandResponse.Parse(command,
-                                                                                                        json));
+                    response = OCPIResponse<StopSessionCommand, CommandResponse>.ParseJObject(command,
+                                                                                              HTTPResponse,
+                                                                                              requestId,
+                                                                                              correlationId,
+                                                                                              json => CommandResponse.Parse(command,
+                                                                                                                            json));
 
                 }
 
                 else
-                    response = new OCPIResponse<String, CommandResponse>("",
-                                                                         default,
-                                                                         -1,
-                                                                         "No remote URL available!");
+                    response = new OCPIResponse<StopSessionCommand, CommandResponse>(null,
+                                                                                     default,
+                                                                                     -1,
+                                                                                     "No remote URL available!");
+
+
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                    commandValues.Response = response.Data;
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CommandResponse>("",
-                                                                     default,
-                                                                     -1,
-                                                                     e.Message,
-                                                                     e.StackTrace);
+                response = new OCPIResponse<StopSessionCommand, CommandResponse>(null,
+                                                                                 default,
+                                                                                 -1,
+                                                                                 e.Message,
+                                                                                 e.StackTrace);
 
             }
 
@@ -4959,24 +5014,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CommandResponse>>
+        public async Task<OCPIResponse<UnlockConnectorCommand, CommandResponse>>
 
-            UnlockConnector(Location_Id             LocationId,
-                            EVSE_UId                EVSEUId,
-                            Connector_Id            ConnectorId,
+            UnlockConnector(Location_Id         LocationId,
+                            EVSE_UId            EVSEUId,
+                            Connector_Id        ConnectorId,
 
-                            Request_Id?             RequestId           = null,
-                            Correlation_Id?         CorrelationId       = null,
-                            Version_Id?             VersionId           = null,
+                            Command_Id?         CommandId           = null,
+                            Request_Id?         RequestId           = null,
+                            Correlation_Id?     CorrelationId       = null,
+                            Version_Id?         VersionId           = null,
 
-                            DateTime?               Timestamp           = null,
-                            CancellationToken?      CancellationToken   = null,
-                            EventTracking_Id        EventTrackingId     = null,
-                            TimeSpan?               RequestTimeout      = null)
+                            DateTime?           Timestamp           = null,
+                            CancellationToken?  CancellationToken   = null,
+                            EventTracking_Id    EventTrackingId     = null,
+                            TimeSpan?           RequestTimeout      = null)
 
         {
 
-            OCPIResponse<CommandResponse> response;
+            OCPIResponse<UnlockConnectorCommand, CommandResponse> response;
 
             #region Send OnUnlockConnectorRequest event
 
@@ -5020,6 +5076,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
+                var commandId      = CommandId     ?? Command_Id.Random();
                 var requestId      = RequestId     ?? Request_Id.Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
@@ -5031,7 +5088,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                 EVSEUId,
                                                                 ConnectorId,
                                                                 MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
-                                                                                         SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + random.RandomString(50));
+                                                                                         SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
+                                                                requestId,
+                                                                correlationId);
+
+                MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
+                                                          (id)    => CommandValues.FromCommand(command),
+                                                          (id, c) => CommandValues.FromUpstreamCommand(command, c.UpstreamCommand));
 
 
                 if (remoteURL.HasValue)
@@ -5074,30 +5137,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<CommandResponse>.ParseJObject(HTTPResponse,
-                                                                          requestId,
-                                                                          correlationId,
-                                                                          json => CommandResponse.Parse(command,
-                                                                                                        json));
+                    response = OCPIResponse<UnlockConnectorCommand, CommandResponse>.ParseJObject(command,
+                                                                                                  HTTPResponse,
+                                                                                                  requestId,
+                                                                                                  correlationId,
+                                                                                                  json => CommandResponse.Parse(command,
+                                                                                                                                json));
 
                 }
 
                 else
-                    response = new OCPIResponse<String, CommandResponse>("",
-                                                                         default,
-                                                                         -1,
-                                                                         "No remote URL available!");
+                    response = new OCPIResponse<UnlockConnectorCommand, CommandResponse>(null,
+                                                                                         default,
+                                                                                         -1,
+                                                                                         "No remote URL available!");
+
+
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                    commandValues.Response = response.Data;
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CommandResponse>("",
-                                                                     default,
-                                                                     -1,
-                                                                     e.Message,
-                                                                     e.StackTrace);
+                response = new OCPIResponse<UnlockConnectorCommand, CommandResponse>(null,
+                                                                                     default,
+                                                                                     -1,
+                                                                                     e.Message,
+                                                                                     e.StackTrace);
 
             }
 

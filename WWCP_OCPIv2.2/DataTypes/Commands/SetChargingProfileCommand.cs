@@ -43,13 +43,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public ChargingProfile  ChargingProfile    { get; }
 
-        /// <summary>
-        /// URL that the ChargingProfileResult POST should be send to. This URL might contain an
-        /// unique identification to be able to distinguish between GET ActiveChargingProfile requests.
-        /// </summary>
-        [Mandatory]
-        public URL              ResponseURL        { get; }
-
         #endregion
 
         #region Constructor(s)
@@ -68,13 +61,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                          Request_Id?      RequestId       = null,
                                          Correlation_Id?  CorrelationId   = null)
 
-            : base(RequestId,
+            : base(ResponseURL,
+                   RequestId,
                    CorrelationId)
 
         {
 
             this.ChargingProfile  = ChargingProfile;
-            this.ResponseURL      = ResponseURL;
 
         }
 

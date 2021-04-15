@@ -17,6 +17,8 @@
 
 #region Usings
 
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Illias;
 using System;
 
 #endregion
@@ -29,6 +31,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// </summary>
     public interface IOCPICommand : IComparable
     {
+
+        /// <summary>
+        /// URL that the CommandResult POST should be sent to. This URL might contain an
+        /// unique identification to be able to distinguish between 'reserve now' command requests.
+        /// </summary>
+        URL             ResponseURL      { get; }
+
+        /// <summary>
+        /// The request identification.
+        /// </summary>
+        Request_Id      RequestId        { get; }
+
+        /// <summary>
+        /// The request correlation identification.
+        /// </summary>
+        Correlation_Id  CorrelationId    { get; }
 
     }
 
@@ -55,14 +73,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
+        /// URL that the CommandResult POST should be sent to. This URL might contain an
+        /// unique identification to be able to distinguish between 'reserve now' command requests.
+        /// </summary>
+        [Mandatory]
+        public URL             ResponseURL      { get; }
+
+        /// <summary>
         /// The request identification.
         /// </summary>
-        public Request_Id      RequestId;
+        public Request_Id      RequestId        { get; }
 
         /// <summary>
         /// The request correlation identification.
         /// </summary>
-        public Correlation_Id  CorrelationId;
+        public Correlation_Id  CorrelationId    { get; }
 
         #endregion
 
@@ -71,12 +96,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new abstract OCPI command.
         /// </summary>
+        /// <param name="ResponseURL">The response URL.</param>
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
-        public AOCPICommand(Request_Id?      RequestId       = null,
+        public AOCPICommand(URL              ResponseURL,
+                            Request_Id?      RequestId       = null,
                             Correlation_Id?  CorrelationId   = null)
         {
 
+            this.ResponseURL    = ResponseURL;
             this.RequestId      = RequestId     ?? Request_Id.    Random();
             this.CorrelationId  = CorrelationId ?? Correlation_Id.Random();
 

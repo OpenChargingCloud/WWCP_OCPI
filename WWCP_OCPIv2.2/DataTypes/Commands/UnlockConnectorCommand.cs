@@ -56,14 +56,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public Connector_Id  ConnectorId     { get; }
 
-        /// <summary>
-        /// URL that the CommandResult POST should be sent to. This URL might contain an
-        /// unique identification to be able to distinguish between 'unlock connector'
-        /// command requests.
-        /// </summary>
-        [Mandatory]
-        public URL           ResponseURL     { get; }
-
         #endregion
 
         #region Constructor(s)
@@ -86,7 +78,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                       Request_Id?      RequestId       = null,
                                       Correlation_Id?  CorrelationId   = null)
 
-            : base(RequestId,
+            : base(ResponseURL,
+                   RequestId,
                    CorrelationId)
 
         {
@@ -94,7 +87,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.LocationId   = LocationId;
             this.EVSEUId      = EVSEUId;
             this.ConnectorId  = ConnectorId;
-            this.ResponseURL  = ResponseURL;
 
         }
 

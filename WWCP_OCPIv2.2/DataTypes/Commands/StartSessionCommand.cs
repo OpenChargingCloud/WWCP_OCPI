@@ -64,14 +64,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public AuthorizationReference?  AuthorizationReference    { get; }
 
-        /// <summary>
-        /// URL that the CommandResult POST should be sent to. This URL might contain an
-        /// unique identification to be able to distinguish between 'start session'
-        /// command requests.
-        /// </summary>
-        [Mandatory]
-        public URL                      ResponseURL               { get; }
-
         #endregion
 
         #region Constructor(s)
@@ -82,7 +74,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Token">The token the charge point has to use to start a new session. The Token provided in this request is authorized by the eMSP.</param>
         /// <param name="LocationId">Location identification of the location (belonging to the CPO this request is send to) on which a session is to be started.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'start session' command requests.</param>
-        /// 
         /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
         /// <param name="AuthorizationReference">Optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant session and/or CDR.</param>
         /// 
@@ -91,22 +82,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public StartSessionCommand(Token                    Token,
                                    Location_Id              LocationId,
                                    URL                      ResponseURL,
-
                                    EVSE_UId?                EVSEUId                  = null,
                                    AuthorizationReference?  AuthorizationReference   = null,
 
                                    Request_Id?              RequestId                = null,
                                    Correlation_Id?          CorrelationId            = null)
 
-            : base(RequestId,
+            : base(ResponseURL,
+                   RequestId,
                    CorrelationId)
 
         {
 
             this.Token                   = Token;
             this.LocationId              = LocationId;
-            this.ResponseURL             = ResponseURL;
-
             this.EVSEUId                 = EVSEUId;
             this.AuthorizationReference  = AuthorizationReference;
 

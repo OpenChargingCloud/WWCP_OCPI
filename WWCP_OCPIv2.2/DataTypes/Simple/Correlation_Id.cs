@@ -39,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         private readonly String InternalId;
 
-        private static readonly Random random = new Random(DateTime.Now.Millisecond);
+        private static readonly Random random = new Random();
 
         #endregion
 

@@ -34,9 +34,6 @@ using System.Threading.Tasks;
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
-
-
-
     /// <summary>
     /// A HTTP delegate.
     /// </summary>
@@ -140,6 +137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               e.Message,
                                                                               null,
                                                                               DateTime.UtcNow,
+                                                                              null,
                                                                               (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
                                                                               (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
                                                                           ).ToJSON(json => json).ToUTF8Bytes(),

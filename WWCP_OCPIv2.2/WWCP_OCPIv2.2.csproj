@@ -55,6 +55,7 @@
     <Compile Include="CPO\CPOClient.cs" />
     <Compile Include="CPO\CPOAPILogger.cs" />
     <Compile Include="CPO\CPOClientLogger.cs" />
+    <Compile Include="DataTypes\Commands\CommandValues.cs" />
     <Compile Include="DataTypes\Commands\AOCPICommand.cs" />
     <Compile Include="DataTypes\Commands\ClearProfileResult.cs" />
     <Compile Include="DataTypes\Commands\ChargingProfileResult.cs" />

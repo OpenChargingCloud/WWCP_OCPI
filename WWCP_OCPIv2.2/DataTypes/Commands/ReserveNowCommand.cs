@@ -64,13 +64,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Location_Id              LocationId                { get; }
 
         /// <summary>
-        /// URL that the CommandResult POST should be sent to. This URL might contain an
-        /// unique identification to be able to distinguish between 'reserve now' command requests.
-        /// </summary>
-        [Mandatory]
-        public URL                      ResponseURL               { get; }
-
-        /// <summary>
         /// Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.
         /// </summary>
         [Mandatory]
@@ -113,7 +106,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                  Request_Id?              RequestId                = null,
                                  Correlation_Id?          CorrelationId            = null)
 
-            : base(RequestId,
+            : base(ResponseURL,
+                   RequestId,
                    CorrelationId)
 
         {
@@ -122,7 +116,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.ExpiryDate              = ExpiryDate;
             this.ReservationId           = ReservationId;
             this.LocationId              = LocationId;
-            this.ResponseURL             = ResponseURL;
 
             this.EVSEUId                 = EVSEUId;
             this.AuthorizationReference  = AuthorizationReference;

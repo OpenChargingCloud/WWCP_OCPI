@@ -43,13 +43,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         [Mandatory]
         public Session_Id  SessionId      { get; }
 
-        /// <summary>
-        /// URL that the CommandResult POST should be sent to. This URL might contain an
-        /// unique identification to be able to distinguish between 'stop session' command requests.
-        /// </summary>
-        [Mandatory]
-        public URL         ResponseURL    { get; }
-
         #endregion
 
         #region Constructor(s)
@@ -68,13 +61,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   Request_Id?      RequestId       = null,
                                   Correlation_Id?  CorrelationId   = null)
 
-            : base(RequestId,
+            : base(ResponseURL,
+                   RequestId,
                    CorrelationId)
 
         {
 
-            this.SessionId    = SessionId;
-            this.ResponseURL  = ResponseURL;
+            this.SessionId  = SessionId;
 
         }
 

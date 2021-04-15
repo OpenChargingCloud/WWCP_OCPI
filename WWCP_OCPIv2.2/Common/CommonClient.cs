@@ -23,6 +23,7 @@ using System.Threading;
 using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
@@ -30,9 +31,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
 using org.GraphDefined.WWCP;
-using System.Security.Cryptography.X509Certificates;
 
 #endregion
 
@@ -414,7 +413,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
 
-        protected static readonly Random random = new Random(DateTime.Now.Millisecond);
+        protected static readonly Random random = new Random();
 
         #endregion
 
@@ -1158,9 +1157,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     #endregion
 
                     response = OCPIResponse<Version_Id, VersionDetail>.ParseJObject(versionId.Value,
+                                                                                    HTTPResponse,
                                                                                     requestId,
                                                                                     correlationId,
-                                                                                    HTTPResponse,
                                                                                     json => VersionDetail.Parse(json, null));
 
                     switch (response.StatusCode)
