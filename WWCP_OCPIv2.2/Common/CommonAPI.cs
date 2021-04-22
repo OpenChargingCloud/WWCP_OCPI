@@ -302,17 +302,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null)
 
-            : base(HTTPHostname,
+            : base(null,
+                   null,
+                   null,
+                   null,
+                   HTTPHostname,
                    HTTPServerPort ?? DefaultHTTPServerPort,
                    HTTPServerName ?? DefaultHTTPServerName,
                    ExternalDNSName,
                    URLPathPrefix  ?? DefaultURLPathPrefix,
                    BasePath,
                    ServiceName    ?? DefaultHTTPServiceName,
-                   "",
-                   false,
-                   "",
-                   DNSClient)
+                   DNSClient,
+                   false)
 
         {
 
