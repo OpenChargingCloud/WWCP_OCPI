@@ -1,12 +1,12 @@
 ﻿/*
- * Copyright (c) 2014-2020 GraphDefined GmbH
+ * Copyright (c) 2014--2021 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -51,7 +51,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the EVSE.
+        /// The length of the EVSE identification.
         /// </summary>
         public UInt64 Length
 
@@ -62,12 +62,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EVSE based on the given string.
+        /// Create a new EVSE identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the EVSE.</param>
-        private EVSE_Id(String String)
+        /// <param name="Text">The text representation of an EVSE.</param>
+        private EVSE_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId  = Text;
         }
 
         #endregion
@@ -76,19 +76,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an EVSE.
+        /// Parse the given string as an EVSE identification.
         /// </summary>
-        /// <param name="Text">A text representation of an EVSE.</param>
+        /// <param name="Text">A text representation of an EVSE identification.</param>
         public static EVSE_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out EVSE_Id locationId))
-                return locationId;
+            if (TryParse(Text, out EVSE_Id evseId))
+                return evseId;
 
             if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an EVSE must not be null or empty!");
+                throw new ArgumentNullException(nameof(Text), "The given text representation of an EVSE identification must not be null or empty!");
 
-            throw new ArgumentException("The given text representation of an EVSE is invalid!", nameof(Text));
+            throw new ArgumentException("The given text representation of an EVSE identification is invalid!", nameof(Text));
 
         }
 
@@ -97,14 +97,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as an EVSE.
+        /// Try to parse the given text as an EVSE identification.
         /// </summary>
-        /// <param name="Text">A text representation of an EVSE.</param>
+        /// <param name="Text">A text representation of an EVSE identification.</param>
         public static EVSE_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out EVSE_Id locationId))
-                return locationId;
+            if (TryParse(Text, out EVSE_Id evseId))
+                return evseId;
 
             return null;
 
@@ -115,18 +115,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text, out EVSEId)
 
         /// <summary>
-        /// Try to parse the given text as an EVSE.
+        /// Try to parse the given text as an EVSE identification.
         /// </summary>
-        /// <param name="Text">A text representation of an EVSE.</param>
-        /// <param name="EVSEId">The parsed EVSE.</param>
+        /// <param name="Text">A text representation of an EVSE identification.</param>
+        /// <param name="EVSEId">The parsed EVSE identification.</param>
         public static Boolean TryParse(String Text, out EVSE_Id EVSEId)
         {
+
+            Text = Text?.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    EVSEId = new EVSE_Id(Text.Trim());
+                    EVSEId = new EVSE_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -143,7 +145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this EVSE.
+        /// Clone this EVSE identification.
         /// </summary>
         public EVSE_Id Clone
 
@@ -161,8 +163,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEId1">A EVSE identification.</param>
+        /// <param name="EVSEId2">Another EVSE identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (EVSE_Id EVSEId1,
                                            EVSE_Id EVSEId2)
@@ -176,8 +178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEId1">A EVSE identification.</param>
+        /// <param name="EVSEId2">Another EVSE identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (EVSE_Id EVSEId1,
                                            EVSE_Id EVSEId2)
@@ -191,8 +193,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEId1">A EVSE identification.</param>
+        /// <param name="EVSEId2">Another EVSE identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (EVSE_Id EVSEId1,
                                           EVSE_Id EVSEId2)
@@ -206,8 +208,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEId1">A EVSE identification.</param>
+        /// <param name="EVSEId2">Another EVSE identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (EVSE_Id EVSEId1,
                                            EVSE_Id EVSEId2)
@@ -221,8 +223,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEId1">A EVSE identification.</param>
+        /// <param name="EVSEId2">Another EVSE identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (EVSE_Id EVSEId1,
                                           EVSE_Id EVSEId2)
@@ -236,8 +238,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEId1">A EVSE identification.</param>
+        /// <param name="EVSEId2">Another EVSE identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (EVSE_Id EVSEId1,
                                            EVSE_Id EVSEId2)
@@ -258,9 +260,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Object">An object to compare with.</param>
         public Int32 CompareTo(Object Object)
 
-            => Object is EVSE_Id locationId
-                   ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not an EVSE!",
+            => Object is EVSE_Id evseId
+                   ? CompareTo(evseId)
+                   : throw new ArgumentException("The given object is not an EVSE identification!",
                                                  nameof(Object));
 
         #endregion
@@ -292,8 +294,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <returns>true|false</returns>
         public override Boolean Equals(Object Object)
 
-            => Object is EVSE_Id locationId &&
-                   Equals(locationId);
+            => Object is EVSE_Id evseId &&
+                   Equals(evseId);
 
         #endregion
 

@@ -141,7 +141,6 @@
     <Compile Include="DataTypes\Enums\TokenTypes.cs" />
     <Compile Include="DataTypes\Simple\AuthorizationReference.cs" />
     <Compile Include="DataTypes\Simple\AccessToken.cs" />
-    <Compile Include="DataTypes\Simple\URL.cs" />
     <Compile Include="DataTypes\Simple\EnergyContract_Id.cs" />
     <Compile Include="DataTypes\Simple\Currency.cs" />
     <Compile Include="DataTypes\Simple\CreditReference_Id.cs" />
