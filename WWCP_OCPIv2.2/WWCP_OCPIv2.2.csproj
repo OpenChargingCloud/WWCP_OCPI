@@ -93,7 +93,6 @@
     <Compile Include="DataTypes\Enums\OpenSourceLicenses.cs" />
     <Compile Include="DataTypes\Enums\LegalStatus.cs" />
     <Compile Include="DataTypes\Enums\CDRDimensions.cs" />
-    <Compile Include="DataTypes\Patch.cs" />
     <Compile Include="DataTypes\Simple\Facilities.cs" />
     <Compile Include="DataTypes\Simple\Command_Id.cs" />
     <Compile Include="DataTypes\Complex\RemoteParty_Id.cs" />
