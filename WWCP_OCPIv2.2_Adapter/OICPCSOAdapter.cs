@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
-        public Boolean DisablePullPOIData { get; set; }
+        public Boolean PullEVSEData_IsDisabled { get; set; }
 
         #endregion
 
