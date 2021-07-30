@@ -685,8 +685,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            Coordinates.HasValue
                                ? new JProperty("coordinates",           new JObject(
-                                                                            new JProperty("latitude",  Coordinates.Value.Latitude. Value.ToString("0.0000000").Replace(",", ".")),
-                                                                            new JProperty("longitude", Coordinates.Value.Longitude.Value.ToString("0.0000000").Replace(",", "."))
+                                                                            new JProperty("latitude",  Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                            new JProperty("longitude", Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
                                                                         ))
                                : null,
 

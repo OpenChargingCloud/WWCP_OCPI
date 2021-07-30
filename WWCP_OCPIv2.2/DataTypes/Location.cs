@@ -982,8 +982,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            new JProperty("country",                         Country),
                            new JProperty("coordinates",                     new JObject(
-                                                                                new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.0000000").Replace(",", ".")),
-                                                                                new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.0000000").Replace(",", "."))
+                                                                                new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                                new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
                                                                             )),
 
                            RelatedLocations.SafeAny()

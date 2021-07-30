@@ -7239,7 +7239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
@@ -7394,7 +7394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
@@ -7549,7 +7549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
@@ -7704,7 +7704,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
@@ -7859,7 +7859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           HTTPStatusCode             = HTTPStatusCode.Accepted,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
