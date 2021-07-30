@@ -7518,7 +7518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                                      commandValues.UpstreamCommand.ResponseURL.Path,
                                                                                                                      requestbuilder => {
                                                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                                                         requestbuilder.Content       = commandValues.Response.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                                                         requestbuilder.Content       = commandResult.ToJSON().ToUTF8Bytes(JSONFormat);
                                                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                                                          requestbuilder.Set("X-Request-ID",      commandValues.UpstreamCommand.RequestId);
                                                                                                                          requestbuilder.Set("X-Correlation-ID",  commandValues.UpstreamCommand.CorrelationId);

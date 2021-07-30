@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                TokenAuth.Token.TryDecodeBase64(out String DecodedToken)   &&
+                TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
                 OCPIv2_2.AccessToken.TryParse(DecodedToken, out AccessToken accessToken))
             {
                 this.AccessToken = accessToken;
