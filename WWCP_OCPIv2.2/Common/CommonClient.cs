@@ -693,7 +693,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.TokenAuth          = new HTTPTokenAuthentication(AccessToken.ToString().EncodeBase64());
+            this.TokenAuth          = new HTTPTokenAuthentication(AccessToken.ToString().ToBase64());
             this.AccessToken        = AccessToken;
             this.RemoteVersionsURL  = RemoteVersionsURL;
             this.MyCommonAPI        = MyCommonAPI;
@@ -1822,7 +1822,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (response.Data != null)
                     {
 
-                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().EncodeBase64());
+                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
                         foreach (var role in response.Data.Roles)
                         {
@@ -2313,7 +2313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     {
 
                         SelectedOCPIVersionId = versionId;
-                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().EncodeBase64());
+                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
                         //ToDo: Store the new access token on disc.
 
