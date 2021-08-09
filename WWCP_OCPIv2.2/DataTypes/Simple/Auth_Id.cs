@@ -47,14 +47,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
         /// The length of the authentication credential.
         /// </summary>
         public UInt64 Length
-
             => (UInt64) (InternalId?.Length ?? 0);
 
         #endregion
@@ -67,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="String">The string representation of the authentication credential.</param>
         private Auth_Id(String String)
         {
-            this.InternalId  = String;
+            this.InternalId = String;
         }
 
         #endregion
@@ -122,11 +120,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out Auth_Id AuthId)
         {
 
+            Text = Text?.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    AuthId = new Auth_Id(Text.Trim());
+                    AuthId = new Auth_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (Auth_Id AuthId1,
                                            Auth_Id AuthId2)
 
-            => !(AuthId1 > AuthId2);
+            => AuthId1.CompareTo(AuthId2) <= 0;
 
         #endregion
 
