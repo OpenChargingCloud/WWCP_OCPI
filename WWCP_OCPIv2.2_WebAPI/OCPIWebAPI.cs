@@ -455,10 +455,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                           String                                     HTMLTemplate     = null)
 
             : base(HTTPServer,
-                   null,
-                   "",
+                   null, //HTTPHostname,
+                   null, //ExternalDNSName,
+                   null, //HTTPServiceName,
+                   BasePath,
+
                    URLPathPrefix ?? DefaultURLPathPrefix,
-                   BasePath)
+                   null, //HTMLTemplate,
+                   null, //APIVersionHashes,
+
+                   null, //DisableMaintenanceTasks,
+                   null, //MaintenanceInitialDelay,
+                   null, //MaintenanceEvery,
+
+                   null, //DisableWardenTasks,
+                   null, //WardenInitialDelay,
+                   null, //WardenCheckEvery,
+
+                   null, //DisableLogfile,
+                   null, //LoggingPath,
+                   null, //LogfileName,
+                   null) //Autostart)
 
         {
 

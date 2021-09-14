@@ -20,8 +20,12 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Security.Authentication;
 
 using Newtonsoft.Json.Linq;
 
@@ -29,8 +33,9 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Text;
-using System.Collections.Concurrent;
+using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
+
+using social.OpenData.UsersAPI;
 
 #endregion
 
@@ -40,7 +45,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The Common API.
     /// </summary>
-    public class CommonAPI : HTTPAPI
+    public class CommonAPI : UsersAPI
     {
 
         #region Data
@@ -274,47 +279,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// <param name="OurCredentialRoles">All our credential roles.</param>
         /// 
+        /// <param name="ServerCertificateSelector">An optional delegate to select a SSL/TLS server certificate.</param>
+        /// <param name="ClientCertificateValidator">An optional delegate to verify the SSL/TLS client certificate used for authentication.</param>
+        /// <param name="ClientCertificateSelector">An optional delegate to select the SSL/TLS client certificate used for authentication.</param>
+        /// <param name="AllowedTLSProtocols">The SSL/TLS protocol(s) allowed for this connection.</param>
+        /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
         /// <param name="HTTPServerName">An optional HTTP server name.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
-        /// <param name="ServiceName">An optional HTTP service name.</param>
+        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
+        /// <param name="HTTPServiceName">An optional HTTP service name.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(URL                           OurVersionsURL,
-                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+        public CommonAPI(URL                                  OurVersionsURL,
+                         IEnumerable<CredentialsRole>         OurCredentialRoles,
 
-                         HTTPHostname?                 HTTPHostname              = null,
-                         IPPort?                       HTTPServerPort            = null,
-                         String                        HTTPServerName            = DefaultHTTPServerName,
-                         String                        ExternalDNSName           = null,
-                         HTTPPath?                     URLPathPrefix             = null,
-                         HTTPPath?                     BasePath                  = null,
-                         String                        ServiceName               = DefaultHTTPServiceName,
-                         DNSClient                     DNSClient                 = null,
+                         ServerCertificateSelectorDelegate    ServerCertificateSelector    = null,
+                         LocalCertificateSelectionCallback    ClientCertificateSelector    = null,
+                         RemoteCertificateValidationCallback  ClientCertificateValidator   = null,
+                         SslProtocols                         AllowedTLSProtocols          = SslProtocols.Tls12 | SslProtocols.Tls13,
 
-                         HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
-                         Boolean                       LocationsAsOpenData       = true,
-                         Boolean?                      AllowDowngrades           = null)
+                         HTTPHostname?                        HTTPHostname                 = null,
+                         IPPort?                              HTTPServerPort               = null,
+                         String                               HTTPServerName               = DefaultHTTPServerName,
+                         String                               ExternalDNSName              = null,
+                         HTTPPath?                            URLPathPrefix                = null,
+                         HTTPPath?                            BasePath                     = null,
+                         String                               HTTPServiceName              = DefaultHTTPServiceName,
+                         DNSClient                            DNSClient                    = null,
 
-            : base(null,
-                   null,
-                   null,
-                   null,
-                   HTTPHostname,
-                   HTTPServerPort ?? DefaultHTTPServerPort,
-                   HTTPServerName ?? DefaultHTTPServerName,
+                         HTTPPath?                            AdditionalURLPathPrefix      = null,
+                         Func<EVSE, Boolean>                  KeepRemovedEVSEs             = null,
+                         Boolean                              LocationsAsOpenData          = true,
+                         Boolean?                             AllowDowngrades              = null)
+
+            : base(HTTPHostname,
                    ExternalDNSName,
-                   URLPathPrefix  ?? DefaultURLPathPrefix,
+                   HTTPServerPort,
                    BasePath,
-                   ServiceName    ?? DefaultHTTPServiceName,
+                   HTTPServerName,
+
+                   URLPathPrefix,
+                   HTTPServiceName,
+                   null, //HTMLTemplate,
+                   null, //APIVersionHashes,
+
+                   ServerCertificateSelector,
+                   ClientCertificateValidator,
+                   ClientCertificateSelector,
+                   AllowedTLSProtocols,
+
+                   null,  //ServerThreadName,
+                   null,  //ServerThreadPriority,
+                   null,  //ServerThreadIsBackground,
+                   null,  //ConnectionIdBuilder,
+                   null,  //ConnectionThreadsNameBuilder,
+                   null,  //ConnectionThreadsPriorityBuilder,
+                   null,  //ConnectionThreadsAreBackground,
+                   null,  //ConnectionTimeout,
+                   null,  //MaxClientConnections,
+
+                   null,  //AdminOrganizationId,
+                   null,  //APIRobotEMailAddress,
+                   null,  //APIRobotGPGPassphrase,
+                   null,  //SMTPClient,
+                   null,  //SMSClient,
+                   null,  //SMSSenderName,
+                   null,  //TelegramClient,
+
+                   null,  //PasswordQualityCheck,
+                   null,  //CookieName,
+                   false, //UseSecureCookies,
+                   null,  //MaxSignInSessionLifetime,
+                   null,  //DefaultLanguage,
+                   null,  //MinUserIdLength,
+                   null,  //MinRealmLength,
+                   null,  //MinUserNameLength,
+                   null,  //MinUserGroupIdLength,
+                   null,  //MinAPIKeyLength,
+                   null,  //MinMessageIdLength,
+                   null,  //MinOrganizationIdLength,
+                   null,  //MinOrganizationGroupIdLength,
+                   null,  //MinNotificationMessageIdLength,
+                   null,  //MinNewsPostingIdLength,
+                   null,  //MinNewsBannerIdLength,
+                   null,  //MinFAQIdLength,
+
+                   true,  //DisableMaintenanceTasks,
+                   null,  //MaintenanceInitialDelay,
+                   null,  //MaintenanceEvery,
+
+                   true,  //DisableWardenTasks,
+                   null,  //WardenInitialDelay,
+                   null,  //WardenCheckEvery,
+
+                   true,  //SkipURLTemplates,
+                   true,  //DisableNotifications,
+                   true,  //DisableLogfile,
+                   null,  //LoggingPath,
+                   null,  //DatabaseFileName,
+                   null,  //LogfileName,
                    DNSClient,
-                   false)
+                   false) //Autostart)
 
         {
 
@@ -344,71 +415,134 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region CommonAPI(HTTPServer, ...)
 
-        /// <summary>
-        /// Create a new common HTTP API.
-        /// </summary>
-        /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
-        /// <param name="OurCredentialRoles">All our credential roles.</param>
-        /// 
-        /// <param name="HTTPServer">A HTTP server.</param>
-        /// <param name="HTTPHostname">An optional HTTP hostname.</param>
-        /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
-        /// <param name="URLPathPrefix">An optional URL path prefix.</param>
-        /// <param name="ServiceName">An optional name of the HTTP API service.</param>
-        /// 
-        /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
-        /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
-        /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
-        public CommonAPI(URL                           OurVersionsURL,
-                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+        ///// <summary>
+        ///// Create a new common HTTP API.
+        ///// </summary>
+        ///// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
+        ///// <param name="OurCredentialRoles">All our credential roles.</param>
+        ///// 
+        ///// <param name="HTTPServer">A HTTP server.</param>
+        ///// <param name="HTTPHostname">An optional HTTP hostname.</param>
+        ///// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
+        ///// <param name="URLPathPrefix">An optional URL path prefix.</param>
+        ///// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
+        ///// <param name="ServiceName">An optional name of the HTTP API service.</param>
+        ///// 
+        ///// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
+        ///// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
+        ///// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        //public CommonAPI(URL                           OurVersionsURL,
+        //                 IEnumerable<CredentialsRole>  OurCredentialRoles,
 
-                         HTTPServer                    HTTPServer,
-                         HTTPHostname?                 HTTPHostname              = null,
-                         String                        ExternalDNSName           = null,
-                         HTTPPath?                     URLPathPrefix             = null,
-                         HTTPPath?                     BasePath                  = null,
-                         String                        ServiceName               = DefaultHTTPServerName,
+        //                 HTTPServer                    HTTPServer,
+        //                 HTTPHostname?                 HTTPHostname              = null,
+        //                 String                        ExternalDNSName           = null,
+        //                 HTTPPath?                     URLPathPrefix             = null,
+        //                 HTTPPath?                     BasePath                  = null,
+        //                 String                        ServiceName               = DefaultHTTPServerName,
 
-                         HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
-                         Boolean                       LocationsAsOpenData       = true,
-                         Boolean?                      AllowDowngrades           = null)
+        //                 HTTPPath?                     AdditionalURLPathPrefix   = null,
+        //                 Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
+        //                 Boolean                       LocationsAsOpenData       = true,
+        //                 Boolean?                      AllowDowngrades           = null)
 
-            : base(HTTPServer,
-                   HTTPHostname,
-                   ExternalDNSName,
-                   URLPathPrefix,
-                   BasePath,
-                   ServiceName)
+        //    : base(HTTPHostname,
+        //           ExternalDNSName,
+        //           HTTPServerPort,
+        //           BasePath,
+        //           HTTPServerName,
 
-        {
+        //           URLPathPrefix,
+        //           HTTPServiceName,
+        //           null, //HTMLTemplate,
+        //           null, //APIVersionHashes,
 
-            if (!OurCredentialRoles.SafeAny())
-                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
+        //           ServerCertificateSelector,
+        //           ClientCertificateValidator,
+        //           ClientCertificateSelector,
+        //           AllowedTLSProtocols,
 
-            this.OurVersionsURL           = OurVersionsURL;
-            this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
-            this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
-            this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
-            this.LocationsAsOpenData      = LocationsAsOpenData;
-            this.AllowDowngrades          = AllowDowngrades;
+        //           null,  //ServerThreadName,
+        //           null,  //ServerThreadPriority,
+        //           null,  //ServerThreadIsBackground,
+        //           null,  //ConnectionIdBuilder,
+        //           null,  //ConnectionThreadsNameBuilder,
+        //           null,  //ConnectionThreadsPriorityBuilder,
+        //           null,  //ConnectionThreadsAreBackground,
+        //           null,  //ConnectionTimeout,
+        //           null,  //MaxClientConnections,
 
-            this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
-            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+        //           null,  //AdminOrganizationId,
+        //           null,  //APIRobotEMailAddress,
+        //           null,  //APIRobotGPGPassphrase,
+        //           null,  //SMTPClient,
+        //           null,  //SMSClient,
+        //           null,  //SMSSenderName,
+        //           null,  //TelegramClient,
 
-            // Link HTTP events...
-            HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
-            HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
-            HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+        //           null,  //PasswordQualityCheck,
+        //           null,  //CookieName,
+        //           false, //UseSecureCookies,
+        //           null,  //MaxSignInSessionLifetime,
+        //           null,  //DefaultLanguage,
+        //           null,  //MinUserIdLength,
+        //           null,  //MinRealmLength,
+        //           null,  //MinUserNameLength,
+        //           null,  //MinUserGroupIdLength,
+        //           null,  //MinAPIKeyLength,
+        //           null,  //MinMessageIdLength,
+        //           null,  //MinOrganizationIdLength,
+        //           null,  //MinOrganizationGroupIdLength,
+        //           null,  //MinNotificationMessageIdLength,
+        //           null,  //MinNewsPostingIdLength,
+        //           null,  //MinNewsBannerIdLength,
+        //           null,  //MinFAQIdLength,
 
-            RegisterURLTemplates();
+        //           true,  //DisableMaintenanceTasks,
+        //           null,  //MaintenanceInitialDelay,
+        //           null,  //MaintenanceEvery,
 
-        }
+        //           true,  //DisableWardenTasks,
+        //           null,  //WardenInitialDelay,
+        //           null,  //WardenCheckEvery,
+
+        //           true,  //SkipURLTemplates,
+        //           true,  //DisableNotifications,
+        //           true,  //DisableLogfile,
+        //           null,  //LoggingPath,
+        //           null,  //DatabaseFileName,
+        //           null,  //LogfileName,
+        //           DNSClient,
+        //           false) //Autostart)
+
+        //{
+
+        //    if (!OurCredentialRoles.SafeAny())
+        //        throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
+
+        //    this.OurVersionsURL           = OurVersionsURL;
+        //    this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
+        //    this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
+        //    this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
+        //    this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
+        //    this.LocationsAsOpenData      = LocationsAsOpenData;
+        //    this.AllowDowngrades          = AllowDowngrades;
+
+        //    this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
+        //    this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
+        //    this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+        //    this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+        //    this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+        //    this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+
+        //    // Link HTTP events...
+        //    HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
+        //    HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
+        //    HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
+
+        //    RegisterURLTemplates();
+
+        //}
 
         #endregion
 

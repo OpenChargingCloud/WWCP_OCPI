@@ -815,7 +815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnGetVersionsRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionsRequest));
             }
 
             #endregion
@@ -963,7 +963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnGetVersionsResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionsResponse));
             }
 
             #endregion
@@ -1034,7 +1034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnGetVersionDetailsRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionDetailsRequest));
             }
 
             #endregion
@@ -1240,7 +1240,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnGetVersionDetailsResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetVersionDetailsResponse));
             }
 
             #endregion
@@ -1362,7 +1362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnGetCredentialsHTTPRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetCredentialsHTTPRequest));
             }
 
             #endregion
@@ -1481,7 +1481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnGetCredentialsHTTPResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnGetCredentialsHTTPResponse));
             }
 
             #endregion
@@ -1560,7 +1560,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnPostCredentialsHTTPRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPostCredentialsHTTPRequest));
             }
 
             #endregion
@@ -1681,7 +1681,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnPostCredentialsHTTPResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPostCredentialsHTTPResponse));
             }
 
             #endregion
@@ -1760,7 +1760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnPutCredentialsHTTPRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPutCredentialsHTTPRequest));
             }
 
             #endregion
@@ -1909,7 +1909,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnPutCredentialsHTTPResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnPutCredentialsHTTPResponse));
             }
 
             #endregion
@@ -1981,7 +1981,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnDeleteCredentialsHTTPRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnDeleteCredentialsHTTPRequest));
             }
 
             #endregion
@@ -2102,7 +2102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnDeleteCredentialsHTTPResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnDeleteCredentialsHTTPResponse));
             }
 
             #endregion
@@ -2198,7 +2198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnRegisterRequest));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnRegisterRequest));
             }
 
             #endregion
@@ -2395,7 +2395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             catch (Exception e)
             {
-                e.Log(nameof(CommonClient) + "." + nameof(OnRegisterResponse));
+                DebugX.LogException(e, nameof(CommonClient) + "." + nameof(OnRegisterResponse));
             }
 
             #endregion

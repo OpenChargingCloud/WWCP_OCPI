@@ -28,6 +28,8 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
+using social.OpenData.UsersAPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
@@ -3601,7 +3603,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
-        /// <param name="ServiceName">An optional name of the HTTP API service.</param>
+        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
+        /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public EMSPAPI(CommonAPI      CommonAPI,
                        CountryCode    DefaultCountryCode,
                        Party_Id       DefaultPartyId,
@@ -3611,14 +3614,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                        String         ExternalDNSName   = null,
                        HTTPPath?      URLPathPrefix     = null,
                        HTTPPath?      BasePath          = null,
-                       String         ServiceName       = DefaultHTTPServerName)
+                       String         HTTPServiceName   = DefaultHTTPServerName)
 
             : base(CommonAPI?.HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
-                   URLPathPrefix ?? DefaultURLPathPrefix,
+                   HTTPServiceName,
                    BasePath,
-                   ServiceName)
+
+                   URLPathPrefix ?? DefaultURLPathPrefix,
+                   null, //HTMLTemplate,
+                   null, //APIVersionHashes,
+
+                   null, //DisableMaintenanceTasks,
+                   null, //MaintenanceInitialDelay,
+                   null, //MaintenanceEvery,
+
+                   null, //DisableWardenTasks,
+                   null, //WardenInitialDelay,
+                   null, //WardenCheckEvery,
+
+                   null, //DisableLogfile,
+                   null, //LoggingPath,
+                   null, //LogfileName,
+                   null) //Autostart)
 
         {
 
