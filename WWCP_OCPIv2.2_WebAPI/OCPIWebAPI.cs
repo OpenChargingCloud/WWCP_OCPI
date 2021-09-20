@@ -503,24 +503,65 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             RegisterURITemplates();
 
-            this.HTMLTemplate = HTMLTemplate ?? GetResourceString(typeof(OCPIWebAPI).Assembly, HTTPRoot + "template.html");
+            this.HTMLTemplate = HTMLTemplate ?? GetResourceString(HTTPRoot + "template.html");
 
         }
 
         #endregion
 
 
+        #region Manage HTTP Resources
+
+        #region (private) GetResourceStream      (ResourceName)
+
+        private Stream GetResourceStream(String ResourceName)
+
+            => GetResourceStream(ResourceName,
+                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) GetResourceMemoryStream(ResourceName)
+
+        private MemoryStream GetResourceMemoryStream(String ResourceName)
+
+            => GetResourceMemoryStream(ResourceName,
+                                       new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                       new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) GetResourceString      (ResourceName)
+
+        private String GetResourceString(String ResourceName)
+
+            => GetResourceString(ResourceName,
+                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) GetResourceBytes       (ResourceName)
+        private Byte[] GetResourceBytes(String ResourceName)
+
+            => GetResourceBytes(ResourceName,
+                                new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
         #region (private) MixWithHTMLTemplate    (ResourceName)
 
         protected String MixWithHTMLTemplate(String ResourceName)
 
             => MixWithHTMLTemplate(ResourceName,
-                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.          HTTPRoot, typeof(OCPIWebAPI).          Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(OpenChargingCloudAPI.HTTPRoot, typeof(OpenChargingCloudAPI).Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.            HTTPRoot, typeof(UsersAPI).            Assembly));
+                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
 
         #endregion
 
+        #endregion
 
 
 
