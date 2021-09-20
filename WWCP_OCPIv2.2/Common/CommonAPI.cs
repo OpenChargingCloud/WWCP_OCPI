@@ -36,6 +36,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
 using social.OpenData.UsersAPI;
+using System.Threading;
+using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 
 #endregion
 
@@ -45,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// The Common API.
     /// </summary>
-    public class CommonAPI : UsersAPI
+    public class CommonAPI : HTTPAPI
     {
 
         #region Data
@@ -278,11 +280,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         /// <param name="OurVersionsURL">The URL of our VERSIONS endpoint.</param>
         /// <param name="OurCredentialRoles">All our credential roles.</param>
+        /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
         /// <param name="ServerCertificateSelector">An optional delegate to select a SSL/TLS server certificate.</param>
         /// <param name="ClientCertificateValidator">An optional delegate to verify the SSL/TLS client certificate used for authentication.</param>
         /// <param name="ClientCertificateSelector">An optional delegate to select the SSL/TLS client certificate used for authentication.</param>
         /// <param name="AllowedTLSProtocols">The SSL/TLS protocol(s) allowed for this connection.</param>
+        /// 
+        /// <param name="ServerThreadName">The optional name of the TCP server thread.</param>
+        /// <param name="ServerThreadPriority">The optional priority of the TCP server thread.</param>
+        /// <param name="ServerThreadIsBackground">Whether the TCP server thread is a background thread or not.</param>
+        /// <param name="ConnectionIdBuilder">An optional delegate to build a connection identification based on IP socket information.</param>
+        /// <param name="ConnectionThreadsNameBuilder">An optional delegate to set the name of the TCP connection threads.</param>
+        /// <param name="ConnectionThreadsPriorityBuilder">An optional delegate to set the priority of the TCP connection threads.</param>
+        /// <param name="ConnectionThreadsAreBackground">Whether the TCP connection threads are background threads or not (default: yes).</param>
+        /// <param name="ConnectionTimeout">The TCP client timeout for all incoming client connections in seconds (default: 30 sec).</param>
+        /// <param name="MaxClientConnections">The maximum number of concurrent TCP client connections (default: 4096).</param>
         /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
@@ -291,32 +304,74 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional HTTP service name.</param>
-        /// <param name="DNSClient">An optional DNS client.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        /// 
+        /// <param name="DisableMaintenanceTasks">Disable all maintenance tasks.</param>
+        /// <param name="MaintenanceInitialDelay">The initial delay of the maintenance tasks.</param>
+        /// <param name="MaintenanceEvery">The maintenance intervall.</param>
+        /// 
+        /// <param name="DisableWardenTasks">Disable all warden tasks.</param>
+        /// <param name="WardenInitialDelay">The initial delay of the warden tasks.</param>
+        /// <param name="WardenCheckEvery">The warden intervall.</param>
+        /// 
+        /// <param name="IsDevelopment">This HTTP API runs in development mode.</param>
+        /// <param name="DevelopmentServers">An enumeration of server names which will imply to run this service in development mode.</param>
+        /// <param name="DisableLogfile">Disable the log file.</param>
+        /// <param name="LoggingPath">The path for all logfiles.</param>
+        /// <param name="LogfileName">The name of the logfile for this API.</param>
+        /// <param name="DNSClient">The DNS client of the API.</param>
+        /// <param name="Autostart">Whether to start the API automatically.</param>
         public CommonAPI(URL                                  OurVersionsURL,
                          IEnumerable<CredentialsRole>         OurCredentialRoles,
+                         JObject                              APIVersionHashes                   = null,
 
-                         ServerCertificateSelectorDelegate    ServerCertificateSelector    = null,
-                         LocalCertificateSelectionCallback    ClientCertificateSelector    = null,
-                         RemoteCertificateValidationCallback  ClientCertificateValidator   = null,
-                         SslProtocols                         AllowedTLSProtocols          = SslProtocols.Tls12 | SslProtocols.Tls13,
+                         ServerCertificateSelectorDelegate    ServerCertificateSelector          = null,
+                         LocalCertificateSelectionCallback    ClientCertificateSelector          = null,
+                         RemoteCertificateValidationCallback  ClientCertificateValidator         = null,
+                         SslProtocols                         AllowedTLSProtocols                = SslProtocols.Tls12 | SslProtocols.Tls13,
 
-                         HTTPHostname?                        HTTPHostname                 = null,
-                         IPPort?                              HTTPServerPort               = null,
-                         String                               HTTPServerName               = DefaultHTTPServerName,
-                         String                               ExternalDNSName              = null,
-                         HTTPPath?                            URLPathPrefix                = null,
-                         HTTPPath?                            BasePath                     = null,
-                         String                               HTTPServiceName              = DefaultHTTPServiceName,
-                         DNSClient                            DNSClient                    = null,
+                         String                               ServerThreadName                   = null,
+                         ThreadPriority?                      ServerThreadPriority               = null,
+                         Boolean?                             ServerThreadIsBackground           = null,
+                         ConnectionIdBuilder                  ConnectionIdBuilder                = null,
+                         ConnectionThreadsNameBuilder         ConnectionThreadsNameBuilder       = null,
+                         ConnectionThreadsPriorityBuilder     ConnectionThreadsPriorityBuilder   = null,
+                         Boolean?                             ConnectionThreadsAreBackground     = null,
+                         TimeSpan?                            ConnectionTimeout                  = null,
+                         UInt32?                              MaxClientConnections               = null,
 
-                         HTTPPath?                            AdditionalURLPathPrefix      = null,
-                         Func<EVSE, Boolean>                  KeepRemovedEVSEs             = null,
-                         Boolean                              LocationsAsOpenData          = true,
-                         Boolean?                             AllowDowngrades              = null)
+                         HTTPHostname?                        HTTPHostname                       = null,
+                         IPPort?                              HTTPServerPort                     = null,
+                         String                               HTTPServerName                     = DefaultHTTPServerName,
+                         String                               ExternalDNSName                    = null,
+                         HTTPPath?                            URLPathPrefix                      = null,
+                         HTTPPath?                            BasePath                           = null,
+                         String                               HTTPServiceName                    = DefaultHTTPServiceName,
+
+                         HTTPPath?                            AdditionalURLPathPrefix            = null,
+                         Func<EVSE, Boolean>                  KeepRemovedEVSEs                   = null,
+                         Boolean                              LocationsAsOpenData                = true,
+                         Boolean?                             AllowDowngrades                    = null,
+
+                         Boolean?                             DisableMaintenanceTasks            = false,
+                         TimeSpan?                            MaintenanceInitialDelay            = null,
+                         TimeSpan?                            MaintenanceEvery                   = null,
+
+                         Boolean?                             DisableWardenTasks                 = false,
+                         TimeSpan?                            WardenInitialDelay                 = null,
+                         TimeSpan?                            WardenCheckEvery                   = null,
+
+                         Boolean?                             IsDevelopment                      = null,
+                         IEnumerable<String>                  DevelopmentServers                 = null,
+                         Boolean?                             DisableLogfile                     = false,
+                         String                               LoggingPath                        = DefaultHTTPAPI_LoggingPath,
+                         String                               LogfileName                        = DefaultHTTPAPI_LogfileName,
+                         LogfileCreatorDelegate               LogfileCreator                     = null,
+                         DNSClient                            DNSClient                          = null,
+                         Boolean                              Autostart                          = false)
 
             : base(HTTPHostname,
                    ExternalDNSName,
@@ -327,65 +382,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    URLPathPrefix,
                    HTTPServiceName,
                    null, //HTMLTemplate,
-                   null, //APIVersionHashes,
+                   APIVersionHashes,
 
                    ServerCertificateSelector,
                    ClientCertificateValidator,
                    ClientCertificateSelector,
                    AllowedTLSProtocols,
 
-                   null,  //ServerThreadName,
-                   null,  //ServerThreadPriority,
-                   null,  //ServerThreadIsBackground,
-                   null,  //ConnectionIdBuilder,
-                   null,  //ConnectionThreadsNameBuilder,
-                   null,  //ConnectionThreadsPriorityBuilder,
-                   null,  //ConnectionThreadsAreBackground,
-                   null,  //ConnectionTimeout,
-                   null,  //MaxClientConnections,
+                   ServerThreadName,
+                   ServerThreadPriority,
+                   ServerThreadIsBackground,
+                   ConnectionIdBuilder,
+                   ConnectionThreadsNameBuilder,
+                   ConnectionThreadsPriorityBuilder,
+                   ConnectionThreadsAreBackground,
+                   ConnectionTimeout,
+                   MaxClientConnections,
 
-                   null,  //AdminOrganizationId,
-                   null,  //APIRobotEMailAddress,
-                   null,  //APIRobotGPGPassphrase,
-                   null,  //SMTPClient,
-                   null,  //SMSClient,
-                   null,  //SMSSenderName,
-                   null,  //TelegramClient,
+                   DisableMaintenanceTasks,
+                   MaintenanceInitialDelay,
+                   MaintenanceEvery,
 
-                   null,  //PasswordQualityCheck,
-                   null,  //CookieName,
-                   false, //UseSecureCookies,
-                   null,  //MaxSignInSessionLifetime,
-                   null,  //DefaultLanguage,
-                   null,  //MinUserIdLength,
-                   null,  //MinRealmLength,
-                   null,  //MinUserNameLength,
-                   null,  //MinUserGroupIdLength,
-                   null,  //MinAPIKeyLength,
-                   null,  //MinMessageIdLength,
-                   null,  //MinOrganizationIdLength,
-                   null,  //MinOrganizationGroupIdLength,
-                   null,  //MinNotificationMessageIdLength,
-                   null,  //MinNewsPostingIdLength,
-                   null,  //MinNewsBannerIdLength,
-                   null,  //MinFAQIdLength,
+                   DisableWardenTasks,
+                   WardenInitialDelay,
+                   WardenCheckEvery,
 
-                   true,  //DisableMaintenanceTasks,
-                   null,  //MaintenanceInitialDelay,
-                   null,  //MaintenanceEvery,
-
-                   true,  //DisableWardenTasks,
-                   null,  //WardenInitialDelay,
-                   null,  //WardenCheckEvery,
-
-                   true,  //SkipURLTemplates,
-                   true,  //DisableNotifications,
-                   true,  //DisableLogfile,
-                   null,  //LoggingPath,
-                   null,  //DatabaseFileName,
-                   null,  //LogfileName,
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogfile,
+                   LoggingPath,
+                   LogfileName,
+                   LogfileCreator,
                    DNSClient,
-                   false) //Autostart)
+                   false) //Autostart
 
         {
 
@@ -408,6 +437,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             RegisterURLTemplates();
+
+            if (Autostart)
+                Start();
 
         }
 
