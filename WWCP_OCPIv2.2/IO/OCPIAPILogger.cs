@@ -765,6 +765,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         OCPIRequest  Request)
         {
 
+            var LoggingPath = "";
+
             //ToDo: Can we have a lock per logfile?
             var LockTaken = await LogHTTPRequest_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
@@ -782,7 +784,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(Context, LogEventName),
+                            File.AppendAllText(LogfileCreator(LoggingPath, Context, LogEventName),
                                                String.Concat(Request.HTTPRequest.HTTPSource != null && Request.HTTPRequest.LocalSocket != null
                                                                  ? String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket)
                                                                  : "",                                                                            Environment.NewLine,
@@ -800,20 +802,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                             if (e.HResult != -2147024864)
                             {
-                                DebugX.LogT("File access error while logging to '" + LogfileCreator(Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
+                                DebugX.LogT("File access error while logging to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
                                 Thread.Sleep(100);
                             }
 
                             else
                             {
-                                DebugX.LogT("Could not log to '" + LogfileCreator(Context, LogEventName) + "': " + e.Message);
+                                DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
                                 break;
                             }
 
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("Could not log to '" + LogfileCreator(Context, LogEventName) + "': " + e.Message);
+                            DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
                             break;
                         }
 
@@ -821,15 +823,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     while (retry++ < MaxRetries);
 
                     if (retry >= MaxRetries)
-                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(Context, LogEventName) + "' for "   + retry + " retries!");
+                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(LoggingPath, Context, LogEventName) + "' for "   + retry + " retries!");
 
                     else if (retry > 0)
-                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(Context, LogEventName) + "' after " + retry + " retries!");
+                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' after " + retry + " retries!");
 
                 }
 
                 else
-                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(Context, LogEventName) + "'!");
+                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "'!");
 
             }
             finally
@@ -857,6 +859,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          OCPIResponse  Response)
         {
 
+            var LoggingPath = "";
+
             //ToDo: Can we have a lock per logfile?
             var LockTaken = await LogHTTPResponse_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
@@ -874,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         try
                         {
 
-                            File.AppendAllText(LogfileCreator(Context, LogEventName),
+                            File.AppendAllText(LogfileCreator(LoggingPath, Context, LogEventName),
                                                String.Concat(Request.HTTPRequest.HTTPSource != null && Request.HTTPRequest.LocalSocket != null
                                                                  ? String.Concat(Request.HTTPRequest.HTTPSource, " -> ", Request.HTTPRequest.LocalSocket)
                                                                  : "",                                                                            Environment.NewLine,
@@ -897,20 +901,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                             if (e.HResult != -2147024864)
                             {
-                                DebugX.LogT("File access error while logging to '" + LogfileCreator(Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
+                                DebugX.LogT("File access error while logging to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' (retry: " + retry + "): " + e.Message);
                                 Thread.Sleep(100);
                             }
 
                             else
                             {
-                                DebugX.LogT("Could not log to '" + LogfileCreator(Context, LogEventName) + "': " + e.Message);
+                                DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
                                 break;
                             }
 
                         }
                         catch (Exception e)
                         {
-                            DebugX.LogT("Could not log to '" + LogfileCreator(Context, LogEventName) + "': " + e.Message);
+                            DebugX.LogT("Could not log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "': " + e.Message);
                             break;
                         }
 
@@ -918,15 +922,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     while (retry++ < MaxRetries);
 
                     if (retry >= MaxRetries)
-                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(Context, LogEventName) + "' for "   + retry + " retries!");
+                        DebugX.LogT("Could not write to logfile '"      + LogfileCreator(LoggingPath, Context, LogEventName) + "' for "   + retry + " retries!");
 
                     else if (retry > 0)
-                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(Context, LogEventName) + "' after " + retry + " retries!");
+                        DebugX.LogT("Successfully written to logfile '" + LogfileCreator(LoggingPath, Context, LogEventName) + "' after " + retry + " retries!");
 
                 }
 
                 else
-                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(Context, LogEventName) + "'!");
+                    DebugX.LogT("Could not get lock to log to '" + LogfileCreator(LoggingPath, Context, LogEventName) + "'!");
 
             }
             finally
@@ -1062,11 +1066,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.LogfileCreator = LogfileCreator != null
                                       ? LogfileCreator
-                                      : (context, logfilename) => String.Concat(context != null ? context + "_" : "",
-                                                                                logfilename, "_",
-                                                                                DateTime.UtcNow.Year, "-",
-                                                                                DateTime.UtcNow.Month.ToString("D2"),
-                                                                                ".log");
+                                      : (loggingPath, context, logfileName) => String.Concat(context != null ? context + "_" : "",
+                                                                                             logfileName, "_",
+                                                                                             DateTime.UtcNow.Year, "-",
+                                                                                             DateTime.UtcNow.Month.ToString("D2"),
+                                                                                             ".log");
 
             #endregion
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015--2021 GraphDefined GmbH
+ * Copyright (c) 2015-2021 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -456,9 +456,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             : base(HTTPServer,
                    null,
-                   "",
+                   null, // ExternalDNSName,
+                   null, // HTTPServiceName,
+                   BasePath,
+
                    URLPathPrefix ?? DefaultURLPathPrefix,
-                   BasePath)
+                   null, // HTMLTemplate,
+                   null, // APIVersionHashes,
+
+                   null, // DisableMaintenanceTasks,
+                   null, // MaintenanceInitialDelay,
+                   null, // MaintenanceEvery,
+
+                   null, // DisableWardenTasks,
+                   null, // WardenInitialDelay,
+                   null, // WardenCheckEvery,
+
+                   null, // IsDevelopment,
+                   null, // DevelopmentServers,
+                   null, // DisableLogging,
+                   null, // LoggingPath,
+                   null, // LogfileName,
+                   null, // LogfileCreator,
+                   false)// Autostart
 
         {
 
@@ -486,28 +506,73 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             RegisterURITemplates();
 
-            this.HTMLTemplate = HTMLTemplate ?? GetResourceString(typeof(OCPIWebAPI).Assembly, HTTPRoot + "template.html");
+            this.HTMLTemplate = HTMLTemplate ?? GetResourceString("template.html");
 
         }
 
         #endregion
 
 
-        #region (private) MixWithHTMLTemplate    (ResourceName)
+        #region (private) RegisterURLTemplates()
 
-        protected String MixWithHTMLTemplate(String ResourceName)
+        #region Manage HTTP Resources
 
-            => MixWithHTMLTemplate(ResourceName,
-                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.          HTTPRoot, typeof(OCPIWebAPI).          Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(OpenChargingCloudAPI.HTTPRoot, typeof(OpenChargingCloudAPI).Assembly),
-                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.            HTTPRoot, typeof(UsersAPI).            Assembly));
+        #region (protected override) GetResourceStream      (ResourceName)
+
+        protected override Stream GetResourceStream(String ResourceName)
+
+            => GetResourceStream(ResourceName,
+                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
 
         #endregion
 
+        #region (protected override) GetResourceMemoryStream(ResourceName)
 
+        protected override MemoryStream GetResourceMemoryStream(String ResourceName)
 
+            => GetResourceMemoryStream(ResourceName,
+                                       new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                       new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                                       new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
 
-        #region (private) RegisterURITemplates()
+        #endregion
+
+        #region (protected override) GetResourceString      (ResourceName)
+
+        protected override String GetResourceString(String ResourceName)
+
+            => GetResourceString(ResourceName,
+                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (protected override) GetResourceBytes       (ResourceName)
+
+        protected override Byte[] GetResourceBytes(String ResourceName)
+
+            => GetResourceBytes(ResourceName,
+                                new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                                new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (protected override) MixWithHTMLTemplate    (ResourceName)
+
+        protected override String MixWithHTMLTemplate(String ResourceName)
+
+            => MixWithHTMLTemplate(ResourceName,
+                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(UsersAPI.  HTTPRoot, typeof(UsersAPI).  Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #endregion
 
         private void RegisterURITemplates()
         {
@@ -2977,8 +3042,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         }
 
         #endregion
-
-
 
 
         #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO)

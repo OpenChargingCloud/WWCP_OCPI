@@ -279,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="HTTPServerName">An optional HTTP server name.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional HTTP URL path prefix.</param>
-        /// <param name="ServiceName">An optional HTTP service name.</param>
+        /// <param name="HTTPServiceName">An optional HTTP service name.</param>
         /// <param name="DNSClient">An optional DNS client.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          String                        ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
-                         String                        ServiceName               = DefaultHTTPServiceName,
+                         String                        HTTPServiceName           = DefaultHTTPServiceName,
                          DNSClient                     DNSClient                 = null,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
@@ -302,19 +302,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null)
 
-            : base(null,
-                   null,
-                   null,
-                   null,
-                   HTTPHostname,
-                   HTTPServerPort ?? DefaultHTTPServerPort,
-                   HTTPServerName ?? DefaultHTTPServerName,
+            : base(HTTPHostname,
                    ExternalDNSName,
-                   URLPathPrefix  ?? DefaultURLPathPrefix,
+                   HTTPServerPort  ?? DefaultHTTPServerPort,
                    BasePath,
-                   ServiceName    ?? DefaultHTTPServiceName,
+                   HTTPServerName  ?? DefaultHTTPServerName,
+
+                   URLPathPrefix   ?? DefaultURLPathPrefix,
+                   HTTPServiceName ?? DefaultHTTPServiceName,
+                   null, // HTMLTemplate,
+                   null, // APIVersionHashes,
+
+                   null, // ServerCertificateSelector,
+                   null, // ClientCertificateValidator,
+                   null, // ClientCertificateSelector,
+                   null, // AllowedTLSProtocols,
+
+                   null, // ServerThreadName,
+                   null, // ServerThreadPriority,
+                   null, // ServerThreadIsBackground,
+                   null, // ConnectionIdBuilder,
+                   null, // ConnectionThreadsNameBuilder,
+                   null, // ConnectionThreadsPriorityBuilder,
+                   null, // ConnectionThreadsAreBackground,
+                   null, // ConnectionTimeout,
+                   null, // MaxClientConnections,
+
+                   null, // DisableMaintenanceTasks,
+                   null, // MaintenanceInitialDelay,
+                   null, // MaintenanceEvery,
+
+                   null, // DisableWardenTasks,
+                   null, // WardenInitialDelay,
+                   null, // WardenCheckEvery,
+
+                   null, // IsDevelopment,
+                   null, // DevelopmentServers,
+                   null, // DisableLogging,
+                   null, // LoggingPath,
+                   null, // LogfileName,
+                   null, // LogfileCreator,
                    DNSClient,
-                   false)
+                   false)// Autostart
 
         {
 
@@ -354,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
-        /// <param name="ServiceName">An optional name of the HTTP API service.</param>
+        /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         /// 
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
@@ -367,7 +396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          String                        ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
-                         String                        ServiceName               = DefaultHTTPServerName,
+                         String                        HTTPServiceName           = DefaultHTTPServerName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
@@ -377,9 +406,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             : base(HTTPServer,
                    HTTPHostname,
                    ExternalDNSName,
-                   URLPathPrefix,
+                   HTTPServiceName,
                    BasePath,
-                   ServiceName)
+
+                   URLPathPrefix,
+                   null, // HTMLTemplate,
+                   null, // APIVersionHashes,
+
+                   null, // DisableMaintenanceTasks,
+                   null, // MaintenanceInitialDelay,
+                   null, // MaintenanceEvery,
+
+                   null, // DisableWardenTasks,
+                   null, // WardenInitialDelay,
+                   null, // WardenCheckEvery,
+
+                   null, // IsDevelopment,
+                   null, // DevelopmentServers,
+                   null, // DisableLogging,
+                   null, // LoggingPath,
+                   null, // LogfileName,
+                   null, // LogfileCreator,
+                   false)// Autostart
 
         {
 
