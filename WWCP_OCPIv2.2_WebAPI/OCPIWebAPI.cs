@@ -455,6 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                           String                                     HTMLTemplate     = null)
 
             : base(HTTPServer,
+<<<<<<< HEAD
                    null,
                    null, // ExternalDNSName,
                    null, // HTTPServiceName,
@@ -479,6 +480,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                    null, // LogfileName,
                    null, // LogfileCreator,
                    false)// Autostart
+=======
+                   null, //HTTPHostname,
+                   null, //ExternalDNSName,
+                   null, //HTTPServiceName,
+                   BasePath,
+
+                   URLPathPrefix ?? DefaultURLPathPrefix,
+                   null, //HTMLTemplate,
+                   null, //APIVersionHashes,
+
+                   null, //DisableMaintenanceTasks,
+                   null, //MaintenanceInitialDelay,
+                   null, //MaintenanceEvery,
+
+                   null, //DisableWardenTasks,
+                   null, //WardenInitialDelay,
+                   null, //WardenCheckEvery,
+
+                   null, //DisableLogfile,
+                   null, //LoggingPath,
+                   null, //LogfileName,
+                   null) //Autostart)
+>>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
 
         {
 
@@ -506,17 +530,67 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             RegisterURITemplates();
 
+<<<<<<< HEAD
             this.HTMLTemplate = HTMLTemplate ?? GetResourceString("template.html");
+=======
+            this.HTMLTemplate = HTMLTemplate ?? GetResourceString(HTTPRoot + "template.html");
+>>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
 
         }
 
         #endregion
 
 
+<<<<<<< HEAD
         #region (private) RegisterURLTemplates()
+=======
+        #region Manage HTTP Resources
+
+        #region (private) GetResourceStream      (ResourceName)
+
+        private Stream GetResourceStream(String ResourceName)
+
+            => GetResourceStream(ResourceName,
+                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) GetResourceMemoryStream(ResourceName)
+
+        private MemoryStream GetResourceMemoryStream(String ResourceName)
+
+            => GetResourceMemoryStream(ResourceName,
+                                       new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                       new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) GetResourceString      (ResourceName)
+
+        private String GetResourceString(String ResourceName)
+
+            => GetResourceString(ResourceName,
+                                 new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                 new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) GetResourceBytes       (ResourceName)
+        private Byte[] GetResourceBytes(String ResourceName)
+
+            => GetResourceBytes(ResourceName,
+                                new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #region (private) MixWithHTMLTemplate    (ResourceName)
+>>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
 
         #region Manage HTTP Resources
 
+<<<<<<< HEAD
         #region (protected override) GetResourceStream      (ResourceName)
 
         protected override Stream GetResourceStream(String ResourceName)
@@ -562,6 +636,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         #endregion
 
         #region (protected override) MixWithHTMLTemplate    (ResourceName)
+=======
+            => MixWithHTMLTemplate(ResourceName,
+                                   new Tuple<String, System.Reflection.Assembly>(OCPIWebAPI.HTTPRoot, typeof(OCPIWebAPI).Assembly),
+                                   new Tuple<String, System.Reflection.Assembly>(HTTPAPI.   HTTPRoot, typeof(HTTPAPI).   Assembly));
+
+        #endregion
+
+        #endregion
+>>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
 
         protected override String MixWithHTMLTemplate(String ResourceName)
 

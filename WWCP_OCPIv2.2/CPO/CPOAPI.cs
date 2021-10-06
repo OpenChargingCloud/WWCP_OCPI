@@ -28,6 +28,8 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Threading.Tasks;
 
+using social.OpenData.UsersAPI;
+
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
@@ -2154,6 +2156,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
+<<<<<<< HEAD
+=======
+        /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
+>>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public CPOAPI(CommonAPI      CommonAPI,
                       CountryCode    DefaultCountryCode,
@@ -2173,6 +2179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    BasePath,
 
                    URLPathPrefix ?? DefaultURLPathPrefix,
+<<<<<<< HEAD
                    null, // HTMLTemplate,
                    null, // APIVersionHashes,
 
@@ -2191,6 +2198,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // LogfileName,
                    null, // LogfileCreator,
                    false)// Autostart
+=======
+                   null, //HTMLTemplate,
+                   null, //APIVersionHashes,
+
+                   null, //DisableMaintenanceTasks,
+                   null, //MaintenanceInitialDelay,
+                   null, //MaintenanceEvery,
+
+                   null, //DisableWardenTasks,
+                   null, //WardenInitialDelay,
+                   null, //WardenCheckEvery,
+
+                   null, //DisableLogfile,
+                   null, //LoggingPath,
+                   null, //LogfileName,
+                   null) //Autostart)
+>>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
 
         {
 
@@ -2250,21 +2274,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "locations",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "locations",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
@@ -2272,46 +2296,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // https://example.com/ocpi/2.2/cpo/locations/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "locations",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequestHandler: Request => {
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "locations",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                             var filters                 = Request.GetDateAndPaginationFilters();
+                                        var filters                 = Request.GetDateAndPaginationFilters();
 
-                                             var allLocations            = CommonAPI.   GetLocations(DefaultCountryCode,
-                                                                                                     DefaultPartyId).
-                                                                                        ToArray();
+                                        var allLocations            = CommonAPI.   GetLocations(DefaultCountryCode,
+                                                                                                DefaultPartyId).
+                                                                                   ToArray();
 
-                                             var allLocationsCount       = allLocations.Length;
-
-
-                                             var filteredLocations       = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
-                                                                                        Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
-                                                                                        ToArray();
-
-                                             var filteredLocationsCount  = filteredLocations.Length;
+                                        var allLocationsCount       = allLocations.Length;
 
 
-                                             return Task.FromResult(
-                                                 new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
-                                                                                                                           filters.Limit).
-                                                                                                            SafeSelect(location => location.ToJSON())),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                            //LastModified               = ?
-                                                        }.
-                                                        Set("X-Total-Count", filteredLocationsCount)
-                                                        // X-Limit               The maximum number of objects that the server WILL return.
-                                                        // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                                 });
+                                        var filteredLocations       = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                                                                   Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
+                                                                                   ToArray();
 
-                                         });
+                                        var filteredLocationsCount  = filteredLocations.Length;
+
+
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
+                                                                                                                      filters.Limit).
+                                                                                                       SafeSelect(location => location.ToJSON())),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                       //LastModified               = ?
+                                                   }.
+                                                   Set("X-Total-Count", filteredLocationsCount)
+                                                   // X-Limit               The maximum number of objects that the server WILL return.
+                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                                            });
+
+                                    });
 
             #endregion
 
@@ -2322,58 +2346,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS  ~/locations/{locationId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.OPTIONS,
-                                         URLPathPrefix + "locations/{locationId}",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequestHandler: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "locations/{locationId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                             return Task.FromResult(
-                                                 new OCPIResponse.Builder(Request) {
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                        }
-                                                 });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                         });
+                                    });
 
             #endregion
 
             #region GET      ~/locations/{locationId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "locations/{locationId}",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequestHandler: Request => {
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "locations/{locationId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                             #region Check location
+                                        #region Check location
 
-                                             if (!Request.ParseLocation(this,
-                                                                        out Location_Id?          LocationId,
-                                                                        out Location              Location,
-                                                                        out OCPIResponse.Builder  OCPIResponseBuilder))
-                                             {
-                                                 return Task.FromResult(OCPIResponseBuilder);
-                                             }
+                                        if (!Request.ParseLocation(this,
+                                                                   out Location_Id?          LocationId,
+                                                                   out Location              Location,
+                                                                   out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        {
+                                            return Task.FromResult(OCPIResponseBuilder);
+                                        }
 
-                                             #endregion
+                                        #endregion
 
-                                             return Task.FromResult(
-                                                 new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = Location.ToJSON(),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET",
-                                                            AccessControlAllowHeaders  = "Authorization",
-                                                            LastModified               = Location.LastUpdated.ToIso8601()
-                                                        }
-                                                 });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = Location.ToJSON(),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization",
+                                                       LastModified               = Location.LastUpdated.ToIso8601()
+                                                   }
+                                            });
 
-                                         });
+                                    });
 
             #endregion
 
@@ -2384,60 +2408,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS  ~/locations/{locationId}/{evseId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "locations/{locationId}/{evseId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
             #region GET      ~/locations/{locationId}/{evseId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.GET,
-                                     URLPathPrefix + "locations/{locationId}/{evseId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         #region Check EVSE
+                                        #region Check EVSE
 
-                                         if (!Request.ParseLocationEVSE(this,
-                                                                        out Location_Id?          LocationId,
-                                                                        out Location              Location,
-                                                                        out EVSE_UId?             EVSEId,
-                                                                        out EVSE                  EVSE,
-                                                                        out OCPIResponse.Builder  OCPIResponseBuilder))
-                                         {
-                                             return Task.FromResult(OCPIResponseBuilder);
-                                         }
+                                        if (!Request.ParseLocationEVSE(this,
+                                                                       out Location_Id?          LocationId,
+                                                                       out Location              Location,
+                                                                       out EVSE_UId?             EVSEId,
+                                                                       out EVSE                  EVSE,
+                                                                       out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        {
+                                            return Task.FromResult(OCPIResponseBuilder);
+                                        }
 
-                                         #endregion
+                                        #endregion
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 1000,
-                                                    StatusMessage        = "Hello world!",
-                                                    Data                 = EVSE.ToJSON(),
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = EVSE.LastUpdated.ToIso8601()
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = EVSE.ToJSON(),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization",
+                                                       LastModified               = EVSE.LastUpdated.ToIso8601()
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
@@ -2448,62 +2472,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS  ~/locations/{locationId}/{evseId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
             #region GET      ~/locations/{locationId}/{evseId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.GET,
-                                     URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         #region Check connector
+                                        #region Check connector
 
-                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                 out Location_Id?          LocationId,
-                                                                                 out Location              Location,
-                                                                                 out EVSE_UId?             EVSEId,
-                                                                                 out EVSE                  EVSE,
-                                                                                 out Connector_Id?         ConnectorId,
-                                                                                 out Connector             Connector,
-                                                                                 out OCPIResponse.Builder  OCPIResponseBuilder))
-                                         {
-                                             return Task.FromResult(OCPIResponseBuilder);
-                                         }
+                                        if (!Request.ParseLocationEVSEConnector(this,
+                                                                                out Location_Id?          LocationId,
+                                                                                out Location              Location,
+                                                                                out EVSE_UId?             EVSEId,
+                                                                                out EVSE                  EVSE,
+                                                                                out Connector_Id?         ConnectorId,
+                                                                                out Connector             Connector,
+                                                                                out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        {
+                                            return Task.FromResult(OCPIResponseBuilder);
+                                        }
 
-                                         #endregion
+                                        #endregion
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 1000,
-                                                    StatusMessage        = "Hello world!",
-                                                    Data                 = Connector.ToJSON(),
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = Connector.LastUpdated.ToIso8601()
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = Connector.ToJSON(),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization",
+                                                       LastModified               = Connector.LastUpdated.ToIso8601()
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
@@ -2516,21 +2540,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "tariffs",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "tariffs",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
@@ -2538,46 +2562,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             // https://example.com/ocpi/2.2/cpo/tariffs/?date_from=2019-01-28T12:00:00&date_to=2019-01-29T12:00:00&offset=50&limit=100
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                         HTTPMethod.GET,
-                                         URLPathPrefix + "tariffs",
-                                         HTTPContentType.JSON_UTF8,
-                                         OCPIRequestHandler: Request => {
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "tariffs",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                             var filters               = Request.GetDateAndPaginationFilters();
+                                        var filters               = Request.GetDateAndPaginationFilters();
 
-                                             var allTariffs            = CommonAPI.GetTariffs(DefaultCountryCode,
-                                                                                              DefaultPartyId).
-                                                                                   ToArray();
+                                        var allTariffs            = CommonAPI.GetTariffs(DefaultCountryCode,
+                                                                                         DefaultPartyId).
+                                                                              ToArray();
 
-                                             var allTariffsCount       = allTariffs.Length;
-
-
-                                             var filteredTariffs       = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
-                                                                                    Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
-                                                                                    ToArray();
-
-                                             var filteredTariffsCount  = filteredTariffs.Length;
+                                        var allTariffsCount       = allTariffs.Length;
 
 
-                                             return Task.FromResult(
-                                                 new OCPIResponse.Builder(Request) {
-                                                        StatusCode           = 1000,
-                                                        StatusMessage        = "Hello world!",
-                                                        Data                 = new JArray(filteredTariffs.SkipTakeFilter(filters.Offset,
-                                                                                                                         filters.Limit).
-                                                                                                          SafeSelect(tariff => tariff.ToJSON())),
-                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                            HTTPStatusCode             = HTTPStatusCode.OK,
-                                                            AccessControlAllowMethods  = "OPTIONS, GET",
-                                                            AccessControlAllowHeaders  = "Authorization"
-                                                            //LastModified               = ?
-                                                        }.
-                                                        Set("X-Total-Count", filteredTariffsCount)
-                                                        // X-Limit               The maximum number of objects that the server WILL return.
-                                                        // Link                  Link to the 'next' page should be provided when this is NOT the last page.
-                                                 });
+                                        var filteredTariffs       = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
+                                                                               Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
+                                                                               ToArray();
 
-                                         });
+                                        var filteredTariffsCount  = filteredTariffs.Length;
+
+
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = new JArray(filteredTariffs.SkipTakeFilter(filters.Offset,
+                                                                                                                    filters.Limit).
+                                                                                                     SafeSelect(tariff => tariff.ToJSON())),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                       //LastModified               = ?
+                                                   }.
+                                                   Set("X-Total-Count", filteredTariffsCount)
+                                                   // X-Limit               The maximum number of objects that the server WILL return.
+                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                                            });
+
+                                    });
 
             #endregion
 
@@ -2588,58 +2612,58 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region OPTIONS  ~/tariffs/{tariffId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "tariffs/{tariffId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "tariffs/{tariffId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization"
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
             #region GET      ~/tariffs/{tariffId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
-                                     HTTPMethod.GET,
-                                     URLPathPrefix + "tariffs/{tariffId}",
-                                     HTTPContentType.JSON_UTF8,
-                                     OCPIRequestHandler: Request => {
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "tariffs/{tariffId}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestHandler: Request => {
 
-                                         #region Check tariff
+                                        #region Check tariff
 
-                                         if (!Request.ParseTariff(this,
-                                                                  out Tariff_Id?            TariffId,
-                                                                  out Tariff                Tariff,
-                                                                  out OCPIResponse.Builder  OCPIResponseBuilder))
-                                         {
-                                             return Task.FromResult(OCPIResponseBuilder);
-                                         }
+                                        if (!Request.ParseTariff(this,
+                                                                 out Tariff_Id?            TariffId,
+                                                                 out Tariff                Tariff,
+                                                                 out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        {
+                                            return Task.FromResult(OCPIResponseBuilder);
+                                        }
 
-                                         #endregion
+                                        #endregion
 
-                                         return Task.FromResult(
-                                             new OCPIResponse.Builder(Request) {
-                                                    StatusCode           = 1000,
-                                                    StatusMessage        = "Hello world!",
-                                                    Data                 = Tariff.ToJSON(),
-                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
-                                                        AccessControlAllowHeaders  = "Authorization",
-                                                        LastModified               = Tariff.LastUpdated.ToIso8601()
-                                                    }
-                                             });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = Tariff.ToJSON(),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
+                                                       AccessControlAllowHeaders  = "Authorization",
+                                                       LastModified               = Tariff.LastUpdated.ToIso8601()
+                                                   }
+                                            });
 
-                                     });
+                                    });
 
             #endregion
 
