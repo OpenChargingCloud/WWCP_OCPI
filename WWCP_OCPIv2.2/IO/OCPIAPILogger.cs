@@ -774,8 +774,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         OCPIRequest  Request)
         {
 
-            var LoggingPath = "";
-
             //ToDo: Can we have a lock per logfile?
             var LockTaken = await LogHTTPRequest_toDisc_Lock.WaitAsync(MaxWaitingForALock);
 
@@ -868,8 +866,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          OCPIRequest   Request,
                                                          OCPIResponse  Response)
         {
-
-            var LoggingPath = "";
 
             //ToDo: Can we have a lock per logfile?
             var LockTaken = await LogHTTPResponse_toDisc_Lock.WaitAsync(MaxWaitingForALock);
@@ -1078,14 +1074,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.LogfileCreator = LogfileCreator != null
                                       ? LogfileCreator
-<<<<<<< HEAD
-                                      : (loggingPath, context, logfileName) => String.Concat(context != null ? context + "_" : "",
-                                                                                             logfileName, "_",
-=======
                                       : (loggingPath, context, logfilename) => String.Concat(loggingPath,
                                                                                              context != null ? context + "_" : "",
                                                                                              logfilename, "_",
->>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
                                                                                              DateTime.UtcNow.Year, "-",
                                                                                              DateTime.UtcNow.Month.ToString("D2"),
                                                                                              ".log");

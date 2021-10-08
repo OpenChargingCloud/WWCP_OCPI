@@ -2156,10 +2156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="ExternalDNSName">The offical URL/DNS name of this service, e.g. for sending e-mails.</param>
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
-<<<<<<< HEAD
-=======
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
->>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
         public CPOAPI(CommonAPI      CommonAPI,
                       CountryCode    DefaultCountryCode,
@@ -2179,7 +2176,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    BasePath,
 
                    URLPathPrefix ?? DefaultURLPathPrefix,
-<<<<<<< HEAD
                    null, // HTMLTemplate,
                    null, // APIVersionHashes,
 
@@ -2198,23 +2194,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // LogfileName,
                    null, // LogfileCreator,
                    false)// Autostart
-=======
-                   null, //HTMLTemplate,
-                   null, //APIVersionHashes,
-
-                   null, //DisableMaintenanceTasks,
-                   null, //MaintenanceInitialDelay,
-                   null, //MaintenanceEvery,
-
-                   null, //DisableWardenTasks,
-                   null, //WardenInitialDelay,
-                   null, //WardenCheckEvery,
-
-                   null, //DisableLogfile,
-                   null, //LoggingPath,
-                   null, //LogfileName,
-                   null) //Autostart)
->>>>>>> 540fce42031f3f1c3a9b71c9fbc8d6dc74bdc79f
 
         {
 
