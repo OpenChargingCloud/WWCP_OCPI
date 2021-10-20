@@ -65,13 +65,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             /// Create a new common client logger using the default logging delegates.
             /// </summary>
             /// <param name="CommonClient">A common client.</param>
+            /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(CommonClient            CommonClient,
+                          String                  LoggingPath,
                           String                  Context         = DefaultContext,
                           LogfileCreatorDelegate  LogfileCreator  = null)
 
                 : this(CommonClient,
+                       LoggingPath,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
                        null,
                        null,
@@ -90,6 +93,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             /// Create a new common client logger using the given logging delegates.
             /// </summary>
             /// <param name="CommonClient">A common client.</param>
+            /// <param name="LoggingPath">The logging path.</param>
             /// <param name="Context">A context of this API.</param>
             /// 
             /// <param name="LogHTTPRequest_toConsole">A delegate to log incoming HTTP requests to console.</param>
@@ -109,6 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             /// 
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(CommonClient                CommonClient,
+                          String                      LoggingPath,
                           String                      Context,
 
                           HTTPRequestLoggerDelegate   LogHTTPRequest_toConsole,
@@ -129,6 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                           LogfileCreatorDelegate      LogfileCreator              = null)
 
                 : base(CommonClient,
+                       LoggingPath,
                        Context.IsNotNullOrEmpty() ? Context : DefaultContext,
 
                        LogHTTPRequest_toConsole,

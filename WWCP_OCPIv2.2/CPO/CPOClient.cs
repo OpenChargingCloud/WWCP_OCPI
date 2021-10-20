@@ -645,6 +645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="TransmissionRetryDelay">The delay between transmission retries.</param>
         /// <param name="MaxNumberOfRetries">The maximum number of transmission retries for HTTP request.</param>
         /// <param name="DisableLogging">Disable all logging.</param>
+        /// <param name="LoggingPath">The logging path.</param>
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
@@ -660,6 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
                          UInt16?                              MaxNumberOfRetries           = null,
                          Boolean                              DisableLogging               = false,
+                         String                               LoggingPath                  = null,
                          String                               LoggingContext               = null,
                          LogfileCreatorDelegate               LogfileCreator               = null,
                          DNSClient                            DNSClient                    = null)
@@ -676,6 +678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
                    DisableLogging,
+                   LoggingPath,
                    LoggingContext,
                    LogfileCreator,
                    DNSClient)
@@ -684,6 +687,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             base.HTTPLogger = DisableLogging == false
                                    ? new Logger(this,
+                                                LoggingPath,
                                                 LoggingContext,
                                                 LogfileCreator)
                                    : null;

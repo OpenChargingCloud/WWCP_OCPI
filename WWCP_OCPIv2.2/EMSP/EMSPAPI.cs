@@ -6253,7 +6253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PostCDRRequest,
                                     OCPIResponseLogger:  PostCDRResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 

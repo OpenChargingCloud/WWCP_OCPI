@@ -673,6 +673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
                             UInt16?                              MaxNumberOfRetries           = null,
                             Boolean                              DisableLogging               = false,
+                            String                               LoggingPath                  = null,
                             String                               LoggingContext               = null,
                             LogfileCreatorDelegate               LogfileCreator               = null,
                             DNSClient                            DNSClient                    = null)
@@ -702,6 +703,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             base.HTTPLogger         = DisableLogging == false
                                           ? new Logger(this,
+                                                       LoggingPath,
                                                        LoggingContext,
                                                        LogfileCreator)
                                           : null;
