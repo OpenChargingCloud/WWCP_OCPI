@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The default HTTP URI prefix.
         /// </summary>
-        public static readonly HTTPPath                             DefaultURLPathPrefix        = HTTPPath.Parse("webapi");
+        public new static readonly HTTPPath                         DefaultURLPathPrefix        = HTTPPath.Parse("webapi");
 
         /// <summary>
         /// The default HTTP realm, if HTTP Basic Authentication is used.
@@ -314,7 +314,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The HTTP root for embedded ressources.
         /// </summary>
-        public const              String                            HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot.";
+        public new const       String                               HTTPRoot                    = "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot.";
 
 
         //ToDo: http://www.iana.org/form/media-types
@@ -418,20 +418,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region Generic HTTP server logging
 
-        /// <summary>
-        /// An event called whenever a HTTP request came in.
-        /// </summary>
-        public HTTPRequestLogEvent   RequestLog    = new HTTPRequestLogEvent();
+        ///// <summary>
+        ///// An event called whenever a HTTP request came in.
+        ///// </summary>
+        //public HTTPRequestLogEvent   RequestLog    = new HTTPRequestLogEvent();
 
-        /// <summary>
-        /// An event called whenever a HTTP request could successfully be processed.
-        /// </summary>
-        public HTTPResponseLogEvent  ResponseLog   = new HTTPResponseLogEvent();
+        ///// <summary>
+        ///// An event called whenever a HTTP request could successfully be processed.
+        ///// </summary>
+        //public HTTPResponseLogEvent  ResponseLog   = new HTTPResponseLogEvent();
 
-        /// <summary>
-        /// An event called whenever a HTTP request resulted in an error.
-        /// </summary>
-        public HTTPErrorLogEvent     ErrorLog      = new HTTPErrorLogEvent();
+        ///// <summary>
+        ///// An event called whenever a HTTP request resulted in an error.
+        ///// </summary>
+        //public HTTPErrorLogEvent     ErrorLog      = new HTTPErrorLogEvent();
 
         #endregion
 

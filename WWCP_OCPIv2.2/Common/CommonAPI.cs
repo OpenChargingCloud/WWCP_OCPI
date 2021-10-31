@@ -691,7 +691,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                       new VersionInformation[] {
                                                                           new VersionInformation(
                                                                               Version_Id.Parse("2.2"),
-                                                                              URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                              URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                         (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2")).Replace("//", "/"))
                                                                           )
                                                                       }.Select(version => version.ToJSON())
@@ -831,12 +831,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                         new VersionEndpoint(ModuleIDs.Credentials,
                                                                             InterfaceRoles.SENDER,
-                                                                            URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                       (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials")).Replace("//", "/"))),
 
                                                         new VersionEndpoint(ModuleIDs.Credentials,
                                                                             InterfaceRoles.RECEIVER,
-                                                                            URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                       (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials")).Replace("//", "/")))
 
                                                     };
@@ -851,33 +851,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") + 
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/locations")).Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                          InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tariffs")).  Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                          InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/sessions")). Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                          InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/cdrs")).     Replace("//", "/"))));
 
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/commands")). Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tokens")).   Replace("//", "/"))));
 
                                        // hubclientinfo
@@ -895,7 +895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations")).Replace("//", "/"))));
 
                                    }
@@ -909,49 +909,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs")).            Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions")).        Replace("//", "/"))));
 
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations")).       Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tariffs")).         Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions")).        Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.ChargingProfiles,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/chargingprofiles")).Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                          InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs")).            Replace("//", "/"))));
 
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                          InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/commands")).        Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                          InterfaceRoles.RECEIVER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == HTTPProtocols.https ? "https://" : "http://") +
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tokens")).          Replace("//", "/"))));
 
                                        // hubclientinfo
