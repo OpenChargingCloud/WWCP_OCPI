@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The unique identification of a token.
     /// </summary>
-    public struct Token_Id : IId<Token_Id>
+    public readonly struct Token_Id : IId<Token_Id>
     {
 
         #region Data
@@ -49,8 +49,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the token identification.

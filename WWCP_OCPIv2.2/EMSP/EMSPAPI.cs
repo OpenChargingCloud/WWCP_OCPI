@@ -6812,7 +6812,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                       //    _tokenStatus.Token.UILanguage ?? Languages.en,
                                                                       //    responseText
                                                                       //)
-                                                                  );
+                                                                );
 
                                             #region Parse optional LocationReference JSON
 

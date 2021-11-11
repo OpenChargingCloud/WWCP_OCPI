@@ -29,7 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// The unique identification of a version.
     /// </summary>
-    public struct Version_Id : IId<Version_Id>
+    public readonly struct Version_Id : IId<Version_Id>
     {
 
         #region Data
@@ -49,8 +49,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Indicates whether this identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the version identification.

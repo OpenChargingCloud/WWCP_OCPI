@@ -4763,7 +4763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PostToken      (Token, TokenType = null, ...)
+        #region PostToken      (Token,   TokenType = null, ...)
 
         /// <summary>
         /// Post/store the given token on/within the remote API.
@@ -4914,6 +4914,233 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            -1,
                                                            e.Message,
                                                            e.StackTrace);
+
+            }
+
+
+            #region Send OnPostTokenResponse event
+
+            var Endtime = DateTime.UtcNow;
+
+            try
+            {
+
+                // Update counters
+                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
+                //else
+                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+
+
+                //if (OnPostTokenResponse != null)
+                //    await Task.WhenAll(OnPostTokenResponse.GetInvocationList().
+                //                       Cast<OnPostTokenResponseDelegate>().
+                //                       Select(e => e(Endtime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
+                //                                     result.Content,
+                //                                     Endtime - StartTime))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
+        #region PostToken      (TokenId, TokenType = null, ...)
+
+        /// <summary>
+        /// Post/store the given token identification on/within the remote API.
+        /// </summary>
+        /// <param name="Timestamp">The optional timestamp of the request.</param>
+        /// <param name="CancellationToken">An optional token to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<AuthorizationInfo>>
+
+            PostToken(Token_Id            TokenId,
+                      TokenTypes?         TokenType           = null,
+                      LocationReference?  LocationReference   = null,
+
+                      Request_Id?         RequestId           = null,
+                      Correlation_Id?     CorrelationId       = null,
+                      Version_Id?         VersionId           = null,
+
+                      DateTime?           Timestamp           = null,
+                      CancellationToken?  CancellationToken   = null,
+                      EventTracking_Id    EventTrackingId     = null,
+                      TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            if (TokenId.IsNullOrEmpty)
+                throw new ArgumentNullException(nameof(Token), "The given token identification must not be null!");
+
+            OCPIResponse<AuthorizationInfo> response;
+
+            #region Send OnPostTokenRequest event
+
+            var StartTime = DateTime.UtcNow;
+
+            try
+            {
+
+                //Counters.PostToken.IncRequests();
+
+                //if (OnPostTokenRequest != null)
+                //    await Task.WhenAll(OnPostTokenRequest.GetInvocationList().
+                //                       Cast<OnPostTokenRequestDelegate>().
+                //                       Select(e => e(StartTime,
+                //                                     Request.Timestamp.Value,
+                //                                     this,
+                //                                     ClientId,
+                //                                     Request.EventTrackingId,
+
+                //                                     Request.PartnerId,
+                //                                     Request.OperatorId,
+                //                                     Request.ChargingPoolId,
+                //                                     Request.StatusEventDate,
+                //                                     Request.AvailabilityStatus,
+                //                                     Request.TransactionId,
+                //                                     Request.AvailabilityStatusUntil,
+                //                                     Request.AvailabilityStatusComment,
+
+                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
+                //                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostTokenRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var requestId      = RequestId     ?? Request_Id.Random();
+                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var remoteURL      = await GetRemoteURL(VersionId,
+                                                        ModuleIDs.Tokens,
+                                                        InterfaceRoles.SENDER);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + TokenId.ToString() + "authorize",
+                                                                                     requestbuilder => {
+
+                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+
+                                                                                         if (TokenType.HasValue)
+                                                                                             requestbuilder.QueryString.Add("type", TokenType.ToString());
+
+                                                                                         if (LocationReference.HasValue)
+                                                                                         {
+                                                                                             requestbuilder.ContentType = HTTPContentType.JSON_UTF8;
+                                                                                             requestbuilder.Content     = LocationReference.Value.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         }
+
+                                                                                     }),
+
+                                                    RequestLogDelegate:   OnPostTokenHTTPRequest,
+                                                    ResponseLogDelegate:  OnPostTokenHTTPResponse,
+                                                    CancellationToken:    CancellationToken,
+                                                    EventTrackingId:      EventTrackingId,
+                                                    RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    // {
+                    //   "allowed": "ALLOWED",
+                    //   "token": {
+                    //     "country_code": "DE",
+                    //     "party_id": "GDF",
+                    //     "uid": "aabbccdd",
+                    //     "type": "RFID",
+                    //     "contract_id": "C-aabbccdd",
+                    //     "visual_number": "visual:n/a",
+                    //     "issuer": "DE-GDF1-issuer",
+                    //     "valid": true,
+                    //     "whitelist": "NEVER",
+                    //     "last_updated": "2021-11-11T04:48:36.913Z"
+                    //   },
+                    //   "authorization_reference": "K5Cr29r53Q4v753nn49f8371CQA2Mh",
+                    //   "info": {
+                    //     "language": "en",
+                    //     "text": "Charging allowed!"
+                    //   }
+                    // }
+
+                    response = OCPIResponse<AuthorizationInfo>.ParseJObject(HTTPResponse,
+                                                                            requestId,
+                                                                            correlationId,
+                                                                            json => AuthorizationInfo.Parse(json));
+
+                }
+
+                else
+                    response = new OCPIResponse<String, AuthorizationInfo>("",
+                                                                           default,
+                                                                           -1,
+                                                                           "No remote URL available!");
+
+            }
+
+            catch (Exception e)
+            {
+
+                response = new OCPIResponse<String, AuthorizationInfo>("",
+                                                                       default,
+                                                                       -1,
+                                                                       e.Message,
+                                                                       e.StackTrace);
 
             }
 
