@@ -1,0 +1,42 @@
+﻿body #page #bottom #right #text #remotePartyInfos .subGroup {
+  white-space: nowrap;
+  color: #666;
+  vertical-align: top;
+  margin: 15px 0 1px 15px;
+  width: calc(100% - 15px); }
+  body #page #bottom #right #text #remotePartyInfos .subGroup .headline {
+    padding: 1vh 0vw 1vh 0vw; }
+  body #page #bottom #right #text #remotePartyInfos .subGroup .subGroup2 {
+    display: table;
+    width: 100%; }
+    body #page #bottom #right #text #remotePartyInfos .subGroup .subGroup2 .row {
+      display: table-row;
+      width: 100%; }
+      body #page #bottom #right #text #remotePartyInfos .subGroup .subGroup2 .row .subkey {
+        display: table-cell;
+        padding: 8px 42px 8px 0;
+        white-space: nowrap;
+        color: #666;
+        vertical-align: top;
+        padding-left: 20px; }
+      body #page #bottom #right #text #remotePartyInfos .subGroup .subGroup2 .row .value {
+        display: table-cell;
+        width: inherit; }
+        body #page #bottom #right #text #remotePartyInfos .subGroup .subGroup2 .row .value input {
+          background-color: rgba(255, 255, 255, 0.7);
+          padding: 6px 8px;
+          border-radius: 4px;
+          font-size: 90%;
+          border: 0;
+          width: calc(100% - 16px); }
+
+body #page #bottom #right #text #remotePartyInfos #commands {
+  padding: 2vh 0; }
+  body #page #bottom #right #text #remotePartyInfos #commands button {
+    padding: .5vh 1.2vh;
+    background-color: #456ca7;
+    border-radius: 4px;
+    border: 0;
+    color: #d6e0ee; }
+  body #page #bottom #right #text #remotePartyInfos #commands button:hover {
+    background-color: #668ac1; }

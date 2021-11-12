@@ -672,6 +672,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             TimeSpan?                            RequestTimeout               = null,
                             TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
                             UInt16?                              MaxNumberOfRetries           = null,
+                            Boolean                              AccessTokenBase64Encoding    = true,
+
                             Boolean                              DisableLogging               = false,
                             String                               LoggingPath                  = null,
                             String                               LoggingContext               = null,
@@ -694,7 +696,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.TokenAuth          = new HTTPTokenAuthentication(AccessToken.ToString().ToBase64());
+            this.TokenAuth          = new HTTPTokenAuthentication(AccessTokenBase64Encoding
+                                                                      ? AccessToken.ToString().ToBase64()
+                                                                      : AccessToken.ToString());
             this.AccessToken        = AccessToken;
             this.RemoteVersionsURL  = RemoteVersionsURL;
             this.MyCommonAPI        = MyCommonAPI;
@@ -1062,8 +1066,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 try
                 {
 
-                    var requestId = RequestId ?? Request_Id.Random();
-                    var correlationId = CorrelationId ?? Correlation_Id.Random();
+                    var requestId      = RequestId     ?? Request_Id.    Random();
+                    var correlationId  = CorrelationId ?? Correlation_Id.Random();
 
                     // ToDo: Add request logging!
 

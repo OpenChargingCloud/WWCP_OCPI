@@ -116,6 +116,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         public Boolean?                      AllowDowngrades            { get; }
 
+        /// <summary>
+        /// Disable OCPI v2.1.1.
+        /// </summary>
+        public Boolean                       Disable_OCPIv2_1_1         { get; }
+
         #endregion
 
         #region Events
@@ -282,21 +287,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OurCredentialRoles">All our credential roles.</param>
         /// <param name="APIVersionHashes">The API version hashes (git commit hash values).</param>
         /// 
-        /// <param name="ServerCertificateSelector">An optional delegate to select a SSL/TLS server certificate.</param>
-        /// <param name="ClientCertificateValidator">An optional delegate to verify the SSL/TLS client certificate used for authentication.</param>
-        /// <param name="ClientCertificateSelector">An optional delegate to select the SSL/TLS client certificate used for authentication.</param>
-        /// <param name="AllowedTLSProtocols">The SSL/TLS protocol(s) allowed for this connection.</param>
-        /// 
-        /// <param name="ServerThreadName">The optional name of the TCP server thread.</param>
-        /// <param name="ServerThreadPriority">The optional priority of the TCP server thread.</param>
-        /// <param name="ServerThreadIsBackground">Whether the TCP server thread is a background thread or not.</param>
-        /// <param name="ConnectionIdBuilder">An optional delegate to build a connection identification based on IP socket information.</param>
-        /// <param name="ConnectionThreadsNameBuilder">An optional delegate to set the name of the TCP connection threads.</param>
-        /// <param name="ConnectionThreadsPriorityBuilder">An optional delegate to set the priority of the TCP connection threads.</param>
-        /// <param name="ConnectionThreadsAreBackground">Whether the TCP connection threads are background threads or not (default: yes).</param>
-        /// <param name="ConnectionTimeout">The TCP client timeout for all incoming client connections in seconds (default: 30 sec).</param>
-        /// <param name="MaxClientConnections">The maximum number of concurrent TCP client connections (default: 4096).</param>
-        /// 
         /// <param name="HTTPHostname">An optional HTTP hostname.</param>
         /// <param name="HTTPServerPort">An optional HTTP TCP port.</param>
         /// <param name="HTTPServerName">An optional HTTP server name.</param>
@@ -323,7 +313,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
-                         Boolean?                      AllowDowngrades           = null)
+                         Boolean?                      AllowDowngrades           = null,
+
+                         Boolean                       Disable_OCPIv2_1_1        = true)
 
             : base(HTTPHostname,
                    ExternalDNSName,
@@ -381,6 +373,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
 
+            this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
+
             this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
@@ -424,7 +418,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
                          Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
-                         Boolean?                      AllowDowngrades           = null)
+                         Boolean?                      AllowDowngrades           = null,
+
+                         Boolean                       Disable_OCPIv2_1_1        = true)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -464,6 +460,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
+
+            this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
             this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
@@ -682,19 +680,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    #endregion
 
-
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
                                            StatusCode           = 1000,
                                            StatusMessage        = "Hello world!",
                                            Data                 = new JArray(
                                                                       new VersionInformation[] {
+                                                                          Disable_OCPIv2_1_1
+                                                                              ? null
+                                                                              : new VersionInformation(
+                                                                                    Version_Id.Parse("2.1.1"),
+                                                                                    URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                                              (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
+                                                                                ),
                                                                           new VersionInformation(
                                                                               Version_Id.Parse("2.2"),
                                                                               URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                         (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2")).Replace("//", "/"))
                                                                           )
-                                                                      }.Select(version => version.ToJSON())
+                                                                      }.Where (version => version != null).
+                                                                        Select(version => version.ToJSON())
                                                                   ),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -709,14 +714,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/versions/{id}
+            #region OPTIONS     ~/versions/{versionId}
 
             // --------------------------------------------------------
             // curl -v -X OPTIONS http://127.0.0.1:2502/versions/{id}
             // --------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
-                               URLPathPrefix + "versions/{id}",
+                               URLPathPrefix + "versions/{versionId}",
                                OCPIRequestHandler: Request => {
 
                                    return Task.FromResult(
@@ -736,14 +741,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET         ~/versions/{id}
+            #region GET         ~/versions/{versionId}
 
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions/{id}
             // ---------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
-                               URLPathPrefix + "versions/{id}",
+                               URLPathPrefix + "versions/{versionId}",
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestHandler: Request => {
 
@@ -807,20 +812,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                    #region Only allow versionId == "2.2"
 
                                    if (versionId.ToString() != "2.2")
-                                   {
-
                                        return Task.FromResult(
                                            new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "Version identification is unknown!",
+                                              StatusMessage        = "This OCPI version is not supported!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.NotFound,
                                                   AccessControlAllowMethods  = "OPTIONS, GET",
                                                   AccessControlAllowHeaders  = "Authorization"
                                               }
                                           });
-
-                                   }
 
                                    #endregion
 
@@ -832,12 +833,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                         new VersionEndpoint(ModuleIDs.Credentials,
                                                                             InterfaceRoles.SENDER,
                                                                             URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials")).Replace("//", "/"))),
+                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "credentials")).Replace("//", "/"))),
 
                                                         new VersionEndpoint(ModuleIDs.Credentials,
                                                                             InterfaceRoles.RECEIVER,
                                                                             URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/credentials")).Replace("//", "/")))
+                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "credentials")).Replace("//", "/")))
 
                                                     };
 
@@ -852,33 +853,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/locations")).Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/locations")).Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tariffs")).  Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/tariffs")).  Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/sessions")). Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/sessions")). Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/cdrs")).     Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/cdrs")).     Replace("//", "/"))));
 
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/commands")). Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/commands")). Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/emsp/tokens")).   Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/tokens")).   Replace("//", "/"))));
 
                                        // hubclientinfo
 
@@ -896,7 +897,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations")).Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/locations")).Replace("//", "/"))));
 
                                    }
 
@@ -910,49 +911,49 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs")).            Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/cdrs")).            Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions")).        Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/sessions")).        Replace("//", "/"))));
 
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/locations")).       Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/locations")).       Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tariffs")).         Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/tariffs")).         Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/sessions")).        Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/sessions")).        Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.ChargingProfiles,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/chargingprofiles")).Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/chargingprofiles")).Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/cdrs")).            Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/cdrs")).            Replace("//", "/"))));
 
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/commands")).        Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/commands")).        Replace("//", "/"))));
 
                                        endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "2.2/cpo/tokens")).          Replace("//", "/"))));
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/tokens")).          Replace("//", "/"))));
 
                                        // hubclientinfo
 
@@ -966,7 +967,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                               StatusCode           = 1000,
                                               StatusMessage        = "Hello world!",
                                               Data                 = new VersionDetail(
-                                                                         Version_Id.Parse("2.2"),
+                                                                         versionId,
                                                                          endpoints
                                                                      ).ToJSON(),
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
@@ -982,14 +983,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
-            #region OPTIONS     ~/2.2/credentials
+            #region OPTIONS     ~/{versionId}/credentials
 
             // ----------------------------------------------------------
             // curl -v -X OPTIONS http://127.0.0.1:2502/2.2/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
-                               URLPathPrefix + "2.2/credentials",
+                               URLPathPrefix + "{versionId}/credentials",
                                OCPIRequestHandler: Request => {
 
                                    return Task.FromResult(
@@ -1012,14 +1013,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET         ~/2.2/credentials
+            #region GET         ~/{versionId}/credentials
 
             // ---------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
-                               URLPathPrefix + "2.2/credentials",
+                               URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestHandler: Request => {
 
@@ -1056,7 +1057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region POST        ~/2.2/credentials
+            #region POST        ~/{versionId}/credentials
 
             // REGISTER new OCPI party!
 
@@ -1065,7 +1066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.POST,
-                               URLPathPrefix + "2.2/credentials",
+                               URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:   PostCredentialsRequest,
                                OCPIResponseLogger:  PostCredentialsResponse,
@@ -1109,7 +1110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region PUT         ~/2.2/credentials
+            #region PUT         ~/{versionId}/credentials
 
             // UPDATE the registration of an existing OCPI party!
 
@@ -1118,7 +1119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.PUT,
-                               URLPathPrefix + "2.2/credentials",
+                               URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  PutCredentialsRequest,
                                OCPIResponseLogger: PutCredentialsResponse,
@@ -1158,7 +1159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE      ~/2.2/credentials
+            #region DELETE      ~/{versionId}/credentials
 
             // UNREGISTER an existing OCPI party!
 
@@ -1167,7 +1168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.DELETE,
-                               URLPathPrefix + "2.2/credentials",
+                               URLPathPrefix + "{versionId}/credentials",
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  DeleteCredentialsRequest,
                                OCPIResponseLogger: DeleteCredentialsResponse,

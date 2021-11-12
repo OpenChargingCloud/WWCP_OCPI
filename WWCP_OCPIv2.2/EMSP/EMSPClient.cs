@@ -1310,6 +1310,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                           TimeSpan?                            RequestTimeout               = null,
                           TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
                           UInt16?                              MaxNumberOfRetries           = null,
+                          Boolean                              AccessTokenBase64Encoding    = true,
+
                           Boolean                              DisableLogging               = false,
                           String                               LoggingPath                  = null,
                           String                               LoggingContext               = null,
@@ -1327,6 +1329,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   AccessTokenBase64Encoding,
+
                    DisableLogging,
                    LoggingPath,
                    LoggingContext,

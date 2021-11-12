@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C49D3D9E-028F-4076-B6E8-21BD43B50B74}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WWCP_OCPIv2._1._1_WebAPI</RootNamespace>
+    <AssemblyName>WWCP_OCPIv2._1._1_WebAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Styx\libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="OCPIWebAPI.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="HTTPRoot\dashboard\dashboard.css" />
+    <Content Include="HTTPRoot\dashboard\dashboard.html" />
+    <Content Include="HTTPRoot\dashboard\dashboard.js" />
+    <Content Include="HTTPRoot\dashboard\dashboard.min.css" />
+    <Content Include="HTTPRoot\defaults\defaults.js" />
+    <Content Include="HTTPRoot\favicon.png" />
+    <Content Include="HTTPRoot\images\favicon_big.png" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\startSession.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\startSession.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\startSession.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\stopSession.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\stopSession.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
+    <Content Include="HTTPRoot\remoteParty\remoteParties.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteParties.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteParties.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteParties.shtml" />
+    <Content Include="HTTPRoot\remoteParty\remoteParty.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteParty.js" />
+    <Content Include="HTTPRoot\remoteParty\remoteParty.min.css" />
+    <Content Include="HTTPRoot\remoteParty\remoteParty.shtml" />
+    <Content Include="HTTPRoot\template.css" />
+    <Content Include="HTTPRoot\template.html" />
+    <Content Include="HTTPRoot\template.min.css" />
+    <Content Include="HTTPRoot\versions\versionDetails.css" />
+    <Content Include="HTTPRoot\versions\versionDetails.js" />
+    <Content Include="HTTPRoot\versions\versionDetails.min.css" />
+    <Content Include="HTTPRoot\versions\versionDetails.shtml" />
+    <Content Include="HTTPRoot\versions\versions.css" />
+    <Content Include="HTTPRoot\versions\versions.js" />
+    <Content Include="HTTPRoot\versions\versions.min.css" />
+    <Content Include="HTTPRoot\versions\versions.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
+    <None Include="HTTPRoot\dashboard\dashboard.js.map" />
+    <None Include="HTTPRoot\dashboard\dashboard.scss" />
+    <None Include="HTTPRoot\defaults\defaults.js.map" />
+    <None Include="HTTPRoot\defaults\_defaults.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\startSession.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteParties.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteParties.scss" />
+    <None Include="HTTPRoot\remoteParty\remoteParty.js.map" />
+    <None Include="HTTPRoot\remoteParty\remoteParty.scss" />
+    <None Include="HTTPRoot\template.scss" />
+    <None Include="HTTPRoot\versions\versionDetails.js.map" />
+    <None Include="HTTPRoot\versions\versionDetails.scss" />
+    <None Include="HTTPRoot\versions\versions.js.map" />
+    <None Include="HTTPRoot\versions\versions.scss" />
+    <None Include="tsconfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="HTTPRoot\dashboard\dashboard.ts" />
+    <TypeScriptCompile Include="HTTPRoot\defaults\defaults.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteParties.ts" />
+    <TypeScriptCompile Include="HTTPRoot\remoteParty\remoteParty.ts" />
+    <TypeScriptCompile Include="HTTPRoot\versions\versionDetails.ts" />
+    <TypeScriptCompile Include="HTTPRoot\versions\versions.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BouncyCastle\crypto\crypto.csproj">
+      <Project>{38872a5f-e87e-4fad-b109-8eb7b2e6a4a0}</Project>
+      <Name>crypto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
+      <Project>{477efd16-3627-4473-957d-44ca9a9dfb79}</Project>
+      <Name>Hermod</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenChargingCloudAPI\OpenChargingCloudAPI\OpenChargingCloudAPI.csproj">
+      <Project>{85949a33-de77-4d57-a5cf-7cf2d29b8a68}</Project>
+      <Name>OpenChargingCloudAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SMSAPI\smsapi\SMSAPI2.csproj">
+      <Project>{05c2a720-2cd1-401b-a832-9ce85313c248}</Project>
+      <Name>SMSAPI2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
+      <Project>{af76ecc0-2ca5-4cff-9e1e-ff5478c4b6e4}</Project>
+      <Name>Styx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TelegramBotAPI\TelegramBotAPI\TelegramBotAPI.csproj">
+      <Project>{2fee90e4-7e55-49a6-8be9-5a434ffa5a00}</Project>
+      <Name>TelegramBotAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UsersAPI\UsersAPI\UsersAPI.csproj">
+      <Project>{4d5da5f5-0dce-4620-bce5-74a27e5cfc47}</Project>
+      <Name>UsersAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj">
+      <Project>{33836742-af1d-4aa4-963f-b0a8e60e6480}</Project>
+      <Name>WWCP_Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WWCP_OCPIv2.1.1\WWCP_OCPIv2.1.1.csproj">
+      <Project>{83bc55c4-fb60-42c4-a6d2-06d16ee8fb35}</Project>
+      <Name>WWCP_OCPIv2.1.1</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -495,7 +495,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public override String ToString()
 
             => String.Concat(Identifier, ", ", Role,
-                             " -> ", URL);
+                             " -> ",
+                             URL);
 
         #endregion
 

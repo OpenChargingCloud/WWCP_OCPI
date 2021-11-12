@@ -3044,11 +3044,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         #endregion
 
 
-        #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO)
+        #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO, AccessTokenBase64Encoding = true)
 
         public EMSPClient GetEMSPClient(CountryCode  CountryCode,
                                         Party_Id     PartyId,
-                                        Roles        Role = Roles.CPO)
+                                        Roles        Role                        = Roles.CPO,
+                                        Boolean      AccessTokenBase64Encoding   = true)
         {
 
             var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
@@ -3063,7 +3064,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                    _remoteParty.RemoteAccessInfos.First().VersionsURL,
                                    _remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
-                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
 
             return null;
 
@@ -3071,9 +3073,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyd)
+        #region GetEMSPClient(RemotePartyd, AccessTokenBase64Encoding = true)
 
-        public EMSPClient GetEMSPClient(RemoteParty RemoteParty)
+        public EMSPClient GetEMSPClient(RemoteParty  RemoteParty,
+                                        Boolean      AccessTokenBase64Encoding = true)
         {
 
             if (RemoteParty == null)
@@ -3090,7 +3093,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                     new EMSPClient(RemoteParty.RemoteAccessInfos.First().VersionsURL,
                                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
-                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
 
             return null;
 
@@ -3098,9 +3102,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyId)
+        #region GetEMSPClient(RemotePartyId, AccessTokenBase64Encoding = true)
 
-        public EMSPClient GetEMSPClient(RemoteParty_Id RemotePartyId)
+        public EMSPClient GetEMSPClient(RemoteParty_Id  RemotePartyId,
+                                        Boolean         AccessTokenBase64Encoding = true)
         {
 
             var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == RemotePartyId.CountryCode &&
@@ -3118,7 +3123,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                     new EMSPClient(_remoteParty.RemoteAccessInfos.First().VersionsURL,
                                    _remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
-                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
 
             return null;
 
@@ -3131,7 +3137,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         public CPOClient GetCPOClient(CountryCode  CountryCode,
                                       Party_Id     PartyId,
-                                      Roles        Role = Roles.EMSP)
+                                      Roles        Role                        = Roles.EMSP,
+                                      Boolean      AccessTokenBase64Encoding   = true)
         {
 
             var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
@@ -3146,7 +3153,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                   _remoteParty.RemoteAccessInfos.First().VersionsURL,
                                   _remoteParty.RemoteAccessInfos.First().AccessToken,
                                   CommonAPI,
-                                  RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true));
+                                  RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
+                                  AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
 
             return null;
 
