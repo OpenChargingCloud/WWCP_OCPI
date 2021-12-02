@@ -150,13 +150,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
-        public static Hours Parse(JObject                                        JSON,
-                                             CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
+        public static Hours Parse(JObject                             JSON,
+                                  CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Hours hours,
-                         out String           ErrorResponse,
+                         out Hours   hours,
+                         out String  ErrorResponse,
                          CustomHoursParser))
             {
                 return hours;
@@ -175,13 +175,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
-        public static Hours Parse(String                                         Text,
-                                             CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
+        public static Hours Parse(String                              Text,
+                                  CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
         {
 
             if (TryParse(Text,
-                         out Hours hours,
-                         out String         ErrorResponse,
+                         out Hours   hours,
+                         out String  ErrorResponse,
                          CustomHoursParser))
             {
                 return hours;
