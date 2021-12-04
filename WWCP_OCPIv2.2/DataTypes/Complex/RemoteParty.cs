@@ -43,9 +43,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
     /// <summary>
-    /// Extention methods for remote parties.
+    /// Extension methods for remote parties.
     /// </summary>
-    public static partial class CardiRemotePartyExtentions
+    public static partial class CardiRemotePartyExtensions
     {
 
         #region ToJSON(this RemoteParties, Skip = null, Take = null, Embedded = false, ...)

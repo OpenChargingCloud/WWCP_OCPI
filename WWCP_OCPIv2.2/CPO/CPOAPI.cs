@@ -36,9 +36,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// Extention methods for the CPO HTTP API.
+    /// Extension methods for the CPO HTTP API.
     /// </summary>
-    public static class CPOAPIExtentions
+    public static class CPOAPIExtensions
     {
 
         #region ParseParseCountryCodePartyId(this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)

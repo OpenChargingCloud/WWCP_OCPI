@@ -10,7 +10,7 @@
     <RootNamespace>org.GraphDefined.WWCP.OCPIv2_2.UnitTests</RootNamespace>
     <AssemblyName>org.GraphDefined.WWCP.OCPIv2_2.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-	<LangVersion>8.0</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

@@ -37,7 +37,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public delegate Task   OCPIRequestLoggerDelegate (String LoggingPath, String Context, String LogEventName, OCPIRequest Request);
     public delegate Task   OCPIResponseLoggerDelegate(String LoggingPath, String Context, String LogEventName, OCPIRequest Request, OCPIResponse Response);
 
-    public static class OCPIAPILoggerExtentions
+    public static class OCPIAPILoggerExtensions
     {
 
         #region RegisterDefaultConsoleLogTarget(this RequestLogger,  Logger)

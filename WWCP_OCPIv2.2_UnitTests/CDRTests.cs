@@ -117,7 +117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                AuthorizationReference.Parse("Auth0815"),
                                Meter_Id.              Parse("Meter0815"),
 
-                               // OCPI Computer Science Extentions
+                               // OCPI Computer Science Extensions
                                new EnergyMeter(
                                    Meter_Id.Parse("Meter0815"),
                                    "EnergyMeter Model #1",
@@ -128,7 +128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                    null
                                ),
 
-                               // OCPI Computer Science Extentions
+                               // OCPI Computer Science Extensions
                                new TransparencySoftware[] {
                                    new TransparencySoftware(
                                        "Chargy Transparency Software Desktop Application",

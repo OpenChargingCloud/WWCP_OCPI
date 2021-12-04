@@ -36,9 +36,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// Extention methods for the EMSP HTTP API.
+    /// Extension methods for the EMSP HTTP API.
     /// </summary>
-    public static class EMSPAPIExtentions
+    public static class EMSPAPIExtensions
     {
 
         #region ParseCountryCodeAndPartyId(this Request, EMSPAPI, out CountryCode, out PartyId,                                                                                        out HTTPResponse)

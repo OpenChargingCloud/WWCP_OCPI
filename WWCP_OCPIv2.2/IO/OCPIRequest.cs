@@ -43,9 +43,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
     /// <summary>
-    /// Extention methods for OCPI requests.
+    /// Extension methods for OCPI requests.
     /// </summary>
-    public static class OCPIRequestExtentions
+    public static class OCPIRequestExtensions
     {
 
         #region AddOCPIMethod(CommonAPI, Hostname, HTTPMethod, URLTemplate,  HTTPContentType = null, URLAuthentication = false, HTTPMethodAuthentication = false, ContentTypeAuthentication = false, HTTPDelegate = null)
