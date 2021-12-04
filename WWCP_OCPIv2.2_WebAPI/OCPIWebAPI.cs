@@ -44,7 +44,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
     /// <summary>
     /// OCPI WebAPI extention methods.
     /// </summary>
-    public static class ExtentionMethods
+    public static class ExtensionMethods
     {
 
         #region ParseRoamingNetwork(this HTTPRequest, HTTPServer, out RoamingNetwork, out HTTPResponse)
