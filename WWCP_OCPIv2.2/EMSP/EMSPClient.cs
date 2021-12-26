@@ -1493,6 +1493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                LocationsURL.Path,
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1712,6 +1713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                LocationsURL.Path + LocationId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1933,6 +1935,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                LocationsURL.Path + LocationId.ToString() + EVSEUId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2156,6 +2159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                LocationsURL.Path + LocationId.ToString() + EVSEUId.ToString() + ConnectorId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2373,6 +2377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                TariffsURL.Path,
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2592,6 +2597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                TariffsURL.Path + TariffId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2809,6 +2815,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                SessionsURL.Path,
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3028,6 +3035,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                SessionsURL.Path + SessionId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3247,6 +3255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                CDRsURL.Path,
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3466,6 +3475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                CDRsURL.Path + CDRId.ToString(),
                                                                                requestbuilder => {
                                                                                    requestbuilder.Authorization = TokenAuth;
+                                                                                   requestbuilder.Connection    = "close";
                                                                                    requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                    requestbuilder.Set("X-Request-ID",      requestId);
                                                                                    requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3653,6 +3663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                             TokenId.    ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3852,6 +3863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = Token.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4052,6 +4064,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = TokenPatch.ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4271,6 +4284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4483,6 +4497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4701,6 +4716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4913,6 +4929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -5129,6 +5146,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
                                                                                          requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection    = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
