@@ -7245,7 +7245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
 
 
                                                 } catch (Exception e)
@@ -7400,7 +7400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
 
 
                                                 } catch (Exception e)
@@ -7555,7 +7555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
 
 
                                                 } catch (Exception e)
@@ -7710,7 +7710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
 
 
                                                 } catch (Exception e)
@@ -7865,7 +7865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
 
 
                                                 } catch (Exception e)
