@@ -4825,6 +4825,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public event OnChargeDetailRecordChangedDelegate OnChargeDetailRecordChanged;
 
 
+        public delegate Task<CDR> OnChargeDetailRecordLookupDelegate(CountryCode  CountryCode,
+                                                                     Party_Id     PartyId,
+                                                                     CDR_Id       CDRId);
+
+        public event OnChargeDetailRecordLookupDelegate OnChargeDetailRecordLookup;
+
+
         #region AddCDR           (CDR)
 
         public CDR AddCDR(CDR CDR)
@@ -5106,6 +5113,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                             return true;
                     }
                 }
+
+                var OnChargeDetailRecordLookupLocal = OnChargeDetailRecordLookup;
+                if (OnChargeDetailRecordLookupLocal != null)
+                {
+                    try
+                    {
+
+                        var cdr = OnChargeDetailRecordLookupLocal(CountryCode,
+                                                                  PartyId,
+                                                                  CDRId).Result;
+
+                        if (cdr != null)
+                        {
+                            CDR = cdr;
+                            return true;
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        DebugX.LogT("OCPI v", Version.Number, " ", nameof(CommonAPI), " ", nameof(TryGetCDR), " ", nameof(OnChargeDetailRecordLookup), ": ",
+                                    Environment.NewLine, e.Message,
+                                    Environment.NewLine, e.StackTrace);
+                    }
+                }
+
 
                 CDR = null;
                 return false;

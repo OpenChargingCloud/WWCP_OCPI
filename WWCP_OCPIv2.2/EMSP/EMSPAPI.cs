@@ -1767,10 +1767,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
