@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>WWCP_OCPIv2._2_WebAPI</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Hermod\NET6\Hermod\Hermod.csproj" />
+    <ProjectReference Include="..\..\..\OpenChargingCloudAPI\NET6\OpenChargingCloudAPI\OpenChargingCloudAPI.csproj" />
+    <ProjectReference Include="..\..\..\SMSAPI\NET6\SMSAPI\SMSAPI.csproj" />
+    <ProjectReference Include="..\..\..\Styx\NET6\Styx\Styx.csproj" />
+    <ProjectReference Include="..\..\..\TelegramBotAPI\NET6\TelegramBotAPI\TelegramBotAPI.csproj" />
+    <ProjectReference Include="..\..\..\UsersAPI\NET6\UsersAPI\UsersAPI.csproj" />
+    <ProjectReference Include="..\..\..\WWCP_Core\NET6\WWCP_Core\WWCP_Core.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.2\WWCP_OCPIv2.2.csproj" />
+    <ProjectReference Include="..\WWCP_OCPIv2.2_Adapter\WWCP_OCPIv2.2_Adapter.csproj" />
+  </ItemGroup>
+
+</Project>

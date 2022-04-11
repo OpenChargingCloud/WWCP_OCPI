@@ -1,0 +1,86 @@
+﻿@import "../defaults/_defaults.scss";
+
+body {
+    #page {
+        #bottom {
+            #right {
+                #text {
+                    #remotePartyInfos {
+
+                        .subGroup {
+
+                            white-space:        nowrap;
+                            color:              #666;
+                            vertical-align:     top;
+                            margin:             15px 0 1px 15px;
+                            width:              calc(100% - 15px);
+
+                            .headline {
+                                padding:            1vh 0vw 1vh 0vw;
+                            }
+
+                            .subGroup2 {
+
+                                display:            table;
+                                width:              100%;
+
+                                .row {
+
+                                    display:            table-row;
+                                    width:              100%;
+
+                                    .subkey {
+                                        display:            table-cell;
+                                        padding:            8px 42px 8px 0;
+                                        white-space:        nowrap;
+                                        color:              #666;
+                                        vertical-align:     top;
+                                        padding-left:       20px;
+                                    }
+
+                                    .value {
+
+                                        display:            table-cell;
+                                        width:              inherit;
+
+                                        input {
+                                            background-color:   rgba(255,255,255,.7);
+                                            padding:            6px 8px;
+                                            border-radius:      4px;
+                                            font-size:          90%;
+                                            border:             0;
+                                            width:              calc(100% - 16px);
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                        #commands {
+
+                            padding: 2vh 0;
+
+                            button {
+                                padding:            .5vh 1.2vh;
+                                background-color:   #456ca7;
+                                border-radius:      4px;
+                                border:             0;
+                                color:              #d6e0ee;
+                            }
+
+                            button:hover {
+                                background-color:   #668ac1;
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+}
