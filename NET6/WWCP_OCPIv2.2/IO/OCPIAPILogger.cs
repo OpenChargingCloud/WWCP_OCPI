@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public class OCPIAPILogger
     {
 
-        #region (class) APILogger
+        #region (class) APILogger<T, X>
 
         /// <summary>
         /// A wrapper class to manage OCPI API event subscriptions
@@ -978,6 +978,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         private   readonly ConcurrentDictionary<String, OCPIAPIRequestLogger>   _RequestLoggers;
         private   readonly ConcurrentDictionary<String, OCPIAPIResponseLogger>  _ResponseLoggers;
 
+        /// <summary>
+        /// The default context of this logger.
+        /// </summary>
+        public    const    String                                               DefaultContext   = "OCPIAPI";
+
         #endregion
 
         #region Properties
@@ -1020,37 +1025,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
         /// 
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public OCPIAPILogger(IHTTPServer                 HTTPServer,
-                             String                      Context,
+        public OCPIAPILogger(IHTTPServer                  HTTPServer,
+                             String                       LoggingPath,
+                             String                       Context,
 
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toConsole,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toConsole,
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toDisc,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toDisc,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toConsole,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toConsole,
 
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toDisc,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toDisc,
 
-                             OCPIResponseLoggerDelegate  LogHTTPError_toConsole      = null,
-                             OCPIResponseLoggerDelegate  LogHTTPError_toDisc         = null,
-                             OCPIResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
-                             OCPIResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
 
-                             LogfileCreatorDelegate      LogfileCreator              = null)
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
+
+                             LogfileCreatorDelegate?      LogfileCreator              = null)
 
         {
 
-            this.HTTPServer        = HTTPServer ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
-
+            this.HTTPServer        = HTTPServer  ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
+            this.LoggingPath       = LoggingPath ?? AppContext.BaseDirectory;
             this._RequestLoggers   = new ConcurrentDictionary<String, OCPIAPIRequestLogger>();
             this._ResponseLoggers  = new ConcurrentDictionary<String, OCPIAPIResponseLogger>();
 
 
             #region Init data structures
 
-            this.Context     = Context ?? "";
+            this.Context     = Context ?? DefaultContext;
             this._GroupTags  = new ConcurrentDictionary<String, HashSet<String>>();
 
             #endregion

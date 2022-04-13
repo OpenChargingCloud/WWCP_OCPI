@@ -420,7 +420,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
 
-                         Boolean                       Disable_OCPIv2_1_1        = true)
+                         Boolean                       Disable_OCPIv2_1_1        = true,
+
+                         Boolean?                      IsDevelopment             = false,
+                         IEnumerable<String>?          DevelopmentServers        = null,
+                         Boolean?                      DisableLogging            = false,
+                         String?                       LoggingPath               = null,
+                         String?                       LogfileName               = null,
+                         LogfileCreatorDelegate?       LogfileCreator            = null)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -440,13 +447,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // WardenInitialDelay,
                    null, // WardenCheckEvery,
 
-                   null, // IsDevelopment,
-                   null, // DevelopmentServers,
-                   null, // DisableLogging,
-                   null, // LoggingPath,
-                   null, // LogfileName,
-                   null, // LogfileCreator,
-                   false)// Autostart
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LogfileName,
+                   LogfileCreator,
+                   false) // Autostart
 
         {
 
