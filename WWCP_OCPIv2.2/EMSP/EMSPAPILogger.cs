@@ -445,6 +445,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
+
+            RegisterEvent("GetCDRRequest",
+                          handler => EMSPAPI.OnGetCDRRequest += handler,
+                          handler => EMSPAPI.OnGetCDRRequest -= handler,
+                          "GetCDR", "CDRs", "Get", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("GetCDRResponse",
+                          handler => EMSPAPI.OnGetCDRResponse += handler,
+                          handler => EMSPAPI.OnGetCDRResponse -= handler,
+                          "GetCDR", "CDRs", "Get", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
             #endregion
 
             #region Tokens
