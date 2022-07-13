@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{439BE8CF-A416-4FA1-BBEF-8EA4A4794D87}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>cloud.charging.open.protocols.OCPIv2_2.WebAPI</RootNamespace>
+    <AssemblyName>cloud.charging.open.protocols.OCPIv2_2.WebAPI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\cloud.charging.open.protocols.OCPIv2_2.WebAPI.xml</DocumentationFile>
+    <CodeAnalysisRuleSet>..\..\WWCP_Core\WWCP.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Styx\libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="OCPIWebAPI.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\BouncyCastle\crypto\crypto.csproj">
+      <Project>{38872a5f-e87e-4fad-b109-8eb7b2e6a4a0}</Project>
+      <Name>crypto</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Hermod\Hermod\Hermod.csproj">
+      <Project>{477efd16-3627-4473-957d-44ca9a9dfb79}</Project>
+      <Name>Hermod</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\OpenChargingCloudAPI\OpenChargingCloudAPI\OpenChargingCloudAPI.csproj">
+      <Project>{85949a33-de77-4d57-a5cf-7cf2d29b8a68}</Project>
+      <Name>OpenChargingCloudAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SMSAPI\smsapi\SMSAPI2.csproj">
+      <Project>{05c2a720-2cd1-401b-a832-9ce85313c248}</Project>
+      <Name>SMSAPI2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Styx\Styx\Styx.csproj">
+      <Project>{af76ecc0-2ca5-4cff-9e1e-ff5478c4b6e4}</Project>
+      <Name>Styx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UsersAPI\UsersAPI\UsersAPI.csproj">
+      <Project>{4d5da5f5-0dce-4620-bce5-74a27e5cfc47}</Project>
+      <Name>UsersAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WWCP_Core\WWCP_Core\WWCP_Core.csproj">
+      <Project>{33836742-af1d-4aa4-963f-b0a8e60e6480}</Project>
+      <Name>WWCP_Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WWCP_OCPIv2.2\WWCP_OCPIv2.2.csproj">
+      <Project>{820584ca-46a2-4eb7-8b26-ef43025d042a}</Project>
+      <Name>WWCP_OCPIv2.2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WWCP_OCPIv2.2_Adapter\WWCP_OCPIv2.2_Adapter.csproj">
+      <Project>{688b9ebc-81a4-4aa3-a663-2bd357de1100}</Project>
+      <Name>WWCP_OCPIv2.2_Adapter</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js">
+      <DependentUpon>dashboard.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.js.map">
+      <DependentUpon>dashboard.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.scss" />
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js">
+      <DependentUpon>defaults.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js">
+      <DependentUpon>remoteParty.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.js.map">
+      <DependentUpon>remoteParty.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js">
+      <DependentUpon>reserveNow.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.js.map">
+      <DependentUpon>reserveNow.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js">
+      <DependentUpon>startSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.js.map">
+      <DependentUpon>startSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js">
+      <DependentUpon>unlockConnector.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.js.map">
+      <DependentUpon>unlockConnector.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js">
+      <DependentUpon>versionDetails.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.js.map">
+      <DependentUpon>versionDetails.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js">
+      <DependentUpon>versions.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.js.map">
+      <DependentUpon>versions.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.scss" />
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js.map">
+      <DependentUpon>remoteParties.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js.map">
+      <DependentUpon>cancelReservation.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js.map">
+      <DependentUpon>stopSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.scss" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.scss" />
+    <None Include="tsconfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.js.map">
+      <DependentUpon>defaults.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\favicon.png" />
+    <EmbeddedResource Include="HTTPRoot\template.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\template.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\defaults\_defaults.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\defaults\defaults.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\template.css">
+      <DependentUpon>template.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\template.min.css">
+      <DependentUpon>template.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.css">
+      <DependentUpon>dashboard.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\dashboard\dashboard.min.css">
+      <DependentUpon>dashboard.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\images\favicon_big.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.css">
+      <DependentUpon>versionDetails.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.min.css">
+      <DependentUpon>versionDetails.css</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.shtml" />
+    <EmbeddedResource Include="HTTPRoot\versions\versions.css">
+      <DependentUpon>versions.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\versions\versions.min.css">
+      <DependentUpon>versions.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\versions\versionDetails.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.css">
+      <DependentUpon>remoteParties.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.min.css">
+      <DependentUpon>remoteParties.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParties.js">
+      <DependentUpon>remoteParties.ts</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.css">
+      <DependentUpon>remoteParty.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteParty.min.css">
+      <DependentUpon>remoteParty.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.css">
+      <DependentUpon>unlockConnector.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\unlockConnector.min.css">
+      <DependentUpon>unlockConnector.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.css">
+      <DependentUpon>cancelReservation.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.js">
+      <DependentUpon>cancelReservation.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\cancelReservation.min.css">
+      <DependentUpon>cancelReservation.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.css">
+      <DependentUpon>stopSession.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.js">
+      <DependentUpon>stopSession.ts</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\stopSession.min.css">
+      <DependentUpon>stopSession.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.shtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.css">
+      <DependentUpon>reserveNow.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.min.css">
+      <DependentUpon>reserveNow.css</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.shtml" />
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.css">
+      <DependentUpon>startSession.scss</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.min.css">
+      <DependentUpon>startSession.css</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\startSession.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HTTPRoot\remoteParty\remoteCPO\reserveNow.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HTTPRoot\remoteParty\remoteEMSP\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>tsc</PreBuildEvent>
+  </PropertyGroup>
+</Project>

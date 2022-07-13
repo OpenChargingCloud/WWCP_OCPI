@@ -18,13 +18,14 @@
 #region Usings
 
 using System;
+using System.Management.Instrumentation;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1
+namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>

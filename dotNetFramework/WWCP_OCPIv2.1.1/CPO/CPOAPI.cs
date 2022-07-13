@@ -32,13 +32,13 @@ using social.OpenData.UsersAPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 {
 
     /// <summary>
-    /// Extension methods for the CPO HTTP API.
+    /// Extention methods for the CPO HTTP API.
     /// </summary>
-    public static class CPOAPIExtensions
+    public static class CPOAPIExtentions
     {
 
         #region ParseParseCountryCodePartyId(this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1400,7 +1400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1522,7 +1522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -2158,23 +2158,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public CPOAPI(CommonAPI               CommonAPI,
-                      CountryCode             DefaultCountryCode,
-                      Party_Id                DefaultPartyId,
-                      Boolean?                AllowDowngrades      = null,
+        public CPOAPI(CommonAPI      CommonAPI,
+                      CountryCode    DefaultCountryCode,
+                      Party_Id       DefaultPartyId,
+                      Boolean?       AllowDowngrades   = null,
 
-                      HTTPHostname?           HTTPHostname         = null,
-                      String                  ExternalDNSName      = null,
-                      HTTPPath?               URLPathPrefix        = null,
-                      HTTPPath?               BasePath             = null,
-                      String                  HTTPServiceName      = DefaultHTTPServerName,
-
-                      Boolean?                IsDevelopment        = false,
-                      IEnumerable<String>?    DevelopmentServers   = null,
-                      Boolean?                DisableLogging       = false,
-                      String?                 LoggingPath          = null,
-                      String?                 LogfileName          = null,
-                      LogfileCreatorDelegate? LogfileCreator       = null)
+                      HTTPHostname?  HTTPHostname      = null,
+                      String         ExternalDNSName   = null,
+                      HTTPPath?      URLPathPrefix     = null,
+                      HTTPPath?      BasePath          = null,
+                      String         HTTPServiceName   = DefaultHTTPServerName)
 
             : base(CommonAPI?.HTTPServer,
                    HTTPHostname,
@@ -2194,13 +2187,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // WardenInitialDelay,
                    null, // WardenCheckEvery,
 
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator,
-                   false) // Autostart
+                   null, // IsDevelopment,
+                   null, // DevelopmentServers,
+                   null, // DisableLogging,
+                   null, // LoggingPath,
+                   null, // LogfileName,
+                   null, // LogfileCreator,
+                   false)// Autostart
 
         {
 
@@ -2224,7 +2217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #region GET    [/cpo] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/cpo", "cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.CPOAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(HTTPHostname.Any,
@@ -2237,8 +2230,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.CPOAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(CPOAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.CPOAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,

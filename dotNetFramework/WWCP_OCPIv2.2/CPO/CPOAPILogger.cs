@@ -27,9 +27,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// A Common API logger.
+    /// A CPO API logger.
     /// </summary>
-    public class CommonAPILogger : OCPIAPILogger
+    public class CPOAPILogger : OCPIAPILogger
     {
 
         #region Data
@@ -37,37 +37,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The default context of this logger.
         /// </summary>
-        public const String DefaultContext = "CommonAPI";
+        public const String DefaultContext = "CPOAPI";
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// The linked Common API.
+        /// The linked CPO API.
         /// </summary>
-        public CommonAPI  CommonAPI   { get; }
+        public CPOAPI  CPOAPI  { get; }
 
         #endregion
 
         #region Constructor(s)
 
-        #region CommonAPILogger(CommonAPI, Context = DefaultContext, LogFileCreator = null)
+        #region CPOAPILogger(CPOAPI, Context = DefaultContext, LogFileCreator = null)
 
         /// <summary>
-        /// Create a new Common API logger using the default logging delegates.
+        /// Create a new CPO API logger using the default logging delegates.
         /// </summary>
-        /// <param name="CommonAPI">An Common API.</param>
+        /// <param name="CPOAPI">An CPO API.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public CommonAPILogger(CommonAPI                CommonAPI,
-                               String                   LoggingPath,
-                               String?                  Context          = DefaultContext,
-                               LogfileCreatorDelegate?  LogFileCreator   = null)
+        public CPOAPILogger(CPOAPI                CPOAPI,
+                             String                  Context         = DefaultContext,
+                             LogfileCreatorDelegate  LogFileCreator  = null)
 
-            : this(CommonAPI,
-                   LoggingPath,
-                   Context ?? DefaultContext,
+            : this(CPOAPI,
+                   Context,
                    null,
                    null,
                    null,
@@ -78,12 +76,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region CommonAPILogger(CommonAPI, Context, ... Logging delegates ...)
+        #region CPOAPILogger(CPOAPI, Context, ... Logging delegates ...)
 
         /// <summary>
-        /// Create a new Common API logger using the given logging delegates.
+        /// Create a new CPO API logger using the given logging delegates.
         /// </summary>
-        /// <param name="CommonAPI">An Common API.</param>
+        /// <param name="CPOAPI">An CPO API.</param>
         /// <param name="Context">A context of this API.</param>
         /// 
         /// <param name="LogHTTPRequest_toConsole">A delegate to log incoming HTTP requests to console.</param>
@@ -102,30 +100,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
         /// 
         /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public CommonAPILogger(CommonAPI                    CommonAPI,
-                               String                       LoggingPath,
-                               String                       Context,
+        public CPOAPILogger(CPOAPI                     CPOAPI,
+                             String                      Context,
 
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toConsole    = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toConsole   = null,
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toDisc       = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toDisc      = null,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                               LogfileCreatorDelegate?      LogFileCreator              = null)
+                             LogfileCreatorDelegate      LogFileCreator              = null)
 
-            : base(CommonAPI.HTTPServer,
-                   LoggingPath,
-                   Context ?? DefaultContext,
+            : base(CPOAPI.HTTPServer,
+                   Context,
 
                    LogHTTPRequest_toConsole,
                    LogHTTPResponse_toConsole,
@@ -146,51 +142,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.CommonAPI = CommonAPI ?? throw new ArgumentNullException(nameof(CommonAPI), "The given Common API must not be null!");
+            this.CPOAPI = CPOAPI ?? throw new ArgumentNullException(nameof(CPOAPI), "The given CPO API must not be null!");
 
-            #region Credentials
+            #region Tokens
 
-            RegisterEvent("PostCredentialsRequest",
-                          handler => CommonAPI.OnPostCredentialsRequest += handler,
-                          handler => CommonAPI.OnPostCredentialsRequest -= handler,
-                          "Credentials", "Request",  "All").
+            RegisterEvent("PutTokenRequest",
+                          handler => CPOAPI.OnPutTokenRequest += handler,
+                          handler => CPOAPI.OnPutTokenRequest -= handler,
+                          "PutToken", "Tokens", "Put", "Request",  "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
-            RegisterEvent("PostCredentialsResponse",
-                          handler => CommonAPI.OnPostCredentialsResponse += handler,
-                          handler => CommonAPI.OnPostCredentialsResponse -= handler,
-                          "Credentials", "Response", "All").
-                RegisterDefaultConsoleLogTarget(this).
-                RegisterDefaultDiscLogTarget(this);
-
-
-            RegisterEvent("PutCredentialsRequest",
-                          handler => CommonAPI.OnPutCredentialsRequest += handler,
-                          handler => CommonAPI.OnPutCredentialsRequest -= handler,
-                          "Credentials", "Request",  "All").
-                RegisterDefaultConsoleLogTarget(this).
-                RegisterDefaultDiscLogTarget(this);
-
-            RegisterEvent("PutCredentialsResponse",
-                          handler => CommonAPI.OnPutCredentialsResponse += handler,
-                          handler => CommonAPI.OnPutCredentialsResponse -= handler,
-                          "Credentials", "Response", "All").
+            RegisterEvent("PutTokenResponse",
+                          handler => CPOAPI.OnPutTokenResponse += handler,
+                          handler => CPOAPI.OnPutTokenResponse -= handler,
+                          "PutToken", "Tokens", "Put", "Response", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
 
-            RegisterEvent("DeleteCredentialsRequest",
-                          handler => CommonAPI.OnDeleteCredentialsRequest += handler,
-                          handler => CommonAPI.OnDeleteCredentialsRequest -= handler,
-                          "Credentials", "Request",  "All").
+            RegisterEvent("PatchTokenRequest",
+                          handler => CPOAPI.OnPatchTokenRequest += handler,
+                          handler => CPOAPI.OnPatchTokenRequest -= handler,
+                          "PatchToken", "Tokens", "Patch", "Request", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 
-            RegisterEvent("DeleteCredentialsResponse",
-                          handler => CommonAPI.OnDeleteCredentialsResponse += handler,
-                          handler => CommonAPI.OnDeleteCredentialsResponse -= handler,
-                          "Credentials", "Response", "All").
+            RegisterEvent("PatchTokenResponse",
+                          handler => CPOAPI.OnPatchTokenResponse += handler,
+                          handler => CPOAPI.OnPatchTokenResponse -= handler,
+                          "PatchToken", "Tokens", "Patch", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("DeleteTokenRequest",
+                          handler => CPOAPI.OnDeleteTokenRequest += handler,
+                          handler => CPOAPI.OnDeleteTokenRequest -= handler,
+                          "DeleteToken", "Tokens", "Delete", "Request",  "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("DeleteTokenResponse",
+                          handler => CPOAPI.OnDeleteTokenResponse += handler,
+                          handler => CPOAPI.OnDeleteTokenResponse -= handler,
+                          "DeleteToken", "Tokens", "Delete", "Response", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 

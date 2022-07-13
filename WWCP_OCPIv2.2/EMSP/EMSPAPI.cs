@@ -3267,56 +3267,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region (protected internal) GetCDRRequest (Request)
-
-        /// <summary>
-        /// An event sent whenever a Get CDR request was received.
-        /// </summary>
-        public OCPIRequestLogEvent OnGetCDRRequest = new OCPIRequestLogEvent();
-
-        /// <summary>
-        /// An event sent whenever a Get CDR request was received.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the request.</param>
-        /// <param name="API">The EMSP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        protected internal Task GetCDRRequest(DateTime    Timestamp,
-                                              HTTPAPI     API,
-                                              OCPIRequest Request)
-
-            => OnGetCDRRequest?.WhenAll(Timestamp,
-                                        API ?? this,
-                                        Request);
-
-        #endregion
-
-        #region (protected internal) GetCDRResponse(Response)
-
-        /// <summary>
-        /// An event sent whenever a Get CDR response was sent.
-        /// </summary>
-        public OCPIResponseLogEvent OnGetCDRResponse = new OCPIResponseLogEvent();
-
-        /// <summary>
-        /// An event sent whenever a Get CDR response was sent.
-        /// </summary>
-        /// <param name="Timestamp">The timestamp of the response.</param>
-        /// <param name="API">The EMSP API.</param>
-        /// <param name="Request">An OCPI request.</param>
-        /// <param name="Response">An OCPI response.</param>
-        protected internal Task GetCDRResponse(DateTime     Timestamp,
-                                               HTTPAPI      API,
-                                               OCPIRequest  Request,
-                                               OCPIResponse Response)
-
-            => OnGetCDRResponse?.WhenAll(Timestamp,
-                                         API ?? this,
-                                         Request,
-                                         Response);
-
-        #endregion
-
         #endregion
 
         #region Tokens
@@ -3655,16 +3605,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public EMSPAPI(CommonAPI      CommonAPI,
-                       CountryCode    DefaultCountryCode,
-                       Party_Id       DefaultPartyId,
-                       Boolean?       AllowDowngrades   = null,
+        public EMSPAPI(CommonAPI                CommonAPI,
+                       CountryCode              DefaultCountryCode,
+                       Party_Id                 DefaultPartyId,
+                       Boolean?                 AllowDowngrades      = null,
 
-                       HTTPHostname?  HTTPHostname      = null,
-                       String         ExternalDNSName   = null,
-                       HTTPPath?      URLPathPrefix     = null,
-                       HTTPPath?      BasePath          = null,
-                       String         HTTPServiceName   = DefaultHTTPServerName)
+                       HTTPHostname?            HTTPHostname         = null,
+                       String                   ExternalDNSName      = null,
+                       HTTPPath?                URLPathPrefix        = null,
+                       HTTPPath?                BasePath             = null,
+                       String                   HTTPServiceName      = DefaultHTTPServerName,
+
+                       Boolean?                 IsDevelopment        = false,
+                       IEnumerable<String>?     DevelopmentServers   = null,
+                       Boolean?                 DisableLogging       = false,
+                       String?                  LoggingPath          = null,
+                       String?                  LogfileName          = null,
+                       LogfileCreatorDelegate?  LogfileCreator       = null)
 
             : base(CommonAPI?.HTTPServer,
                    HTTPHostname,
@@ -3684,13 +3641,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // WardenInitialDelay,
                    null, // WardenCheckEvery,
 
-                   null, // IsDevelopment,
-                   null, // DevelopmentServers,
-                   null, // DisableLogging,
-                   null, // LoggingPath,
-                   null, // LogfileName,
-                   null, // LogfileCreator,
-                   false)// Autostart
+                   IsDevelopment,
+                   DevelopmentServers,
+                   DisableLogging,
+                   LoggingPath,
+                   LogfileName,
+                   LogfileCreator,
+                   false) // Autostart
 
         {
 
@@ -5933,7 +5890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutSessionRequest,
                                     OCPIResponseLogger:  PutSessionResponse,
-                                    OCPIRequestHandler:  async Request => {
+                                    OCPIRequestHandler:   async Request => {
 
                                         #region Check access token
 
@@ -6495,8 +6452,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestLogger:  GetCDRRequest,
-                                    OCPIResponseLogger: GetCDRResponse,
                                     OCPIRequestHandler: Request => {
 
                                         #region Check access token
@@ -6537,16 +6492,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                StatusCode           = 1000,
-                                                StatusMessage        = "Hello world!",
-                                                Data                 = CDR.ToJSON(),
-                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.OK,
-                                                    AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
-                                                    AccessControlAllowHeaders  = "Authorization",
-                                                    LastModified               = CDR.LastUpdated.ToIso8601(),
-                                                    ETag                       = CDR.SHA256Hash
-                                                }
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = CDR.ToJSON(),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                       AccessControlAllowHeaders  = "Authorization",
+                                                       LastModified               = CDR.LastUpdated.ToIso8601(),
+                                                       ETag                       = CDR.SHA256Hash
+                                                   }
                                             });
 
                                     });

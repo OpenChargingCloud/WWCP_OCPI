@@ -46,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The linked Common API.
         /// </summary>
-        public CommonAPI  CommonAPI   { get; }
+        public CommonAPI  CommonAPI  { get; }
 
         #endregion
 
@@ -60,14 +60,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CommonAPI">An Common API.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public CommonAPILogger(CommonAPI                CommonAPI,
-                               String                   LoggingPath,
-                               String?                  Context          = DefaultContext,
-                               LogfileCreatorDelegate?  LogFileCreator   = null)
+        public CommonAPILogger(CommonAPI               CommonAPI,
+                               String                  Context         = DefaultContext,
+                               LogfileCreatorDelegate  LogFileCreator  = null)
 
             : this(CommonAPI,
-                   LoggingPath,
-                   Context ?? DefaultContext,
+                   Context,
                    null,
                    null,
                    null,
@@ -102,30 +100,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
         /// 
         /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public CommonAPILogger(CommonAPI                    CommonAPI,
-                               String                       LoggingPath,
-                               String                       Context,
+        public CommonAPILogger(CommonAPI                   CommonAPI,
+                               String                      Context,
 
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toConsole    = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toConsole   = null,
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toDisc       = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toDisc      = null,
+                               OCPIRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                               OCPIResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                               OCPIRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                               OCPIResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
-                               OCPIRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
+                               OCPIRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                               OCPIResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                               OCPIRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                               OCPIResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
-                               OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
+                               OCPIResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                               OCPIResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                               OCPIResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                               OCPIResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                               LogfileCreatorDelegate?      LogFileCreator              = null)
+                               LogfileCreatorDelegate      LogFileCreator              = null)
 
             : base(CommonAPI.HTTPServer,
-                   LoggingPath,
-                   Context ?? DefaultContext,
+                   Context,
 
                    LogHTTPRequest_toConsole,
                    LogHTTPResponse_toConsole,

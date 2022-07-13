@@ -35,7 +35,7 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 
-//using social.OpenData.UsersAPI;
+using social.OpenData.UsersAPI;
 using System.Threading;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 

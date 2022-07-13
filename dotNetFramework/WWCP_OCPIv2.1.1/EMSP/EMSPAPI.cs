@@ -28,7 +28,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-//using social.OpenData.UsersAPI;
+using social.OpenData.UsersAPI;
 
 #endregion
 

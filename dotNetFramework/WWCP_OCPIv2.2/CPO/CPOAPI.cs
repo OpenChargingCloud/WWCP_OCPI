@@ -2158,23 +2158,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="URLPathPrefix">An optional URL path prefix.</param>
         /// <param name="BasePath">When the API is served from an optional subdirectory path.</param>
         /// <param name="HTTPServiceName">An optional name of the HTTP API service.</param>
-        public CPOAPI(CommonAPI               CommonAPI,
-                      CountryCode             DefaultCountryCode,
-                      Party_Id                DefaultPartyId,
-                      Boolean?                AllowDowngrades      = null,
+        public CPOAPI(CommonAPI      CommonAPI,
+                      CountryCode    DefaultCountryCode,
+                      Party_Id       DefaultPartyId,
+                      Boolean?       AllowDowngrades   = null,
 
-                      HTTPHostname?           HTTPHostname         = null,
-                      String                  ExternalDNSName      = null,
-                      HTTPPath?               URLPathPrefix        = null,
-                      HTTPPath?               BasePath             = null,
-                      String                  HTTPServiceName      = DefaultHTTPServerName,
-
-                      Boolean?                IsDevelopment        = false,
-                      IEnumerable<String>?    DevelopmentServers   = null,
-                      Boolean?                DisableLogging       = false,
-                      String?                 LoggingPath          = null,
-                      String?                 LogfileName          = null,
-                      LogfileCreatorDelegate? LogfileCreator       = null)
+                      HTTPHostname?  HTTPHostname      = null,
+                      String         ExternalDNSName   = null,
+                      HTTPPath?      URLPathPrefix     = null,
+                      HTTPPath?      BasePath          = null,
+                      String         HTTPServiceName   = DefaultHTTPServerName)
 
             : base(CommonAPI?.HTTPServer,
                    HTTPHostname,
@@ -2194,13 +2187,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // WardenInitialDelay,
                    null, // WardenCheckEvery,
 
-                   IsDevelopment,
-                   DevelopmentServers,
-                   DisableLogging,
-                   LoggingPath,
-                   LogfileName,
-                   LogfileCreator,
-                   false) // Autostart
+                   null, // IsDevelopment,
+                   null, // DevelopmentServers,
+                   null, // DisableLogging,
+                   null, // LoggingPath,
+                   null, // LogfileName,
+                   null, // LogfileCreator,
+                   false)// Autostart
 
         {
 

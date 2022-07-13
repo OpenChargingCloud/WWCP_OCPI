@@ -60,14 +60,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="EMSPAPI">An EMSP API.</param>
         /// <param name="Context">A context of this API.</param>
         /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public EMSPAPILogger(EMSPAPI                  EMSPAPI,
-                             String                   LoggingPath,
-                             String?                  Context          = DefaultContext,
-                             LogfileCreatorDelegate?  LogFileCreator   = null)
+        public EMSPAPILogger(EMSPAPI                EMSPAPI,
+                             String                  Context         = DefaultContext,
+                             LogfileCreatorDelegate  LogFileCreator  = null)
 
             : this(EMSPAPI,
-                   LoggingPath,
-                   Context ?? DefaultContext,
+                   Context,
                    null,
                    null,
                    null,
@@ -102,30 +100,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
         /// 
         /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public EMSPAPILogger(EMSPAPI                      EMSPAPI,
-                             String                       LoggingPath,
-                             String                       Context,
+        public EMSPAPILogger(EMSPAPI                     EMSPAPI,
+                             String                      Context,
 
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toConsole,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toConsole,
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toDisc,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toDisc,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toConsole,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toConsole,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toDisc,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toDisc,
 
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
-                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
+                             OCPIRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
+                             OCPIResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
 
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
-                             OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toConsole      = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toDisc         = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
+                             OCPIResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
 
-                             LogfileCreatorDelegate?      LogFileCreator              = null)
+                             LogfileCreatorDelegate      LogFileCreator              = null)
 
             : base(EMSPAPI.HTTPServer,
-                   LoggingPath,
-                   Context ?? DefaultContext,
+                   Context,
 
                    LogHTTPRequest_toConsole,
                    LogHTTPResponse_toConsole,
@@ -446,6 +442,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                           handler => EMSPAPI.OnDeleteCDRResponse += handler,
                           handler => EMSPAPI.OnDeleteCDRResponse -= handler,
                           "DeleteCDR", "CDRs", "Delete", "Response", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+
+            RegisterEvent("GetCDRRequest",
+                          handler => EMSPAPI.OnGetCDRRequest += handler,
+                          handler => EMSPAPI.OnGetCDRRequest -= handler,
+                          "GetCDR", "CDRs", "Get", "Request", "All").
+                RegisterDefaultConsoleLogTarget(this).
+                RegisterDefaultDiscLogTarget(this);
+
+            RegisterEvent("GetCDRResponse",
+                          handler => EMSPAPI.OnGetCDRResponse += handler,
+                          handler => EMSPAPI.OnGetCDRResponse -= handler,
+                          "GetCDR", "CDRs", "Get", "Response", "All").
                 RegisterDefaultConsoleLogTarget(this).
                 RegisterDefaultDiscLogTarget(this);
 

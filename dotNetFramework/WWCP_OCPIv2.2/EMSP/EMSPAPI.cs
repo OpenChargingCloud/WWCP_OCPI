@@ -28,17 +28,17 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
-//using social.OpenData.UsersAPI;
+using social.OpenData.UsersAPI;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 {
 
     /// <summary>
-    /// Extention methods for the EMSP HTTP API.
+    /// Extension methods for the EMSP HTTP API.
     /// </summary>
-    public static class EMSPAPIExtentions
+    public static class EMSPAPIExtensions
     {
 
         #region ParseCountryCodeAndPartyId(this Request, EMSPAPI, out CountryCode, out PartyId,                                                                                        out HTTPResponse)
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -453,7 +453,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -600,7 +600,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -780,7 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -952,7 +952,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1162,7 +1162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1284,7 +1284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1420,7 +1420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1542,7 +1542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1677,7 +1677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -1767,10 +1767,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1798,7 +1798,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
+            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CountryCode.HasValue)
             {
@@ -3267,6 +3267,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
+        #region (protected internal) GetCDRRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a Get CDR request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetCDRRequest = new OCPIRequestLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a Get CDR request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetCDRRequest(DateTime    Timestamp,
+                                              HTTPAPI     API,
+                                              OCPIRequest Request)
+
+            => OnGetCDRRequest?.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
+
+        #endregion
+
+        #region (protected internal) GetCDRResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a Get CDR response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetCDRResponse = new OCPIResponseLogEvent();
+
+        /// <summary>
+        /// An event sent whenever a Get CDR response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetCDRResponse(DateTime     Timestamp,
+                                               HTTPAPI      API,
+                                               OCPIRequest  Request,
+                                               OCPIResponse Response)
+
+            => OnGetCDRResponse?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
+
+        #endregion
+
         #endregion
 
         #region Tokens
@@ -3665,7 +3715,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region GET    [/emsp] == /
 
             //HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
-            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.EMSPAPI.HTTPRoot",
+            //                                   URLPathPrefix + "/emsp", "cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot",
             //                                   Assembly.GetCallingAssembly());
 
             //CommonAPI.AddOCPIMethod(HTTPHostname.Any,
@@ -3678,8 +3728,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                             OCPIRequest: async Request => {
 
             //                                 var _MemoryStream = new MemoryStream();
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
-            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_1_1.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._header.html").SeekAndCopyTo(_MemoryStream, 3);
+            //                                 typeof(EMSPAPI).Assembly.GetManifestResourceStream("cloud.charging.open.protocols.OCPIv2_2.HTTPAPI.EMSPAPI.HTTPRoot._footer.html").SeekAndCopyTo(_MemoryStream, 3);
 
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
@@ -5883,7 +5933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutSessionRequest,
                                     OCPIResponseLogger:  PutSessionResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
@@ -6445,6 +6495,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
+                                    OCPIRequestLogger:  GetCDRRequest,
+                                    OCPIResponseLogger: GetCDRResponse,
                                     OCPIRequestHandler: Request => {
 
                                         #region Check access token
@@ -6485,16 +6537,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = CDR.ToJSON(),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
-                                                       AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = CDR.LastUpdated.ToIso8601(),
-                                                       ETag                       = CDR.SHA256Hash
-                                                   }
+                                                StatusCode           = 1000,
+                                                StatusMessage        = "Hello world!",
+                                                Data                 = CDR.ToJSON(),
+                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.OK,
+                                                    AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
+                                                    AccessControlAllowHeaders  = "Authorization",
+                                                    LastModified               = CDR.LastUpdated.ToIso8601(),
+                                                    ETag                       = CDR.SHA256Hash
+                                                }
                                             });
 
                                     });
@@ -7245,7 +7297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
 
 
                                                 } catch (Exception e)
@@ -7400,7 +7452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
 
 
                                                 } catch (Exception e)
@@ -7555,7 +7607,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
 
 
                                                 } catch (Exception e)
@@ -7710,7 +7762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
 
 
                                                 } catch (Exception e)
@@ -7865,7 +7917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
 
 
                                                 } catch (Exception e)

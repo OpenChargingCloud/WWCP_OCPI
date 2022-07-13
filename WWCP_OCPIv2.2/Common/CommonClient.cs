@@ -31,7 +31,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.WWCP;
 
 #endregion
 
@@ -439,11 +438,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// My Common API.
         /// </summary>
         public CommonAPI                            MyCommonAPI                   { get; }
-
-        /// <summary>
-        /// The roaming network identification.
-        /// </summary>
-        public RoamingNetwork                       RoamingNetwork                { get; }
 
         /// <summary>
         /// CPO client event counters.
