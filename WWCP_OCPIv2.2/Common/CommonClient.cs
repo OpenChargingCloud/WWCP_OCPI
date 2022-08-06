@@ -371,12 +371,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public class CommonCounters
         {
 
-            public CounterValues  GetVersions    { get; }
+            public APICounterValues  GetVersions    { get; }
 
-            public CommonCounters(CounterValues? GetVersions = null)
+            public CommonCounters(APICounterValues? GetVersions = null)
             {
 
-                this.GetVersions = GetVersions ?? new CounterValues();
+                this.GetVersions = GetVersions ?? new APICounterValues();
 
             }
 
@@ -680,6 +680,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    RemoteCertificateValidator,
                    null,
                    ClientCert,
+                   null,
+                   null,
                    HTTPUserAgent      ?? DefaultHTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
@@ -789,7 +791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                Counters.GetVersions.IncRequests();
+                Counters.GetVersions.IncRequests_OK();
 
                 //if (OnGetVersionsRequest != null)
                 //    await Task.WhenAll(OnGetVersionsRequest.GetInvocationList().
@@ -841,6 +843,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1009,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                Counters.GetVersions.IncRequests();
+                Counters.GetVersions.IncRequests_OK();
 
                 //if (OnGetVersionsRequest != null)
                 //    await Task.WhenAll(OnGetVersionsRequest.GetInvocationList().
@@ -1075,6 +1079,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1389,6 +1395,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1588,6 +1596,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1789,6 +1799,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2011,6 +2023,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2263,6 +2277,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null,
+                                                             null,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,

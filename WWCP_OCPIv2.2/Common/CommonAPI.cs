@@ -332,6 +332,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // ClientCertificateValidator,
                    null, // ClientCertificateSelector,
                    null, // AllowedTLSProtocols,
+                   null, // ClientCertificateRequired
+                   null, // CheckCertificateRevocation
 
                    null, // ServerThreadName,
                    null, // ServerThreadPriority,
