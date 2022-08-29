@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -78,10 +74,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="RegularHours">Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.</param>
         /// <param name="ExceptionalOpenings">Exceptions for specified calendar dates, time-range based. Periods the station is operating/accessible. Additional to regular hours. May overlap regular rules.</param>
         /// <param name="ExceptionalClosings">Exceptions for specified calendar dates, time-range based. Periods the station is not operating/accessible. Overwriting regularHours and exceptionalOpenings. Should not overlap exceptionalOpenings.</param>
-        private Hours(Boolean                         IsTwentyFourSevenOpen,
-                      IEnumerable<RegularHours>       RegularHours          = null,
-                      IEnumerable<ExceptionalPeriod>  ExceptionalOpenings   = null,
-                      IEnumerable<ExceptionalPeriod>  ExceptionalClosings   = null)
+        private Hours(Boolean                          IsTwentyFourSevenOpen,
+                      IEnumerable<RegularHours>?       RegularHours          = null,
+                      IEnumerable<ExceptionalPeriod>?  ExceptionalOpenings   = null,
+                      IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
         {
 
             this.IsTwentyFourSevenOpen  = IsTwentyFourSevenOpen;
@@ -98,9 +94,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="RegularHours">Regular hours, weekday based. Should not be set for representing 24/7 as this is the most common case.</param>
         /// <param name="ExceptionalOpenings">Exceptions for specified calendar dates, time-range based. Periods the station is operating/accessible. Additional to regular hours. May overlap regular rules.</param>
         /// <param name="ExceptionalClosings">Exceptions for specified calendar dates, time-range based. Periods the station is not operating/accessible. Overwriting regularHours and exceptionalOpenings. Should not overlap exceptionalOpenings.</param>
-        public Hours(IEnumerable<RegularHours>       RegularHours          = null,
-                     IEnumerable<ExceptionalPeriod>  ExceptionalOpenings   = null,
-                     IEnumerable<ExceptionalPeriod>  ExceptionalClosings   = null)
+        public Hours(IEnumerable<RegularHours>        RegularHours          = null,
+                     IEnumerable<ExceptionalPeriod>?  ExceptionalOpenings   = null,
+                     IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
 
             : this(false,
                    RegularHours,
@@ -114,11 +110,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ExceptionalOpenings">Exceptions for specified calendar dates, time-range based. Periods the station is operating/accessible. Additional to regular hours. May overlap regular rules.</param>
         /// <param name="ExceptionalClosings">Exceptions for specified calendar dates, time-range based. Periods the station is not operating/accessible. Overwriting regularHours and exceptionalOpenings. Should not overlap exceptionalOpenings.</param>
-        public Hours(IEnumerable<ExceptionalPeriod>  ExceptionalOpenings   = null,
-                     IEnumerable<ExceptionalPeriod>  ExceptionalClosings   = null)
+        public Hours(IEnumerable<ExceptionalPeriod>?  ExceptionalOpenings   = null,
+                     IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
 
             : this(true,
-                   new RegularHours[0],
+                   Array.Empty<RegularHours>(),
                    ExceptionalOpenings,
                    ExceptionalClosings)
 
@@ -134,11 +130,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ExceptionalOpenings">Exceptions for specified calendar dates, time-range based. Periods the station is operating/accessible. Additional to regular hours. May overlap regular rules.</param>
         /// <param name="ExceptionalClosings">Exceptions for specified calendar dates, time-range based. Periods the station is not operating/accessible. Overwriting regularHours and exceptionalOpenings. Should not overlap exceptionalOpenings.</param>
-        public static Hours TwentyFourSevenOpen(IEnumerable<ExceptionalPeriod>  ExceptionalOpenings   = null,
-                                                IEnumerable<ExceptionalPeriod>  ExceptionalClosings   = null)
+        public static Hours TwentyFourSevenOpen(IEnumerable<ExceptionalPeriod>?  ExceptionalOpenings   = null,
+                                                IEnumerable<ExceptionalPeriod>?  ExceptionalClosings   = null)
 
-            => new Hours(ExceptionalOpenings,
-                         ExceptionalClosings);
+            => new (ExceptionalOpenings,
+                    ExceptionalClosings);
 
         #endregion
 
@@ -150,19 +146,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
-        public static Hours Parse(JObject                             JSON,
-                                  CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
+        public static Hours? Parse(JObject                              JSON,
+                                   CustomJObjectParserDelegate<Hours>?  CustomHoursParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Hours   hours,
-                         out String  ErrorResponse,
+                         out Hours?   hours,
+                         out String?  errorResponse,
                          CustomHoursParser))
             {
                 return hours;
             }
 
-            throw new ArgumentException("The given JSON representation of a hour is invalid: " + ErrorResponse, nameof(JSON));
+            throw new ArgumentException("The given JSON representation of a hours object is invalid: " + errorResponse, nameof(JSON));
 
         }
 
@@ -175,19 +171,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Text">The text to parse.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
-        public static Hours Parse(String                              Text,
-                                  CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
+        public static Hours? Parse(String                               Text,
+                                   CustomJObjectParserDelegate<Hours>?  CustomHoursParser   = null)
         {
 
             if (TryParse(Text,
-                         out Hours   hours,
-                         out String  ErrorResponse,
+                         out Hours?   hours,
+                         out String?  errorResponse,
                          CustomHoursParser))
             {
                 return hours;
             }
 
-            throw new ArgumentException("The given text representation of a hour is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given text representation of a hours object is invalid: " + errorResponse, nameof(Text));
 
         }
 
@@ -203,9 +199,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Hours">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out Hours   Hours,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out Hours?   Hours,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Hours,
@@ -220,10 +216,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Hours">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
-        public static Boolean TryParse(JObject                             JSON,
-                                       out Hours                           Hours,
-                                       out String                          ErrorResponse,
-                                       CustomJObjectParserDelegate<Hours>  CustomHoursParser)
+        public static Boolean TryParse(JObject                              JSON,
+                                       out Hours?                           Hours,
+                                       out String?                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Hours>?  CustomHoursParser)
         {
 
             try
@@ -304,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   ExceptionalClosings);
 
 
-                if (CustomHoursParser != null)
+                if (CustomHoursParser is not null)
                     Hours = CustomHoursParser(JSON,
                                               Hours);
 
@@ -331,10 +327,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Hours">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomHoursParser">A delegate to parse custom hours JSON objects.</param>
-        public static Boolean TryParse(String                              Text,
-                                       out Hours                           Hours,
-                                       out String                          ErrorResponse,
-                                       CustomJObjectParserDelegate<Hours>  CustomHoursParser   = null)
+        public static Boolean TryParse(String                               Text,
+                                       out Hours?                           Hours,
+                                       out String?                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Hours>?  CustomHoursParser   = null)
         {
 
             try
@@ -348,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Hours = default;
+                Hours          = default;
                 ErrorResponse  = "The given text representation of a hour is invalid: " + e.Message;
                 return false;
             }
