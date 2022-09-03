@@ -339,9 +339,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null, // ServerThreadPriority,
                    null, // ServerThreadIsBackground,
                    null, // ConnectionIdBuilder,
-                   null, // ConnectionThreadsNameBuilder,
-                   null, // ConnectionThreadsPriorityBuilder,
-                   null, // ConnectionThreadsAreBackground,
+                   //null, // ConnectionThreadsNameBuilder,
+                   //null, // ConnectionThreadsPriorityBuilder,
+                   //null, // ConnectionThreadsAreBackground,
                    null, // ConnectionTimeout,
                    null, // MaxClientConnections,
 
