@@ -29,6 +29,7 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Threading.Tasks;
 
 using social.OpenData.UsersAPI;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 

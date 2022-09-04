@@ -17,9 +17,7 @@
 
 #region Usings
 
-using System;
-
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
@@ -52,18 +50,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Constructor(s)
 
-        #region CommonAPILogger(CommonAPI, Context = DefaultContext, LogFileCreator = null)
+        #region CommonAPILogger(CommonAPI, Context = DefaultContext, LogfileCreator = null)
 
         /// <summary>
         /// Create a new Common API logger using the default logging delegates.
         /// </summary>
         /// <param name="CommonAPI">An Common API.</param>
         /// <param name="Context">A context of this API.</param>
-        /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public CommonAPILogger(CommonAPI                CommonAPI,
                                String                   LoggingPath,
                                String?                  Context          = DefaultContext,
-                               LogfileCreatorDelegate?  LogFileCreator   = null)
+                               LogfileCreatorDelegate?  LogfileCreator   = null)
 
             : this(CommonAPI,
                    LoggingPath,
@@ -72,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    null,
                    null,
                    null,
-                   LogFileCreator: LogFileCreator)
+                   LogfileCreator: LogfileCreator)
 
         { }
 
@@ -101,7 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LogHTTPError_toNetwork">A delegate to log HTTP errors to a network target.</param>
         /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
         /// 
-        /// <param name="LogFileCreator">A delegate to create a log file from the given context and log file name.</param>
+        /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         public CommonAPILogger(CommonAPI                    CommonAPI,
                                String                       LoggingPath,
                                String                       Context,
@@ -121,7 +119,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
                                OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
 
-                               LogfileCreatorDelegate?      LogFileCreator              = null)
+                               LogfileCreatorDelegate?      LogfileCreator              = null)
 
             : base(CommonAPI.HTTPServer,
                    LoggingPath,
@@ -142,7 +140,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    LogHTTPError_toNetwork,
                    LogHTTPError_toHTTPSSE,
 
-                   LogFileCreator)
+                   LogfileCreator)
 
         {
 

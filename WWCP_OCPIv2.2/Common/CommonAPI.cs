@@ -38,6 +38,7 @@ using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
 using social.OpenData.UsersAPI;
 using System.Threading;
 using org.GraphDefined.Vanaheimr.Hermod.Sockets;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
