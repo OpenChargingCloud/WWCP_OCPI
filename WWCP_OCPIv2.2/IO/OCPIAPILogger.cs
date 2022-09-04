@@ -17,17 +17,12 @@
 
 #region Usings
 
-using System;
-using System.IO;
 using System.Text;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
