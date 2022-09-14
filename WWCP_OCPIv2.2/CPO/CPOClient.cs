@@ -5298,7 +5298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             OCPIResponse<ChargingProfileResponse> response;
 
             var Command = new SetChargingProfileCommand(ChargingProfile,
-                                                        MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "SET_CHARGING_PROFILE" + random.RandomString(50));
+                                                        MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50));
 
             #region Send OnSetChargingProfileRequest event
 

@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -38,8 +36,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The internal identification.
         /// </summary>
         private readonly String InternalId;
-
-        private static readonly Random random = new Random();
 
         #endregion
 
@@ -83,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Length">The expected length of the authorization reference.</param>
         public static AuthorizationReference Random(Byte Length = 30)
 
-            => new AuthorizationReference(random.RandomString(Length));
+            => new (RandomExtensions.RandomString(Length));
 
         #endregion
 

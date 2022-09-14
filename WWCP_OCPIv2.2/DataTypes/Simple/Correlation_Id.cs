@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -38,8 +36,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The internal identification.
         /// </summary>
         private readonly String InternalId;
-
-        private static readonly Random random = new Random();
 
         #endregion
 
@@ -85,8 +81,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Correlation_Id Random(Byte      Length    = 30,
                                             Boolean?  IsLocal   = false)
 
-            => new Correlation_Id((IsLocal == true ? "Local:" : "") +
-                                  random.RandomString(Length));
+            => new ((IsLocal == true ? "Local:" : "") +
+                    RandomExtensions.RandomString(Length));
 
         #endregion
 

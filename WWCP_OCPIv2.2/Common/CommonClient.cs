@@ -395,12 +395,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The default HTTP port.
         /// </summary>
-        public static readonly IPPort    DefaultRemotePort       = IPPort.HTTPS;
+        public static readonly new IPPort    DefaultRemotePort       = IPPort.HTTPS;
 
         /// <summary>
         /// The default request timeout.
         /// </summary>
-        public static readonly TimeSpan  DefaultRequestTimeout   = TimeSpan.FromSeconds(180);
+        public static readonly new TimeSpan  DefaultRequestTimeout   = TimeSpan.FromSeconds(180);
 
 
         protected HTTPTokenAuthentication TokenAuth;
@@ -412,8 +412,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
         protected Newtonsoft.Json.Formatting JSONFormat = Newtonsoft.Json.Formatting.Indented;
-
-        protected static readonly Random random = new Random();
 
         #endregion
 
