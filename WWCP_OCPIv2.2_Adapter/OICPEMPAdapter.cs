@@ -89,8 +89,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         IId ISendChargeDetailRecords.Id => throw new NotImplementedException();
 
-        IEnumerable<IId> ISendChargeDetailRecords.Ids => throw new NotImplementedException();
-
 
 
         public Task<AuthStartResult> AuthorizeStart(LocalAuthentication LocalAuthentication, ChargingLocation ChargingLocation = null, ChargingProduct ChargingProduct = null, ChargingSession_Id? SessionId = null, ChargingSession_Id? CPOPartnerSessionId = null, ChargingStationOperator_Id? OperatorId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)

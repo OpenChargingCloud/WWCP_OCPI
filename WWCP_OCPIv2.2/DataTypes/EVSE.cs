@@ -467,7 +467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalEnums("capabilities",
                                             "capabilities",
-                                            out IEnumerable<CapabilityTypes> Capabilities,
+                                            out HashSet<CapabilityTypes> Capabilities,
                                             out ErrorResponse))
                 {
 
@@ -526,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalEnums("parking_restrictions",
                                             "parking restrictions",
-                                            out IEnumerable<ParkingRestrictions> ParkingRestrictions,
+                                            out HashSet<ParkingRestrictions> ParkingRestrictions,
                                             out ErrorResponse))
                 {
 

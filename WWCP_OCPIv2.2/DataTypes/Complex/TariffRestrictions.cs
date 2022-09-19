@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (JSON.ParseOptionalEnums("day_of_week",
                                             "day of week",
-                                            out IEnumerable<DayOfWeek> DayOfWeek,
+                                            out HashSet<DayOfWeek> DayOfWeek,
                                             out ErrorResponse))
                 {
                     if (ErrorResponse != null)
