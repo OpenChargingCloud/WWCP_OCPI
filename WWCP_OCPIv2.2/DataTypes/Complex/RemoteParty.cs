@@ -341,15 +341,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomRemotePartySerializer">A delegate to serialize custom remote party JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="IncludeCryptoHash">Include the crypto hash value of this object.</param>
-        public JObject ToJSON(Boolean                                           Embedded,
-                              CustomJObjectSerializerDelegate<RemoteParty>      CustomRemotePartySerializer       = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>  CustomBusinessDetailsSerializer   = null,
-                              Boolean                                           IncludeCryptoHash                 = false)
+        public JObject ToJSON(Boolean                                            Embedded,
+                              CustomJObjectSerializerDelegate<RemoteParty>?      CustomRemotePartySerializer       = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
+                              Boolean                                            IncludeCryptoHash                 = false)
         {
 
             var JSON = JSONObject.Create(
 
-                           Id.ToJSON("@id"),
+                           new JProperty("@id",                      Id.                  ToString()),
 
                            Embedded
                                ? new JProperty("@context",           DefaultJSONLDContext.ToString())
@@ -380,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomRemotePartySerializer != null
+            return CustomRemotePartySerializer is not null
                        ? CustomRemotePartySerializer(this, JSON)
                        : JSON;
 

@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.WWCP;
+using cloud.charging.open.protocols.WWCP;
 
 #endregion
 
@@ -36,7 +36,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// Receive charging stations downstream from an OCPI partner...
     /// </summary>
-    public class OCPICSOAdapter : ACryptoEMobilityEntity<CSORoamingProvider_Id>,
+    public class OCPICSOAdapter : ACryptoEMobilityEntity<CSORoamingProvider_Id,
+                                                         CSORoamingProviderAdminStatusTypes,
+                                                         CSORoamingProviderStatusTypes>,
                                   ICSORoamingProvider,
                                   //ISendAuthenticationData,
                                   IEquatable<OCPICSOAdapter>,
@@ -73,8 +75,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public event OnReserveResponseDelegate            OnReserveResponse;
         public event OnNewReservationDelegate             OnNewReservation;
 
-        public event org.GraphDefined.WWCP.OnCancelReservationRequestDelegate   OnCancelReservationRequest;
-        public event org.GraphDefined.WWCP.OnCancelReservationResponseDelegate  OnCancelReservationResponse;
+        public event cloud.charging.open.protocols.WWCP.OnCancelReservationRequestDelegate   OnCancelReservationRequest;
+        public event cloud.charging.open.protocols.WWCP.OnCancelReservationResponseDelegate  OnCancelReservationResponse;
         public event OnReservationCanceledDelegate        OnReservationCanceled;
 
         public event OnRemoteStartRequestDelegate         OnRemoteStartRequest;
@@ -88,8 +90,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-        public event org.GraphDefined.WWCP.OnGetCDRsRequestDelegate   OnGetChargeDetailRecordsRequest;
-        public event org.GraphDefined.WWCP.OnGetCDRsResponseDelegate  OnGetChargeDetailRecordsResponse;
+        public event cloud.charging.open.protocols.WWCP.OnGetCDRsRequestDelegate   OnGetChargeDetailRecordsRequest;
+        public event cloud.charging.open.protocols.WWCP.OnGetCDRsResponseDelegate  OnGetChargeDetailRecordsResponse;
 
         #endregion
 
@@ -99,8 +101,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                               RoamingNetwork         RoamingNetwork)
 
             : base(Id,
-                   Name,
-                   RoamingNetwork)
+                   RoamingNetwork,
+                   Name)
 
         {
         
@@ -109,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region POIData
 
-        public Task<POIDataPull<org.GraphDefined.WWCP.EVSE>> PullEVSEData(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, eMobilityProvider_Id? ProviderId = null, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter = null, IEnumerable<Country> CountryCodeFilter = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<POIDataPull<cloud.charging.open.protocols.WWCP.EVSE>> PullEVSEData(DateTime? LastCall = null, GeoCoordinate? SearchCenter = null, float DistanceKM = 0, eMobilityProvider_Id? ProviderId = null, IEnumerable<ChargingStationOperator_Id> OperatorIdFilter = null, IEnumerable<Country> CountryCodeFilter = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }

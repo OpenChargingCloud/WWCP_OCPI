@@ -21,7 +21,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using WWCP = org.GraphDefined.WWCP;
+using WWCP = cloud.charging.open.protocols.WWCP;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
