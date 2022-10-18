@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Properties
 
-        public Boolean PullOperatorInfos_IsDisabled { get; set; }
+        public Boolean  PullEVSEData_IsDisabled    { get; set; }
 
         #endregion
 
