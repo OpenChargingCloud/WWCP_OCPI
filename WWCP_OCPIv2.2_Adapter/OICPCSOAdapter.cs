@@ -56,42 +56,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Events
 
         // from OCPI partner
-        public event OnAuthorizeStartRequestDelegate      OnAuthorizeStartRequest;
-        public event OnAuthorizeStartResponseDelegate     OnAuthorizeStartResponse;
+        public event OnAuthorizeStartRequestDelegate?           OnAuthorizeStartRequest;
+        public event OnAuthorizeStartResponseDelegate?          OnAuthorizeStartResponse;
 
-        public event OnAuthorizeStopRequestDelegate       OnAuthorizeStopRequest;
-        public event OnAuthorizeStopResponseDelegate      OnAuthorizeStopResponse;
+        public event OnAuthorizeStopRequestDelegate?            OnAuthorizeStopRequest;
+        public event OnAuthorizeStopResponseDelegate?           OnAuthorizeStopResponse;
 
-        public event OnNewChargingSessionDelegate         OnNewChargingSession;
+        public event OnNewChargingSessionDelegate?              OnNewChargingSession;
 
-        public event OnSendCDRsRequestDelegate            OnChargeDetailRecordRequest;
-        public event OnSendCDRsResponseDelegate           OnChargeDetailRecordResponse;
-        public event OnNewChargeDetailRecordDelegate      OnNewChargeDetailRecord;
+        public event OnSendCDRsRequestDelegate?                 OnChargeDetailRecordRequest;
+        public event OnSendCDRsResponseDelegate?                OnChargeDetailRecordResponse;
+        public event OnNewChargeDetailRecordDelegate?           OnNewChargeDetailRecord;
 
 
 
         // from roaming network
-        public event OnReserveRequestDelegate             OnReserveRequest;
-        public event OnReserveResponseDelegate            OnReserveResponse;
-        public event OnNewReservationDelegate             OnNewReservation;
+        public event OnReserveRequestDelegate?                  OnReserveRequest;
+        public event OnReserveResponseDelegate?                 OnReserveResponse;
+        public event OnNewReservationDelegate?                  OnNewReservation;
 
-        public event cloud.charging.open.protocols.WWCP.OnCancelReservationRequestDelegate   OnCancelReservationRequest;
-        public event cloud.charging.open.protocols.WWCP.OnCancelReservationResponseDelegate  OnCancelReservationResponse;
-        public event OnReservationCanceledDelegate        OnReservationCanceled;
+        public event WWCP.OnCancelReservationRequestDelegate?   OnCancelReservationRequest;
+        public event WWCP.OnCancelReservationResponseDelegate?  OnCancelReservationResponse;
+        public event OnReservationCanceledDelegate?             OnReservationCanceled;
 
-        public event OnRemoteStartRequestDelegate         OnRemoteStartRequest;
-        public event OnRemoteStartResponseDelegate        OnRemoteStartResponse;
+        public event OnRemoteStartRequestDelegate?              OnRemoteStartRequest;
+        public event OnRemoteStartResponseDelegate?             OnRemoteStartResponse;
 
-        public event OnRemoteStopRequestDelegate          OnRemoteStopRequest;
-        public event OnRemoteStopResponseDelegate         OnRemoteStopResponse;
+        public event OnRemoteStopRequestDelegate?               OnRemoteStopRequest;
+        public event OnRemoteStopResponseDelegate?              OnRemoteStopResponse;
 
-
-
-
-
-
-        public event cloud.charging.open.protocols.WWCP.OnGetCDRsRequestDelegate   OnGetChargeDetailRecordsRequest;
-        public event cloud.charging.open.protocols.WWCP.OnGetCDRsResponseDelegate  OnGetChargeDetailRecordsResponse;
+        public event WWCP.OnGetCDRsRequestDelegate?             OnGetChargeDetailRecordsRequest;
+        public event WWCP.OnGetCDRsResponseDelegate?            OnGetChargeDetailRecordsResponse;
 
         #endregion
 
@@ -129,33 +124,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        public IEnumerable<ChargingReservation> ChargingReservations => throw new NotImplementedException();
-
-        public IEnumerable<ChargingSession> ChargingSessions => throw new NotImplementedException();
-
-
-
-
-
-        public Task<IEnumerable<ChargeDetailRecord>> GetChargeDetailRecords(DateTime From, DateTime? To = null, EMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
+        public IEnumerable<ChargingReservation> ChargingReservations
+            => throw new NotImplementedException();
 
         public bool TryGetChargingReservationById(ChargingReservation_Id ReservationId, out ChargingReservation ChargingReservation)
         {
@@ -167,57 +137,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             throw new NotImplementedException();
         }
 
-
-
-
-
-        public Task<ReservationResult> Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel = ChargingReservationLevel.EVSE, DateTime? StartTime = null, TimeSpan? Duration = null, ChargingReservation_Id? ReservationId = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication RemoteAuthentication = null, ChargingProduct ChargingProduct = null, IEnumerable<Auth_Token> AuthTokens = null, IEnumerable<eMobilityAccount_Id> eMAIds = null, IEnumerable<uint> PINs = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-        public Task<CancelReservationResult> CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<ReservationResult> Reserve(ChargingLocation ChargingLocation, ChargingReservationLevel ReservationLevel = ChargingReservationLevel.EVSE, DateTime? StartTime = null, TimeSpan? Duration = null, ChargingReservation_Id? ReservationId = null, ChargingReservation_Id? LinkedReservationId = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication? RemoteAuthentication = null, ChargingProduct? ChargingProduct = null, IEnumerable<Auth_Token>? AuthTokens = null, IEnumerable<eMobilityAccount_Id>? eMAIds = null, IEnumerable<UInt32>? PINs = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<RemoteStartResult> RemoteStart(ChargingLocation ChargingLocation, ChargingProduct ChargingProduct = null, ChargingReservation_Id? ReservationId = null, ChargingSession_Id? SessionId = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication RemoteAuthentication = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<RemoteStopResult> RemoteStop(ChargingSession_Id SessionId, ReservationHandling? ReservationHandling = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication RemoteAuthentication = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        public Task<CancelReservationResult> CancelReservation(ChargingReservation_Id ReservationId, ChargingReservationCancellationReason Reason, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
         }
 
 
 
+        public Task<RemoteStartResult> RemoteStart(ChargingLocation ChargingLocation, ChargingProduct? ChargingProduct = null, ChargingReservation_Id? ReservationId = null, ChargingSession_Id? SessionId = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication? RemoteAuthentication = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<RemoteStopResult> RemoteStop(ChargingSession_Id SessionId, ReservationHandling? ReservationHandling = null, EMobilityProvider_Id? ProviderId = null, RemoteAuthentication? RemoteAuthentication = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
 
 
 
 
 
 
+        public IEnumerable<ChargingSession> ChargingSessions
+            => throw new NotImplementedException();
+        public Task<IEnumerable<ChargeDetailRecord>> GetChargeDetailRecords(DateTime From, DateTime? To = null, EMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
+        {
+            throw new NotImplementedException();
+        }
 
 
-        public int CompareTo(OCPICSOAdapter other)
+
+
+        public int CompareTo(OCPICSOAdapter? other)
 
             => other is null
                    ? throw new ArgumentException("The given object is not an OCPI CSO adapter!")
                    : Id.CompareTo(other.Id);
 
-        public override int CompareTo(Object other)
+        public override int CompareTo(Object? other)
 
             => other is OCPICSOAdapter OCPICSOAdapter
                    ? Id.CompareTo(OCPICSOAdapter.Id)
                    : throw new ArgumentException("The given object is not an OCPI CSO adapter!");
 
 
-        public Boolean Equals(OCPICSOAdapter other)
+        public Boolean Equals(OCPICSOAdapter? other)
 
             => !(other is null) &&
                    Id.Equals(other.Id);
-
 
     }
 

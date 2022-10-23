@@ -2887,8 +2887,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
             Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(result);
 
             Assert.AreEqual(CountryCode.Parse("BE"),                                    parsedLocation.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("BEC"),                                   parsedLocation.PartyId);
@@ -2997,8 +2998,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
             Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(result);
 
             Assert.AreEqual(CountryCode.Parse("SE"),                                    parsedLocation.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("EVC"),                                   parsedLocation.PartyId);
@@ -3075,8 +3077,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
             Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(result);
 
             Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
@@ -3152,8 +3155,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
             Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(result);
 
             Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
@@ -3239,8 +3243,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
             Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(result);
 
             Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
@@ -3319,8 +3324,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse));
+            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
             Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(result);
 
             Assert.AreEqual(CountryCode.Parse("DE"),                                    parsedLocation.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);

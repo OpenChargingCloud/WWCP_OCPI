@@ -17,11 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
-using WWCP = cloud.charging.open.protocols.WWCP;
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
@@ -43,34 +38,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
         /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this OCPIv2_2.StatusTypes EVSEStatus)
+        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this StatusTypes EVSEStatus)
         {
 
             switch (EVSEStatus)
             {
 
-                case OCPIv2_2.StatusTypes.AVAILABLE:
+                case StatusTypes.AVAILABLE:
                     return WWCP.EVSEStatusTypes.Available;
 
-                case OCPIv2_2.StatusTypes.BLOCKED:
+                case StatusTypes.BLOCKED:
                     return WWCP.EVSEStatusTypes.OutOfService;
 
-                case OCPIv2_2.StatusTypes.CHARGING:
+                case StatusTypes.CHARGING:
                     return WWCP.EVSEStatusTypes.Charging;
 
-                case OCPIv2_2.StatusTypes.INOPERATIVE:
+                case StatusTypes.INOPERATIVE:
                     return WWCP.EVSEStatusTypes.OutOfService;
 
-                case OCPIv2_2.StatusTypes.OUTOFORDER:
-                    return WWCP.EVSEStatusTypes.Faulted;
+                case StatusTypes.OUTOFORDER:
+                    return WWCP.EVSEStatusTypes.Error;
 
-                //case OCPIv2_2.EVSEStatusType.Planned:
+                //case EVSEStatusType.Planned:
                 //    return WWCP.EVSEStatusTypes.Planned;
 
-                case OCPIv2_2.StatusTypes.REMOVED:
-                    return WWCP.EVSEStatusTypes.UnknownEVSE;
+                //case StatusTypes.REMOVED:
+                //    return WWCP.EVSEStatusTypes.UnknownEVSE;
 
-                case OCPIv2_2.StatusTypes.RESERVED:
+                case StatusTypes.RESERVED:
                     return WWCP.EVSEStatusTypes.Reserved;
 
                 default:
@@ -89,96 +84,104 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
         /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static OCPIv2_2.StatusTypes AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
+        public static StatusTypes AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
         {
 
-            switch (EVSEStatus)
-            {
+            //case WWCP.EVSEStatusTypes.Planned:
+            //    return OCPIv2_2.EVSEStatusType.Planned;
 
-                //case WWCP.EVSEStatusTypes.Planned:
-                //    return OCPIv2_2.EVSEStatusType.Planned;
+            //case WWCP.EVSEStatusTypes.InDeployment:
+            //    return OCPIv2_2.EVSEStatusType.Planned;
 
-                //case WWCP.EVSEStatusTypes.InDeployment:
-                //    return OCPIv2_2.EVSEStatusType.Planned;
+            if (EVSEStatus == WWCP.EVSEStatusTypes.Available)
+                return StatusTypes.AVAILABLE;
 
-                case WWCP.EVSEStatusTypes.Available:
-                    return OCPIv2_2.StatusTypes.AVAILABLE;
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Charging)
+                return StatusTypes.CHARGING;
 
-                case WWCP.EVSEStatusTypes.Charging:
-                    return OCPIv2_2.StatusTypes.CHARGING;
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
+                return StatusTypes.OUTOFORDER;
 
-                case WWCP.EVSEStatusTypes.Faulted:
-                    return OCPIv2_2.StatusTypes.OUTOFORDER;
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.OutOfService)
+                return StatusTypes.INOPERATIVE;
 
-                case WWCP.EVSEStatusTypes.OutOfService:
-                    return OCPIv2_2.StatusTypes.INOPERATIVE;
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Offline)
+                return StatusTypes.UNKNOWN;
 
-                case WWCP.EVSEStatusTypes.Offline:
-                    return OCPIv2_2.StatusTypes.UNKNOWN;
+            else if (EVSEStatus == WWCP.EVSEStatusTypes.Reserved)
+                return StatusTypes.RESERVED;
 
-                case WWCP.EVSEStatusTypes.Reserved:
-                    return OCPIv2_2.StatusTypes.RESERVED;
+            //case WWCP.EVSEStatusTypes.Private:
+            //    return OCPIv2_2.EVSEStatusType.Unknown;
 
-                //case WWCP.EVSEStatusTypes.Private:
-                //    return OCPIv2_2.EVSEStatusType.Unknown;
+            //else if (EVSEStatus == WWCP.EVSEStatusTypes.UnknownEVSE)
+            //    return StatusTypes.REMOVED;
 
-                case WWCP.EVSEStatusTypes.UnknownEVSE:
-                    return OCPIv2_2.StatusTypes.REMOVED;
-
-                default:
-                    return OCPIv2_2.StatusTypes.UNKNOWN;
-
-            }
+            else
+                return StatusTypes.UNKNOWN;
 
         }
 
         #endregion
 
 
+        #region ToOCPI(this ChargingPools)
+
         public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools)
+        {
 
-            => ChargingPools.SafeSelect(pool => {
+            var locations = new HashSet<Location>();
 
-                                            try
-                                            {
+            foreach (var pool in ChargingPools)
+            {
+                try
+                {
 
-                                                return new Location(CountryCode.Parse("DE"),
-                                                                    Party_Id.Parse("GEF"),
-                                                                    Location_Id.Parse("..."),
-                                                                    true,
-                                                                    pool.Address.Street + pool.Address.HouseNumber,
-                                                                    pool.Address.City.FirstText(),
-                                                                    pool.Address.Country.Alpha3Code,
-                                                                    pool.GeoLocation ?? default,
-                                                                    "timezone",
-                                                                    null,
-                                                                    "name",
-                                                                    pool.Address.PostalCode,
-                                                                    pool.Address.Country.CountryName.FirstText(),
-                                                                    null,
-                                                                    null,
-                                                                    new EVSE[0],
-                                                                    new DisplayText[] { new DisplayText(Languages.en, "directions") },
-                                                                    new BusinessDetails(pool.Operator.Name.FirstText(),
-                                                                                        URL.Parse(pool.Operator.Homepage),
-                                                                                        null),
-                                                                    null,
-                                                                    null,
-                                                                    new Facilities[0],
-                                                                    null,
-                                                                    null,
-                                                                    null,
-                                                                    null,
-                                                                    DateTime.UtcNow);
+                    locations.Add(new Location(
+                                      CountryCode.Parse("DE"),
+                                      Party_Id.   Parse("GEF"),
+                                      Location_Id.Parse("..."),
+                                      true,
+                                      pool.Address.Street + pool.Address.HouseNumber,
+                                      pool.Address.City.FirstText(),
+                                      pool.Address.Country.Alpha3Code,
+                                      pool.GeoLocation ?? default,
+                                      "timezone",
+                                      null,
+                                      "name",
+                                      pool.Address.PostalCode,
+                                      pool.Address.Country.CountryName.FirstText(),
+                                      null,
+                                      null,
+                                      Array.Empty<EVSE>(),
+                                      new DisplayText[] {
+                                          new DisplayText(Languages.en, "directions")
+                                      },
+                                      new BusinessDetails(
+                                          pool.Operator.Name.FirstText(),
+                                          URL.Parse(pool.Operator.Homepage),
+                                          null
+                                      ),
+                                      null,
+                                      null,
+                                      Array.Empty<Facilities>(),
+                                      null,
+                                      null,
+                                      null,
+                                      null,
+                                      Timestamp.Now)
+                                  );
 
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                return null;
-                                            }
-                                        }).
+                }
+                catch (Exception)
+                { }
+            }
 
-                             Where(pool => pool != null);
+            return locations;
+
+        }
+
+        #endregion
 
     }
 

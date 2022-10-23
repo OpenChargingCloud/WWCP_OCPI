@@ -152,8 +152,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual("RFID_READER",                            JSON["capabilities"]        [0].                Value<String>());
             Assert.AreEqual("RESERVABLE",                             JSON["capabilities"]        [1].                Value<String>());
             Assert.AreEqual("1. Stock",                               JSON["floor_level"].                            Value<String>());
-            Assert.AreEqual("10.1000000",                             JSON["coordinates"]            ["latitude"].    Value<String>());
-            Assert.AreEqual("20.2000000",                             JSON["coordinates"]            ["longitude"].   Value<String>());
+            Assert.AreEqual("10.10000",                               JSON["coordinates"]            ["latitude"].    Value<String>());
+            Assert.AreEqual("20.20000",                               JSON["coordinates"]            ["longitude"].   Value<String>());
             Assert.AreEqual("Ladestation #1",                         JSON["physical_reference"].                     Value<String>());
             Assert.AreEqual("de",                                     JSON["directions"]          [0]["language"].    Value<String>());
             Assert.AreEqual("Bitte klingeln!",                        JSON["directions"]          [0]["text"].        Value<String>());
