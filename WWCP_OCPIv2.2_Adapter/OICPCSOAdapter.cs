@@ -166,6 +166,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public IEnumerable<ChargingSession> ChargingSessions
             => throw new NotImplementedException();
+
+        public TimeSpan MaxReservationDuration { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public Task<IEnumerable<ChargeDetailRecord>> GetChargeDetailRecords(DateTime From, DateTime? To = null, EMobilityProvider_Id? ProviderId = null, DateTime? Timestamp = null, CancellationToken? CancellationToken = null, EventTracking_Id? EventTrackingId = null, TimeSpan? RequestTimeout = null)
         {
             throw new NotImplementedException();
