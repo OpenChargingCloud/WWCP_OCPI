@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out DisplayText? Name,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -230,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                   Name);
 
 
-                if (CustomAdditionalGeoLocationParser != null)
+                if (CustomAdditionalGeoLocationParser is not null)
                     AdditionalGeoLocation = CustomAdditionalGeoLocationParser(JSON,
                                                                               AdditionalGeoLocation);
 
@@ -305,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomAdditionalGeoLocationSerializer != null
+            return CustomAdditionalGeoLocationSerializer is not null
                        ? CustomAdditionalGeoLocationSerializer(this, JSON)
                        : JSON;
 

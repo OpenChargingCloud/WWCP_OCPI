@@ -367,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -395,7 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -423,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -461,7 +461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? End,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out AuthorizationReference? AuthorizationReference,
                                              out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -565,7 +565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Meter_Id? MeterId,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -579,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -593,7 +593,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<TransparencySoftware> TransparencySoftwares,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -620,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<ChargingPeriod> ChargingPeriods,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -634,7 +634,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalCosts,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -689,7 +689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                       LastUpdated);
 
 
-                if (CustomSessionParser != null)
+                if (CustomSessionParser is not null)
                     Session = CustomSessionParser(JSON,
                                                   Session);
 
@@ -825,7 +825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomSessionSerializer != null
+            return CustomSessionSerializer is not null
                        ? CustomSessionSerializer(this, JSON)
                        : JSON;
 

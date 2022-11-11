@@ -347,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -375,7 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -403,7 +403,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -442,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out TariffTypes? TariffType,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -456,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<DisplayText> TariffAltText,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -470,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out URL? TariffAltURL,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -485,7 +485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? MinPrice,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -499,7 +499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? MaxPrice,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -513,7 +513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             out IEnumerable<TariffElement> TariffElements,
                                             out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -526,7 +526,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? Start,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -539,7 +539,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? End,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -553,7 +553,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out EnergyMix EnergyMix,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -588,7 +588,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                     EnergyMix,
                                     LastUpdated);
 
-                if (CustomTariffParser != null)
+                if (CustomTariffParser is not null)
                     Tariff = CustomTariffParser(JSON,
                                                 Tariff);
 
@@ -713,7 +713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomTariffSerializer != null
+            return CustomTariffSerializer is not null
                        ? CustomTariffSerializer(this, JSON)
                        : JSON;
 

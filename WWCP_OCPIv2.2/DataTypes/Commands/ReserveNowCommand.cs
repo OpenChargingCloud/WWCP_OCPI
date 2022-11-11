@@ -370,7 +370,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                           EVSEUId,
                                                           AuthorizationReference);
 
-                if (CustomReserveNowCommandParser != null)
+                if (CustomReserveNowCommandParser is not null)
                     ReserveNowCommand = CustomReserveNowCommandParser(JSON,
                                                                       ReserveNowCommand);
 
@@ -456,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomReserveNowCommandSerializer != null
+            return CustomReserveNowCommandSerializer is not null
                        ? CustomReserveNowCommandSerializer(this, JSON)
                        : JSON;
 

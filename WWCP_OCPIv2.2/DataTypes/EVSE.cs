@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -283,49 +280,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static EVSE Parse(JObject                            JSON,
-                                 EVSE_UId?                          EVSEUIdURL         = null,
-                                 CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        public static EVSE Parse(JObject                             JSON,
+                                 EVSE_UId?                           EVSEUIdURL         = null,
+                                 CustomJObjectParserDelegate<EVSE>?  CustomEVSEParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EVSE   evse,
-                         out String ErrorResponse,
+                         out var evse,
+                         out var errorResponse,
                          EVSEUIdURL,
                          CustomEVSEParser))
             {
-                return evse;
+                return evse!;
             }
 
-            throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, EVSEUIdURL = null, CustomEVSEParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an EVSE.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static EVSE Parse(String                             Text,
-                                 EVSE_UId?                          EVSEUIdURL         = null,
-                                 CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EVSE   evse,
-                         out String ErrorResponse,
-                         EVSEUIdURL,
-                         CustomEVSEParser))
-            {
-                return evse;
-            }
-
-            throw new ArgumentException("The given text representation of an EVSE is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -341,9 +311,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EVSE">The parsed EVSE.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out EVSE    EVSE,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out EVSE?    EVSE,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out EVSE,
@@ -359,11 +329,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static Boolean TryParse(JObject                            JSON,
-                                       out EVSE                           EVSE,
-                                       out String                         ErrorResponse,
-                                       EVSE_UId?                          EVSEUIdURL,
-                                       CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        public static Boolean TryParse(JObject                             JSON,
+                                       out EVSE?                           EVSE,
+                                       out String?                         ErrorResponse,
+                                       EVSE_UId?                           EVSEUIdURL,
+                                       CustomJObjectParserDelegate<EVSE>?  CustomEVSEParser   = null)
         {
 
             try
@@ -386,7 +356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -440,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -456,7 +426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -471,7 +441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -489,13 +459,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (JSON.ParseOptionalJSON("coordinates",
                                            "geo coordinates",
                                            GeoCoordinate.TryParse,
-                                           out GeoCoordinate? Coordinates,
+                                           out GeoCoordinate Coordinates,
                                            out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -515,7 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -530,7 +498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -546,7 +514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -584,7 +552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                 LastUpdated);
 
 
-                if (CustomEVSEParser != null)
+                if (CustomEVSEParser is not null)
                     EVSE = CustomEVSEParser(JSON,
                                             EVSE);
 
@@ -595,44 +563,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
                 EVSE           = default;
                 ErrorResponse  = "The given JSON representation of an EVSE is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out EVSE, out ErrorResponse, EVSEUIdURL = null, CustomEVSEParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an EVSE.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EVSE">The parsed EVSE.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static Boolean TryParse(String                             Text,
-                                       out EVSE                           EVSE,
-                                       out String                         ErrorResponse,
-                                       EVSE_UId?                          EVSEUIdURL         = null,
-                                       CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EVSE,
-                                out ErrorResponse,
-                                EVSEUIdURL,
-                                CustomEVSEParser);
-
-            }
-            catch (Exception e)
-            {
-                EVSE      = null;
-                ErrorResponse  = "The given text representation of an EVSE is invalid: " + e.Message;
                 return false;
             }
 
@@ -710,7 +640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomEVSESerializer != null
+            return CustomEVSESerializer is not null
                        ? CustomEVSESerializer(this, JSON)
                        : JSON;
 

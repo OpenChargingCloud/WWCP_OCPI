@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                 Volume);
 
 
-                if (CustomCDRDimensionParser != null)
+                if (CustomCDRDimensionParser is not null)
                     CDRDimension = CustomCDRDimensionParser(JSON,
                                                             CDRDimension);
 
@@ -311,7 +311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("volume",  Volume)
                        );
 
-            return CustomCDRDimensionSerializer != null
+            return CustomCDRDimensionSerializer is not null
                        ? CustomCDRDimensionSerializer(this, JSON)
                        : JSON;
 

@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 ActiveChargingProfile = new ActiveChargingProfile(Start,
                                                                   ChargingProfile);
 
-                if (CustomActiveChargingProfileParser != null)
+                if (CustomActiveChargingProfileParser is not null)
                     ActiveChargingProfile = CustomActiveChargingProfileParser(JSON,
                                                                               ActiveChargingProfile);
 
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                                      CustomChargingProfilePeriodSerializer))
                        );
 
-            return CustomActiveChargingProfileSerializer != null
+            return CustomActiveChargingProfileSerializer is not null
                        ? CustomActiveChargingProfileSerializer(this, JSON)
                        : JSON;
 

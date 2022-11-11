@@ -253,7 +253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -268,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -300,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   Thumbnail);
 
 
-                if (CustomImageParser != null)
+                if (CustomImageParser is not null)
                     Image = CustomImageParser(JSON,
                                               Image);
 
@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomImageSerializer != null
+            return CustomImageSerializer is not null
                        ? CustomImageSerializer(this, JSON)
                        : JSON;
 

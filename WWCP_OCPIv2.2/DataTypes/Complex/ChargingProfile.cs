@@ -267,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -312,7 +312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -325,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                       Duration.HasValue ? new TimeSpan?(TimeSpan.FromSeconds(Duration.Value)) : null,
                                                       MinChargingRate);
 
-                if (CustomChargingProfileParser != null)
+                if (CustomChargingProfileParser is not null)
                     ChargingProfile = CustomChargingProfileParser(JSON,
                                                                   ChargingProfile);
 
@@ -412,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomChargingProfileSerializer != null
+            return CustomChargingProfileSerializer is not null
                        ? CustomChargingProfileSerializer(this, JSON)
                        : JSON;
 

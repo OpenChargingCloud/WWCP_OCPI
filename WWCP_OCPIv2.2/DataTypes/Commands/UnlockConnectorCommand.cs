@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                     ConnectorId,
                                                                     ResponseURL);
 
-                if (CustomUnlockConnectorCommandParser != null)
+                if (CustomUnlockConnectorCommandParser is not null)
                     UnlockConnectorCommand = CustomUnlockConnectorCommandParser(JSON,
                                                                                 UnlockConnectorCommand);
 
@@ -364,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("response_url",  ResponseURL.ToString())
                        );
 
-            return CustomUnlockConnectorCommandSerializer != null
+            return CustomUnlockConnectorCommandSerializer is not null
                        ? CustomUnlockConnectorCommandSerializer(this, JSON)
                        : JSON;
 

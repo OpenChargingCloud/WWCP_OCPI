@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -239,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             URL);
 
 
-                if (CustomSignedDataParser != null)
+                if (CustomSignedDataParser is not null)
                     SignedData = CustomSignedDataParser(JSON,
                                                         SignedData);
 
@@ -359,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomSignedDataSerializer != null
+            return CustomSignedDataSerializer is not null
                        ? CustomSignedDataSerializer(this, JSON)
                        : JSON;
 

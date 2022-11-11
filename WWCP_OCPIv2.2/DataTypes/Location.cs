@@ -334,57 +334,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Location Parse(JObject                                JSON,
-                                     CountryCode?                           CountryCodeURL         = null,
-                                     Party_Id?                              PartyIdURL             = null,
-                                     Location_Id?                           LocationIdURL          = null,
-                                     CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        public static Location Parse(JObject                                 JSON,
+                                     CountryCode?                            CountryCodeURL         = null,
+                                     Party_Id?                               PartyIdURL             = null,
+                                     Location_Id?                            LocationIdURL          = null,
+                                     CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Location location,
-                         out String   ErrorResponse,
+                         out var location,
+                         out var errorResponse,
                          CountryCodeURL,
                          PartyIdURL,
                          LocationIdURL,
                          CustomLocationParser))
             {
-                return location;
+                return location!;
             }
 
-            throw new ArgumentException("The given JSON representation of a location is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, LocationIdURL = null, CustomLocationParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an Location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Location Parse(String                                 Text,
-                                     CountryCode?                           CountryCodeURL         = null,
-                                     Party_Id?                              PartyIdURL             = null,
-                                     Location_Id?                           LocationIdURL          = null,
-                                     CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Location location,
-                         out String   ErrorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
-                         LocationIdURL,
-                         CustomLocationParser))
-            {
-                return location;
-            }
-
-            throw new ArgumentException("The given text representation of a location is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a location is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -400,9 +369,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject       JSON,
-                                       out Location  Location,
-                                       out String    ErrorResponse)
+        public static Boolean TryParse(JObject        JSON,
+                                       out Location?  Location,
+                                       out String?    ErrorResponse)
 
             => TryParse(JSON,
                         out Location,
@@ -423,13 +392,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(JObject                                JSON,
-                                       out Location                           Location,
-                                       out String                             ErrorResponse,
-                                       CountryCode?                           CountryCodeURL         = null,
-                                       Party_Id?                              PartyIdURL             = null,
-                                       Location_Id?                           LocationIdURL          = null,
-                                       CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        public static Boolean TryParse(JObject                                 JSON,
+                                       out Location?                           Location,
+                                       out String?                             ErrorResponse,
+                                       CountryCode?                            CountryCodeURL         = null,
+                                       Party_Id?                               PartyIdURL             = null,
+                                       Location_Id?                            LocationIdURL          = null,
+                                       CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {
 
             try
@@ -452,7 +421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -480,7 +449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -508,7 +477,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -610,7 +579,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -644,7 +613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -659,7 +628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -675,7 +644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -691,7 +660,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -707,7 +676,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -723,7 +692,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -739,7 +708,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -755,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -771,7 +740,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -786,7 +755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -802,7 +771,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -818,7 +787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -867,7 +836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                         EnergyMix,
                                         LastUpdated);
 
-                if (CustomLocationParser != null)
+                if (CustomLocationParser is not null)
                     Location = CustomLocationParser(JSON,
                                                     Location);
 
@@ -878,48 +847,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
                 Location       = default;
                 ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out Location, out ErrorResponse, LocationIdURL = null, CustomLocationParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an Location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Location">The parsed location.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(String                                 Text,
-                                       out Location                           Location,
-                                       out String                             ErrorResponse,
-                                       CountryCode?                           CountryCodeURL         = null,
-                                       Party_Id?                              PartyIdURL             = null,
-                                       Location_Id?                           LocationIdURL          = null,
-                                       CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Location,
-                                out ErrorResponse,
-                                CountryCodeURL,
-                                PartyIdURL,
-                                LocationIdURL,
-                                CustomLocationParser);
-
-            }
-            catch (Exception e)
-            {
-                Location      = null;
-                ErrorResponse  = "The given text representation of a location is invalid: " + e.Message;
                 return false;
             }
 
@@ -1045,7 +972,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomLocationSerializer != null
+            return CustomLocationSerializer is not null
                        ? CustomLocationSerializer(this, JSON)
                        : JSON;
 

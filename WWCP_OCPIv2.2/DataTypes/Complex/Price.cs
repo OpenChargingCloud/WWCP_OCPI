@@ -234,7 +234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? IncludingVAT,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -245,7 +245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   IncludingVAT);
 
 
-                if (CustomPriceParser != null)
+                if (CustomPriceParser is not null)
                     Price = CustomPriceParser(JSON,
                                               Price);
 
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomPriceSerializer != null
+            return CustomPriceSerializer is not null
                        ? CustomPriceSerializer(this, JSON)
                        : JSON;
 

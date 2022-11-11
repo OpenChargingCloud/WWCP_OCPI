@@ -244,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 ChargingProfileResponse = new ChargingProfileResponse(Result,
                                                                       Timeout);
 
-                if (CustomChargingProfileResponseParser != null)
+                if (CustomChargingProfileResponseParser is not null)
                     ChargingProfileResponse = CustomChargingProfileResponseParser(JSON,
                                                                                   ChargingProfileResponse);
 
@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("timeout",  (UInt32) Timeout.TotalSeconds)
                        );
 
-            return CustomChargingProfileResponseSerializer != null
+            return CustomChargingProfileResponseSerializer is not null
                        ? CustomChargingProfileResponseSerializer(this, JSON)
                        : JSON;
 

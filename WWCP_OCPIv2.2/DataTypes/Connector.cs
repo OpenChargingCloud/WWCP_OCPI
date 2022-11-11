@@ -323,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -410,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -426,7 +426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -442,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -476,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                           LastUpdated);
 
 
-                if (CustomConnectorParser != null)
+                if (CustomConnectorParser is not null)
                     Connector = CustomConnectorParser(JSON,
                                                       Connector);
 
@@ -566,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomConnectorSerializer != null
+            return CustomConnectorSerializer is not null
                        ? CustomConnectorSerializer(this, JSON)
                        : JSON;
 

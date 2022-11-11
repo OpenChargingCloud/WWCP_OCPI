@@ -238,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<EVSE_UId> EVSEUIds,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -249,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                           EVSEUIds);
 
 
-                if (CustomLocationReferenceParser != null)
+                if (CustomLocationReferenceParser is not null)
                     LocationReference = CustomLocationReferenceParser(JSON,
                                                                       LocationReference);
 
@@ -339,7 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomLocationReferenceSerializer != null
+            return CustomLocationReferenceSerializer is not null
                        ? CustomLocationReferenceSerializer(this, JSON)
                        : JSON;
 

@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                       URL);
 
 
-                if (CustomVersionEndpointParser != null)
+                if (CustomVersionEndpointParser is not null)
                     VersionEndpoint = CustomVersionEndpointParser(JSON,
                                                   VersionEndpoint);
 
@@ -289,7 +289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("url",         URL.       ToString())
                        );
 
-            return CustomVersionEndpointSerializer != null
+            return CustomVersionEndpointSerializer is not null
                        ? CustomVersionEndpointSerializer(this, JSON)
                        : JSON;
 

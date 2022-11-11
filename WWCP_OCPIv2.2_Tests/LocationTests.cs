@@ -2887,7 +2887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
@@ -2998,7 +2998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
@@ -3077,7 +3077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
@@ -3155,7 +3155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
@@ -3243,7 +3243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
@@ -3324,7 +3324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            var result = Location.TryParse(JSON, out Location parsedLocation, out String ErrorResponse);
+            var result = Location.TryParse(JObject.Parse(JSON), out var parsedLocation, out var ErrorResponse);
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 

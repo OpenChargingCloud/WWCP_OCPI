@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             Status,
                                             LastUpdated);
 
-                if (CustomClientInfoParser != null)
+                if (CustomClientInfoParser is not null)
                     ClientInfo = CustomClientInfoParser(JSON,
                                                         ClientInfo);
 
@@ -380,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("last_updated",  LastUpdated.ToIso8601())
                        );
 
-            return CustomClientInfoSerializer != null
+            return CustomClientInfoSerializer is not null
                        ? CustomClientInfoSerializer(this, JSON)
                        : JSON;
 

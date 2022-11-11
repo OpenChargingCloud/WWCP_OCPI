@@ -260,7 +260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out LocationReference? LocationReference,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -272,7 +272,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                               LocationReference);
 
 
-                if (CustomTokenStatusParser != null)
+                if (CustomTokenStatusParser is not null)
                     TokenStatus = CustomTokenStatusParser(JSON,
                                                           TokenStatus);
 
@@ -345,7 +345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomTokenStatusSerializer != null
+            return CustomTokenStatusSerializer is not null
                        ? CustomTokenStatusSerializer(this, JSON)
                        : JSON;
 

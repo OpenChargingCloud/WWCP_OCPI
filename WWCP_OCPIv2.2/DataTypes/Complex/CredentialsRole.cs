@@ -261,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Boolean? AllowDowngrades,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -275,7 +275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                       AllowDowngrades);
 
 
-                if (CustomCredentialsRoleParser != null)
+                if (CustomCredentialsRoleParser is not null)
                     CredentialsRole = CustomCredentialsRoleParser(JSON,
                                                                   CredentialsRole);
 
@@ -352,7 +352,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomCredentialsRoleSerializer != null
+            return CustomCredentialsRoleSerializer is not null
                        ? CustomCredentialsRoleSerializer(this, JSON)
                        : JSON;
 

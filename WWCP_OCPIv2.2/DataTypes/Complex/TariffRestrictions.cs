@@ -315,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Time? StartTime,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -329,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Time? EndTime,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -342,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? StartDate,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out DateTime? EndDate,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -368,7 +368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MinKWh,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -381,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MaxKWh,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -394,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MinCurrent,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MaxCurrent,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -420,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MinPower,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -433,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Decimal? MaxPower,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? MinDurationSec,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -459,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? MaxDurationSec,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -474,7 +474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                             out HashSet<DayOfWeek> DayOfWeek,
                                             out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -487,7 +487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ReservationRestrictionTypes? Reservation,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -527,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            : null;
 
 
-                if (CustomTariffRestrictionsParser != null)
+                if (CustomTariffRestrictionsParser is not null)
                     TariffRestrictions = CustomTariffRestrictionsParser(JSON,
                                                                         TariffRestrictions);
 
@@ -649,7 +649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            var JSON2 = CustomTariffRestrictionsSerializer != null
+            var JSON2 = CustomTariffRestrictionsSerializer is not null
                             ? CustomTariffRestrictionsSerializer(this, JSON)
                             : JSON;
 

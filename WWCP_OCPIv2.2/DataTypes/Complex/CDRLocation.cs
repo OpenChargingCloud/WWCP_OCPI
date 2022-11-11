@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -167,44 +165,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static CDRLocation Parse(JObject                                   JSON,
-                                        CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
+        public static CDRLocation Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<CDRLocation>?  CustomCDRLocationParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CDRLocation  location,
-                         out String       ErrorResponse,
+                         out var location,
+                         out var errorResponse,
                          CustomCDRLocationParser))
             {
-                return location;
+                return location!;
             }
 
-            throw new ArgumentException("The given JSON representation of a location is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCDRLocationParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a charge detail record location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static CDRLocation Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CDRLocation  location,
-                         out String       ErrorResponse,
-                         CustomCDRLocationParser))
-            {
-                return location;
-            }
-
-            throw new ArgumentException("The given text representation of a location is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a cdr location is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -220,9 +194,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDRLocation">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject          JSON,
-                                       out CDRLocation  CDRLocation,
-                                       out String       ErrorResponse)
+        public static Boolean TryParse(JObject           JSON,
+                                       out CDRLocation?  CDRLocation,
+                                       out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out CDRLocation,
@@ -237,10 +211,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CDRLocation">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(JObject                                   JSON,
-                                       out CDRLocation                           CDRLocation,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out CDRLocation?                           CDRLocation,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRLocation>?  CustomCDRLocationParser   = null)
         {
 
             try
@@ -419,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                               PostalCode);
 
 
-                if (CustomCDRLocationParser != null)
+                if (CustomCDRLocationParser is not null)
                     CDRLocation = CustomCDRLocationParser(JSON,
                                                           CDRLocation);
 
@@ -428,43 +402,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                CDRLocation       = default;
-                ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out CDRLocation, out ErrorResponse, CDRLocationIdURL = null, CustomCDRLocationParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a charge detail record location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CDRLocation">The parsed location.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out CDRLocation                           CDRLocation,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CDRLocation,
-                                out ErrorResponse,
-                                CustomCDRLocationParser);
-
-            }
-            catch (Exception e)
-            {
-                CDRLocation      = null;
-                ErrorResponse  = "The given text representation of a location is invalid: " + e.Message;
+                CDRLocation    = default;
+                ErrorResponse  = "The given JSON representation of a cdr location is invalid: " + e.Message;
                 return false;
             }
 
@@ -512,7 +451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomCDRLocationSerializer != null
+            return CustomCDRLocationSerializer is not null
                        ? CustomCDRLocationSerializer(this, JSON)
                        : JSON;
 

@@ -226,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -242,7 +242,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -258,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                           Info);
 
 
-                if (CustomAuthorizationInfoParser != null)
+                if (CustomAuthorizationInfoParser is not null)
                     AuthorizationInfo = CustomAuthorizationInfoParser(JSON,
                                                                       AuthorizationInfo);
 
@@ -360,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomAuthorizationInfoSerializer != null
+            return CustomAuthorizationInfoSerializer is not null
                        ? CustomAuthorizationInfoSerializer(this, JSON)
                        : JSON;
 

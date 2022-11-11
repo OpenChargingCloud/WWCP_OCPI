@@ -224,7 +224,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                 PeriodEnd);
 
 
-                if (CustomRegularHoursParser != null)
+                if (CustomRegularHoursParser is not null)
                     RegularHours = CustomRegularHoursParser(JSON,
                                                             RegularHours);
 
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomRegularHoursSerializer != null
+            return CustomRegularHoursSerializer is not null
                        ? CustomRegularHoursSerializer(this, JSON)
                        : JSON;
 

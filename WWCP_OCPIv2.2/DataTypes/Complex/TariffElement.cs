@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                   TariffRestrictions);
 
 
-                if (CustomTariffElementParser != null)
+                if (CustomTariffElementParser is not null)
                     TariffElement = CustomTariffElementParser(JSON,
                                                               TariffElement);
 
@@ -372,7 +372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomTariffElementSerializer != null
+            return CustomTariffElementSerializer is not null
                        ? CustomTariffElementSerializer(this, JSON)
                        : JSON;
 

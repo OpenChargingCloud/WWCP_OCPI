@@ -474,7 +474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -502,7 +502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -530,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -581,7 +581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out Session_Id? SessionId,
                                              out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -620,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out AuthorizationReference? AuthorizationReference,
                                              out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -647,7 +647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out Meter_Id? MeterId,
                                              out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -661,7 +661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -675,7 +675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<TransparencySoftware> TransparencySoftwares,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -702,7 +702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<Tariff> Tariffs,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -729,7 +729,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out SignedData SignedData,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -756,7 +756,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalFixedCosts,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -782,7 +782,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalEnergyCost,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -808,7 +808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalTimeCost,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -821,7 +821,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Double? TotalParkingTimeHours,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -835,7 +835,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalParkingCost,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -849,7 +849,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Price? TotalReservationCost,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -869,7 +869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out InvoiceReference_Id? InvoiceReferenceId,
                                              out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -882,7 +882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Boolean? Credit,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -896,7 +896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                              out CreditReference_Id? CreditReferenceId,
                                              out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -950,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               LastUpdated);
 
 
-                if (CustomCDRParser != null)
+                if (CustomCDRParser is not null)
                     CDR = CustomCDRParser(JSON,
                                           CDR);
 
@@ -1147,7 +1147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                        );
 
-            return CustomCDRSerializer != null
+            return CustomCDRSerializer is not null
                        ? CustomCDRSerializer(this, JSON)
                        : JSON;
 

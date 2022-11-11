@@ -250,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 CancelReservationCommand = new CancelReservationCommand(ReservationId,
                                                                         ResponseURL);
 
-                if (CustomCancelReservationCommandParser != null)
+                if (CustomCancelReservationCommandParser is not null)
                     CancelReservationCommand = CustomCancelReservationCommandParser(JSON,
                                                                                     CancelReservationCommand);
 
@@ -317,7 +317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("response_url",    ResponseURL.  ToString())
                        );
 
-            return CustomCancelReservationCommandSerializer != null
+            return CustomCancelReservationCommandSerializer is not null
                        ? CustomCancelReservationCommandSerializer(this, JSON)
                        : JSON;
 
