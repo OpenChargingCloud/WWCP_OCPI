@@ -331,27 +331,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// HTTP method for creating a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_ReserveNow           = HTTPMethod.Create("ReserveNow");
+        public static readonly HTTPMethod HTTP_ReserveNow           = new HTTPMethod("ReserveNow");
 
         /// <summary>
         /// HTTP method for canceling a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_CancelReservation    = HTTPMethod.Create("CancelReservation");
+        public static readonly HTTPMethod HTTP_CancelReservation    = new HTTPMethod("CancelReservation");
 
         /// <summary>
         /// HTTP method for starting a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_StartSession         = HTTPMethod.Create("StartSession");
+        public static readonly HTTPMethod HTTP_StartSession         = new HTTPMethod("StartSession");
 
         /// <summary>
         /// HTTP method for stopping a charging reservation.
         /// </summary>
-        public static readonly HTTPMethod HTTP_StopSession          = HTTPMethod.Create("StopSession");
+        public static readonly HTTPMethod HTTP_StopSession          = new HTTPMethod("StopSession");
 
         /// <summary>
         /// HTTP method for unlocking a charging connector.
         /// </summary>
-        public static readonly HTTPMethod HTTP_UnlockConnector      = HTTPMethod.Create("UnlockConnector");
+        public static readonly HTTPMethod HTTP_UnlockConnector      = new HTTPMethod("UnlockConnector");
 
         #endregion
 
