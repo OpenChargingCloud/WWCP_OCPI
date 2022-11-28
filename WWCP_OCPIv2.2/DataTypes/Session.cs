@@ -338,13 +338,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="SessionIdURL">An optional session identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
-        public static Boolean TryParse(JObject                               JSON,
-                                       out Session                           Session,
-                                       out String                            ErrorResponse,
-                                       CountryCode?                          CountryCodeURL        = null,
-                                       Party_Id?                             PartyIdURL            = null,
-                                       Session_Id?                           SessionIdURL          = null,
-                                       CustomJObjectParserDelegate<Session>  CustomSessionParser   = null)
+        public static Boolean TryParse(JObject                                JSON,
+                                       out Session?                           Session,
+                                       out String?                            ErrorResponse,
+                                       CountryCode?                           CountryCodeURL        = null,
+                                       Party_Id?                              PartyIdURL            = null,
+                                       Session_Id?                            SessionIdURL          = null,
+                                       CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
 
             try
@@ -360,16 +360,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse CountryCode               [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -388,16 +386,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PartyIdURL                [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -416,16 +412,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                        [optional]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "session identification",
-                                             Session_Id.TryParse,
-                                             out Session_Id? SessionIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "session identification",
+                                       Session_Id.TryParse,
+                                       out Session_Id? SessionIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!SessionIdURL.HasValue && !SessionIdBody.HasValue)
@@ -506,11 +500,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse AuthorizationReference    [optional]
 
-                if (JSON.ParseOptionalStruct("authorization_reference",
-                                             "authorization reference",
-                                             OCPIv2_2.AuthorizationReference.TryParse,
-                                             out AuthorizationReference? AuthorizationReference,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("authorization_reference",
+                                       "authorization reference",
+                                       OCPIv2_2.AuthorizationReference.TryParse,
+                                       out AuthorizationReference? AuthorizationReference,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;

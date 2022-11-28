@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -83,13 +81,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Connector_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Connector_Id connectorId))
+            if (TryParse(Text, out var connectorId))
                 return connectorId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a connector identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a connector identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a connector identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -104,7 +100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Connector_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Connector_Id connectorId))
+            if (TryParse(Text, out var connectorId))
                 return connectorId;
 
             return null;

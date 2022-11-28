@@ -349,16 +349,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse UId                       [optional]
 
-                if (JSON.ParseOptionalStruct("uid",
-                                             "internal EVSE identification",
-                                             EVSE_UId.TryParse,
-                                             out EVSE_UId? EVSEUIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("uid",
+                                       "internal EVSE identification",
+                                       EVSE_UId.TryParse,
+                                       out EVSE_UId? EVSEUIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!EVSEUIdURL.HasValue && !EVSEUIdBody.HasValue)

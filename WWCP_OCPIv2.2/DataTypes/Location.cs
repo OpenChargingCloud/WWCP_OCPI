@@ -414,16 +414,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse CountryCode           [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -442,16 +440,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PartyIdURL            [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -470,16 +466,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                    [optional]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "location identification",
-                                             Location_Id.TryParse,
-                                             out Location_Id? LocationIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "location identification",
+                                       Location_Id.TryParse,
+                                       out Location_Id? LocationIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!LocationIdURL.HasValue && !LocationIdBody.HasValue)

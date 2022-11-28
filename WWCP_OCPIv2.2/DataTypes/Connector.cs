@@ -296,11 +296,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="ConnectorIdURL">An optional connector identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomConnectorParser">A delegate to parse custom connector JSON objects.</param>
-        public static Boolean TryParse(JObject                                 JSON,
-                                       out Connector                           Connector,
-                                       out String                              ErrorResponse,
-                                       Connector_Id?                           ConnectorIdURL          = null,
-                                       CustomJObjectParserDelegate<Connector>  CustomConnectorParser   = null)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       out Connector?                           Connector,
+                                       out String?                              ErrorResponse,
+                                       Connector_Id?                            ConnectorIdURL          = null,
+                                       CustomJObjectParserDelegate<Connector>?  CustomConnectorParser   = null)
         {
 
             try
@@ -316,11 +316,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                  [mandatory]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "connector identification",
-                                             Connector_Id.TryParse,
-                                             out Connector_Id? ConnectorIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "connector identification",
+                                       Connector_Id.TryParse,
+                                       out Connector_Id? ConnectorIdBody,
+                                       out ErrorResponse))
                 {
 
                     if (ErrorResponse is not null)

@@ -302,13 +302,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="TokenIdURL">An optional token identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
-        public static Boolean TryParse(JObject                             JSON,
-                                       out Token                           Token,
-                                       out String                          ErrorResponse,
-                                       CountryCode?                        CountryCodeURL      = null,
-                                       Party_Id?                           PartyIdURL          = null,
-                                       Token_Id?                           TokenIdURL          = null,
-                                       CustomJObjectParserDelegate<Token>  CustomTokenParser   = null)
+        public static Boolean TryParse(JObject                              JSON,
+                                       out Token?                           Token,
+                                       out String?                          ErrorResponse,
+                                       CountryCode?                         CountryCodeURL      = null,
+                                       Party_Id?                            PartyIdURL          = null,
+                                       Token_Id?                            TokenIdURL          = null,
+                                       CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
 
             try
@@ -324,16 +324,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse CountryCode           [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -352,16 +350,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PartyIdURL            [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -380,16 +376,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Id                    [optional]
 
-                if (JSON.ParseOptionalStruct("uid",
-                                             "token identification",
-                                             Token_Id.TryParse,
-                                             out Token_Id? TokenIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("uid",
+                                       "token identification",
+                                       Token_Id.TryParse,
+                                       out Token_Id? TokenIdBody,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!TokenIdURL.HasValue && !TokenIdBody.HasValue)

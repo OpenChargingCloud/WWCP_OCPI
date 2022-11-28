@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static CDR_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out CDR_Id cdrId))
+            if (TryParse(Text, out var cdrId))
                 return cdrId;
 
             if (Text.IsNullOrEmpty())
@@ -103,7 +103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static CDR_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out CDR_Id cdrId))
+            if (TryParse(Text, out var cdrId))
                 return cdrId;
 
             return null;
