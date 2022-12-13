@@ -413,13 +413,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          HTTPServer                    HTTPServer,
                          HTTPHostname?                 HTTPHostname              = null,
-                         String                        ExternalDNSName           = null,
+                         String?                       ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
                          String                        HTTPServiceName           = DefaultHTTPServerName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
+                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
 
@@ -465,7 +465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.OurVersionsURL           = OurVersionsURL;
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
+            this.OurCredentialRoles       = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
@@ -623,9 +623,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          });
 
             #endregion
-
-
-
 
             #endregion
 

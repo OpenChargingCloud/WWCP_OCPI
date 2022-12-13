@@ -25,8 +25,8 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using social.OpenData.UsersAPI;
 
-using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 using cloud.charging.open.protocols.WWCP;
+using cloud.charging.open.protocols.OCPIv2_2.HTTP;
 
 #endregion
 
@@ -139,18 +139,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <param name="RemotePartyId">The parsed unique defibrillator identification.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when defibrillator identification was found; false else.</returns>
-        public static Boolean ParseRemotePartyId(this HTTPRequest          HTTPRequest,
-                                                 OCPIWebAPI                OCPIWebAPI,
-                                                 out RemoteParty_Id?       RemotePartyId,
-                                                 out HTTPResponse.Builder  HTTPResponse)
+        public static Boolean ParseRemotePartyId(this HTTPRequest           HTTPRequest,
+                                                 OCPIWebAPI                 OCPIWebAPI,
+                                                 out RemoteParty_Id?        RemotePartyId,
+                                                 out HTTPResponse.Builder?  HTTPResponse)
         {
 
             #region Initial checks
 
-            if (HTTPRequest == null)
+            if (HTTPRequest is null)
                 throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (OCPIWebAPI  == null)
+            if (OCPIWebAPI  is null)
                 throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
 
             #endregion
@@ -209,19 +209,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <param name="RemoteParty">The resolved defibrillator.</param>
         /// <param name="HTTPResponse">A HTTP error response.</param>
         /// <returns>True, when defibrillator identification was found; false else.</returns>
-        public static Boolean ParseRemoteParty(this HTTPRequest          HTTPRequest,
-                                               OCPIWebAPI                OCPIWebAPI,
-                                               out RemoteParty_Id?       RemotePartyId,
-                                               out RemoteParty           RemoteParty,
-                                               out HTTPResponse.Builder  HTTPResponse)
+        public static Boolean ParseRemoteParty(this HTTPRequest           HTTPRequest,
+                                               OCPIWebAPI                 OCPIWebAPI,
+                                               out RemoteParty_Id?        RemotePartyId,
+                                               out RemoteParty?           RemoteParty,
+                                               out HTTPResponse.Builder?  HTTPResponse)
         {
 
             #region Initial checks
 
-            if (HTTPRequest == null)
+            if (HTTPRequest is null)
                 throw new ArgumentNullException(nameof(HTTPRequest),  "The given HTTP request must not be null!");
 
-            if (OCPIWebAPI  == null)
+            if (OCPIWebAPI  is null)
                 throw new ArgumentNullException(nameof(OCPIWebAPI),   "The given OCPI WebAPI must not be null!");
 
             #endregion
@@ -280,7 +280,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         }
 
         #endregion
-
 
     }
 
@@ -360,32 +359,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <summary>
         /// The HTTP URI prefix.
         /// </summary>
-        public HTTPPath?                                    URLPathPrefix1      { get; }
+        public HTTPPath?                                    URLPathPrefix1     { get; }
 
         /// <summary>
         /// The HTTP realm, if HTTP Basic Authentication is used.
         /// </summary>
-        public String                                       HTTPRealm           { get; }
+        public String                                       HTTPRealm          { get; }
 
         /// <summary>
         /// An enumeration of logins for an optional HTTP Basic Authentication.
         /// </summary>
-        public IEnumerable<KeyValuePair<String, String>>    HTTPLogins          { get; }
+        public IEnumerable<KeyValuePair<String, String>>    HTTPLogins         { get; }
 
 
         /// <summary>
         /// Send debug information via HTTP Server Sent Events.
         /// </summary>
-        public HTTPEventSource<JObject>                     DebugLog            { get; }
+        public HTTPEventSource<JObject>                     DebugLog           { get; }
 
 
-        /// <summary>
-        /// The DNS client to use.
-        /// </summary>
-        public DNSClient                                    DNSClient           { get; }
-
-
-        public CommonAPI                                    CommonAPI          { get; set; }
+        public CommonAPI                                    CommonAPI          { get; }
 
         public CommonAPILogger                              CommonAPILogger    { get; set; }
 
@@ -400,9 +393,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         public EMSPAPILogger                                EMSPAPILogger      { get; set; }
 
 
-        public List<CPOClient>                              CPOClients         { get; }
+        private readonly List<CPOClient>  cpoClients;
 
-        public List<EMSPClient>                             EMSPClients        { get; }
+        public IEnumerable<CPOClient>                       CPOClients
+            => cpoClients;
+
+
+        private readonly List<EMSPClient> emspClients;
+        public IEnumerable<EMSPClient>                      EMSPClients
+            => emspClients;
 
         #endregion
 
@@ -438,13 +437,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
         /// <param name="URLPathPrefix">An optional prefix for the HTTP URIs.</param>
         /// <param name="HTTPRealm">The HTTP realm, if HTTP Basic Authentication is used.</param>
         /// <param name="HTTPLogins">An enumeration of logins for an optional HTTP Basic Authentication.</param>
-        public OCPIWebAPI(HTTPServer                                 HTTPServer,
-                          HTTPPath?                                  URLPathPrefix1   = null,
-                          HTTPPath?                                  URLPathPrefix    = null,
-                          HTTPPath?                                  BasePath         = null,
-                          String                                     HTTPRealm        = DefaultHTTPRealm,
-                          IEnumerable<KeyValuePair<String, String>>  HTTPLogins       = null,
-                          String                                     HTMLTemplate     = null)
+        public OCPIWebAPI(HTTPServer                                  HTTPServer,
+
+                          CommonAPI                                   CommonAPI,
+
+                          HTTPPath?                                   URLPathPrefix1   = null,
+                          HTTPPath?                                   URLPathPrefix    = null,
+                          HTTPPath?                                   BasePath         = null,
+                          String                                      HTTPRealm        = DefaultHTTPRealm,
+                          IEnumerable<KeyValuePair<String, String>>?  HTTPLogins       = null,
+                          String?                                     HTMLTemplate     = null)
 
             : base(HTTPServer,
                    null,
@@ -474,13 +476,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         {
 
+            this.CommonAPI           = CommonAPI;
+
             this.URLPathPrefix1      = URLPathPrefix1;
             this.HTTPRealm           = HTTPRealm.IsNotNullOrEmpty() ? HTTPRealm : DefaultHTTPRealm;
-            this.HTTPLogins          = HTTPLogins    ?? new KeyValuePair<String, String>[0];
-            this.DNSClient           = HTTPServer.DNSClient;
+            this.HTTPLogins          = HTTPLogins    ?? Array.Empty<KeyValuePair<String, String>>();
 
-            this.CPOClients          = new List<CPOClient>();
-            this.EMSPClients         = new List<EMSPClient>();
+            this.cpoClients          = new List<CPOClient>();
+            this.emspClients         = new List<EMSPClient>();
 
             // Link HTTP events...
             HTTPServer.RequestLog   += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -3038,23 +3041,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region GetEMSPClient(CountryCode, PartyId, Role = Roles.CPO, AccessTokenBase64Encoding = true)
 
-        public EMSPClient GetEMSPClient(CountryCode  CountryCode,
-                                        Party_Id     PartyId,
-                                        Roles        Role                        = Roles.CPO,
-                                        Boolean      AccessTokenBase64Encoding   = true)
+        public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
+                                         Party_Id     PartyId,
+                                         Roles        Role                        = Roles.CPO,
+                                         Boolean      AccessTokenBase64Encoding   = true)
         {
 
-            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                                     remoteParty.PartyId     == PartyId     &&
-                                                                                     remoteParty.Role        == Role);
+            var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                                    remoteparty.PartyId     == PartyId     &&
+                                                                                    remoteparty.Role        == Role);
 
-            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
-                return EMSPClients.AddAndReturnElement(
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
                     new EMSPClient(//CountryCode,
                                    //PartyId,
                                    //Role,
-                                   _remoteParty.RemoteAccessInfos.First().VersionsURL,
-                                   _remoteParty.RemoteAccessInfos.First().AccessToken,
+                                   remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                   remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
                                    AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
@@ -3067,21 +3070,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region GetEMSPClient(RemotePartyd, AccessTokenBase64Encoding = true)
 
-        public EMSPClient GetEMSPClient(RemoteParty  RemoteParty,
-                                        Boolean      AccessTokenBase64Encoding = true)
+        public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
+                                         Boolean      AccessTokenBase64Encoding = true)
         {
 
-            if (RemoteParty == null)
+            if (RemoteParty is null)
                 return null;
 
-            var _EMSPClient = EMSPClients.FirstOrDefault(EMSPClient => EMSPClient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                       EMSPClient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
+            var emspClient = EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == RemoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                      emspclient.AccessToken       == RemoteParty.RemoteAccessInfos.First().AccessToken);
 
-            if (_EMSPClient != null)
-                return _EMSPClient;
+            if (emspClient is not null)
+                return emspClient;
 
             if (RemoteParty.RemoteAccessInfos?.Any() == true)
-                return EMSPClients.AddAndReturnElement(
+                return emspClients.AddAndReturnElement(
                     new EMSPClient(RemoteParty.RemoteAccessInfos.First().VersionsURL,
                                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
@@ -3096,24 +3099,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region GetEMSPClient(RemotePartyId, AccessTokenBase64Encoding = true)
 
-        public EMSPClient GetEMSPClient(RemoteParty_Id  RemotePartyId,
-                                        Boolean         AccessTokenBase64Encoding = true)
+        public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
+                                         Boolean         AccessTokenBase64Encoding = true)
         {
 
-            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == RemotePartyId.CountryCode &&
-                                                                                     remoteParty.PartyId     == RemotePartyId.PartyId     &&
-                                                                                     remoteParty.Role        == RemotePartyId.Role);
+            var remoteParty  = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
+                                                                                     remoteparty.PartyId     == RemotePartyId.PartyId     &&
+                                                                                     remoteparty.Role        == RemotePartyId.Role);
 
-            var _EMSPClient = EMSPClients.FirstOrDefault(EMSPClient => EMSPClient.RemoteVersionsURL == _remoteParty.RemoteAccessInfos.First().VersionsURL &&
-                                                                       EMSPClient.AccessToken       == _remoteParty.RemoteAccessInfos.First().AccessToken);
+            var emspClient   = remoteParty is not null
+                                   ? EMSPClients.FirstOrDefault(emspclient => emspclient.RemoteVersionsURL == remoteParty.RemoteAccessInfos.First().VersionsURL &&
+                                                                              emspclient.AccessToken       == remoteParty.RemoteAccessInfos.First().AccessToken)
+                                   : null;
 
-            if (_EMSPClient != null)
-                return _EMSPClient;
+            if (emspClient is not null)
+                return emspClient;
 
-            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
-                return EMSPClients.AddAndReturnElement(
-                    new EMSPClient(_remoteParty.RemoteAccessInfos.First().VersionsURL,
-                                   _remoteParty.RemoteAccessInfos.First().AccessToken,
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return emspClients.AddAndReturnElement(
+                    new EMSPClient(remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                   remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
                                    AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
@@ -3127,23 +3132,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
         #region GetCPOClient (CountryCode, PartyId, Role = Roles.EMSP)
 
-        public CPOClient GetCPOClient(CountryCode  CountryCode,
-                                      Party_Id     PartyId,
-                                      Roles        Role                        = Roles.EMSP,
-                                      Boolean      AccessTokenBase64Encoding   = true)
+        public CPOClient? GetCPOClient(CountryCode  CountryCode,
+                                       Party_Id     PartyId,
+                                       Roles        Role                        = Roles.EMSP,
+                                       Boolean      AccessTokenBase64Encoding   = true)
         {
 
-            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                                     remoteParty.PartyId     == PartyId     &&
-                                                                                     remoteParty.Role        == Role);
+            var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                                    remoteparty.PartyId     == PartyId     &&
+                                                                                    remoteparty.Role        == Role);
 
-            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
-                return CPOClients.AddAndReturnElement(
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
+                return cpoClients.AddAndReturnElement(
                     new CPOClient(//CountryCode,
                                   //PartyId,
                                   //Role,
-                                  _remoteParty.RemoteAccessInfos.First().VersionsURL,
-                                  _remoteParty.RemoteAccessInfos.First().AccessToken,
+                                  remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                  remoteParty.RemoteAccessInfos.First().AccessToken,
                                   CommonAPI,
                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));

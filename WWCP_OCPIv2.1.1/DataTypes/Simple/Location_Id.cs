@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -29,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     /// <summary>
     /// The unique identification of a charging location.
     /// </summary>
-    public struct Location_Id : IId<Location_Id>
+    public readonly struct Location_Id : IId<Location_Id>
     {
 
         #region Data

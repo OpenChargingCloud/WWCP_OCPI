@@ -163,13 +163,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 #region Initial checks
 
                 if (LogEventName.IsNullOrEmpty())
-                    throw new ArgumentNullException(nameof(LogEventName),                 "The given log event name must not be null or empty!");
+                    throw new ArgumentNullException(nameof(LogEventName),                  "The given log event name must not be null or empty!");
 
-                if (SubscribeToEventDelegate == null)
-                    throw new ArgumentNullException(nameof(SubscribeToEventDelegate),     "The given delegate for subscribing to the linked HTTP API event must not be null!");
+                if (SubscribeToEventDelegate     is null)
+                    throw new ArgumentNullException(nameof(SubscribeToEventDelegate),      "The given delegate for subscribing to the linked HTTP API event must not be null!");
 
-                if (UnsubscribeFromEventDelegate == null)
-                    throw new ArgumentNullException(nameof(UnsubscribeFromEventDelegate), "The given delegate for unsubscribing from the linked HTTP API event must not be null!");
+                if (UnsubscribeFromEventDelegate is null)
+                    throw new ArgumentNullException(nameof(UnsubscribeFromEventDelegate),  "The given delegate for unsubscribing from the linked HTTP API event must not be null!");
 
                 #endregion
 
@@ -1015,30 +1015,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LogHTTPError_toHTTPSSE">A delegate to log HTTP errors to a HTTP server sent events source.</param>
         /// 
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
-        public OCPIAPILogger(IHTTPServer                 HTTPServer,
-                             String                      Context,
+        public OCPIAPILogger(IHTTPServer                  HTTPServer,
+                             String                       LoggingPath,
+                             String                       Context,
 
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toConsole,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toConsole,
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toDisc,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toDisc,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toConsole,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toConsole,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toDisc,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toDisc,
 
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toNetwork    = null,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toNetwork   = null,
-                             OCPIRequestLoggerDelegate   LogHTTPRequest_toHTTPSSE    = null,
-                             OCPIResponseLoggerDelegate  LogHTTPResponse_toHTTPSSE   = null,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toNetwork    = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toNetwork   = null,
+                             OCPIRequestLoggerDelegate?   LogHTTPRequest_toHTTPSSE    = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPResponse_toHTTPSSE   = null,
 
-                             OCPIResponseLoggerDelegate  LogHTTPError_toConsole      = null,
-                             OCPIResponseLoggerDelegate  LogHTTPError_toDisc         = null,
-                             OCPIResponseLoggerDelegate  LogHTTPError_toNetwork      = null,
-                             OCPIResponseLoggerDelegate  LogHTTPError_toHTTPSSE      = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toConsole      = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toDisc         = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toNetwork      = null,
+                             OCPIResponseLoggerDelegate?  LogHTTPError_toHTTPSSE      = null,
 
-                             LogfileCreatorDelegate      LogfileCreator              = null)
+                             LogfileCreatorDelegate?      LogfileCreator              = null)
 
         {
 
             this.HTTPServer        = HTTPServer ?? throw new ArgumentNullException(nameof(HTTPServer), "The given HTTP API must not be null!");
-
+            this.LoggingPath       = LoggingPath ?? AppContext.BaseDirectory;
             this._RequestLoggers   = new ConcurrentDictionary<String, OCPIAPIRequestLogger>();
             this._ResponseLoggers  = new ConcurrentDictionary<String, OCPIAPIResponseLogger>();
 

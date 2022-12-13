@@ -17,17 +17,10 @@
 
 #region Usings
 
-using System;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Linq;
-using System.Threading.Tasks;
 
 #endregion
 
@@ -65,19 +58,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseLogger">A OCPI response logger.</param>
         /// <param name="DefaultErrorHandler">The default error handler.</param>
         /// <param name="OCPIRequestHandler">The method to call.</param>
-        public static void AddOCPIMethod(this CommonAPI          CommonAPI,
-                                         HTTPHostname            Hostname,
-                                         HTTPMethod              HTTPMethod,
-                                         HTTPPath                URLTemplate,
-                                         HTTPContentType         HTTPContentType             = null,
-                                         HTTPAuthentication      URLAuthentication           = null,
-                                         HTTPAuthentication      HTTPMethodAuthentication    = null,
-                                         HTTPAuthentication      ContentTypeAuthentication   = null,
-                                         OCPIRequestLogHandler   OCPIRequestLogger           = null,
-                                         OCPIResponseLogHandler  OCPIResponseLogger          = null,
-                                         HTTPDelegate            DefaultErrorHandler         = null,
-                                         OCPIRequestDelegate     OCPIRequestHandler          = null,
-                                         URLReplacement          AllowReplacement            = URLReplacement.Fail)
+        public static void AddOCPIMethod(this CommonAPI           CommonAPI,
+                                         HTTPHostname             Hostname,
+                                         HTTPMethod               HTTPMethod,
+                                         HTTPPath                 URLTemplate,
+                                         HTTPContentType?         HTTPContentType             = null,
+                                         HTTPAuthentication?      URLAuthentication           = null,
+                                         HTTPAuthentication?      HTTPMethodAuthentication    = null,
+                                         HTTPAuthentication?      ContentTypeAuthentication   = null,
+                                         OCPIRequestLogHandler?   OCPIRequestLogger           = null,
+                                         OCPIResponseLogHandler?  OCPIResponseLogger          = null,
+                                         HTTPDelegate?            DefaultErrorHandler         = null,
+                                         OCPIRequestDelegate?     OCPIRequestHandler          = null,
+                                         URLReplacement           AllowReplacement            = URLReplacement.Fail)
 
         {
 
@@ -115,7 +108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                            OCPIResponseBuilder.StatusCode ?? 3000,
                                                                                                            OCPIResponseBuilder.StatusMessage,
                                                                                                            OCPIResponseBuilder.AdditionalInformation,
-                                                                                                           OCPIResponseBuilder.Timestamp  ?? DateTime.UtcNow,
+                                                                                                           OCPIResponseBuilder.Timestamp  ?? Timestamp.Now,
                                                                                                            httpResponseBuilder.AsImmutable);
 
                                                 return httpResponseBuilder;
@@ -136,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               2000,
                                                                               e.Message,
                                                                               null,
-                                                                              DateTime.UtcNow,
+                                                                              Timestamp.Now,
                                                                               null,
                                                                               (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
                                                                               (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId
@@ -355,12 +348,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public Boolean TryParseJObjectRequestBody(out JObject               JSON,
                                                   out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                  Boolean                   AllowEmptyHTTPBody = false,
-                                                  String                    JSONLDContext      = null)
+                                                  Boolean                   AllowEmptyHTTPBody   = false,
+                                                  String?                   JSONLDContext        = null)
         {
 
             var result = HTTPRequest.TryParseJObjectRequestBody(out JSON,
-                                                                out HTTPResponse.Builder HTTPResponseBuilder,
+                                                                out var HTTPResponseBuilder,
                                                                 AllowEmptyHTTPBody,
                                                                 JSONLDContext);
 
@@ -382,12 +375,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public Boolean TryParseJArrayRequestBody(out JArray               JSON,
                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                 Boolean                   AllowEmptyHTTPBody = false,
-                                                 String                    JSONLDContext      = null)
+                                                 Boolean                   AllowEmptyHTTPBody   = false,
+                                                 String?                   JSONLDContext        = null)
         {
 
             var result = HTTPRequest.TryParseJArrayRequestBody(out JSON,
-                                                               out HTTPResponse.Builder HTTPResponseBuilder,
+                                                               out var HTTPResponseBuilder,
                                                                AllowEmptyHTTPBody,
                                                                JSONLDContext);
 
