@@ -210,7 +210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               Text);
 
 
-                if (CustomDisplayTextParser != null)
+                if (CustomDisplayTextParser is not null)
                     DisplayText = CustomDisplayTextParser(JSON,
                                                           DisplayText);
 
@@ -277,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("text",      Text)
                        );
 
-            return CustomDisplayTextSerializer != null
+            return CustomDisplayTextSerializer is not null
                        ? CustomDisplayTextSerializer(this, JSON)
                        : JSON;
 

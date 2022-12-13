@@ -273,9 +273,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TariffRestrictions">The parsed tariff restrictions.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                 JSON,
-                                       out TariffRestrictions  TariffRestrictions,
-                                       out String              ErrorResponse)
+        public static Boolean TryParse(JObject                  JSON,
+                                       out TariffRestrictions?  TariffRestrictions,
+                                       out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out TariffRestrictions,
@@ -290,10 +290,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TariffRestrictions">The parsed tariff restrictions.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTariffRestrictionsParser">A delegate to parse custom tariff restrictions JSON objects.</param>
-        public static Boolean TryParse(JObject                                          JSON,
-                                       out TariffRestrictions                           TariffRestrictions,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<TariffRestrictions>  CustomTariffRestrictionsParser   = null)
+        public static Boolean TryParse(JObject                                           JSON,
+                                       out TariffRestrictions?                           TariffRestrictions,
+                                       out String?                                       ErrorResponse,
+                                       CustomJObjectParserDelegate<TariffRestrictions>?  CustomTariffRestrictionsParser   = null)
         {
 
             try
@@ -315,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Time? StartTime,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -329,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Time? EndTime,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -342,7 +342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out DateTime? StartDate,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out DateTime? EndDate,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -368,7 +368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? MinKWh,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -381,7 +381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? MaxKWh,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -394,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? MinCurrent,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? MaxCurrent,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -420,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? MinPower,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -433,7 +433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? MaxPower,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -446,7 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Double? MinDurationSec,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -459,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Double? MaxDurationSec,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -471,10 +471,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalEnums("day_of_week",
                                             "day of week",
-                                            out IEnumerable<DayOfWeek> DayOfWeek,
+                                            out HashSet<DayOfWeek> DayOfWeek,
                                             out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -487,7 +487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ReservationRestrictionTypes? Reservation,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -527,7 +527,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            : null;
 
 
-                if (CustomTariffRestrictionsParser != null)
+                if (CustomTariffRestrictionsParser is not null)
                     TariffRestrictions = CustomTariffRestrictionsParser(JSON,
                                                                         TariffRestrictions);
 
@@ -649,7 +649,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            var JSON2 = CustomTariffRestrictionsSerializer != null
+            var JSON2 = CustomTariffRestrictionsSerializer is not null
                             ? CustomTariffRestrictionsSerializer(this, JSON)
                             : JSON;
 

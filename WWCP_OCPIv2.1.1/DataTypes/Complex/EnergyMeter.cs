@@ -256,7 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out PublicKey? PublicKey,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -277,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               PublicKey,
                                               PublicKeyCertificate);
 
-                if (CustomEnergyMeterParser != null)
+                if (CustomEnergyMeterParser is not null)
                     EnergyMeter = CustomEnergyMeterParser(JSON,
                                                           EnergyMeter);
 
@@ -369,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomEnergyMeterSerializer != null
+            return CustomEnergyMeterSerializer is not null
                        ? CustomEnergyMeterSerializer(this, JSON)
                        : JSON;
 

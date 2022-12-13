@@ -572,10 +572,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<PublishTokenType> PublishTokenTypes,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -606,10 +604,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<AdditionalGeoLocation> RelatedLocations,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -621,10 +617,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out ParkingTypes? ParkingType,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -637,10 +631,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<EVSE> EVSEs,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -653,10 +645,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<DisplayText> Directions,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -669,10 +659,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out BusinessDetails Operator,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -685,10 +673,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out BusinessDetails Suboperator,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -701,26 +687,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out BusinessDetails Owner,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
                 #region Parse Facilities            [optional]
 
-                if (JSON.ParseOptionalStruct("facilities",
-                                             "facilities",
-                                             OCPIv2_2.Facilities.TryParse,
-                                             out IEnumerable<Facilities> Facilities,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("facilities",
+                                       "facilities",
+                                       OCPIv2_2.Facilities.TryParse,
+                                       out IEnumerable<Facilities> Facilities,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -733,10 +715,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out Hours OpeningTimes,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -748,10 +728,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out Boolean? ChargingWhenClosed,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -764,10 +742,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<Image> Images,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -780,10 +756,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out EnergyMix EnergyMix,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion

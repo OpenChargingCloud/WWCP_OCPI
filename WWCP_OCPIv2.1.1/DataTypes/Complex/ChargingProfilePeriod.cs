@@ -243,7 +243,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 ChargingProfilePeriod = new ChargingProfilePeriod(StartPeriod,
                                                                   Limit);
 
-                if (CustomChargingProfilePeriodParser != null)
+                if (CustomChargingProfilePeriodParser is not null)
                     ChargingProfilePeriod = CustomChargingProfilePeriodParser(JSON,
                                                                               ChargingProfilePeriod);
 
@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("Limit",         Math.Round(Limit, 1))
                        );
 
-            return CustomChargingProfilePeriodSerializer != null
+            return CustomChargingProfilePeriodSerializer is not null
                        ? CustomChargingProfilePeriodSerializer(this, JSON)
                        : JSON;
 

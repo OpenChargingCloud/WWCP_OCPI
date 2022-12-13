@@ -17,15 +17,8 @@
 
 #region Usings
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Security.Authentication;
 
 using Newtonsoft.Json.Linq;
 
@@ -33,11 +26,6 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
-
-//using social.OpenData.UsersAPI;
-using System.Threading;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 
 #endregion
 
@@ -130,7 +118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event sent whenever a post credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPostCredentialsRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPostCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a post credentials request was received.
@@ -153,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event sent whenever a post credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPostCredentialsResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPostCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a post credentials response was sent.
@@ -180,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event sent whenever a put credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnPutCredentialsRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnPutCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a put credentials request was received.
@@ -203,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event sent whenever a put credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnPutCredentialsResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnPutCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a put credentials response was sent.
@@ -230,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event sent whenever a delete credentials request was received.
         /// </summary>
-        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new OCPIRequestLogEvent();
+        public OCPIRequestLogEvent OnDeleteCredentialsRequest = new ();
 
         /// <summary>
         /// An event sent whenever a delete credentials request was received.
@@ -253,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event sent whenever a delete credentials response was sent.
         /// </summary>
-        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new OCPIResponseLogEvent();
+        public OCPIResponseLogEvent OnDeleteCredentialsResponse = new ();
 
         /// <summary>
         /// An event sent whenever a delete credentials response was sent.
@@ -304,14 +292,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          HTTPHostname?                 HTTPHostname              = null,
                          IPPort?                       HTTPServerPort            = null,
                          String                        HTTPServerName            = DefaultHTTPServerName,
-                         String                        ExternalDNSName           = null,
+                         String?                       ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
                          String                        HTTPServiceName           = DefaultHTTPServiceName,
-                         DNSClient                     DNSClient                 = null,
+                         DNSClient?                    DNSClient                 = null,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
+                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
 
@@ -332,14 +320,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    null, // ClientCertificateValidator,
                    null, // ClientCertificateSelector,
                    null, // AllowedTLSProtocols,
+                   null, // ClientCertificateRequired,
+                   null, // CheckCertificateRevocation,
 
                    null, // ServerThreadName,
                    null, // ServerThreadPriority,
                    null, // ServerThreadIsBackground,
+
                    null, // ConnectionIdBuilder,
-                   null, // ConnectionThreadsNameBuilder,
-                   null, // ConnectionThreadsPriorityBuilder,
-                   null, // ConnectionThreadsAreBackground,
                    null, // ConnectionTimeout,
                    null, // MaxClientConnections,
 
@@ -367,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.OurVersionsURL           = OurVersionsURL;
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
+            this.OurCredentialRoles       = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
@@ -410,13 +398,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                          HTTPServer                    HTTPServer,
                          HTTPHostname?                 HTTPHostname              = null,
-                         String                        ExternalDNSName           = null,
+                         String?                       ExternalDNSName           = null,
                          HTTPPath?                     URLPathPrefix             = null,
                          HTTPPath?                     BasePath                  = null,
                          String                        HTTPServiceName           = DefaultHTTPServerName,
 
                          HTTPPath?                     AdditionalURLPathPrefix   = null,
-                         Func<EVSE, Boolean>           KeepRemovedEVSEs          = null,
+                         Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
 
@@ -455,7 +443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.OurVersionsURL           = OurVersionsURL;
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct();
+            this.OurCredentialRoles       = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
@@ -546,7 +534,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = DefaultHTTPServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      Allow                      = new List<HTTPMethod> {
@@ -601,7 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = DefaultHTTPServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      AccessControlAllowHeaders  = "Authorization",
@@ -2135,12 +2123,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public delegate Task OnLocationAddedDelegate(Location Location);
 
-        public event OnLocationAddedDelegate OnLocationAdded;
+        public event OnLocationAddedDelegate? OnLocationAdded;
 
 
         public delegate Task OnLocationChangedDelegate(Location Location);
 
-        public event OnLocationChangedDelegate OnLocationChanged;
+        public event OnLocationChangedDelegate? OnLocationChanged;
 
 
         #region AddLocation           (Location, SkipNotifications = false)
@@ -2510,21 +2498,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public delegate Task OnEVSEAddedDelegate(EVSE EVSE);
 
-        public event OnEVSEAddedDelegate OnEVSEAdded;
+        public event OnEVSEAddedDelegate? OnEVSEAdded;
 
 
         public delegate Task OnEVSEChangedDelegate(EVSE EVSE);
 
-        public event OnEVSEChangedDelegate OnEVSEChanged;
+        public event OnEVSEChangedDelegate? OnEVSEChanged;
 
         public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusTypes NewEVSEStatus);
 
-        public event OnEVSEStatusChangedDelegate OnEVSEStatusChanged;
+        public event OnEVSEStatusChangedDelegate? OnEVSEStatusChanged;
 
 
         public delegate Task OnEVSERemovedDelegate(EVSE EVSE);
 
-        public event OnEVSERemovedDelegate OnEVSERemoved;
+        public event OnEVSERemovedDelegate? OnEVSERemoved;
 
 
         #region AddOrUpdateEVSE       (Location, newOrUpdatedEVSE, AllowDowngrades = false)
@@ -3154,12 +3142,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
 
-        public event OnTariffAddedDelegate OnTariffAdded;
+        public event OnTariffAddedDelegate? OnTariffAdded;
 
 
         public delegate Task OnTariffChangedDelegate(Tariff Tariff);
 
-        public event OnTariffChangedDelegate OnTariffChanged;
+        public event OnTariffChangedDelegate? OnTariffChanged;
 
 
         #region AddTariff           (Tariff)
@@ -3694,11 +3682,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public delegate Task OnSessionCreatedDelegate(Session Session);
 
-        public event OnSessionCreatedDelegate OnSessionCreated;
+        public event OnSessionCreatedDelegate? OnSessionCreated;
 
         public delegate Task OnSessionChangedDelegate(Session Session);
 
-        public event OnSessionChangedDelegate OnSessionChanged;
+        public event OnSessionChangedDelegate? OnSessionChanged;
 
 
         #region AddSession           (Session)
@@ -4232,19 +4220,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public delegate Task OnTokenAddedDelegate(Token Token);
 
-        public event OnTokenAddedDelegate OnTokenAdded;
+        public event OnTokenAddedDelegate? OnTokenAdded;
 
 
         public delegate Task OnTokenChangedDelegate(Token Token);
 
-        public event OnTokenChangedDelegate OnTokenChanged;
+        public event OnTokenChangedDelegate? OnTokenChanged;
 
 
         public delegate Task<TokenStatus> OnVerifyTokenDelegate(CountryCode  CountryCode,
                                                                 Party_Id     PartyId,
                                                                 Token_Id     TokenId);
 
-        public event OnVerifyTokenDelegate OnVerifyToken;
+        public event OnVerifyTokenDelegate? OnVerifyToken;
 
 
         #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
@@ -4799,12 +4787,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
 
-        public event OnChargeDetailRecordAddedDelegate OnChargeDetailRecordAdded;
+        public event OnChargeDetailRecordAddedDelegate? OnChargeDetailRecordAdded;
 
 
         public delegate Task OnChargeDetailRecordChangedDelegate(CDR CDR);
 
-        public event OnChargeDetailRecordChangedDelegate OnChargeDetailRecordChanged;
+        public event OnChargeDetailRecordChangedDelegate? OnChargeDetailRecordChanged;
 
 
         #region AddCDR           (CDR)
@@ -5312,7 +5300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 HTTPServer.Shutdown(Message, Wait);
 
-                //SendCompleted(this, DateTime.UtcNow, Message);
+                //SendCompleted(this, Timestamp.Now, Message);
 
             }
 

@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -83,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Length">The expected length of the access token.</param>
         public static AccessToken Random(Byte Length = 50)
 
-            => new AccessToken(random.RandomString(Length));
+            => new AccessToken(RandomExtensions.RandomString(Length));
 
         #endregion
 

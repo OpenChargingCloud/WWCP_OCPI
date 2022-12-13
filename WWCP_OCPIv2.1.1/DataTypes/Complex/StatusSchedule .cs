@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -219,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                     End);
 
 
-                if (CustomStatusScheduleParser != null)
+                if (CustomStatusScheduleParser is not null)
                     StatusSchedule = CustomStatusScheduleParser(JSON,
                                                                 StatusSchedule);
 
@@ -293,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomStatusScheduleSerializer != null
+            return CustomStatusScheduleSerializer is not null
                        ? CustomStatusScheduleSerializer(this, JSON)
                        : JSON;
 

@@ -324,16 +324,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse CountryCode           [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -352,16 +350,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse PartyIdURL            [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -380,16 +376,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Id                    [optional]
 
-                if (JSON.ParseOptionalStruct("uid",
-                                             "token identification",
-                                             Token_Id.TryParse,
-                                             out Token_Id? TokenIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("uid",
+                                       "token identification",
+                                       Token_Id.TryParse,
+                                       out Token_Id? TokenIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!TokenIdURL.HasValue && !TokenIdBody.HasValue)
@@ -458,7 +452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -497,7 +491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -512,7 +506,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -528,7 +522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -564,7 +558,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                   LastUpdated);
 
 
-                if (CustomTokenParser != null)
+                if (CustomTokenParser is not null)
                     Token = CustomTokenParser(JSON,
                                               Token);
 
@@ -672,7 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomTokenSerializer != null
+            return CustomTokenSerializer is not null
                        ? CustomTokenSerializer(this, JSON)
                        : JSON;
 
@@ -759,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (TokenPatch["last_updated"] is null)
-                    TokenPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    TokenPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         TokenPatch["last_updated"].Type == JTokenType.Date &&

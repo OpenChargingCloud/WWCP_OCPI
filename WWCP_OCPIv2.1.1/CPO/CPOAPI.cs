@@ -2236,7 +2236,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
             //                                     Server          = DefaultHTTPServerName,
-            //                                     Date            = DateTime.UtcNow,
+            //                                     Date            = Timestamp.Now,
             //                                     ContentType     = HTTPContentType.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
             //                                     Connection      = "close"
@@ -3539,7 +3539,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                       //LastModified               = Timestamp.Now.ToIso8601()
                                                    }
                                                };
 

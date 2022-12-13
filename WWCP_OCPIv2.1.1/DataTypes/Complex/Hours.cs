@@ -258,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -290,7 +290,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                   ExceptionalClosings);
 
 
-                if (CustomHoursParser != null)
+                if (CustomHoursParser is not null)
                     Hours = CustomHoursParser(JSON,
                                               Hours);
 
@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomHoursSerializer != null
+            return CustomHoursSerializer is not null
                        ? CustomHoursSerializer(this, JSON)
                        : JSON;
 

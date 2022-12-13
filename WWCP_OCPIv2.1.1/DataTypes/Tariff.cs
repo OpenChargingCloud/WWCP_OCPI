@@ -340,16 +340,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse CountryCode           [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -368,16 +366,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse PartyIdURL            [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -396,16 +392,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Id                    [optional]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "tariff identification",
-                                             Tariff_Id.TryParse,
-                                             out Tariff_Id? TariffIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "tariff identification",
+                                       Tariff_Id.TryParse,
+                                       out Tariff_Id? TariffIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!TariffIdURL.HasValue && !TariffIdBody.HasValue)
@@ -442,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out TariffTypes? TariffType,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -456,7 +450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out IEnumerable<DisplayText> TariffAltText,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -470,7 +464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? TariffAltURL,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -485,7 +479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out Price? MinPrice,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -499,7 +493,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out Price? MaxPrice,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -513,7 +507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             out IEnumerable<TariffElement> TariffElements,
                                             out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -526,7 +520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out DateTime? Start,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -539,7 +533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out DateTime? End,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -553,7 +547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out EnergyMix EnergyMix,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -588,7 +582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                     EnergyMix,
                                     LastUpdated);
 
-                if (CustomTariffParser != null)
+                if (CustomTariffParser is not null)
                     Tariff = CustomTariffParser(JSON,
                                                 Tariff);
 
@@ -713,7 +707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomTariffSerializer != null
+            return CustomTariffSerializer is not null
                        ? CustomTariffSerializer(this, JSON)
                        : JSON;
 
@@ -808,7 +802,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (TariffPatch["last_updated"] is null)
-                    TariffPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    TariffPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         TariffPatch["last_updated"].Type == JTokenType.Date &&

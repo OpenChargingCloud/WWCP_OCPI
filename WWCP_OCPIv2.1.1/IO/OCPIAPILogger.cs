@@ -17,17 +17,12 @@
 
 #region Usings
 
-using System;
-using System.IO;
 using System.Text;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
 
@@ -1077,8 +1072,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       : (loggingPath, context, logfilename) => String.Concat(loggingPath,
                                                                                              context != null ? context + "_" : "",
                                                                                              logfilename, "_",
-                                                                                             DateTime.UtcNow.Year, "-",
-                                                                                             DateTime.UtcNow.Month.ToString("D2"),
+                                                                                             Timestamp.Now.Year, "-",
+                                                                                             Timestamp.Now.Month.ToString("D2"),
                                                                                              ".log");
 
             #endregion

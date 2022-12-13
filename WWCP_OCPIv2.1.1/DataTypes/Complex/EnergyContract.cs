@@ -249,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                     ContractId);
 
 
-                if (CustomEnergyContractParser != null)
+                if (CustomEnergyContractParser is not null)
                     EnergyContract = CustomEnergyContractParser(JSON,
                                                                 EnergyContract);
 
@@ -319,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomEnergyContractSerializer != null
+            return CustomEnergyContractSerializer is not null
                        ? CustomEnergyContractSerializer(this, JSON)
                        : JSON;
 

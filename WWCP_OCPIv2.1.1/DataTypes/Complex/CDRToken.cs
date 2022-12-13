@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         ContractId);
 
 
-                if (CustomCDRTokenParser != null)
+                if (CustomCDRTokenParser is not null)
                     CDRToken = CustomCDRTokenParser(JSON,
                                                     CDRToken);
 
@@ -339,7 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomCDRTokenSerializer != null
+            return CustomCDRTokenSerializer is not null
                        ? CustomCDRTokenSerializer(this, JSON)
                        : JSON;
 

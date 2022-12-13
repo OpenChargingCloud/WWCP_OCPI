@@ -360,16 +360,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse CountryCode               [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -388,16 +386,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse PartyIdURL                [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -416,16 +412,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Id                        [optional]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "session identification",
-                                             Session_Id.TryParse,
-                                             out Session_Id? SessionIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "session identification",
+                                       Session_Id.TryParse,
+                                       out Session_Id? SessionIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!SessionIdURL.HasValue && !SessionIdBody.HasValue)
@@ -461,7 +455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out DateTime? End,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -506,13 +500,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse AuthorizationReference    [optional]
 
-                if (JSON.ParseOptionalStruct("authorization_reference",
-                                             "authorization reference",
-                                             OCPIv2_1_1.AuthorizationReference.TryParse,
-                                             out AuthorizationReference? AuthorizationReference,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("authorization_reference",
+                                       "authorization reference",
+                                       OCPIv2_1_1.AuthorizationReference.TryParse,
+                                       out AuthorizationReference? AuthorizationReference,
+                                       out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -565,7 +559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Meter_Id? MeterId,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -579,7 +573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out EnergyMeter EnergyMeter,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -593,7 +587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out IEnumerable<TransparencySoftware> TransparencySoftwares,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -620,7 +614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out IEnumerable<ChargingPeriod> ChargingPeriods,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -634,7 +628,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out Price? TotalCosts,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -689,7 +683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                       LastUpdated);
 
 
-                if (CustomSessionParser != null)
+                if (CustomSessionParser is not null)
                     Session = CustomSessionParser(JSON,
                                                   Session);
 
@@ -825,7 +819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomSessionSerializer != null
+            return CustomSessionSerializer is not null
                        ? CustomSessionSerializer(this, JSON)
                        : JSON;
 
@@ -920,7 +914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (SessionPatch["last_updated"] is null)
-                    SessionPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    SessionPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         SessionPatch["last_updated"].Type == JTokenType.Date &&

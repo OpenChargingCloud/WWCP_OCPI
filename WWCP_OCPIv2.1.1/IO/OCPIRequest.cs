@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                                            OCPIResponseBuilder.StatusCode ?? 3000,
                                                                                                            OCPIResponseBuilder.StatusMessage,
                                                                                                            OCPIResponseBuilder.AdditionalInformation,
-                                                                                                           OCPIResponseBuilder.Timestamp  ?? DateTime.UtcNow,
+                                                                                                           OCPIResponseBuilder.Timestamp  ?? Timestamp.Now,
                                                                                                            httpResponseBuilder.AsImmutable);
 
                                                 return httpResponseBuilder;
@@ -136,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               2000,
                                                                               e.Message,
                                                                               null,
-                                                                              DateTime.UtcNow,
+                                                                              Timestamp.Now,
                                                                               null,
                                                                               (httpRequest.SubprotocolRequest as OCPIRequest)?.RequestId,
                                                                               (httpRequest.SubprotocolRequest as OCPIRequest)?.CorrelationId

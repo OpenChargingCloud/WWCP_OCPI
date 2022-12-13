@@ -3684,7 +3684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             //                                 return new HTTPResponse.Builder(Request.HTTPRequest) {
             //                                     HTTPStatusCode  = HTTPStatusCode.OK,
             //                                     Server          = DefaultHTTPServerName,
-            //                                     Date            = DateTime.UtcNow,
+            //                                     Date            = Timestamp.Now,
             //                                     ContentType     = HTTPContentType.HTML_UTF8,
             //                                     Content         = _MemoryStream.ToArray(),
             //                                     Connection      = "close"
@@ -4212,7 +4212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
                                                    };
 
@@ -4573,7 +4573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
                                                    };
 
@@ -4946,7 +4946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
                                                    };
 
@@ -5602,7 +5602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
                                                    };
 
@@ -6126,7 +6126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
                                                    };
 
@@ -6559,7 +6559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = DateTime.UtcNow.ToIso8601()
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
                                                        }
                                                    };
 
@@ -7245,7 +7245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_RESERVE_NOW.log");
 
 
                                                 } catch (Exception e)
@@ -7400,7 +7400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_CANCEL_RESERVATION.log");
 
 
                                                 } catch (Exception e)
@@ -7555,7 +7555,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_START_SESSION.log");
 
 
                                                 } catch (Exception e)
@@ -7710,7 +7710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_STOP_SESSION.log");
 
 
                                                 } catch (Exception e)
@@ -7865,7 +7865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               ConfigureAwait(false);
 
 
-                                                    HTTPResponse.AppendLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
+                                                    HTTPResponse.AppendToLogfile(nameof(EMSPAPI) + "_upstream_UNLOCK_CONNECTOR.log");
 
 
                                                 } catch (Exception e)

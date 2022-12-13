@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Tariff_Id? TariffId,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -281,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                     TariffId);
 
 
-                if (CustomChargingPeriodParser != null)
+                if (CustomChargingPeriodParser is not null)
                     ChargingPeriod = CustomChargingPeriodParser(JSON,
                                                                 ChargingPeriod);
 
@@ -355,7 +355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null
                        );
 
-            return CustomChargingPeriodSerializer != null
+            return CustomChargingPeriodSerializer is not null
                        ? CustomChargingPeriodSerializer(this, JSON)
                        : JSON;
 

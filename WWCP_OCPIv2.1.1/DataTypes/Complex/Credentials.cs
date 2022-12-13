@@ -222,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -235,7 +235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               Roles);
 
 
-                if (CustomCredentialsParser != null)
+                if (CustomCredentialsParser is not null)
                     Credentials = CustomCredentialsParser(JSON,
                                                           Credentials);
 
@@ -311,7 +311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomCredentialsSerializer != null
+            return CustomCredentialsSerializer is not null
                        ? CustomCredentialsSerializer(this, JSON)
                        : JSON;
 

@@ -379,14 +379,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse UId                       [optional]
 
-                if (JSON.ParseOptionalStruct("uid",
-                                             "internal EVSE identification",
-                                             EVSE_UId.TryParse,
-                                             out EVSE_UId? EVSEUIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("uid",
+                                       "internal EVSE identification",
+                                       EVSE_UId.TryParse,
+                                       out EVSE_UId? EVSEUIdBody,
+                                       out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -440,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -456,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -467,13 +467,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalEnums("capabilities",
                                             "capabilities",
-                                            out IEnumerable<CapabilityTypes> Capabilities,
+                                            out HashSet<CapabilityTypes> Capabilities,
                                             out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -493,7 +491,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -515,7 +513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -526,13 +524,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (JSON.ParseOptionalEnums("parking_restrictions",
                                             "parking restrictions",
-                                            out IEnumerable<ParkingRestrictions> ParkingRestrictions,
+                                            out HashSet<ParkingRestrictions> ParkingRestrictions,
                                             out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -546,7 +542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -584,7 +580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                 LastUpdated);
 
 
-                if (CustomEVSEParser != null)
+                if (CustomEVSEParser is not null)
                     EVSE = CustomEVSEParser(JSON,
                                             EVSE);
 
@@ -710,7 +706,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomEVSESerializer != null
+            return CustomEVSESerializer is not null
                        ? CustomEVSESerializer(this, JSON)
                        : JSON;
 
@@ -866,7 +862,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (EVSEPatch["last_updated"] is null)
-                    EVSEPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    EVSEPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         EVSEPatch["last_updated"].Type == JTokenType.Date &&

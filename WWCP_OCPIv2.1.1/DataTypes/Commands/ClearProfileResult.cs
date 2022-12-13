@@ -222,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 ClearProfileResult = new ClearProfileResult(Result);
 
-                if (CustomClearProfileResultParser != null)
+                if (CustomClearProfileResultParser is not null)
                     ClearProfileResult = CustomClearProfileResultParser(JSON,
                                                                         ClearProfileResult);
 
@@ -288,7 +288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("result",  Result.ToString())
                        );
 
-            return CustomClearProfileResultSerializer != null
+            return CustomClearProfileResultSerializer is not null
                        ? CustomClearProfileResultSerializer(this, JSON)
                        : JSON;
 

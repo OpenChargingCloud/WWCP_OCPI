@@ -419,7 +419,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               PostalCode);
 
 
-                if (CustomCDRLocationParser != null)
+                if (CustomCDRLocationParser is not null)
                     CDRLocation = CustomCDRLocationParser(JSON,
                                                           CDRLocation);
 
@@ -512,7 +512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomCDRLocationSerializer != null
+            return CustomCDRLocationSerializer is not null
                        ? CustomCDRLocationSerializer(this, JSON)
                        : JSON;
 

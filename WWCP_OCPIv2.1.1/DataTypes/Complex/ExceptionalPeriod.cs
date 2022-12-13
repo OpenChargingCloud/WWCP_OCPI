@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                           PeriodEnd);
 
 
-                if (CustomExceptionalPeriodParser != null)
+                if (CustomExceptionalPeriodParser is not null)
                     ExceptionalPeriod = CustomExceptionalPeriodParser(JSON,
                                                                       ExceptionalPeriod);
 
@@ -261,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("period_end",    End.  ToIso8601())
                        );
 
-            return CustomExceptionalPeriodSerializer != null
+            return CustomExceptionalPeriodSerializer is not null
                        ? CustomExceptionalPeriodSerializer(this, JSON)
                        : JSON;
 

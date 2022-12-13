@@ -221,7 +221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 ChargingProfileResult = new ChargingProfileResult(Result);
 
-                if (CustomChargingProfileResultParser != null)
+                if (CustomChargingProfileResultParser is not null)
                     ChargingProfileResult = CustomChargingProfileResultParser(JSON,
                                                                               ChargingProfileResult);
 
@@ -287,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("result",  Result.ToString())
                        );
 
-            return CustomChargingProfileResultSerializer != null
+            return CustomChargingProfileResultSerializer is not null
                        ? CustomChargingProfileResultSerializer(this, JSON)
                        : JSON;
 

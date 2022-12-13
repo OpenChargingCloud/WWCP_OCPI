@@ -285,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out IEnumerable<DisplayText> Message,
                                            out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -297,7 +297,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       Timeout,
                                                       Message);
 
-                if (CustomCommandResponseParser != null)
+                if (CustomCommandResponseParser is not null)
                     CommandResponse = CustomCommandResponseParser(JSON,
                                                                   CommandResponse);
 
@@ -375,7 +375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomCommandResponseSerializer != null
+            return CustomCommandResponseSerializer is not null
                        ? CustomCommandResponseSerializer(this, JSON)
                        : JSON;
 

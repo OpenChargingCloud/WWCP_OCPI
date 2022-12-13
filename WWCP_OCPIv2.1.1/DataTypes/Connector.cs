@@ -316,14 +316,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Id                  [mandatory]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "connector identification",
-                                             Connector_Id.TryParse,
-                                             out Connector_Id? ConnectorIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "connector identification",
+                                       Connector_Id.TryParse,
+                                       out Connector_Id? ConnectorIdBody,
+                                       out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -410,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -426,7 +426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -442,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -476,7 +476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           LastUpdated);
 
 
-                if (CustomConnectorParser != null)
+                if (CustomConnectorParser is not null)
                     Connector = CustomConnectorParser(JSON,
                                                       Connector);
 
@@ -566,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomConnectorSerializer != null
+            return CustomConnectorSerializer is not null
                        ? CustomConnectorSerializer(this, JSON)
                        : JSON;
 
@@ -653,7 +653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (ConnectorPatch["last_updated"] is null)
-                    ConnectorPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    ConnectorPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         ConnectorPatch["last_updated"].Type == JTokenType.Date &&

@@ -195,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               Amount);
 
 
-                if (CustomEnvironmentalImpactParser != null)
+                if (CustomEnvironmentalImpactParser is not null)
                     EnvironmentalImpact = CustomEnvironmentalImpactParser(JSON,
                                                                           EnvironmentalImpact);
 
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("amount",    Amount)
                        );
 
-            return CustomEnvironmentalImpactSerializer != null
+            return CustomEnvironmentalImpactSerializer is not null
                        ? CustomEnvironmentalImpactSerializer(this, JSON)
                        : JSON;
 

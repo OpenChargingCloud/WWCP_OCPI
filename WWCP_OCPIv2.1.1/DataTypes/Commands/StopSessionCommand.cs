@@ -248,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 StopSessionCommand = new StopSessionCommand(SessionId,
                                                             ResponseURL);
 
-                if (CustomStopSessionCommandParser != null)
+                if (CustomStopSessionCommandParser is not null)
                     StopSessionCommand = CustomStopSessionCommandParser(JSON,
                                                                         StopSessionCommand);
 
@@ -315,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("response_url",  ResponseURL.ToString())
                        );
 
-            return CustomStopSessionCommandSerializer != null
+            return CustomStopSessionCommandSerializer is not null
                        ? CustomStopSessionCommandSerializer(this, JSON)
                        : JSON;
 

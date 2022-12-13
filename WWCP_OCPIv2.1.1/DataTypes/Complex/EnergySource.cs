@@ -194,7 +194,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                 Percentage);
 
 
-                if (CustomEnergySourceParser != null)
+                if (CustomEnergySourceParser is not null)
                     EnergySource = CustomEnergySourceParser(JSON,
                                                             EnergySource);
 
@@ -261,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("percentage",  Percentage)
                        );
 
-            return CustomEnergySourceSerializer != null
+            return CustomEnergySourceSerializer is not null
                        ? CustomEnergySourceSerializer(this, JSON)
                        : JSON;
 

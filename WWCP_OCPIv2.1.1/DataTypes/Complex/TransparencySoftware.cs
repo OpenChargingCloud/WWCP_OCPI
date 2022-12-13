@@ -301,7 +301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? Logo,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -315,7 +315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? HowToUse,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -329,7 +329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? MoreInformation,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -343,7 +343,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? SourceCodeRepository,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -360,7 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                 MoreInformation,
                                                                 SourceCodeRepository);
 
-                if (CustomTransparencySoftwareParser != null)
+                if (CustomTransparencySoftwareParser is not null)
                     TransparencySoftware = CustomTransparencySoftwareParser(JSON,
                                                                             TransparencySoftware);
 
@@ -448,7 +448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomTransparencySoftwareSerializer != null
+            return CustomTransparencySoftwareSerializer is not null
                        ? CustomTransparencySoftwareSerializer(this, JSON)
                        : JSON;
 

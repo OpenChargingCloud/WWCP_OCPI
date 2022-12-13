@@ -17,12 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Threading;
 using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -31,6 +26,8 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Hermod.Logging;
+using System.Security.Authentication;
 
 #endregion
 
@@ -808,12 +805,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public class EMSPCounters
         {
 
-            public CounterValues  GetLocations    { get; }
+            public APICounterValues GetLocations    { get; }
 
-            public EMSPCounters(CounterValues? GetLocations = null)
+            public EMSPCounters(APICounterValues? GetLocations = null)
             {
 
-                this.GetLocations = GetLocations ?? new CounterValues();
+                this.GetLocations = GetLocations ?? new APICounterValues();
 
             }
 
@@ -1299,24 +1296,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(URL                                  RemoteVersionsURL,
-                          AccessToken                          AccessToken,
-                          CommonAPI                            MyCommonAPI,
-                          HTTPHostname?                        VirtualHostname              = null,
-                          String                               Description                  = null,
-                          RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
-                          X509Certificate                      ClientCert                   = null,
-                          String                               HTTPUserAgent                = null,
-                          TimeSpan?                            RequestTimeout               = null,
-                          TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
-                          UInt16?                              MaxNumberOfRetries           = null,
-                          Boolean                              AccessTokenBase64Encoding    = true,
+        public EMSPClient(URL                                   RemoteVersionsURL,
+                          AccessToken                           AccessToken,
+                          CommonAPI                             MyCommonAPI,
+                          HTTPHostname?                         VirtualHostname              = null,
+                          String?                               Description                  = null,
+                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                          X509Certificate?                      ClientCert                   = null,
+                          SslProtocols?                         TLSProtocol                  = null,
+                          Boolean?                              PreferIPv4                   = null,
+                          String?                               HTTPUserAgent                = null,
+                          TimeSpan?                             RequestTimeout               = null,
+                          TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                          UInt16?                               MaxNumberOfRetries           = null,
+                          Boolean                               UseHTTPPipelining            = false,
+                          HTTPClientLogger?                     HTTPLogger                   = null,
+                          Boolean                               AccessTokenBase64Encoding    = true,
 
-                          Boolean                              DisableLogging               = false,
-                          String                               LoggingPath                  = null,
-                          String                               LoggingContext               = null,
-                          LogfileCreatorDelegate               LogfileCreator               = null,
-                          DNSClient                            DNSClient                    = null)
+                          Boolean                               DisableLogging               = false,
+                          String?                               LoggingPath                  = null,
+                          String?                               LoggingContext               = null,
+                          LogfileCreatorDelegate?               LogfileCreator               = null,
+                          DNSClient?                            DNSClient                    = null)
 
             : base(RemoteVersionsURL,
                    AccessToken,
@@ -1324,11 +1326,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                    VirtualHostname,
                    Description,
                    RemoteCertificateValidator,
+                   ClientCertificateSelector,
                    ClientCert,
+                   TLSProtocol,
+                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   UseHTTPPipelining,
+                   HTTPLogger,
                    AccessTokenBase64Encoding,
 
                    DisableLogging,
@@ -1339,8 +1346,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.HTTPLogger = new Logger(this, LoggingPath);
-            base.HTTPLogger = HTTPLogger;
+            base.HTTPLogger = DisableLogging == false
+                                   ? new Logger(this,
+                                                LoggingPath,
+                                                LoggingContext,
+                                                LogfileCreator)
+                                   : null;
 
         }
 
@@ -1381,7 +1392,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetLocationsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1468,6 +1479,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                              RemoteCertificateValidator,
                                              ClientCertificateSelector,
                                              ClientCert,
+                                             null, //TLSProtocol,
+                                             null, //PreferIPv4,
                                              HTTPUserAgent,
                                              RequestTimeout,
                                              TransmissionRetryDelay,
@@ -1528,7 +1541,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetLocationsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1611,7 +1624,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetLocationByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1698,6 +1711,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1746,7 +1761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetLocationByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1831,7 +1846,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetEVSEByUIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1918,6 +1933,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1966,7 +1983,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetEVSEByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2044,7 +2061,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                              DateTime?           Timestamp           = null,
                              CancellationToken?  CancellationToken   = null,
-                             EventTracking_Id    EventTrackingId     = null,
+                             EventTracking_Id?   EventTrackingId     = null,
                              TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2053,7 +2070,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetConnectorByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2140,6 +2157,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2188,7 +2207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetConnectorByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2260,7 +2279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2269,7 +2288,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetTariffsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2356,6 +2375,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2404,7 +2425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetTariffsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2478,7 +2499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                           DateTime?           Timestamp           = null,
                           CancellationToken?  CancellationToken   = null,
-                          EventTracking_Id    EventTrackingId     = null,
+                          EventTracking_Id?   EventTrackingId     = null,
                           TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2487,7 +2508,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetTariffByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2574,6 +2595,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2622,7 +2645,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetTariffByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2694,7 +2717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2703,7 +2726,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetSessionsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2790,6 +2813,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2838,7 +2863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetSessionsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2912,7 +2937,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                            DateTime?           Timestamp           = null,
                            CancellationToken?  CancellationToken   = null,
-                           EventTracking_Id    EventTrackingId     = null,
+                           EventTracking_Id?   EventTrackingId     = null,
                            TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2921,7 +2946,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetSessionByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3008,6 +3033,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3056,7 +3083,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetSessionByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3130,7 +3157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
@@ -3139,7 +3166,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetCDRsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3226,6 +3253,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3274,7 +3303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetCDRsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3348,7 +3377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
@@ -3357,7 +3386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetCDRByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3444,6 +3473,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3492,7 +3523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetCDRByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3563,7 +3594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                      DateTime?           Timestamp           = null,
                      CancellationToken?  CancellationToken   = null,
-                     EventTracking_Id    EventTrackingId     = null,
+                     EventTracking_Id?   EventTrackingId     = null,
                      TimeSpan?           RequestTimeout      = null)
 
         {
@@ -3572,7 +3603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3628,6 +3659,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3686,7 +3719,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3756,7 +3789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                      DateTime?           Timestamp           = null,
                      CancellationToken?  CancellationToken   = null,
-                     EventTracking_Id    EventTrackingId     = null,
+                     EventTracking_Id?   EventTrackingId     = null,
                      TimeSpan?           RequestTimeout      = null)
 
         {
@@ -3768,7 +3801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPutTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3824,6 +3857,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3884,7 +3919,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPutTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3955,7 +3990,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
@@ -3967,7 +4002,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPatchTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4023,6 +4058,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4083,7 +4120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPatchTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4160,7 +4197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                        DateTime?                Timestamp                = null,
                        CancellationToken?       CancellationToken        = null,
-                       EventTracking_Id         EventTrackingId          = null,
+                       EventTracking_Id?        EventTrackingId          = null,
                        TimeSpan?                RequestTimeout           = null)
 
         {
@@ -4169,7 +4206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnReserveNowRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4243,6 +4280,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4288,7 +4327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                     "No remote URL available!");
 
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
@@ -4307,7 +4346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnReserveNowResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4376,7 +4415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                               DateTime?           Timestamp           = null,
                               CancellationToken?  CancellationToken   = null,
-                              EventTracking_Id    EventTrackingId     = null,
+                              EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null)
 
         {
@@ -4385,7 +4424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnCancelReservationRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4454,6 +4493,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4518,7 +4559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnCancelReservationResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4590,7 +4631,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                          DateTime?                Timestamp                = null,
                          CancellationToken?       CancellationToken        = null,
-                         EventTracking_Id         EventTrackingId          = null,
+                         EventTracking_Id?        EventTrackingId          = null,
                          TimeSpan?                RequestTimeout           = null)
 
         {
@@ -4599,7 +4640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnStartSessionRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4671,6 +4712,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4735,7 +4778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnStartSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4804,7 +4847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
@@ -4813,7 +4856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnStopSessionRequest event
 
-            var StopTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4882,6 +4925,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4946,7 +4991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnStopSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5017,7 +5062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                             DateTime?           Timestamp           = null,
                             CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
+                            EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 
         {
@@ -5026,7 +5071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnUnlockConnectorRequest event
 
-            var StopTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5097,6 +5142,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
+                                                             null, //TLSProtocol,
+                                                             null, //PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -5161,7 +5208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnUnlockConnectorResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {

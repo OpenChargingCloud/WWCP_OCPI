@@ -423,13 +423,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(JObject                                JSON,
-                                       out Location                           Location,
-                                       out String                             ErrorResponse,
-                                       CountryCode?                           CountryCodeURL         = null,
-                                       Party_Id?                              PartyIdURL             = null,
-                                       Location_Id?                           LocationIdURL          = null,
-                                       CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
+        public static Boolean TryParse(JObject                                 JSON,
+                                       out Location?                           Location,
+                                       out String?                             ErrorResponse,
+                                       CountryCode?                            CountryCodeURL         = null,
+                                       Party_Id?                               PartyIdURL             = null,
+                                       Location_Id?                            LocationIdURL          = null,
+                                       CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {
 
             try
@@ -445,16 +445,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse CountryCode           [optional]
 
-                if (JSON.ParseOptionalStruct("country_code",
-                                             "country code",
-                                             CountryCode.TryParse,
-                                             out CountryCode? CountryCodeBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
@@ -473,16 +471,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse PartyIdURL            [optional]
 
-                if (JSON.ParseOptionalStruct("party_id",
-                                             "party identification",
-                                             Party_Id.TryParse,
-                                             out Party_Id? PartyIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
@@ -501,16 +497,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Id                    [optional]
 
-                if (JSON.ParseOptionalStruct("id",
-                                             "location identification",
-                                             Location_Id.TryParse,
-                                             out Location_Id? LocationIdBody,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("id",
+                                       "location identification",
+                                       Location_Id.TryParse,
+                                       out Location_Id? LocationIdBody,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!LocationIdURL.HasValue && !LocationIdBody.HasValue)
@@ -610,7 +604,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -644,7 +638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -659,7 +653,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -675,7 +669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -691,7 +685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -707,7 +701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -723,7 +717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -739,7 +733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -748,16 +742,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Facilities            [optional]
 
-                if (JSON.ParseOptionalStruct("facilities",
-                                             "facilities",
-                                             OCPIv2_1_1.Facilities.TryParse,
-                                             out IEnumerable<Facilities> Facilities,
-                                             out ErrorResponse))
+                if (JSON.ParseOptional("facilities",
+                                       "facilities",
+                                       OCPIv2_1_1.Facilities.TryParse,
+                                       out IEnumerable<Facilities> Facilities,
+                                       out ErrorResponse))
                 {
-
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -771,7 +763,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -786,7 +778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -802,7 +794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -818,7 +810,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -867,7 +859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         EnergyMix,
                                         LastUpdated);
 
-                if (CustomLocationParser != null)
+                if (CustomLocationParser is not null)
                     Location = CustomLocationParser(JSON,
                                                     Location);
 
@@ -1045,7 +1037,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomLocationSerializer != null
+            return CustomLocationSerializer is not null
                        ? CustomLocationSerializer(this, JSON)
                        : JSON;
 
@@ -1209,7 +1201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 if (LocationPatch["last_updated"] is null)
-                    LocationPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    LocationPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         LocationPatch["last_updated"].Type == JTokenType.Date &&

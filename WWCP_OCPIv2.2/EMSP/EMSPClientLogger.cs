@@ -69,8 +69,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
             public Logger(EMSPClient               EMSPClient,
                           String                   LoggingPath,
-                          String                   Context         = DefaultContext,
-                          LogfileCreatorDelegate?  LogfileCreator  = null)
+                          String                   Context          = DefaultContext,
+                          LogfileCreatorDelegate?  LogfileCreator   = null)
 
                 : this(EMSPClient,
                        LoggingPath,

@@ -218,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -246,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -269,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         : null;
 
 
-                if (CustomPublishTokenTypeParser != null)
+                if (CustomPublishTokenTypeParser is not null)
                     PublishTokenType = CustomPublishTokenTypeParser(JSON,
                                                                     PublishTokenType);
 
@@ -354,7 +354,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomPublishTokenTypeSerializer != null
+            return CustomPublishTokenTypeSerializer is not null
                        ? CustomPublishTokenTypeSerializer(this, JSON)
                        : JSON;
 

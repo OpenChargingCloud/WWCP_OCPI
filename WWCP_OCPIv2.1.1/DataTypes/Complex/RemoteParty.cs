@@ -318,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Role                = Role;
             this.BusinessDetails     = BusinessDetails;
             this.Status              = Status;
-            this.LastUpdated         = LastUpdated ?? DateTime.UtcNow;
+            this.LastUpdated         = LastUpdated ?? Timestamp.Now;
 
             this._AccessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
             this._RemoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
@@ -341,15 +341,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomRemotePartySerializer">A delegate to serialize custom remote party JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="IncludeCryptoHash">Include the crypto hash value of this object.</param>
-        public JObject ToJSON(Boolean                                           Embedded,
-                              CustomJObjectSerializerDelegate<RemoteParty>      CustomRemotePartySerializer       = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>  CustomBusinessDetailsSerializer   = null,
-                              Boolean                                           IncludeCryptoHash                 = false)
+        public JObject ToJSON(Boolean                                            Embedded,
+                              CustomJObjectSerializerDelegate<RemoteParty>?      CustomRemotePartySerializer       = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
+                              Boolean                                            IncludeCryptoHash                 = false)
         {
 
             var JSON = JSONObject.Create(
 
-                           Id.ToJSON("@id"),
+                           new JProperty("@id",                      Id.                  ToString()),
 
                            Embedded
                                ? new JProperty("@context",           DefaultJSONLDContext.ToString())
@@ -358,9 +358,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("countryCode",              CountryCode.         ToString()),
                            new JProperty("partyId",                  PartyId.             ToString()),
                            new JProperty("role",                     Role.                ToString()),
-                           new JProperty("partyStatus",              Status.         ToString()),
+                           new JProperty("partyStatus",              Status.              ToString()),
 
-                           BusinessDetails != null
+                           BusinessDetails is not null
                                ? new JProperty("businessDetails",    BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
@@ -380,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomRemotePartySerializer != null
+            return CustomRemotePartySerializer is not null
                        ? CustomRemotePartySerializer(this, JSON)
                        : JSON;
 

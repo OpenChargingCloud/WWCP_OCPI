@@ -320,7 +320,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("response_url",      ResponseURL.    ToString())
                        );
 
-            return CustomSetChargingProfileSerializer != null
+            return CustomSetChargingProfileSerializer is not null
                        ? CustomSetChargingProfileSerializer(this, JSON)
                        : JSON;
 

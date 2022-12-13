@@ -91,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.PartyId      = PartyId;
             this.Role         = Role;
             this.Status       = Status;
-            this.LastUpdated  = LastUpdated ?? DateTime.UtcNow;
+            this.LastUpdated  = LastUpdated ?? Timestamp.Now;
         }
 
         #endregion
@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Status,
                                             LastUpdated);
 
-                if (CustomClientInfoParser != null)
+                if (CustomClientInfoParser is not null)
                     ClientInfo = CustomClientInfoParser(JSON,
                                                         ClientInfo);
 
@@ -380,7 +380,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("last_updated",  LastUpdated.ToIso8601())
                        );
 
-            return CustomClientInfoSerializer != null
+            return CustomClientInfoSerializer is not null
                        ? CustomClientInfoSerializer(this, JSON)
                        : JSON;
 

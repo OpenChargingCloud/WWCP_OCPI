@@ -282,7 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out EVSE_UId? EVSEUId,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -296,7 +296,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -323,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                               EVSEUId,
                                                               AuthorizationReference);
 
-                if (CustomStartSessionCommandParser != null)
+                if (CustomStartSessionCommandParser is not null)
                     StartSessionCommand = CustomStartSessionCommandParser(JSON,
                                                                           StartSessionCommand);
 
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomStartSessionCommandSerializer != null
+            return CustomStartSessionCommandSerializer is not null
                        ? CustomStartSessionCommandSerializer(this, JSON)
                        : JSON;
 

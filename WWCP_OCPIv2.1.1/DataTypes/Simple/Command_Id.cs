@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -83,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Length">The expected length of the command identification.</param>
         public static Command_Id Random(Byte Length = 50)
 
-            => new Command_Id(random.RandomString(Length));
+            => new Command_Id(RandomExtensions.RandomString(Length));
 
         #endregion
 

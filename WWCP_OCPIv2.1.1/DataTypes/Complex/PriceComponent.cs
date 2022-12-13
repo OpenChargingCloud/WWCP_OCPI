@@ -325,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out Decimal? VAT,
                                        out ErrorResponse))
                 {
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
                 }
 
@@ -350,7 +350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                     StepSize);
 
 
-                if (CustomPriceComponentParser != null)
+                if (CustomPriceComponentParser is not null)
                     PriceComponent = CustomPriceComponentParser(JSON,
                                                                 PriceComponent);
 
@@ -425,7 +425,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomPriceComponentSerializer != null
+            return CustomPriceComponentSerializer is not null
                        ? CustomPriceComponentSerializer(this, JSON)
                        : JSON;
 

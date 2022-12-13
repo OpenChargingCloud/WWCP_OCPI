@@ -206,7 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                   Endpoints);
 
 
-                if (CustomVersionDetailParser != null)
+                if (CustomVersionDetailParser is not null)
                     VersionDetail = CustomVersionDetailParser(JSON,
                                                               VersionDetail);
 
@@ -273,7 +273,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("endpoints",  new JArray(Endpoints.SafeSelect(endpoint => endpoint.ToJSON())))
                        );
 
-            return CustomVersionDetailSerializer != null
+            return CustomVersionDetailSerializer is not null
                        ? CustomVersionDetailSerializer(this, JSON)
                        : JSON;
 

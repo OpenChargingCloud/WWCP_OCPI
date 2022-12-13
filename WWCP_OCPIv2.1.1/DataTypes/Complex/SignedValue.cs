@@ -225,7 +225,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                               SignedData);
 
 
-                if (CustomSignedValueParser != null)
+                if (CustomSignedValueParser is not null)
                     SignedValue = CustomSignedValueParser(JSON,
                                                           SignedValue);
 
@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomSignedValueSerializer != null
+            return CustomSignedValueSerializer is not null
                        ? CustomSignedValueSerializer(this, JSON)
                        : JSON;
 

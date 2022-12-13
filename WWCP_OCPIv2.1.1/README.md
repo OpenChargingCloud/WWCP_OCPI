@@ -1,7 +1,7 @@
 # WWCP OCPI v2.2 Implementation
 
 This software implements the [Open Charge Point Interface (OCPI)](https://github.com/ocpi/ocpi)
-in C# / .NET Framework 4.8+. A .NET Core 5 version will be available in the near future.
+in C# on .NET6.
 
 ## Differences to the official protocol
 

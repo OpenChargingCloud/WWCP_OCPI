@@ -98,7 +98,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomRemoteAccessInfoSerializer != null
+            return CustomRemoteAccessInfoSerializer is not null
                        ? CustomRemoteAccessInfoSerializer(this, JSON)
                        : JSON;
 

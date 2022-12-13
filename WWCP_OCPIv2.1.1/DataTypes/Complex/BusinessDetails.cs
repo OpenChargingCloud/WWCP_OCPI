@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -215,7 +215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out ErrorResponse))
                 {
 
-                    if (ErrorResponse != null)
+                    if (ErrorResponse is not null)
                         return false;
 
                 }
@@ -228,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       Logo);
 
 
-                if (CustomBusinessDetailsParser != null)
+                if (CustomBusinessDetailsParser is not null)
                     BusinessDetails = CustomBusinessDetailsParser(JSON,
                                                                   BusinessDetails);
 
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                        );
 
-            return CustomBusinessDetailsSerializer != null
+            return CustomBusinessDetailsSerializer is not null
                        ? CustomBusinessDetailsSerializer(this, JSON)
                        : JSON;
 
