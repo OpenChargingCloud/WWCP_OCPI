@@ -104,10 +104,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         public Boolean?                      AllowDowngrades            { get; }
 
-        /// <summary>
-        /// Disable OCPI v2.1.1.
-        /// </summary>
-        public Boolean                       Disable_OCPIv2_1_1         { get; }
+
+        public Boolean                       Disable_RootServices       { get; }
 
         #endregion
 
@@ -286,6 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
         public CommonAPI(URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
 
@@ -302,8 +301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
-
-                         Boolean                       Disable_OCPIv2_1_1        = true)
+                         Boolean                       Disable_RootServices      = true)
 
             : base(HTTPHostname,
                    ExternalDNSName,
@@ -360,8 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
-
-            this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
+            this.Disable_RootServices     = Disable_RootServices;
 
             this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
@@ -370,7 +367,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
-            RegisterURLTemplates();
+            if (!Disable_RootServices)
+                RegisterURLTemplates();
 
         }
 
@@ -393,6 +391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="KeepRemovedEVSEs">Whether to keep or delete EVSEs marked as "REMOVED" (default: keep).</param>
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
+        /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
         public CommonAPI(URL                           OurVersionsURL,
                          IEnumerable<CredentialsRole>  OurCredentialRoles,
 
@@ -407,8 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          Func<EVSE, Boolean>?          KeepRemovedEVSEs          = null,
                          Boolean                       LocationsAsOpenData       = true,
                          Boolean?                      AllowDowngrades           = null,
-
-                         Boolean                       Disable_OCPIv2_1_1        = true)
+                         Boolean                       Disable_RootServices      = true)
 
             : base(HTTPServer,
                    HTTPHostname,
@@ -448,8 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
             this.AllowDowngrades          = AllowDowngrades;
-
-            this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
+            this.Disable_RootServices     = Disable_RootServices;
 
             this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
@@ -463,7 +460,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             HTTPServer.ResponseLog       += (HTTPProcessor, ServerTimestamp, Request, Response)                       => ResponseLog.WhenAll(HTTPProcessor, ServerTimestamp, Request, Response);
             HTTPServer.ErrorLog          += (HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException) => ErrorLog.   WhenAll(HTTPProcessor, ServerTimestamp, Request, Response, Error, LastException);
 
-            RegisterURLTemplates();
+            if (!Disable_RootServices)
+                RegisterURLTemplates();
 
         }
 
@@ -525,7 +523,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region OPTIONS     ~/
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix,
                                          HTTPDelegate: Request => {
@@ -538,9 +537,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      Allow                      = new List<HTTPMethod> {
-                                                                                      HTTPMethod.OPTIONS,
-                                                                                      HTTPMethod.GET
-                                                                                  },
+                                                                                     HTTPMethod.OPTIONS,
+                                                                                     HTTPMethod.GET
+                                                                                 },
                                                      AccessControlAllowHeaders  = "Authorization",
                                                      Connection                 = "close"
                                                  }.AsImmutable);
@@ -579,7 +578,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Text
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix,
                                          HTTPContentType.TEXT_UTF8,
@@ -611,25 +611,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // curl -v -X OPTIONS http://127.0.0.1:2502/versions
             // ----------------------------------------------------
             this.AddOCPIMethod(Hostname,
-                               HTTPMethod.OPTIONS,
-                               URLPathPrefix + "versions",
-                               OCPIRequestHandler: Request => {
+                                HTTPMethod.OPTIONS,
+                                URLPathPrefix + "versions",
+                                OCPIRequestHandler: Request => {
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = "OPTIONS, GET",
-                                               Allow                      = new List<HTTPMethod> {
+                                    return Task.FromResult(
+                                        new OCPIResponse.Builder(Request) {
+                                            HTTPResponseBuilder = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                AccessControlAllowMethods  = "OPTIONS, GET",
+                                                Allow                      = new List<HTTPMethod> {
                                                                                 HTTPMethod.OPTIONS,
                                                                                 HTTPMethod.GET
                                                                             },
-                                               AccessControlAllowHeaders  = "Authorization",
-                                               Vary                       = "Accept"
-                                           }
-                                       });
+                                                AccessControlAllowHeaders  = "Authorization",
+                                                Vary                       = "Accept"
+                                            }
+                                        });
 
-                               });
+                                });
 
             #endregion
 
@@ -639,62 +639,55 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
-                               HTTPMethod.GET,
-                               URLPathPrefix + "versions",
-                               HTTPContentType.JSON_UTF8,
-                               OCPIRequestHandler: Request => {
+                                HTTPMethod.GET,
+                                URLPathPrefix + "versions",
+                                HTTPContentType.JSON_UTF8,
+                                OCPIRequestHandler: Request => {
 
-                                   #region Check access token
+                                    #region Check access token
 
-                                   if (Request.AccessInfo2.HasValue &&
-                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
-                                   {
+                                    if (Request.AccessInfo2.HasValue &&
+                                        Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
+                                    {
 
-                                       return Task.FromResult(
-                                           new OCPIResponse.Builder(Request) {
-                                              StatusCode           = 2000,
-                                              StatusMessage        = "Invalid or blocked access token!",
-                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                  AccessControlAllowMethods  = "OPTIONS, GET",
-                                                  AccessControlAllowHeaders  = "Authorization"
-                                              }
-                                          });
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                StatusCode           = 2000,
+                                                StatusMessage        = "Invalid or blocked access token!",
+                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                    AccessControlAllowMethods  = "OPTIONS, GET",
+                                                    AccessControlAllowHeaders  = "Authorization"
+                                                }
+                                            });
 
-                                   }
+                                    }
 
-                                   #endregion
+                                    #endregion
 
-                                   return Task.FromResult(
-                                       new OCPIResponse.Builder(Request) {
-                                           StatusCode           = 1000,
-                                           StatusMessage        = "Hello world!",
-                                           Data                 = new JArray(
-                                                                      new VersionInformation[] {
-                                                                          Disable_OCPIv2_1_1
-                                                                              ? null
-                                                                              : new VersionInformation(
-                                                                                    Version_Id.Parse("2.1.1"),
-                                                                                    URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                              (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
-                                                                                ),
-                                                                          new VersionInformation(
-                                                                              Version_Id.Parse("2.2"),
-                                                                              URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                        (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2")).Replace("//", "/"))
-                                                                          )
-                                                                      }.Where (version => version != null).
+                                    return Task.FromResult(
+                                        new OCPIResponse.Builder(Request) {
+                                            StatusCode           = 1000,
+                                            StatusMessage        = "Hello world!",
+                                            Data                 = new JArray(
+                                                                        new VersionInformation[] {
+                                                                            new VersionInformation(
+                                                                                Version_Id.Parse("2.1.1"),
+                                                                                URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                                        (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
+                                                                            )
+                                                                        }.Where (version => version is not null).
                                                                         Select(version => version.ToJSON())
-                                                                  ),
-                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.OK,
-                                               AccessControlAllowMethods  = "OPTIONS, GET",
-                                               AccessControlAllowHeaders  = "Authorization",
-                                               Vary                       = "Accept"
-                                           }
-                                       });
+                                                                    ),
+                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                HTTPStatusCode             = HTTPStatusCode.OK,
+                                                AccessControlAllowMethods  = "OPTIONS, GET",
+                                                AccessControlAllowHeaders  = "Authorization",
+                                                Vary                       = "Accept"
+                                            }
+                                        });
 
-                               });
+                                });
 
             #endregion
 

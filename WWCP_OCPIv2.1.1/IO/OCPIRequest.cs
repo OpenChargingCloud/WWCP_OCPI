@@ -75,7 +75,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         {
 
             CommonAPI.HTTPServer.
-                      AddMethodCallback(Hostname,
+                      AddMethodCallback(CommonAPI,
+                                        Hostname,
                                         HTTPMethod,
                                         URLTemplate,
                                         HTTPContentType,
@@ -373,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         }
 
-        public Boolean TryParseJArrayRequestBody(out JArray               JSON,
+        public Boolean TryParseJArrayRequestBody(out JArray                JSON,
                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
                                                  Boolean                   AllowEmptyHTTPBody   = false,
                                                  String?                   JSONLDContext        = null)
@@ -404,8 +405,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public static OCPIRequest Parse(HTTPRequest  HTTPRequest,
                                         CommonAPI    CommonAPI)
 
-            => new OCPIRequest(HTTPRequest,
-                               CommonAPI);
+            => new (HTTPRequest,
+                    CommonAPI);
 
 
     }

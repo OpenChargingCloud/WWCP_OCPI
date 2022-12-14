@@ -75,14 +75,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             CommonAPI.HTTPServer.
-                      AddMethodCallback(Hostname,
+                      AddMethodCallback(CommonAPI,
+                                        Hostname,
                                         HTTPMethod,
                                         URLTemplate,
                                         HTTPContentType,
                                         URLAuthentication,
                                         HTTPMethodAuthentication,
                                         ContentTypeAuthentication,
-                                        (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, HTTP.OCPIRequest.Parse(httpRequest, CommonAPI)),
+                                        (timestamp, httpAPI, httpRequest)               => OCPIRequestLogger?. Invoke(timestamp, null, OCPIRequest.Parse(httpRequest, CommonAPI)),
                                         (timestamp, httpAPI, httpRequest, httpResponse) => OCPIResponseLogger?.Invoke(timestamp, null, httpRequest. SubprotocolRequest  as OCPIRequest,
                                                                                                                                       (httpResponse.SubprotocolResponse as OCPIResponse) 
                                                                                                                                            ?? new OCPIResponse(httpRequest.SubprotocolRequest as OCPIRequest,
@@ -373,7 +374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         }
 
-        public Boolean TryParseJArrayRequestBody(out JArray               JSON,
+        public Boolean TryParseJArrayRequestBody(out JArray                JSON,
                                                  out OCPIResponse.Builder  OCPIResponseBuilder,
                                                  Boolean                   AllowEmptyHTTPBody   = false,
                                                  String?                   JSONLDContext        = null)
@@ -404,8 +405,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public static OCPIRequest Parse(HTTPRequest  HTTPRequest,
                                         CommonAPI    CommonAPI)
 
-            => new OCPIRequest(HTTPRequest,
-                               CommonAPI);
+            => new (HTTPRequest,
+                    CommonAPI);
 
 
     }

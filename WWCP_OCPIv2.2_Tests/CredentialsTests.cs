@@ -17,9 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-
 using NUnit.Framework;
 using Newtonsoft.Json.Linq;
 

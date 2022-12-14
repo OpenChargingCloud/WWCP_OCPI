@@ -547,7 +547,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region OPTIONS     ~/
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix,
                                          HTTPDelegate: Request => {
@@ -601,7 +602,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Text
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix,
                                          HTTPContentType.TEXT_UTF8,
@@ -692,7 +694,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                            StatusCode           = 1000,
                                            StatusMessage        = "Hello world!",
                                            Data                 = new JArray(
-                                                                      new VersionInformation[] {
+                                                                      new VersionInformation?[] {
                                                                           Disable_OCPIv2_1_1
                                                                               ? null
                                                                               : new VersionInformation(
@@ -705,8 +707,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                         (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.2")).Replace("//", "/"))
                                                                           )
-                                                                      }.Where (version => version != null).
-                                                                        Select(version => version.ToJSON())
+                                                                      }.Where (version => version is not null).
+                                                                        Select(version => version?.ToJSON())
                                                                   ),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                HTTPStatusCode             = HTTPStatusCode.OK,

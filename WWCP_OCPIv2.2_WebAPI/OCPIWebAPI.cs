@@ -574,13 +574,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region / (HTTPRoot)
 
-            HTTPServer.RegisterResourcesFolder(HTTPHostname.Any,
+            HTTPServer.RegisterResourcesFolder(this,
+                                               HTTPHostname.Any,
                                                URLPathPrefix,
                                                "cloud.charging.open.protocols.OCPIv2_2.WebAPI.HTTPRoot",
                                                DefaultFilename: "index.html");
 
             if (URLPathPrefix1.HasValue)
-                HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              URLPathPrefix1.Value,
                                              HTTPContentType.HTML_UTF8,
@@ -610,7 +612,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              });
 
             if (URLPathPrefix1.HasValue)
-                HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              URLPathPrefix1.Value + "versions",
                                              HTTPContentType.HTML_UTF8,
@@ -634,7 +637,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
 
             if (URLPathPrefix1.HasValue)
-                HTTPServer.AddMethodCallback(HTTPHostname.Any,
+                HTTPServer.AddMethodCallback(this,
+                                             HTTPHostname.Any,
                                              HTTPMethod.GET,
                                              URLPathPrefix1.Value + "versions/{id}",
                                              HTTPContentType.HTML_UTF8,
@@ -667,7 +671,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties
             // --------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "remoteParties",
                                          HTTPDelegate: Request => {
@@ -703,7 +708,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
             // ---------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties",
                                          HTTPContentType.JSON_UTF8,
@@ -788,7 +794,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // ---------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:3001/remoteParties
             // ---------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties",
                                          HTTPContentType.HTML_UTF8,
@@ -834,7 +841,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO
             // -------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPDelegate: Request => {
@@ -865,7 +873,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.JSON_UTF8,
@@ -947,7 +956,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.HTML_UTF8,
@@ -1024,7 +1034,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // ------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/reserveNow
             // ------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/reserveNow",
                                          HTTPDelegate: Request => {
@@ -1055,7 +1066,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // ---------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/reserveNow
             // ---------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/reserveNow",
                                          HTTPContentType.JSON_UTF8,
@@ -1137,7 +1149,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/reserveNow
             // --------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/reserveNow",
                                          HTTPContentType.HTML_UTF8,
@@ -1213,7 +1226,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTP_ReserveNow,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.JSON_UTF8,
@@ -1500,7 +1514,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -------------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/cancelReservation
             // -------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/cancelReservation",
                                          HTTPDelegate: Request => {
@@ -1531,7 +1546,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/cancelReservation
             // --------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/cancelReservation",
                                          HTTPContentType.JSON_UTF8,
@@ -1613,7 +1629,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/cancelReservation
             // -------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/cancelReservation",
                                          HTTPContentType.HTML_UTF8,
@@ -1689,7 +1706,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTP_CancelReservation,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.JSON_UTF8,
@@ -1830,7 +1848,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/startSession
             // --------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/startSession",
                                          HTTPDelegate: Request => {
@@ -1861,7 +1880,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // ---------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/startSession
             // ---------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/startSession",
                                          HTTPContentType.JSON_UTF8,
@@ -1943,7 +1963,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/startSession
             // --------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/startSession",
                                          HTTPContentType.HTML_UTF8,
@@ -2019,7 +2040,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTP_StartSession,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.JSON_UTF8,
@@ -2248,7 +2270,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/stopSession
             // -------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/stopSession",
                                          HTTPDelegate: Request => {
@@ -2279,7 +2302,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/stopSession
             // --------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/stopSession",
                                          HTTPContentType.JSON_UTF8,
@@ -2361,7 +2385,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/stopSession
             // -------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/stopSession",
                                          HTTPContentType.HTML_UTF8,
@@ -2437,7 +2462,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTP_StopSession,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.JSON_UTF8,
@@ -2575,7 +2601,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -----------------------------------------------------------------------------------
             // curl -X OPTIONS -v http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/unlockConnector
             // -----------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.OPTIONS,
                                          URLPathPrefix + "/{remotePartyId}/unlockConnector",
                                          HTTPDelegate: Request => {
@@ -2606,7 +2633,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // ------------------------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO/unlockConnector
             // ------------------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/unlockConnector",
                                          HTTPContentType.JSON_UTF8,
@@ -2688,7 +2716,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // -------------------------------------------------------------------------------------------
             // curl -v -H "Accept: text/html" http://127.0.0.1:3001/remoteParties/DE-GDF-CPO/unlockConnector
             // -------------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "remoteParties/{remotePartyId}/unlockConnector",
                                          HTTPContentType.HTML_UTF8,
@@ -2764,7 +2793,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
             // --------------------------------------------------------------------------------------
             // curl -v -H "Accept: application/json" http://127.0.0.1:2100/remoteParties/DE-GDF-CPO
             // --------------------------------------------------------------------------------------
-            HTTPServer.AddMethodCallback(Hostname,
+            HTTPServer.AddMethodCallback(this,
+                                         Hostname,
                                          HTTP_UnlockConnector,
                                          URLPathPrefix + "remoteParties/{remotePartyId}",
                                          HTTPContentType.JSON_UTF8,
@@ -2959,7 +2989,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region GET      ~/clients
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "clients",
                                          HTTPContentType.JSON_UTF8,
@@ -2986,7 +3017,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region GET      ~/cpoclients
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "cpoclients",
                                          HTTPContentType.JSON_UTF8,
@@ -3011,7 +3043,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             #region GET      ~/emspclients
 
-            HTTPServer.AddMethodCallback(HTTPHostname.Any,
+            HTTPServer.AddMethodCallback(this,
+                                         HTTPHostname.Any,
                                          HTTPMethod.GET,
                                          URLPathPrefix + "emspclients",
                                          HTTPContentType.JSON_UTF8,
