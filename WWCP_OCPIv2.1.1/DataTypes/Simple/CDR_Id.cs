@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, CDR 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,7 +25,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
+    /// Extension methods for charge detail record identifications.
+    /// </summary>
+    public static class CDRIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this charge detail record identification is null or empty.
+        /// </summary>
+        /// <param name="CDRId">A charge detail record identification.</param>
+        public static Boolean IsNullOrEmpty(this CDR_Id? CDRId)
+            => !CDRId.HasValue || CDRId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this charge detail record identification is NOT null or empty.
+        /// </summary>
+        /// <param name="CDRId">A charge detail record identification.</param>
+        public static Boolean IsNotNullOrEmpty(this CDR_Id? CDRId)
+            => CDRId.HasValue && CDRId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a charge detail record.
+    /// CiString(39)
     /// </summary>
     public readonly struct CDR_Id : IId<CDR_Id>
     {
@@ -44,18 +66,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this charge detail record identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this charge detail record identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the charge detail record identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
@@ -76,19 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a charge detail record identification.
+        /// Parse the given text as a charge detail record identification.
         /// </summary>
         /// <param name="Text">A text representation of a charge detail record identification.</param>
         public static CDR_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out CDR_Id cdrId))
+            if (TryParse(Text, out var cdrId))
                 return cdrId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a charge detail record identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a charge detail record identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a charge detail record identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -103,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static CDR_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out CDR_Id cdrId))
+            if (TryParse(Text, out var cdrId))
                 return cdrId;
 
             return null;
@@ -122,11 +146,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(String Text, out CDR_Id CDRId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    CDRId = new CDR_Id(Text.Trim());
+                    CDRId = new CDR_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -147,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public CDR_Id Clone
 
-            => new CDR_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -182,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (CDR_Id CDRId1,
                                            CDR_Id CDRId2)
 
-            => !(CDRId1 == CDRId2);
+            => !CDRId1.Equals(CDRId2);
 
         #endregion
 
@@ -212,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (CDR_Id CDRId1,
                                            CDR_Id CDRId2)
 
-            => !(CDRId1 > CDRId2);
+            => CDRId1.CompareTo(CDRId2) <= 0;
 
         #endregion
 
@@ -242,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (CDR_Id CDRId1,
                                            CDR_Id CDRId2)
 
-            => !(CDRId1 < CDRId2);
+            => CDRId1.CompareTo(CDRId2) >= 0;
 
         #endregion
 
@@ -253,10 +279,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charge detail record identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charge detail record identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is CDR_Id cdrId
                    ? CompareTo(cdrId)
@@ -268,9 +294,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(CDRId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charge detail record identifications.
         /// </summary>
-        /// <param name="CDRId">An object to compare with.</param>
+        /// <param name="CDRId">A charge detail record identification to compare with.</param>
         public Int32 CompareTo(CDR_Id CDRId)
 
             => String.Compare(InternalId,
@@ -286,11 +312,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charge detail record identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charge detail record identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CDR_Id cdrId &&
                    Equals(cdrId);
@@ -302,8 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two charge detail record identifications for equality.
         /// </summary>
-        /// <param name="CDRId">An charge detail record identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="CDRId">A charge detail record identification to compare with.</param>
         public Boolean Equals(CDR_Id CDRId)
 
             => String.Equals(InternalId,

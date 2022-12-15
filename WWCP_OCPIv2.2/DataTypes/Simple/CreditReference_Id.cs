@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, CreditReference 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,7 +25,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for credit reference identifications.
+    /// </summary>
+    public static class CreditReferenceIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this credit reference identification is null or empty.
+        /// </summary>
+        /// <param name="CreditReferenceId">A credit reference identification.</param>
+        public static Boolean IsNullOrEmpty(this CreditReference_Id? CreditReferenceId)
+            => !CreditReferenceId.HasValue || CreditReferenceId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this credit reference identification is NOT null or empty.
+        /// </summary>
+        /// <param name="CreditReferenceId">A credit reference identification.</param>
+        public static Boolean IsNotNullOrEmpty(this CreditReference_Id? CreditReferenceId)
+            => CreditReferenceId.HasValue && CreditReferenceId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a credit reference.
+    /// CiString(39)
     /// </summary>
     public readonly struct CreditReference_Id : IId<CreditReference_Id>
     {
@@ -44,27 +66,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this credit reference identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the credit reference.
+        /// Indicates whether this credit reference identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
+
+        /// <summary>
+        /// The length of the credit reference identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new credit reference based on the given text.
+        /// Create a new credit reference identification based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a credit reference.</param>
+        /// <param name="Text">The text representation of a credit reference identification.</param>
         private CreditReference_Id(String Text)
         {
             this.InternalId = Text;
@@ -76,19 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a credit reference.
+        /// Parse the given text as a credit reference identification.
         /// </summary>
-        /// <param name="Text">A text representation of a credit reference.</param>
+        /// <param name="Text">A text representation of a credit reference identification.</param>
         public static CreditReference_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out CreditReference_Id creditReferenceId))
+            if (TryParse(Text, out var creditReferenceId))
                 return creditReferenceId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a credit reference must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a credit reference is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a credit reference identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -97,13 +121,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a credit reference.
+        /// Try to parse the given text as a credit reference identification.
         /// </summary>
-        /// <param name="Text">A text representation of a credit reference.</param>
+        /// <param name="Text">A text representation of a credit reference identification.</param>
         public static CreditReference_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out CreditReference_Id creditReferenceId))
+            if (TryParse(Text, out var creditReferenceId))
                 return creditReferenceId;
 
             return null;
@@ -112,28 +136,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CreditReference_Id)
+        #region (static) TryParse(Text, out CreditReferenceId)
 
         /// <summary>
-        /// Try to parse the given text as a credit reference.
+        /// Try to parse the given text as a credit reference identification.
         /// </summary>
-        /// <param name="Text">A text representation of a credit reference.</param>
-        /// <param name="CreditReference_Id">The parsed credit reference.</param>
-        public static Boolean TryParse(String Text, out CreditReference_Id CreditReference_Id)
+        /// <param name="Text">A text representation of a credit reference identification.</param>
+        /// <param name="CreditReferenceId">The parsed credit reference identification.</param>
+        public static Boolean TryParse(String Text, out CreditReference_Id CreditReferenceId)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    CreditReference_Id = new CreditReference_Id(Text.Trim());
+                    CreditReferenceId = new CreditReference_Id(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            CreditReference_Id = default;
+            CreditReferenceId = default;
             return false;
 
         }
@@ -143,11 +169,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this credit reference.
+        /// Clone this credit reference identification.
         /// </summary>
         public CreditReference_Id Clone
 
-            => new CreditReference_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -156,107 +182,107 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (CreditReference_Id1, CreditReference_Id2)
+        #region Operator == (CreditReferenceId1, CreditReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CreditReference_Id1">A credit reference.</param>
-        /// <param name="CreditReference_Id2">Another credit reference.</param>
+        /// <param name="CreditReferenceId1">A credit reference identification.</param>
+        /// <param name="CreditReferenceId2">Another credit reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (CreditReference_Id CreditReference_Id1,
-                                           CreditReference_Id CreditReference_Id2)
+        public static Boolean operator == (CreditReference_Id CreditReferenceId1,
+                                           CreditReference_Id CreditReferenceId2)
 
-            => CreditReference_Id1.Equals(CreditReference_Id2);
+            => CreditReferenceId1.Equals(CreditReferenceId2);
 
         #endregion
 
-        #region Operator != (CreditReference_Id1, CreditReference_Id2)
+        #region Operator != (CreditReferenceId1, CreditReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CreditReference_Id1">A credit reference.</param>
-        /// <param name="CreditReference_Id2">Another credit reference.</param>
+        /// <param name="CreditReferenceId1">A credit reference identification.</param>
+        /// <param name="CreditReferenceId2">Another credit reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (CreditReference_Id CreditReference_Id1,
-                                           CreditReference_Id CreditReference_Id2)
+        public static Boolean operator != (CreditReference_Id CreditReferenceId1,
+                                           CreditReference_Id CreditReferenceId2)
 
-            => !(CreditReference_Id1 == CreditReference_Id2);
+            => !CreditReferenceId1.Equals(CreditReferenceId2);
 
         #endregion
 
-        #region Operator <  (CreditReference_Id1, CreditReference_Id2)
+        #region Operator <  (CreditReferenceId1, CreditReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CreditReference_Id1">A credit reference.</param>
-        /// <param name="CreditReference_Id2">Another credit reference.</param>
+        /// <param name="CreditReferenceId1">A credit reference identification.</param>
+        /// <param name="CreditReferenceId2">Another credit reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (CreditReference_Id CreditReference_Id1,
-                                          CreditReference_Id CreditReference_Id2)
+        public static Boolean operator < (CreditReference_Id CreditReferenceId1,
+                                          CreditReference_Id CreditReferenceId2)
 
-            => CreditReference_Id1.CompareTo(CreditReference_Id2) < 0;
+            => CreditReferenceId1.CompareTo(CreditReferenceId2) < 0;
 
         #endregion
 
-        #region Operator <= (CreditReference_Id1, CreditReference_Id2)
+        #region Operator <= (CreditReferenceId1, CreditReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CreditReference_Id1">A credit reference.</param>
-        /// <param name="CreditReference_Id2">Another credit reference.</param>
+        /// <param name="CreditReferenceId1">A credit reference identification.</param>
+        /// <param name="CreditReferenceId2">Another credit reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (CreditReference_Id CreditReference_Id1,
-                                           CreditReference_Id CreditReference_Id2)
+        public static Boolean operator <= (CreditReference_Id CreditReferenceId1,
+                                           CreditReference_Id CreditReferenceId2)
 
-            => !(CreditReference_Id1 > CreditReference_Id2);
+            => CreditReferenceId1.CompareTo(CreditReferenceId2) <= 0;
 
         #endregion
 
-        #region Operator >  (CreditReference_Id1, CreditReference_Id2)
+        #region Operator >  (CreditReferenceId1, CreditReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CreditReference_Id1">A credit reference.</param>
-        /// <param name="CreditReference_Id2">Another credit reference.</param>
+        /// <param name="CreditReferenceId1">A credit reference identification.</param>
+        /// <param name="CreditReferenceId2">Another credit reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (CreditReference_Id CreditReference_Id1,
-                                          CreditReference_Id CreditReference_Id2)
+        public static Boolean operator > (CreditReference_Id CreditReferenceId1,
+                                          CreditReference_Id CreditReferenceId2)
 
-            => CreditReference_Id1.CompareTo(CreditReference_Id2) > 0;
+            => CreditReferenceId1.CompareTo(CreditReferenceId2) > 0;
 
         #endregion
 
-        #region Operator >= (CreditReference_Id1, CreditReference_Id2)
+        #region Operator >= (CreditReferenceId1, CreditReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CreditReference_Id1">A credit reference.</param>
-        /// <param name="CreditReference_Id2">Another credit reference.</param>
+        /// <param name="CreditReferenceId1">A credit reference identification.</param>
+        /// <param name="CreditReferenceId2">Another credit reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (CreditReference_Id CreditReference_Id1,
-                                           CreditReference_Id CreditReference_Id2)
+        public static Boolean operator >= (CreditReference_Id CreditReferenceId1,
+                                           CreditReference_Id CreditReferenceId2)
 
-            => !(CreditReference_Id1 < CreditReference_Id2);
-
-        #endregion
+            => CreditReferenceId1.CompareTo(CreditReferenceId2) >= 0;
 
         #endregion
 
-        #region IComparable<CreditReference_Id> Members
+        #endregion
+
+        #region IComparable<CreditReferenceId> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credit reference identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A credit reference identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is CreditReference_Id creditReferenceId
                    ? CompareTo(creditReferenceId)
@@ -265,49 +291,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region CompareTo(CreditReference_Id)
+        #region CompareTo(CreditReferenceId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credit reference identifications.
         /// </summary>
-        /// <param name="CreditReference_Id">An object to compare with.</param>
-        public Int32 CompareTo(CreditReference_Id CreditReference_Id)
+        /// <param name="CreditReferenceId">A credit reference identification to compare with.</param>
+        public Int32 CompareTo(CreditReference_Id CreditReferenceId)
 
             => String.Compare(InternalId,
-                              CreditReference_Id.InternalId,
+                              CreditReferenceId.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<CreditReference_Id> Members
+        #region IEquatable<CreditReferenceId> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credit reference identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A credit reference identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CreditReference_Id creditReferenceId &&
                    Equals(creditReferenceId);
 
         #endregion
 
-        #region Equals(CreditReference_Id)
+        #region Equals(CreditReferenceId)
 
         /// <summary>
-        /// Compares two credit references for equality.
+        /// Compares two credit reference identifications for equality.
         /// </summary>
-        /// <param name="CreditReference_Id">An credit reference to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CreditReference_Id CreditReference_Id)
+        /// <param name="CreditReferenceId">A credit reference identification to compare with.</param>
+        public Boolean Equals(CreditReference_Id CreditReferenceId)
 
             => String.Equals(InternalId,
-                             CreditReference_Id.InternalId,
+                             CreditReferenceId.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

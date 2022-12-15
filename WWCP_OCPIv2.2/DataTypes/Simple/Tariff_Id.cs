@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefinedGmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Tariff 2.0 (the "License");

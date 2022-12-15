@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Correlation 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -25,9 +25,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for correlation identifications.
+    /// </summary>
+    public static class CorrelationIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this correlation identification is null or empty.
+        /// </summary>
+        /// <param name="CorrelationId">A correlation identification.</param>
+        public static Boolean IsNullOrEmpty(this Correlation_Id? CorrelationId)
+            => !CorrelationId.HasValue || CorrelationId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this correlation identification is NOT null or empty.
+        /// </summary>
+        /// <param name="CorrelationId">A correlation identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Correlation_Id? CorrelationId)
+            => CorrelationId.HasValue && CorrelationId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a request correlation.
     /// </summary>
-    public struct Correlation_Id : IId<Correlation_Id>
+    public readonly struct Correlation_Id : IId<Correlation_Id>
     {
 
         #region Data
@@ -42,27 +65,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this correlation identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the request correlation identification.
+        /// Indicates whether this correlation identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
+
+        /// <summary>
+        /// The length of the correlation identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new request correlation identification based on the given text.
+        /// Create a new correlation identification based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a request correlation identification.</param>
+        /// <param name="Text">The text representation of a correlation identification.</param>
         private Correlation_Id(String Text)
         {
             this.InternalId = Text;
@@ -71,53 +98,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Random  (Length = 30, IsLocal = false)
+        #region (static) NewRandom(Length = 30, IsLocal = false)
 
         /// <summary>
         /// Create a new random request correlation identification.
         /// </summary>
         /// <param name="Length">The expected length of the request correlation identification.</param>
         /// <param name="IsLocal">The request correlation identification was generated locally and not received via network.</param>
-        public static Correlation_Id Random(Byte      Length    = 30,
-                                            Boolean?  IsLocal   = false)
+        public static Correlation_Id NewRandom(Byte      Length    = 30,
+                                               Boolean?  IsLocal   = false)
 
             => new ((IsLocal == true ? "Local:" : "") +
                     RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
-        /// Parse the given string as a request correlation identification.
+        /// Parse the given text as a correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         public static Correlation_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Correlation_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var correlationId))
+                return correlationId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a correlation identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a correlation identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a correlation identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
-        /// Try to parse the given text as a request correlation identification.
+        /// Try to parse the given text as a correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         public static Correlation_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Correlation_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var correlationId))
+                return correlationId;
 
             return null;
 
@@ -125,21 +150,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CorrelationId)
+        #region (static) TryParse (Text, out CorrelationId)
 
         /// <summary>
-        /// Try to parse the given text as a request correlation identification.
+        /// Try to parse the given text as a correlation identification.
         /// </summary>
         /// <param name="Text">A text representation of a correlation identification.</param>
         /// <param name="CorrelationId">The parsed correlation identification.</param>
         public static Boolean TryParse(String Text, out Correlation_Id CorrelationId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    CorrelationId = new Correlation_Id(Text.Trim());
+                    CorrelationId = new Correlation_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -156,11 +183,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this request correlation identification.
+        /// Clone this correlation identification.
         /// </summary>
         public Correlation_Id Clone
 
-            => new Correlation_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -174,8 +201,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A request correlation identification.</param>
-        /// <param name="CorrelationId2">Another request correlation identification.</param>
+        /// <param name="CorrelationId1">A correlation identification.</param>
+        /// <param name="CorrelationId2">Another correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
@@ -189,13 +216,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A request correlation identification.</param>
-        /// <param name="CorrelationId2">Another request correlation identification.</param>
+        /// <param name="CorrelationId1">A correlation identification.</param>
+        /// <param name="CorrelationId2">Another correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
 
-            => !(CorrelationId1 == CorrelationId2);
+            => !CorrelationId1.Equals(CorrelationId2);
 
         #endregion
 
@@ -204,8 +231,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A request correlation identification.</param>
-        /// <param name="CorrelationId2">Another request correlation identification.</param>
+        /// <param name="CorrelationId1">A correlation identification.</param>
+        /// <param name="CorrelationId2">Another correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Correlation_Id CorrelationId1,
                                           Correlation_Id CorrelationId2)
@@ -219,13 +246,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A request correlation identification.</param>
-        /// <param name="CorrelationId2">Another request correlation identification.</param>
+        /// <param name="CorrelationId1">A correlation identification.</param>
+        /// <param name="CorrelationId2">Another correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
 
-            => !(CorrelationId1 > CorrelationId2);
+            => CorrelationId1.CompareTo(CorrelationId2) <= 0;
 
         #endregion
 
@@ -234,8 +261,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A request correlation identification.</param>
-        /// <param name="CorrelationId2">Another request correlation identification.</param>
+        /// <param name="CorrelationId1">A correlation identification.</param>
+        /// <param name="CorrelationId2">Another correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Correlation_Id CorrelationId1,
                                           Correlation_Id CorrelationId2)
@@ -249,13 +276,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CorrelationId1">A request correlation identification.</param>
-        /// <param name="CorrelationId2">Another request correlation identification.</param>
+        /// <param name="CorrelationId1">A correlation identification.</param>
+        /// <param name="CorrelationId2">Another correlation identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Correlation_Id CorrelationId1,
                                            Correlation_Id CorrelationId2)
 
-            => !(CorrelationId1 < CorrelationId2);
+            => CorrelationId1.CompareTo(CorrelationId2) >= 0;
 
         #endregion
 
@@ -266,13 +293,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two correlation identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A correlation identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is Correlation_Id locationId
-                   ? CompareTo(locationId)
+            => Object is Correlation_Id correlationId
+                   ? CompareTo(correlationId)
                    : throw new ArgumentException("The given object is not a correlation identification!",
                                                  nameof(Object));
 
@@ -281,9 +308,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(CorrelationId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two correlation identifications.
         /// </summary>
-        /// <param name="CorrelationId">An object to compare with.</param>
+        /// <param name="CorrelationId">A correlation identification to compare with.</param>
         public Int32 CompareTo(Correlation_Id CorrelationId)
 
             => String.Compare(InternalId,
@@ -299,24 +326,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two correlation identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A correlation identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is Correlation_Id locationId &&
-                   Equals(locationId);
+            => Object is Correlation_Id correlationId &&
+                   Equals(correlationId);
 
         #endregion
 
         #region Equals(CorrelationId)
 
         /// <summary>
-        /// Compares two request correlation identifications for equality.
+        /// Compares two correlation identifications for equality.
         /// </summary>
-        /// <param name="CorrelationId">A request correlation identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="CorrelationId">A correlation identification to compare with.</param>
         public Boolean Equals(Correlation_Id CorrelationId)
 
             => String.Equals(InternalId,

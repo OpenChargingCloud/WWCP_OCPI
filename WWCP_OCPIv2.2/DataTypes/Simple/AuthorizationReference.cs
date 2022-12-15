@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefinedGmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for authorization references.
+    /// </summary>
+    public static class AuthorizationReferenceExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this authorization reference is null or empty.
+        /// </summary>
+        /// <param name="AuthorizationReference">An authorization reference.</param>
+        public static Boolean IsNullOrEmpty(this AuthorizationReference? AuthorizationReference)
+            => !AuthorizationReference.HasValue || AuthorizationReference.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this authorization reference is NOT null or empty.
+        /// </summary>
+        /// <param name="AuthorizationReference">An authorization reference.</param>
+        public static Boolean IsNotNullOrEmpty(this AuthorizationReference? AuthorizationReference)
+            => AuthorizationReference.HasValue && AuthorizationReference.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of an authorization reference.
     /// </summary>
     public readonly struct AuthorizationReference : IId<AuthorizationReference>
@@ -42,18 +65,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this authorization reference is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this authorization reference is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the authorization reference.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
@@ -62,7 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new authorization reference based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a authorization reference.</param>
+        /// <param name="Text">The text representation of an authorization reference.</param>
         private AuthorizationReference(String Text)
         {
             this.InternalId = Text;
@@ -71,40 +98,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Random  (Length = 30)
+        #region (static) NewRandom(Length = 30)
 
         /// <summary>
         /// Create a new random authorization reference.
         /// </summary>
         /// <param name="Length">The expected length of the authorization reference.</param>
-        public static AuthorizationReference Random(Byte Length = 30)
+        public static AuthorizationReference NewRandom(Byte Length = 30)
 
             => new (RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
-        /// Parse the given string as an authorization reference.
+        /// Parse the given text as an authorization reference.
         /// </summary>
         /// <param name="Text">A text representation of an authorization reference.</param>
         public static AuthorizationReference Parse(String Text)
         {
 
-            if (TryParse(Text, out AuthorizationReference authorizationReference))
+            if (TryParse(Text, out var authorizationReference))
                 return authorizationReference;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an authorization reference must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of an authorization reference is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of an authorization reference: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as an authorization reference.
@@ -113,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static AuthorizationReference? TryParse(String Text)
         {
 
-            if (TryParse(Text, out AuthorizationReference authorizationReference))
+            if (TryParse(Text, out var authorizationReference))
                 return authorizationReference;
 
             return null;
@@ -122,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out AuthorizationReference)
+        #region (static) TryParse (Text, out AuthorizationReference)
 
         /// <summary>
         /// Try to parse the given text as an authorization reference.
@@ -132,11 +157,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out AuthorizationReference AuthorizationReference)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    AuthorizationReference = new AuthorizationReference(Text.Trim());
+                    AuthorizationReference = new AuthorizationReference(Text);
                     return true;
                 }
                 catch (Exception)
@@ -157,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public AuthorizationReference Clone
 
-            => new AuthorizationReference(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -171,7 +198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthorizationReference1">A authorization reference.</param>
+        /// <param name="AuthorizationReference1">An authorization reference.</param>
         /// <param name="AuthorizationReference2">Another authorization reference.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (AuthorizationReference AuthorizationReference1,
@@ -186,13 +213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthorizationReference1">A authorization reference.</param>
+        /// <param name="AuthorizationReference1">An authorization reference.</param>
         /// <param name="AuthorizationReference2">Another authorization reference.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (AuthorizationReference AuthorizationReference1,
                                            AuthorizationReference AuthorizationReference2)
 
-            => !(AuthorizationReference1 == AuthorizationReference2);
+            => !AuthorizationReference1.Equals(AuthorizationReference2);
 
         #endregion
 
@@ -201,7 +228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthorizationReference1">A authorization reference.</param>
+        /// <param name="AuthorizationReference1">An authorization reference.</param>
         /// <param name="AuthorizationReference2">Another authorization reference.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (AuthorizationReference AuthorizationReference1,
@@ -216,13 +243,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthorizationReference1">A authorization reference.</param>
+        /// <param name="AuthorizationReference1">An authorization reference.</param>
         /// <param name="AuthorizationReference2">Another authorization reference.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (AuthorizationReference AuthorizationReference1,
                                            AuthorizationReference AuthorizationReference2)
 
-            => !(AuthorizationReference1 > AuthorizationReference2);
+            => AuthorizationReference1.CompareTo(AuthorizationReference2) <= 0;
 
         #endregion
 
@@ -231,7 +258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthorizationReference1">A authorization reference.</param>
+        /// <param name="AuthorizationReference1">An authorization reference.</param>
         /// <param name="AuthorizationReference2">Another authorization reference.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (AuthorizationReference AuthorizationReference1,
@@ -246,13 +273,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthorizationReference1">A authorization reference.</param>
+        /// <param name="AuthorizationReference1">An authorization reference.</param>
         /// <param name="AuthorizationReference2">Another authorization reference.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (AuthorizationReference AuthorizationReference1,
                                            AuthorizationReference AuthorizationReference2)
 
-            => !(AuthorizationReference1 < AuthorizationReference2);
+            => AuthorizationReference1.CompareTo(AuthorizationReference2) >= 0;
 
         #endregion
 
@@ -263,10 +290,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two authorization references.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An authorization reference to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is AuthorizationReference authorizationReference
                    ? CompareTo(authorizationReference)
@@ -278,9 +305,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(AuthorizationReference)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two authorization references.
         /// </summary>
-        /// <param name="AuthorizationReference">An object to compare with.</param>
+        /// <param name="AuthorizationReference">An authorization reference to compare with.</param>
         public Int32 CompareTo(AuthorizationReference AuthorizationReference)
 
             => String.Compare(InternalId,
@@ -296,11 +323,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two authorization references for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An authorization reference to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is AuthorizationReference authorizationReference &&
                    Equals(authorizationReference);
@@ -313,7 +339,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two authorization references for equality.
         /// </summary>
         /// <param name="AuthorizationReference">An authorization reference to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(AuthorizationReference AuthorizationReference)
 
             => String.Equals(InternalId,

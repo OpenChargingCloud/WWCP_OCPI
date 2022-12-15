@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -105,8 +105,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             this.ResponseURL    = ResponseURL;
-            this.RequestId      = RequestId     ?? Request_Id.    Random();
-            this.CorrelationId  = CorrelationId ?? Correlation_Id.Random();
+            this.RequestId      = RequestId     ?? Request_Id.    NewRandom();
+            this.CorrelationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
         }
 

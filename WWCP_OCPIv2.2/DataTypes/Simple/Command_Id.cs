@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefinedGmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Command 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -25,6 +25,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for command identifications.
+    /// </summary>
+    public static class CommandIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this command identification is null or empty.
+        /// </summary>
+        /// <param name="CommandId">A command identification.</param>
+        public static Boolean IsNullOrEmpty(this Command_Id? CommandId)
+            => !CommandId.HasValue || CommandId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this command identification is NOT null or empty.
+        /// </summary>
+        /// <param name="CommandId">A command identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Command_Id? CommandId)
+            => CommandId.HasValue && CommandId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a command.
     /// </summary>
     public readonly struct Command_Id : IId<Command_Id>
@@ -42,18 +65,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this command identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this command identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the command identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
@@ -71,40 +98,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Random  (Length = 50)
+        #region (static) NewRandom(Length = 50)
 
         /// <summary>
         /// Create a new random command identification.
         /// </summary>
         /// <param name="Length">The expected length of the command identification.</param>
-        public static Command_Id Random(Byte Length = 50)
+        public static Command_Id NewRandom(Byte Length = 50)
 
             => new (RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
-        /// Parse the given string as a command identification.
+        /// Parse the given text as a command identification.
         /// </summary>
         /// <param name="Text">A text representation of a command identification.</param>
         public static Command_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Command_Id commandId))
+            if (TryParse(Text, out var commandId))
                 return commandId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a command identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a command identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a command identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a command identification.
@@ -113,16 +138,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Command_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Command_Id commandId))
+            if (TryParse(Text, out var commandId))
                 return commandId;
 
-            return default;
+            return null;
 
         }
 
         #endregion
 
-        #region (static) TryParse(Text, out CommandId)
+        #region (static) TryParse (Text, out CommandId)
 
         /// <summary>
         /// Try to parse the given text as a command identification.
@@ -132,11 +157,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out Command_Id CommandId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    CommandId = new Command_Id(Text.Trim());
+                    CommandId = new Command_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -157,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public Command_Id Clone
 
-            => new Command_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -192,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (Command_Id CommandId1,
                                            Command_Id CommandId2)
 
-            => !(CommandId1 == CommandId2);
+            => !CommandId1.Equals(CommandId2);
 
         #endregion
 
@@ -222,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (Command_Id CommandId1,
                                            Command_Id CommandId2)
 
-            => !(CommandId1 > CommandId2);
+            => CommandId1.CompareTo(CommandId2) <= 0;
 
         #endregion
 
@@ -252,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (Command_Id CommandId1,
                                            Command_Id CommandId2)
 
-            => !(CommandId1 < CommandId2);
+            => CommandId1.CompareTo(CommandId2) >= 0;
 
         #endregion
 
@@ -263,10 +290,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two command identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A command identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Command_Id commandId
                    ? CompareTo(commandId)
@@ -278,9 +305,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(CommandId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two command identifications.
         /// </summary>
-        /// <param name="CommandId">An object to compare with.</param>
+        /// <param name="CommandId">A command identification to compare with.</param>
         public Int32 CompareTo(Command_Id CommandId)
 
             => String.Compare(InternalId,
@@ -296,11 +323,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two command identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A command identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Command_Id commandId &&
                    Equals(commandId);
@@ -312,8 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two command identifications for equality.
         /// </summary>
-        /// <param name="CommandId">An command identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="CommandId">A command identification to compare with.</param>
         public Boolean Equals(Command_Id CommandId)
 
             => String.Equals(InternalId,

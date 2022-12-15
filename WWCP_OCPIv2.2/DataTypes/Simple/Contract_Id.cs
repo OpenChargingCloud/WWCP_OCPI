@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Contract 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,10 +25,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a contract.
+    /// Extension methods for contract identifications.
+    /// </summary>
+    public static class ContractIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this contract identification is null or empty.
+        /// </summary>
+        /// <param name="ContractId">A contract identification.</param>
+        public static Boolean IsNullOrEmpty(this Contract_Id? ContractId)
+            => !ContractId.HasValue || ContractId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this contract identification is NOT null or empty.
+        /// </summary>
+        /// <param name="ContractId">A contract identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Contract_Id? ContractId)
+            => ContractId.HasValue && ContractId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of a contract (eMAId).
+    /// CiString(36)
     /// </summary>
     public readonly struct Contract_Id : IId<Contract_Id>
-
     {
 
         #region Data
@@ -45,18 +66,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this contract identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this contract identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the contract identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
@@ -77,19 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a contract identification.
+        /// Parse the given text as a contract identification.
         /// </summary>
         /// <param name="Text">A text representation of a contract identification.</param>
         public static Contract_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Contract_Id contractId))
+            if (TryParse(Text, out var contractId))
                 return contractId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a contract identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a contract identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a contract identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -104,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Contract_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Contract_Id contractId))
+            if (TryParse(Text, out var contractId))
                 return contractId;
 
             return null;
@@ -123,11 +146,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out Contract_Id ContractId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    ContractId = new Contract_Id(Text.Trim());
+                    ContractId = new Contract_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -148,7 +173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public Contract_Id Clone
 
-            => new Contract_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -183,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (Contract_Id ContractId1,
                                            Contract_Id ContractId2)
 
-            => !(ContractId1 == ContractId2);
+            => !ContractId1.Equals(ContractId2);
 
         #endregion
 
@@ -213,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (Contract_Id ContractId1,
                                            Contract_Id ContractId2)
 
-            => !(ContractId1 > ContractId2);
+            => ContractId1.CompareTo(ContractId2) <= 0;
 
         #endregion
 
@@ -243,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (Contract_Id ContractId1,
                                            Contract_Id ContractId2)
 
-            => !(ContractId1 < ContractId2);
+            => ContractId1.CompareTo(ContractId2) >= 0;
 
         #endregion
 
@@ -254,28 +279,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two contract identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
-        {
+        /// <param name="Object">A contract identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            if (Object is Contract_Id contractId)
-                return CompareTo(contractId);
-
-            throw new ArgumentException("The given object is not a contract identification!",
-                                        nameof(Object));
-
-        }
+            => Object is Contract_Id contractId
+                   ? CompareTo(contractId)
+                   : throw new ArgumentException("The given object is not a contract identification!",
+                                                 nameof(Object));
 
         #endregion
 
         #region CompareTo(ContractId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two contract identifications.
         /// </summary>
-        /// <param name="ContractId">An object to compare with.</param>
+        /// <param name="ContractId">A contract identification to compare with.</param>
         public Int32 CompareTo(Contract_Id ContractId)
 
             => String.Compare(InternalId,
@@ -291,19 +312,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two contract identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
-        {
+        /// <param name="Object">A contract identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            if (Object is Contract_Id contractId)
-                return Equals(contractId);
-
-            return false;
-
-        }
+            => Object is Contract_Id contractId &&
+                   Equals(contractId);
 
         #endregion
 
@@ -312,8 +327,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two contract identifications for equality.
         /// </summary>
-        /// <param name="ContractId">An contract identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="ContractId">A contract identification to compare with.</param>
         public Boolean Equals(Contract_Id ContractId)
 
             => String.Equals(InternalId,

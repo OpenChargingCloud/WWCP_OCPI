@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -828,8 +828,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 try
                 {
 
-                    var requestId      = RequestId     ?? Request_Id.Random();
-                    var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                    var requestId      = RequestId     ?? Request_Id.NewRandom();
+                    var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                     // ToDo: Add request logging!
 
@@ -1064,8 +1064,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 try
                 {
 
-                    var requestId      = RequestId     ?? Request_Id.    Random();
-                    var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                    var requestId      = RequestId     ?? Request_Id.    NewRandom();
+                    var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                     // ToDo: Add request logging!
 
@@ -1377,8 +1377,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.Random();
-                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         ModuleIDs.Credentials,
                                                         InterfaceRoles.RECEIVER);
@@ -1578,8 +1578,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.Random();
-                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         ModuleIDs.Credentials,
                                                         InterfaceRoles.RECEIVER);
@@ -1781,8 +1781,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.Random();
-                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         ModuleIDs.Credentials,
                                                         InterfaceRoles.RECEIVER);
@@ -2005,8 +2005,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.Random();
-                var correlationId  = CorrelationId ?? Correlation_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         ModuleIDs.Credentials,
                                                         InterfaceRoles.RECEIVER);
@@ -2229,7 +2229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var versionId         = VersionId        ?? SelectedOCPIVersionId;
                 var myVersionsURL     = MyVersionsURL    ?? MyCommonAPI?.OurVersionsURL;
                 var myRoles           = MyRoles          ?? MyCommonAPI?.OurCredentialRoles;
-                var credentialTokenB  = CredentialTokenB ?? AccessToken.Random();
+                var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
                 var remoteURL         = await GetRemoteURL(versionId,
                                                            ModuleIDs.Credentials,
@@ -2262,8 +2262,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 else
                 {
 
-                    var requestId          = RequestId     ?? Request_Id.Random();
-                    var correlationId      = CorrelationId ?? Correlation_Id.Random();
+                    var requestId          = RequestId     ?? Request_Id.NewRandom();
+                    var correlationId      = CorrelationId ?? Correlation_Id.NewRandom();
                     var credentials        = new Credentials(credentialTokenB,
                                                              myVersionsURL.Value,
                                                              myRoles);

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -98,22 +98,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Random  (Length = 30, IsLocal = false)
+        #region (static) NewRandom(Length = 30, IsLocal = false)
 
         /// <summary>
         /// Create a new random request identification.
         /// </summary>
         /// <param name="Length">The expected length of the request identification.</param>
         /// <param name="IsLocal">The request identification was generated locally and not received via network.</param>
-        public static Request_Id Random(Byte      Length    = 30,
-                                        Boolean?  IsLocal   = false)
+        public static Request_Id NewRandom(Byte      Length    = 30,
+                                           Boolean?  IsLocal   = false)
 
             => new ((IsLocal == true ? "Local:" : "") +
                     RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
         /// Parse the given text as a request identification.
@@ -132,7 +132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as a request identification.
@@ -150,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out RequestId)
+        #region (static) TryParse (Text, out RequestId)
 
         /// <summary>
         /// Try to parse the given text as a request identification.

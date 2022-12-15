@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -6809,7 +6809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                       _tokenStatus.Status,
                                                                       _tokenStatus.Token,
                                                                       _tokenStatus.LocationReference,
-                                                                      AuthorizationReference.Random()
+                                                                      AuthorizationReference.NewRandom()
                                                                       //new DisplayText(
                                                                       //    _tokenStatus.Token.UILanguage ?? Languages.en,
                                                                       //    responseText
@@ -7109,7 +7109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                               authorizationInfo.Allowed,
                                                                               authorizationInfo.Token,
                                                                               authorizationInfo.Location,
-                                                                              authorizationInfo.AuthorizationReference ?? AuthorizationReference.Random(),
+                                                                              authorizationInfo.AuthorizationReference ?? AuthorizationReference.NewRandom(),
                                                                               authorizationInfo.Info                   ?? new DisplayText(
                                                                                                                               authorizationInfo.Token.UILanguage ?? Languages.en,
                                                                                                                               responseText

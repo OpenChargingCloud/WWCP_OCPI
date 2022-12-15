@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Token 2.0 (the "License");
@@ -49,6 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     /// <summary>
     /// The unique identification of a token.
+    /// CiString(36)
     /// </summary>
     public readonly struct Token_Id : IId<Token_Id>
     {
@@ -97,6 +98,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
+        #region (static) NewRandom
+
+        /// <summary>
+        /// Create a new random token identification.
+        /// </summary>
+        public static Token_Id NewRandom
+
+            => Parse(Guid.NewGuid().ToString());
+
+        #endregion
 
         #region (static) Parse   (Text)
 

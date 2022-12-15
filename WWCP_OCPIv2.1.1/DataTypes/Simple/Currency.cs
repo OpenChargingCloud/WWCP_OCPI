@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,7 +25,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The unique identification of a currency.
+    /// Extension methods for currencies.
+    /// </summary>
+    public static class CurrencyExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this currency is null or empty.
+        /// </summary>
+        /// <param name="Currency">A currency.</param>
+        public static Boolean IsNullOrEmpty(this Currency? Currency)
+            => !Currency.HasValue || Currency.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this currency is NOT null or empty.
+        /// </summary>
+        /// <param name="Currency">A currency.</param>
+        public static Boolean IsNotNullOrEmpty(this Currency? Currency)
+            => Currency.HasValue && Currency.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The ISO 4217 code of a currency.
     /// </summary>
     public readonly struct Currency : IId<Currency>
     {
@@ -44,25 +65,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this currency is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this currency is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the currency.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new currency based on the given text.
+        /// Create a new ISO 4217 code of a currency based on the given text.
         /// </summary>
         /// <param name="Text">The text representation of a currency.</param>
         private Currency(String Text)
@@ -76,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a currency.
+        /// Parse the given text as a currency.
         /// </summary>
         /// <param name="Text">A text representation of a currency.</param>
         public static Currency Parse(String Text)
         {
 
-            if (TryParse(Text, out Currency currency))
+            if (TryParse(Text, out var currency))
                 return currency;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a currency must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a currency is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a currency: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -103,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Currency? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Currency currency))
+            if (TryParse(Text, out var currency))
                 return currency;
 
             return null;
@@ -112,28 +135,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out AuthId)
+        #region (static) TryParse(Text, out Currency)
 
         /// <summary>
         /// Try to parse the given text as a currency.
         /// </summary>
         /// <param name="Text">A text representation of a currency.</param>
-        /// <param name="AuthId">The parsed currency.</param>
-        public static Boolean TryParse(String Text, out Currency AuthId)
+        /// <param name="Currency">The parsed currency.</param>
+        public static Boolean TryParse(String Text, out Currency Currency)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    AuthId = new Currency(Text.Trim());
+                    Currency = new Currency(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            AuthId = default;
+            Currency = default;
             return false;
 
         }
@@ -147,126 +172,127 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public Currency Clone
 
-            => new Currency(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
         #endregion
 
 
-        #region Static defaults
+        #region Static definitions
 
         /// <summary>
         /// EUR, €.
         /// </summary>
-        public static Currency EUR = Currency.Parse("EUR");
+        public static Currency EUR
+            => new ("EUR");
 
         #endregion
 
 
         #region Operator overloading
 
-        #region Operator == (AuthId1, AuthId2)
+        #region Operator == (Currency1, Currency2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A currency.</param>
-        /// <param name="AuthId2">Another currency.</param>
+        /// <param name="Currency1">A currency.</param>
+        /// <param name="Currency2">Another currency.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Currency AuthId1,
-                                           Currency AuthId2)
+        public static Boolean operator == (Currency Currency1,
+                                           Currency Currency2)
 
-            => AuthId1.Equals(AuthId2);
+            => Currency1.Equals(Currency2);
 
         #endregion
 
-        #region Operator != (AuthId1, AuthId2)
+        #region Operator != (Currency1, Currency2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A currency.</param>
-        /// <param name="AuthId2">Another currency.</param>
+        /// <param name="Currency1">A currency.</param>
+        /// <param name="Currency2">Another currency.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Currency AuthId1,
-                                           Currency AuthId2)
+        public static Boolean operator != (Currency Currency1,
+                                           Currency Currency2)
 
-            => !(AuthId1 == AuthId2);
+            => !Currency1.Equals(Currency2);
 
         #endregion
 
-        #region Operator <  (AuthId1, AuthId2)
+        #region Operator <  (Currency1, Currency2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A currency.</param>
-        /// <param name="AuthId2">Another currency.</param>
+        /// <param name="Currency1">A currency.</param>
+        /// <param name="Currency2">Another currency.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Currency AuthId1,
-                                          Currency AuthId2)
+        public static Boolean operator < (Currency Currency1,
+                                          Currency Currency2)
 
-            => AuthId1.CompareTo(AuthId2) < 0;
+            => Currency1.CompareTo(Currency2) < 0;
 
         #endregion
 
-        #region Operator <= (AuthId1, AuthId2)
+        #region Operator <= (Currency1, Currency2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A currency.</param>
-        /// <param name="AuthId2">Another currency.</param>
+        /// <param name="Currency1">A currency.</param>
+        /// <param name="Currency2">Another currency.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Currency AuthId1,
-                                           Currency AuthId2)
+        public static Boolean operator <= (Currency Currency1,
+                                           Currency Currency2)
 
-            => !(AuthId1 > AuthId2);
+            => Currency1.CompareTo(Currency2) <= 0;
 
         #endregion
 
-        #region Operator >  (AuthId1, AuthId2)
+        #region Operator >  (Currency1, Currency2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A currency.</param>
-        /// <param name="AuthId2">Another currency.</param>
+        /// <param name="Currency1">A currency.</param>
+        /// <param name="Currency2">Another currency.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Currency AuthId1,
-                                          Currency AuthId2)
+        public static Boolean operator > (Currency Currency1,
+                                          Currency Currency2)
 
-            => AuthId1.CompareTo(AuthId2) > 0;
+            => Currency1.CompareTo(Currency2) > 0;
 
         #endregion
 
-        #region Operator >= (AuthId1, AuthId2)
+        #region Operator >= (Currency1, Currency2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A currency.</param>
-        /// <param name="AuthId2">Another currency.</param>
+        /// <param name="Currency1">A currency.</param>
+        /// <param name="Currency2">Another currency.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Currency AuthId1,
-                                           Currency AuthId2)
+        public static Boolean operator >= (Currency Currency1,
+                                           Currency Currency2)
 
-            => !(AuthId1 < AuthId2);
-
-        #endregion
+            => Currency1.CompareTo(Currency2) >= 0;
 
         #endregion
 
-        #region IComparable<AuthId> Members
+        #endregion
+
+        #region IComparable<Currency> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two currencies.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A currency to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Currency currency
                    ? CompareTo(currency)
@@ -275,49 +301,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region CompareTo(AuthId)
+        #region CompareTo(Currency)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two currencies.
         /// </summary>
-        /// <param name="AuthId">An object to compare with.</param>
-        public Int32 CompareTo(Currency AuthId)
+        /// <param name="Currency">A currency to compare with.</param>
+        public Int32 CompareTo(Currency Currency)
 
             => String.Compare(InternalId,
-                              AuthId.InternalId,
+                              Currency.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<AuthId> Members
+        #region IEquatable<Currency> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two currencies for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A currency to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Currency currency &&
                    Equals(currency);
 
         #endregion
 
-        #region Equals(AuthId)
+        #region Equals(Currency)
 
         /// <summary>
-        /// Compares two currencys for equality.
+        /// Compares two currencies for equality.
         /// </summary>
-        /// <param name="AuthId">An currency to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Currency AuthId)
+        /// <param name="Currency">A currency to compare with.</param>
+        public Boolean Equals(Currency Currency)
 
             => String.Equals(InternalId,
-                             AuthId.InternalId,
+                             Currency.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

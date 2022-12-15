@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -300,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Compare(InternalId,
                               PublicKey.InternalId,
-                              StringComparison.OrdinalIgnoreCase);
+                              StringComparison.Ordinal);
 
         #endregion
 
@@ -331,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Equals(InternalId,
                              PublicKey.InternalId,
-                             StringComparison.OrdinalIgnoreCase);
+                             StringComparison.Ordinal);
 
         #endregion
 
@@ -345,7 +345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <returns>The hash code of this object.</returns>
         public override Int32 GetHashCode()
 
-            => InternalId?.ToLower().GetHashCode() ?? 0;
+            => InternalId?.GetHashCode() ?? 0;
 
         #endregion
 

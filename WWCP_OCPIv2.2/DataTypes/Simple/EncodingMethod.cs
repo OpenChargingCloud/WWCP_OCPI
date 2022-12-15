@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefinedGmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,7 +25,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of an encoding method for the German Eichrecht.
+    /// Extension methods for encoding methods.
+    /// </summary>
+    public static class EncodingMethodExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this encoding method is null or empty.
+        /// </summary>
+        /// <param name="EncodingMethod">An encoding method.</param>
+        public static Boolean IsNullOrEmpty(this EncodingMethod? EncodingMethod)
+            => !EncodingMethod.HasValue || EncodingMethod.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this encoding method is NOT null or empty.
+        /// </summary>
+        /// <param name="EncodingMethod">An encoding method.</param>
+        public static Boolean IsNotNullOrEmpty(this EncodingMethod? EncodingMethod)
+            => EncodingMethod.HasValue && EncodingMethod.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of a version.
     /// </summary>
     public readonly struct EncodingMethod : IId<EncodingMethod>
     {
@@ -44,27 +65,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this encoding method is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this encoding method is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the encoding method.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new encoding method for the German Eichrecht based on the given text.
+        /// Create a new encoding method based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a encoding method.</param>
+        /// <param name="Text">The text representation of an encoding method.</param>
         private EncodingMethod(String Text)
         {
             this.InternalId = Text;
@@ -76,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an encoding method.
+        /// Parse the given text as an encoding method.
         /// </summary>
         /// <param name="Text">A text representation of an encoding method.</param>
         public static EncodingMethod Parse(String Text)
         {
 
-            if (TryParse(Text, out EncodingMethod encodingMethod))
+            if (TryParse(Text, out var encodingMethod))
                 return encodingMethod;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an encoding method must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of an encoding method is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of an encoding method: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -103,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static EncodingMethod? TryParse(String Text)
         {
 
-            if (TryParse(Text, out EncodingMethod encodingMethod))
+            if (TryParse(Text, out var encodingMethod))
                 return encodingMethod;
 
             return null;
@@ -112,28 +135,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out AuthId)
+        #region (static) TryParse(Text, out EncodingMethod)
 
         /// <summary>
         /// Try to parse the given text as an encoding method.
         /// </summary>
         /// <param name="Text">A text representation of an encoding method.</param>
-        /// <param name="AuthId">The parsed encoding method.</param>
-        public static Boolean TryParse(String Text, out EncodingMethod AuthId)
+        /// <param name="EncodingMethod">The parsed encoding method.</param>
+        public static Boolean TryParse(String Text, out EncodingMethod EncodingMethod)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    AuthId = new EncodingMethod(Text.Trim());
+                    EncodingMethod = new EncodingMethod(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            AuthId = default;
+            EncodingMethod = default;
             return false;
 
         }
@@ -147,161 +172,174 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public EncodingMethod Clone
 
-            => new EncodingMethod(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
         #endregion
 
 
-        #region Static defaults
+        #region Static definitions
+
+#pragma warning disable IDE1006 // Naming Styles
 
         /// <summary>
         /// Proposed by SAFE.
         /// </summary>
-        public static EncodingMethod OCMF           = Parse("OCMF");
+        public static EncodingMethod OCMF
+            => new ("OCMF");
 
         /// <summary>
         /// Alfen Eichrecht encoding / implementation.
         /// </summary>
-        public static EncodingMethod Alfen          = Parse("Alfen Eichrecht");
+        public static EncodingMethod Alfen
+            => new ("Alfen Eichrecht");
 
         /// <summary>
         /// eBee smart technologies implementation.
         /// </summary>
-        public static EncodingMethod eBee           = Parse("EDL40 E-Mobility Extension");
+
+        public static EncodingMethod eBee
+            => new ("EDL40 E-Mobility Extension");
 
         /// <summary>
         /// Mennekes implementation.
         /// </summary>
-        public static EncodingMethod Mennekes       = Parse("EDL40 Mennekes");
+        public static EncodingMethod Mennekes
+            => new ("EDL40 Mennekes");
 
         /// <summary>
         /// GraphDefiened implementation.
         /// </summary>
-        public static EncodingMethod GraphDefiened  = Parse("GraphDefiened");
+        public static EncodingMethod GraphDefiened
+            => new ("GraphDefiened");
 
         /// <summary>
         /// chargeIT Mobility implementation.
         /// </summary>
-        public static EncodingMethod chargeIT       = Parse("chargeIT Mobility");
+        public static EncodingMethod chargeIT
+            => new ("chargeIT Mobility");
 
         /// <summary>
         /// ChargePoint implementation.
         /// </summary>
-        public static EncodingMethod ChargePoint    = Parse("ChargePoint");
+        public static EncodingMethod ChargePoint
+            => new ("ChargePoint");
 
         /// <summary>
         /// Porsche implementation.
         /// </summary>
-        public static EncodingMethod Porsche        = Parse("Porsche");
+        public static EncodingMethod Porsche
+            => new ("Porsche");
+
+#pragma warning restore IDE1006 // Naming Styles
 
         #endregion
 
 
         #region Operator overloading
 
-        #region Operator == (AuthId1, AuthId2)
+        #region Operator == (EncodingMethod1, EncodingMethod2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A encoding method.</param>
-        /// <param name="AuthId2">Another encoding method.</param>
+        /// <param name="EncodingMethod1">An encoding method.</param>
+        /// <param name="EncodingMethod2">Another encoding method.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (EncodingMethod AuthId1,
-                                           EncodingMethod AuthId2)
+        public static Boolean operator == (EncodingMethod EncodingMethod1,
+                                           EncodingMethod EncodingMethod2)
 
-            => AuthId1.Equals(AuthId2);
+            => EncodingMethod1.Equals(EncodingMethod2);
 
         #endregion
 
-        #region Operator != (AuthId1, AuthId2)
+        #region Operator != (EncodingMethod1, EncodingMethod2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A encoding method.</param>
-        /// <param name="AuthId2">Another encoding method.</param>
+        /// <param name="EncodingMethod1">An encoding method.</param>
+        /// <param name="EncodingMethod2">Another encoding method.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (EncodingMethod AuthId1,
-                                           EncodingMethod AuthId2)
+        public static Boolean operator != (EncodingMethod EncodingMethod1,
+                                           EncodingMethod EncodingMethod2)
 
-            => !(AuthId1 == AuthId2);
+            => !EncodingMethod1.Equals(EncodingMethod2);
 
         #endregion
 
-        #region Operator <  (AuthId1, AuthId2)
+        #region Operator <  (EncodingMethod1, EncodingMethod2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A encoding method.</param>
-        /// <param name="AuthId2">Another encoding method.</param>
+        /// <param name="EncodingMethod1">An encoding method.</param>
+        /// <param name="EncodingMethod2">Another encoding method.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (EncodingMethod AuthId1,
-                                          EncodingMethod AuthId2)
+        public static Boolean operator < (EncodingMethod EncodingMethod1,
+                                          EncodingMethod EncodingMethod2)
 
-            => AuthId1.CompareTo(AuthId2) < 0;
+            => EncodingMethod1.CompareTo(EncodingMethod2) < 0;
 
         #endregion
 
-        #region Operator <= (AuthId1, AuthId2)
+        #region Operator <= (EncodingMethod1, EncodingMethod2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A encoding method.</param>
-        /// <param name="AuthId2">Another encoding method.</param>
+        /// <param name="EncodingMethod1">An encoding method.</param>
+        /// <param name="EncodingMethod2">Another encoding method.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (EncodingMethod AuthId1,
-                                           EncodingMethod AuthId2)
+        public static Boolean operator <= (EncodingMethod EncodingMethod1,
+                                           EncodingMethod EncodingMethod2)
 
-            => !(AuthId1 > AuthId2);
+            => EncodingMethod1.CompareTo(EncodingMethod2) <= 0;
 
         #endregion
 
-        #region Operator >  (AuthId1, AuthId2)
+        #region Operator >  (EncodingMethod1, EncodingMethod2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A encoding method.</param>
-        /// <param name="AuthId2">Another encoding method.</param>
+        /// <param name="EncodingMethod1">An encoding method.</param>
+        /// <param name="EncodingMethod2">Another encoding method.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (EncodingMethod AuthId1,
-                                          EncodingMethod AuthId2)
+        public static Boolean operator > (EncodingMethod EncodingMethod1,
+                                          EncodingMethod EncodingMethod2)
 
-            => AuthId1.CompareTo(AuthId2) > 0;
+            => EncodingMethod1.CompareTo(EncodingMethod2) > 0;
 
         #endregion
 
-        #region Operator >= (AuthId1, AuthId2)
+        #region Operator >= (EncodingMethod1, EncodingMethod2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A encoding method.</param>
-        /// <param name="AuthId2">Another encoding method.</param>
+        /// <param name="EncodingMethod1">An encoding method.</param>
+        /// <param name="EncodingMethod2">Another encoding method.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (EncodingMethod AuthId1,
-                                           EncodingMethod AuthId2)
+        public static Boolean operator >= (EncodingMethod EncodingMethod1,
+                                           EncodingMethod EncodingMethod2)
 
-            => !(AuthId1 < AuthId2);
-
-        #endregion
+            => EncodingMethod1.CompareTo(EncodingMethod2) >= 0;
 
         #endregion
 
-        #region IComparable<AuthId> Members
+        #endregion
+
+        #region IComparable<EncodingMethod> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two encoding methods.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An encoding method to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is EncodingMethod encodingMethod
                    ? CompareTo(encodingMethod)
@@ -310,49 +348,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region CompareTo(AuthId)
+        #region CompareTo(EncodingMethod)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two encoding methods.
         /// </summary>
-        /// <param name="AuthId">An object to compare with.</param>
-        public Int32 CompareTo(EncodingMethod AuthId)
+        /// <param name="EncodingMethod">An encoding method to compare with.</param>
+        public Int32 CompareTo(EncodingMethod EncodingMethod)
 
             => String.Compare(InternalId,
-                              AuthId.InternalId,
+                              EncodingMethod.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<AuthId> Members
+        #region IEquatable<EncodingMethod> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two encoding methods for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An encoding method to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is EncodingMethod encodingMethod &&
                    Equals(encodingMethod);
 
         #endregion
 
-        #region Equals(AuthId)
+        #region Equals(EncodingMethod)
 
         /// <summary>
         /// Compares two encoding methods for equality.
         /// </summary>
-        /// <param name="AuthId">An encoding method to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(EncodingMethod AuthId)
+        /// <param name="EncodingMethod">An encoding method to compare with.</param>
+        public Boolean Equals(EncodingMethod EncodingMethod)
 
             => String.Equals(InternalId,
-                             AuthId.InternalId,
+                             EncodingMethod.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

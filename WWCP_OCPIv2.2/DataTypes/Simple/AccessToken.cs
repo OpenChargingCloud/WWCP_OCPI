@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefinedGmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// An access token.
+    /// Extension methods for access tokens.
+    /// </summary>
+    public static class AccessTokenExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this access token is null or empty.
+        /// </summary>
+        /// <param name="AccessToken">An access token.</param>
+        public static Boolean IsNullOrEmpty(this AccessToken? AccessToken)
+            => !AccessToken.HasValue || AccessToken.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this access token is NOT null or empty.
+        /// </summary>
+        /// <param name="AccessToken">An access token.</param>
+        public static Boolean IsNotNullOrEmpty(this AccessToken? AccessToken)
+            => AccessToken.HasValue && AccessToken.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The access token.
     /// </summary>
     public readonly struct AccessToken : IId<AccessToken>
     {
@@ -42,27 +65,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this access token is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this access token is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the access token.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new access token.
+        /// Create a new access token based on the given text.
         /// </summary>
-        /// <param name="Text">The text representation of a access token.</param>
+        /// <param name="Text">The text representation of an access token.</param>
         private AccessToken(String Text)
         {
             this.InternalId = Text;
@@ -71,40 +98,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Random  (Length)
+        #region (static) NewRandom(Length = 50)
 
         /// <summary>
         /// Create a new random access token.
         /// </summary>
         /// <param name="Length">The expected length of the access token.</param>
-        public static AccessToken Random(Byte Length = 50)
+        public static AccessToken NewRandom(Byte Length = 50)
 
             => new (RandomExtensions.RandomString(Length));
 
         #endregion
 
-        #region (static) Parse   (Text)
+        #region (static) Parse    (Text)
 
         /// <summary>
-        /// Parse the given string as an access token.
+        /// Parse the given text as an access token.
         /// </summary>
         /// <param name="Text">A text representation of an access token.</param>
         public static AccessToken Parse(String Text)
         {
 
-            if (TryParse(Text, out AccessToken accessToken))
+            if (TryParse(Text, out var accessToken))
                 return accessToken;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an access token must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of an access token is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of an access token: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
         #endregion
 
-        #region (static) TryParse(Text)
+        #region (static) TryParse (Text)
 
         /// <summary>
         /// Try to parse the given text as an access token.
@@ -113,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static AccessToken? TryParse(String Text)
         {
 
-            if (TryParse(Text, out AccessToken accessToken))
+            if (TryParse(Text, out var accessToken))
                 return accessToken;
 
             return null;
@@ -122,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out AccessToken)
+        #region (static) TryParse (Text, out AccessToken)
 
         /// <summary>
         /// Try to parse the given text as an access token.
@@ -132,11 +157,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out AccessToken AccessToken)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    AccessToken = new AccessToken(Text.Trim());
+                    AccessToken = new AccessToken(Text);
                     return true;
                 }
                 catch (Exception)
@@ -157,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public AccessToken Clone
 
-            => new AccessToken(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -192,7 +219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (AccessToken AccessToken1,
                                            AccessToken AccessToken2)
 
-            => !(AccessToken1 == AccessToken2);
+            => !AccessToken1.Equals(AccessToken2);
 
         #endregion
 
@@ -222,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (AccessToken AccessToken1,
                                            AccessToken AccessToken2)
 
-            => !(AccessToken1 > AccessToken2);
+            => AccessToken1.CompareTo(AccessToken2) <= 0;
 
         #endregion
 
@@ -252,7 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (AccessToken AccessToken1,
                                            AccessToken AccessToken2)
 
-            => !(AccessToken1 < AccessToken2);
+            => AccessToken1.CompareTo(AccessToken2) >= 0;
 
         #endregion
 
@@ -263,10 +290,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two access tokens.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An access token to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is AccessToken accessToken
                    ? CompareTo(accessToken)
@@ -278,9 +305,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(AccessToken)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two access tokens.
         /// </summary>
-        /// <param name="AccessToken">An object to compare with.</param>
+        /// <param name="AccessToken">An access token to compare with.</param>
         public Int32 CompareTo(AccessToken AccessToken)
 
             => String.Compare(InternalId,
@@ -296,11 +323,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two access tokens for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An access token to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is AccessToken accessToken &&
                    Equals(accessToken);
@@ -313,7 +339,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two access tokens for equality.
         /// </summary>
         /// <param name="AccessToken">An access token to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(AccessToken AccessToken)
 
             => String.Equals(InternalId,
