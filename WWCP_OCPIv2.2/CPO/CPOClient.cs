@@ -42,32 +42,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public partial class CPOClient : CommonClient
     {
 
-        public class CPOCounters
+        public class CPOCounters : CommonCounters
         {
 
-            public APICounterValues GetTokens  { get; }
-            public APICounterValues PostTokens { get; }
+            public APICounterValues  GetTokens     { get; }
+            public APICounterValues  PostTokens    { get; }
 
-            public CPOCounters(APICounterValues? GetTokens  = null,
-                               APICounterValues? PostTokens = null)
+            public CPOCounters(APICounterValues?  GetVersions   = null,
+                               APICounterValues?  GetTokens     = null,
+                               APICounterValues?  PostTokens    = null)
+
+                : base(GetVersions)
+
             {
 
-                this.GetTokens  = GetTokens  ?? new APICounterValues();
-                this.PostTokens = PostTokens ?? new APICounterValues();
+                this.GetTokens   = GetTokens  ?? new APICounterValues();
+                this.PostTokens  = PostTokens ?? new APICounterValues();
 
             }
 
             public JObject ToJSON()
 
                 => JSONObject.Create(
-                       new JProperty("GetTokens",  GetTokens. ToJSON()),
-                       new JProperty("PostTokens", PostTokens.ToJSON())
+
+                       new JProperty("GetVersions",  GetVersions.ToJSON()),
+
+                       new JProperty("GetTokens",    GetTokens.  ToJSON()),
+                       new JProperty("PostTokens",   PostTokens. ToJSON())
+
                    );
 
         }
 
 
         #region Properties
+
+        /// <summary>
+        /// CPO client event counters.
+        /// </summary>
+        public new CPOCounters  Counters    { get; }
+
 
         /// <summary>
         /// The attached HTTP client logger.
@@ -690,12 +704,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            base.HTTPLogger = DisableLogging == false
-                                   ? new Logger(this,
-                                                LoggingPath,
-                                                LoggingContext,
-                                                LogfileCreator)
-                                   : null;
+            this.Counters    = new CPOCounters();
+
+            base.HTTPLogger  = DisableLogging == false
+                                    ? new Logger(this,
+                                                 LoggingPath,
+                                                 LoggingContext,
+                                                 LogfileCreator)
+                                    : null;
 
         }
 
@@ -735,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -778,7 +794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -853,7 +869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -935,7 +951,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutLocationRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -978,7 +994,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1055,7 +1071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutLocationResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1138,7 +1154,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchLocationRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1181,7 +1197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1258,7 +1274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchLocationResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1339,7 +1355,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1382,7 +1398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1458,7 +1474,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1642,7 +1658,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutEVSERequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1685,7 +1701,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1763,7 +1779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutEVSEResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1847,7 +1863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchEVSERequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1890,7 +1906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1968,7 +1984,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchEVSEResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2050,7 +2066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetConnectorRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2093,7 +2109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -2170,7 +2186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetConnectorResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2252,7 +2268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutConnectorRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2295,7 +2311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -2374,7 +2390,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutConnectorResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2459,7 +2475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchConnectorRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2502,7 +2518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Locations,
+                                                        Module_Id.Locations,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -2581,7 +2597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchConnectorResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2662,7 +2678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTariffRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2705,7 +2721,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tariffs,
+                                                        Module_Id.Tariffs,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -2780,7 +2796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTariffResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2862,7 +2878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutTariffRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2905,7 +2921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tariffs,
+                                                        Module_Id.Tariffs,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -2982,7 +2998,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutTariffResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3065,7 +3081,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchTariffRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3108,7 +3124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tariffs,
+                                                        Module_Id.Tariffs,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -3185,7 +3201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchTariffResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3264,7 +3280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteTariffRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3307,7 +3323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tariffs,
+                                                        Module_Id.Tariffs,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -3382,7 +3398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteTariffResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3463,7 +3479,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetSessionRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3506,7 +3522,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Sessions,
+                                                        Module_Id.Sessions,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -3581,7 +3597,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3663,7 +3679,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutSessionRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3706,7 +3722,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Sessions,
+                                                        Module_Id.Sessions,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -3783,7 +3799,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3866,7 +3882,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchSessionRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3909,7 +3925,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Sessions,
+                                                        Module_Id.Sessions,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -3986,7 +4002,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4065,7 +4081,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteSessionRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4108,7 +4124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Sessions,
+                                                        Module_Id.Sessions,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -4183,7 +4199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4264,7 +4280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCDRRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4307,7 +4323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.CDRs,
+                                                        Module_Id.CDRs,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -4382,7 +4398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCDRResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4462,7 +4478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostCDRRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4505,7 +4521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.CDRs,
+                                                        Module_Id.CDRs,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -4582,7 +4598,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostCDRResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4661,16 +4677,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<IEnumerable<Token>> response;
-
             #region Send OnGetTokensRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
 
-                //Counters.GetTokens.IncRequests();
+                Counters.GetTokens.IncRequests_OK();
 
                 //if (OnGetTokensRequest != null)
                 //    await Task.WhenAll(OnGetTokensRequest.GetInvocationList().
@@ -4701,6 +4715,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+            OCPIResponse<IEnumerable<Token>> response;
+
 
             try
             {
@@ -4708,7 +4724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tokens,
+                                                        Module_Id.Tokens,
                                                         InterfaceRoles.RECEIVER);
 
                 var offsetLimit    = "";
@@ -4793,7 +4809,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTokensResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4875,7 +4891,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4918,7 +4934,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tokens,
+                                                        Module_Id.Tokens,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -5002,7 +5018,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5084,7 +5100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5127,7 +5143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tokens,
+                                                        Module_Id.Tokens,
                                                         InterfaceRoles.SENDER);
 
                 if (remoteURL.HasValue)
@@ -5232,7 +5248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5312,11 +5328,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             OCPIResponse<ChargingProfileResponse> response;
 
             var Command = new SetChargingProfileCommand(ChargingProfile,
-                                                        MyCommonAPI.GetModuleURL(ModuleIDs.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50));
+                                                        MyCommonAPI.GetModuleURL(Module_Id.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50));
 
             #region Send OnSetChargingProfileRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5359,7 +5375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.ChargingProfiles,
+                                                        Module_Id.ChargingProfiles,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -5434,7 +5450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnSetChargingProfileResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {

@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -30,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// This class references business details.
+    /// The business details.
     /// </summary>
     public class BusinessDetails : IEquatable<BusinessDetails>,
                                    IComparable<BusinessDetails>,
@@ -41,6 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         /// <summary>
         /// Name of the operator.
+        /// [max 100]
         /// </summary>
         [Mandatory]
         public String  Name       { get; }
@@ -55,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Optinal image link to the operator's logo.
         /// </summary>
         [Optional]
-        public Image   Logo       { get; }
+        public Image?  Logo       { get; }
 
         #endregion
 
@@ -69,13 +68,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Logo">Optinal image link to the operator's logo.</param>
         public BusinessDetails(String  Name,
                                URL?    Website   = null,
-                               Image   Logo      = null)
+                               Image?  Logo      = null)
         {
 
             if (Name.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Name), "The given name must not be null or empty!");
 
-            this.Name     = Name?.Trim();
+            this.Name     = Name.Trim();
             this.Website  = Website;
             this.Logo     = Logo;
 
@@ -87,48 +86,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (JSON, CustomBusinessDetailsParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a business detail.
+        /// Parse the given JSON representation of business details.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
-        public static BusinessDetails Parse(JObject                                       JSON,
-                                            CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser   = null)
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details.</param>
+        public static BusinessDetails Parse(JObject                                        JSON,
+                                            CustomJObjectParserDelegate<BusinessDetails>?  CustomBusinessDetailsParser   = null)
         {
 
             if (TryParse(JSON,
-                         out BusinessDetails businessDetails,
-                         out String          ErrorResponse,
+                         out var businessDetails,
+                         out var errorResponse,
                          CustomBusinessDetailsParser))
             {
-                return businessDetails;
+                return businessDetails!;
             }
 
-            throw new ArgumentException("The given JSON representation of a business detail is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomBusinessDetailsParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a business detail.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
-        public static BusinessDetails Parse(String                                        Text,
-                                            CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out BusinessDetails businessDetails,
-                         out String          ErrorResponse,
-                         CustomBusinessDetailsParser))
-            {
-                return businessDetails;
-            }
-
-            throw new ArgumentException("The given text representation of a business detail is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a business detail is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -139,14 +114,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a business detail.
+        /// Try to parse the given JSON representation of business details.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="BusinessDetails">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject              JSON,
-                                       out BusinessDetails  BusinessDetails,
-                                       out String           ErrorResponse)
+        public static Boolean TryParse(JObject               JSON,
+                                       out BusinessDetails?  BusinessDetails,
+                                       out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out BusinessDetails,
@@ -155,16 +130,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of a business detail.
+        /// Try to parse the given JSON representation of business details.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="BusinessDetails">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
-        public static Boolean TryParse(JObject                                       JSON,
-                                       out BusinessDetails                           BusinessDetails,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser)
+        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details.</param>
+        public static Boolean TryParse(JObject                                        JSON,
+                                       out BusinessDetails?                           BusinessDetails,
+                                       out String?                                    ErrorResponse,
+                                       CustomJObjectParserDelegate<BusinessDetails>?  CustomBusinessDetailsParser)
         {
 
             try
@@ -198,10 +173,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out URL? Website,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -214,10 +187,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                            out Image Logo,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -238,42 +209,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             catch (Exception e)
             {
                 BusinessDetails  = default;
-                ErrorResponse     = "The given JSON representation of a business detail is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out BusinessDetails, out ErrorResponse, CustomBusinessDetailsParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a business detail.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="BusinessDetails">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomBusinessDetailsParser">A delegate to parse custom business details JSON objects.</param>
-        public static Boolean TryParse(String                                        Text,
-                                       out BusinessDetails                           BusinessDetails,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<BusinessDetails>  CustomBusinessDetailsParser)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out BusinessDetails,
-                                out ErrorResponse,
-                                CustomBusinessDetailsParser);
-
-            }
-            catch (Exception e)
-            {
-                BusinessDetails = default;
-                ErrorResponse  = "The given text representation of a business detail is invalid: " + e.Message;
+                ErrorResponse    = "The given JSON representation of business details is invalid: " + e.Message;
                 return false;
             }
 
@@ -286,8 +222,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails> CustomBusinessDetailsSerializer = null)
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
+                              CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null)
         {
 
             var JSON = JSONObject.Create(
@@ -298,8 +235,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("website",   Website.ToString())
                                : null,
 
-                           Logo != null
-                               ? new JProperty("logo",      Logo.   ToJSON())
+                           Logo is not null
+                               ? new JProperty("logo",      Logo.   ToJSON(CustomImageSerializer))
                                : null
 
                        );
@@ -320,8 +257,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="BusinessDetails1">A business detail.</param>
-        /// <param name="BusinessDetails2">Another business detail.</param>
+        /// <param name="BusinessDetails1">Business details.</param>
+        /// <param name="BusinessDetails2">Other business details.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (BusinessDetails BusinessDetails1,
                                            BusinessDetails BusinessDetails2)
@@ -344,8 +281,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="BusinessDetails1">A business detail.</param>
-        /// <param name="BusinessDetails2">Another business detail.</param>
+        /// <param name="BusinessDetails1">Business details.</param>
+        /// <param name="BusinessDetails2">Other business details.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (BusinessDetails BusinessDetails1,
                                            BusinessDetails BusinessDetails2)
@@ -359,14 +296,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="BusinessDetails1">A business detail.</param>
-        /// <param name="BusinessDetails2">Another business detail.</param>
+        /// <param name="BusinessDetails1">Business details.</param>
+        /// <param name="BusinessDetails2">Other business details.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (BusinessDetails BusinessDetails1,
                                           BusinessDetails BusinessDetails2)
 
             => BusinessDetails1 is null
-                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business detail must not be null!")
+                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business details must not be null!")
                    : BusinessDetails1.CompareTo(BusinessDetails2) < 0;
 
         #endregion
@@ -376,8 +313,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="BusinessDetails1">A business detail.</param>
-        /// <param name="BusinessDetails2">Another business detail.</param>
+        /// <param name="BusinessDetails1">Business details.</param>
+        /// <param name="BusinessDetails2">Other business details.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (BusinessDetails BusinessDetails1,
                                            BusinessDetails BusinessDetails2)
@@ -391,14 +328,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="BusinessDetails1">A business detail.</param>
-        /// <param name="BusinessDetails2">Another business detail.</param>
+        /// <param name="BusinessDetails1">Business details.</param>
+        /// <param name="BusinessDetails2">Other business details.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (BusinessDetails BusinessDetails1,
                                           BusinessDetails BusinessDetails2)
 
             => BusinessDetails1 is null
-                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business detail must not be null!")
+                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business details must not be null!")
                    : BusinessDetails1.CompareTo(BusinessDetails2) > 0;
 
         #endregion
@@ -408,8 +345,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="BusinessDetails1">A business detail.</param>
-        /// <param name="BusinessDetails2">Another business detail.</param>
+        /// <param name="BusinessDetails1">Business details.</param>
+        /// <param name="BusinessDetails2">Other business details.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (BusinessDetails BusinessDetails1,
                                            BusinessDetails BusinessDetails2)
@@ -425,10 +362,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two business details.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">Business details to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is BusinessDetails businessDetails
                    ? CompareTo(businessDetails)
@@ -440,13 +377,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(BusinessDetails)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two business details.
         /// </summary>
-        /// <param name="BusinessDetails">An object to compare with.</param>
-        public Int32 CompareTo(BusinessDetails BusinessDetails)
+        /// <param name="BusinessDetails">Business details to compare with.</param>
+        public Int32 CompareTo(BusinessDetails? BusinessDetails)
         {
 
-            if (BusinessDetails == null)
+            if (BusinessDetails is null)
                 throw new ArgumentNullException(nameof(BusinessDetails), "The given business details must not be null!");
 
             var c = Name.   CompareTo(BusinessDetails.Name);
@@ -457,7 +394,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         : 0;
 
             if (c == 0)
-                c = !(Logo is null) && !(BusinessDetails.Logo is null)
+                c = Logo is not null && BusinessDetails.Logo is not null
                         ? Logo.CompareTo(BusinessDetails.Logo)
                         : 0;
 
@@ -474,11 +411,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two business details for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">Business details to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is BusinessDetails businessDetails &&
                    Equals(businessDetails);
@@ -490,19 +426,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two business details for equality.
         /// </summary>
-        /// <param name="BusinessDetails">A business detail to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(BusinessDetails BusinessDetails)
+        /// <param name="BusinessDetails">Business details to compare with.</param>
+        public Boolean Equals(BusinessDetails? BusinessDetails)
 
-            => !(BusinessDetails is null) &&
+            => BusinessDetails is not null &&
 
-                 Name.Equals(BusinessDetails.Name) &&
+               Name.Equals(BusinessDetails.Name) &&
 
-               ((!Website.HasValue && !BusinessDetails.Website.HasValue) ||
-                 (Website.HasValue && BusinessDetails.Website.HasValue && Website.Value.Equals(BusinessDetails.Website.Value))) &&
+            ((!Website.HasValue    && !BusinessDetails.Website.HasValue)    ||
+              (Website.HasValue    &&  BusinessDetails.Website.HasValue    && Website.Value.Equals(BusinessDetails.Website.Value))) &&
 
-               ((Logo == null      && BusinessDetails.Logo == null) ||
-                (Logo != null      && BusinessDetails.Logo != null     && Logo.         Equals(BusinessDetails.Logo)));
+             ((Logo    is     null &&  BusinessDetails.Logo    is     null) ||
+              (Logo    is not null &&  BusinessDetails.Logo    is not null && Logo.         Equals(BusinessDetails.Logo)));
 
         #endregion
 
@@ -519,15 +454,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return        Name.         GetHashCode() * 5 ^
-
-                       (Website.HasValue
-                            ? Website.Value.GetHashCode() * 3
-                            : 0) ^
-
-                       (Logo    != null
-                            ? Logo.         GetHashCode()
-                            : 0);
+                return  Name.    GetHashCode()       * 5 ^
+                       (Website?.GetHashCode() ?? 0) * 3 ^
+                       (Logo?.   GetHashCode() ?? 0);
 
             }
         }
@@ -541,13 +470,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Name,
-                             Website.HasValue
-                                 ? "; " + Website
-                                 : "",
-                             Logo != null
-                                 ? "; " + Logo
-                                 : "");
+            => String.Concat(
+
+                   Name,
+
+                   Website.HasValue
+                       ? "; " + Website
+                       : "",
+
+                   Logo is not null
+                       ? "; " + Logo
+                       : ""
+
+               );
 
         #endregion
 

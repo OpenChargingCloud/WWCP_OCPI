@@ -2684,8 +2684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -2777,8 +2776,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -2873,8 +2871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -2966,8 +2963,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3050,8 +3046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3130,8 +3125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if ( Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3193,8 +3187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3260,8 +3253,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3401,8 +3393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3492,8 +3483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3587,8 +3577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3697,8 +3686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3806,8 +3794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3915,8 +3902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4024,8 +4010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.EMSP) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {

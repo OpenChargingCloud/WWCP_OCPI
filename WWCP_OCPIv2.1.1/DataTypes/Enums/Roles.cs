@@ -18,13 +18,127 @@
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    ///// <summary>
+    ///// Extensions methods for roles.
+    ///// </summary>
+    //public static class RolesExtensions
+    //{
+
+    //    #region Parse   (Text)
+
+    //    /// <summary>
+    //    /// Parse the given text as a role.
+    //    /// </summary>
+    //    /// <param name="Text">A text representation of a role.</param>
+    //    public static Roles Parse(String Text)
+    //    {
+
+    //        if (TryParse(Text, out var role))
+    //            return role;
+
+    //        return Roles.Unknown;
+
+    //    }
+
+    //    #endregion
+
+    //    #region TryParse(Text)
+
+    //    /// <summary>
+    //    /// Try to parse the given text as a role.
+    //    /// </summary>
+    //    /// <param name="Text">A text representation of a role.</param>
+    //    public static Roles? TryParse(String Text)
+    //    {
+
+    //        if (TryParse(Text, out var role))
+    //            return role;
+
+    //        return null;
+
+    //    }
+
+    //    #endregion
+
+    //    #region TryParse(Text, out Role)
+
+    //    /// <summary>
+    //    /// Try to parse the given text as a role.
+    //    /// </summary>
+    //    /// <param name="Text">A text representation of a role.</param>
+    //    /// <param name="Role">The parsed role.</param>
+    //    public static Boolean TryParse(String Text, out Roles Role)
+    //    {
+    //        switch (Text.Trim().ToUpper())
+    //        {
+
+    //            case "CPO":
+    //                Role = Roles.CPO;
+    //                return true;
+
+    //            case "EMSP":
+    //                Role = Roles.EMSP;
+    //                return true;
+
+    //            case "HUB":
+    //                Role = Roles.HUB;
+    //                return true;
+
+    //            case "NAP":
+    //                Role = Roles.NAP;
+    //                return true;
+
+    //            case "NSP":
+    //                Role = Roles.NSP;
+    //                return true;
+
+    //            case "OTHER":
+    //                Role = Roles.OTHER;
+    //                return true;
+
+    //            case "SCSP":
+    //                Role = Roles.SCSP;
+    //                return true;
+
+    //            default:
+    //                Role = Roles.Unknown;
+    //                return false;
+
+    //        }
+    //    }
+
+    //    #endregion
+
+    //    #region AsText(this Role)
+
+    //    public static String AsText(this Roles Role)
+
+    //        => Role switch {
+    //               Roles.CPO    => "CPO",
+    //               Roles.EMSP   => "EMSP",
+    //               Roles.HUB    => "HUB",
+    //               Roles.NAP    => "NAP",
+    //               Roles.NSP    => "NSP",
+    //               Roles.OTHER  => "OTHER",
+    //               Roles.SCSP   => "SCSP",
+    //               _            => "unknown"
+    //           };
+
+    //    #endregion
+
+    //}
+
+
     /// <summary>
     /// The role of a party.
     /// </summary>
-    public enum Roles
+    public enum Roles555
     {
 
-        OpenData,
+        /// <summary>
+        /// Unknown role.
+        /// </summary>
+        Unknown,
 
         /// <summary>
         /// Charge point operator.

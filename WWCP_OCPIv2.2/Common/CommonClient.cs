@@ -373,18 +373,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         {
 
             public APICounterValues  GetVersions    { get; }
+            public APICounterValues  Register       { get; }
 
-            public CommonCounters(APICounterValues? GetVersions = null)
+            public CommonCounters(APICounterValues?  GetVersions   = null,
+                                  APICounterValues?  Register      = null)
             {
 
-                this.GetVersions = GetVersions ?? new APICounterValues();
-
+                this.GetVersions  = GetVersions ?? new APICounterValues();
+                this.Register     = Register    ?? new APICounterValues();
             }
 
             public JObject ToJSON()
 
                 => JSONObject.Create(
-                       new JProperty("GetVersions", GetVersions.ToJSON())
+                       new JProperty("GetVersions",  GetVersions.ToJSON()),
+                       new JProperty("Register",     Register.   ToJSON())
                    );
 
         }
@@ -446,7 +449,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger                           HTTPLogger
+        public new Logger?                          HTTPLogger
         {
             get
             {
@@ -785,7 +788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -929,7 +932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {
@@ -1007,7 +1010,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionDetailsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -1209,7 +1212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionDetailsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {
@@ -1261,7 +1264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region GetRemoteURL(VersionId, ModuleId, InterfaceRole)
 
         public async Task<URL?> GetRemoteURL(Version_Id?     VersionId,
-                                             ModuleIDs       ModuleId,
+                                             Module_Id       ModuleId,
                                              InterfaceRoles  InterfaceRole)
         {
 
@@ -1338,7 +1341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCredentialsHTTPRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -1380,7 +1383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials,
+                                                        Module_Id.Credentials,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1453,7 +1456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCredentialsHTTPResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {
@@ -1539,7 +1542,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostCredentialsHTTPRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -1581,7 +1584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials,
+                                                        Module_Id.Credentials,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1656,7 +1659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostCredentialsHTTPResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {
@@ -1742,7 +1745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutCredentialsHTTPRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -1784,7 +1787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials,
+                                                        Module_Id.Credentials,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -1887,7 +1890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutCredentialsHTTPResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {
@@ -1966,7 +1969,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteCredentialsHTTPRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -2008,7 +2011,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials,
+                                                        Module_Id.Credentials,
                                                         InterfaceRoles.RECEIVER);
 
                 if (remoteURL.HasValue)
@@ -2083,7 +2086,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteCredentialsHTTPResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {
@@ -2166,19 +2169,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            Register(Version_Id?                   VersionId             = null,
-                     Boolean                       SetAsDefaultVersion   = true,
-                     URL?                          MyVersionsURL         = null,
-                     IEnumerable<CredentialsRole>  MyRoles               = null,
-                     AccessToken?                  CredentialTokenB      = null,
+            Register(Version_Id?                    VersionId             = null,
+                     Boolean                        SetAsDefaultVersion   = true,
+                     URL?                           MyVersionsURL         = null,
+                     IEnumerable<CredentialsRole>?  MyRoles               = null,
+                     AccessToken?                   CredentialTokenB      = null,
 
-                     Request_Id?                   RequestId             = null,
-                     Correlation_Id?               CorrelationId         = null,
+                     Request_Id?                    RequestId             = null,
+                     Correlation_Id?                CorrelationId         = null,
 
-                     DateTime?                     Timestamp             = null,
-                     CancellationToken?            CancellationToken     = null,
-                     EventTracking_Id              EventTrackingId       = null,
-                     TimeSpan?                     RequestTimeout        = null)
+                     DateTime?                      Timestamp             = null,
+                     CancellationToken?             CancellationToken     = null,
+                     EventTracking_Id?              EventTrackingId       = null,
+                     TimeSpan?                      RequestTimeout        = null)
 
         {
 
@@ -2186,7 +2189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnRegisterRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             try
             {
@@ -2232,7 +2235,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
                 var remoteURL         = await GetRemoteURL(versionId,
-                                                           ModuleIDs.Credentials,
+                                                           Module_Id.Credentials,
                                                            InterfaceRoles.RECEIVER);
 
                 if (!versionId.HasValue)
@@ -2379,7 +2382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnRegisterResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = DateTime.UtcNow;
 
             try
             {

@@ -3086,14 +3086,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return emspClients.AddAndReturnElement(
-                    new EMSPClient(//CountryCode,
-                                   //PartyId,
-                                   //Role,
-                                   remoteParty.RemoteAccessInfos.First().VersionsURL,
-                                   remoteParty.RemoteAccessInfos.First().AccessToken,
-                                   CommonAPI,
-                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
+                    new EMSPClient(
+                        remoteParty.RemoteAccessInfos.First().VersionsURL,
+                        remoteParty.RemoteAccessInfos.First().AccessToken,
+                        CommonAPI,
+                        RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
+                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding
+                    ));
 
             return null;
 
@@ -3177,11 +3176,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return cpoClients.AddAndReturnElement(
-                    new CPOClient(remoteParty.RemoteAccessInfos.First().VersionsURL,
-                                  remoteParty.RemoteAccessInfos.First().AccessToken,
-                                  CommonAPI,
-                                  RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                                  AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
+                    new CPOClient(
+                        remoteParty.RemoteAccessInfos.First().VersionsURL,
+                        remoteParty.RemoteAccessInfos.First().AccessToken,
+                        CommonAPI,
+                        RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
+                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding
+                    ));
 
             return null;
 

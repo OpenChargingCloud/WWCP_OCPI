@@ -88,16 +88,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                Boolean?         AllowDowngrades   = true)
         {
 
-            if (CountryCode. IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(CountryCode),      "The given CountryCode must not be null or empty!");
-
-            if (PartyId.   IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(PartyId),          "The given PartyId must not be null or empty!");
-
-            if (BusinessDetails is null)
-                throw new ArgumentNullException(nameof(BusinessDetails),  "The given business details must not be null!");
-
-
             this.CountryCode      = CountryCode;
             this.PartyId          = PartyId;
             this.Role             = Role;
@@ -117,43 +107,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCredentialsRoleParser">A delegate to parse custom credentials role JSON objects.</param>
         public static CredentialsRole Parse(JObject                                        JSON,
-                                             CustomJObjectParserDelegate<CredentialsRole>  CustomCredentialsRoleParser   = null)
+                                            CustomJObjectParserDelegate<CredentialsRole>?  CustomCredentialsRoleParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CredentialsRole  credentialsRole,
-                         out String           ErrorResponse,
+                         out var credentialsRole,
+                         out var errorResponse,
                          CustomCredentialsRoleParser))
             {
                 return credentialsRole;
             }
 
-            throw new ArgumentException("The given JSON representation of a credentials role is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCredentialsRoleParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a credentials role.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCredentialsRoleParser">A delegate to parse custom credentials role JSON objects.</param>
-        public static CredentialsRole Parse(String                                         Text,
-                                             CustomJObjectParserDelegate<CredentialsRole>  CustomCredentialsRoleParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CredentialsRole  credentialsRole,
-                         out String           ErrorResponse,
-                         CustomCredentialsRoleParser))
-            {
-                return credentialsRole;
-            }
-
-            throw new ArgumentException("The given text representation of a credentials role is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a credentials role is invalid: " + errorResponse, nameof(JSON));
 
         }
 
@@ -169,9 +134,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CredentialsRole">The parsed credentials role.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject              JSON,
-                                       out CredentialsRole  CredentialsRole,
-                                       out String           ErrorResponse)
+        public static Boolean TryParse(JObject               JSON,
+                                       out CredentialsRole?  CredentialsRole,
+                                       out String?           ErrorResponse)
 
             => TryParse(JSON,
                         out CredentialsRole,
@@ -186,10 +151,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CredentialsRole">The parsed credentials role.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCredentialsRoleParser">A delegate to parse custom credentials role JSON objects.</param>
-        public static Boolean TryParse(JObject                                       JSON,
-                                       out CredentialsRole                           CredentialsRole,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<CredentialsRole>  CustomCredentialsRoleParser)
+        public static Boolean TryParse(JObject                                        JSON,
+                                       out CredentialsRole?                           CredentialsRole,
+                                       out String?                                    ErrorResponse,
+                                       CustomJObjectParserDelegate<CredentialsRole>?  CustomCredentialsRoleParser)
         {
 
             try
@@ -203,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse CountryCode           [mandatory]
+                #region Parse CountryCode         [mandatory]
 
                 if (!JSON.ParseMandatory("country_code",
                                          "country code",
@@ -216,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PartyId               [mandatory]
+                #region Parse PartyId             [mandatory]
 
                 if (!JSON.ParseMandatory("party_id",
                                          "party identification",
@@ -229,32 +194,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Role                  [mandatory]
+                #region Parse Role                [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("role",
-                                             "role",
-                                             out Roles Role,
+                if (!JSON.ParseMandatory("role",
+                                         "role",
+                                         Roles.TryParse,
+                                         out Roles Role,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse Business details    [mandatory]
+
+                if (!JSON.ParseMandatoryJSON("business_details",
+                                             "business details",
+                                             OCPIv2_2.BusinessDetails.TryParse,
+                                             out BusinessDetails? BusinessDetails,
                                              out ErrorResponse))
                 {
                     return false;
                 }
 
-                #endregion
-
-                #region Parse Business details      [mandatory]
-
-                if (!JSON.ParseMandatoryJSON2("business_details",
-                                              "business details",
-                                              OCPIv2_2.BusinessDetails.TryParse,
-                                              out BusinessDetails BusinessDetails,
-                                              out ErrorResponse))
-                {
+                if (BusinessDetails is null)
                     return false;
-                }
 
                 #endregion
 
-                #region Parse AllowDowngrades       [optional]
+                #region Parse AllowDowngrades     [optional]
 
                 if (JSON.ParseOptional("allowDowngrades",
                                        "allow downgrades",
@@ -293,41 +262,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CredentialsRole, out ErrorResponse, CustomCredentialsRoleParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a credentials role.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CredentialsRole">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCredentialsRoleParser">A delegate to parse custom credentials role JSON objects.</param>
-        public static Boolean TryParse(String                                        Text,
-                                       out CredentialsRole                           CredentialsRole,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<CredentialsRole>  CustomCredentialsRoleParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CredentialsRole,
-                                out ErrorResponse,
-                                CustomCredentialsRoleParser);
-
-            }
-            catch (Exception e)
-            {
-                CredentialsRole = default;
-                ErrorResponse  = "The given text representation of a credentials role is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCredentialsRoleSerializer = null, CustomBusinessDetailsSerializer = null)
 
         /// <summary>
@@ -335,15 +269,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CustomCredentialsRoleSerializer">A delegate to serialize custom credentials roles JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CredentialsRole>  CustomCredentialsRoleSerializer   = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>  CustomBusinessDetailsSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CredentialsRole>?  CustomCredentialsRoleSerializer   = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
                            new JProperty("country_code",      CountryCode.    ToString()),
                            new JProperty("party_id",          PartyId.        ToString()),
-                           new JProperty("role",              Role.           ToString()),
+                           new JProperty("role",              Role.           AsText()),
                            new JProperty("business_details",  BusinessDetails.ToJSON(CustomBusinessDetailsSerializer))
 
                            //AllowDowngrades.HasValue

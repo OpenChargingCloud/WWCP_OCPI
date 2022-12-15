@@ -49,10 +49,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public HTTPResponse?    HTTPResponse              { get; }
         public Request_Id?      RequestId                 { get; }
         public Correlation_Id?  CorrelationId             { get; }
-        public Party_Id?        FromPartyId               { get; }
-        public CountryCode?     FromCountryCode           { get; }
-        public Party_Id?        ToPartyId                 { get; }
-        public CountryCode?     ToCountryCode             { get; }
 
         #endregion
 
@@ -67,11 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null,
-                            Party_Id?        FromPartyId             = null,
-                            CountryCode?     FromCountryCode         = null,
-                            Party_Id?        ToPartyId               = null,
-                            CountryCode?     ToCountryCode           = null)
+                            Correlation_Id?  CorrelationId           = null)
 
         {
 
@@ -85,10 +77,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.HTTPResponse           = HTTPResponse;
             this.RequestId              = RequestId;
             this.CorrelationId          = CorrelationId;
-            this.FromPartyId            = FromPartyId;
-            this.FromCountryCode        = FromCountryCode;
-            this.ToPartyId              = ToPartyId;
-            this.ToCountryCode          = ToCountryCode;
 
         }
 
@@ -99,11 +87,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                             HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null,
-                            Party_Id?        FromPartyId             = null,
-                            CountryCode?     FromCountryCode         = null,
-                            Party_Id?        ToPartyId               = null,
-                            CountryCode?     ToCountryCode           = null)
+                            Correlation_Id?  CorrelationId           = null)
 
         {
 
@@ -115,10 +99,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.HTTPResponse           = HTTPResponse;
             this.RequestId              = RequestId;
             this.CorrelationId          = CorrelationId;
-            this.FromPartyId            = FromPartyId;
-            this.FromCountryCode        = FromCountryCode;
-            this.ToPartyId              = ToPartyId;
-            this.ToCountryCode          = ToCountryCode;
 
         }
 
@@ -297,16 +277,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public OCPIResponse(TResponse        Data,
                             Int32            StatusCode,
                             String           StatusMessage,
-                            String           AdditionalInformation   = null,
+                            String?          AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
 
-                            HTTPResponse     HTTPResponse            = null,
+                            HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null,
-                            Party_Id?        FromPartyId             = null,
-                            CountryCode?     FromCountryCode         = null,
-                            Party_Id?        ToPartyId               = null,
-                            CountryCode?     ToCountryCode           = null)
+                            Correlation_Id?  CorrelationId           = null)
 
             : base(StatusCode,
                    StatusMessage,
@@ -315,11 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    HTTPResponse,
                    RequestId,
-                   CorrelationId,
-                   FromPartyId,
-                   FromCountryCode,
-                   ToPartyId,
-                   ToCountryCode)
+                   CorrelationId)
 
         {
 
@@ -334,16 +306,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      Func<TResponse, JToken>  Serializer,
                                      Int32                    StatusCode,
                                      String                   StatusMessage,
-                                     String                   AdditionalInformation   = null,
+                                     String?                  AdditionalInformation   = null,
                                      DateTime?                Timestamp               = null,
 
-                                     HTTPResponse             Response                = null,
+                                     HTTPResponse?            Response                = null,
                                      Request_Id?              RequestId               = null,
-                                     Correlation_Id?          CorrelationId           = null,
-                                     Party_Id?                FromPartyId             = null,
-                                     CountryCode?             FromCountryCode         = null,
-                                     Party_Id?                ToPartyId               = null,
-                                     CountryCode?             ToCountryCode           = null)
+                                     Correlation_Id?          CorrelationId           = null)
 
         {
 
@@ -355,11 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                Response,
                                                RequestId,
-                                               CorrelationId,
-                                               FromPartyId,
-                                               FromCountryCode,
-                                               ToPartyId,
-                                               ToCountryCode).ToJSON(Serializer);
+                                               CorrelationId).ToJSON(Serializer);
 
         }
 
@@ -481,11 +445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                           Response,
                                                                           RemoteRequestId,
-                                                                          RemoteCorrelationId,
-                                                                          FromPartyId,
-                                                                          FromCountryCode,
-                                                                          ToPartyId,
-                                                                          ToCountryCode);
+                                                                          RemoteCorrelationId);
 
                     }
 
@@ -498,11 +458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                           Response,
                                                                           RemoteRequestId,
-                                                                          RemoteCorrelationId,
-                                                                          FromPartyId,
-                                                                          FromCountryCode,
-                                                                          ToPartyId,
-                                                                          ToCountryCode);
+                                                                          RemoteCorrelationId);
 
                 }
 
@@ -515,11 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                       Response,
                                                                       RemoteRequestId,
-                                                                      RemoteCorrelationId,
-                                                                      FromPartyId,
-                                                                      FromCountryCode,
-                                                                      ToPartyId,
-                                                                      ToCountryCode);
+                                                                      RemoteCorrelationId);
 
             }
             catch (Exception e)
@@ -586,11 +538,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                  Response,
                                                                  RemoteRequestId,
-                                                                 RemoteCorrelationId,
-                                                                 FromPartyId,
-                                                                 FromCountryCode,
-                                                                 ToPartyId,
-                                                                 ToCountryCode);
+                                                                 RemoteCorrelationId);
 
                     }
 
@@ -603,11 +551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                              Response,
                                                              RemoteRequestId,
-                                                             RemoteCorrelationId,
-                                                             FromPartyId,
-                                                             FromCountryCode,
-                                                             ToPartyId,
-                                                             ToCountryCode);
+                                                             RemoteCorrelationId);
 
                 }
 
@@ -620,11 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                          Response,
                                                          RemoteRequestId,
-                                                         RemoteCorrelationId,
-                                                         FromPartyId,
-                                                         FromCountryCode,
-                                                         ToPartyId,
-                                                         ToCountryCode);
+                                                         RemoteCorrelationId);
 
             }
             catch (Exception e)
@@ -668,16 +608,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                             TResponse        Data,
                             Int32            StatusCode,
                             String           StatusMessage,
-                            String           AdditionalInformation   = null,
+                            String?          AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
 
-                            HTTPResponse     HTTPResponse            = null,
+                            HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
-                            Correlation_Id?  CorrelationId           = null,
-                            Party_Id?        FromPartyId             = null,
-                            CountryCode?     FromCountryCode         = null,
-                            Party_Id?        ToPartyId               = null,
-                            CountryCode?     ToCountryCode           = null)
+                            Correlation_Id?  CorrelationId           = null)
 
             : base(Data,
                    StatusCode,
@@ -687,11 +623,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    HTTPResponse,
                    RequestId,
-                   CorrelationId,
-                   FromPartyId,
-                   FromCountryCode,
-                   ToPartyId,
-                   ToCountryCode)
+                   CorrelationId)
 
         {
 
@@ -724,11 +656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                                       r.HTTPResponse,
                                                                       r.RequestId,
-                                                                      r.CorrelationId,
-                                                                      r.FromPartyId,
-                                                                      r.FromCountryCode,
-                                                                      r.ToPartyId,
-                                                                      r.ToCountryCode);
+                                                                      r.CorrelationId);
 
         }
 
@@ -754,11 +682,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                                                          r.HTTPResponse,
                                                          r.RequestId,
-                                                         r.CorrelationId,
-                                                         r.FromPartyId,
-                                                         r.FromCountryCode,
-                                                         r.ToPartyId,
-                                                         r.ToCountryCode);
+                                                         r.CorrelationId);
 
         }
 

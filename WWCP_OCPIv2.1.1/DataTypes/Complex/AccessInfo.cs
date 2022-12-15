@@ -31,23 +31,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public static class AccessInfoextentions
-    {
-
-        public static Boolean Is(this AccessInfo?  AccessInfo,
-                                 Roles             Role)
-
-            => AccessInfo.HasValue &&
-               AccessInfo.Value.Is(Role);
-
-        public static Boolean IsNot(this AccessInfo?  AccessInfo,
-                                    Roles             Role)
-
-            => !AccessInfo.HasValue ||
-                AccessInfo.Value.IsNot(Role);
-
-    }
-
     public readonly struct AccessInfo2
     {
 
@@ -79,25 +62,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     public struct AccessInfo
     {
 
-        public AccessToken                   Token          { get; }
+        public AccessToken                  Token          { get; }
 
-        public URL?                          VersionsURL    { get; }
+        public URL?                         VersionsURL    { get; }
 
-        public IEnumerable<CredentialsRole>  Roles          { get; }
+        /// <summary>
+        /// ISO-3166 alpha-2 country code of the country this party is operating in.
+        /// </summary>
+        [Mandatory]
+        public CountryCode                  CountryCode        { get; }
 
-        public AccessStatus                  Status         { get; set; }
+        /// <summary>
+        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id                     PartyId            { get; }
+
+        /// <summary>
+        /// Business details of this party.
+        /// </summary>
+        [Mandatory]
+        public BusinessDetails              BusinessDetails    { get; }
+
+
+        public AccessStatus                 Status         { get; set; }
 
 
         public AccessInfo(AccessToken                   Token,
                           AccessStatus                  Status,
-                          URL?                          VersionsURL   = null,
-                          IEnumerable<CredentialsRole>  Roles         = null)
+                          CountryCode                   CountryCode,
+                          Party_Id                      PartyId,
+                          BusinessDetails               BusinessDetails,
+                          URL?                          VersionsURL   = null)
         {
 
-            this.Token        = Token;
-            this.VersionsURL  = VersionsURL;
-            this.Roles        = Roles?.Distinct() ?? new CredentialsRole[0];
-            this.Status       = Status;
+            this.Token            = Token;
+            this.VersionsURL      = VersionsURL;
+            this.CountryCode      = CountryCode;
+            this.PartyId          = PartyId;
+            this.BusinessDetails  = BusinessDetails;
+            this.Status           = Status;
 
         }
 
@@ -105,10 +109,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             return JSONObject.Create(
-                       new JProperty("accesstoken", Token.      ToString()),
-                       new JProperty("versionsURL", VersionsURL.ToString()),
-                       new JProperty("roles",       new JArray(Roles.Select(role => role.ToJSON()))),
-                       new JProperty("status",      Status.     ToString())
+                       new JProperty("accesstoken",      Token.          ToString()),
+                       new JProperty("versionsURL",      VersionsURL.    ToString()),
+                       new JProperty("countryCode",      CountryCode.    ToString()),
+                       new JProperty("partyId",          PartyId.        ToString()),
+                       new JProperty("businessDetails",  BusinessDetails.ToJSON()),
+                       new JProperty("status",           Status.         ToString())
                 );
 
         }
@@ -117,17 +123,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => new Credentials(Token,
                                VersionsURL.Value,
-                               Roles.Select(role => new CredentialsRole(role.CountryCode,
-                                                                        role.PartyId,
-                                                                        role.Role,
-                                                                        role.BusinessDetails)));
-
-
-        public Boolean Is(Roles Role)
-            => Roles.Any(role => role.Role == Role);
-
-        public Boolean IsNot(Roles Role)
-            => !Roles.Any(role => role.Role == Role);
+                               BusinessDetails,
+                               CountryCode,
+                               PartyId);
 
     }
 

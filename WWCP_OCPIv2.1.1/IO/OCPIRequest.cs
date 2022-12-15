@@ -263,16 +263,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         this.AccessInfo   = new AccessInfo(
                                                 AccessToken.Value,
                                                 Parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
-                                                null,
-                                                new CredentialsRole[] {
-                                                    new CredentialsRole(
-                                                        Parties.First().CountryCode,
-                                                        Parties.First().PartyId,
-                                                        Parties.First().Role,
-                                                        Parties.First().BusinessDetails,
-                                                        null
-                                                    )
-                                                }
+                                                Parties.First().CountryCode,
+                                                Parties.First().PartyId,
+                                                Parties.First().BusinessDetails,
+                                                null
                                             );
 
                         this.AccessInfo2  = Parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
@@ -293,7 +287,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         {
 
                             this.AccessInfo   = new AccessInfo(AccessToken.Value,
-                                                               filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status);
+                                                               filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
+                                                               Parties.First().CountryCode,
+                                                               Parties.First().PartyId,
+                                                               Parties.First().BusinessDetails,
+                                                               null);
 
                             this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
 

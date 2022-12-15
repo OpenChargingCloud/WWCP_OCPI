@@ -131,11 +131,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Mandatory]
         public Party_Id                 PartyId              { get; }
 
-        /// <summary>
-        /// The type of the role.
-        /// </summary>
-        [Mandatory]
-        public Roles                    Role                 { get; }
+        ///// <summary>
+        ///// The type of the role.
+        ///// </summary>
+        //[Mandatory]
+        //public Roles                    Role                 { get; }
 
         /// <summary>
         /// Business details of this party.
@@ -180,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public RemoteParty(CountryCode      CountryCode,
                            Party_Id         PartyId,
-                           Roles            Role,
+                           //Roles            Role,
                            BusinessDetails  BusinessDetails,
 
                            AccessToken      AccessToken,
@@ -191,7 +191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             : this(CountryCode,
                    PartyId,
-                   Role,
+                   //Role,
                    BusinessDetails,
                    new AccessInfo2[] {
                        new AccessInfo2(
@@ -209,24 +209,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region RemoteParty(..., RemoteAccessToken, RemoteVersionsURL, ...)
 
-        public RemoteParty(CountryCode              CountryCode,
-                           Party_Id                 PartyId,
-                           Roles                    Role,
-                           BusinessDetails          BusinessDetails,
+        public RemoteParty(CountryCode               CountryCode,
+                           Party_Id                  PartyId,
+                           //Roles                     Role,
+                           BusinessDetails           BusinessDetails,
 
-                           AccessToken              RemoteAccessToken,
-                           URL                      RemoteVersionsURL,
-                           IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                           Version_Id?              SelectedVersionId   = null,
+                           AccessToken               RemoteAccessToken,
+                           URL                       RemoteVersionsURL,
+                           IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                           Version_Id?               SelectedVersionId   = null,
 
-                           RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                           PartyStatus              Status              = PartyStatus.ENABLED,
+                           RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
+                           PartyStatus               Status              = PartyStatus.ENABLED,
 
-                           DateTime?                LastUpdated         = null)
+                           DateTime?                 LastUpdated         = null)
 
             : this(CountryCode,
                    PartyId,
-                   Role,
+                   //Role,
                    BusinessDetails,
                    null,
                    new RemoteAccessInfo[] {
@@ -247,27 +247,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region RemoteParty(...)
 
-        public RemoteParty(CountryCode              CountryCode,
-                           Party_Id                 PartyId,
-                           Roles                    Role,
-                           BusinessDetails          BusinessDetails,
+        public RemoteParty(CountryCode               CountryCode,
+                           Party_Id                  PartyId,
+                           //Roles                     Role,
+                           BusinessDetails           BusinessDetails,
 
-                           AccessToken              AccessToken,
+                           AccessToken               AccessToken,
 
-                           AccessToken              RemoteAccessToken,
-                           URL                      RemoteVersionsURL,
-                           IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                           Version_Id?              SelectedVersionId   = null,
+                           AccessToken               RemoteAccessToken,
+                           URL                       RemoteVersionsURL,
+                           IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                           Version_Id?               SelectedVersionId   = null,
 
-                           AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
-                           RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                           PartyStatus              Status              = PartyStatus.ENABLED,
+                           AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
+                           RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
+                           PartyStatus               Status              = PartyStatus.ENABLED,
 
-                           DateTime?                LastUpdated         = null)
+                           DateTime?                 LastUpdated         = null)
 
             : this(CountryCode,
                    PartyId,
-                   Role,
+                   //Role,
                    BusinessDetails,
                    new AccessInfo2[] {
                        new AccessInfo2(
@@ -295,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public RemoteParty(CountryCode                    CountryCode,
                            Party_Id                       PartyId,
-                           Roles                          Role,
+                           //Roles                          Role,
                            BusinessDetails                BusinessDetails,
 
                            IEnumerable<AccessInfo2>       AccessInfos,
@@ -309,13 +309,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Id                  = RemoteParty_Id.Parse(
                                            String.Concat(CountryCode.ToString(),
                                                          "-",
-                                                         PartyId.    ToString(),
-                                                         "_",
-                                                         Role.       ToString()));
+                                                         PartyId.    ToString()));
+                                                         //"_",
+                                                         //Role.       ToString()));
 
             this.CountryCode         = CountryCode;
             this.PartyId             = PartyId;
-            this.Role                = Role;
+            //this.Role                = Role;
             this.BusinessDetails     = BusinessDetails;
             this.Status              = Status;
             this.LastUpdated         = LastUpdated ?? Timestamp.Now;
@@ -357,7 +357,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            new JProperty("countryCode",              CountryCode.         ToString()),
                            new JProperty("partyId",                  PartyId.             ToString()),
-                           new JProperty("role",                     Role.                ToString()),
                            new JProperty("partyStatus",              Status.              ToString()),
 
                            BusinessDetails is not null
@@ -602,7 +601,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                  Id.               Equals(RemoteParty.Id) &&
                  CountryCode.      Equals(RemoteParty.Id) &&
                  PartyId.          Equals(RemoteParty.Id) &&
-                 Role.             Equals(RemoteParty.Id) &&
                  BusinessDetails.  Equals(RemoteParty.Id);
                  //Status.           Equals(RemoteParty.Id);
                  //LastUpdated.      Equals(RemoteParty.Id);

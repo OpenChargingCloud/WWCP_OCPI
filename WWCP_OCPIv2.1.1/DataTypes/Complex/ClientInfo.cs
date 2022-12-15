@@ -51,12 +51,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Party_Id          PartyId        { get; }
 
         /// <summary>
-        /// The role of the connected party.
-        /// </summary>
-        [Mandatory]
-        public Roles             Role           { get; }
-
-        /// <summary>
         /// Status of the connection to the party.
         /// </summary>
         [Mandatory]
@@ -82,14 +76,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="LastUpdated">Optional timestamp when this client info was last updated.</param>
         public ClientInfo(CountryCode       CountryCode,
                           Party_Id          PartyId,
-                          Roles             Role,
                           ConnectionStatus  Status,
                           DateTime?         LastUpdated = null)
         {
 
             this.CountryCode  = CountryCode;
             this.PartyId      = PartyId;
-            this.Role         = Role;
             this.Status       = Status;
             this.LastUpdated  = LastUpdated ?? Timestamp.Now;
         }
@@ -267,18 +259,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse Role              [mandatory]
-
-                if (!JSON.ParseMandatoryEnum("role",
-                                             "client role",
-                                             out Roles Role,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
                 #region Parse Status            [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("status",
@@ -306,7 +286,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 ClientInfo = new ClientInfo(CountryCode,
                                             PartyId,
-                                            Role,
                                             Status,
                                             LastUpdated);
 
@@ -375,7 +354,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var JSON = JSONObject.Create(
                            new JProperty("country_code",  CountryCode.ToString()),
                            new JProperty("party_id",      PartyId.    ToString()),
-                           new JProperty("role",          Role.       ToString()),
                            new JProperty("status",        Status.     ToString()),
                            new JProperty("last_updated",  LastUpdated.ToIso8601())
                        );
@@ -515,9 +493,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 c = PartyId.    CompareTo(ClientInfo.PartyId);
 
             if (c == 0)
-                c = Role.       CompareTo(ClientInfo.Role);
-
-            if (c == 0)
                 c = Status.     CompareTo(ClientInfo.Status);
 
             if (c == 0)
@@ -558,7 +533,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => CountryCode.Equals(ClientInfo.CountryCode) &&
                PartyId.    Equals(ClientInfo.PartyId)     &&
-               Role.       Equals(ClientInfo.Role)        &&
                Status.     Equals(ClientInfo.Status)      &&
                LastUpdated.Equals(ClientInfo.LastUpdated);
 
@@ -579,7 +553,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return CountryCode.GetHashCode() * 11 ^
                        PartyId.    GetHashCode() *  7 ^
-                       Role.       GetHashCode() *  5 ^
                        Status.     GetHashCode() *  3 ^
                        LastUpdated.GetHashCode();
 
@@ -596,7 +569,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public override String ToString()
 
             => String.Concat(CountryCode, "*" , PartyId, ": ",
-                             Role, " / ", Status,
+                             Status,
                              " (", LastUpdated, ")");
 
         #endregion

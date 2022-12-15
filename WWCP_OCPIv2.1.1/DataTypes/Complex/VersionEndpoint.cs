@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -43,13 +41,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The module identifier.
         /// </summary>
         [Mandatory]
-        public ModuleIDs       Identifier    { get; }
+        public Module_Id  Identifier    { get; }
 
         /// <summary>
         /// The URL of the module.
         /// </summary>
         [Mandatory]
-        public URL             URL           { get; }
+        public URL        URL           { get; }
 
         #endregion
 
@@ -60,12 +58,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Identifier">The module identifier.</param>
         /// <param name="URL">The URL of the module.</param>
-        public VersionEndpoint(ModuleIDs  Identifier,
+        public VersionEndpoint(Module_Id  Identifier,
                                URL        URL)
         {
-
-            if (URL.IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(URL), "The given version URL must not be null or empty!");
 
             this.Identifier  = Identifier;
             this.URL         = URL;
@@ -104,44 +99,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomVersionEndpointParser">A delegate to parse custom version endpoint JSON objects.</param>
-        public static VersionEndpoint Parse(JObject                                       JSON,
-                                            CustomJObjectParserDelegate<VersionEndpoint>  CustomVersionEndpointParser   = null)
+        public static VersionEndpoint Parse(JObject                                        JSON,
+                                            CustomJObjectParserDelegate<VersionEndpoint>?  CustomVersionEndpointParser   = null)
         {
 
             if (TryParse(JSON,
-                         out VersionEndpoint  versionEndpoint,
-                         out String           ErrorResponse,
+                         out var versionEndpoint,
+                         out var errorResponse,
                          CustomVersionEndpointParser))
             {
                 return versionEndpoint;
             }
 
-            throw new ArgumentException("The given JSON representation of a version endpoint is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomVersionEndpointParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a version endpoint.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomVersionEndpointParser">A delegate to parse custom version endpoint JSON objects.</param>
-        public static VersionEndpoint Parse(String                               Text,
-                                   CustomJObjectParserDelegate<VersionEndpoint>  CustomVersionEndpointParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out VersionEndpoint  versionEndpoint,
-                         out String           ErrorResponse,
-                         CustomVersionEndpointParser))
-            {
-                return versionEndpoint;
-            }
-
-            throw new ArgumentException("The given text representation of a version endpoint is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a version endpoint is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -159,7 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject              JSON,
                                        out VersionEndpoint  VersionEndpoint,
-                                       out String           ErrorResponse)
+                                       out String?          ErrorResponse)
 
             => TryParse(JSON,
                         out VersionEndpoint,
@@ -174,11 +145,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionEndpoint">The parsed version endpoint.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomVersionEndpointParser">A delegate to parse custom version JSON objects.</param>
-        public static Boolean TryParse(JObject                                       JSON,
-                                       out VersionEndpoint                           VersionEndpoint,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<VersionEndpoint>  CustomVersionEndpointParser,
-                                       Boolean                                       RoleIsMandatory = true)
+        public static Boolean TryParse(JObject                                        JSON,
+                                       out VersionEndpoint                            VersionEndpoint,
+                                       out String?                                    ErrorResponse,
+                                       CustomJObjectParserDelegate<VersionEndpoint>?  CustomVersionEndpointParser)
         {
 
             try
@@ -192,19 +162,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return false;
                 }
 
-                #region Parse Identifier     [mandatory]
+                #region Parse Identifier    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("identifier",
-                                             "endpoint identifier",
-                                             out ModuleIDs Identifier,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("identifier",
+                                         "module identifier",
+                                         Module_Id.TryParse,
+                                         out Module_Id Identifier,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse URL            [mandatory]
+                #region Parse URL           [mandatory]
 
                 if (!JSON.ParseMandatory("url",
                                          "version URL",
@@ -224,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (CustomVersionEndpointParser is not null)
                     VersionEndpoint = CustomVersionEndpointParser(JSON,
-                                                  VersionEndpoint);
+                                                                  VersionEndpoint);
 
                 return true;
 
@@ -240,52 +211,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out VersionEndpoint, out ErrorResponse, CustomVersionEndpointParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a version.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="VersionEndpoint">The parsed version.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomVersionEndpointParser">A delegate to parse custom version JSON objects.</param>
-        public static Boolean TryParse(String                                        Text,
-                                       out VersionEndpoint                           VersionEndpoint,
-                                       out String                                    ErrorResponse,
-                                       CustomJObjectParserDelegate<VersionEndpoint>  CustomVersionEndpointParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out VersionEndpoint,
-                                out ErrorResponse,
-                                CustomVersionEndpointParser);
-
-            }
-            catch (Exception e)
-            {
-                VersionEndpoint  = default;
-                ErrorResponse    = "The given text representation of a version is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomVersionEndpointSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomVersionEndpointSerializer">A delegate to serialize custom version JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<VersionEndpoint> CustomVersionEndpointSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<VersionEndpoint>? CustomVersionEndpointSerializer = null)
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("identifier",  Identifier.ToString().ToLower()),
+                           new JProperty("identifier",  Identifier.ToString()),
                            new JProperty("url",         URL.       ToString())
                        );
 
@@ -326,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (VersionEndpoint VersionEndpoint1,
                                            VersionEndpoint VersionEndpoint2)
 
-            => !(VersionEndpoint1 == VersionEndpoint2);
+            => !VersionEndpoint1.Equals(VersionEndpoint2);
 
         #endregion
 
@@ -356,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (VersionEndpoint VersionEndpoint1,
                                            VersionEndpoint VersionEndpoint2)
 
-            => !(VersionEndpoint1 > VersionEndpoint2);
+            => VersionEndpoint1.CompareTo(VersionEndpoint2) <= 0;
 
         #endregion
 
@@ -386,7 +322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (VersionEndpoint VersionEndpoint1,
                                            VersionEndpoint VersionEndpoint2)
 
-            => !(VersionEndpoint1 < VersionEndpoint2);
+            => VersionEndpoint1.CompareTo(VersionEndpoint2) >= 0;
 
         #endregion
 
@@ -397,14 +333,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version endpoint information.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A version endpoint information to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is VersionEndpoint versionEndpoint
                    ? CompareTo(versionEndpoint)
-                   : throw new ArgumentException("The given object is not a version!",
+                   : throw new ArgumentException("The given object is not a version endpoint!",
                                                  nameof(Object));
 
         #endregion
@@ -412,16 +348,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(VersionEndpoint)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version endpoint information.
         /// </summary>
-        /// <param name="VersionEndpoint">An object to compare with.</param>
+        /// <param name="VersionEndpoint">A version endpoint information to compare with.</param>
         public Int32 CompareTo(VersionEndpoint VersionEndpoint)
         {
 
             var c = Identifier.CompareTo(VersionEndpoint.Identifier);
 
             if (c == 0)
-                c = URL.CompareTo(VersionEndpoint.URL);
+                c = URL.       CompareTo(VersionEndpoint.URL);
 
             return c;
 
@@ -436,11 +372,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version endpoint information for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A version endpoint information to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is VersionEndpoint versionEndpoint &&
                    Equals(versionEndpoint);
@@ -450,10 +385,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(VersionEndpoint)
 
         /// <summary>
-        /// Compares two version endpoint informations for equality.
+        /// Compares two version endpoint information for equality.
         /// </summary>
         /// <param name="VersionEndpoint">A version endpoint information to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(VersionEndpoint VersionEndpoint)
 
             => Identifier.Equals(VersionEndpoint.Identifier) &&

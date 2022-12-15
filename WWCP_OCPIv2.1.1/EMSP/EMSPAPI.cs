@@ -3730,8 +3730,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3812,8 +3811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3907,8 +3905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3971,8 +3968,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4079,8 +4075,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4167,8 +4162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4265,8 +4259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -4330,8 +4323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4439,8 +4431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4527,8 +4518,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4628,8 +4618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -4695,8 +4684,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4807,8 +4795,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4898,8 +4885,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4999,8 +4985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5113,8 +5098,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5195,8 +5179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5288,8 +5271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5351,8 +5333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5459,8 +5440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5556,8 +5536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5647,8 +5626,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5729,8 +5707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5823,8 +5800,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5887,8 +5863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if ( Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5995,8 +5970,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6080,8 +6054,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6171,8 +6144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -6257,8 +6229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6357,8 +6328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6449,8 +6419,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -6513,8 +6482,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6614,8 +6582,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -6687,8 +6654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
-                                            Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6819,7 +6785,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             if (locationReference.HasValue)
                                             {
 
-                                                Location validLocation = null;
+                                                Location? validLocation = null;
 
                                                 if (Request.FromCountryCode.HasValue && Request.FromPartyId.HasValue)
                                                 {
@@ -6854,52 +6820,52 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                 else
                                                 {
 
-                                                    if (Request.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).Count() != 1)
-                                                    {
+                                                    //if (Request.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).Count() != 1)
+                                                    //{
 
-                                                        return new OCPIResponse.Builder(Request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = "Could not determine the country code and party identification of the given location!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
-                                                                                       locationReference.Value
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST",
-                                                                AccessControlAllowHeaders  = "Authorization"
-                                                            }
-                                                        };
+                                                    //    return new OCPIResponse.Builder(Request) {
+                                                    //        StatusCode           = 2001,
+                                                    //        StatusMessage        = "Could not determine the country code and party identification of the given location!",
+                                                    //        Data                 = new AuthorizationInfo(
+                                                    //                                   AllowedTypes.NOT_ALLOWED,
+                                                    //                                   _tokenStatus.Token,
+                                                    //                                   locationReference.Value
+                                                    //                               ).ToJSON(),
+                                                    //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    //            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                    //            AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                    //            AccessControlAllowHeaders  = "Authorization"
+                                                    //        }
+                                                    //    };
 
-                                                    }
+                                                    //}
 
-                                                    var allTheirCPORoles = Request.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
+                                                    //var allTheirCPORoles = Request.AccessInfo.Value.Roles.Where(role => role.Role == Roles.CPO).ToArray();
 
-                                                    if (!CommonAPI.TryGetLocation(allTheirCPORoles[0].CountryCode,
-                                                                                  allTheirCPORoles[0].PartyId,
-                                                                                  locationReference.Value.LocationId,
-                                                                                  out validLocation))
-                                                    {
+                                                    //if (!CommonAPI.TryGetLocation(allTheirCPORoles[0].CountryCode,
+                                                    //                              allTheirCPORoles[0].PartyId,
+                                                    //                              locationReference.Value.LocationId,
+                                                    //                              out validLocation))
+                                                    //{
 
-                                                        return new OCPIResponse.Builder(Request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = "The given location is unknown!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
-                                                                                       locationReference.Value,
-                                                                                       null,
-                                                                                       new DisplayText(Languages.en, "The given location is unknown!")
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST",
-                                                                AccessControlAllowHeaders  = "Authorization"
-                                                            }
-                                                        };
+                                                    //    return new OCPIResponse.Builder(Request) {
+                                                    //        StatusCode           = 2001,
+                                                    //        StatusMessage        = "The given location is unknown!",
+                                                    //        Data                 = new AuthorizationInfo(
+                                                    //                                   AllowedTypes.NOT_ALLOWED,
+                                                    //                                   _tokenStatus.Token,
+                                                    //                                   locationReference.Value,
+                                                    //                                   null,
+                                                    //                                   new DisplayText(Languages.en, "The given location is unknown!")
+                                                    //                               ).ToJSON(),
+                                                    //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                    //            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                    //            AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                    //            AccessControlAllowHeaders  = "Authorization"
+                                                    //        }
+                                                    //    };
 
-                                                    }
+                                                    //}
 
                                                 }
 
@@ -6955,7 +6921,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         }
 
-                                        if (authorizationInfo == null)
+                                        if (authorizationInfo is null)
                                             authorizationInfo = new AuthorizationInfo(
                                                                       AllowedTypes.BLOCKED,
                                                                       new Token(

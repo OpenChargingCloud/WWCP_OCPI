@@ -1455,7 +1455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -1689,7 +1689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -1913,7 +1913,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -2139,7 +2139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Locations &&
+                    LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -2359,7 +2359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Tariffs &&
+                    TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Tariffs &&
                                                                                      endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -2581,7 +2581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Tariffs &&
+                    TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Tariffs &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -2801,7 +2801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    SessionsURL  = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Sessions &&
+                    SessionsURL  = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Sessions &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -3023,7 +3023,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    SessionsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.Sessions &&
+                    SessionsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Sessions &&
                                                                                        endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -3245,7 +3245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.CDRs &&
+                    CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.CDRs &&
                                                                                   endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -3467,7 +3467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
                 {
 
-                    CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == ModuleIDs.CDRs &&
+                    CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.CDRs &&
                                                                                   endpoint.Role       == InterfaceRoles.SENDER).URL;
 
                 }
@@ -3656,7 +3656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tokens,
+                                                        Module_Id.Tokens,
                                                         InterfaceRoles.SENDER);
 
                 if (remoteURL.HasValue)
@@ -3856,7 +3856,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tokens,
+                                                        Module_Id.Tokens,
                                                         InterfaceRoles.SENDER);
 
                 if (remoteURL.HasValue)
@@ -4059,7 +4059,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Tokens,
+                                                        Module_Id.Tokens,
                                                         InterfaceRoles.SENDER);
 
                 if (remoteURL.HasValue)
@@ -4267,14 +4267,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Commands,
+                                                        Module_Id.Commands,
                                                         InterfaceRoles.RECEIVER);
 
                 var command        = new ReserveNowCommand(Token,
                                                            ExpirationTimestamp,
                                                            ReservationId,
                                                            LocationId,
-                                                           MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
+                                                           MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
                                                            EVSEUId,
                                                            AuthorizationReference,
@@ -4487,11 +4487,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Commands,
+                                                        Module_Id.Commands,
                                                         InterfaceRoles.RECEIVER);
 
                 var command        = new CancelReservationCommand(ReservationId,
-                                                                  MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
+                                                                  MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                            SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
                                                                   requestId,
                                                                   correlationId);
@@ -4705,12 +4705,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Commands,
+                                                        Module_Id.Commands,
                                                         InterfaceRoles.RECEIVER);
 
                 var command        = new StartSessionCommand(Token,
                                                              LocationId,
-                                                             MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
+                                                             MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                       SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
                                                              EVSEUId,
                                                              AuthorizationReference,
@@ -4923,11 +4923,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Commands,
+                                                        Module_Id.Commands,
                                                         InterfaceRoles.RECEIVER);
 
                 var command        = new StopSessionCommand(SessionId,
-                                                            MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
+                                                            MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
                                                             requestId,
                                                             correlationId);
@@ -5140,13 +5140,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Commands,
+                                                        Module_Id.Commands,
                                                         InterfaceRoles.RECEIVER);
 
                 var command        = new UnlockConnectorCommand(LocationId,
                                                                 EVSEUId,
                                                                 ConnectorId,
-                                                                MyCommonAPI.GetModuleURL(ModuleIDs.Commands,
+                                                                MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                          SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
                                                                 requestId,
                                                                 correlationId);

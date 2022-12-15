@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -74,19 +70,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            IEnumerable<CredentialsRole>  Roles)
         {
 
-            if (Token. IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(Token),  "The given token must not be null or empty!");
-
-            if (URL.   IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(URL),    "The given URL must not be null or empty!");
-
             if (!Roles.SafeAny())
                 throw new ArgumentNullException(nameof(Roles),  "The given enumeration of roles must not be null or empty!");
 
-
             this.Token  = Token;
             this.URL    = URL;
-            this.Roles  = Roles?.Distinct();
+            this.Roles  = Roles?.Distinct() ?? Array.Empty<CredentialsRole>();
 
         }
 
@@ -100,44 +89,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Credentials Parse(JObject                                   JSON,
-                                        CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser   = null)
+        public static Credentials Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<Credentials>?  CustomCredentialsParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Credentials  credentials,
-                         out String       ErrorResponse,
+                         out var credentials,
+                         out var errorResponse,
                          CustomCredentialsParser))
             {
-                return credentials;
+                return credentials!;
             }
 
-            throw new ArgumentException("The given JSON representation of a credentials is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCredentialsParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a credentials.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Credentials Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Credentials  credentials,
-                         out String       ErrorResponse,
-                         CustomCredentialsParser))
-            {
-                return credentials;
-            }
-
-            throw new ArgumentException("The given text representation of a credentials is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a credentials is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -153,9 +118,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Credentials">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject          JSON,
-                                       out Credentials  Credentials,
-                                       out String       ErrorResponse)
+        public static Boolean TryParse(JObject           JSON,
+                                       out Credentials?  Credentials,
+                                       out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out Credentials,
@@ -170,10 +135,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Credentials">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Boolean TryParse(JObject                                   JSON,
-                                       out Credentials                           Credentials,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out Credentials?                           Credentials,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<Credentials>?  CustomCredentialsParser)
         {
 
             try
@@ -213,13 +178,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Roles     [optional]
+                #region Parse Roles     [mandatory]
 
-                if (JSON.ParseOptionalJSON("roles",
-                                           "roles",
-                                           CredentialsRole.TryParse,
-                                           out IEnumerable<CredentialsRole> Roles,
-                                           out ErrorResponse))
+                if (JSON.ParseMandatoryHashSet("roles",
+                                               "roles",
+                                               CredentialsRole.TryParse,
+                                               out HashSet<CredentialsRole> Roles,
+                                               out ErrorResponse))
                 {
 
                     if (ErrorResponse is not null)
@@ -253,42 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out Credentials, out ErrorResponse, CustomCredentialsParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a credentials.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Credentials">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out Credentials                           Credentials,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Credentials,
-                                out ErrorResponse,
-                                CustomCredentialsParser);
-
-            }
-            catch (Exception e)
-            {
-                Credentials    = default;
-                ErrorResponse  = "The given text representation of a credentials is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region ToJSON(CustomCredentialsSerializer = null, CustomCredentialsRoleSerializer = null, CustomBusinessDetailsSerializer = null)
+        #region ToJSON(CustomCredentialsSerializer = null, CustomCredentialsRoleSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
@@ -296,9 +226,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomCredentialsSerializer">A delegate to serialize custom credentials JSON objects.</param>
         /// <param name="CustomCredentialsRoleSerializer">A delegate to serialize custom credentials roles JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Credentials>      CustomCredentialsSerializer       = null,
-                              CustomJObjectSerializerDelegate<CredentialsRole>  CustomCredentialsRoleSerializer   = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>  CustomBusinessDetailsSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Credentials>?      CustomCredentialsSerializer       = null,
+                              CustomJObjectSerializerDelegate<CredentialsRole>?  CustomCredentialsRoleSerializer   = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
@@ -306,8 +236,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("token",  Token.ToString()),
                            new JProperty("url",    URL.  ToString()),
 
-                           new JProperty("roles",  new JArray(Roles.SafeSelect(role => role.ToJSON(CustomCredentialsRoleSerializer,
-                                                                                                   CustomBusinessDetailsSerializer))))
+                           new JProperty("roles",  new JArray(Roles.Select(role => role.ToJSON(CustomCredentialsRoleSerializer,
+                                                                                               CustomBusinessDetailsSerializer))))
 
                        );
 
@@ -327,8 +257,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -351,8 +281,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -366,8 +296,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Credentials Credentials1,
                                           Credentials Credentials2)
@@ -383,8 +313,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -398,8 +328,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Credentials Credentials1,
                                           Credentials Credentials2)
@@ -415,8 +345,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -432,10 +362,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">Credentials to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Credentials credentials
                    ? CompareTo(credentials)
@@ -447,13 +377,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Credentials)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials.
         /// </summary>
-        /// <param name="Credentials">An object to compare with.</param>
-        public Int32 CompareTo(Credentials Credentials)
+        /// <param name="Credentials">Credentials to compare with.</param>
+        public Int32 CompareTo(Credentials? Credentials)
         {
 
-            if (Credentials == null)
+            if (Credentials is null)
                 throw new ArgumentNullException(nameof(Credentials), "The given credential must not be null!");
 
             var c = Token.CompareTo(Credentials.Token);
@@ -474,27 +404,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">Credentials to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is Credentials Credentials &&
-                   Equals(Credentials);
+            => Object is Credentials credentials &&
+                   Equals(credentials);
 
         #endregion
 
         #region Equals(Credentials)
 
         /// <summary>
-        /// Compares two Credentialss for equality.
+        /// Compares two credentials for equality.
         /// </summary>
-        /// <param name="Credentials">A Credentials to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Credentials Credentials)
+        /// <param name="Credentials">Credentials to compare with.</param>
+        public Boolean Equals(Credentials? Credentials)
 
-            => !(Credentials is null) &&
+            => Credentials is not null &&
 
                Token.Equals(Credentials.Token) &&
                URL.  Equals(Credentials.URL)   &&
@@ -519,8 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 return Token.GetHashCode() * 5 ^
                        URL.  GetHashCode() * 3 ^
-
-                       Roles.Aggregate(0, (hashCode, role) => hashCode ^ role.GetHashCode());
+                       Roles.CalcHashCode();
 
             }
         }
@@ -534,7 +461,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Token.ToString().SubstringMax(5), " : ", URL, " => ", Roles.AggregateWith(", "));
+            => String.Concat(
+
+                   Token.ToString().SubstringMax(5),
+                   " : ",
+                   URL,
+                   " => ",
+                   Roles.AggregateWith(", ")
+
+               );
 
         #endregion
 

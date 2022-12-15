@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -64,13 +62,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                   URL         URL)
         {
 
-            if (Id. IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(Id),   "The given version information identification must not be null or empty!");
-
-            if (URL.IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(URL),  "The given version information URL must not be null or empty!");
-
-
             this.Id   = Id;
             this.URL  = URL;
 
@@ -86,44 +77,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomVersionInformationParser">A delegate to parse custom version information JSON objects.</param>
-        public static VersionInformation Parse(JObject                                          JSON,
-                                               CustomJObjectParserDelegate<VersionInformation>  CustomVersionInformationParser   = null)
+        public static VersionInformation Parse(JObject                                           JSON,
+                                               CustomJObjectParserDelegate<VersionInformation>?  CustomVersionInformationParser   = null)
         {
 
             if (TryParse(JSON,
-                         out VersionInformation  versionInformation,
-                         out String              errorResponse,
+                         out var versionInformation,
+                         out var errorResponse,
                          CustomVersionInformationParser))
             {
-                return versionInformation;
+                return versionInformation!;
             }
 
             throw new ArgumentException("The given JSON representation of a version information is invalid: " + errorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomVersionInformationParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a version information.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomVersionInformationParser">A delegate to parse custom version information JSON objects.</param>
-        public static VersionInformation Parse(String                                           Text,
-                                               CustomJObjectParserDelegate<VersionInformation>  CustomVersionInformationParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out VersionInformation  versionInformation,
-                         out String              errorResponse,
-                         CustomVersionInformationParser))
-            {
-                return versionInformation;
-            }
-
-            throw new ArgumentException("The given text representation of a version information is invalid: " + errorResponse, nameof(Text));
 
         }
 
@@ -139,9 +105,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Version">The parsed version information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                 JSON,
-                                       out VersionInformation  Version,
-                                       out String              ErrorResponse)
+        public static Boolean TryParse(JObject                  JSON,
+                                       out VersionInformation?  Version,
+                                       out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out Version,
@@ -156,16 +122,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Version">The parsed version information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomVersionInformationParser">A delegate to parse custom version information JSON objects.</param>
-        public static Boolean TryParse(JObject                                          JSON,
-                                       out VersionInformation                           Version,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<VersionInformation>  CustomVersionInformationParser)
+        public static Boolean TryParse(JObject                                           JSON,
+                                       out VersionInformation?                           Version,
+                                       out String?                                       ErrorResponse,
+                                       CustomJObjectParserDelegate<VersionInformation>?  CustomVersionInformationParser)
         {
 
             try
             {
 
-                Version = default;
+                Version = null;
 
                 if (JSON?.HasValues != true)
                 {
@@ -222,48 +188,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out Version, out ErrorResponse, CustomVersionInformationParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a version information.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Version">The parsed version information.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomVersionInformationParser">A delegate to parse custom version information JSON objects.</param>
-        public static Boolean TryParse(String                                           Text,
-                                       out VersionInformation                           Version,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<VersionInformation>  CustomVersionInformationParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Version,
-                                out ErrorResponse,
-                                CustomVersionInformationParser);
-
-            }
-            catch (Exception e)
-            {
-                Version        = default;
-                ErrorResponse  = "The given text representation of a version information is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomVersionSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomVersionSerializer">A delegate to serialize custom version information JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<VersionInformation> CustomVersionSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<VersionInformation>? CustomVersionSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -290,8 +221,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionInformation1">A version information.</param>
         /// <param name="VersionInformation2">Another version information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (VersionInformation VersionInformation1,
-                                           VersionInformation VersionInformation2)
+        public static Boolean operator == (VersionInformation? VersionInformation1,
+                                           VersionInformation? VersionInformation2)
         {
 
             if (Object.ReferenceEquals(VersionInformation1, VersionInformation2))
@@ -314,8 +245,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionInformation1">A version information.</param>
         /// <param name="VersionInformation2">Another version information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (VersionInformation VersionInformation1,
-                                           VersionInformation VersionInformation2)
+        public static Boolean operator != (VersionInformation? VersionInformation1,
+                                           VersionInformation? VersionInformation2)
 
             => !(VersionInformation1 == VersionInformation2);
 
@@ -329,8 +260,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionInformation1">A version information.</param>
         /// <param name="VersionInformation2">Another version information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (VersionInformation VersionInformation1,
-                                          VersionInformation VersionInformation2)
+        public static Boolean operator < (VersionInformation? VersionInformation1,
+                                          VersionInformation? VersionInformation2)
 
             => VersionInformation1 is null
                    ? throw new ArgumentNullException(nameof(VersionInformation1), "The given version information must not be null!")
@@ -346,8 +277,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionInformation1">A version information.</param>
         /// <param name="VersionInformation2">Another version information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (VersionInformation VersionInformation1,
-                                           VersionInformation VersionInformation2)
+        public static Boolean operator <= (VersionInformation? VersionInformation1,
+                                           VersionInformation? VersionInformation2)
 
             => !(VersionInformation1 > VersionInformation2);
 
@@ -361,8 +292,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionInformation1">A version information.</param>
         /// <param name="VersionInformation2">Another version information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (VersionInformation VersionInformation1,
-                                          VersionInformation VersionInformation2)
+        public static Boolean operator > (VersionInformation? VersionInformation1,
+                                          VersionInformation? VersionInformation2)
 
             => VersionInformation1 is null
                    ? throw new ArgumentNullException(nameof(VersionInformation1), "The given version information must not be null!")
@@ -378,8 +309,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="VersionInformation1">A version information.</param>
         /// <param name="VersionInformation2">Another version information.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (VersionInformation VersionInformation1,
-                                           VersionInformation VersionInformation2)
+        public static Boolean operator >= (VersionInformation? VersionInformation1,
+                                           VersionInformation? VersionInformation2)
 
             => !(VersionInformation1 < VersionInformation2);
 
@@ -392,10 +323,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version information.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A version information to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is VersionInformation versionInformation
                    ? CompareTo(versionInformation)
@@ -407,21 +338,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Version)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version information.
         /// </summary>
-        /// <param name="VersionInformation">An object to compare with.</param>
-        public Int32 CompareTo(VersionInformation VersionInformation)
+        /// <param name="VersionInformation">A version information to compare with.</param>
+        public Int32 CompareTo(VersionInformation? VersionInformation)
         {
 
             if (VersionInformation is null)
                 throw new ArgumentNullException(nameof(VersionInformation), "The given version information must not be null!");
 
-            var result = Id.CompareTo(VersionInformation.Id);
+            var c = Id. CompareTo(VersionInformation.Id);
 
-            if (result == 0)
-                result = URL.CompareTo(VersionInformation.URL);
+            if (c == 0)
+                c = URL.CompareTo(VersionInformation.URL);
 
-            return result;
+            return c;
 
         }
 
@@ -434,11 +365,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version information for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A version information to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is VersionInformation versionInformation &&
                    Equals(versionInformation);
@@ -448,20 +378,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Version)
 
         /// <summary>
-        /// Compares two version informations for equality.
+        /// Compares two version information for equality.
         /// </summary>
         /// <param name="VersionInformation">A version information to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(VersionInformation VersionInformation)
-        {
+        public Boolean Equals(VersionInformation? VersionInformation)
 
-            if (VersionInformation is null)
-                throw new ArgumentNullException(nameof(VersionInformation), "The given version information must not be null!");
+            => VersionInformation is not null &&
 
-            return Id. Equals(VersionInformation.Id) &&
-                   URL.Equals(VersionInformation.URL);
-
-        }
+               Id. Equals(VersionInformation.Id) &&
+               URL.Equals(VersionInformation.URL);
 
         #endregion
 

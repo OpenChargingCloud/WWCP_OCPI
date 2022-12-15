@@ -164,8 +164,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Credentials.TryParse(JSON, out Credentials parsedCredentials, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(AccessToken.Parse("ebf3b399-779f-4497-9b9d-ac6ad3cc44d2"),  parsedCredentials.Token);
             Assert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),    parsedCredentials.URL);
@@ -212,8 +212,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Credentials.TryParse(JSON, out Credentials parsedCredentials, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(AccessToken.Parse("9e80a9c4-28be-11e9-b210-d663bd873d93"),  parsedCredentials.Token);
             Assert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);
@@ -269,8 +269,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Credentials.TryParse(JSON, out Credentials parsedCredentials, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(AccessToken.Parse("9e80ae10-28be-11e9-b210-d663bd873d93"),    parsedCredentials.Token);
             Assert.AreEqual(URL.        Parse("https://example.com/ocpi/versions/"),      parsedCredentials.URL);
@@ -331,8 +331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Credentials.TryParse(JSON, out Credentials parsedCredentials, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Credentials.TryParse(JObject.Parse(JSON), out var parsedCredentials, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(AccessToken.Parse("9e80aca8-28be-11e9-b210-d663bd873d93"),  parsedCredentials.Token);
             Assert.AreEqual(URL.        Parse("https://ocpi.example.com/versions/"),    parsedCredentials.URL);

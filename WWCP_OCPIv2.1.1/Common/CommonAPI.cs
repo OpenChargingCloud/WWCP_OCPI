@@ -76,14 +76,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region Properties
 
         /// <summary>
-        /// The URL of our VERSIONS endpoint.
+        /// The URL to your API versions endpoint.
         /// </summary>
-        public URL                           OurVersionsURL             { get; }
+        [Mandatory]
+        public URL              OurVersionsURL        { get; }
 
         /// <summary>
-        /// All our credential roles.
+        /// Business details of this party.
         /// </summary>
-        public IEnumerable<CredentialsRole>  OurCredentialRoles         { get; }
+        [Mandatory]
+        public BusinessDetails  OurBusinessDetails    { get; }
+
+        /// <summary>
+        /// ISO-3166 alpha-2 country code of the country this party is operating in.
+        /// </summary>
+        [Mandatory]
+        public CountryCode      OurCountryCode        { get; }
+
+        /// <summary>
+        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id         OurPartyId            { get; }
+
+
+
 
 
         public HTTPPath?                     AdditionalURLPathPrefix    { get; }
@@ -285,8 +302,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
-        public CommonAPI(URL                           OurVersionsURL,
-                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+        public CommonAPI(URL              OurVersionsURL,
+                         BusinessDetails  OurBusinessDetails,
+                         CountryCode      OurCountryCode,
+                         Party_Id         OurPartyId,
 
                          HTTPHostname?                 HTTPHostname              = null,
                          IPPort?                       HTTPServerPort            = null,
@@ -348,12 +367,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            if (!OurCredentialRoles.SafeAny())
-                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
-
             this.OurVersionsURL           = OurVersionsURL;
+            this.OurBusinessDetails       = OurBusinessDetails;
+            this.OurCountryCode           = OurCountryCode;
+            this.OurPartyId               = OurPartyId;
+
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
@@ -392,8 +411,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="LocationsAsOpenData">Allow anonymous access to locations as Open Data.</param>
         /// <param name="AllowDowngrades">(Dis-)allow PUTting of object having an earlier 'LastUpdated'-timestamp then already existing objects.</param>
         /// <param name="Disable_RootServices">Whether to disable / and /versions HTTP services.</param>
-        public CommonAPI(URL                           OurVersionsURL,
-                         IEnumerable<CredentialsRole>  OurCredentialRoles,
+        public CommonAPI(URL              OurVersionsURL,
+                         BusinessDetails  OurBusinessDetails,
+                         CountryCode      OurCountryCode,
+                         Party_Id         OurPartyId,
 
                          HTTPServer                    HTTPServer,
                          HTTPHostname?                 HTTPHostname              = null,
@@ -436,12 +457,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            if (!OurCredentialRoles.SafeAny())
-                throw new ArgumentNullException(nameof(OurCredentialRoles), "The given credential roles must not be null or empty!");
-
             this.OurVersionsURL           = OurVersionsURL;
+            this.OurBusinessDetails       = OurBusinessDetails;
+            this.OurCountryCode           = OurCountryCode;
+            this.OurPartyId               = OurPartyId;
+
             this.OurBaseURL               = URL.Parse(OurVersionsURL.ToString().Replace("/versions", ""));
-            this.OurCredentialRoles       = OurCredentialRoles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.AdditionalURLPathPrefix  = AdditionalURLPathPrefix;
             this.KeepRemovedEVSEs         = KeepRemovedEVSEs ?? (evse => true);
             this.LocationsAsOpenData      = LocationsAsOpenData;
@@ -472,44 +493,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region GetModuleURL(ModuleId, Stuff = "")
 
-        public URL GetModuleURL(ModuleIDs  ModuleId,
+        public URL GetModuleURL(Module_Id  ModuleId,
                                 String     Stuff   = "")
         {
 
-            switch (ModuleId)
-            {
+            return OurBaseURL + Stuff + ModuleId.ToString();
 
-                case ModuleIDs.CDRs:
-                    return OurBaseURL + Stuff + "cdrs";
+            //switch (ModuleId)
+            //{
 
-                case ModuleIDs.ChargingProfiles:
-                    return OurBaseURL + Stuff + "chargingprofiles";
+            //    case ModuleIds.CDRs:
+            //        return OurBaseURL + Stuff + "cdrs";
 
-                case ModuleIDs.Commands:
-                    return OurBaseURL + Stuff + "commands";
+            //    case ModuleIds.ChargingProfiles:
+            //        return OurBaseURL + Stuff + "chargingprofiles";
 
-                case ModuleIDs.Credentials:
-                    return OurBaseURL + Stuff + "credentials";
+            //    case ModuleIds.Commands:
+            //        return OurBaseURL + Stuff + "commands";
 
-                case ModuleIDs.HubClientInfo:
-                    return OurBaseURL + Stuff + "hubclientinfo";
+            //    case ModuleIds.Credentials:
+            //        return OurBaseURL + Stuff + "credentials";
 
-                case ModuleIDs.Locations:
-                    return OurBaseURL + Stuff + "locations";
+            //    case ModuleIds.HubClientInfo:
+            //        return OurBaseURL + Stuff + "hubclientinfo";
 
-                case ModuleIDs.Sessions:
-                    return OurBaseURL + Stuff + "sessions";
+            //    case ModuleIds.Locations:
+            //        return OurBaseURL + Stuff + "locations";
 
-                case ModuleIDs.Tariffs:
-                    return OurBaseURL + Stuff + "tariffs";
+            //    case ModuleIds.Sessions:
+            //        return OurBaseURL + Stuff + "sessions";
 
-                case ModuleIDs.Tokens:
-                    return OurBaseURL + Stuff + "tokens";
+            //    case ModuleIds.Tariffs:
+            //        return OurBaseURL + Stuff + "tariffs";
 
-                default:
-                    return OurVersionsURL;
+            //    case ModuleIds.Tokens:
+            //        return OurBaseURL + Stuff + "tokens";
 
-            }
+            //    default:
+            //        return OurVersionsURL;
+
+            //}
 
         }
 
@@ -808,11 +831,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    var endpoints  = new List<VersionEndpoint>() {
 
-                                                        new VersionEndpoint(ModuleIDs.Credentials,
+                                                        new VersionEndpoint(Module_Id.Credentials,
                                                                             URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                       (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "credentials")).Replace("//", "/"))),
 
-                                                        new VersionEndpoint(ModuleIDs.Credentials,
+                                                        new VersionEndpoint(Module_Id.Credentials,
                                                                             URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                       (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "credentials")).Replace("//", "/")))
 
@@ -823,48 +846,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region The other side is a CPO...
 
-                                   if (Request.RemoteParty?.Role == Roles.CPO)
-                                   {
+                                   //if (Request.RemoteParty?.Role == Roles.CPO)
+                                   //{
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/locations")).Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/tariffs")).  Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/sessions")). Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/cdrs")).     Replace("//", "/"))));
 
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Commands,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/commands")). Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/tokens")).   Replace("//", "/"))));
 
                                        // hubclientinfo
 
-                                   }
+                                   //}
 
                                    #endregion
 
                                    #region The other side is an EMP or unauthenticated (Open Data Access)...
 
-                                   if (Request.RemoteParty?.Role == Roles.EMSP ||
-                                       Request.RemoteParty?.Role == Roles.OpenData ||
-                                      (Request.RemoteParty == null && LocationsAsOpenData))
+                                   if (Request.RemoteParty is null && LocationsAsOpenData)
                                    {
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/locations")).Replace("//", "/"))));
 
@@ -874,50 +895,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region The other side is an EMP...
 
-                                   if (Request.RemoteParty?.Role == Roles.EMSP)
-                                   {
+                                   //if (Request.RemoteParty?.Role == Roles.EMSP)
+                                   //{
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/cdrs")).            Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/sessions")).        Replace("//", "/"))));
 
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Locations,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Locations,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/locations")).       Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Tariffs,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Tariffs,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/tariffs")).         Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Sessions,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/sessions")).        Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.ChargingProfiles,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/chargingprofiles")).Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.CDRs,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/cdrs")).            Replace("//", "/"))));
 
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Commands,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Commands,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/commands")).        Replace("//", "/"))));
 
-                                       endpoints.Add(new VersionEndpoint(ModuleIDs.Tokens,
+                                       endpoints.Add(new VersionEndpoint(Module_Id.Tokens,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/tokens")).          Replace("//", "/"))));
 
                                        // hubclientinfo
 
-                                   }
+                                   //}
 
                                    #endregion
 
@@ -1201,7 +1218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             var ErrorResponse = String.Empty;
 
             if (!Request.TryParseJObjectRequestBody(out JObject JSON, out OCPIResponse.Builder ResponseBuilder, AllowEmptyHTTPBody: false) ||
-                !Credentials.TryParse(JSON, out Credentials receivedCredentials, out ErrorResponse))
+                !Credentials.TryParse(JSON, out var receivedCredentials, out ErrorResponse))
             {
 
                 return new OCPIResponse.Builder(Request) {
@@ -1266,10 +1283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            var commonClient            = new CommonClient(//receivedCredentials.Roles.First().CountryCode,
-                                                           //receivedCredentials.Roles.First().PartyId,
-                                                           //receivedCredentials.Roles.First().Role,
-                                                           receivedCredentials.URL,
+            var commonClient            = new CommonClient(receivedCredentials.URL,
                                                            receivedCredentials.Token,  // CREDENTIALS_TOKEN_B
                                                            this,
                                                            DNSClient: HTTPServer.DNSClient);
@@ -1343,22 +1357,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             var CREDENTIALS_TOKEN_C = AccessToken.NewRandom();
 
             // Store credential of the other side!
-            foreach (var role in receivedCredentials.Roles)
-                AddOrUpdateRemoteParty(role.CountryCode,
-                                       role.PartyId,
-                                       role.Role,
-                                       role.BusinessDetails,
+            AddOrUpdateRemoteParty(receivedCredentials.CountryCode,
+                                   receivedCredentials.PartyId,
+                                   receivedCredentials.BusinessDetails,
 
-                                       CREDENTIALS_TOKEN_C, // -------------------------------------------------- !!!
+                                   CREDENTIALS_TOKEN_C, // -------------------------------------------------- !!!
 
-                                       receivedCredentials.Token,
-                                       receivedCredentials.URL,
-                                       otherVersions.Data.Select(version => version.Id),
-                                       version2_2,
+                                   receivedCredentials.Token,
+                                   receivedCredentials.URL,
+                                   otherVersions.Data.Select(version => version.Id),
+                                   version2_2,
 
-                                       AccessStatus.ALLOWED,
-                                       RemoteAccessStatus.ONLINE,
-                                       PartyStatus.ENABLED);
+                                   AccessStatus.ALLOWED,
+                                   RemoteAccessStatus.ONLINE,
+                                   PartyStatus.ENABLED);
 
             //SetIncomingAccessToken(CREDENTIALS_TOKEN_C,
             //                       receivedCredentials.URL,
@@ -1376,7 +1388,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                            Data                 = new Credentials(
                                                       CREDENTIALS_TOKEN_C,
                                                       OurVersionsURL,
-                                                      OurCredentialRoles
+                                                      OurBusinessDetails,
+                                                      OurCountryCode,
+                                                      OurPartyId
                                                   ).ToJSON(),
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.OK,
@@ -1427,21 +1441,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode              CountryCode,
-                                      Party_Id                 PartyId,
-                                      Roles                    Role,
-                                      BusinessDetails          BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode               CountryCode,
+                                      Party_Id                  PartyId,
+                                      BusinessDetails           BusinessDetails,
 
-                                      AccessToken              AccessToken,
+                                      AccessToken               AccessToken,
 
-                                      AccessToken              RemoteAccessToken,
-                                      URL                      RemoteVersionsURL,
-                                      IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                      Version_Id?              SelectedVersionId   = null,
+                                      AccessToken               RemoteAccessToken,
+                                      URL                       RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                      Version_Id?               SelectedVersionId   = null,
 
-                                      AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
-                                      RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                      PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                      AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
+                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
+                                      PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
             lock (_RemoteParties)
             {
@@ -1456,7 +1469,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1487,7 +1499,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddRemoteParty(CountryCode      CountryCode,
                                       Party_Id         PartyId,
-                                      Roles            Role,
                                       BusinessDetails  BusinessDetails,
 
                                       AccessToken      AccessToken,
@@ -1508,7 +1519,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1531,18 +1541,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode              CountryCode,
-                                      Party_Id                 PartyId,
-                                      Roles                    Role,
-                                      BusinessDetails          BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode               CountryCode,
+                                      Party_Id                  PartyId,
+                                      BusinessDetails           BusinessDetails,
 
-                                      AccessToken              RemoteAccessToken,
-                                      URL                      RemoteVersionsURL,
-                                      IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                      Version_Id?              SelectedVersionId   = null,
+                                      AccessToken               RemoteAccessToken,
+                                      URL                       RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                      Version_Id?               SelectedVersionId   = null,
 
-                                      RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                      PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
+                                      PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
             lock (_RemoteParties)
             {
@@ -1557,7 +1566,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      RemoteAccessToken,
@@ -1585,7 +1593,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddRemoteParty(CountryCode                    CountryCode,
                                       Party_Id                       PartyId,
-                                      Roles                          Role,
                                       BusinessDetails                BusinessDetails,
 
                                       IEnumerable<AccessInfo2>       AccessInfos,
@@ -1599,7 +1606,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessInfos,
@@ -1624,28 +1630,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
-                                              Party_Id                 PartyId,
-                                              Roles                    Role,
-                                              BusinessDetails          BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
+                                              Party_Id                  PartyId,
+                                              BusinessDetails           BusinessDetails,
 
-                                              AccessToken              AccessToken,
+                                              AccessToken               AccessToken,
 
-                                              AccessToken              RemoteAccessToken,
-                                              URL                      RemoteVersionsURL,
-                                              IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                              Version_Id?              SelectedVersionId   = null,
+                                              AccessToken               RemoteAccessToken,
+                                              URL                       RemoteVersionsURL,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                              Version_Id?               SelectedVersionId   = null,
 
-                                              AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
-                                              RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                              PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                              AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
+                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
+                                              PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
             lock (_RemoteParties)
             {
 
                 var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
-                                                                         party.PartyId     == PartyId     &&
-                                                                         party.Role        == Role).ToArray();
+                                                                         party.PartyId     == PartyId).ToArray();
 
                 foreach (var remoteParty in remoteParties)
                     _RemoteParties.Remove(remoteParty.Id);
@@ -1653,7 +1657,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1684,7 +1687,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddOrUpdateRemoteParty(CountryCode      CountryCode,
                                               Party_Id         PartyId,
-                                              Roles            Role,
                                               BusinessDetails  BusinessDetails,
 
                                               AccessToken      AccessToken,
@@ -1696,8 +1698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
-                                                                         party.PartyId     == PartyId     &&
-                                                                         party.Role        == Role).ToArray();
+                                                                         party.PartyId     == PartyId).ToArray();
 
                 foreach (var remoteParty in remoteParties)
                     _RemoteParties.Remove(remoteParty.Id);
@@ -1705,7 +1706,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1728,25 +1728,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
-                                              Party_Id                 PartyId,
-                                              Roles                    Role,
-                                              BusinessDetails          BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
+                                              Party_Id                  PartyId,
+                                              BusinessDetails           BusinessDetails,
 
-                                              AccessToken              RemoteAccessToken,
-                                              URL                      RemoteVersionsURL,
-                                              IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                              Version_Id?              SelectedVersionId   = null,
+                                              AccessToken               RemoteAccessToken,
+                                              URL                       RemoteVersionsURL,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                              Version_Id?               SelectedVersionId   = null,
 
-                                              RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                              PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
+                                              PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
             lock (_RemoteParties)
             {
 
                 var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
-                                                                         party.PartyId     == PartyId     &&
-                                                                         party.Role        == Role).ToArray();
+                                                                         party.PartyId     == PartyId).ToArray();
 
                 foreach (var remoteParty in remoteParties)
                     _RemoteParties.Remove(remoteParty.Id);
@@ -1754,7 +1752,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
-                                                     Role,
                                                      BusinessDetails,
 
                                                      RemoteAccessToken,
@@ -1910,31 +1907,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean RemoveRemoteParty(CountryCode  CountryCode,
                                          Party_Id     PartyId,
-                                         Roles        Role)
-        {
-            lock (_RemoteParties)
-            {
-
-                var remoteParties = _RemoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                               remoteParty.PartyId     == PartyId     &&
-                                                                               remoteParty.Role        == Role).ToArray();
-
-                foreach (var remoteParty in remoteParties)
-                {
-                    _RemoteParties.Remove(remoteParty.Id);
-                    File.AppendAllText(LogfileName,
-                                       new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
-                                       Encoding.UTF8);
-                }
-
-                return true;
-
-            }
-        }
-
-        public Boolean RemoveRemoteParty(CountryCode  CountryCode,
-                                         Party_Id     PartyId,
-                                         Roles        Role,
                                          AccessToken  Token)
         {
             lock (_RemoteParties)
@@ -1942,7 +1914,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var remoteParties = _RemoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
                                                                                remoteParty.PartyId     == PartyId     &&
-                                                                               remoteParty.Role        == Role        &&
                                                                                remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == Token)).ToArray();
 
                 foreach (var remoteParty in remoteParties)
@@ -1992,7 +1963,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         var newRemoteParty = new RemoteParty(
                                                  remoteParty.CountryCode,
                                                  remoteParty.PartyId,
-                                                 remoteParty.Role,
                                                  remoteParty.BusinessDetails,
                                                  remoteParty.AccessInfo.Where(accessInfo => accessInfo.Token != AccessToken),
                                                  remoteParty.RemoteAccessInfos,

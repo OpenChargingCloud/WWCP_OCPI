@@ -359,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Image> CustomImageSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Image>? CustomImageSerializer = null)
         {
 
             var JSON = JSONObject.Create(

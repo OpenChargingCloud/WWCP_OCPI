@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -45,19 +41,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The credentials token for the other party to authenticate in your system.
         /// </summary>
         [Mandatory]
-        public AccessToken                   Token     { get; }
+        public AccessToken     Token               { get; }
 
         /// <summary>
         /// The URL to your API versions endpoint.
         /// </summary>
         [Mandatory]
-        public URL                           URL       { get; }
+        public URL              URL                { get; }
 
         /// <summary>
-        /// The enumeration of roles a party provides.
+        /// Business details of this party.
         /// </summary>
         [Mandatory]
-        public IEnumerable<CredentialsRole>  Roles     { get; }
+        public BusinessDetails  BusinessDetails    { get; }
+
+        /// <summary>
+        /// ISO-3166 alpha-2 country code of the country this party is operating in.
+        /// </summary>
+        [Mandatory]
+        public CountryCode      CountryCode        { get; }
+
+        /// <summary>
+        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id         PartyId            { get; }
 
         #endregion
 
@@ -68,25 +76,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Token">The credentials token for the other party to authenticate in your system.</param>
         /// <param name="URL">The URL to your API versions endpoint.</param>
-        /// <param name="Roles">The enumeration of roles a party provides.</param>
-        public Credentials(AccessToken                   Token,
-                           URL                           URL,
-                           IEnumerable<CredentialsRole>  Roles)
+        /// <param name="BusinessDetails">Business details of this party.</param>
+        /// <param name="CountryCode">ISO-3166 alpha-2 country code of the country this party is operating in.</param>
+        /// <param name="PartyId">CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).</param>
+        public Credentials(AccessToken      Token,
+                           URL              URL,
+                           BusinessDetails  BusinessDetails,
+                           CountryCode      CountryCode,
+                           Party_Id         PartyId)
         {
 
-            if (Token. IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(Token),  "The given token must not be null or empty!");
-
-            if (URL.   IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(URL),    "The given URL must not be null or empty!");
-
-            if (!Roles.SafeAny())
-                throw new ArgumentNullException(nameof(Roles),  "The given enumeration of roles must not be null or empty!");
-
-
-            this.Token  = Token;
-            this.URL    = URL;
-            this.Roles  = Roles?.Distinct();
+            this.Token            = Token;
+            this.URL              = URL;
+            this.BusinessDetails  = BusinessDetails;
+            this.CountryCode      = CountryCode;
+            this.PartyId          = PartyId;
 
         }
 
@@ -100,44 +104,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Credentials Parse(JObject                                   JSON,
-                                        CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser   = null)
+        public static Credentials Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<Credentials>?  CustomCredentialsParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Credentials  credentials,
-                         out String       ErrorResponse,
+                         out var credentials,
+                         out var errorResponse,
                          CustomCredentialsParser))
             {
-                return credentials;
+                return credentials!;
             }
 
-            throw new ArgumentException("The given JSON representation of a credentials is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCredentialsParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a credentials.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Credentials Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Credentials  credentials,
-                         out String       ErrorResponse,
-                         CustomCredentialsParser))
-            {
-                return credentials;
-            }
-
-            throw new ArgumentException("The given text representation of a credentials is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a credentials is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -153,9 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Credentials">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject          JSON,
-                                       out Credentials  Credentials,
-                                       out String       ErrorResponse)
+        public static Boolean TryParse(JObject           JSON,
+                                       out Credentials?  Credentials,
+                                       out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out Credentials,
@@ -170,10 +150,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Credentials">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Boolean TryParse(JObject                                   JSON,
-                                       out Credentials                           Credentials,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out Credentials?                           Credentials,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<Credentials>?  CustomCredentialsParser)
         {
 
             try
@@ -187,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return false;
                 }
 
-                #region Parse Token     [mandatory]
+                #region Parse Token               [mandatory]
 
                 if (!JSON.ParseMandatory("token",
                                          "access token",
@@ -200,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse URL       [mandatory]
+                #region Parse URL                 [mandatory]
 
                 if (!JSON.ParseMandatory("url",
                                          "url",
@@ -213,18 +193,44 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse Roles     [optional]
+                #region Parse Business details    [mandatory]
 
-                if (JSON.ParseOptionalJSON("roles",
-                                           "roles",
-                                           CredentialsRole.TryParse,
-                                           out IEnumerable<CredentialsRole> Roles,
-                                           out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON2("business_details",
+                                              "business details",
+                                              OCPIv2_1_1.BusinessDetails.TryParse,
+                                              out BusinessDetails? BusinessDetails,
+                                              out ErrorResponse))
                 {
+                    return false;
+                }
 
-                    if (ErrorResponse is not null)
-                        return false;
+                if (BusinessDetails is null)
+                    return false;
 
+                #endregion
+
+                #region Parse CountryCode         [mandatory]
+
+                if (!JSON.ParseMandatory("country_code",
+                                         "country code",
+                                         OCPIv2_1_1.CountryCode.TryParse,
+                                         out CountryCode CountryCode,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyId             [mandatory]
+
+                if (!JSON.ParseMandatory("party_id",
+                                         "party identification",
+                                         Party_Id.TryParse,
+                                         out Party_Id PartyId,
+                                         out ErrorResponse))
+                {
+                    return false;
                 }
 
                 #endregion
@@ -232,7 +238,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 Credentials = new Credentials(Token,
                                               URL,
-                                              Roles);
+                                              BusinessDetails,
+                                              CountryCode,
+                                              PartyId);
 
 
                 if (CustomCredentialsParser is not null)
@@ -253,61 +261,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out Credentials, out ErrorResponse, CustomCredentialsParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a credentials.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Credentials">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCredentialsParser">A delegate to parse custom credentials JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out Credentials                           Credentials,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<Credentials>  CustomCredentialsParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Credentials,
-                                out ErrorResponse,
-                                CustomCredentialsParser);
-
-            }
-            catch (Exception e)
-            {
-                Credentials    = default;
-                ErrorResponse  = "The given text representation of a credentials is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCredentialsSerializer = null, CustomCredentialsRoleSerializer = null, CustomBusinessDetailsSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomCredentialsSerializer">A delegate to serialize custom credentials JSON objects.</param>
-        /// <param name="CustomCredentialsRoleSerializer">A delegate to serialize custom credentials roles JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Credentials>      CustomCredentialsSerializer       = null,
-                              CustomJObjectSerializerDelegate<CredentialsRole>  CustomCredentialsRoleSerializer   = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>  CustomBusinessDetailsSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Credentials>?      CustomCredentialsSerializer       = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",  Token.ToString()),
-                           new JProperty("url",    URL.  ToString()),
-
-                           new JProperty("roles",  new JArray(Roles.SafeSelect(role => role.ToJSON(CustomCredentialsRoleSerializer,
-                                                                                                   CustomBusinessDetailsSerializer))))
+                           new JProperty("token",             Token.          ToString()),
+                           new JProperty("url",               URL.            ToString()),
+                           new JProperty("business_details",  BusinessDetails.ToJSON(CustomBusinessDetailsSerializer)),
+                           new JProperty("country_code",      CountryCode.    ToString()),
+                           new JProperty("party_id",          PartyId.        ToString())
 
                        );
 
@@ -327,8 +298,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -351,8 +322,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -366,8 +337,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Credentials Credentials1,
                                           Credentials Credentials2)
@@ -383,8 +354,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -398,8 +369,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Credentials Credentials1,
                                           Credentials Credentials2)
@@ -415,8 +386,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Credentials1">A credential.</param>
-        /// <param name="Credentials2">Another credential.</param>
+        /// <param name="Credentials1">Credentials.</param>
+        /// <param name="Credentials2">Other credentials.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Credentials Credentials1,
                                            Credentials Credentials2)
@@ -435,7 +406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public Int32 CompareTo(Object? Object)
 
             => Object is Credentials credentials
                    ? CompareTo(credentials)
@@ -450,10 +421,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Credentials">An object to compare with.</param>
-        public Int32 CompareTo(Credentials Credentials)
+        public Int32 CompareTo(Credentials? Credentials)
         {
 
-            if (Credentials == null)
+            if (Credentials is null)
                 throw new ArgumentNullException(nameof(Credentials), "The given credential must not be null!");
 
             var c = Token.CompareTo(Credentials.Token);
@@ -474,33 +445,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">Credentials to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is Credentials Credentials &&
-                   Equals(Credentials);
+            => Object is Credentials credentials &&
+                   Equals(credentials);
 
         #endregion
 
         #region Equals(Credentials)
 
         /// <summary>
-        /// Compares two Credentialss for equality.
+        /// Compares two credentials for equality.
         /// </summary>
-        /// <param name="Credentials">A Credentials to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Credentials Credentials)
+        /// <param name="Credentials">Credentials to compare with.</param>
+        public Boolean Equals(Credentials? Credentials)
 
-            => !(Credentials is null) &&
+            => Credentials is not null &&
 
-               Token.Equals(Credentials.Token) &&
-               URL.  Equals(Credentials.URL)   &&
-
-               Roles.Count().Equals(Credentials.Roles.Count()) &&
-               Roles.All(role => Credentials.Roles.Contains(role));
+               Token.          Equals(Credentials.Token)           &&
+               URL.            Equals(Credentials.URL)             &&
+               BusinessDetails.Equals(Credentials.BusinessDetails) &&
+               CountryCode.    Equals(Credentials.CountryCode)     &&
+               PartyId.        Equals(Credentials.PartyId);
 
         #endregion
 
@@ -517,10 +486,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Token.GetHashCode() * 5 ^
-                       URL.  GetHashCode() * 3 ^
-
-                       Roles.Aggregate(0, (hashCode, role) => hashCode ^ role.GetHashCode());
+                return Token.          GetHashCode() * 11 ^
+                       URL.            GetHashCode() *  7 ^
+                       BusinessDetails.GetHashCode() *  5 ^
+                       CountryCode.    GetHashCode() *  3 ^
+                       PartyId.        GetHashCode();
 
             }
         }
@@ -534,7 +504,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Token.ToString().SubstringMax(5), " : ", URL, " => ", Roles.AggregateWith(", "));
+            => String.Concat(
+
+                   BusinessDetails,
+                   " (",
+                   CountryCode,
+                   "-",
+                   PartyId,
+                   ", ",
+                   Token,
+                   ") => ",
+                   URL
+
+               );
 
         #endregion
 

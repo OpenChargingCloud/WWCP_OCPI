@@ -370,19 +370,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public class CommonCounters
         {
 
-            public APICounterValues GetVersions    { get; }
+            public APICounterValues  GetVersions    { get; }
+            public APICounterValues  Register       { get; }
 
-            public CommonCounters(APICounterValues? GetVersions = null)
+            public CommonCounters(APICounterValues?  GetVersions   = null,
+                                  APICounterValues?  Register      = null)
             {
 
-                this.GetVersions = GetVersions ?? new APICounterValues();
-
+                this.GetVersions  = GetVersions ?? new APICounterValues();
+                this.Register     = Register    ?? new APICounterValues();
             }
 
             public JObject ToJSON()
 
                 => JSONObject.Create(
-                       new JProperty("GetVersions", GetVersions.ToJSON())
+                       new JProperty("GetVersions",  GetVersions.ToJSON()),
+                       new JProperty("Register",     Register.   ToJSON())
                    );
 
         }
@@ -793,7 +796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetVersionsRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -936,7 +939,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetVersionsResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1014,7 +1017,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetVersionDetailsRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1215,7 +1218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetVersionDetailsResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1267,7 +1270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region GetRemoteURL(VersionId, ModuleId, InterfaceRole)
 
         public async Task<URL?> GetRemoteURL(Version_Id?     VersionId,
-                                             ModuleIDs       ModuleId)
+                                             Module_Id       ModuleId)
         {
 
             var versionId = VersionId ?? SelectedOCPIVersionId;
@@ -1342,7 +1345,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetCredentialsHTTPRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1384,7 +1387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials);
+                                                        Module_Id.Credentials);
 
                 if (remoteURL.HasValue)
                 {
@@ -1455,7 +1458,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnGetCredentialsHTTPResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1541,7 +1544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPostCredentialsHTTPRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1583,7 +1586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials);
+                                                        Module_Id.Credentials);
 
                 if (remoteURL.HasValue)
                 {
@@ -1656,7 +1659,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPostCredentialsHTTPResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1730,7 +1733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                            DateTime?           Timestamp           = null,
                            CancellationToken?  CancellationToken   = null,
-                           EventTracking_Id    EventTrackingId     = null,
+                           EventTracking_Id?   EventTrackingId     = null,
                            TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1742,7 +1745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPutCredentialsHTTPRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1784,7 +1787,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials);
+                                                        Module_Id.Credentials);
 
                 if (remoteURL.HasValue)
                 {
@@ -1833,31 +1836,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                       correlationId,
                                                                       json => Credentials.Parse(json));
 
-                    if (response.Data != null)
+                    if (response.Data is not null)
                     {
 
                         TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
-                        foreach (var role in response.Data.Roles)
-                        {
+                        //foreach (var role in response.Data.Roles)
+                        //{
 
-                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
-                                                         PartyId:            role.PartyId,
-                                                         Role:               role.Role,
-                                                         BusinessDetails:    role.BusinessDetails,
+                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        Credentials.CountryCode,
+                                                               PartyId:            Credentials.PartyId,
+                                                               BusinessDetails:    Credentials.BusinessDetails,
 
-                                                         AccessToken:        Credentials.Token,
-                                                         AccessStatus:       AccessStatus.ALLOWED,
+                                                               AccessToken:        Credentials.Token,
+                                                               AccessStatus:       AccessStatus.ALLOWED,
 
-                                                         RemoteAccessToken:  response.Data.Token,
-                                                         RemoteVersionsURL:  response.Data.URL,
-                                                         RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
-                                                         SelectedVersionId:  Version_Id.Parse("2.2"),
+                                                               RemoteAccessToken:  response.Data.Token,
+                                                               RemoteVersionsURL:  response.Data.URL,
+                                                               RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
+                                                               SelectedVersionId:  Version_Id.Parse("2.2"),
 
-                                                         PartyStatus:        PartyStatus.ENABLED,
-                                                         RemoteStatus:       RemoteAccessStatus.ONLINE);
+                                                               PartyStatus:        PartyStatus.ENABLED,
+                                                               RemoteStatus:       RemoteAccessStatus.ONLINE);
 
-                        }
+                        //}
 
                     }
 
@@ -1885,7 +1887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnPutCredentialsHTTPResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1964,7 +1966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnDeleteCredentialsHTTPRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2006,7 +2008,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
-                                                        ModuleIDs.Credentials);
+                                                        Module_Id.Credentials);
 
                 if (remoteURL.HasValue)
                 {
@@ -2079,7 +2081,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnDeleteCredentialsHTTPResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2162,19 +2164,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Credentials>>
 
-            Register(Version_Id?                   VersionId             = null,
-                     Boolean                       SetAsDefaultVersion   = true,
-                     URL?                          MyVersionsURL         = null,
-                     IEnumerable<CredentialsRole>  MyRoles               = null,
-                     AccessToken?                  CredentialTokenB      = null,
+            Register(Version_Id?         VersionId             = null,
+                     Boolean             SetAsDefaultVersion   = true,
+                     AccessToken?        CredentialTokenB      = null,
 
-                     Request_Id?                   RequestId             = null,
-                     Correlation_Id?               CorrelationId         = null,
+                     Request_Id?         RequestId             = null,
+                     Correlation_Id?     CorrelationId         = null,
 
-                     DateTime?                     Timestamp             = null,
-                     CancellationToken?            CancellationToken     = null,
-                     EventTracking_Id              EventTrackingId       = null,
-                     TimeSpan?                     RequestTimeout        = null)
+                     DateTime?           Timestamp             = null,
+                     CancellationToken?  CancellationToken     = null,
+                     EventTracking_Id?   EventTrackingId       = null,
+                     TimeSpan?           RequestTimeout        = null)
 
         {
 
@@ -2182,7 +2182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnRegisterRequest event
 
-            var StartTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2223,30 +2223,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             {
 
                 var versionId         = VersionId        ?? SelectedOCPIVersionId;
-                var myVersionsURL     = MyVersionsURL    ?? MyCommonAPI?.OurVersionsURL;
-                var myRoles           = MyRoles          ?? MyCommonAPI?.OurCredentialRoles;
                 var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
                 var remoteURL         = await GetRemoteURL(versionId,
-                                                           ModuleIDs.Credentials);
+                                                           Module_Id.Credentials);
 
                 if (!versionId.HasValue)
                     response = new OCPIResponse<String, Credentials>("",
                                                                      default,
                                                                      -1,
                                                                      "No versionId available!");
-
-                else if (!myVersionsURL.HasValue)
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No my versions URL available!");
-
-                else if (!myRoles.SafeAny())
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No credential roles available!");
 
                 else if (!remoteURL.HasValue)
                     response = new OCPIResponse<String, Credentials>("",
@@ -2257,11 +2243,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 else
                 {
 
-                    var requestId          = RequestId     ?? Request_Id.NewRandom();
+                    var requestId          = RequestId     ?? Request_Id.    NewRandom();
                     var correlationId      = CorrelationId ?? Correlation_Id.NewRandom();
                     var credentials        = new Credentials(credentialTokenB,
-                                                             myVersionsURL.Value,
-                                                             myRoles);
+                                                             MyCommonAPI.OurVersionsURL,
+                                                             MyCommonAPI.OurBusinessDetails,
+                                                             MyCommonAPI.OurCountryCode,
+                                                             MyCommonAPI.OurPartyId);
 
                     #region Upstream HTTP request...
 
@@ -2301,21 +2289,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               ConfigureAwait(false);
 
 
+                    // HTTP/1.1 500 Internal Server Error
+                    // Content-Type:                application/json;charset=utf-8
+                    // Content-Length:              134
+                    // Connection:                  keep-alive
+                    // Date:                        Thu, 15 Dec 2022 22:00:29 GMT
+                    // x-amzn-RequestId:            a8bead08-66b7-4e20-91ea-e81ebcb21583
+                    // x-amzn-Remapped-Connection:  close
+                    // x-amz-apigw-id:              dNTXnFUKDoEF5fg=
+                    // x-amzn-Remapped-Date:        Thu, 15 Dec 2022 22:00:29 GMT
+                    // X-Cache:                     Error from cloudfront
+                    // Via:                         1.1 5f6905ea282e042ad3334bfed8a840ce.cloudfront.net (CloudFront)
+                    // X-Amz-Cf-Pop:                FRA50-C1
+                    // X-Amz-Cf-Id:                 NQOE2JBU0xuQi760GbLaSyyKvp0x1oI45L5-NbpvBZq5sc-OD8IU8Q==
+                    // 
                     // {
-                    //     "data": {
-                    //         "token":                     "e~!Kgf457pApk5b&vG93K-<MQ#T&Q)io!S)HfQxSGyb#*b6beZP#36kF55~zhuq]",
-                    //         "url":                       "https://example.com/ocpi/versions",
-                    //         "roles": [{
-                    //             "role":                  "CPO",
-                    //             "business_details": {
-                    //                 "name":              "Example Corp."
-                    //             },
-                    //             "party_id":              "EXP",
-                    //             "country_code":          "DE"
-                    //         }]
-                    //     },
-                    //     "status_code": 1000,
-                    //     "timestamp": "2020-11-07T15:33:49.481Z"
+                    //     "data":             null,
+                    //     "timestamp":       "2022-12-15T22:00:29Z",
+                    //     "status_code":      3002,
+                    //     "status_message":  "No versions found from partner version endpoint"
                     // }
 
                     #endregion
@@ -2325,34 +2317,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                     correlationId,
                                                                                     json => Credentials.Parse(json));
 
-                    if (response.Data != null)
+                    if (response.Data is not null)
                     {
 
                         SelectedOCPIVersionId = versionId;
-                        TokenAuth = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
+                        TokenAuth             = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
 
                         //ToDo: Store the new access token on disc.
 
-                        foreach (var role in response.Data.Roles)
-                        {
+                        MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        response.Data.CountryCode,
+                                                           PartyId:            response.Data.PartyId,
+                                                           BusinessDetails:    response.Data.BusinessDetails,
 
-                            MyCommonAPI.AddOrUpdateRemoteParty(CountryCode:        role.CountryCode,
-                                                               PartyId:            role.PartyId,
-                                                               Role:               role.Role,
-                                                               BusinessDetails:    role.BusinessDetails,
+                                                           AccessToken:        credentialTokenB,
+                                                           AccessStatus:       AccessStatus.ALLOWED,
 
-                                                               AccessToken:        credentialTokenB,
-                                                               AccessStatus:       AccessStatus.ALLOWED,
+                                                           RemoteAccessToken:  response.Data.Token,
+                                                           RemoteVersionsURL:  response.Data.URL,
+                                                           RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
+                                                           SelectedVersionId:  Version_Id.Parse("2.2"),
 
-                                                               RemoteAccessToken:  response.Data.Token,
-                                                               RemoteVersionsURL:  response.Data.URL,
-                                                               RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
-                                                               SelectedVersionId:  Version_Id.Parse("2.2"),
-
-                                                               PartyStatus:        PartyStatus.ENABLED,
-                                                               RemoteStatus:       RemoteAccessStatus.ONLINE);
-
-                        }
+                                                           PartyStatus:        PartyStatus.ENABLED,
+                                                           RemoteStatus:       RemoteAccessStatus.ONLINE);
 
                     }
 
@@ -2373,7 +2359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Send OnRegisterResponse event
 
-            var Endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
