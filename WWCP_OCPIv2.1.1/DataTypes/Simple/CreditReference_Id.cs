@@ -62,12 +62,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new credit reference based on the given string.
+        /// Create a new credit reference based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the credit reference.</param>
-        private CreditReference_Id(String String)
+        /// <param name="Text">The text representation of a credit reference.</param>
+        private CreditReference_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,7 +25,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The internal unique identification of an EVSE.
+    /// Extension methods for internal EVSE identifications.
+    /// </summary>
+    public static class EVSEUIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this internal EVSE identification is null or empty.
+        /// </summary>
+        /// <param name="EVSEUId">An internal EVSE identification.</param>
+        public static Boolean IsNullOrEmpty(this EVSE_UId? EVSEUId)
+            => !EVSEUId.HasValue || EVSEUId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this internal EVSE identification is NOT null or empty.
+        /// </summary>
+        /// <param name="EVSEUId">An internal EVSE identification.</param>
+        public static Boolean IsNotNullOrEmpty(this EVSE_UId? EVSEUId)
+            => EVSEUId.HasValue && EVSEUId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique internal identification of an EVSE.
+    /// CiString(36)
     /// </summary>
     public readonly struct EVSE_UId : IId<EVSE_UId>
     {
@@ -44,30 +66,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this internal EVSE identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the EVSE.
+        /// Indicates whether this internal EVSE identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
+
+        /// <summary>
+        /// The length of the internal EVSE identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new EVSE based on the given string.
+        /// Create a new internal EVSE identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the EVSE.</param>
-        private EVSE_UId(String String)
+        /// <param name="Text">The text representation of an internal EVSE identification.</param>
+        private EVSE_UId(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -76,19 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an EVSE.
+        /// Parse the given text as an internal EVSE identification.
         /// </summary>
-        /// <param name="Text">A text representation of an EVSE.</param>
+        /// <param name="Text">A text representation of an internal EVSE identification.</param>
         public static EVSE_UId Parse(String Text)
         {
 
-            if (TryParse(Text, out EVSE_UId locationId))
-                return locationId;
+            if (TryParse(Text, out var evseUId))
+                return evseUId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an EVSE must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of an EVSE is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of an internal EVSE identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -97,14 +121,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as an EVSE.
+        /// Try to parse the given text as an internal EVSE identification.
         /// </summary>
-        /// <param name="Text">A text representation of an EVSE.</param>
+        /// <param name="Text">A text representation of an internal EVSE identification.</param>
         public static EVSE_UId? TryParse(String Text)
         {
 
-            if (TryParse(Text, out EVSE_UId locationId))
-                return locationId;
+            if (TryParse(Text, out var evseUId))
+                return evseUId;
 
             return null;
 
@@ -112,28 +136,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out EVSEId)
+        #region (static) TryParse(Text, out EVSEUId)
 
         /// <summary>
-        /// Try to parse the given text as an EVSE.
+        /// Try to parse the given text as an internal EVSE identification.
         /// </summary>
-        /// <param name="Text">A text representation of an EVSE.</param>
-        /// <param name="EVSEId">The parsed EVSE.</param>
-        public static Boolean TryParse(String Text, out EVSE_UId EVSEId)
+        /// <param name="Text">A text representation of an internal EVSE identification.</param>
+        /// <param name="EVSEUId">The parsed internal EVSE identification.</param>
+        public static Boolean TryParse(String Text, out EVSE_UId EVSEUId)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    EVSEId = new EVSE_UId(Text.Trim());
+                    EVSEUId = new EVSE_UId(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            EVSEId = default;
+            EVSEUId = default;
             return false;
 
         }
@@ -143,11 +169,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Clone
 
         /// <summary>
-        /// Clone this EVSE.
+        /// Clone this internal EVSE identification.
         /// </summary>
         public EVSE_UId Clone
 
-            => new EVSE_UId(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -156,158 +182,156 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Operator overloading
 
-        #region Operator == (EVSEId1, EVSEId2)
+        #region Operator == (EVSEUId1, EVSEUId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEUId1">An internal EVSE identification.</param>
+        /// <param name="EVSEUId2">Another internal EVSE identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (EVSE_UId EVSEId1,
-                                           EVSE_UId EVSEId2)
+        public static Boolean operator == (EVSE_UId EVSEUId1,
+                                           EVSE_UId EVSEUId2)
 
-            => EVSEId1.Equals(EVSEId2);
+            => EVSEUId1.Equals(EVSEUId2);
 
         #endregion
 
-        #region Operator != (EVSEId1, EVSEId2)
+        #region Operator != (EVSEUId1, EVSEUId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEUId1">An internal EVSE identification.</param>
+        /// <param name="EVSEUId2">Another internal EVSE identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (EVSE_UId EVSEId1,
-                                           EVSE_UId EVSEId2)
+        public static Boolean operator != (EVSE_UId EVSEUId1,
+                                           EVSE_UId EVSEUId2)
 
-            => !(EVSEId1 == EVSEId2);
+            => !EVSEUId1.Equals(EVSEUId2);
 
         #endregion
 
-        #region Operator <  (EVSEId1, EVSEId2)
+        #region Operator <  (EVSEUId1, EVSEUId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEUId1">An internal EVSE identification.</param>
+        /// <param name="EVSEUId2">Another internal EVSE identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (EVSE_UId EVSEId1,
-                                          EVSE_UId EVSEId2)
+        public static Boolean operator < (EVSE_UId EVSEUId1,
+                                          EVSE_UId EVSEUId2)
 
-            => EVSEId1.CompareTo(EVSEId2) < 0;
+            => EVSEUId1.CompareTo(EVSEUId2) < 0;
 
         #endregion
 
-        #region Operator <= (EVSEId1, EVSEId2)
+        #region Operator <= (EVSEUId1, EVSEUId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEUId1">An internal EVSE identification.</param>
+        /// <param name="EVSEUId2">Another internal EVSE identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (EVSE_UId EVSEId1,
-                                           EVSE_UId EVSEId2)
+        public static Boolean operator <= (EVSE_UId EVSEUId1,
+                                           EVSE_UId EVSEUId2)
 
-            => !(EVSEId1 > EVSEId2);
+            => EVSEUId1.CompareTo(EVSEUId2) <= 0;
 
         #endregion
 
-        #region Operator >  (EVSEId1, EVSEId2)
+        #region Operator >  (EVSEUId1, EVSEUId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEUId1">An internal EVSE identification.</param>
+        /// <param name="EVSEUId2">Another internal EVSE identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (EVSE_UId EVSEId1,
-                                          EVSE_UId EVSEId2)
+        public static Boolean operator > (EVSE_UId EVSEUId1,
+                                          EVSE_UId EVSEUId2)
 
-            => EVSEId1.CompareTo(EVSEId2) > 0;
+            => EVSEUId1.CompareTo(EVSEUId2) > 0;
 
         #endregion
 
-        #region Operator >= (EVSEId1, EVSEId2)
+        #region Operator >= (EVSEUId1, EVSEUId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="EVSEId1">A EVSE.</param>
-        /// <param name="EVSEId2">Another EVSE.</param>
+        /// <param name="EVSEUId1">An internal EVSE identification.</param>
+        /// <param name="EVSEUId2">Another internal EVSE identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (EVSE_UId EVSEId1,
-                                           EVSE_UId EVSEId2)
+        public static Boolean operator >= (EVSE_UId EVSEUId1,
+                                           EVSE_UId EVSEUId2)
 
-            => !(EVSEId1 < EVSEId2);
-
-        #endregion
+            => EVSEUId1.CompareTo(EVSEUId2) >= 0;
 
         #endregion
 
-        #region IComparable<EVSEId> Members
+        #endregion
+
+        #region IComparable<EVSEUId> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two internal EVSE identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An internal EVSE identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is EVSE_UId locationId
-                   ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not an EVSE!",
+            => Object is EVSE_UId EVSEUId
+                   ? CompareTo(EVSEUId)
+                   : throw new ArgumentException("The given object is not an internal EVSE identification!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(EVSEId)
+        #region CompareTo(EVSEUId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two internal EVSE identifications.
         /// </summary>
-        /// <param name="EVSEId">An object to compare with.</param>
-        public Int32 CompareTo(EVSE_UId EVSEId)
+        /// <param name="EVSEUId">An internal EVSE identification to compare with.</param>
+        public Int32 CompareTo(EVSE_UId EVSEUId)
 
             => String.Compare(InternalId,
-                              EVSEId.InternalId,
+                              EVSEUId.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<EVSEId> Members
+        #region IEquatable<EVSEUId> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two internal EVSE identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An internal EVSE identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is EVSE_UId locationId &&
-                   Equals(locationId);
+            => Object is EVSE_UId EVSEUId &&
+                   Equals(EVSEUId);
 
         #endregion
 
-        #region Equals(EVSEId)
+        #region Equals(EVSEUId)
 
         /// <summary>
-        /// Compares two EVSEs for equality.
+        /// Compares two internal EVSE identifications for equality.
         /// </summary>
-        /// <param name="EVSEId">An EVSE to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(EVSE_UId EVSEId)
+        /// <param name="EVSEUId">An internal EVSE identification to compare with.</param>
+        public Boolean Equals(EVSE_UId EVSEUId)
 
             => String.Equals(InternalId,
-                             EVSEId.InternalId,
+                             EVSEUId.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

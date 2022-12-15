@@ -63,12 +63,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new contract identification based on the given string.
+        /// Create a new contract identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the contract identification.</param>
-        private EnergyContract_Id(String String)
+        /// <param name="Text">The text representation of a contract identification.</param>
+        private EnergyContract_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

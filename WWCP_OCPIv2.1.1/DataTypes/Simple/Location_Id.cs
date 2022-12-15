@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Location 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -25,14 +25,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The unique identification of a charging location.
+    /// Extension methods for location identifications.
+    /// </summary>
+    public static class LocationIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this location identification is null or empty.
+        /// </summary>
+        /// <param name="LocationId">A location identification.</param>
+        public static Boolean IsNullOrEmpty(this Location_Id? LocationId)
+            => !LocationId.HasValue || LocationId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this location identification is NOT null or empty.
+        /// </summary>
+        /// <param name="LocationId">A location identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Location_Id? LocationId)
+            => LocationId.HasValue && LocationId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of a location.
+    /// CiString(36)
     /// </summary>
     public readonly struct Location_Id : IId<Location_Id>
     {
 
         #region Data
-
-        // CiString(36)
 
         /// <summary>
         /// The internal identification.
@@ -44,51 +66,64 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this location identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the charging location identification.
+        /// Indicates whether this location identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
+
+        /// <summary>
+        /// The length of the location identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charging location identification based on the given string.
+        /// Create a new location identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the charging location identification.</param>
-        private Location_Id(String String)
+        /// <param name="Text">The text representation of a location identification.</param>
+        private Location_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
 
 
+        #region (static) NewRandom
+
+        /// <summary>
+        /// Create a new random location identification.
+        /// </summary>
+        public static Location_Id NewRandom
+
+            => Parse(Guid.NewGuid().ToString());
+
+        #endregion
+
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a charging location identification.
+        /// Parse the given text as a location identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
+        /// <param name="Text">A text representation of a location identification.</param>
         public static Location_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out var locationId))
                 return locationId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a charging location identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a charging location identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a location identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -97,13 +132,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a location identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
+        /// <param name="Text">A text representation of a location identification.</param>
         public static Location_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Location_Id locationId))
+            if (TryParse(Text, out var locationId))
                 return locationId;
 
             return null;
@@ -115,18 +150,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) TryParse(Text, out LocationId)
 
         /// <summary>
-        /// Try to parse the given text as a charging location identification.
+        /// Try to parse the given text as a location identification.
         /// </summary>
-        /// <param name="Text">A text representation of a charging location identification.</param>
-        /// <param name="LocationId">The parsed charging location identification.</param>
+        /// <param name="Text">A text representation of a location identification.</param>
+        /// <param name="LocationId">The parsed location identification.</param>
         public static Boolean TryParse(String Text, out Location_Id LocationId)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    LocationId = new Location_Id(Text.Trim());
+                    LocationId = new Location_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -143,11 +180,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Clone
 
         /// <summary>
-        /// Clone this charging location identification.
+        /// Clone this location identification.
         /// </summary>
         public Location_Id Clone
 
-            => new Location_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -161,8 +198,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A location identification.</param>
+        /// <param name="LocationId2">Another location identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Location_Id LocationId1,
                                            Location_Id LocationId2)
@@ -176,13 +213,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A location identification.</param>
+        /// <param name="LocationId2">Another location identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Location_Id LocationId1,
                                            Location_Id LocationId2)
 
-            => !(LocationId1 == LocationId2);
+            => !LocationId1.Equals(LocationId2);
 
         #endregion
 
@@ -191,8 +228,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A location identification.</param>
+        /// <param name="LocationId2">Another location identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Location_Id LocationId1,
                                           Location_Id LocationId2)
@@ -206,13 +243,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A location identification.</param>
+        /// <param name="LocationId2">Another location identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Location_Id LocationId1,
                                            Location_Id LocationId2)
 
-            => !(LocationId1 > LocationId2);
+            => LocationId1.CompareTo(LocationId2) <= 0;
 
         #endregion
 
@@ -221,8 +258,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A location identification.</param>
+        /// <param name="LocationId2">Another location identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Location_Id LocationId1,
                                           Location_Id LocationId2)
@@ -236,13 +273,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A charging location identification.</param>
-        /// <param name="LocationId2">Another charging location identification.</param>
+        /// <param name="LocationId1">A location identification.</param>
+        /// <param name="LocationId2">Another location identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Location_Id LocationId1,
                                            Location_Id LocationId2)
 
-            => !(LocationId1 < LocationId2);
+            => LocationId1.CompareTo(LocationId2) >= 0;
 
         #endregion
 
@@ -253,14 +290,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two location identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A location identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Location_Id locationId
                    ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not a charging location identification!",
+                   : throw new ArgumentException("The given object is not a location identification!",
                                                  nameof(Object));
 
         #endregion
@@ -268,9 +305,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(LocationId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two location identifications.
         /// </summary>
-        /// <param name="LocationId">An object to compare with.</param>
+        /// <param name="LocationId">A location identification to compare with.</param>
         public Int32 CompareTo(Location_Id LocationId)
 
             => String.Compare(InternalId,
@@ -286,11 +323,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two location identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A location identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Location_Id locationId &&
                    Equals(locationId);
@@ -300,10 +336,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(LocationId)
 
         /// <summary>
-        /// Compares two charging location identifications for equality.
+        /// Compares two location identifications for equality.
         /// </summary>
-        /// <param name="LocationId">An charging location identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="LocationId">A location identification to compare with.</param>
         public Boolean Equals(Location_Id LocationId)
 
             => String.Equals(InternalId,

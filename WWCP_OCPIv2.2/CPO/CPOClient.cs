@@ -4651,10 +4651,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             GetTokens(Version_Id?         VersionId           = null,
                       Request_Id?         RequestId           = null,
                       Correlation_Id?     CorrelationId       = null,
+                      UInt64?             Offset              = null,
+                      UInt64?             Limit               = null,
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
-                      EventTracking_Id    EventTrackingId     = null,
+                      EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
         {
@@ -4703,11 +4705,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.    Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         ModuleIDs.Tokens,
                                                         InterfaceRoles.RECEIVER);
+
+                var offsetLimit    = "";
+
+                if (Offset.HasValue)
+                    offsetLimit += "&offset=" + Offset.Value;
+
+                if (Limit.HasValue)
+                    offsetLimit += "&limit="  + Limit. Value;
+
+                if (offsetLimit.Length > 0)
+                    offsetLimit = String.Concat("?", offsetLimit.AsSpan(1));
+
 
                 if (remoteURL.HasValue)
                 {
@@ -4731,7 +4745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     remoteURL.Value.Path,
+                                                                                     remoteURL.Value.Path + offsetLimit,
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.Connection    = "close";
@@ -4751,9 +4765,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     #endregion
 
                     response = OCPIResponse<Token>.ParseJArray(HTTPResponse,
-                                                             requestId,
-                                                             correlationId,
-                                                             json => Token.Parse(json));
+                                                               requestId,
+                                                               correlationId,
+                                                               json => Token.Parse(json));
 
                 }
 

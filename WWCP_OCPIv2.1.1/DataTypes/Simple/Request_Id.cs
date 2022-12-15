@@ -25,9 +25,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The unique identification of an OCPI request.
+    /// Extension methods for request identifications.
     /// </summary>
-    public struct Request_Id : IId<Request_Id>
+    public static class RequestIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this request identification is null or empty.
+        /// </summary>
+        /// <param name="RequestId">A request identification.</param>
+        public static Boolean IsNullOrEmpty(this Request_Id? RequestId)
+            => !RequestId.HasValue || RequestId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this request identification is NOT null or empty.
+        /// </summary>
+        /// <param name="RequestId">A request identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Request_Id? RequestId)
+            => RequestId.HasValue && RequestId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of a request.
+    /// </summary>
+    public readonly struct Request_Id : IId<Request_Id>
     {
 
         #region Data
@@ -42,30 +65,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this request identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this request identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the request identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new HTTP request identification based on the given string.
+        /// Create a new request identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the HTTP request identification.</param>
-        private Request_Id(String String)
+        /// <param name="Text">The text representation of a request identification.</param>
+        private Request_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -81,27 +108,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Request_Id Random(Byte      Length    = 30,
                                         Boolean?  IsLocal   = false)
 
-            => new Request_Id((IsLocal == true ? "Local:" : "") +
-                              RandomExtensions.RandomString(Length));
+            => new ((IsLocal == true ? "Local:" : "") +
+                    RandomExtensions.RandomString(Length));
 
         #endregion
 
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a HTTP request identification.
+        /// Parse the given text as a request identification.
         /// </summary>
         /// <param name="Text">A text representation of a request identification.</param>
         public static Request_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Request_Id requestId))
+            if (TryParse(Text, out var requestId))
                 return requestId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a request identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a request identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a request identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -110,13 +135,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a HTTP request identification.
+        /// Try to parse the given text as a request identification.
         /// </summary>
         /// <param name="Text">A text representation of a request identification.</param>
         public static Request_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Request_Id requestId))
+            if (TryParse(Text, out var requestId))
                 return requestId;
 
             return null;
@@ -128,18 +153,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) TryParse(Text, out RequestId)
 
         /// <summary>
-        /// Try to parse the given text as a HTTP request identification.
+        /// Try to parse the given text as a request identification.
         /// </summary>
         /// <param name="Text">A text representation of a request identification.</param>
         /// <param name="RequestId">The parsed request identification.</param>
         public static Boolean TryParse(String Text, out Request_Id RequestId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    RequestId = new Request_Id(Text.Trim());
+                    RequestId = new Request_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -156,11 +183,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Clone
 
         /// <summary>
-        /// Clone this HTTP request identification.
+        /// Clone this request identification.
         /// </summary>
         public Request_Id Clone
 
-            => new Request_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -174,8 +201,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RequestId1">A HTTP request identification.</param>
-        /// <param name="RequestId2">Another HTTP request identification.</param>
+        /// <param name="RequestId1">A request identification.</param>
+        /// <param name="RequestId2">Another request identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Request_Id RequestId1,
                                            Request_Id RequestId2)
@@ -189,13 +216,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RequestId1">A HTTP request identification.</param>
-        /// <param name="RequestId2">Another HTTP request identification.</param>
+        /// <param name="RequestId1">A request identification.</param>
+        /// <param name="RequestId2">Another request identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Request_Id RequestId1,
                                            Request_Id RequestId2)
 
-            => !(RequestId1 == RequestId2);
+            => !RequestId1.Equals(RequestId2);
 
         #endregion
 
@@ -204,8 +231,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RequestId1">A HTTP request identification.</param>
-        /// <param name="RequestId2">Another HTTP request identification.</param>
+        /// <param name="RequestId1">A request identification.</param>
+        /// <param name="RequestId2">Another request identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Request_Id RequestId1,
                                           Request_Id RequestId2)
@@ -219,13 +246,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RequestId1">A HTTP request identification.</param>
-        /// <param name="RequestId2">Another HTTP request identification.</param>
+        /// <param name="RequestId1">A request identification.</param>
+        /// <param name="RequestId2">Another request identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Request_Id RequestId1,
                                            Request_Id RequestId2)
 
-            => !(RequestId1 > RequestId2);
+            => RequestId1.CompareTo(RequestId2) <= 0;
 
         #endregion
 
@@ -234,8 +261,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RequestId1">A HTTP request identification.</param>
-        /// <param name="RequestId2">Another HTTP request identification.</param>
+        /// <param name="RequestId1">A request identification.</param>
+        /// <param name="RequestId2">Another request identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Request_Id RequestId1,
                                           Request_Id RequestId2)
@@ -249,13 +276,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RequestId1">A HTTP request identification.</param>
-        /// <param name="RequestId2">Another HTTP request identification.</param>
+        /// <param name="RequestId1">A request identification.</param>
+        /// <param name="RequestId2">Another request identification.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Request_Id RequestId1,
                                            Request_Id RequestId2)
 
-            => !(RequestId1 < RequestId2);
+            => RequestId1.CompareTo(RequestId2) >= 0;
 
         #endregion
 
@@ -266,10 +293,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two request identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A request identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Request_Id requestId
                    ? CompareTo(requestId)
@@ -281,9 +308,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(RequestId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two request identifications.
         /// </summary>
-        /// <param name="RequestId">An object to compare with.</param>
+        /// <param name="RequestId">A request identification to compare with.</param>
         public Int32 CompareTo(Request_Id RequestId)
 
             => String.Compare(InternalId,
@@ -299,11 +326,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two request identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A request identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Request_Id requestId &&
                    Equals(requestId);
@@ -313,10 +339,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(RequestId)
 
         /// <summary>
-        /// Compares two HTTP request identifications for equality.
+        /// Compares two request identifications for equality.
         /// </summary>
-        /// <param name="RequestId">A HTTP request identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="RequestId">A request identification to compare with.</param>
         public Boolean Equals(Request_Id RequestId)
 
             => String.Equals(InternalId,

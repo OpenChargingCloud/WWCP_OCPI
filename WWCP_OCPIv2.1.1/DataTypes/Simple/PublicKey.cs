@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,14 +17,35 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
+
+    /// <summary>
+    /// Extension methods for public keys.
+    /// </summary>
+    public static class PublicKeyExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this public key is null or empty.
+        /// </summary>
+        /// <param name="PublicKey">A public key.</param>
+        public static Boolean IsNullOrEmpty(this PublicKey? PublicKey)
+            => !PublicKey.HasValue || PublicKey.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this public key is NOT null or empty.
+        /// </summary>
+        /// <param name="PublicKey">A public key.</param>
+        public static Boolean IsNotNullOrEmpty(this PublicKey? PublicKey)
+            => PublicKey.HasValue && PublicKey.Value.IsNotNullOrEmpty;
+
+    }
+
 
     /// <summary>
     /// The unique identification of a public key.
@@ -44,30 +65,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this public key is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this public key is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the public key.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new public key based on the given string.
+        /// Create a new public key based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the public key.</param>
-        private PublicKey(String String)
+        /// <param name="Text">The text representation of a public key.</param>
+        private PublicKey(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -76,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a public key.
+        /// Parse the given text as a public key.
         /// </summary>
         /// <param name="Text">A text representation of a public key.</param>
         public static PublicKey Parse(String Text)
         {
 
-            if (TryParse(Text, out PublicKey publicKey))
+            if (TryParse(Text, out var publicKey))
                 return publicKey;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a public key must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a public key is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a public key: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -103,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static PublicKey? TryParse(String Text)
         {
 
-            if (TryParse(Text, out PublicKey publicKey))
+            if (TryParse(Text, out var publicKey))
                 return publicKey;
 
             return null;
@@ -112,28 +135,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out AuthId)
+        #region (static) TryParse(Text, out PublicKey)
 
         /// <summary>
         /// Try to parse the given text as a public key.
         /// </summary>
         /// <param name="Text">A text representation of a public key.</param>
-        /// <param name="AuthId">The parsed public key.</param>
-        public static Boolean TryParse(String Text, out PublicKey AuthId)
+        /// <param name="PublicKey">The parsed public key.</param>
+        public static Boolean TryParse(String Text, out PublicKey PublicKey)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    AuthId = new PublicKey(Text.Trim());
+                    PublicKey = new PublicKey(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            AuthId = default;
+            PublicKey = default;
             return false;
 
         }
@@ -147,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public PublicKey Clone
 
-            => new PublicKey(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -156,107 +181,107 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Operator overloading
 
-        #region Operator == (AuthId1, AuthId2)
+        #region Operator == (PublicKey1, PublicKey2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A public key.</param>
-        /// <param name="AuthId2">Another public key.</param>
+        /// <param name="PublicKey1">A public key.</param>
+        /// <param name="PublicKey2">Another public key.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (PublicKey AuthId1,
-                                           PublicKey AuthId2)
+        public static Boolean operator == (PublicKey PublicKey1,
+                                           PublicKey PublicKey2)
 
-            => AuthId1.Equals(AuthId2);
+            => PublicKey1.Equals(PublicKey2);
 
         #endregion
 
-        #region Operator != (AuthId1, AuthId2)
+        #region Operator != (PublicKey1, PublicKey2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A public key.</param>
-        /// <param name="AuthId2">Another public key.</param>
+        /// <param name="PublicKey1">A public key.</param>
+        /// <param name="PublicKey2">Another public key.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (PublicKey AuthId1,
-                                           PublicKey AuthId2)
+        public static Boolean operator != (PublicKey PublicKey1,
+                                           PublicKey PublicKey2)
 
-            => !(AuthId1 == AuthId2);
+            => !PublicKey1.Equals(PublicKey2);
 
         #endregion
 
-        #region Operator <  (AuthId1, AuthId2)
+        #region Operator <  (PublicKey1, PublicKey2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A public key.</param>
-        /// <param name="AuthId2">Another public key.</param>
+        /// <param name="PublicKey1">A public key.</param>
+        /// <param name="PublicKey2">Another public key.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (PublicKey AuthId1,
-                                          PublicKey AuthId2)
+        public static Boolean operator < (PublicKey PublicKey1,
+                                          PublicKey PublicKey2)
 
-            => AuthId1.CompareTo(AuthId2) < 0;
+            => PublicKey1.CompareTo(PublicKey2) < 0;
 
         #endregion
 
-        #region Operator <= (AuthId1, AuthId2)
+        #region Operator <= (PublicKey1, PublicKey2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A public key.</param>
-        /// <param name="AuthId2">Another public key.</param>
+        /// <param name="PublicKey1">A public key.</param>
+        /// <param name="PublicKey2">Another public key.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (PublicKey AuthId1,
-                                           PublicKey AuthId2)
+        public static Boolean operator <= (PublicKey PublicKey1,
+                                           PublicKey PublicKey2)
 
-            => !(AuthId1 > AuthId2);
+            => PublicKey1.CompareTo(PublicKey2) <= 0;
 
         #endregion
 
-        #region Operator >  (AuthId1, AuthId2)
+        #region Operator >  (PublicKey1, PublicKey2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A public key.</param>
-        /// <param name="AuthId2">Another public key.</param>
+        /// <param name="PublicKey1">A public key.</param>
+        /// <param name="PublicKey2">Another public key.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (PublicKey AuthId1,
-                                          PublicKey AuthId2)
+        public static Boolean operator > (PublicKey PublicKey1,
+                                          PublicKey PublicKey2)
 
-            => AuthId1.CompareTo(AuthId2) > 0;
+            => PublicKey1.CompareTo(PublicKey2) > 0;
 
         #endregion
 
-        #region Operator >= (AuthId1, AuthId2)
+        #region Operator >= (PublicKey1, PublicKey2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="AuthId1">A public key.</param>
-        /// <param name="AuthId2">Another public key.</param>
+        /// <param name="PublicKey1">A public key.</param>
+        /// <param name="PublicKey2">Another public key.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (PublicKey AuthId1,
-                                           PublicKey AuthId2)
+        public static Boolean operator >= (PublicKey PublicKey1,
+                                           PublicKey PublicKey2)
 
-            => !(AuthId1 < AuthId2);
-
-        #endregion
+            => PublicKey1.CompareTo(PublicKey2) >= 0;
 
         #endregion
 
-        #region IComparable<AuthId> Members
+        #endregion
+
+        #region IComparable<PublicKey> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two public keys.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A public key to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is PublicKey publicKey
                    ? CompareTo(publicKey)
@@ -265,49 +290,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region CompareTo(AuthId)
+        #region CompareTo(PublicKey)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two public keys.
         /// </summary>
-        /// <param name="AuthId">An object to compare with.</param>
-        public Int32 CompareTo(PublicKey AuthId)
+        /// <param name="PublicKey">A public key to compare with.</param>
+        public Int32 CompareTo(PublicKey PublicKey)
 
             => String.Compare(InternalId,
-                              AuthId.InternalId,
+                              PublicKey.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<AuthId> Members
+        #region IEquatable<PublicKey> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two public keys for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A public key to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is PublicKey publicKey &&
                    Equals(publicKey);
 
         #endregion
 
-        #region Equals(AuthId)
+        #region Equals(PublicKey)
 
         /// <summary>
         /// Compares two public keys for equality.
         /// </summary>
-        /// <param name="AuthId">An public key to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(PublicKey AuthId)
+        /// <param name="PublicKey">A public key to compare with.</param>
+        public Boolean Equals(PublicKey PublicKey)
 
             => String.Equals(InternalId,
-                             AuthId.InternalId,
+                             PublicKey.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

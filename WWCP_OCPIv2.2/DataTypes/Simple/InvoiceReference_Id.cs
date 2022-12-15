@@ -1,8 +1,8 @@
 ﻿/*
- * Copyright (c) 2014--2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, InvoiceReference 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,7 +25,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for invoice reference identifications.
+    /// </summary>
+    public static class InvoiceReferenceIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this invoice reference identification is null or empty.
+        /// </summary>
+        /// <param name="InvoiceReferenceId">An invoice reference identification.</param>
+        public static Boolean IsNullOrEmpty(this InvoiceReference_Id? InvoiceReferenceId)
+            => !InvoiceReferenceId.HasValue || InvoiceReferenceId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this invoice reference identification is NOT null or empty.
+        /// </summary>
+        /// <param name="InvoiceReferenceId">An invoice reference identification.</param>
+        public static Boolean IsNotNullOrEmpty(this InvoiceReference_Id? InvoiceReferenceId)
+            => InvoiceReferenceId.HasValue && InvoiceReferenceId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of an invoice reference.
+    /// CiString(39)
     /// </summary>
     public readonly struct InvoiceReference_Id : IId<InvoiceReference_Id>
     {
@@ -44,30 +66,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this invoice reference identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the invoice reference.
+        /// Indicates whether this invoice reference identification is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
+
+        /// <summary>
+        /// The length of the invoice reference identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new invoice reference based on the given string.
+        /// Create a new invoice reference identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the invoice reference.</param>
-        private InvoiceReference_Id(String String)
+        /// <param name="Text">The text representation of an invoice reference identification.</param>
+        private InvoiceReference_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -76,19 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an invoice reference.
+        /// Parse the given text as an invoice reference identification.
         /// </summary>
-        /// <param name="Text">A text representation of an invoice reference.</param>
+        /// <param name="Text">A text representation of an invoice reference identification.</param>
         public static InvoiceReference_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out InvoiceReference_Id invoiceReferenceId))
+            if (TryParse(Text, out var invoiceReferenceId))
                 return invoiceReferenceId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an invoice reference must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of an invoice reference is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of an invoice reference identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -97,13 +121,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as an invoice reference.
+        /// Try to parse the given text as an invoice reference identification.
         /// </summary>
-        /// <param name="Text">A text representation of an invoice reference.</param>
+        /// <param name="Text">A text representation of an invoice reference identification.</param>
         public static InvoiceReference_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out InvoiceReference_Id invoiceReferenceId))
+            if (TryParse(Text, out var invoiceReferenceId))
                 return invoiceReferenceId;
 
             return null;
@@ -112,28 +136,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out InvoiceReference_Id)
+        #region (static) TryParse(Text, out InvoiceReferenceId)
 
         /// <summary>
-        /// Try to parse the given text as an invoice reference.
+        /// Try to parse the given text as an invoice reference identification.
         /// </summary>
-        /// <param name="Text">A text representation of an invoice reference.</param>
-        /// <param name="InvoiceReference_Id">The parsed invoice reference.</param>
-        public static Boolean TryParse(String Text, out InvoiceReference_Id InvoiceReference_Id)
+        /// <param name="Text">A text representation of an invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId">The parsed invoice reference identification.</param>
+        public static Boolean TryParse(String Text, out InvoiceReference_Id InvoiceReferenceId)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    InvoiceReference_Id = new InvoiceReference_Id(Text.Trim());
+                    InvoiceReferenceId = new InvoiceReference_Id(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            InvoiceReference_Id = default;
+            InvoiceReferenceId = default;
             return false;
 
         }
@@ -143,11 +169,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this invoice reference.
+        /// Clone this invoice reference identification.
         /// </summary>
         public InvoiceReference_Id Clone
 
-            => new InvoiceReference_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -156,107 +182,107 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (InvoiceReference_Id1, InvoiceReference_Id2)
+        #region Operator == (InvoiceReferenceId1, InvoiceReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="InvoiceReference_Id1">A invoice reference.</param>
-        /// <param name="InvoiceReference_Id2">Another invoice reference.</param>
+        /// <param name="InvoiceReferenceId1">An invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId2">Another invoice reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (InvoiceReference_Id InvoiceReference_Id1,
-                                           InvoiceReference_Id InvoiceReference_Id2)
+        public static Boolean operator == (InvoiceReference_Id InvoiceReferenceId1,
+                                           InvoiceReference_Id InvoiceReferenceId2)
 
-            => InvoiceReference_Id1.Equals(InvoiceReference_Id2);
+            => InvoiceReferenceId1.Equals(InvoiceReferenceId2);
 
         #endregion
 
-        #region Operator != (InvoiceReference_Id1, InvoiceReference_Id2)
+        #region Operator != (InvoiceReferenceId1, InvoiceReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="InvoiceReference_Id1">A invoice reference.</param>
-        /// <param name="InvoiceReference_Id2">Another invoice reference.</param>
+        /// <param name="InvoiceReferenceId1">An invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId2">Another invoice reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (InvoiceReference_Id InvoiceReference_Id1,
-                                           InvoiceReference_Id InvoiceReference_Id2)
+        public static Boolean operator != (InvoiceReference_Id InvoiceReferenceId1,
+                                           InvoiceReference_Id InvoiceReferenceId2)
 
-            => !(InvoiceReference_Id1 == InvoiceReference_Id2);
+            => !InvoiceReferenceId1.Equals(InvoiceReferenceId2);
 
         #endregion
 
-        #region Operator <  (InvoiceReference_Id1, InvoiceReference_Id2)
+        #region Operator <  (InvoiceReferenceId1, InvoiceReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="InvoiceReference_Id1">A invoice reference.</param>
-        /// <param name="InvoiceReference_Id2">Another invoice reference.</param>
+        /// <param name="InvoiceReferenceId1">An invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId2">Another invoice reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (InvoiceReference_Id InvoiceReference_Id1,
-                                          InvoiceReference_Id InvoiceReference_Id2)
+        public static Boolean operator < (InvoiceReference_Id InvoiceReferenceId1,
+                                          InvoiceReference_Id InvoiceReferenceId2)
 
-            => InvoiceReference_Id1.CompareTo(InvoiceReference_Id2) < 0;
+            => InvoiceReferenceId1.CompareTo(InvoiceReferenceId2) < 0;
 
         #endregion
 
-        #region Operator <= (InvoiceReference_Id1, InvoiceReference_Id2)
+        #region Operator <= (InvoiceReferenceId1, InvoiceReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="InvoiceReference_Id1">A invoice reference.</param>
-        /// <param name="InvoiceReference_Id2">Another invoice reference.</param>
+        /// <param name="InvoiceReferenceId1">An invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId2">Another invoice reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (InvoiceReference_Id InvoiceReference_Id1,
-                                           InvoiceReference_Id InvoiceReference_Id2)
+        public static Boolean operator <= (InvoiceReference_Id InvoiceReferenceId1,
+                                           InvoiceReference_Id InvoiceReferenceId2)
 
-            => !(InvoiceReference_Id1 > InvoiceReference_Id2);
+            => InvoiceReferenceId1.CompareTo(InvoiceReferenceId2) <= 0;
 
         #endregion
 
-        #region Operator >  (InvoiceReference_Id1, InvoiceReference_Id2)
+        #region Operator >  (InvoiceReferenceId1, InvoiceReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="InvoiceReference_Id1">A invoice reference.</param>
-        /// <param name="InvoiceReference_Id2">Another invoice reference.</param>
+        /// <param name="InvoiceReferenceId1">An invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId2">Another invoice reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (InvoiceReference_Id InvoiceReference_Id1,
-                                          InvoiceReference_Id InvoiceReference_Id2)
+        public static Boolean operator > (InvoiceReference_Id InvoiceReferenceId1,
+                                          InvoiceReference_Id InvoiceReferenceId2)
 
-            => InvoiceReference_Id1.CompareTo(InvoiceReference_Id2) > 0;
+            => InvoiceReferenceId1.CompareTo(InvoiceReferenceId2) > 0;
 
         #endregion
 
-        #region Operator >= (InvoiceReference_Id1, InvoiceReference_Id2)
+        #region Operator >= (InvoiceReferenceId1, InvoiceReferenceId2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="InvoiceReference_Id1">A invoice reference.</param>
-        /// <param name="InvoiceReference_Id2">Another invoice reference.</param>
+        /// <param name="InvoiceReferenceId1">An invoice reference identification.</param>
+        /// <param name="InvoiceReferenceId2">Another invoice reference identification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (InvoiceReference_Id InvoiceReference_Id1,
-                                           InvoiceReference_Id InvoiceReference_Id2)
+        public static Boolean operator >= (InvoiceReference_Id InvoiceReferenceId1,
+                                           InvoiceReference_Id InvoiceReferenceId2)
 
-            => !(InvoiceReference_Id1 < InvoiceReference_Id2);
-
-        #endregion
+            => InvoiceReferenceId1.CompareTo(InvoiceReferenceId2) >= 0;
 
         #endregion
 
-        #region IComparable<InvoiceReference_Id> Members
+        #endregion
+
+        #region IComparable<InvoiceReferenceId> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two invoice reference identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An invoice reference identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is InvoiceReference_Id invoiceReferenceId
                    ? CompareTo(invoiceReferenceId)
@@ -265,49 +291,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region CompareTo(InvoiceReference_Id)
+        #region CompareTo(InvoiceReferenceId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two invoice reference identifications.
         /// </summary>
-        /// <param name="InvoiceReference_Id">An object to compare with.</param>
-        public Int32 CompareTo(InvoiceReference_Id InvoiceReference_Id)
+        /// <param name="InvoiceReferenceId">An invoice reference identification to compare with.</param>
+        public Int32 CompareTo(InvoiceReference_Id InvoiceReferenceId)
 
             => String.Compare(InternalId,
-                              InvoiceReference_Id.InternalId,
+                              InvoiceReferenceId.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<InvoiceReference_Id> Members
+        #region IEquatable<InvoiceReferenceId> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two invoice reference identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An invoice reference identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is InvoiceReference_Id invoiceReferenceId &&
                    Equals(invoiceReferenceId);
 
         #endregion
 
-        #region Equals(InvoiceReference_Id)
+        #region Equals(InvoiceReferenceId)
 
         /// <summary>
-        /// Compares two invoice references for equality.
+        /// Compares two invoice reference identifications for equality.
         /// </summary>
-        /// <param name="InvoiceReference_Id">An invoice reference to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(InvoiceReference_Id InvoiceReference_Id)
+        /// <param name="InvoiceReferenceId">An invoice reference identification to compare with.</param>
+        public Boolean Equals(InvoiceReference_Id InvoiceReferenceId)
 
             => String.Equals(InternalId,
-                             InvoiceReference_Id.InternalId,
+                             InvoiceReferenceId.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

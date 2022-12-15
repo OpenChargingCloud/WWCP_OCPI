@@ -70,7 +70,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new remote party identification based on the given string.
+        /// Create a new remote party identification based on the given text.
         /// </summary>
         private RemoteParty_Id(CountryCode  CountryCode,
                                Party_Id     PartyId,

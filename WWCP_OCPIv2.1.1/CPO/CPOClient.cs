@@ -4620,6 +4620,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             GetTokens(Version_Id?         VersionId           = null,
                       Request_Id?         RequestId           = null,
                       Correlation_Id?     CorrelationId       = null,
+                      UInt64?             Offset              = null,
+                      UInt64?             Limit               = null,
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
@@ -4672,10 +4674,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.Random();
+                var requestId      = RequestId     ?? Request_Id.    Random();
                 var correlationId  = CorrelationId ?? Correlation_Id.Random();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         ModuleIDs.Tokens);
+
+                var offsetLimit    = "";
+
+                if (Offset.HasValue)
+                    offsetLimit += "&offset=" + Offset.Value;
+
+                if (Limit.HasValue)
+                    offsetLimit += "&limit="  + Limit. Value;
+
+                if (offsetLimit.Length > 0)
+                    offsetLimit = String.Concat("?", offsetLimit.AsSpan(1));
+
 
                 if (remoteURL.HasValue)
                 {
@@ -4699,7 +4713,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     remoteURL.Value.Path,
+                                                                                     remoteURL.Value.Path + offsetLimit,
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);

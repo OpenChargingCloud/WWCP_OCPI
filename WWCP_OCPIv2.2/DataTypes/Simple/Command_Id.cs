@@ -60,12 +60,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new command identification based on the given string.
+        /// Create a new command identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the command identification.</param>
-        private Command_Id(String String)
+        /// <param name="Text">The text representation of a command identification.</param>
+        private Command_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

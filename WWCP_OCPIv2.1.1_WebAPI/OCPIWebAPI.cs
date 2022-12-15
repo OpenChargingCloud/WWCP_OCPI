@@ -3087,17 +3087,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                          Boolean      AccessTokenBase64Encoding   = true)
         {
 
-            var _remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteParty => remoteParty.CountryCode == CountryCode &&
-                                                                                     remoteParty.PartyId     == PartyId     &&
-                                                                                     remoteParty.Role        == Role);
+            var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
+                                                                                    remoteparty.PartyId     == PartyId     &&
+                                                                                    remoteparty.Role        == Role);
 
-            if (_remoteParty?.RemoteAccessInfos?.Any() == true)
+            if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return emspClients.AddAndReturnElement(
                     new EMSPClient(//CountryCode,
                                    //PartyId,
                                    //Role,
-                                   _remoteParty.RemoteAccessInfos.First().VersionsURL,
-                                   _remoteParty.RemoteAccessInfos.First().AccessToken,
+                                   remoteParty.RemoteAccessInfos.First().VersionsURL,
+                                   remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
                                    AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
@@ -3108,7 +3108,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyd, AccessTokenBase64Encoding = true)
+        #region GetEMSPClient(RemoteParty,   AccessTokenBase64Encoding = true)
 
         public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
                                          Boolean      AccessTokenBase64Encoding = true)
@@ -3184,10 +3184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             if (remoteParty?.RemoteAccessInfos?.Any() == true)
                 return cpoClients.AddAndReturnElement(
-                    new CPOClient(//CountryCode,
-                                  //PartyId,
-                                  //Role,
-                                  remoteParty.RemoteAccessInfos.First().VersionsURL,
+                    new CPOClient(remoteParty.RemoteAccessInfos.First().VersionsURL,
                                   remoteParty.RemoteAccessInfos.First().AccessToken,
                                   CommonAPI,
                                   RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,

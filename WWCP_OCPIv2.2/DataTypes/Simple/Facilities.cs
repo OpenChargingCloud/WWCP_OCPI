@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,10 +25,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Facilities at a charge point location.
-    /// May be used for user information.
+    /// Extension methods for facilities.
     /// </summary>
-    public struct Facilities : IId<Facilities>
+    public static class FacilitiesExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this facility is null or empty.
+        /// </summary>
+        /// <param name="Facilities">A facility.</param>
+        public static Boolean IsNullOrEmpty(this Facilities? Facilities)
+            => !Facilities.HasValue || Facilities.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this facility is NOT null or empty.
+        /// </summary>
+        /// <param name="Facilities">A facility.</param>
+        public static Boolean IsNotNullOrEmpty(this Facilities? Facilities)
+            => Facilities.HasValue && Facilities.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of a facility.
+    /// </summary>
+    public readonly struct Facilities : IId<Facilities>
     {
 
         #region Data
@@ -45,30 +65,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this facility is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this facility is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the facility.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new facility based on the given string.
+        /// Create a new facility based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the facility.</param>
-        private Facilities(String String)
+        /// <param name="Text">The text representation of a facility.</param>
+        private Facilities(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -77,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a facility.
+        /// Parse the given text as a facility.
         /// </summary>
         /// <param name="Text">A text representation of a facility.</param>
         public static Facilities Parse(String Text)
         {
 
-            if (TryParse(Text, out Facilities locationId))
-                return locationId;
+            if (TryParse(Text, out var facilityId))
+                return facilityId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a facility must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a facility is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a facility: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -104,8 +126,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Facilities? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Facilities locationId))
-                return locationId;
+            if (TryParse(Text, out var facilityId))
+                return facilityId;
 
             return null;
 
@@ -113,28 +135,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out VersionId)
+        #region (static) TryParse(Text, out Facilities)
 
         /// <summary>
         /// Try to parse the given text as a facility.
         /// </summary>
         /// <param name="Text">A text representation of a facility.</param>
-        /// <param name="VersionId">The parsed facility.</param>
-        public static Boolean TryParse(String Text, out Facilities VersionId)
+        /// <param name="Facilities">The parsed facility.</param>
+        public static Boolean TryParse(String Text, out Facilities Facilities)
         {
+
+            Text = Text.Trim();
 
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    VersionId = new Facilities(Text.Trim());
+                    Facilities = new Facilities(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            VersionId = default;
+            Facilities = default;
             return false;
 
         }
@@ -148,268 +172,290 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public Facilities Clone
 
-            => new Facilities(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
         #endregion
 
 
+        #region Static definition
+
         /// <summary>
         /// A hotel.
         /// </summary>
-        public static Facilities HOTEL            = new Facilities("HOTEL");
+        public static Facilities HOTEL
+            => new ("HOTEL");
 
         /// <summary>
         /// A restaurant.
         /// </summary>
-        public static Facilities RESTAURANT       = new Facilities("RESTAURANT");
+        public static Facilities RESTAURANT
+            => new ("RESTAURANT");
 
         /// <summary>
         /// A cafe.
         /// </summary>
-        public static Facilities CAFE             = new Facilities("CAFE");
+        public static Facilities CAFE
+            => new ("CAFE");
 
         /// <summary>
         /// A mall or shopping center.
         /// </summary>
-        public static Facilities MALL             = new Facilities("MALL");
+        public static Facilities MALL
+            => new ("MALL");
 
         /// <summary>
         /// A supermarket.
         /// </summary>
-        public static Facilities SUPERMARKET      = new Facilities("SUPERMARKET");
+        public static Facilities SUPERMARKET
+            => new ("SUPERMARKET");
 
         /// <summary>
         /// Sport facilities: gym, field etc.
         /// </summary>
-        public static Facilities SPORT            = new Facilities("XXSPORTX");
+        public static Facilities SPORT
+            => new ("XXSPORTX");
 
         /// <summary>
         /// A recreation area.
         /// </summary>
-        public static Facilities RECREATION_AREA  = new Facilities("RECREATION_AREA");
+        public static Facilities RECREATION_AREA
+            => new ("RECREATION_AREA");
 
         /// <summary>
         /// Located in, or close to, a park, nature reserve etc.
         /// </summary>
-        public static Facilities NATURE           = new Facilities("NATURE");
+        public static Facilities NATURE
+            => new ("NATURE");
 
         /// <summary>
         /// A museum.
         /// </summary>
-        public static Facilities MUSEUM           = new Facilities("MUSEUM");
+        public static Facilities MUSEUM
+            => new ("MUSEUM");
 
         /// <summary>
         /// A bike/e-bike/e-scooter sharing location.
         /// </summary>
-        public static Facilities BIKE_SHARING     = new Facilities("BIKE_SHARING");
+        public static Facilities BIKE_SHARING
+            => new ("BIKE_SHARING");
 
         /// <summary>
         /// A bus stop.
         /// </summary>
-        public static Facilities BUS_STOP         = new Facilities("BUS_STOP");
+        public static Facilities BUS_STOP
+            => new ("BUS_STOP");
 
         /// <summary>
         /// A taxi stand.
         /// </summary>
-        public static Facilities TAXI_STAND       = new Facilities("TAXI_STAND");
+        public static Facilities TAXI_STAND
+            => new ("TAXI_STAND");
 
         /// <summary>
         /// A tram stop/station.
         /// </summary>
-        public static Facilities TRAM_STOP        = new Facilities("TRAM_STOP");
+        public static Facilities TRAM_STOP
+            => new ("TRAM_STOP");
 
         /// <summary>
         /// A metro station.
         /// </summary>
-        public static Facilities METRO_STATION    = new Facilities("METRO_STATION");
+        public static Facilities METRO_STATION
+            => new ("METRO_STATION");
 
         /// <summary>
         /// A train station.
         /// </summary>
-        public static Facilities TRAIN_STATION    = new Facilities("TRAIN_STATION");
+        public static Facilities TRAIN_STATION
+            => new ("TRAIN_STATION");
 
         /// <summary>
         /// An airport.
         /// </summary>
-        public static Facilities AIRPORT          = new Facilities("AIRPORT");
+        public static Facilities AIRPORT
+            => new ("AIRPORT");
 
         /// <summary>
         /// A parking lot.
         /// </summary>
-        public static Facilities PARKING_LOT      = new Facilities("PARKING_LOT");
+        public static Facilities PARKING_LOT
+            => new ("PARKING_LOT");
 
         /// <summary>
         /// A carpool parking.
         /// </summary>
-        public static Facilities CARPOOL_PARKING  = new Facilities("CARPOOL_PARKING");
+        public static Facilities CARPOOL_PARKING
+            => new ("CARPOOL_PARKING");
 
         /// <summary>
         /// A Fuel station.
         /// </summary>
-        public static Facilities FUEL_STATION     = new Facilities("FUEL_STATION");
+        public static Facilities FUEL_STATION
+            => new ("FUEL_STATION");
 
         /// <summary>
         /// Wifi or other type of internet available.
         /// </summary>
-        public static Facilities WIFI             = new Facilities("WIFI");
+        public static Facilities WIFI
+            => new ("WIFI");
+
+        #endregion
 
 
         #region Operator overloading
 
-        #region Operator == (VersionId1, VersionId2)
+        #region Operator == (Facilities1, Facilities2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="VersionId1">A facility.</param>
-        /// <param name="VersionId2">Another facility.</param>
+        /// <param name="Facilities1">A facility.</param>
+        /// <param name="Facilities2">Another facility.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (Facilities VersionId1,
-                                           Facilities VersionId2)
+        public static Boolean operator == (Facilities Facilities1,
+                                           Facilities Facilities2)
 
-            => VersionId1.Equals(VersionId2);
+            => Facilities1.Equals(Facilities2);
 
         #endregion
 
-        #region Operator != (VersionId1, VersionId2)
+        #region Operator != (Facilities1, Facilities2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="VersionId1">A facility.</param>
-        /// <param name="VersionId2">Another facility.</param>
+        /// <param name="Facilities1">A facility.</param>
+        /// <param name="Facilities2">Another facility.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (Facilities VersionId1,
-                                           Facilities VersionId2)
+        public static Boolean operator != (Facilities Facilities1,
+                                           Facilities Facilities2)
 
-            => !(VersionId1 == VersionId2);
+            => !Facilities1.Equals(Facilities2);
 
         #endregion
 
-        #region Operator <  (VersionId1, VersionId2)
+        #region Operator <  (Facilities1, Facilities2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="VersionId1">A facility.</param>
-        /// <param name="VersionId2">Another facility.</param>
+        /// <param name="Facilities1">A facility.</param>
+        /// <param name="Facilities2">Another facility.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (Facilities VersionId1,
-                                          Facilities VersionId2)
+        public static Boolean operator < (Facilities Facilities1,
+                                          Facilities Facilities2)
 
-            => VersionId1.CompareTo(VersionId2) < 0;
+            => Facilities1.CompareTo(Facilities2) < 0;
 
         #endregion
 
-        #region Operator <= (VersionId1, VersionId2)
+        #region Operator <= (Facilities1, Facilities2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="VersionId1">A facility.</param>
-        /// <param name="VersionId2">Another facility.</param>
+        /// <param name="Facilities1">A facility.</param>
+        /// <param name="Facilities2">Another facility.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (Facilities VersionId1,
-                                           Facilities VersionId2)
+        public static Boolean operator <= (Facilities Facilities1,
+                                           Facilities Facilities2)
 
-            => !(VersionId1 > VersionId2);
+            => Facilities1.CompareTo(Facilities2) <= 0;
 
         #endregion
 
-        #region Operator >  (VersionId1, VersionId2)
+        #region Operator >  (Facilities1, Facilities2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="VersionId1">A facility.</param>
-        /// <param name="VersionId2">Another facility.</param>
+        /// <param name="Facilities1">A facility.</param>
+        /// <param name="Facilities2">Another facility.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (Facilities VersionId1,
-                                          Facilities VersionId2)
+        public static Boolean operator > (Facilities Facilities1,
+                                          Facilities Facilities2)
 
-            => VersionId1.CompareTo(VersionId2) > 0;
+            => Facilities1.CompareTo(Facilities2) > 0;
 
         #endregion
 
-        #region Operator >= (VersionId1, VersionId2)
+        #region Operator >= (Facilities1, Facilities2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="VersionId1">A facility.</param>
-        /// <param name="VersionId2">Another facility.</param>
+        /// <param name="Facilities1">A facility.</param>
+        /// <param name="Facilities2">Another facility.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (Facilities VersionId1,
-                                           Facilities VersionId2)
+        public static Boolean operator >= (Facilities Facilities1,
+                                           Facilities Facilities2)
 
-            => !(VersionId1 < VersionId2);
-
-        #endregion
+            => Facilities1.CompareTo(Facilities2) >= 0;
 
         #endregion
 
-        #region IComparable<VersionId> Members
+        #endregion
+
+        #region IComparable<Facilities> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two facilities.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A facility to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is Facilities locationId
-                   ? CompareTo(locationId)
+            => Object is Facilities facilityId
+                   ? CompareTo(facilityId)
                    : throw new ArgumentException("The given object is not a facility!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(VersionId)
+        #region CompareTo(Facilities)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two facilities.
         /// </summary>
-        /// <param name="VersionId">An object to compare with.</param>
-        public Int32 CompareTo(Facilities VersionId)
+        /// <param name="Facilities">A facility to compare with.</param>
+        public Int32 CompareTo(Facilities Facilities)
 
             => String.Compare(InternalId,
-                              VersionId.InternalId,
+                              Facilities.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<VersionId> Members
+        #region IEquatable<Facilities> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two facilities for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A facility to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is Facilities locationId &&
-                   Equals(locationId);
+            => Object is Facilities facilityId &&
+                   Equals(facilityId);
 
         #endregion
 
-        #region Equals(VersionId)
+        #region Equals(Facilities)
 
         /// <summary>
-        /// Compares two facilitys for equality.
+        /// Compares two facilities for equality.
         /// </summary>
-        /// <param name="VersionId">An facility to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Facilities VersionId)
+        /// <param name="Facilities">A facility to compare with.</param>
+        public Boolean Equals(Facilities Facilities)
 
             => String.Equals(InternalId,
-                             VersionId.InternalId,
+                             Facilities.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

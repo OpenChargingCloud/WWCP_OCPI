@@ -62,12 +62,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new currency based on the given string.
+        /// Create a new currency based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the currency.</param>
-        private Currency(String String)
+        /// <param name="Text">The text representation of a currency.</param>
+        private Currency(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

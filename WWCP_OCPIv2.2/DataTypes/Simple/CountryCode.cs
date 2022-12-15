@@ -27,14 +27,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The unique identification of a country code.
+    /// Extension methods for country codes.
     /// </summary>
-    public struct CountryCode : IId<CountryCode>
+    public static class CountryCodeExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this country code is null or empty.
+        /// </summary>
+        /// <param name="CountryCode">A country code.</param>
+        public static Boolean IsNullOrEmpty(this CountryCode? CountryCode)
+            => !CountryCode.HasValue || CountryCode.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this country code is NOT null or empty.
+        /// </summary>
+        /// <param name="CountryCode">A country code.</param>
+        public static Boolean IsNotNullOrEmpty(this CountryCode? CountryCode)
+            => CountryCode.HasValue && CountryCode.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique ISO-3166 alpha-2 country code of the country a party is operating in.
+    /// </summary>
+    public readonly struct CountryCode : IId<CountryCode>
     {
 
         #region Data
-
-        // CiString(2)
 
         /// <summary>
         /// The internal identification.
@@ -46,30 +67,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this country code is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// The length of the country code identification.
+        /// Indicates whether this country code is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
+
+        /// <summary>
+        /// The length of the country code.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new country code identification based on the given string.
+        /// Create a new country code based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the country code identification.</param>
-        private CountryCode(String String)
+        /// <param name="Text">A text representation of a country code.</param>
+        private CountryCode(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -78,19 +103,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a country code identification.
+        /// Parse the given text as a country code.
         /// </summary>
-        /// <param name="Text">A text representation of a country code identification.</param>
+        /// <param name="Text">A text representation of a country code.</param>
         public static CountryCode Parse(String Text)
         {
 
-            if (TryParse(Text, out CountryCode locationId))
-                return locationId;
+            if (TryParse(Text, out var countryCode))
+                return countryCode;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a country code identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a country code identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a country code: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -99,14 +122,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) TryParse(Text)
 
         /// <summary>
-        /// Try to parse the given text as a country code identification.
+        /// Try to parse the given text as a country code.
         /// </summary>
-        /// <param name="Text">A text representation of a country code identification.</param>
+        /// <param name="Text">A text representation of a country code.</param>
         public static CountryCode? TryParse(String Text)
         {
 
-            if (TryParse(Text, out CountryCode locationId))
-                return locationId;
+            if (TryParse(Text, out var countryCode))
+                return countryCode;
 
             return null;
 
@@ -114,28 +137,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out LocationId)
+        #region (static) TryParse(Text, out CountryCode)
 
         /// <summary>
-        /// Try to parse the given text as a country code identification.
+        /// Try to parse the given text as a country code.
         /// </summary>
-        /// <param name="Text">A text representation of a country code identification.</param>
-        /// <param name="LocationId">The parsed country code identification.</param>
-        public static Boolean TryParse(String Text, out CountryCode LocationId)
+        /// <param name="Text">A text representation of a country code.</param>
+        /// <param name="CountryCode">The parsed country code.</param>
+        public static Boolean TryParse(String Text, out CountryCode CountryCode)
         {
 
-            if (Text.IsNotNullOrEmpty())
+            Text = Text.Trim();
+
+            if (Text.IsNotNullOrEmpty() &&
+                Text.Length == 2)
             {
                 try
                 {
-                    LocationId = new CountryCode(Text.Trim());
+                    CountryCode = new CountryCode(Text);
                     return true;
                 }
                 catch (Exception)
                 { }
             }
 
-            LocationId = default;
+            CountryCode = default;
             return false;
 
         }
@@ -145,11 +171,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Clone
 
         /// <summary>
-        /// Clone this country code identification.
+        /// Clone this country code.
         /// </summary>
         public CountryCode Clone
 
-            => new CountryCode(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -158,158 +184,156 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (LocationId1, LocationId2)
+        #region Operator == (CountryCode1, CountryCode2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A country code identification.</param>
-        /// <param name="LocationId2">Another country code identification.</param>
+        /// <param name="CountryCode1">A country code.</param>
+        /// <param name="CountryCode2">Another country code.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (CountryCode LocationId1,
-                                           CountryCode LocationId2)
+        public static Boolean operator == (CountryCode CountryCode1,
+                                           CountryCode CountryCode2)
 
-            => LocationId1.Equals(LocationId2);
+            => CountryCode1.Equals(CountryCode2);
 
         #endregion
 
-        #region Operator != (LocationId1, LocationId2)
+        #region Operator != (CountryCode1, CountryCode2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A country code identification.</param>
-        /// <param name="LocationId2">Another country code identification.</param>
+        /// <param name="CountryCode1">A country code.</param>
+        /// <param name="CountryCode2">Another country code.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (CountryCode LocationId1,
-                                           CountryCode LocationId2)
+        public static Boolean operator != (CountryCode CountryCode1,
+                                           CountryCode CountryCode2)
 
-            => !(LocationId1 == LocationId2);
+            => !CountryCode1.Equals(CountryCode2);
 
         #endregion
 
-        #region Operator <  (LocationId1, LocationId2)
+        #region Operator <  (CountryCode1, CountryCode2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A country code identification.</param>
-        /// <param name="LocationId2">Another country code identification.</param>
+        /// <param name="CountryCode1">A country code.</param>
+        /// <param name="CountryCode2">Another country code.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator < (CountryCode LocationId1,
-                                          CountryCode LocationId2)
+        public static Boolean operator < (CountryCode CountryCode1,
+                                          CountryCode CountryCode2)
 
-            => LocationId1.CompareTo(LocationId2) < 0;
+            => CountryCode1.CompareTo(CountryCode2) < 0;
 
         #endregion
 
-        #region Operator <= (LocationId1, LocationId2)
+        #region Operator <= (CountryCode1, CountryCode2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A country code identification.</param>
-        /// <param name="LocationId2">Another country code identification.</param>
+        /// <param name="CountryCode1">A country code.</param>
+        /// <param name="CountryCode2">Another country code.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator <= (CountryCode LocationId1,
-                                           CountryCode LocationId2)
+        public static Boolean operator <= (CountryCode CountryCode1,
+                                           CountryCode CountryCode2)
 
-            => !(LocationId1 > LocationId2);
+            => CountryCode1.CompareTo(CountryCode2) <= 0;
 
         #endregion
 
-        #region Operator >  (LocationId1, LocationId2)
+        #region Operator >  (CountryCode1, CountryCode2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A country code identification.</param>
-        /// <param name="LocationId2">Another country code identification.</param>
+        /// <param name="CountryCode1">A country code.</param>
+        /// <param name="CountryCode2">Another country code.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator > (CountryCode LocationId1,
-                                          CountryCode LocationId2)
+        public static Boolean operator > (CountryCode CountryCode1,
+                                          CountryCode CountryCode2)
 
-            => LocationId1.CompareTo(LocationId2) > 0;
+            => CountryCode1.CompareTo(CountryCode2) > 0;
 
         #endregion
 
-        #region Operator >= (LocationId1, LocationId2)
+        #region Operator >= (CountryCode1, CountryCode2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="LocationId1">A country code identification.</param>
-        /// <param name="LocationId2">Another country code identification.</param>
+        /// <param name="CountryCode1">A country code.</param>
+        /// <param name="CountryCode2">Another country code.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator >= (CountryCode LocationId1,
-                                           CountryCode LocationId2)
+        public static Boolean operator >= (CountryCode CountryCode1,
+                                           CountryCode CountryCode2)
 
-            => !(LocationId1 < LocationId2);
-
-        #endregion
+            => CountryCode1.CompareTo(CountryCode2) >= 0;
 
         #endregion
 
-        #region IComparable<LocationId> Members
+        #endregion
+
+        #region IComparable<CountryCode> Members
 
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two country codes.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A country code to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is CountryCode locationId
-                   ? CompareTo(locationId)
-                   : throw new ArgumentException("The given object is not a country code identification!",
+            => Object is CountryCode countryCode
+                   ? CompareTo(countryCode)
+                   : throw new ArgumentException("The given object is not a country code!",
                                                  nameof(Object));
 
         #endregion
 
-        #region CompareTo(LocationId)
+        #region CompareTo(CountryCode)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two country codes.
         /// </summary>
-        /// <param name="LocationId">An object to compare with.</param>
-        public Int32 CompareTo(CountryCode LocationId)
+        /// <param name="CountryCode">A country code to compare with.</param>
+        public Int32 CompareTo(CountryCode CountryCode)
 
             => String.Compare(InternalId,
-                              LocationId.InternalId,
+                              CountryCode.InternalId,
                               StringComparison.OrdinalIgnoreCase);
 
         #endregion
 
         #endregion
 
-        #region IEquatable<LocationId> Members
+        #region IEquatable<CountryCode> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two country codes for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A country code to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is CountryCode locationId &&
-                   Equals(locationId);
+            => Object is CountryCode countryCode &&
+                   Equals(countryCode);
 
         #endregion
 
-        #region Equals(LocationId)
+        #region Equals(CountryCode)
 
         /// <summary>
-        /// Compares two country code identifications for equality.
+        /// Compares two country codes for equality.
         /// </summary>
-        /// <param name="LocationId">An country code identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CountryCode LocationId)
+        /// <param name="CountryCode">A country code to compare with.</param>
+        public Boolean Equals(CountryCode CountryCode)
 
             => String.Equals(InternalId,
-                             LocationId.InternalId,
+                             CountryCode.InternalId,
                              StringComparison.OrdinalIgnoreCase);
 
         #endregion

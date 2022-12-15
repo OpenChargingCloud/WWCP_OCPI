@@ -60,12 +60,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new authorization reference based on the given string.
+        /// Create a new authorization reference based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the authorization reference.</param>
-        private AuthorizationReference(String String)
+        /// <param name="Text">The text representation of a authorization reference.</param>
+        private AuthorizationReference(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

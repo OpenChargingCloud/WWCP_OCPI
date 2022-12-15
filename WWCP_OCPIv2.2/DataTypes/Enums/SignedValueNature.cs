@@ -63,12 +63,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new signed value nature based on the given string.
+        /// Create a new signed value nature based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the signed value nature.</param>
-        private SignedValueNature(String String)
+        /// <param name="Text">The text representation of a signed value nature.</param>
+        private SignedValueNature(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

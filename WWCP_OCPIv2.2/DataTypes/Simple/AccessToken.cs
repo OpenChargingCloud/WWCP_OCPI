@@ -62,10 +62,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new access token.
         /// </summary>
-        /// <param name="String">The string representation of the access token.</param>
-        private AccessToken(String String)
+        /// <param name="Text">The text representation of a access token.</param>
+        private AccessToken(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion

@@ -17,9 +17,6 @@
 
 #region Usings
 
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -30,6 +27,9 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
+    /// <summary>
+    /// The remote access information.
+    /// </summary>
     public class RemoteAccessInfo
     {
 
@@ -54,16 +54,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Constructor(s)
 
-        public RemoteAccessInfo(AccessToken              AccessToken,
-                                URL                      VersionsURL,
-                                IEnumerable<Version_Id>  VersionIds          = null,
-                                Version_Id?              SelectedVersionId   = null,
-                                RemoteAccessStatus?      Status              = RemoteAccessStatus.ONLINE)
+        /// <summary>
+        /// Create new remote access information.
+        /// </summary>
+        /// <param name="AccessToken">A remote access token.</param>
+        /// <param name="VersionsURL">An OCPI vesions URL.</param>
+        /// <param name="VersionIds">An optional enumeration of version identifications.</param>
+        /// <param name="SelectedVersionId">A optional selected version identification.</param>
+        /// <param name="Status">A remote access status.</param>
+        public RemoteAccessInfo(AccessToken               AccessToken,
+                                URL                       VersionsURL,
+                                IEnumerable<Version_Id>?  VersionIds          = null,
+                                Version_Id?               SelectedVersionId   = null,
+                                RemoteAccessStatus?       Status              = RemoteAccessStatus.ONLINE)
         {
 
             this.AccessToken        = AccessToken;
             this.VersionsURL        = VersionsURL;
-            this.VersionIds         = VersionIds;
+            this.VersionIds         = VersionIds?.Distinct() ?? Array.Empty<Version_Id>();
             this.SelectedVersionId  = SelectedVersionId;
             this.Status             = Status ?? RemoteAccessStatus.ONLINE;
 
@@ -77,8 +85,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access info JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<RemoteAccessInfo>  CustomRemoteAccessInfoSerializer   = null)
+        /// <param name="CustomRemoteAccessInfoSerializer">A delegate to serialize custom remote access information.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer   = null)
         {
 
             var JSON = JSONObject.Create(

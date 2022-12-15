@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,14 +25,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The file type of an image.
+    /// Extension methods for image file types.
     /// </summary>
-    public readonly struct ImageFileType
+    public static class ImageFileTypeExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this image file type is null or empty.
+        /// </summary>
+        /// <param name="ImageFileType">An image file type.</param>
+        public static Boolean IsNullOrEmpty(this ImageFileType? ImageFileType)
+            => !ImageFileType.HasValue || ImageFileType.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this image file type is NOT null or empty.
+        /// </summary>
+        /// <param name="ImageFileType">An image file type.</param>
+        public static Boolean IsNotNullOrEmpty(this ImageFileType? ImageFileType)
+            => ImageFileType.HasValue && ImageFileType.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of an image file type.
+    /// </summary>
+    public readonly struct ImageFileType : IId<ImageFileType>
     {
 
         #region Data
-
-        // CiString(3)
 
         /// <summary>
         /// The internal identification.
@@ -46,30 +65,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this image file type is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this image file type is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the image file type.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new image file type based on the given string.
+        /// Create a new image file type based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the image file type.</param>
-        private ImageFileType(String String)
+        /// <param name="Text">The text representation of an image file type.</param>
+        private ImageFileType(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -78,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as an image file type.
+        /// Parse the given text as an image file type.
         /// </summary>
         /// <param name="Text">A text representation of an image file type.</param>
         public static ImageFileType Parse(String Text)
         {
 
-            if (TryParse(Text, out ImageFileType imageFileType))
+            if (TryParse(Text, out var imageFileType))
                 return imageFileType;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of an image file type must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of an image file type is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of an image file type: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -105,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static ImageFileType? TryParse(String Text)
         {
 
-            if (TryParse(Text, out ImageFileType imageFileType))
+            if (TryParse(Text, out var imageFileType))
                 return imageFileType;
 
             return null;
@@ -124,11 +145,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(String Text, out ImageFileType ImageFileType)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    ImageFileType = new ImageFileType(Text.Trim());
+                    ImageFileType = new ImageFileType(Text);
                     return true;
                 }
                 catch (Exception)
@@ -149,42 +172,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public ImageFileType Clone
 
-            => new ImageFileType(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
         #endregion
 
 
+        #region Static definitions
+
+#pragma warning disable IDE1006 // Naming Styles
+
         /// <summary>
         /// gif
         /// </summary>
         public static ImageFileType gif
-            => new ImageFileType("gif");
+            => new ("gif");
 
         /// <summary>
         /// jpeg
         /// </summary>
         public static ImageFileType jpeg
-            => new ImageFileType("jpeg");
+            => new ("jpeg");
 
         /// <summary>
         /// jpg
         /// </summary>
         public static ImageFileType jpg
-            => new ImageFileType("jpg");
+            => new ("jpg");
 
         /// <summary>
         /// png
         /// </summary>
         public static ImageFileType png
-            => new ImageFileType("png");
+            => new ("png");
 
         /// <summary>
         /// svg
         /// </summary>
         public static ImageFileType svg
-            => new ImageFileType("svg");
+            => new ("svg");
+
+#pragma warning restore IDE1006 // Naming Styles
+
+        #endregion
 
 
         #region Operator overloading
@@ -215,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (ImageFileType ImageFileType1,
                                            ImageFileType ImageFileType2)
 
-            => !(ImageFileType1 == ImageFileType2);
+            => !ImageFileType1.Equals(ImageFileType2);
 
         #endregion
 
@@ -245,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (ImageFileType ImageFileType1,
                                            ImageFileType ImageFileType2)
 
-            => !(ImageFileType1 > ImageFileType2);
+            => ImageFileType1.CompareTo(ImageFileType2) <= 0;
 
         #endregion
 
@@ -275,7 +306,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (ImageFileType ImageFileType1,
                                            ImageFileType ImageFileType2)
 
-            => !(ImageFileType1 < ImageFileType2);
+            => ImageFileType1.CompareTo(ImageFileType2) >= 0;
 
         #endregion
 
@@ -286,10 +317,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two image file types.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An image file type to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ImageFileType imageFileType
                    ? CompareTo(imageFileType)
@@ -301,9 +332,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(ImageFileType)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two image file types.
         /// </summary>
-        /// <param name="ImageFileType">An object to compare with.</param>
+        /// <param name="ImageFileType">An image file type to compare with.</param>
         public Int32 CompareTo(ImageFileType ImageFileType)
 
             => String.Compare(InternalId,
@@ -319,11 +350,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two image file types for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An image file type to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ImageFileType imageFileType &&
                    Equals(imageFileType);
@@ -336,7 +366,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two image file types for equality.
         /// </summary>
         /// <param name="ImageFileType">An image file type to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(ImageFileType ImageFileType)
 
             => String.Equals(InternalId,

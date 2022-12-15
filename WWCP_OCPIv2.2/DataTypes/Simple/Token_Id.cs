@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Token 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,14 +25,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for token identifications.
+    /// </summary>
+    public static class TokenIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this token identification is null or empty.
+        /// </summary>
+        /// <param name="TokenId">A token identification.</param>
+        public static Boolean IsNullOrEmpty(this Token_Id? TokenId)
+            => !TokenId.HasValue || TokenId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this token identification is NOT null or empty.
+        /// </summary>
+        /// <param name="TokenId">A token identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Token_Id? TokenId)
+            => TokenId.HasValue && TokenId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a token.
     /// </summary>
     public readonly struct Token_Id : IId<Token_Id>
     {
 
         #region Data
-
-        // CiString(3)
 
         /// <summary>
         /// The internal identification.
@@ -46,13 +65,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this token identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
         /// <summary>
-        /// Indicates whether this identification is NOT null or empty.
+        /// Indicates whether this token identification is NOT null or empty.
         /// </summary>
         public Boolean IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
@@ -61,20 +80,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The length of the token identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new token identification based on the given string.
+        /// Create a new token identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the token identification.</param>
-        private Token_Id(String String)
+        /// <param name="Text">The text representation of a token identification.</param>
+        private Token_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -83,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a token identification.
+        /// Parse the given text as a token identification.
         /// </summary>
         /// <param name="Text">A text representation of a token identification.</param>
         public static Token_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Token_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var tokenId))
+                return tokenId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a token identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a token identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a token identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -110,8 +126,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Token_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Token_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var tokenId))
+                return tokenId;
 
             return null;
 
@@ -129,11 +145,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out Token_Id TokenId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    TokenId = new Token_Id(Text.Trim());
+                    TokenId = new Token_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -154,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public Token_Id Clone
 
-            => new Token_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -189,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (Token_Id TokenId1,
                                            Token_Id TokenId2)
 
-            => !(TokenId1 == TokenId2);
+            => !TokenId1.Equals(TokenId2);
 
         #endregion
 
@@ -219,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (Token_Id TokenId1,
                                            Token_Id TokenId2)
 
-            => !(TokenId1 > TokenId2);
+            => TokenId1.CompareTo(TokenId2) <= 0;
 
         #endregion
 
@@ -249,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (Token_Id TokenId1,
                                            Token_Id TokenId2)
 
-            => !(TokenId1 < TokenId2);
+            => TokenId1.CompareTo(TokenId2) >= 0;
 
         #endregion
 
@@ -260,13 +278,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two token identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A token identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is Token_Id locationId
-                   ? CompareTo(locationId)
+            => Object is Token_Id tokenId
+                   ? CompareTo(tokenId)
                    : throw new ArgumentException("The given object is not a token identification!",
                                                  nameof(Object));
 
@@ -275,9 +293,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(TokenId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two token identifications.
         /// </summary>
-        /// <param name="TokenId">An object to compare with.</param>
+        /// <param name="TokenId">A token identification to compare with.</param>
         public Int32 CompareTo(Token_Id TokenId)
 
             => String.Compare(InternalId,
@@ -293,14 +311,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two token identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A token identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is Token_Id locationId &&
-                   Equals(locationId);
+            => Object is Token_Id tokenId &&
+                   Equals(tokenId);
 
         #endregion
 
@@ -309,8 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two token identifications for equality.
         /// </summary>
-        /// <param name="TokenId">An token identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="TokenId">A token identification to compare with.</param>
         public Boolean Equals(Token_Id TokenId)
 
             => String.Equals(InternalId,

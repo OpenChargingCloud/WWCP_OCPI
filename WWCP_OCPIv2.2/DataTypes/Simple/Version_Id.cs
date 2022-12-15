@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -27,14 +25,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extension methods for version identifications.
+    /// </summary>
+    public static class VersionIdExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this version identification is null or empty.
+        /// </summary>
+        /// <param name="VersionId">A version identification.</param>
+        public static Boolean IsNullOrEmpty(this Version_Id? VersionId)
+            => !VersionId.HasValue || VersionId.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this version identification is NOT null or empty.
+        /// </summary>
+        /// <param name="VersionId">A version identification.</param>
+        public static Boolean IsNotNullOrEmpty(this Version_Id? VersionId)
+            => VersionId.HasValue && VersionId.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
     /// The unique identification of a version.
     /// </summary>
     public readonly struct Version_Id : IId<Version_Id>
     {
 
         #region Data
-
-        // CiString(3)
 
         /// <summary>
         /// The internal identification.
@@ -46,11 +65,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this version identification is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
             => InternalId.IsNullOrEmpty();
 
+        /// <summary>
+        /// Indicates whether this version identification is NOT null or empty.
+        /// </summary>
         public Boolean IsNotNullOrEmpty
             => InternalId.IsNotNullOrEmpty();
 
@@ -58,20 +80,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The length of the version identification.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new version identification based on the given string.
+        /// Create a new version identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the version identification.</param>
-        private Version_Id(String String)
+        /// <param name="Text">The text representation of a version identification.</param>
+        private Version_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
@@ -80,19 +101,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a version identification.
+        /// Parse the given text as a version identification.
         /// </summary>
         /// <param name="Text">A text representation of a version identification.</param>
         public static Version_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out Version_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var versionId))
+                return versionId;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a version identification must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a version identification is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a version identification: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -107,8 +126,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Version_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Version_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var versionId))
+                return versionId;
 
             return null;
 
@@ -126,11 +145,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out Version_Id VersionId)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    VersionId = new Version_Id(Text.Trim());
+                    VersionId = new Version_Id(Text);
                     return true;
                 }
                 catch (Exception)
@@ -151,7 +172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public Version_Id Clone
 
-            => new Version_Id(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
@@ -186,7 +207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (Version_Id VersionId1,
                                            Version_Id VersionId2)
 
-            => !(VersionId1 == VersionId2);
+            => !VersionId1.Equals(VersionId2);
 
         #endregion
 
@@ -216,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (Version_Id VersionId1,
                                            Version_Id VersionId2)
 
-            => !(VersionId1 > VersionId2);
+            => VersionId1.CompareTo(VersionId2) <= 0;
 
         #endregion
 
@@ -246,7 +267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (Version_Id VersionId1,
                                            Version_Id VersionId2)
 
-            => !(VersionId1 < VersionId2);
+            => VersionId1.CompareTo(VersionId2) >= 0;
 
         #endregion
 
@@ -257,13 +278,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version identifications.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A version identification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is Version_Id locationId
-                   ? CompareTo(locationId)
+            => Object is Version_Id versionId
+                   ? CompareTo(versionId)
                    : throw new ArgumentException("The given object is not a version identification!",
                                                  nameof(Object));
 
@@ -272,9 +293,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(VersionId)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version identifications.
         /// </summary>
-        /// <param name="VersionId">An object to compare with.</param>
+        /// <param name="VersionId">A version identification to compare with.</param>
         public Int32 CompareTo(Version_Id VersionId)
 
             => String.Compare(InternalId,
@@ -290,14 +311,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two version identifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A version identification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is Version_Id locationId &&
-                   Equals(locationId);
+            => Object is Version_Id versionId &&
+                   Equals(versionId);
 
         #endregion
 
@@ -306,8 +326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two version identifications for equality.
         /// </summary>
-        /// <param name="VersionId">An version identification to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="VersionId">A version identification to compare with.</param>
         public Boolean Equals(Version_Id VersionId)
 
             => String.Equals(InternalId,

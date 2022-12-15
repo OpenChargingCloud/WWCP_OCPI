@@ -60,12 +60,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new request correlation identification based on the given string.
+        /// Create a new request correlation identification based on the given text.
         /// </summary>
-        /// <param name="String">The string representation of the request correlation identification.</param>
-        private Correlation_Id(String String)
+        /// <param name="Text">The text representation of a request correlation identification.</param>
+        private Correlation_Id(String Text)
         {
-            this.InternalId  = String;
+            this.InternalId = Text;
         }
 
         #endregion
