@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -381,10 +381,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse ConnectorFormat           [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_format",
-                                             "connector format",
-                                             out ConnectorFormats ConnectorFormat,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_format",
+                                         "connector format",
+                                         ConnectorFormatsExtensions.TryParse,
+                                         out ConnectorFormats ConnectorFormat,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -393,10 +394,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse ConnectorPowerType        [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_power_type",
-                                             "connector power type",
-                                             out PowerTypes ConnectorPowerType,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_power_type",
+                                         "connector power type",
+                                         PowerTypesExtensions.TryParse,
+                                         out PowerTypes ConnectorPowerType,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -428,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
             catch (Exception e)
             {
-                CDRLocation       = default;
+                CDRLocation    = default;
                 ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
                 return false;
             }

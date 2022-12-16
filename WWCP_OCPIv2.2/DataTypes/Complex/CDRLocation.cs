@@ -355,10 +355,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse ConnectorFormat           [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_format",
-                                             "connector format",
-                                             out ConnectorFormats ConnectorFormat,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_format",
+                                         "connector format",
+                                         ConnectorFormatsExtensions.TryParse,
+                                         out ConnectorFormats ConnectorFormat,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -367,10 +368,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse ConnectorPowerType        [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_power_type",
-                                             "connector power type",
-                                             out PowerTypes ConnectorPowerType,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_power_type",
+                                         "connector power type",
+                                         PowerTypesExtensions.TryParse,
+                                         out PowerTypes ConnectorPowerType,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

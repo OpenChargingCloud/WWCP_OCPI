@@ -18,6 +18,7 @@
 #region Usings
 
 using System.Net.Security;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -29,7 +30,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 using cloud.charging.open.protocols.WWCP;
-using System.Security.Authentication;
 
 #endregion
 
@@ -731,10 +731,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             return JSONObject.Create(
 
-                       //new JProperty("countryCode",              CountryCode.ToString()),
-                       //new JProperty("partyId",                  PartyId.    ToString()),
-                       //new JProperty("role",                     Role.       ToString()),
-
                        new JProperty("type",                     ClientType),
 
                        Description.IsNotNullOrEmpty()
@@ -1384,12 +1380,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var versionId      = VersionId     ?? SelectedOCPIVersionId;
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
+                var remoteURL      = await GetRemoteURL(versionId,
                                                         Module_Id.Credentials);
 
-                if (remoteURL.HasValue)
+                if (!versionId.HasValue)
+                    response = new OCPIResponse<Credentials>(default,
+                                                             -1,
+                                                             "No versionId available!");
+
+                else if (!remoteURL.HasValue)
+                    response = new OCPIResponse<Credentials>(default,
+                                                             -1,
+                                                             "No remote URL available!");
+
+                else
                 {
 
                     #region Upstream HTTP request...
@@ -1435,12 +1442,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                       json => Credentials.Parse(json));
 
                 }
-
-                else
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No remote URL available!");
 
             }
 
@@ -1532,7 +1533,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                             DateTime?           Timestamp           = null,
                             CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
+                            EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1957,7 +1958,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                               DateTime?           Timestamp           = null,
                               CancellationToken?  CancellationToken   = null,
-                              EventTracking_Id    EventTrackingId     = null,
+                              EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2251,7 +2252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              MyCommonAPI.OurCountryCode,
                                                              MyCommonAPI.OurPartyId);
 
-                    #region Upstream HTTP request...
+                    #region Upstream HTTP request... meanwhile the other side will access our 'versions endpoint'!
 
                     var HTTPResponse = await new HTTPSClient(remoteURL.Value,
                                                              VirtualHostname,
@@ -2334,8 +2335,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                            RemoteAccessToken:  response.Data.Token,
                                                            RemoteVersionsURL:  response.Data.URL,
-                                                           RemoteVersionIds:   new Version_Id[] { Version_Id.Parse("2.2") },
-                                                           SelectedVersionId:  Version_Id.Parse("2.2"),
+                                                           RemoteVersionIds:   new Version_Id[] { versionId.Value },
+                                                           SelectedVersionId:  versionId.Value,
 
                                                            PartyStatus:        PartyStatus.ENABLED,
                                                            RemoteStatus:       RemoteAccessStatus.ONLINE);

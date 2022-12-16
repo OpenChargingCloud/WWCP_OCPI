@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,6 @@
  */
 
 #region Usings
-
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -62,70 +58,71 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
     public struct AccessInfo
     {
 
-        public AccessToken                  Token          { get; }
-
-        public URL?                         VersionsURL    { get; }
-
-        /// <summary>
-        /// ISO-3166 alpha-2 country code of the country this party is operating in.
-        /// </summary>
-        [Mandatory]
-        public CountryCode                  CountryCode        { get; }
-
-        /// <summary>
-        /// CPO, eMSP (or other role) ID of this party (following the ISO-15118 standard).
-        /// </summary>
-        [Mandatory]
-        public Party_Id                     PartyId            { get; }
-
-        /// <summary>
-        /// Business details of this party.
-        /// </summary>
-        [Mandatory]
-        public BusinessDetails              BusinessDetails    { get; }
+        public AccessToken       Token              { get; }
+        public AccessStatus      Status             { get; set; }
+        public URL?              VersionsURL        { get; }
+        public BusinessDetails?  BusinessDetails    { get; }
+        public CountryCode?      CountryCode        { get; }
+        public Party_Id?         PartyId            { get; }
+        
 
 
-        public AccessStatus                 Status         { get; set; }
-
-
-        public AccessInfo(AccessToken                   Token,
-                          AccessStatus                  Status,
-                          CountryCode                   CountryCode,
-                          Party_Id                      PartyId,
-                          BusinessDetails               BusinessDetails,
-                          URL?                          VersionsURL   = null)
+        public AccessInfo(AccessToken       Token,
+                          AccessStatus      Status,
+                          URL?              VersionsURL       = null,
+                          BusinessDetails?  BusinessDetails   = null,
+                          CountryCode?      CountryCode       = null,
+                          Party_Id?         PartyId           = null)
         {
 
             this.Token            = Token;
+            this.Status           = Status;
             this.VersionsURL      = VersionsURL;
+            this.BusinessDetails  = BusinessDetails;
             this.CountryCode      = CountryCode;
             this.PartyId          = PartyId;
-            this.BusinessDetails  = BusinessDetails;
-            this.Status           = Status;
 
         }
 
         public JObject ToJSON()
-        {
 
-            return JSONObject.Create(
-                       new JProperty("accesstoken",      Token.          ToString()),
-                       new JProperty("versionsURL",      VersionsURL.    ToString()),
-                       new JProperty("countryCode",      CountryCode.    ToString()),
-                       new JProperty("partyId",          PartyId.        ToString()),
-                       new JProperty("businessDetails",  BusinessDetails.ToJSON()),
-                       new JProperty("status",           Status.         ToString())
-                );
+            => JSONObject.Create(
 
-        }
+                         new JProperty("accesstoken",      Token.          ToString()),
+                         new JProperty("status",           Status.         ToString()),
 
-        public Credentials AsCredentials()
+                   VersionsURL.HasValue
+                       ? new JProperty("versionsURL",      VersionsURL.    ToString())
+                       : null,
 
-            => new Credentials(Token,
-                               VersionsURL.Value,
-                               BusinessDetails,
-                               CountryCode,
-                               PartyId);
+                   BusinessDetails is not null
+                       ? new JProperty("businessDetails",  BusinessDetails.ToJSON())
+                       : null,
+
+                   CountryCode.HasValue
+                       ? new JProperty("countryCode",      CountryCode.    ToString())
+                       : null,
+
+                   PartyId.HasValue
+                       ? new JProperty("partyId",          PartyId.        ToString())
+                       : null
+
+               );
+
+        public Credentials? AsCredentials
+
+            => VersionsURL.    HasValue    &&
+               BusinessDetails is not null &&
+               CountryCode.    HasValue    &&
+               PartyId.        HasValue
+
+                   ? new Credentials(Token,
+                                     VersionsURL.Value,
+                                     BusinessDetails,
+                                     CountryCode.Value,
+                                     PartyId.    Value)
+
+                   : null;
 
     }
 

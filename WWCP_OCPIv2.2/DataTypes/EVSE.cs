@@ -205,7 +205,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? new ParkingRestrictions[0];
             this.Images                = Images?.             Distinct() ?? new Image[0];
 
-            this.LastUpdated           = LastUpdated ?? DateTime.Now;
+            this.LastUpdated           = LastUpdated ?? Timestamp.Now;
 
             if (Connectors != null)
                 foreach (var connector in Connectors)

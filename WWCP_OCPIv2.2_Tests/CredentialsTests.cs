@@ -64,7 +64,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                new Image(
                                                    URL.Parse("http://cpo.charging.cloud/logo"),
                                                    ImageFileType.svg,
-                                                   ImageCategories.OPERATOR,
+                                                   ImageCategory.OPERATOR,
                                                    1000,
                                                    1500,
                                                    URL.Parse("http://cpo.charging.cloud/logo_small")
@@ -82,7 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                new Image(
                                                    URL.Parse("http://emsp.charging.cloud/logo"),
                                                    ImageFileType.png,
-                                                   ImageCategories.NETWORK,
+                                                   ImageCategory.NETWORK,
                                                    2000,
                                                    3000,
                                                    URL.Parse("http://emsp.charging.cloud/logo_small")
@@ -280,7 +280,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual(Roles.CPO,                                                    parsedCredentials.Roles.First().Role);
             Assert.AreEqual(URL.        Parse("https://example.com/img/logo.jpg"),        parsedCredentials.Roles.First().BusinessDetails.Logo.URL);
             Assert.AreEqual(URL.        Parse("https://example.com/img/logo_thumb.jpg"),  parsedCredentials.Roles.First().BusinessDetails.Logo.Thumbnail);
-            Assert.AreEqual(ImageCategories.OPERATOR,                                     parsedCredentials.Roles.First().BusinessDetails.Logo.Category);
+            Assert.AreEqual(ImageCategory.OPERATOR,                                     parsedCredentials.Roles.First().BusinessDetails.Logo.Category);
             Assert.AreEqual(ImageFileType.jpeg,                                           parsedCredentials.Roles.First().BusinessDetails.Logo.Type);
             Assert.AreEqual(512,                                                          parsedCredentials.Roles.First().BusinessDetails.Logo.Width);
             Assert.AreEqual(512,                                                          parsedCredentials.Roles.First().BusinessDetails.Logo.Height);

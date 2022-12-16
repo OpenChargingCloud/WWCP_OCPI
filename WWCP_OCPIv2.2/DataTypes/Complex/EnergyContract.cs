@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -29,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// An energy delivery contract.
+    /// The energy delivery contract.
     /// </summary>
     public readonly struct EnergyContract : IEquatable<EnergyContract>,
                                             IComparable<EnergyContract>,
@@ -58,8 +56,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create new energy delivery contracts for an EV driver.
         /// </summary>
-        /// <param name="SupplierName">The name of the energy supplier for this token.</param>
-        /// <param name="ContractId">The optional contract identification at the energy supplier, that belongs to the owner of this token.</param>
+        /// <param name="SupplierName">A name of the energy supplier for this token.</param>
+        /// <param name="ContractId">An optional contract identification at the energy supplier, that belongs to the owner of this token.</param>
         public EnergyContract(String             SupplierName,
                               EnergyContract_Id  ContractId)
         {
@@ -82,44 +80,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static EnergyContract Parse(JObject                                      JSON,
-                                           CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        public static EnergyContract Parse(JObject                                       JSON,
+                                           CustomJObjectParserDelegate<EnergyContract>?  CustomEnergyContractParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EnergyContract  energyContract,
-                         out String          ErrorResponse,
+                         out var energyContract,
+                         out var errorResponse,
                          CustomEnergyContractParser))
             {
                 return energyContract;
             }
 
-            throw new ArgumentException("The given JSON representation of an energy contract is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomEnergyContractParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an energy contract.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static EnergyContract Parse(String                                       Text,
-                                           CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EnergyContract  energyContract,
-                         out String          ErrorResponse,
-                         CustomEnergyContractParser))
-            {
-                return energyContract;
-            }
-
-            throw new ArgumentException("The given text representation of an energy contract is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an energy contract is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -132,38 +106,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static EnergyContract? TryParse(JObject                                         JSON,
-                                                  CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        public static EnergyContract? TryParse(JObject                                       JSON,
+                                               CustomJObjectParserDelegate<EnergyContract>?  CustomEnergyContractParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EnergyContract  energyContract,
-                         out String          ErrorResponse,
-                         CustomEnergyContractParser))
-            {
-                return energyContract;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomEnergyContractParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a energy contract.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static EnergyContract? TryParse(String                                       Text,
-                                               CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EnergyContract  energyContract,
-                         out String          ErrorResponse,
+                         out var energyContract,
+                         out var errorResponse,
                          CustomEnergyContractParser))
             {
                 return energyContract;
@@ -187,7 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject             JSON,
                                        out EnergyContract  EnergyContract,
-                                       out String          ErrorResponse)
+                                       out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out EnergyContract,
@@ -202,10 +151,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="EnergyContract">The parsed energy contract.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static Boolean TryParse(JObject                                      JSON,
-                                       out EnergyContract                           EnergyContract,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       out EnergyContract                            EnergyContract,
+                                       out String?                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyContract>?  CustomEnergyContractParser   = null)
         {
 
             try
@@ -219,7 +168,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse SupplierName      [mandatory]
+                #region Parse SupplierName    [mandatory]
 
                 if (!JSON.ParseMandatoryText("supplier_name",
                                              "energy supplier name",
@@ -231,7 +180,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ContractId        [mandatory]
+                #region Parse ContractId      [mandatory]
 
                 if (!JSON.ParseMandatory("contract_id",
                                          "energy contract identification",
@@ -259,42 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 EnergyContract  = default;
-                ErrorResponse      = "The given JSON representation of an energy contract is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out EnergyContract, out ErrorResponse, CustomEnergyContractParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an energy contract.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EnergyContract">The parsed energyContract.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomEnergyContractParser">A delegate to parse custom energy contract JSON objects.</param>
-        public static Boolean TryParse(String                                       Text,
-                                       out EnergyContract                           EnergyContract,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergyContract>  CustomEnergyContractParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EnergyContract,
-                                out ErrorResponse,
-                                CustomEnergyContractParser);
-
-            }
-            catch (Exception e)
-            {
-                EnergyContract  = default;
-                ErrorResponse   = "The given text representation of an energy contract is invalid: " + e.Message;
+                ErrorResponse   = "The given JSON representation of an energy contract is invalid: " + e.Message;
                 return false;
             }
 
@@ -308,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyContract> CustomEnergyContractSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyContract>? CustomEnergyContractSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -356,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (EnergyContract EnergyContract1,
                                            EnergyContract EnergyContract2)
 
-            => !(EnergyContract1 == EnergyContract2);
+            => !EnergyContract1.Equals(EnergyContract2);
 
         #endregion
 
@@ -386,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (EnergyContract EnergyContract1,
                                            EnergyContract EnergyContract2)
 
-            => !(EnergyContract1 > EnergyContract2);
+            => EnergyContract1.CompareTo(EnergyContract2) <= 0;
 
         #endregion
 
@@ -416,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (EnergyContract EnergyContract1,
                                            EnergyContract EnergyContract2)
 
-            => !(EnergyContract1 < EnergyContract2);
+            => EnergyContract1.CompareTo(EnergyContract2) >= 0;
 
         #endregion
 
@@ -427,10 +341,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy delivery contracts.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An energy delivery contract to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is EnergyContract energyContract
                    ? CompareTo(energyContract)
@@ -442,16 +356,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(EnergyContract)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy delivery contracts.
         /// </summary>
-        /// <param name="EnergyContract">An object to compare with.</param>
+        /// <param name="EnergyContract">An energy delivery contract to compare with.</param>
         public Int32 CompareTo(EnergyContract EnergyContract)
         {
 
             var c = SupplierName.CompareTo(EnergyContract.SupplierName);
 
             if (c == 0)
-                c = ContractId.CompareTo(EnergyContract.ContractId);
+                c = ContractId.  CompareTo(EnergyContract.ContractId);
 
             return c;
 
@@ -466,11 +380,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy delivery contracts for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An energy delivery contract to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is EnergyContract energyContract &&
                    Equals(energyContract);
@@ -483,7 +396,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two energy delivery contracts for equality.
         /// </summary>
         /// <param name="EnergyContract">An energy delivery contract to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(EnergyContract EnergyContract)
 
             => SupplierName.Equals(EnergyContract.SupplierName) &&
@@ -519,8 +431,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(SupplierName,
-                             " (", ContractId, ")");
+            => String.Concat(
+
+                   SupplierName,
+                   " (",
+                   ContractId,
+                   ")"
+
+               );
 
         #endregion
 

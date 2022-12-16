@@ -32,6 +32,7 @@ using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
+using System.Security.Authentication;
 
 #endregion
 
@@ -830,9 +831,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region Properties
 
         /// <summary>
+        /// EMSP client event counters.
+        /// </summary>
+        public new EMSPCounters  Counters      { get; }
+
+
+        /// <summary>
         /// The EMSP client (HTTP client) logger.
         /// </summary>
-        public new Logger  HTTPLogger    { get; }
+        public new Logger        HTTPLogger    { get; }
 
         #endregion
 
@@ -1300,24 +1307,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public EMSPClient(URL                                  RemoteVersionsURL,
-                          AccessToken                          AccessToken,
-                          CommonAPI                            MyCommonAPI,
-                          HTTPHostname?                        VirtualHostname              = null,
-                          String                               Description                  = null,
-                          RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
-                          X509Certificate                      ClientCert                   = null,
-                          String                               HTTPUserAgent                = null,
-                          TimeSpan?                            RequestTimeout               = null,
-                          TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
-                          UInt16?                              MaxNumberOfRetries           = null,
-                          Boolean                              AccessTokenBase64Encoding    = true,
+        public EMSPClient(URL                                   RemoteVersionsURL,
+                          AccessToken                           AccessToken,
+                          CommonAPI                             MyCommonAPI,
+                          HTTPHostname?                         VirtualHostname              = null,
+                          String?                               Description                  = null,
+                          RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                          LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                          X509Certificate?                      ClientCert                   = null,
+                          SslProtocols?                         TLSProtocol                  = null,
+                          Boolean?                              PreferIPv4                   = null,
+                          String?                               HTTPUserAgent                = null,
+                          TimeSpan?                             RequestTimeout               = null,
+                          TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                          UInt16?                               MaxNumberOfRetries           = null,
+                          Boolean                               UseHTTPPipelining            = false,
+                          HTTPClientLogger?                     HTTPLogger                   = null,
+                          Boolean                               AccessTokenBase64Encoding    = true,
 
-                          Boolean                              DisableLogging               = false,
-                          String                               LoggingPath                  = null,
-                          String                               LoggingContext               = null,
-                          LogfileCreatorDelegate               LogfileCreator               = null,
-                          DNSClient                            DNSClient                    = null)
+                          Boolean                               DisableLogging               = false,
+                          String?                               LoggingPath                  = null,
+                          String?                               LoggingContext               = null,
+                          LogfileCreatorDelegate?               LogfileCreator               = null,
+                          DNSClient?                            DNSClient                    = null)
 
             : base(RemoteVersionsURL,
                    AccessToken,
@@ -1325,11 +1337,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    VirtualHostname,
                    Description,
                    RemoteCertificateValidator,
+                   ClientCertificateSelector,
                    ClientCert,
+                   TLSProtocol,
+                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   UseHTTPPipelining,
+                   HTTPLogger,
                    AccessTokenBase64Encoding,
 
                    DisableLogging,
@@ -1340,8 +1357,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            this.HTTPLogger = new Logger(this, LoggingPath);
-            base.HTTPLogger = HTTPLogger;
+            this.Counters    = new EMSPCounters();
+
+            base.HTTPLogger  = DisableLogging == false
+                                   ? new Logger(this,
+                                                LoggingPath,
+                                                LoggingContext,
+                                                LogfileCreator)
+                                   : null;
 
         }
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -240,10 +240,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse TokenType         [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("type",
-                                             "token type",
-                                             out TokenTypes TokenType,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("type",
+                                         "token type",
+                                         TokenTypesExtensions.TryParse,
+                                         out TokenTypes TokenType,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

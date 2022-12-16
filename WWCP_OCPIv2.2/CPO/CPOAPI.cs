@@ -3378,7 +3378,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = addOrUpdateResult.Data.SHA256Hash
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -3470,7 +3470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedToken.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedToken.PatchedData.SHA256Hash
+                                                               ETag                       = patchedToken.PatchedData.ETag
                                                            }
                                                        };
 

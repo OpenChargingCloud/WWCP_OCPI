@@ -22,6 +22,7 @@ using System.Threading;
 using System.Net.Security;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
@@ -664,24 +665,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LoggingContext">An optional context for logging.</param>
         /// <param name="LogfileCreator">A delegate to create a log file from the given context and log file name.</param>
         /// <param name="DNSClient">The DNS client to use.</param>
-        public CPOClient(URL                                  RemoteVersionsURL,
-                         AccessToken                          AccessToken,
-                         CommonAPI                            MyCommonAPI,
-                         HTTPHostname?                        VirtualHostname              = null,
-                         String                               Description                  = null,
-                         RemoteCertificateValidationCallback  RemoteCertificateValidator   = null,
-                         X509Certificate                      ClientCert                   = null,
-                         String                               HTTPUserAgent                = null,
-                         TimeSpan?                            RequestTimeout               = null,
-                         TransmissionRetryDelayDelegate       TransmissionRetryDelay       = null,
-                         UInt16?                              MaxNumberOfRetries           = null,
-                         Boolean                              AccessTokenBase64Encoding    = true,
+        public CPOClient(URL                                   RemoteVersionsURL,
+                         AccessToken                           AccessToken,
+                         CommonAPI                             MyCommonAPI,
+                         HTTPHostname?                         VirtualHostname              = null,
+                         String?                               Description                  = null,
+                         RemoteCertificateValidationCallback?  RemoteCertificateValidator   = null,
+                         LocalCertificateSelectionCallback?    ClientCertificateSelector    = null,
+                         X509Certificate?                      ClientCert                   = null,
+                         SslProtocols?                         TLSProtocol                  = null,
+                         Boolean?                              PreferIPv4                   = null,
+                         String?                               HTTPUserAgent                = null,
+                         TimeSpan?                             RequestTimeout               = null,
+                         TransmissionRetryDelayDelegate?       TransmissionRetryDelay       = null,
+                         UInt16?                               MaxNumberOfRetries           = null,
+                         Boolean                               UseHTTPPipelining            = false,
+                         HTTPClientLogger?                     HTTPLogger                   = null,
+                         Boolean                               AccessTokenBase64Encoding    = true,
 
-                         Boolean                              DisableLogging               = false,
-                         String                               LoggingPath                  = null,
-                         String                               LoggingContext               = null,
-                         LogfileCreatorDelegate               LogfileCreator               = null,
-                         DNSClient                            DNSClient                    = null)
+                         Boolean                               DisableLogging               = false,
+                         String?                               LoggingPath                  = null,
+                         String?                               LoggingContext               = null,
+                         LogfileCreatorDelegate?               LogfileCreator               = null,
+                         DNSClient?                            DNSClient                    = null)
 
             : base(RemoteVersionsURL,
                    AccessToken,
@@ -689,11 +695,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                    VirtualHostname,
                    Description,
                    RemoteCertificateValidator,
+                   ClientCertificateSelector,
                    ClientCert,
+                   TLSProtocol,
+                   PreferIPv4,
                    HTTPUserAgent,
                    RequestTimeout,
                    TransmissionRetryDelay,
                    MaxNumberOfRetries,
+                   UseHTTPPipelining,
+                   HTTPLogger,
                    AccessTokenBase64Encoding,
 
                    DisableLogging,
@@ -742,7 +753,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
@@ -939,7 +950,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1142,7 +1153,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                           DateTime?           Timestamp           = null,
                           CancellationToken?  CancellationToken   = null,
-                          EventTracking_Id    EventTrackingId     = null,
+                          EventTracking_Id?   EventTrackingId     = null,
                           TimeSpan?           RequestTimeout      = null)
 
         {
@@ -4879,7 +4890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
-                      EventTracking_Id    EventTrackingId     = null,
+                      EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
         {
@@ -5088,7 +5099,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
-                      EventTracking_Id    EventTrackingId     = null,
+                      EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
         {

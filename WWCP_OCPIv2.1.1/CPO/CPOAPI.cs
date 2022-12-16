@@ -27,6 +27,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 //using social.OpenData.UsersAPI;
 
@@ -1580,7 +1581,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetToken(CountryCode.Value, PartyId.Value, TokenId.Value, out TokenStatus) &&
+            if (!CPOAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) &&
                 FailOnMissingToken)
             {
 
@@ -3079,7 +3080,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters              = Request.GetDateAndPaginationFilters();
 
-                                        var allTokens            = CommonAPI.GetTokens(CountryCode, PartyId);
+                                        var allTokens            = CommonAPI.GetTokens();
 
                                         var allTokensCount       = allTokens.Count();
 
@@ -3155,8 +3156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        CommonAPI.RemoveAllTokens(CountryCode.Value,
-                                                                  PartyId.    Value);
+                                        CommonAPI.RemoveAllTokens();
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -3291,16 +3291,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             return OCPIResponseBuilder;
 
                                         if (!Token.TryParse(TokenJSON,
-                                                            out Token   newOrUpdatedToken,
-                                                            out String  ErrorResponse,
-                                                            CountryCode,
-                                                            PartyId,
+                                                            out var newOrUpdatedToken,
+                                                            out var errorResponse,
                                                             TokenId))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2001,
-                                                   StatusMessage        = "Could not parse the given token JSON: " + ErrorResponse,
+                                                   StatusMessage        = "Could not parse the given token JSON: " + errorResponse,
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -3339,9 +3337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        var wasCreated = CommonAPI.TokenExists(newOrUpdatedToken.CountryCode,
-                                                                               newOrUpdatedToken.PartyId,
-                                                                               newOrUpdatedToken.Id);
+                                        var wasCreated = CommonAPI.TokenExists(newOrUpdatedToken.Id);
 
                                         //ToDo: What exactly to do with this information?
                                         var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
@@ -3349,6 +3345,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
                                                                                                  AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
+
+                                        
 
                                         if (addOrUpdateResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {
@@ -3362,7 +3360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = addOrUpdateResult.Data.SHA256Hash
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -3453,7 +3451,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedToken.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedToken.PatchedData.SHA256Hash
+                                                               ETag                       = patchedToken.PatchedData.ETag
                                                            }
                                                        };
 

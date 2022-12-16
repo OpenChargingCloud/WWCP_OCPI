@@ -241,10 +241,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse TokenType         [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("type",
-                                             "token type",
-                                             out TokenTypes TokenType,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("type",
+                                         "token type",
+                                         TokenTypesExtensions.TryParse,
+                                         out TokenTypes TokenType,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

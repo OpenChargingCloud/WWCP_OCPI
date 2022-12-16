@@ -177,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.TariffIds              = TariffIds?.Distinct() ?? new Tariff_Id[0];
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
-            this.LastUpdated            = LastUpdated ?? DateTime.Now;
+            this.LastUpdated            = LastUpdated ?? Timestamp.Now;
 
             CalcSHA256Hash();
 
@@ -356,10 +356,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Format              [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("format",
-                                             "connector format",
-                                             out ConnectorFormats Format,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("format",
+                                         "connector format",
+                                         ConnectorFormatsExtensions.TryParse,
+                                         out ConnectorFormats Format,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -368,10 +369,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PowerType           [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("power_type",
-                                             "power type",
-                                             out PowerTypes PowerType,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("power_type",
+                                         "power type",
+                                         PowerTypesExtensions.TryParse,
+                                         out PowerTypes PowerType,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

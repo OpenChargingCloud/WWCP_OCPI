@@ -339,7 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Credit                   = Credit;
             this.CreditReferenceId        = CreditReferenceId;
 
-            this.LastUpdated              = LastUpdated           ?? DateTime.Now;
+            this.LastUpdated              = LastUpdated           ?? Timestamp.Now;
 
             CalcSHA256Hash();
 

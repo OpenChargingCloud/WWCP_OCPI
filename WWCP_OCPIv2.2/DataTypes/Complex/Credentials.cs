@@ -369,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => Object is Credentials credentials
                    ? CompareTo(credentials)
-                   : throw new ArgumentException("The given object is not a credential!",
+                   : throw new ArgumentException("The given object is not a credentials object!",
                                                  nameof(Object));
 
         #endregion
@@ -389,7 +389,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var c = Token.CompareTo(Credentials.Token);
 
             if (c == 0)
-                c = URL.CompareTo(Credentials.URL);
+                c = URL.  CompareTo(Credentials.URL);
+
+            //ToDo: Compare credentials roles!
 
             return c;
 

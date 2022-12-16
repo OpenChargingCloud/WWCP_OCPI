@@ -115,7 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 new Image(
                                     URL.Parse("http://example.com/pinguine.jpg"),
                                     ImageFileType.jpeg,
-                                    ImageCategories.OPERATOR,
+                                    ImageCategory.OPERATOR,
                                     100,
                                     150,
                                     URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -123,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 new Image(
                                     URL.Parse("http://example.com/wellensittiche.jpg"),
                                     ImageFileType.png,
-                                    ImageCategories.ENTRANCE,
+                                    ImageCategory.ENTRANCE,
                                     200,
                                     300,
                                     URL.Parse("http://example.com/kleine_wellensittiche.jpg")

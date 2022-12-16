@@ -2027,10 +2027,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetToken(Request.ToCountryCode ?? EMSPAPI.DefaultCountryCode,
-                                               Request.ToPartyId     ?? EMSPAPI.DefaultPartyId,
-                                               TokenId.Value,
-                                               out TokenStatus) &&
+            if (!EMSPAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) &&
                 FailOnMissingToken)
             {
 
@@ -4664,7 +4661,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = Connector.LastUpdated.ToIso8601(),
-                                                       ETag                       = Connector.SHA256Hash
+                                                       ETag                       = Connector.ETag
                                                    }
                                             });
 
@@ -4764,7 +4761,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newOrUpdatedConnector.LastUpdated.ToIso8601(),
-                                                           ETag                       = newOrUpdatedConnector.SHA256Hash
+                                                           ETag                       = newOrUpdatedConnector.ETag
                                                        }
                                                    };
 
@@ -4855,7 +4852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedConnector.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedConnector.PatchedData.SHA256Hash
+                                                               ETag                       = patchedConnector.PatchedData.ETag
                                                            }
                                                        };
 
@@ -6748,10 +6745,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                             #region Check existing token
 
-                                            if (!CommonAPI.TryGetToken(Request.ToCountryCode ?? DefaultCountryCode,
-                                                                       Request.ToPartyId     ?? DefaultPartyId,
-                                                                       TokenId.Value,
-                                                                       out TokenStatus _tokenStatus) ||
+                                            if (!CommonAPI.TryGetToken(TokenId.Value, out var _tokenStatus) ||
                                                 (_tokenStatus.Token.Type != requestedTokenType))
                                             {
 
@@ -6925,11 +6919,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             authorizationInfo = new AuthorizationInfo(
                                                                       AllowedTypes.BLOCKED,
                                                                       new Token(
-                                                                          CountryCode.Parse("DE"),
-                                                                          Party_Id.Parse("XXX"),
                                                                           TokenId.Value,
                                                                           requestedTokenType,
-                                                                          Contract_Id.Parse("DE-XXX-" + TokenId.ToString()),
+                                                                          Auth_Id.Parse("DE-XXX-" + TokenId.ToString()),
                                                                           "Error!",
                                                                           false,
                                                                           WhitelistTypes.NEVER

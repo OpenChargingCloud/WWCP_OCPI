@@ -212,15 +212,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Type            [optional]
 
-                if (JSON.ParseOptionalEnum("type",
-                                           "type",
-                                           out TokenTypes? Type,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("type",
+                                       "type",
+                                       TokenTypesExtensions.TryParse,
+                                       out TokenTypes? Type,
+                                       out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion

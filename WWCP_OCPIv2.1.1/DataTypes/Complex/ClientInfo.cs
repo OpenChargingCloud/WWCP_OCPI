@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -71,7 +71,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CountryCode">Country code of the country this party is operating in, as used in the credentials exchange.</param>
         /// <param name="PartyId">CPO or eMSP ID of this party (following the 15118 ISO standard), as used in the credentials exchange.</param>
-        /// <param name="Role">The role of the connected party.</param>
         /// <param name="Status">Status of the connection to the party.</param>
         /// <param name="LastUpdated">Optional timestamp when this client info was last updated.</param>
         public ClientInfo(CountryCode       CountryCode,
@@ -551,9 +550,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return CountryCode.GetHashCode() * 11 ^
-                       PartyId.    GetHashCode() *  7 ^
-                       Status.     GetHashCode() *  3 ^
+                return CountryCode.GetHashCode() * 7 ^
+                       PartyId.    GetHashCode() * 5 ^
+                       Status.     GetHashCode() * 3 ^
                        LastUpdated.GetHashCode();
 
             }

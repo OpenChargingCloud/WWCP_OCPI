@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The business details.
+    /// This class references business details.
     /// </summary>
     public class BusinessDetails : IEquatable<BusinessDetails>,
                                    IComparable<BusinessDetails>,
@@ -38,20 +38,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Name of the operator.
-        /// [max 100]
+        /// The name of the operator.
         /// </summary>
         [Mandatory]
         public String  Name       { get; }
 
         /// <summary>
-        /// Optinal link to the operator's website.
+        /// The optional link to the operator's website.
         /// </summary>
         [Optional]
         public URL?    Website    { get; }
 
         /// <summary>
-        /// Optinal image link to the operator's logo.
+        /// The optional image link to the operator's logo.
         /// </summary>
         [Optional]
         public Image?  Logo       { get; }
@@ -63,9 +62,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create new business details.
         /// </summary>
-        /// <param name="Name">Name of the operator.</param>
-        /// <param name="Website">Optinal link to the operator's website.</param>
-        /// <param name="Logo">Optinal image link to the operator's logo.</param>
+        /// <param name="Name">The name of the operator.</param>
+        /// <param name="Website">An optional link to the operator's website.</param>
+        /// <param name="Logo">An optional image link to the operator's logo.</param>
         public BusinessDetails(String  Name,
                                URL?    Website   = null,
                                Image?  Logo      = null)
@@ -102,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 return businessDetails!;
             }
 
-            throw new ArgumentException("The given JSON representation of a business detail is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of business details is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -217,26 +216,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomBusinessDetailsSerializer = null)
+        #region ToJSON(CustomBusinessDetailsSerializer = null, CustomImageSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom images.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<BusinessDetails>?  CustomBusinessDetailsSerializer   = null,
                               CustomJObjectSerializerDelegate<Image>?            CustomImageSerializer             = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("name",            Name),
+                                 new JProperty("name",     Name),
 
                            Website.HasValue
-                               ? new JProperty("website",   Website.ToString())
+                               ? new JProperty("website",  Website.ToString())
                                : null,
 
                            Logo is not null
-                               ? new JProperty("logo",      Logo.   ToJSON(CustomImageSerializer))
+                               ? new JProperty("logo",     Logo.   ToJSON(CustomImageSerializer))
                                : null
 
                        );
@@ -303,7 +303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           BusinessDetails BusinessDetails2)
 
             => BusinessDetails1 is null
-                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business details must not be null!")
+                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business detail must not be null!")
                    : BusinessDetails1.CompareTo(BusinessDetails2) < 0;
 
         #endregion
@@ -335,7 +335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           BusinessDetails BusinessDetails2)
 
             => BusinessDetails1 is null
-                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business details must not be null!")
+                   ? throw new ArgumentNullException(nameof(BusinessDetails1), "The given business detail must not be null!")
                    : BusinessDetails1.CompareTo(BusinessDetails2) > 0;
 
         #endregion
@@ -369,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Object is BusinessDetails businessDetails
                    ? CompareTo(businessDetails)
-                   : throw new ArgumentException("The given object is not a business detail!",
+                   : throw new ArgumentException("The given object is not a business details object!",
                                                  nameof(Object));
 
         #endregion

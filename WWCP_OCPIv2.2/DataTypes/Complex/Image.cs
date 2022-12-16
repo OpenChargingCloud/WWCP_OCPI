@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -40,22 +38,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// URL from where the image data can be fetched through a web browser (about 512 pixels).
+        /// The URL from where the image data can be fetched.
         /// </summary>
         [Mandatory]
         public URL              URL          { get; }
 
         /// <summary>
-        /// Image type like: gif, jpeg, png, svg.
+        /// The image type like: gif, jpeg, png, svg.
         /// </summary>
         [Mandatory]
         public ImageFileType    Type         { get; }
 
         /// <summary>
-        /// Describes what the image is used for.
+        /// The description for what the image can be used for.
         /// </summary>
         [Mandatory]
-        public ImageCategories  Category     { get; }
+        public ImageCategory    Category     { get; }
 
         /// <summary>
         /// The optional width of the full scale image.
@@ -70,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public UInt32?          Height       { get; }
 
         /// <summary>
-        /// An optional URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).
+        /// The optional URL from where a thumbnail of the image can be fetched.
         /// </summary>
         [Optional]
         public URL?             Thumbnail    { get; }
@@ -82,28 +80,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new image.
         /// </summary>
-        /// <param name="URL">URL from where the image data can be fetched through a web browser (about 512 pixels).</param>
-        /// <param name="Type">Image type like: gif, jpeg, png, svg.</param>
-        /// <param name="Category">Describes what the image is used for.</param>
-        /// <param name="Width">The optional width of the full scale image.</param>
-        /// <param name="Height">The optional height of the full scale image.</param>
-        /// <param name="Thumbnail">An optional URL from where a thumbnail of the image can be fetched through a webbrowser (about 128 pixels).</param>
-        public Image(URL              URL,
-                     ImageFileType    Type,
-                     ImageCategories  Category,
-
-                     UInt32?          Width       = null,
-                     UInt32?          Height      = null,
-                     URL?             Thumbnail   = null)
+        /// <param name="URL">An URL from where the image data can be fetched.</param>
+        /// <param name="Type">An image type like: gif, jpeg, png, svg.</param>
+        /// <param name="Category">An description for what the image can be used for.</param>
+        /// <param name="Width">An optional width of the full scale image.</param>
+        /// <param name="Height">An optional height of the full scale image.</param>
+        /// <param name="Thumbnail">An optional URL from where a thumbnail of the image can be fetched.</param>
+        public Image(URL            URL,
+                     ImageFileType  Type,
+                     ImageCategory  Category,
+                     UInt32?        Width       = null,
+                     UInt32?        Height      = null,
+                     URL?           Thumbnail   = null)
         {
-
-            if (URL.IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(URL), "The given URL of the image must not be null or empty!");
 
             this.URL        = URL;
             this.Type       = Type;
             this.Category   = Category;
-
             this.Width      = Width;
             this.Height     = Height;
             this.Thumbnail  = Thumbnail;
@@ -120,44 +113,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
-        public static Image Parse(JObject                             JSON,
-                                  CustomJObjectParserDelegate<Image>  CustomImageParser   = null)
+        public static Image Parse(JObject                              JSON,
+                                  CustomJObjectParserDelegate<Image>?  CustomImageParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Image  additionalGeoLocation,
-                         out String ErrorResponse,
+                         out var additionalGeoLocation,
+                         out var errorResponse,
                          CustomImageParser))
             {
-                return additionalGeoLocation;
+                return additionalGeoLocation!;
             }
 
-            throw new ArgumentException("The given JSON representation of an image is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomImageParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an image.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
-        public static Image Parse(String                                        Text,
-                                            CustomJObjectParserDelegate<Image>  CustomImageParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Image  additionalGeoLocation,
-                         out String ErrorResponse,
-                         CustomImageParser))
-            {
-                return additionalGeoLocation;
-            }
-
-            throw new ArgumentException("The given text representation of an image is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an image is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -173,9 +142,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Image">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out Image   Image,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out Image?   Image,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Image,
@@ -190,10 +159,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Image">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
-        public static Boolean TryParse(JObject                             JSON,
-                                       out Image                           Image,
-                                       out String                          ErrorResponse,
-                                       CustomJObjectParserDelegate<Image>  CustomImageParser)
+        public static Boolean TryParse(JObject                              JSON,
+                                       out Image?                           Image,
+                                       out String?                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Image>?  CustomImageParser)
         {
 
             try
@@ -222,10 +191,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Category    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("category",
-                                             "image category",
-                                             out ImageCategories Category,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("category",
+                                         "image category",
+                                         ImageCategory.TryParse,
+                                         out ImageCategory Category,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -252,10 +222,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out UInt32? Width,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -267,10 +235,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out UInt32? Height,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -283,10 +249,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out URL? Thumbnail,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -318,41 +282,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out Image, out ErrorResponse, CustomImageParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an image.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Image">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomImageParser">A delegate to parse custom images JSON objects.</param>
-        public static Boolean TryParse(String                              Text,
-                                       out Image                           Image,
-                                       out String                          ErrorResponse,
-                                       CustomJObjectParserDelegate<Image>  CustomImageParser)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Image,
-                                out ErrorResponse,
-                                CustomImageParser);
-
-            }
-            catch (Exception e)
-            {
-                Image = default;
-                ErrorResponse  = "The given text representation of an image is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomImageSerializer = null)
 
         /// <summary>
@@ -365,13 +294,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             var JSON = JSONObject.Create(
 
                            new JProperty("url",                 URL.            ToString()),
+                           new JProperty("category",            Category.       ToString()),
+                           new JProperty("type",                Type.           ToString()),
 
                            Thumbnail.HasValue
                                ? new JProperty("thumbnail",     Thumbnail.Value.ToString())
                                : null,
-
-                           new JProperty("category",            Category.       ToString()),
-                           new JProperty("type",                Type.           ToString()),
 
                            Width.HasValue
                                ? new JProperty("width",         Width. Value)
@@ -504,13 +432,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two images.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An image to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is Image chargingPeriod
-                   ? CompareTo(chargingPeriod)
+            => Object is Image image
+                   ? CompareTo(image)
                    : throw new ArgumentException("The given object is not an image!",
                                                  nameof(Object));
 
@@ -519,10 +447,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Image)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two images.
         /// </summary>
-        /// <param name="Image">An object to compare with.</param>
-        public Int32 CompareTo(Image Image)
+        /// <param name="Image">An image to compare with.</param>
+        public Int32 CompareTo(Image? Image)
         {
 
             if (Image is null)
@@ -538,18 +466,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 c = Category.CompareTo(Image.Category);
 
             if (c == 0)
+                c = Thumbnail.HasValue && Image.Thumbnail.HasValue
+                        ? Thumbnail.Value.CompareTo(Image.Thumbnail.Value)
+                        : 0;
+
+            if (c == 0)
                 c = Width. HasValue && Image.Width. HasValue
-                        ? Width. Value.CompareTo(Image.Width. Value)
+                        ? Width.    Value.CompareTo(Image.Width.    Value)
                         : 0;
 
             if (c == 0)
                 c = Height.HasValue && Image.Height.HasValue
-                        ? Height.Value.CompareTo(Image.Height.Value)
-                        : 0;
-
-            if (c == 0)
-                c = !Thumbnail.HasValue && !Image.Thumbnail.HasValue
-                        ? Thumbnail.Value.CompareTo(Image.Thumbnail.Value)
+                        ? Height.   Value.CompareTo(Image.Height.   Value)
                         : 0;
 
             return c;
@@ -565,11 +493,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two images for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An image to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Image Image &&
                    Equals(Image);
@@ -581,24 +508,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two images for equality.
         /// </summary>
-        /// <param name="Image">A image to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Image Image)
+        /// <param name="Image">An image to compare with.</param>
+        public Boolean Equals(Image? Image)
 
-            => !(Image is null) &&
+            => Image is not null &&
 
-                 URL.     Equals(Image.URL)      &&
-                 Type.    Equals(Image.Type)     &&
-                 Category.Equals(Image.Category) &&
+               URL.     Equals(Image.URL)      &&
+               Type.    Equals(Image.Type)     &&
+               Category.Equals(Image.Category)  &&
 
-               ((!Width. HasValue   && !Image.Width.    HasValue) ||
-                 (Width. HasValue   &&  Image.Width.    HasValue && Width.    Value.Equals(Image.Width.    Value))) &&
+            ((!Thumbnail.HasValue && !Image.Thumbnail.HasValue) ||
+              (Thumbnail.HasValue &&  Image.Thumbnail.HasValue && Thumbnail.Value.Equals(Image.Thumbnail.Value))) &&
 
-               ((!Height.HasValue   && !Image.Height.   HasValue) ||
-                 (Height.HasValue   &&  Image.Height.   HasValue && Height.   Value.Equals(Image.Height.   Value))) &&
+            ((!Width.    HasValue && !Image.Width.    HasValue) ||
+              (Width.    HasValue &&  Image.Width.    HasValue && Width.    Value.Equals(Image.Width.    Value))) &&
 
-              ((!Thumbnail.HasValue && !Image.Thumbnail.HasValue) ||
-                (Thumbnail.HasValue &&  Image.Thumbnail.HasValue && Thumbnail.Value.Equals(Image.Thumbnail.Value)));
+            ((!Height.   HasValue && !Image.Height.   HasValue) ||
+              (Height.   HasValue &&  Image.Height.   HasValue && Height.   Value.Equals(Image.Height.   Value)));
 
         #endregion
 
@@ -615,21 +541,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return URL.     GetHashCode() * 13 ^
-                       Type.    GetHashCode() * 11 ^
-                       Category.GetHashCode() *  7 ^
+                return URL.       GetHashCode()       * 13 ^
+                       Type.      GetHashCode()       * 11 ^
+                       Category.  GetHashCode()       *  7 ^
 
-                      (Width.    HasValue
-                           ? Width. GetHashCode() * 5
-                           : 0) ^
-
-                      (Height.   HasValue
-                           ? Height.GetHashCode() * 3
-                           : 0) ^
-
-                      (Thumbnail.HasValue
-                           ? Thumbnail.GetHashCode()
-                           : 0);
+                      (Thumbnail?.GetHashCode() ?? 0) *  5 ^
+                      (Width?.    GetHashCode() ?? 0) *  3 ^
+                      (Height?.   GetHashCode() ?? 0);
 
             }
         }
@@ -643,16 +561,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(URL, "; ", Type, "; ", Category, "; ",
+            => String.Concat(
 
-                             Width.    HasValue &&
-                             Height.   HasValue
-                                 ? "; " + Width + " x " + Height + " px"
-                                 : "",
+                   URL,      "; ",
+                   Type,     "; ",
+                   Category, "; ",
 
-                             Thumbnail.HasValue
-                                 ? "; " + Thumbnail
-                                 : "");
+                   Width.    HasValue &&
+                   Height.   HasValue
+                       ? "; " + Width + " x " + Height + " px"
+                       : "",
+
+                   Thumbnail.HasValue
+                       ? "; " + Thumbnail
+                       : ""
+
+               );
 
         #endregion
 

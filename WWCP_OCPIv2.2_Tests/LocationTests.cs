@@ -138,7 +138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -157,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -169,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -181,7 +181,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -216,7 +216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -393,7 +393,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -412,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -424,7 +424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -436,7 +436,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -471,7 +471,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -620,7 +620,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -639,7 +639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -651,7 +651,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -663,7 +663,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -698,7 +698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -847,7 +847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -866,7 +866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -878,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -890,7 +890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -925,7 +925,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -1074,7 +1074,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -1093,7 +1093,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -1105,7 +1105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -1117,7 +1117,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -1152,7 +1152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -1303,7 +1303,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -1322,7 +1322,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -1334,7 +1334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -1346,7 +1346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -1381,7 +1381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -1530,7 +1530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -1549,7 +1549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -1561,7 +1561,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -1573,7 +1573,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -1608,7 +1608,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -1760,7 +1760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -1779,7 +1779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -1791,7 +1791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -1803,7 +1803,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -1838,7 +1838,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -1988,7 +1988,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -2007,7 +2007,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -2019,7 +2019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -2031,7 +2031,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -2066,7 +2066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -2215,7 +2215,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -2234,7 +2234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -2246,7 +2246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -2258,7 +2258,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -2293,7 +2293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -2442,7 +2442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -2461,7 +2461,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -2473,7 +2473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -2485,7 +2485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -2520,7 +2520,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")
@@ -2669,7 +2669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             new Image(
                                                 URL.Parse("http://example.com/pinguine.jpg"),
                                                 ImageFileType.jpeg,
-                                                ImageCategories.OPERATOR,
+                                                ImageCategory.OPERATOR,
                                                 100,
                                                 150,
                                                 URL.Parse("http://example.com/kleine_pinguine.jpg")
@@ -2688,7 +2688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/logo.svg"),
                                         ImageFileType.svg,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         1000,
                                         1500,
                                         URL.Parse("http://open.charging.cloud/logo_small.svg")
@@ -2700,7 +2700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://www.graphdefined.com/logo.png"),
                                         ImageFileType.png,
-                                        ImageCategories.OPERATOR,
+                                        ImageCategory.OPERATOR,
                                         2000,
                                         3000,
                                         URL.Parse("http://www.graphdefined.com/logo_small.png")
@@ -2712,7 +2712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://ahzf.de/logo.gif"),
                                         ImageFileType.gif,
-                                        ImageCategories.OWNER,
+                                        ImageCategory.OWNER,
                                         3000,
                                         4500,
                                         URL.Parse("http://ahzf.de/logo_small.gif")
@@ -2747,7 +2747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     new Image(
                                         URL.Parse("http://open.charging.cloud/locations/location0001.jpg"),
                                         ImageFileType.jpeg,
-                                        ImageCategories.LOCATION,
+                                        ImageCategory.LOCATION,
                                         200,
                                         400,
                                         URL.Parse("http://open.charging.cloud/locations/location0001s.jpg")

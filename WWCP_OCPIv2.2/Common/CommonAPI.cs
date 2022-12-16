@@ -5343,9 +5343,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 //var Message0 = new HTMLEMailBuilder() {
                 //    From        = _APIEMailAddress,
                 //    To          = _APIAdminEMail,
-                //    Subject     = "Open Data API '" + _ServiceName + "' restarted! at " + DateTime.Now.ToString(),
-                //    PlainText   = "Open Data API '" + _ServiceName + "' restarted! at " + DateTime.Now.ToString(),
-                //    HTMLText    = "Open Data API <b>'" + _ServiceName + "'</b> restarted! at " + DateTime.Now.ToString(),
+                //    Subject     = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
+                //    PlainText   = "Open Data API '" + _ServiceName + "' restarted! at " + Timestamp.Now.ToString(),
+                //    HTMLText    = "Open Data API <b>'" + _ServiceName + "'</b> restarted! at " + Timestamp.Now.ToString(),
                 //    Passphrase  = _APIPassphrase
                 //};
                 //
@@ -5356,7 +5356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 #endregion
 
-                //SendStarted(this, DateTime.Now);
+                //SendStarted(this, Timestamp.Now);
 
             }
 

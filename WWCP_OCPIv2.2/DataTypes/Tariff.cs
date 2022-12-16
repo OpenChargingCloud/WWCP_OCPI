@@ -213,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.End             = End;
             this.EnergyMix       = EnergyMix;
 
-            this.LastUpdated     = LastUpdated ?? DateTime.Now;
+            this.LastUpdated     = LastUpdated ?? Timestamp.Now;
 
             CalcSHA256Hash();
 

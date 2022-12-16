@@ -19,10 +19,101 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extensions methods for connector formats.
+    /// </summary>
+    public static class ConnectorFormatsExtensions
+    {
+
+        #region Parse   (Text)
+
+        /// <summary>
+        /// Parse the given text as a connector format.
+        /// </summary>
+        /// <param name="Text">A text representation of a connector format.</param>
+        public static ConnectorFormats Parse(String Text)
+        {
+
+            if (TryParse(Text, out var format))
+                return format;
+
+            return ConnectorFormats.UNKNOWN;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text)
+
+        /// <summary>
+        /// Try to parse the given text as a connector format.
+        /// </summary>
+        /// <param name="Text">A text representation of a connector format.</param>
+        public static ConnectorFormats? TryParse(String Text)
+        {
+
+            if (TryParse(Text, out var format))
+                return format;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text, out ConnectorFormat)
+
+        /// <summary>
+        /// Try to parse the given text as a connector format.
+        /// </summary>
+        /// <param name="Text">A text representation of a connector format.</param>
+        /// <param name="ConnectorFormat">The parsed connector format.</param>
+        public static Boolean TryParse(String Text, out ConnectorFormats ConnectorFormat)
+        {
+            switch (Text.Trim().ToUpper())
+            {
+
+                case "SOCKET":
+                    ConnectorFormat = ConnectorFormats.SOCKET;
+                    return true;
+
+                case "CABLE":
+                    ConnectorFormat = ConnectorFormats.CABLE;
+                    return true;
+
+                default:
+                    ConnectorFormat = ConnectorFormats.UNKNOWN;
+                    return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AsText(this ConnectorFormat)
+
+        public static String AsText(this ConnectorFormats ConnectorFormat)
+
+            => ConnectorFormat switch {
+                   ConnectorFormats.SOCKET  => "SOCKET",
+                   ConnectorFormats.CABLE   => "CABLE",
+                   _                        => "UNKNOWN"
+               };
+
+        #endregion
+
+    }
+
+
+    /// <summary>
     /// The format of the connector, whether it is a socket or a plug.
     /// </summary>
     public enum ConnectorFormats
     {
+
+        /// <summary>
+        /// Unknown connector format.
+        /// </summary>
+        UNKNOWN,
 
         /// <summary>
         /// The connector is a socket; the EV user needs to bring a fitting plug.

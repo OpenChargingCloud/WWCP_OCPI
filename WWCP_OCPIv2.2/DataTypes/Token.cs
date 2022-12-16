@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -33,8 +29,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The Token object describes the charging session and its costs,
-    /// how these costs are composed, etc.
+    /// The (authorization) token.
     /// </summary>
     public class Token : IHasId<Token_Id>,
                          IEquatable<Token>,
@@ -51,77 +46,76 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this token.
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this token.
         /// </summary>
         [Mandatory]
-        public CountryCode                  CountryCode                 { get; }
+        public CountryCode      CountryCode       { get; }
 
         /// <summary>
-        /// The Id of the CPO that 'owns' this token (following the ISO-15118 standard).
+        /// The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).
         /// </summary>
         [Mandatory]
-        public Party_Id                     PartyId                     { get; }
+        public Party_Id         PartyId           { get; }
 
         /// <summary>
-        /// Unique ID by which this Token can be identified.
+        /// The unique identification of the token.
         /// </summary>
         [Mandatory]
-        public Token_Id                     Id                          { get; }
+        public Token_Id         Id                { get; }
 
         /// <summary>
-        /// Type of the token.
+        /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenTypes                   Type                        { get; }
+        public TokenTypes       Type              { get; }
 
         /// <summary>
-        /// Uniquely identifies the EV Driver contract token within the eMSP’s platform
-        /// (and suboperator platforms). 
+        /// The unique identification of the EV driver contract token within the eMSP’s platform.
         /// </summary>
         [Mandatory]
-        public Contract_Id                  ContractId                  { get; }
+        public Contract_Id      ContractId        { get; }
 
         /// <summary>
-        /// Visual readable number/identification as printed on the Token (RFID card),
-        /// might be equal to the contract_id.
-        /// </summary>
-        [Optional]
-        public String                       VisualNumber                { get; }
-
-        /// <summary>
-        /// Issuing company, most of the times the name of the company printed on
+        /// The token issuing company, most of the times the name of the company printed on
         /// the token (RFID card), not necessarily the eMSP.
+        /// string(64)
         /// </summary>
         [Mandatory]
-        public String                       Issuer                      { get; }
+        public String           Issuer            { get; }
 
         /// <summary>
-        /// This identification groups a couple of tokens. This can be used to make two or
-        /// more tokens work as one, so that a session can be started with one token and
-        /// stopped with another, handy when a card and key-fob are given to the EV-driver.
-        /// </summary>
-        [Optional]
-        public Group_Id?                    GroupId                     { get; }
-
-        /// <summary>
-        /// Is this Token valid.
+        /// Whether this token is valid.
         /// </summary>
         [Mandatory]
-        public Boolean                      IsValid                     { get; }
+        public Boolean          IsValid           { get; }
 
         /// <summary>
         /// Indicates what type of white-listing is allowed.
         /// </summary>
         [Mandatory]
-        public WhitelistTypes               WhitelistType               { get; }
+        public WhitelistTypes   WhitelistType     { get; }
 
         /// <summary>
-        /// Optional language Code ISO 639-1. This optional field indicates the token
-        /// owner’s preferred interface language. If the language is not provided or
-        /// not supported then the CPO is free to choose its own language.
+        /// The optional visual readable number/identification as printed on the token/RFID card.
+        /// string(64)
         /// </summary>
         [Optional]
-        public Languages?                   UILanguage                  { get; }
+        public String?          VisualNumber      { get; }
+
+        /// <summary>
+        /// the optional group identification that groups a couple of tokens.
+        /// This can be used to make two or more tokens work as one, so that a session can
+        /// be started with one token and stopped with another, handy when a card and key-fob
+        /// are given to the EV-driver.
+        /// </summary>
+        [Optional]
+        public Group_Id?        GroupId           { get; }
+
+        /// <summary>
+        /// The optional ISO 639-1 language code of the token owner’s preferred interface language.
+        /// </summary>
+        [Optional]
+        public Languages?       UILanguage        { get; }
 
         /// <summary>
         /// The default charging preference. When this is provided, and a charging session
@@ -130,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// set via: SetChargingPreferences.
         /// </summary>
         [Optional]
-        public ProfileTypes?                DefaultProfile              { get; }
+        public ProfileTypes?    DefaultProfile    { get; }
 
         /// <summary>
         /// When the EVSE supports using your own energy supplier/contract, information about
@@ -138,43 +132,60 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// which energy supplier to use.
         /// </summary>
         [Optional]
-        public EnergyContract?              EnergyContract            { get; }
+        public EnergyContract?  EnergyContract    { get; }
 
         /// <summary>
         /// Timestamp when this token was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                     LastUpdated                 { get; }
+        public DateTime         LastUpdated       { get; }
 
         /// <summary>
-        /// The SHA256 hash of the JSON representation of this tokenf.
+        /// The base64 encoded SHA256 hash of the JSON representation of this token.
         /// </summary>
-        public String                       SHA256Hash                  { get; private set; }
+        public String           ETag              { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new token describing the charging session and its costs,
-        /// how these costs are composed, etc.
+        /// Create a new (authorization) token.
         /// </summary>
-        public Token(CountryCode      CountryCode,
-                     Party_Id         PartyId,
-                     Token_Id         Id,
-                     TokenTypes       Type,
-                     Contract_Id      ContractId,
-                     String           Issuer,
-                     Boolean          IsValid,
-                     WhitelistTypes   WhitelistType,
+        /// <param name="CountryCode">The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this token.</param>
+        /// <param name="PartyId">The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).</param>
+        /// <param name="Id">An unique identification of the token.</param>
+        /// <param name="Type">The type of the token.</param>
+        /// <param name="ContractId">An unique identification of the EV driver contract token within the eMSP’s platform.</param>
+        /// <param name="Issuer">An token issuing company, most of the times the name of the company printed on the token (RFID card), not necessarily the eMSP.</param>
+        /// <param name="IsValid">Whether this token is valid.</param>
+        /// <param name="WhitelistType">Indicates what type of white-listing is allowed.</param>
+        /// <param name="VisualNumber">An optional visual readable number/identification as printed on the token/RFID card.</param>
+        /// <param name="GroupId">An optional group identification that groups a couple of tokens.</param>
+        /// <param name="UILanguage">An optional ISO 639-1 language code of the token owner’s preferred interface language.</param>
+        /// <param name="DefaultProfile">The default charging preference.</param>
+        /// <param name="EnergyContract">The optional energy contract.</param>
+        /// <param name="LastUpdated">The timestamp when this token was last updated (or created).</param>
+        /// <param name="CustomTokenSerializer"></param>
+        /// <param name="CustomEnergyContractSerializer"></param>
+        public Token(CountryCode                                       CountryCode,
+                     Party_Id                                          PartyId,
+                     Token_Id                                          Id,
+                     TokenTypes                                        Type,
+                     Contract_Id                                       ContractId,
+                     String                                            Issuer,
+                     Boolean                                           IsValid,
+                     WhitelistTypes                                    WhitelistType,
 
-                     String           VisualNumber     = null,
-                     Group_Id?        GroupId          = null,
-                     Languages?       UILanguage       = null,
-                     ProfileTypes?    DefaultProfile   = null,
-                     EnergyContract?  EnergyContract   = null,
+                     String?                                           VisualNumber                     = null,
+                     Group_Id?                                         GroupId                          = null,
+                     Languages?                                        UILanguage                       = null,
+                     ProfileTypes?                                     DefaultProfile                   = null,
+                     EnergyContract?                                   EnergyContract                   = null,
 
-                     DateTime?        LastUpdated      = null)
+                     DateTime?                                         LastUpdated                      = null,
+                     CustomJObjectSerializerDelegate<Token>?           CustomTokenSerializer            = null,
+                     CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
 
         {
 
@@ -196,74 +207,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.DefaultProfile  = DefaultProfile;
             this.EnergyContract  = EnergyContract;
 
-            this.LastUpdated     = LastUpdated ?? DateTime.Now;
+            this.LastUpdated     = LastUpdated ?? Timestamp.Now;
 
-            CalcSHA256Hash();
+            this.ETag            = SHA256.Create().ComputeHash(ToJSON(CustomTokenSerializer,
+                                                                      CustomEnergyContractSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 
         #endregion
 
 
-        #region (static) Parse   (JSON, TokenIdURL = null, CustomTokenParser = null)
+        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, TokenIdURL = null, CustomTokenParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a token.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="TokenIdURL">An optional token identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
-        public static Token Parse(JObject                             JSON,
-                                  CountryCode?                        CountryCodeURL      = null,
-                                  Party_Id?                           PartyIdURL          = null,
-                                  Token_Id?                           TokenIdURL          = null,
-                                  CustomJObjectParserDelegate<Token>  CustomTokenParser   = null)
+        public static Token Parse(JObject                              JSON,
+                                  CountryCode?                         CountryCodeURL      = null,
+                                  Party_Id?                            PartyIdURL          = null,
+                                  Token_Id?                            TokenIdURL          = null,
+                                  CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Token   token,
-                         out String  ErrorResponse,
+                         out var token,
+                         out var errorResponse,
                          CountryCodeURL,
                          PartyIdURL,
                          TokenIdURL,
                          CustomTokenParser))
             {
-                return token;
+                return token!;
             }
 
-            throw new ArgumentException("The given JSON representation of a token is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, TokenIdURL = null, CustomTokenParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a token.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TokenIdURL">An optional token identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
-        public static Token Parse(String                              Text,
-                                  CountryCode?                        CountryCodeURL      = null,
-                                  Party_Id?                           PartyIdURL          = null,
-                                  Token_Id?                           TokenIdURL          = null,
-                                  CustomJObjectParserDelegate<Token>  CustomTokenParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Token   token,
-                         out String  ErrorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
-                         TokenIdURL,
-                         CustomTokenParser))
-            {
-                return token;
-            }
-
-            throw new ArgumentException("The given text representation of a token is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a token is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -279,9 +262,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Token">The parsed token.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out Token   Token,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out Token?   Token,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Token,
@@ -322,7 +305,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse CountryCode           [optional]
+                #region Parse CountryCode       [optional]
 
                 if (JSON.ParseOptional("country_code",
                                        "country code",
@@ -348,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PartyIdURL            [optional]
+                #region Parse PartyIdURL        [optional]
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
@@ -374,7 +357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Id                    [optional]
+                #region Parse Id                [optional]
 
                 if (JSON.ParseOptional("uid",
                                        "token identification",
@@ -400,19 +383,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Type                  [mandatory]
+                #region Parse Type              [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("type",
-                                             "token type",
-                                             out TokenTypes Type,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("type",
+                                         "token type",
+                                         TokenTypesExtensions.TryParse,
+                                         out TokenTypes Type,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse ContractId            [mandatory]
+                #region Parse ContractId        [mandatory]
 
                 if (!JSON.ParseMandatory("contract_id",
                                          "contract identification",
@@ -425,13 +409,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse VisualNumber          [optional]
+                #region Parse VisualNumber      [optional]
 
                 var VisualNumber = JSON.GetString("visual_number");
 
                 #endregion
 
-                #region Parse Issuer                [mandatory]
+                #region Parse Issuer            [mandatory]
 
                 if (!JSON.ParseMandatoryText("issuer",
                                              "issuer",
@@ -443,7 +427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse GroupId               [optional]
+                #region Parse GroupId           [optional]
 
                 if (JSON.ParseOptional("group_id",
                                        "group identification",
@@ -459,7 +443,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse IsValid               [mandatory]
+                #region Parse IsValid           [mandatory]
 
                 if (!JSON.ParseMandatory("valid",
                                          "token is valid",
@@ -471,19 +455,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse WhitelistType         [mandatory]
+                #region Parse WhitelistType     [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("whitelist",
-                                             "whitelist type",
-                                             out WhitelistTypes WhitelistType,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("whitelist",
+                                         "whitelist type",
+                                         WhitelistTypesExtensions.TryParse,
+                                         out WhitelistTypes WhitelistType,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse UILanguage            [optional]
+                #region Parse UILanguage        [optional]
 
                 if (JSON.ParseOptionalEnum("language",
                                            "user-interface language",
@@ -498,7 +483,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse DefaultProfile        [optional]
+                #region Parse DefaultProfile    [optional]
 
                 if (JSON.ParseOptionalEnum("default_profile_type",
                                            "user-interface language",
@@ -513,7 +498,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse EnergyContract        [optional]
+                #region Parse EnergyContract    [optional]
 
                 if (JSON.ParseOptionalJSON("energy_contract",
                                            "energy contract",
@@ -529,7 +514,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse LastUpdated           [mandatory]
+                #region Parse LastUpdated       [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -542,9 +527,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                Token = new Token(CountryCodeBody ?? CountryCodeURL.Value,
-                                  PartyIdBody     ?? PartyIdURL.Value,
-                                  TokenIdBody     ?? TokenIdURL.Value,
+                Token = new Token(CountryCodeBody ?? CountryCodeURL!.Value,
+                                  PartyIdBody     ?? PartyIdURL!.    Value,
+                                  TokenIdBody     ?? TokenIdURL!.    Value,
                                   Type,
                                   ContractId,
                                   Issuer,
@@ -576,48 +561,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out Token, out ErrorResponse, TokenIdURL = null, CustomTokenParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a token.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Token">The parsed token.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="TokenIdURL">An optional token identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
-        public static Boolean TryParse(String                              Text,
-                                       out Token                           Token,
-                                       out String                          ErrorResponse,
-                                       CountryCode?                        CountryCodeURL      = null,
-                                       Party_Id?                           PartyIdURL          = null,
-                                       Token_Id?                           TokenIdURL          = null,
-                                       CustomJObjectParserDelegate<Token>  CustomTokenParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Token,
-                                out ErrorResponse,
-                                CountryCodeURL,
-                                PartyIdURL,
-                                TokenIdURL,
-                                CustomTokenParser);
-
-            }
-            catch (Exception e)
-            {
-                Token          = null;
-                ErrorResponse  = "The given text representation of a token is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomTokenSerializer = null, CustomEnergyContractSerializer = null)
 
         /// <summary>
@@ -625,8 +568,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
         /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Token>           CustomTokenSerializer            = null,
-                              CustomJObjectSerializerDelegate<EnergyContract>  CustomEnergyContractSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Token>?           CustomTokenSerializer            = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>?  CustomEnergyContractSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
@@ -634,7 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("country_code",                CountryCode.         ToString()),
                            new JProperty("party_id",                    PartyId.             ToString()),
                            new JProperty("uid",                         Id.                  ToString()),
-                           new JProperty("type",                        Type.                ToString()),
+                           new JProperty("type",                        Type.                AsText()),
                            new JProperty("contract_id",                 ContractId.          ToString()),
 
                            VisualNumber.IsNotNullOrEmpty()
@@ -648,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            new JProperty("valid",                       IsValid),
-                           new JProperty("whitelist",                   WhitelistType.       ToString()),
+                           new JProperty("whitelist",                   WhitelistType.       AsText()),
 
                            UILanguage.HasValue
                                ? new JProperty("language",              UILanguage.          ToString())
@@ -792,35 +735,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region CalcSHA256Hash(CustomTokenSerializer = null, CustomEnergyContractSerializer = null, ...)
-
-        /// <summary>
-        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
-        /// </summary>
-        /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
-        /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Token>           CustomTokenSerializer            = null,
-                                     CustomJObjectSerializerDelegate<EnergyContract>  CustomEnergyContractSerializer   = null)
-        {
-
-            using (var SHA256 = new SHA256Managed())
-            {
-
-                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomTokenSerializer,
-                                                                         CustomEnergyContractSerializer).
-                                                                  ToString(Newtonsoft.Json.Formatting.None)
-                                                              )).
-                                                  Select(value => String.Format("{0:x2}", value)).
-                                                  Aggregate();
-
-            }
-
-        }
-
-        #endregion
-
-
         #region Operator overloading
 
         #region Operator == (Token1, Token2)
@@ -933,10 +847,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two tokens.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A token to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Token token
                    ? CompareTo(token)
@@ -948,14 +862,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Token)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two tokens.
         /// </summary>
-        /// <param name="Token">An Token to compare with.</param>
-        public Int32 CompareTo(Token Token)
+        /// <param name="Token">A token to compare with.</param>
+        public Int32 CompareTo(Token? Token)
+        {
 
-            => Token is null
-                   ? throw new ArgumentNullException(nameof(Token), "The given token must not be null!")
-                   : Id.CompareTo(Token.Id);
+            if (Token is null)
+                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+
+            var c = Id.           CompareTo(Token.Id);
+
+            if (c == 0)
+                c = Type.         CompareTo(Token.Type);
+
+            if (c == 0)
+                c = ContractId.   CompareTo(Token.ContractId);
+
+            if (c == 0)
+                c = Issuer.       CompareTo(Token.Issuer);
+
+            if (c == 0)
+                c = IsValid.      CompareTo(Token.IsValid);
+
+            if (c == 0)
+                c = WhitelistType.CompareTo(Token.WhitelistType);
+
+            if (c == 0)
+                c = LastUpdated.  CompareTo(Token.LastUpdated);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -966,11 +904,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two tokens for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A token to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Token token &&
                    Equals(token);
@@ -980,14 +917,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Token)
 
         /// <summary>
-        /// Compares two Tokens for equality.
+        /// Compares two tokens for equality.
         /// </summary>
-        /// <param name="Token">An Token to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Token Token)
+        /// <param name="Token">A token to compare with.</param>
+        public Boolean Equals(Token? Token)
 
-            => !(Token is null) &&
-                   Id.Equals(Token.Id);
+            => Token is not null &&
+
+               CountryCode.  Equals(Token.Id)            &&
+               PartyId.      Equals(Token.Id)            &&
+               Id.           Equals(Token.Id)            &&
+               Type.         Equals(Token.Type)          &&
+               ContractId.   Equals(Token.ContractId)    &&
+               Issuer.       Equals(Token.Issuer)        &&
+               IsValid.      Equals(Token.IsValid)       &&
+               WhitelistType.Equals(Token.WhitelistType) &&
+               LastUpdated.  Equals(Token.LastUpdated)   &&
+
+             ((VisualNumber   is     null &&  Token.VisualNumber   is     null) ||
+              (VisualNumber   is not null &&  Token.VisualNumber   is not null && VisualNumber.        Equals(Token.VisualNumber)))         &&
+
+            ((!GroupId.       HasValue    && !Token.GroupId.       HasValue)    ||
+              (GroupId.       HasValue    &&  Token.GroupId.       HasValue    && GroupId.       Value.Equals(Token.GroupId.Value)))        &&
+
+            ((!UILanguage.    HasValue    && !Token.UILanguage.    HasValue)    ||
+              (UILanguage.    HasValue    &&  Token.UILanguage.    HasValue    && UILanguage.    Value.Equals(Token.UILanguage.Value)))     &&
+
+            ((!DefaultProfile.HasValue    && !Token.DefaultProfile.HasValue)    ||
+              (DefaultProfile.HasValue    &&  Token.DefaultProfile.HasValue    && DefaultProfile.Value.Equals(Token.DefaultProfile.Value))) &&
+
+             ((EnergyContract is     null &&  Token.EnergyContract is     null) ||
+              (EnergyContract is not null &&  Token.EnergyContract is not null && EnergyContract.      Equals(Token.EnergyContract)));
 
         #endregion
 
@@ -999,8 +959,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
+        {
+            unchecked
+            {
 
-            => Id.GetHashCode();
+                return CountryCode.    GetHashCode()       * 31 ^
+                       PartyId.        GetHashCode()       * 29 ^
+                       Id.             GetHashCode()       * 23 ^
+                       Type.           GetHashCode()       * 19 ^
+                       ContractId.     GetHashCode()       * 17 ^
+                       Issuer.         GetHashCode()       * 23 ^
+                       IsValid.        GetHashCode()       * 19 ^
+                       WhitelistType.  GetHashCode()       * 17 ^
+                       LastUpdated.    GetHashCode()       * 13 ^
+                      (VisualNumber?.  GetHashCode() ?? 0) * 11 ^
+                      (GroupId?.       GetHashCode() ?? 0) *  7 ^
+                      (UILanguage?.    GetHashCode() ?? 0) *  5 ^
+                      (DefaultProfile?.GetHashCode() ?? 0) *  3 ^
+                      (EnergyContract?.GetHashCode() ?? 0);
+
+            }
+        }
 
         #endregion
 
@@ -1011,7 +990,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   Id,         " (",
+                   Type,       ", ",
+                   ContractId, ", ",
+                   Issuer,     ", ",
+
+                   IsValid
+                       ? "valid"
+                       : "not valid",
+
+                   ") "
+
+               );
 
         #endregion
 

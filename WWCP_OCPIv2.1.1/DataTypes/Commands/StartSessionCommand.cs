@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
+ * Copyright (c) 2015-2022 GraphDefined GmbH
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -391,8 +391,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",                          Token.                 ToJSON(CustomTokenSerializer,
-                                                                                                         CustomEnergyContractSerializer)),
+                           new JProperty("token",                          Token.                 ToJSON(CustomTokenSerializer)),
                            new JProperty("location_id",                    LocationId.            ToString()),
 
                            EVSEUId.HasValue

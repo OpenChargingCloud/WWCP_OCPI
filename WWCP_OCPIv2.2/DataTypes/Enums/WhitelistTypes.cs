@@ -19,19 +19,110 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Defines when authorization of a Token by the CPO is allowed.
+    /// Extensions methods for whitelist types.
+    /// </summary>
+    public static class WhitelistTypesExtensions
+    {
+
+        #region Parse   (Text)
+
+        /// <summary>
+        /// Parse the given text as a whitelist type.
+        /// </summary>
+        /// <param name="Text">A text representation of a whitelist type.</param>
+        public static WhitelistTypes Parse(String Text)
+        {
+
+            if (TryParse(Text, out var type))
+                return type;
+
+            return WhitelistTypes.NEVER;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text)
+
+        /// <summary>
+        /// Try to parse the given text as a whitelist type.
+        /// </summary>
+        /// <param name="Text">A text representation of a whitelist type.</param>
+        public static WhitelistTypes? TryParse(String Text)
+        {
+
+            if (TryParse(Text, out var type))
+                return type;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text, out WhitelistType)
+
+        /// <summary>
+        /// Try to parse the given text as a whitelist type.
+        /// </summary>
+        /// <param name="Text">A text representation of a whitelist type.</param>
+        /// <param name="WhitelistType">The parsed whitelist type.</param>
+        public static Boolean TryParse(String Text, out WhitelistTypes WhitelistType)
+        {
+            switch (Text.Trim().ToUpper())
+            {
+
+                case "ALWAYS":
+                    WhitelistType = WhitelistTypes.ALWAYS;
+                    return true;
+
+                case "ALLOWED":
+                    WhitelistType = WhitelistTypes.ALLOWED;
+                    return true;
+
+                case "ALLOWED_OFFLINE":
+                    WhitelistType = WhitelistTypes.ALLOWED_OFFLINE;
+                    return true;
+
+                default:
+                    WhitelistType = WhitelistTypes.NEVER;
+                    return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AsText(this WhitelistType)
+
+        public static String AsText(this WhitelistTypes WhitelistType)
+
+            => WhitelistType switch {
+                   WhitelistTypes.ALWAYS           => "ALWAYS",
+                   WhitelistTypes.ALLOWED          => "ALLOWED",
+                   WhitelistTypes.ALLOWED_OFFLINE  => "ALLOWED_OFFLINE",
+                   _                               => "NEVER"
+               };
+
+        #endregion
+
+    }
+
+
+    /// <summary>
+    /// Defines when authorization of a whitelist by the CPO is allowed.
     /// </summary>
     public enum WhitelistTypes
     {
 
         /// <summary>
         /// Token always has to be whitelisted, realtime authorization is not possible/allowed.
-        /// CPO shall always allow any use of this Token.
+        /// CPO shall always allow any use of this whitelist.
         /// </summary>
         ALWAYS,
 
         /// <summary>
-        /// It is allowed to whitelist the token, realtime authorization is also allowed.
+        /// It is allowed to whitelist the whitelist, realtime authorization is also allowed.
         /// The CPO may choose which version of authorization to use.
         /// </summary>
         ALLOWED,

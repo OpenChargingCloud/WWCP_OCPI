@@ -49,6 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
     /// <summary>
     /// The unique identification of an authentication credential.
+    /// string(36)
     /// </summary>
     public readonly struct Auth_Id : IId<Auth_Id>
     {

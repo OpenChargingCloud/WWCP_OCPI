@@ -19,6 +19,97 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
+    /// Extensions methods for token types.
+    /// </summary>
+    public static class TokenTypesExtensions
+    {
+
+        #region Parse   (Text)
+
+        /// <summary>
+        /// Parse the given text as a token type.
+        /// </summary>
+        /// <param name="Text">A text representation of a token type.</param>
+        public static TokenTypes Parse(String Text)
+        {
+
+            if (TryParse(Text, out var type))
+                return type;
+
+            return TokenTypes.OTHER;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text)
+
+        /// <summary>
+        /// Try to parse the given text as a token type.
+        /// </summary>
+        /// <param name="Text">A text representation of a token type.</param>
+        public static TokenTypes? TryParse(String Text)
+        {
+
+            if (TryParse(Text, out var type))
+                return type;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text, out TokenType)
+
+        /// <summary>
+        /// Try to parse the given text as a token type.
+        /// </summary>
+        /// <param name="Text">A text representation of a token type.</param>
+        /// <param name="TokenType">The parsed token type.</param>
+        public static Boolean TryParse(String Text, out TokenTypes TokenType)
+        {
+            switch (Text.Trim().ToUpper())
+            {
+
+                case "AD_HOC_USER":
+                    TokenType = TokenTypes.AD_HOC_USER;
+                    return true;
+
+                case "APP_USER":
+                    TokenType = TokenTypes.APP_USER;
+                    return true;
+
+                case "RFID":
+                    TokenType = TokenTypes.RFID;
+                    return true;
+
+                default:
+                    TokenType = TokenTypes.OTHER;
+                    return false;
+
+            }
+        }
+
+        #endregion
+
+        #region AsText(this TokenType)
+
+        public static String AsText(this TokenTypes TokenType)
+
+            => TokenType switch {
+                   TokenTypes.AD_HOC_USER  => "AD_HOC_USER",
+                   TokenTypes.APP_USER     => "APP_USER",
+                   TokenTypes.RFID         => "RFID",
+                   _                       => "OTHER"
+               };
+
+        #endregion
+
+    }
+
+
+    /// <summary>
     /// Token types.
     /// </summary>
     public enum TokenTypes

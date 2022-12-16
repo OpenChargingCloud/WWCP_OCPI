@@ -410,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Object is Credentials credentials
                    ? CompareTo(credentials)
-                   : throw new ArgumentException("The given object is not a credential!",
+                   : throw new ArgumentException("The given object is not a credentials object!",
                                                  nameof(Object));
 
         #endregion
@@ -427,10 +427,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (Credentials is null)
                 throw new ArgumentNullException(nameof(Credentials), "The given credential must not be null!");
 
-            var c = Token.CompareTo(Credentials.Token);
+            var c = CountryCode.    CompareTo(Credentials.CountryCode);
 
             if (c == 0)
-                c = URL.CompareTo(Credentials.URL);
+                c = PartyId.        CompareTo(Credentials.PartyId);
+
+            if (c == 0)
+                c = BusinessDetails.CompareTo(Credentials.BusinessDetails);
+
+            if (c == 0)
+                c = URL.            CompareTo(Credentials.URL);
+
+            if (c == 0)
+                c = Token.          CompareTo(Credentials.Token);
 
             return c;
 

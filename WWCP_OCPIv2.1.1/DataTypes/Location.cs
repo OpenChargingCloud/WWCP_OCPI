@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Images               = Images            ?? new Image[0];
             this.EnergyMix            = EnergyMix;
 
-            this.LastUpdated          = LastUpdated       ?? DateTime.Now;
+            this.LastUpdated          = LastUpdated       ?? Timestamp.Now;
 
             if (EVSEs != null)
                 foreach (var evse in EVSEs)

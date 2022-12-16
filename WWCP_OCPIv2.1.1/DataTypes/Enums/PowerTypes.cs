@@ -19,10 +19,106 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The power type of the connector.
+    /// Extensions methods for power types.
+    /// </summary>
+    public static class PowerTypesExtensions
+    {
+
+        #region Parse   (Text)
+
+        /// <summary>
+        /// Parse the given text as a power type.
+        /// </summary>
+        /// <param name="Text">A text representation of a power type.</param>
+        public static PowerTypes Parse(String Text)
+        {
+
+            if (TryParse(Text, out var type))
+                return type;
+
+            return PowerTypes.UNKNOWN;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text)
+
+        /// <summary>
+        /// Try to parse the given text as a power type.
+        /// </summary>
+        /// <param name="Text">A text representation of a power type.</param>
+        public static PowerTypes? TryParse(String Text)
+        {
+
+            if (TryParse(Text, out var type))
+                return type;
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region TryParse(Text, out PowerType)
+
+        /// <summary>
+        /// Try to parse the given text as a power type.
+        /// </summary>
+        /// <param name="Text">A text representation of a power type.</param>
+        /// <param name="PowerType">The parsed power type.</param>
+        public static Boolean TryParse(String Text, out PowerTypes PowerType)
+        {
+            switch (Text.Trim().ToUpper())
+            {
+
+                case "AC_1_PHASE":
+                    PowerType = PowerTypes.AC_1_PHASE;
+                    return true;
+
+                case "AC_3_PHASE":
+                    PowerType = PowerTypes.AC_3_PHASE;
+                    return true;
+
+                case "DC":
+                    PowerType = PowerTypes.DC;
+                    return true;
+
+                default:
+                    PowerType = PowerTypes.UNKNOWN;
+                    return true;
+
+            }
+        }
+
+        #endregion
+
+        #region AsText(this PowerType)
+
+        public static String AsText(this PowerTypes PowerType)
+
+            => PowerType switch {
+                   PowerTypes.AC_1_PHASE  => "AC_1_PHASE",
+                   PowerTypes.AC_3_PHASE  => "AC_3_PHASE",
+                   PowerTypes.DC          => "DC",
+                   _                      => "UNKNOWN"
+               };
+
+        #endregion
+
+    }
+
+
+    /// <summary>
+    /// The power type of the power.
     /// </summary>
     public enum PowerTypes
     {
+
+        /// <summary>
+        /// Unknown power type.
+        /// </summary>
+        UNKNOWN,
 
         /// <summary>
         /// AC single phase.

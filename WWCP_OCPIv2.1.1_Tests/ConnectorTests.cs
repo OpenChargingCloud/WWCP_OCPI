@@ -88,8 +88,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(Connector1.Standard,                  Connector2.Standard);
             Assert.AreEqual(Connector1.Format,                    Connector2.Format);
             Assert.AreEqual(Connector1.PowerType,                 Connector2.PowerType);
-            Assert.AreEqual(Connector1.MaxVoltage,                Connector2.MaxVoltage);
-            Assert.AreEqual(Connector1.MaxAmperage,               Connector2.MaxAmperage);
+            Assert.AreEqual(Connector1.Voltage,                Connector2.Voltage);
+            Assert.AreEqual(Connector1.Amperage,               Connector2.Amperage);
             Assert.AreEqual(Connector1.MaxElectricPower,          Connector2.MaxElectricPower);
             Assert.AreEqual(Connector1.TariffIds,                 Connector2.TariffIds);
             Assert.AreEqual(Connector1.TermsAndConditionsURL,     Connector2.TermsAndConditionsURL);
@@ -138,8 +138,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                           patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                                                             patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                                                              patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                                                             patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                                                              patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                                                              patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (2,                                                               patchResult.PatchedData.TariffIds.        Count());
             Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                 patchResult.PatchedData.TariffIds.        First());
@@ -188,8 +188,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual   (ConnectorTypes.TESLA_S,                          patchResult.PatchedData.Standard);
             Assert.AreEqual   (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual   (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
-            Assert.AreEqual   (400,                                             patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual   (30,                                              patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual   (400,                                             patchResult.PatchedData.Voltage);
+            Assert.AreEqual   (30,                                              patchResult.PatchedData.Amperage);
             Assert.AreEqual   (12,                                              patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual   (2,                                               patchResult.PatchedData.TariffIds.        Count());
             Assert.AreEqual   (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffIds.        First());
@@ -240,8 +240,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.CABLE,                          patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                                              patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                                             patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                                              patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (2,                                               patchResult.PatchedData.TariffIds.        Count());
             Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffIds.        First());
@@ -290,8 +290,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                                              patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                                             patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                                              patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (1,                                               patchResult.PatchedData.TariffIds.Count());
             Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0003"),                 patchResult.PatchedData.TariffIds.First());
@@ -339,8 +339,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                                              patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                                             patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                                              patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (0,                                               patchResult.PatchedData.TariffIds.Count());
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
@@ -387,8 +387,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,          patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,            patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                              patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                               patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                              patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                               patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                               patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (2,                                patchResult.PatchedData.TariffIds.        Count());
             Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),  patchResult.PatchedData.TariffIds.        First());
@@ -438,8 +438,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                               patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                                   patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                                     patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                                                                       patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                                                                        patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                                                                       patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                                                                        patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                                                                        patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (2,                                                                         patchResult.PatchedData.TariffIds.        Count());
             Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                           patchResult.PatchedData.TariffIds.        First());
@@ -489,8 +489,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                         patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                             patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                               patchResult.PatchedData.PowerType);
-            Assert.AreEqual (400,                                                                 patchResult.PatchedData.MaxVoltage);
-            Assert.AreEqual (30,                                                                  patchResult.PatchedData.MaxAmperage);
+            Assert.AreEqual (400,                                                                 patchResult.PatchedData.Voltage);
+            Assert.AreEqual (30,                                                                  patchResult.PatchedData.Amperage);
             Assert.AreEqual (12,                                                                  patchResult.PatchedData.MaxElectricPower);
             Assert.AreEqual (2,                                                                   patchResult.PatchedData.TariffIds.        Count());
             Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                     patchResult.PatchedData.TariffIds.        First());

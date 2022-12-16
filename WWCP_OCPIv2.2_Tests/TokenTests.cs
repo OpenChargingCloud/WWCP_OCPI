@@ -82,8 +82,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual("GDF012324",                     JSON["energy_contract"]["contract_id"].  Value<String>());
             Assert.AreEqual("2020-09-21T00:00:00.000Z",      JSON["last_updated"].                    Value<String>());
 
-            Assert.IsTrue(Token.TryParse(JSON, out Token Token2, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Token.TryParse(JSON, out var Token2, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(Token1.CountryCode,              Token2.CountryCode);
             Assert.AreEqual(Token1.PartyId,                  Token2.PartyId);
@@ -133,8 +133,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Token.TryParse(JSON, out Token parsedToken, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("DE"),                             parsedToken.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
@@ -186,8 +186,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Token.TryParse(JSON, out Token parsedToken, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("DE"),                             parsedToken.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
@@ -235,8 +235,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Token.TryParse(JSON, out Token parsedToken, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("DE"),                                    parsedToken.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("TNM"),                                   parsedToken.PartyId);

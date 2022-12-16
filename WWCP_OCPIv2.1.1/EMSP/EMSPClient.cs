@@ -3868,9 +3868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Token.CountryCode.ToString() +
-                                                                                                            Token.PartyId.    ToString() +
-                                                                                                            Token.Id.         ToString(),
+                                                                                     remoteURL.Value.Path + Token.Id.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
