@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -39,22 +37,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Begin of the scheduled period.
+        /// The begin of the scheduled period.
         /// </summary>
         [Mandatory]
-        public DateTime     Begin     { get; }
+        public DateTime    Begin     { get; }
 
         /// <summary>
-        /// Optional end of the scheduled period.
+        /// The optional end of the scheduled period.
         /// </summary>
         [Optional]
-        public DateTime?    End       { get; }
+        public DateTime?   End       { get; }
 
         /// <summary>
-        /// EVSE status value during the scheduled period.
+        /// The EVSE status value during the scheduled period.
         /// </summary>
         [Mandatory]
-        public StatusTypes  Status    { get; }
+        public StatusType  Status    { get; }
 
         #endregion
 
@@ -63,12 +61,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// This type is used to schedule EVSE status periods in the future.
         /// </summary>
-        /// <param name="Status">EVSE status value during the scheduled period.</param>
-        /// <param name="Begin">Begin of the scheduled period.</param>
-        /// <param name="End">Optional end of the scheduled period.</param>
-        public StatusSchedule(StatusTypes  Status,
-                              DateTime     Begin,
-                              DateTime?    End   = null)
+        /// <param name="Status">An EVSE status value during the scheduled period.</param>
+        /// <param name="Begin">The begin of the scheduled period.</param>
+        /// <param name="End">An optional end of the scheduled period.</param>
+        public StatusSchedule(StatusType  Status,
+                              DateTime    Begin,
+                              DateTime?   End   = null)
         {
 
             this.Status  = Status;
@@ -87,44 +85,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
-        public static StatusSchedule Parse(JObject                                      JSON,
-                                           CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
+        public static StatusSchedule Parse(JObject                                       JSON,
+                                           CustomJObjectParserDelegate<StatusSchedule>?  CustomStatusScheduleParser   = null)
         {
 
             if (TryParse(JSON,
-                         out StatusSchedule statusSchedule,
-                         out String         ErrorResponse,
+                         out var statusSchedule,
+                         out var errorResponse,
                          CustomStatusScheduleParser))
             {
                 return statusSchedule;
             }
 
-            throw new ArgumentException("The given JSON representation of a status schedule is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomStatusScheduleParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a status schedule.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
-        public static StatusSchedule Parse(String                                       Text,
-                                           CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out StatusSchedule statusSchedule,
-                         out String         ErrorResponse,
-                         CustomStatusScheduleParser))
-            {
-                return statusSchedule;
-            }
-
-            throw new ArgumentException("The given text representation of a status schedule is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a status schedule is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -142,7 +116,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject             JSON,
                                        out StatusSchedule  StatusSchedule,
-                                       out String          ErrorResponse)
+                                       out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out StatusSchedule,
@@ -157,10 +131,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="StatusSchedule">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
-        public static Boolean TryParse(JObject                                      JSON,
-                                       out StatusSchedule                           StatusSchedule,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       out StatusSchedule                            StatusSchedule,
+                                       out String?                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<StatusSchedule>?  CustomStatusScheduleParser   = null)
         {
 
             try
@@ -176,10 +150,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Status    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("status",
-                                             "status",
-                                             out StatusTypes Status,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("status",
+                                         "status",
+                                         StatusType.TryParse,
+                                         out StatusType Status,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -237,48 +212,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out StatusSchedule, out ErrorResponse, CustomStatusScheduleParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a status schedule.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="StatusSchedule">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomStatusScheduleParser">A delegate to parse custom status schedule JSON objects.</param>
-        public static Boolean TryParse(String                                       Text,
-                                       out StatusSchedule                           StatusSchedule,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<StatusSchedule>  CustomStatusScheduleParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out StatusSchedule,
-                                out ErrorResponse,
-                                CustomStatusScheduleParser);
-
-            }
-            catch (Exception e)
-            {
-                StatusSchedule = default;
-                ErrorResponse  = "The given text representation of a status schedule is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomStatusScheduleSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<StatusSchedule> CustomStatusScheduleSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<StatusSchedule>? CustomStatusScheduleSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -401,10 +341,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two status schedules.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A status schedule to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is StatusSchedule statusSchedule
                    ? CompareTo(statusSchedule)
@@ -416,9 +356,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(StatusSchedule)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two status schedules.
         /// </summary>
-        /// <param name="StatusSchedule">An object to compare with.</param>
+        /// <param name="StatusSchedule">A status schedule to compare with.</param>
         public Int32 CompareTo(StatusSchedule StatusSchedule)
         {
 
@@ -445,11 +385,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two status schedules for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A status schedule to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is StatusSchedule statusSchedule &&
                    Equals(statusSchedule);
@@ -462,14 +401,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two status schedules for equality.
         /// </summary>
         /// <param name="StatusSchedule">A status schedule to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(StatusSchedule StatusSchedule)
+
+            // Note: We compare ISO8601 timestamps to avoid inaccuracies!
 
             => Begin. ToIso8601().Equals(StatusSchedule.Begin.ToIso8601()) &&
                Status.            Equals(StatusSchedule.Status)            &&
 
-               ((!End.HasValue && !StatusSchedule.End.HasValue) ||
-                 (End.HasValue &&  StatusSchedule.End.HasValue && End.Value.ToIso8601().Equals(StatusSchedule.End.Value.ToIso8601())));
+            ((!End.HasValue && !StatusSchedule.End.HasValue) ||
+              (End.HasValue &&  StatusSchedule.End.HasValue && End.Value.ToIso8601().Equals(StatusSchedule.End.Value.ToIso8601())));
 
         #endregion
 
@@ -489,9 +429,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return Begin. ToIso8601().GetHashCode() * 5 ^
                        Status.            GetHashCode() * 3 ^
 
-                       (End.HasValue
-                            ? End.Value.ToIso8601().GetHashCode()
-                            : 0);
+                       End?.  ToIso8601().GetHashCode() ?? 0;
 
             }
         }
@@ -505,13 +443,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Begin,
-                             " -> ",
-                             End.HasValue
-                                 ? End.Value.ToString()
-                                 : "...",
-                             " : ",
-                             Status);
+            => String.Concat(
+
+                   Begin,
+
+                   " -> ",
+                   End?.ToString() ?? "...",
+
+                   " : ",
+                   Status
+
+               );
 
         #endregion
 

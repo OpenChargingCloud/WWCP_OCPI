@@ -2546,7 +2546,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public event OnEVSEChangedDelegate OnEVSEChanged;
 
-        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusTypes NewEVSEStatus);
+        public delegate Task OnEVSEStatusChangedDelegate(DateTime Timestamp, EVSE EVSE, StatusType NewEVSEStatus);
 
         public event OnEVSEStatusChangedDelegate OnEVSEStatusChanged;
 
@@ -2611,7 +2611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (EVSEExistedBefore)
             {
 
-                if (newOrUpdatedEVSE.Status != StatusTypes.REMOVED)
+                if (newOrUpdatedEVSE.Status != StatusType.REMOVED)
                 {
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
@@ -2737,7 +2737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (patchResult.IsSuccess)
                 {
 
-                    if (patchResult.PatchedData.Status != StatusTypes.REMOVED || KeepRemovedEVSEs(EVSE))
+                    if (patchResult.PatchedData.Status != StatusType.REMOVED || KeepRemovedEVSEs(EVSE))
                         Location.SetEVSE   (patchResult.PatchedData);
                     else
                         Location.RemoveEVSE(patchResult.PatchedData);
@@ -2748,7 +2748,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
 
 
-                    if (patchResult.PatchedData.Status != StatusTypes.REMOVED)
+                    if (patchResult.PatchedData.Status != StatusType.REMOVED)
                     {
 
                         if (IsJustAStatusChange)
@@ -2866,7 +2866,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
                 }
 
-                EVSE.SetConnector(newOrUpdatedConnector);
+                EVSE.UpdateConnector(newOrUpdatedConnector);
 
                 // Update EVSE/location timestamps!
                 var evseBuilder     = EVSE.ToBuilder();
@@ -2936,7 +2936,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (patchResult.IsSuccess)
                 {
 
-                    EVSE.SetConnector(patchResult.PatchedData);
+                    EVSE.UpdateConnector(patchResult.PatchedData);
 
                     // Update EVSE/location timestamps!
                     var evseBuilder     = EVSE.ToBuilder();

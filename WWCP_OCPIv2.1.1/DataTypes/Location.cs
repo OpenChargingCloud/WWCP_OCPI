@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -71,7 +68,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Party_Id                            PartyId                  { get; }
 
         /// <summary>
-        /// The identification of the location within the CPOs platform (and suboperator platforms). 
+        /// The identification of the location within the CPOs platform (and suboperator platforms).
+        /// This field can never be changed, modified or renamed.
         /// </summary>
         [Mandatory]
         public Location_Id                         Id                       { get; }
@@ -141,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The general type of parking at the charge point location.
         /// </summary>
         [Optional]
-        public ParkingTypes?                       ParkingType              { get; }
+        public ParkingType?                        ParkingType              { get; }
 
         /// <summary>
         /// All Electric Vehicle Supply Equipments (EVSE) present
@@ -270,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         String                              PostalCode           = null,
                         String                              State                = null,
                         IEnumerable<AdditionalGeoLocation>  RelatedLocations     = null,
-                        ParkingTypes?                       ParkingType          = null,
+                        ParkingType?                        ParkingType          = null,
                         IEnumerable<EVSE>                   EVSEs                = null,
                         IEnumerable<DisplayText>            Directions           = null,
                         BusinessDetails                     Operator             = null,
@@ -353,38 +351,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
             throw new ArgumentException("The given JSON representation of a location is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, LocationIdURL = null, CustomLocationParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an Location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Location Parse(String                                 Text,
-                                     CountryCode?                           CountryCodeURL         = null,
-                                     Party_Id?                              PartyIdURL             = null,
-                                     Location_Id?                           LocationIdURL          = null,
-                                     CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Location location,
-                         out String   ErrorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
-                         LocationIdURL,
-                         CustomLocationParser))
-            {
-                return location;
-            }
-
-            throw new ArgumentException("The given text representation of a location is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
@@ -647,10 +613,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse ParkingType           [optional]
 
-                if (JSON.ParseOptionalEnum("parking_type",
-                                           "parking type",
-                                           out ParkingTypes? ParkingType,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("parking_type",
+                                       "parking type",
+                                       OCPIv2_1_1.ParkingType.TryParse,
+                                       out ParkingType? ParkingType,
+                                       out ErrorResponse))
                 {
 
                     if (ErrorResponse is not null)
@@ -870,48 +837,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
                 Location       = default;
                 ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out Location, out ErrorResponse, LocationIdURL = null, CustomLocationParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an Location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Location">The parsed location.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(String                                 Text,
-                                       out Location                           Location,
-                                       out String                             ErrorResponse,
-                                       CountryCode?                           CountryCodeURL         = null,
-                                       Party_Id?                              PartyIdURL             = null,
-                                       Location_Id?                           LocationIdURL          = null,
-                                       CustomJObjectParserDelegate<Location>  CustomLocationParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Location,
-                                out ErrorResponse,
-                                CountryCodeURL,
-                                PartyIdURL,
-                                LocationIdURL,
-                                CustomLocationParser);
-
-            }
-            catch (Exception e)
-            {
-                Location      = null;
-                ErrorResponse  = "The given text representation of a location is invalid: " + e.Message;
                 return false;
             }
 
@@ -1784,7 +1709,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// The general type of parking at the charge point location.
             /// </summary>
-            public ParkingTypes?                   ParkingType              { get; set; }
+            public ParkingType?                    ParkingType              { get; set; }
 
             /// <summary>
             /// All Electric Vehicle Supply Equipments (EVSE) present
@@ -1896,7 +1821,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            String                              PostalCode           = null,
                            String                              State                = null,
                            IEnumerable<AdditionalGeoLocation>  RelatedLocations     = null,
-                           ParkingTypes?                       ParkingType          = null,
+                           ParkingType?                        ParkingType          = null,
                            IEnumerable<EVSE>                   EVSEs                = null,
                            IEnumerable<DisplayText>            Directions           = null,
                            BusinessDetails                     Operator             = null,

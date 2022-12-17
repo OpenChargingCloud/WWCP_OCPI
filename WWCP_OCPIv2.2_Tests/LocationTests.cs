@@ -55,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -69,15 +69,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -92,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -109,12 +109,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -310,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -324,15 +324,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -347,7 +347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -364,12 +364,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -537,7 +537,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -551,15 +551,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -574,7 +574,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -591,12 +591,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -764,7 +764,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -778,15 +778,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -801,7 +801,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -818,12 +818,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -991,7 +991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -1005,15 +1005,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1028,7 +1028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1045,12 +1045,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1220,7 +1220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -1234,15 +1234,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1257,7 +1257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1274,12 +1274,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1447,7 +1447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -1461,15 +1461,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1484,7 +1484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1501,12 +1501,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1677,7 +1677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -1691,15 +1691,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1714,7 +1714,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1731,12 +1731,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1905,7 +1905,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -1919,15 +1919,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1942,7 +1942,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -1959,12 +1959,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -2132,7 +2132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -2146,15 +2146,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -2169,7 +2169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -2186,12 +2186,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -2359,7 +2359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -2373,15 +2373,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -2396,7 +2396,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -2413,12 +2413,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -2586,7 +2586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 true,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
+                                Country.Germany,
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
                                 null,
@@ -2600,15 +2600,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -2623,7 +2623,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
@@ -2640,12 +2640,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )

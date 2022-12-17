@@ -4300,7 +4300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = EVSE.LastUpdated.ToIso8601(),
-                                                       ETag                       = EVSE.SHA256Hash
+                                                       ETag                       = EVSE.ETag
                                                    }
                                             });
 
@@ -4397,7 +4397,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newOrUpdatedEVSE.LastUpdated.ToIso8601(),
-                                                           ETag                       = newOrUpdatedEVSE.SHA256Hash
+                                                           ETag                       = newOrUpdatedEVSE.ETag
                                                        }
                                                    };
 
@@ -4485,7 +4485,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedEVSE.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedEVSE.PatchedData.SHA256Hash
+                                                               ETag                       = patchedEVSE.PatchedData.ETag
                                                            }
                                                        };
 

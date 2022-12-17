@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -34,7 +31,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// An Electric Vehicle Supply Equipment (EVSE) is the part that controls
+    /// The Electric Vehicle Supply Equipment (EVSE) is the part that controls
     /// the power supply to a single electric vehicle.
     /// </summary>
     public class EVSE : //IHasId<EVSE_Id>,
@@ -55,84 +52,89 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The parent location of this EVSE.
         /// </summary>
-        public Location                          ParentLocation             { get; internal set; }
+        public Location?                         ParentLocation             { get; internal set; }
 
         /// <summary>
-        /// Uniquely identifies the EVSE within the CPOs platform.
+        /// The unique identification of the EVSE within the CPOs platform.
+        /// For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
         public EVSE_UId                          UId                        { get; }
 
         /// <summary>
-        /// Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".
+        /// The official unique identification of the EVSE.
+        /// For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!
         /// </summary>
         [Optional]
         public EVSE_Id?                          EVSEId                     { get; }
 
         /// <summary>
-        /// Indicates the current status of the EVSE.
+        /// The current status of the EVSE.
         /// </summary>
         [Mandatory]
-        public StatusTypes                       Status                     { get; }
+        public StatusType                        Status                     { get; }
 
         /// <summary>
-        /// Indicates a planned status in the future of the EVSE.
+        /// The enumeration of planned future status of the EVSE.
         /// </summary>
         [Optional]
         public IEnumerable<StatusSchedule>       StatusSchedule             { get; }
 
         /// <summary>
-        /// Enumeration of functionalities that the EVSE is capable of.
+        /// The enumeration of functionalities that the EVSE is capable of.
         /// </summary>
         [Optional]
         public IEnumerable<CapabilityTypes>      Capabilities               { get; }
 
         /// <summary>
-        /// Enumeration of available connectors at this EVSE.
+        /// The enumeration of available connectors attached to this EVSE.
         /// </summary>
         [Mandatory]
         public IEnumerable<Connector>            Connectors                 { get; private set; }
 
         /// <summary>
-        /// The unique identifications of all connectors at this EVSE.
+        /// The enumeration of connector identifications attached to this EVSE.
         /// </summary>
         [Optional]
         public IEnumerable<Connector_Id>         ConnectorIds
-            => Connectors.SafeSelect(connector => connector.Id);
+            => Connectors.Select(connector => connector.Id);
 
         /// <summary>
-        /// Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.  // 4
+        /// The optional floor level on which the EVSE is located (in garage buildings)
+        /// in the locally displayed numbering scheme.
+        /// string(4)
         /// </summary>
         [Optional]
-        public String                            FloorLevel                 { get; }
+        public String?                           FloorLevel                 { get; }
 
         /// <summary>
-        /// An optional geographical location of this EVSE.
+        /// The optional geographical location of the EVSE.
         /// </summary>
         [Optional]
         public GeoCoordinate?                    Coordinates                { get; }
 
         /// <summary>
-        /// An optional number/string printed on the outside of the EVSE for visual identification. // 16
+        /// The optional number/string printed on the outside of the EVSE for visual identification.
+        /// string(16)
         /// </summary>
         [Optional]
-        public String                            PhysicalReference          { get; }
+        public String?                           PhysicalReference          { get; }
 
         /// <summary>
-        /// Optional multi-language human-readable directions when more detailed
+        /// The optional multi-language human-readable directions when more detailed
         /// information on how to reach the EVSE from the location is required.
         /// </summary>
         [Optional]
         public IEnumerable<DisplayText>          Directions                 { get; }
 
         /// <summary>
-        /// Optional restrictions that apply to the parking spot.
+        /// The optional enumeration of restrictions that apply to the parking spot.
         /// </summary>
         [Optional]
         public IEnumerable<ParkingRestrictions>  ParkingRestrictions        { get; }
 
         /// <summary>
-        /// Optional links to images related to the EVSE such as photos or logos.
+        /// The optional enumeration of images related to the EVSE such as photos or logos.
         /// </summary>
         [Optional]
         public IEnumerable<Image>                Images                     { get; }
@@ -146,49 +148,59 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The SHA256 hash of the JSON representation of this EVSE.
         /// </summary>
-        public String                            SHA256Hash                 { get; private set; }
+        public String                            ETag                       { get; private set; }
 
         #endregion
 
         #region Constructor(s)
+
+        #region (internal) EVSE(ParentLocation, UId, Status, Connectors, ... )
 
         /// <summary>
         /// Create a new EVSE.
         /// </summary>
         /// <param name="ParentLocation">The parent location of this EVSE.</param>
         /// 
-        /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
-        /// <param name="Status">Indicates the current status of the EVSE.</param>
-        /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
-        /// 
-        /// <param name="EVSEId">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
-        /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
-        /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
-        /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
-        /// <param name="Coordinates">An optional geographical location of this EVSE.</param>
+        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="Status">A current status of the EVSE.</param>
+        /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!</param>
+        /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
+        /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
+        /// <param name="FloorLevel">An optional floor level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
+        /// <param name="Coordinates">An optional geographical location of the EVSE.</param>
         /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
-        /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
-        /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
-        /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+        /// <param name="Directions">An optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
+        /// <param name="ParkingRestrictions">An optional enumeration of restrictions that apply to the parking spot.</param>
+        /// <param name="Images">An optional enumeration of images related to the EVSE such as photos or logos.</param>
         /// 
         /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
-        internal EVSE(Location                          ParentLocation,
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        internal EVSE(Location?                                         ParentLocation,
 
-                      EVSE_UId                          UId,
-                      StatusTypes                       Status,
-                      IEnumerable<Connector>            Connectors,
+                      EVSE_UId                                          UId,
+                      StatusType                                        Status,
+                      IEnumerable<Connector>                            Connectors,
+                      EVSE_Id?                                          EVSEId                           = null,
+                      IEnumerable<StatusSchedule>?                      StatusSchedule                   = null,
+                      IEnumerable<CapabilityTypes>?                     Capabilities                     = null,
+                      String?                                           FloorLevel                       = null,
+                      GeoCoordinate?                                    Coordinates                      = null,
+                      String?                                           PhysicalReference                = null,
+                      IEnumerable<DisplayText>?                         Directions                       = null,
+                      IEnumerable<ParkingRestrictions>?                 ParkingRestrictions              = null,
+                      IEnumerable<Image>?                               Images                           = null,
 
-                      EVSE_Id?                          EVSEId                = null,
-                      IEnumerable<StatusSchedule>       StatusSchedule        = null,
-                      IEnumerable<CapabilityTypes>      Capabilities          = null,
-                      String                            FloorLevel            = null,
-                      GeoCoordinate?                    Coordinates           = null,
-                      String                            PhysicalReference     = null,
-                      IEnumerable<DisplayText>          Directions            = null,
-                      IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
-                      IEnumerable<Image>                Images                = null,
-
-                      DateTime?                         LastUpdated           = null)
+                      DateTime?                                         LastUpdated                      = null,
+                      CustomJObjectSerializerDelegate<EVSE>?            CustomEVSESerializer             = null,
+                      CustomJObjectSerializerDelegate<StatusSchedule>?  CustomStatusScheduleSerializer   = null,
+                      CustomJObjectSerializerDelegate<Connector>?       CustomConnectorSerializer        = null,
+                      CustomJObjectSerializerDelegate<DisplayText>?     CustomDisplayTextSerializer      = null,
+                      CustomJObjectSerializerDelegate<Image>?           CustomImageSerializer            = null)
 
         {
 
@@ -196,61 +208,76 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.UId                   = UId;
             this.Status                = Status;
-            this.Connectors            = Connectors?.         Distinct() ?? new Connector[0];
+            this.Connectors            = Connectors?.         Distinct() ?? Array.Empty<Connector>();
 
             this.EVSEId                = EVSEId;
-            this.StatusSchedule        = StatusSchedule?.     Distinct() ?? new StatusSchedule[0];
-            this.Capabilities          = Capabilities?.       Distinct() ?? new CapabilityTypes[0];
-            this.FloorLevel            = FloorLevel;
+            this.StatusSchedule        = StatusSchedule?.     Distinct() ?? Array.Empty<StatusSchedule>();
+            this.Capabilities          = Capabilities?.       Distinct() ?? Array.Empty<CapabilityTypes>();
+            this.FloorLevel            = FloorLevel?.       Trim();
             this.Coordinates           = Coordinates;
-            this.PhysicalReference     = PhysicalReference;
-            this.Directions            = Directions?.         Distinct() ?? new DisplayText[0];
-            this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? new ParkingRestrictions[0];
-            this.Images                = Images?.             Distinct() ?? new Image[0];
+            this.PhysicalReference     = PhysicalReference?.Trim();
+            this.Directions            = Directions?.         Distinct() ?? Array.Empty<DisplayText>();
+            this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? Array.Empty<ParkingRestrictions>();
+            this.Images                = Images?.             Distinct() ?? Array.Empty<Image>();
 
             this.LastUpdated           = LastUpdated ?? Timestamp.Now;
 
-            if (Connectors != null)
-                foreach (var connector in Connectors)
-                    connector.ParentEVSE = this;
+            foreach (var connector in this.Connectors)
+                connector.ParentEVSE = this;
 
-            CalcSHA256Hash();
+            this.ETag                  = CalcSHA256Hash(CustomEVSESerializer,
+                                                        CustomStatusScheduleSerializer,
+                                                        CustomConnectorSerializer,
+                                                        CustomDisplayTextSerializer,
+                                                        CustomImageSerializer);
 
         }
 
+        #endregion
+
+        #region EVSE(UId, Status, Connectors, ... )
 
         /// <summary>
         /// Create a new EVSE.
         /// </summary>
-        /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
-        /// <param name="Status">Indicates the current status of the EVSE.</param>
-        /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
-        /// 
-        /// <param name="EVSEId">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
-        /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
-        /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
-        /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
-        /// <param name="Coordinates">An optional geographical location of this EVSE.</param>
+        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="Status">A current status of the EVSE.</param>
+        /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!</param>
+        /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
+        /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
+        /// <param name="FloorLevel">An optional floor level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
+        /// <param name="Coordinates">An optional geographical location of the EVSE.</param>
         /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
-        /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
-        /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
-        /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+        /// <param name="Directions">An optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
+        /// <param name="ParkingRestrictions">An optional enumeration of restrictions that apply to the parking spot.</param>
+        /// <param name="Images">An optional enumeration of images related to the EVSE such as photos or logos.</param>
+        /// 
         /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
-        public EVSE(EVSE_UId                          UId,
-                    StatusTypes                       Status,
-                    IEnumerable<Connector>            Connectors,
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        public EVSE(EVSE_UId                                          UId,
+                    StatusType                                        Status,
+                    IEnumerable<Connector>                            Connectors,
+                    EVSE_Id?                                          EVSEId                           = null,
+                    IEnumerable<StatusSchedule>?                      StatusSchedule                   = null,
+                    IEnumerable<CapabilityTypes>?                     Capabilities                     = null,
+                    String?                                           FloorLevel                       = null,
+                    GeoCoordinate?                                    Coordinates                      = null,
+                    String?                                           PhysicalReference                = null,
+                    IEnumerable<DisplayText>?                         Directions                       = null,
+                    IEnumerable<ParkingRestrictions>?                 ParkingRestrictions              = null,
+                    IEnumerable<Image>?                               Images                           = null,
 
-                    EVSE_Id?                          EVSEId                = null,
-                    IEnumerable<StatusSchedule>       StatusSchedule        = null,
-                    IEnumerable<CapabilityTypes>      Capabilities          = null,
-                    String                            FloorLevel            = null,
-                    GeoCoordinate?                    Coordinates           = null,
-                    String                            PhysicalReference     = null,
-                    IEnumerable<DisplayText>          Directions            = null,
-                    IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
-                    IEnumerable<Image>                Images                = null,
-
-                    DateTime?                         LastUpdated           = null)
+                    DateTime?                                         LastUpdated                      = null,
+                    CustomJObjectSerializerDelegate<EVSE>?            CustomEVSESerializer             = null,
+                    CustomJObjectSerializerDelegate<StatusSchedule>?  CustomStatusScheduleSerializer   = null,
+                    CustomJObjectSerializerDelegate<Connector>?       CustomConnectorSerializer        = null,
+                    CustomJObjectSerializerDelegate<DisplayText>?     CustomDisplayTextSerializer      = null,
+                    CustomJObjectSerializerDelegate<Image>?           CustomImageSerializer            = null)
 
             : this(null,
 
@@ -268,9 +295,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    ParkingRestrictions,
                    Images,
 
-                   LastUpdated)
+                   LastUpdated,
+                   CustomEVSESerializer,
+                   CustomStatusScheduleSerializer,
+                   CustomConnectorSerializer,
+                   CustomDisplayTextSerializer,
+                   CustomImageSerializer)
 
             { }
+
+        #endregion
 
         #endregion
 
@@ -283,49 +317,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static EVSE Parse(JObject                            JSON,
-                                 EVSE_UId?                          EVSEUIdURL         = null,
-                                 CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        public static EVSE Parse(JObject                             JSON,
+                                 EVSE_UId?                           EVSEUIdURL         = null,
+                                 CustomJObjectParserDelegate<EVSE>?  CustomEVSEParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EVSE   evse,
-                         out String ErrorResponse,
+                         out var evse,
+                         out var errorResponse,
                          EVSEUIdURL,
                          CustomEVSEParser))
             {
-                return evse;
+                return evse!;
             }
 
-            throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, EVSEUIdURL = null, CustomEVSEParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an EVSE.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static EVSE Parse(String                             Text,
-                                 EVSE_UId?                          EVSEUIdURL         = null,
-                                 CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EVSE   evse,
-                         out String ErrorResponse,
-                         EVSEUIdURL,
-                         CustomEVSEParser))
-            {
-                return evse;
-            }
-
-            throw new ArgumentException("The given text representation of an EVSE is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an EVSE is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -341,9 +348,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EVSE">The parsed EVSE.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out EVSE    EVSE,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out EVSE?    EVSE,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out EVSE,
@@ -359,11 +366,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static Boolean TryParse(JObject                            JSON,
-                                       out EVSE                           EVSE,
-                                       out String                         ErrorResponse,
-                                       EVSE_UId?                          EVSEUIdURL,
-                                       CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
+        public static Boolean TryParse(JObject                             JSON,
+                                       out EVSE?                           EVSE,
+                                       out String?                         ErrorResponse,
+                                       EVSE_UId?                           EVSEUIdURL,
+                                       CustomJObjectParserDelegate<EVSE>?  CustomEVSEParser   = null)
         {
 
             try
@@ -407,10 +414,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Status                    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("status",
-                                             "EVSE status",
-                                             out StatusTypes Status,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("status",
+                                         "EVSE status",
+                                         StatusType.TryParse,
+                                         out StatusType Status,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -563,19 +571,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                EVSE = new EVSE(EVSEUIdBody ?? EVSEUIdURL.Value,
+                EVSE = new EVSE(EVSEUIdBody ?? EVSEUIdURL!.Value,
                                 Status,
-                                Connectors?.         Distinct(),
+                                Connectors,
 
                                 EVSEId,
-                                StatusSchedule?.     Distinct(),
-                                Capabilities?.       Distinct(),
-                                FloorLevel?.         Trim(),
+                                StatusSchedule,
+                                Capabilities,
+                                FloorLevel,
                                 Coordinates,
-                                PhysicalReference?.  Trim(),
-                                Directions?.         Distinct(),
-                                ParkingRestrictions?.Distinct(),
-                                Images?.             Distinct(),
+                                PhysicalReference,
+                                Directions,
+                                ParkingRestrictions,
+                                Images,
 
                                 LastUpdated);
 
@@ -598,44 +606,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out EVSE, out ErrorResponse, EVSEUIdURL = null, CustomEVSEParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an EVSE.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EVSE">The parsed EVSE.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="EVSEUIdURL">An optional EVSE identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomEVSEParser">A delegate to parse custom EVSE JSON objects.</param>
-        public static Boolean TryParse(String                             Text,
-                                       out EVSE                           EVSE,
-                                       out String                         ErrorResponse,
-                                       EVSE_UId?                          EVSEUIdURL         = null,
-                                       CustomJObjectParserDelegate<EVSE>  CustomEVSEParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EVSE,
-                                out ErrorResponse,
-                                EVSEUIdURL,
-                                CustomEVSEParser);
-
-            }
-            catch (Exception e)
-            {
-                EVSE      = null;
-                ErrorResponse  = "The given text representation of an EVSE is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
 
         /// <summary>
@@ -646,11 +616,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>            CustomEVSESerializer             = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>  CustomStatusScheduleSerializer   = null,
-                              CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null,
-                              CustomJObjectSerializerDelegate<DisplayText>     CustomDisplayTextSerializer      = null,
-                              CustomJObjectSerializerDelegate<Image>           CustomImageSerializer            = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EVSE>?            CustomEVSESerializer             = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>?  CustomStatusScheduleSerializer   = null,
+                              CustomJObjectSerializerDelegate<Connector>?       CustomConnectorSerializer        = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?     CustomDisplayTextSerializer      = null,
+                              CustomJObjectSerializerDelegate<Image>?           CustomImageSerializer            = null)
         {
 
             var JSON = JSONObject.Create(
@@ -663,16 +633,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            new JProperty("status",                      Status.ToString()),
 
-                           StatusSchedule.SafeAny()
-                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.Select(status     => status.    ToJSON(CustomStatusScheduleSerializer))))
+                           StatusSchedule.Any()
+                               ? new JProperty("status_schedule",       new JArray(StatusSchedule.     Select(statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
                                : null,
 
-                           Capabilities.SafeAny()
-                               ? new JProperty("capabilities",          new JArray(Capabilities.  Select(capability => capability.ToString())))
+                           Capabilities.Any()
+                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select(capabilityType     => capabilityType.    ToString())))
                                : null,
 
-                           Connectors.SafeAny()
-                               ? new JProperty("connectors",            new JArray(Connectors.    Select(connector  => connector. ToJSON(CustomConnectorSerializer))))
+                           Connectors.Any()
+                               ? new JProperty("connectors",            new JArray(Connectors.         Select(connector          => connector.         ToJSON(CustomConnectorSerializer))))
                                : null,
 
                            FloorLevel.IsNotNullOrEmpty()
@@ -681,8 +651,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            Coordinates.HasValue
                                ? new JProperty("coordinates",           new JObject(
-                                                                            new JProperty("latitude",  Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
-                                                                            new JProperty("longitude", Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
+                                                                            new JProperty("latitude",   Coordinates.Value.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                            new JProperty("longitude",  Coordinates.Value.Longitude.Value.ToString("0.00000##").Replace(",", "."))
                                                                         ))
                                : null,
 
@@ -690,16 +660,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("physical_reference",    PhysicalReference)
                                : null,
 
-                           Directions.SafeAny()
-                               ? new JProperty("directions",            new JArray(Directions.         Select(direction => direction.ToJSON(CustomDisplayTextSerializer))))
+                           Directions.Any()
+                               ? new JProperty("directions",            new JArray(Directions.         Select(displayText        => displayText.       ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
-                           ParkingRestrictions.SafeAny()
-                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select(parking   => parking.  ToString())))
+                           ParkingRestrictions.Any()
+                               ? new JProperty("parking_restrictions",  new JArray(ParkingRestrictions.Select(parkingRestriction => parkingRestriction.ToString())))
                                : null,
 
-                           Images.SafeAny()
-                               ? new JProperty("images",                new JArray(Images.             Select(image     => image.    ToJSON(CustomImageSerializer))))
+                           Images.Any()
+                               ? new JProperty("images",                new JArray(Images.             Select(image              => image.             ToJSON(CustomImageSerializer))))
                                : null,
 
                            new JProperty("last_updated",                LastUpdated.ToIso8601())
@@ -854,7 +824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                           Boolean  AllowDowngrades = false)
         {
 
-            if (EVSEPatch == null)
+            if (EVSEPatch is null)
                 return PatchResult<EVSE>.Failed(this,
                                                 "The given EVSE patch must not be null!");
 
@@ -881,18 +851,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                     patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
-                             out EVSE    PatchedEVSE,
-                             out String  ErrorResponse))
+                             out var patchedEVSE,
+                             out var errorResponse))
                 {
 
-                    return PatchResult<EVSE>.Success(PatchedEVSE,
-                                                     ErrorResponse);
+                    return PatchResult<EVSE>.Success(patchedEVSE,
+                                                     errorResponse);
 
                 }
 
                 else
                     return PatchResult<EVSE>.Failed(this,
-                                                    "Invalid JSON merge patch of an EVSE: " + ErrorResponse);
+                                                    "Invalid JSON merge patch of an EVSE: " + errorResponse);
 
             }
 
@@ -901,9 +871,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (internal) SetConnector(Connector)
+        #region (internal) UpdateConnector(Connector)
 
-        internal void SetConnector(Connector Connector)
+        internal void UpdateConnector(Connector Connector)
         {
 
             if (Connector is null)
@@ -917,6 +887,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  Concat(new Connector[] { Connector });
 
             }
+
+        }
+
+        #endregion
+
+        #region CalcSHA256Hash(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
+
+        /// <summary>
+        /// Calculate the SHA256 hash of the JSON representation of this location in HEX.
+        /// </summary>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<EVSE>?            CustomEVSESerializer             = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>?  CustomStatusScheduleSerializer   = null,
+                                     CustomJObjectSerializerDelegate<Connector>?       CustomConnectorSerializer        = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>?     CustomDisplayTextSerializer      = null,
+                                     CustomJObjectSerializerDelegate<Image>?           CustomImageSerializer            = null)
+
+        {
+
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomEVSESerializer,
+                                                           CustomStatusScheduleSerializer,
+                                                           CustomConnectorSerializer,
+                                                           CustomDisplayTextSerializer,
+                                                           CustomImageSerializer).ToUTF8Bytes()).ToBase64();
+
+            return this.ETag;
 
         }
 
@@ -947,6 +947,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #region GetConnector   (ConnectorId)
+
+        /// <summary>
+        /// Return the connector having the given connector identification.
+        /// </summary>
+        /// <param name="ConnectorId">A connector identification.</param>
+        public Connector? GetConnector(Connector_Id ConnectorId)
+        {
+
+            if (TryGetConnector(ConnectorId, out var connector))
+                return connector;
+
+            return null;
+
+        }
+
+        #endregion
+
         #region TryGetConnector(ConnectorId, out Connector)
 
         /// <summary>
@@ -954,8 +972,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="ConnectorId">A connector identification.</param>
         /// <param name="Connector">The connector having the given connector identification.</param>
-        public Boolean TryGetConnector(Connector_Id   ConnectorId,
-                                       out Connector  Connector)
+        public Boolean TryGetConnector(Connector_Id    ConnectorId,
+                                       out Connector?  Connector)
         {
 
             lock (Connectors)
@@ -984,44 +1002,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public IEnumerator<Connector> GetEnumerator()
             => Connectors.GetEnumerator();
-
-        #endregion
-
-
-        #region CalcSHA256Hash(CustomEVSESerializer = null, CustomStatusScheduleSerializer = null, ...)
-
-        /// <summary>
-        /// Calculate the SHA256 hash of the JSON representation of this EVSE in HEX.
-        /// </summary>
-        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
-        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
-        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<EVSE>            CustomEVSESerializer             = null,
-                                     CustomJObjectSerializerDelegate<StatusSchedule>  CustomStatusScheduleSerializer   = null,
-                                     CustomJObjectSerializerDelegate<Connector>       CustomConnectorSerializer        = null,
-                                     CustomJObjectSerializerDelegate<DisplayText>     CustomDisplayTextSerializer      = null,
-                                     CustomJObjectSerializerDelegate<Image>           CustomImageSerializer            = null)
-        {
-
-            using (var SHA256 = new SHA256Managed())
-            {
-
-                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomEVSESerializer,
-                                                                         CustomStatusScheduleSerializer,
-                                                                         CustomConnectorSerializer,
-                                                                         CustomDisplayTextSerializer,
-                                                                         CustomImageSerializer).
-                                                                  ToString(Newtonsoft.Json.Formatting.None)
-                                                              )).
-                                                  Select(value => String.Format("{0:x2}", value)).
-                                                  Aggregate();
-
-            }
-
-        }
 
         #endregion
 
@@ -1138,10 +1118,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two EVSEs.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An EVSE to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is EVSE evse
                    ? CompareTo(evse)
@@ -1153,10 +1133,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(EVSE)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two EVSEs.
         /// </summary>
         /// <param name="EVSE">An EVSE to compare with.</param>
-        public Int32 CompareTo(EVSE EVSE)
+        public Int32 CompareTo(EVSE? EVSE)
 
             => EVSE is null
                    ? throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!")
@@ -1171,11 +1151,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two EVSEs for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An EVSE to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is EVSE evse &&
                    Equals(evse);
@@ -1188,11 +1167,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two EVSEs for equality.
         /// </summary>
         /// <param name="EVSE">An EVSE to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(EVSE EVSE)
+        public Boolean Equals(EVSE? EVSE)
 
-            => !(EVSE is null) &&
-                   UId.Equals(EVSE.UId);
+            => EVSE is not null &&
+
+               UId.                Equals(EVSE.UId)         &&
+               Status.             Equals(EVSE.Status)      &&
+               LastUpdated.        Equals(EVSE.LastUpdated) &&
+
+            ((!EVSEId.           HasValue    && !EVSE.EVSEId.           HasValue)    ||
+              (EVSEId.           HasValue    &&  EVSE.EVSEId.           HasValue    && EVSEId.     Value.Equals(EVSE.EVSEId.     Value))) &&
+
+            ((!Coordinates.      HasValue    && !EVSE.Coordinates.      HasValue)    ||
+              (Coordinates.      HasValue    &&  EVSE.Coordinates.      HasValue    && Coordinates.Value.Equals(EVSE.Coordinates.Value))) &&
+
+             ((ParentLocation    is     null &&  EVSE.ParentLocation    is     null) ||
+              (ParentLocation    is not null &&  EVSE.ParentLocation    is not null && ParentLocation.   Equals(EVSE.ParentLocation)))    &&
+
+             ((FloorLevel        is     null &&  EVSE.FloorLevel        is     null) ||
+              (FloorLevel        is not null &&  EVSE.FloorLevel        is not null && FloorLevel.       Equals(EVSE.FloorLevel)))        &&
+
+             ((PhysicalReference is     null &&  EVSE.PhysicalReference is     null) ||
+              (PhysicalReference is not null &&  EVSE.PhysicalReference is not null && PhysicalReference.Equals(EVSE.PhysicalReference))) &&
+
+               Connectors.         Count().Equals(EVSE.Connectors.         Count()) &&
+               Connectors.         All(connector          => EVSE.Connectors.         Contains(connector))          &&
+
+               StatusSchedule.     Count().Equals(EVSE.StatusSchedule.     Count()) &&
+               StatusSchedule.     All(statusSchedule     => EVSE.StatusSchedule.     Contains(statusSchedule))     &&
+
+               Capabilities.       Count().Equals(EVSE.Capabilities.       Count()) &&
+               Capabilities.       All(capabilityType     => EVSE.Capabilities.       Contains(capabilityType))     &&
+
+               Directions.         Count().Equals(EVSE.Directions.         Count()) &&
+               Directions.         All(displayText        => EVSE.Directions.         Contains(displayText))        &&
+
+               ParkingRestrictions.Count().Equals(EVSE.ParkingRestrictions.Count()) &&
+               ParkingRestrictions.All(parkingRestriction => EVSE.ParkingRestrictions.Contains(parkingRestriction)) &&
+
+               Images.             Count().Equals(EVSE.Images.             Count()) &&
+               Images.             All(image              => EVSE.Images.Contains(image));
 
         #endregion
 
@@ -1204,8 +1218,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
+        {
+            unchecked
+            {
 
-            => EVSEId.GetHashCode();
+                return (ParentLocation?.    GetHashCode() ?? 0) * 43 ^
+                        UId.                GetHashCode()       * 41 ^
+                        Status.             GetHashCode()       * 37 ^
+                        Connectors.         CalcHashCode()      * 31 ^
+                       (EVSEId?.            GetHashCode() ?? 0) * 29 ^
+                        StatusSchedule.     GetHashCode()       * 23 ^
+                        Capabilities.       CalcHashCode()      * 19 ^
+                       (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
+                       (Coordinates?.       GetHashCode() ?? 0) * 13 ^
+                       (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
+                        Directions.         CalcHashCode()      *  7 ^
+                        ParkingRestrictions.CalcHashCode()      *  5 ^
+                        Images.             CalcHashCode()      *  3 ^
+                        LastUpdated.        GetHashCode();
+
+            }
+        }
 
         #endregion
 
@@ -1216,7 +1249,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => EVSEId.ToString();
+            => String.Concat(
+
+                   UId, 
+
+                   EVSEId.HasValue
+                       ? " (" + EVSEId.Value + ")"
+                       : "",
+
+                   ", ",
+                   Connectors.Count(), " connector(s)"
+
+               );
 
         #endregion
 
@@ -1229,23 +1273,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="NewEVSEUId">An optional new EVSE identification.</param>
         public Builder ToBuilder(EVSE_UId? NewEVSEUId = null)
 
-            => new Builder(ParentLocation,
+            => new (ParentLocation,
 
-                           NewEVSEUId ?? UId,
-                           Status,
-                           Connectors,
+                    NewEVSEUId ?? UId,
+                    Status,
+                    Connectors,
 
-                           EVSEId,
-                           StatusSchedule,
-                           Capabilities,
-                           FloorLevel,
-                           Coordinates,
-                           PhysicalReference,
-                           Directions,
-                           ParkingRestrictions,
-                           Images,
+                    EVSEId,
+                    StatusSchedule,
+                    Capabilities,
+                    FloorLevel,
+                    Coordinates,
+                    PhysicalReference,
+                    Directions,
+                    ParkingRestrictions,
+                    Images,
 
-                           LastUpdated);
+                    LastUpdated);
 
         #endregion
 
@@ -1262,72 +1306,77 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// The parent location of this EVSE.
             /// </summary>
-            public Location                      ParentLocation             { get; internal set; }
+            public Location?                     ParentLocation             { get; internal set; }
 
             /// <summary>
-            /// Uniquely identifies the EVSE within the CPOs platform.
+            /// The unique identification of the EVSE within the CPOs platform.
+            /// For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!
             /// </summary>
             public EVSE_UId?                     UId                        { get; set; }
 
             /// <summary>
-            /// Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".
+            /// The official unique identification of the EVSE.
+            /// For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!
             /// </summary>
             public EVSE_Id?                      EVSEId                     { get; set; }
 
             /// <summary>
-            /// Indicates the current status of the EVSE.
+            /// The current status of the EVSE.
             /// </summary>
-            public StatusTypes?                  Status                     { get; set; }
+            public StatusType?                   Status                     { get; set; }
 
             /// <summary>
-            /// Indicates a planned status in the future of the EVSE.
+            /// The enumeration of planned future status of the EVSE.
             /// </summary>
             public HashSet<StatusSchedule>       StatusSchedule             { get; }
 
             /// <summary>
-            /// Enumeration of functionalities that the EVSE is capable of.
+            /// The enumeration of functionalities that the EVSE is capable of.
             /// </summary>
             public HashSet<CapabilityTypes>      Capabilities               { get; }
 
             /// <summary>
-            /// Enumeration of available connectors at this EVSE.
+            /// The enumeration of available connectors attached to this EVSE.
             /// </summary>
             public HashSet<Connector>            Connectors                 { get; }
 
             /// <summary>
-            /// The unique identifications of all connectors at this EVSE.
+            /// The enumeration of connector identifications attached to this EVSE.
             /// </summary>
             public IEnumerable<Connector_Id>     ConnectorIds
                 => Connectors.SafeSelect(connector => connector.Id);
 
             /// <summary>
-            /// Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.  // 4
+            /// The optional floor level on which the EVSE is located (in garage buildings)
+            /// in the locally displayed numbering scheme.
+            /// string(4)
             /// </summary>
-            public String                        FloorLevel                 { get; set; }
+            public String?                       FloorLevel                 { get; set; }
 
             /// <summary>
-            /// An optional geographical location of this EVSE.
+            /// The optional geographical location of the EVSE.
             /// </summary>
             public GeoCoordinate?                Coordinates                { get; set; }
 
             /// <summary>
-            /// An optional number/string printed on the outside of the EVSE for visual identification. // 16
+            /// The optional number/string printed on the outside of the EVSE for visual identification.
+            /// string(16)
             /// </summary>
-            public String                        PhysicalReference          { get; set; }
+            public String?                       PhysicalReference          { get; set; }
 
             /// <summary>
-            /// Optional multi-language human-readable directions when more detailed
+            /// The optional multi-language human-readable directions when more detailed
             /// information on how to reach the EVSE from the location is required.
             /// </summary>
             public HashSet<DisplayText>          Directions                 { get; }
 
             /// <summary>
-            /// Optional restrictions that apply to the parking spot.
+            /// The optional enumeration of restrictions that apply to the parking spot.
             /// </summary>
             public HashSet<ParkingRestrictions>  ParkingRestrictions        { get; }
 
             /// <summary>
-            /// Optional links to images related to the EVSE such as photos or logos.
+            /// The optional enumeration of images related to the EVSE such as photos or logos.
             /// </summary>
             public HashSet<Image>                Images                     { get; }
 
@@ -1345,38 +1394,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// </summary>
             /// <param name="ParentLocation">The parent location of this EVSE.</param>
             /// 
-            /// <param name="UId">Uniquely identifies the EVSE within the CPOs platform.</param>
-            /// <param name="Status">Indicates the current status of the EVSE.</param>
-            /// <param name="Connectors">Enumeration of available connectors at this EVSE.</param>
-            /// 
-            /// <param name="EVSEId">Compliant with the following specification for EVSE ID from "eMI3 standard version V1.0".</param>
-            /// <param name="StatusSchedule">Indicates a planned status in the future of the EVSE.</param>
-            /// <param name="Capabilities">Enumeration of functionalities that the EVSE is capable of.</param>
-            /// <param name="FloorLevel">Level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
-            /// <param name="Coordinates">An optional geographical location of this EVSE.</param>
+            /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
+            /// <param name="Status">A current status of the EVSE.</param>
+            /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
+            /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!</param>
+            /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
+            /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
+            /// <param name="FloorLevel">An optional floor level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
+            /// <param name="Coordinates">An optional geographical location of the EVSE.</param>
             /// <param name="PhysicalReference">An optional number/string printed on the outside of the EVSE for visual identification.</param>
-            /// <param name="Directions">Optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
-            /// <param name="ParkingRestrictions">Optional restrictions that apply to the parking spot.</param>
-            /// <param name="Images">Optional links to images related to the EVSE such as photos or logos.</param>
+            /// <param name="Directions">An optional multi-language human-readable directions when more detailed information on how to reach the EVSE from the location is required.</param>
+            /// <param name="ParkingRestrictions">An optional enumeration of restrictions that apply to the parking spot.</param>
+            /// <param name="Images">An optional enumeration of images related to the EVSE such as photos or logos.</param>
             /// 
             /// <param name="LastUpdated">Timestamp when this EVSE was last updated (or created).</param>
-            internal Builder(Location                          ParentLocation,
+            internal Builder(Location?                          ParentLocation        = null,
 
-                             EVSE_UId?                         UId                   = null,
-                             StatusTypes?                      Status                = null,
-                             IEnumerable<Connector>            Connectors            = null,
+                             EVSE_UId?                          UId                   = null,
+                             StatusType?                        Status                = null,
+                             IEnumerable<Connector>?            Connectors            = null,
 
-                             EVSE_Id?                          EVSEId                = null,
-                             IEnumerable<StatusSchedule>       StatusSchedule        = null,
-                             IEnumerable<CapabilityTypes>      Capabilities          = null,
-                             String                            FloorLevel            = null,
-                             GeoCoordinate?                    Coordinates           = null,
-                             String                            PhysicalReference     = null,
-                             IEnumerable<DisplayText>          Directions            = null,
-                             IEnumerable<ParkingRestrictions>  ParkingRestrictions   = null,
-                             IEnumerable<Image>                Images                = null,
+                             EVSE_Id?                           EVSEId                = null,
+                             IEnumerable<StatusSchedule>?       StatusSchedule        = null,
+                             IEnumerable<CapabilityTypes>?      Capabilities          = null,
+                             String?                            FloorLevel            = null,
+                             GeoCoordinate?                     Coordinates           = null,
+                             String?                            PhysicalReference     = null,
+                             IEnumerable<DisplayText>?          Directions            = null,
+                             IEnumerable<ParkingRestrictions>?  ParkingRestrictions   = null,
+                             IEnumerable<Image>?                Images                = null,
 
-                             DateTime?                         LastUpdated           = null)
+                             DateTime?                          LastUpdated           = null)
 
             {
 
@@ -1384,17 +1432,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 this.UId                   = UId;
                 this.Status                = Status;
-                this.Connectors            = Connectors          != null ? new HashSet<Connector>          (Connectors)          : new HashSet<Connector>();
+                this.Connectors            = Connectors          is not null ? new HashSet<Connector>          (Connectors)          : new HashSet<Connector>();
 
                 this.EVSEId                = EVSEId;
-                this.StatusSchedule        = StatusSchedule      != null ? new HashSet<StatusSchedule>     (StatusSchedule)      : new HashSet<StatusSchedule>();
-                this.Capabilities          = Capabilities        != null ? new HashSet<CapabilityTypes>    (Capabilities)        : new HashSet<CapabilityTypes>();
+                this.StatusSchedule        = StatusSchedule      is not null ? new HashSet<StatusSchedule>     (StatusSchedule)      : new HashSet<StatusSchedule>();
+                this.Capabilities          = Capabilities        is not null ? new HashSet<CapabilityTypes>    (Capabilities)        : new HashSet<CapabilityTypes>();
                 this.FloorLevel            = FloorLevel;
                 this.Coordinates           = Coordinates;
                 this.PhysicalReference     = PhysicalReference;
-                this.Directions            = Directions          != null ? new HashSet<DisplayText>        (Directions)          : new HashSet<DisplayText>();
-                this.ParkingRestrictions   = ParkingRestrictions != null ? new HashSet<ParkingRestrictions>(ParkingRestrictions) : new HashSet<ParkingRestrictions>();
-                this.Images                = Images              != null ? new HashSet<Image>              (Images)              : new HashSet<Image>();
+                this.Directions            = Directions          is not null ? new HashSet<DisplayText>        (Directions)          : new HashSet<DisplayText>();
+                this.ParkingRestrictions   = ParkingRestrictions is not null ? new HashSet<ParkingRestrictions>(ParkingRestrictions) : new HashSet<ParkingRestrictions>();
+                this.Images                = Images              is not null ? new HashSet<Image>              (Images)              : new HashSet<Image>();
 
                 this.LastUpdated           = LastUpdated;
 
@@ -1407,7 +1455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// Return an immutable version of the EVSE.
             /// </summary>
-            public static implicit operator EVSE(Builder Builder)
+            public static implicit operator EVSE?(Builder? Builder)
 
                 => Builder?.ToImmutable;
 
@@ -1420,7 +1468,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 get
                 {
 
-                    if (!UId.HasValue)
+                    if (!UId.   HasValue)
                         throw new ArgumentNullException(nameof(UId),     "The unique identification must not be null or empty!");
 
                     if (!Status.HasValue)

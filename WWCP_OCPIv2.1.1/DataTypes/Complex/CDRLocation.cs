@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -103,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The standard of the installed connector.
         /// </summary>
-        public ConnectorTypes                      ConnectorStandard        { get; }
+        public ConnectorType                       ConnectorStandard        { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
@@ -131,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            EVSE_UId          EVSEUId,
                            EVSE_Id           EVSEId,
                            Connector_Id      ConnectorId,
-                           ConnectorTypes    ConnectorStandard,
+                           ConnectorType     ConnectorStandard,
                            ConnectorFormats  ConnectorFormat,
                            PowerTypes        ConnectorPowerType,
 
@@ -180,31 +178,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             }
 
             throw new ArgumentException("The given JSON representation of a location is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCDRLocationParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a charge detail record location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static CDRLocation Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CDRLocation  location,
-                         out String       ErrorResponse,
-                         CustomCDRLocationParser))
-            {
-                return location;
-            }
-
-            throw new ArgumentException("The given text representation of a location is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
@@ -369,10 +342,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse ConnectorStandard         [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_standard",
-                                             "connector standard/type",
-                                             out ConnectorTypes ConnectorStandard,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_standard",
+                                         "connector standard/type",
+                                         ConnectorType.TryParse,
+                                         out ConnectorType ConnectorStandard,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -439,41 +413,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out CDRLocation, out ErrorResponse, CDRLocationIdURL = null, CustomCDRLocationParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a charge detail record location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CDRLocation">The parsed location.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCDRLocationParser">A delegate to parse custom location JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out CDRLocation                           CDRLocation,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<CDRLocation>  CustomCDRLocationParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CDRLocation,
-                                out ErrorResponse,
-                                CustomCDRLocationParser);
-
-            }
-            catch (Exception e)
-            {
-                CDRLocation      = null;
-                ErrorResponse  = "The given text representation of a location is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCDRLocationSerializer = null)
 
         /// <summary>
@@ -509,8 +448,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("evse_id",               EVSEId.            ToString()),
                            new JProperty("connector_id",          ConnectorId.       ToString()),
                            new JProperty("connector_standard",    ConnectorStandard. ToString()),
-                           new JProperty("connector_format",      ConnectorFormat.   ToString()),
-                           new JProperty("connector_power_type",  ConnectorPowerType.ToString())
+                           new JProperty("connector_format",      ConnectorFormat.   AsText()),
+                           new JProperty("connector_power_type",  ConnectorPowerType.AsText())
 
                        );
 

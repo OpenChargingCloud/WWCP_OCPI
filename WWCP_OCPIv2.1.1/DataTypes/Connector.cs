@@ -63,7 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The standard of the installed connector.
         /// </summary>
         [Mandatory]
-        public ConnectorTypes    Standard                 { get; }
+        public ConnectorType     Standard                 { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
@@ -72,7 +72,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public ConnectorFormats  Format                   { get; }
 
         /// <summary>
-        /// The type of powert at the connector.
+        /// The type of power at the connector.
         /// </summary>
         [Mandatory]
         public PowerTypes        PowerType                { get; }
@@ -94,16 +94,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// For a "Free of Charge" tariff this field should be set, and point to a defined "Free of Charge" tariff.
         /// </summary>
         [Optional]
-        public Tariff_Id?        TariffId                { get; }
+        public Tariff_Id?        TariffId                 { get; }
 
         /// <summary>
-        /// Optional URL to the operator's terms and conditions.
+        /// The optional URL to the operator's terms and conditions.
         /// </summary>
         [Optional]
         public URL?              TermsAndConditionsURL    { get; }
 
         /// <summary>
-        /// Timestamp when this connector was last updated (or created).
+        /// The timestamp when this connector was last updated (or created).
         /// </summary>
         [Mandatory]
         public DateTime          LastUpdated              { get; }
@@ -124,25 +124,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="ParentEVSE">The parent EVSE of this connector.</param>
         /// 
-        /// <param name="Id">Identifier of the connector within the EVSE.</param>
+        /// <param name="Id">An identification of the connector within the EVSE.</param>
         /// <param name="Standard">The standard of the installed connector.</param>
         /// <param name="Format">The format (socket/cable) of the installed connector.</param>
-        /// <param name="PowerType">The type of powert at the connector.</param>
-        /// <param name="Voltage">Voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
-        /// <param name="Amperage">Maximum amperage of the connector, in ampere [A].</param>
+        /// <param name="PowerType">The type of power at the connector.</param>
+        /// <param name="Voltage">The voltage of the connector (line to neutral for AC_3_PHASE), in volt [V].</param>
+        /// <param name="Amperage">The amperage of the connector, in ampere [A].</param>
         /// <param name="TariffId">The identification of the currently valid charging tariff.</param>
-        /// <param name="TermsAndConditionsURL">Optional URL to the operator's terms and conditions.</param>
-        /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
+        /// <param name="TermsAndConditionsURL">An optional URL to the operator's terms and conditions.</param>
+        /// 
+        /// <param name="LastUpdated">A timestamp when this connector was last updated (or created).</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         internal Connector(EVSE?                                        ParentEVSE,
 
                            Connector_Id                                 Id,
-                           ConnectorTypes                               Standard,
+                           ConnectorType                                Standard,
                            ConnectorFormats                             Format,
                            PowerTypes                                   PowerType,
                            UInt16                                       Voltage,
                            UInt16                                       Amperage,
                            Tariff_Id?                                   TariffId                    = null,
                            URL?                                         TermsAndConditionsURL       = null,
+
                            DateTime?                                    LastUpdated                 = null,
                            CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -160,7 +163,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.TermsAndConditionsURL  = TermsAndConditionsURL;
 
             this.LastUpdated            = LastUpdated ?? Timestamp.Now;
-
             this.ETag                   = SHA256.Create().ComputeHash(ToJSON(CustomConnectorSerializer).ToUTF8Bytes()).ToBase64();
 
         }
@@ -180,15 +182,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="Amperage">Maximum amperage of the connector, in ampere [A].</param>
         /// <param name="TariffId">The identification of the currently valid charging tariff.</param>
         /// <param name="TermsAndConditionsURL">Optional URL to the operator's terms and conditions.</param>
+        /// 
         /// <param name="LastUpdated">Timestamp when this connector was last updated (or created).</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         public Connector(Connector_Id                                 Id,
-                         ConnectorTypes                               Standard,
+                         ConnectorType                                Standard,
                          ConnectorFormats                             Format,
                          PowerTypes                                   PowerType,
                          UInt16                                       Voltage,
                          UInt16                                       Amperage,
                          Tariff_Id?                                   TariffId                    = null,
                          URL?                                         TermsAndConditionsURL       = null,
+
                          DateTime?                                    LastUpdated                 = null,
                          CustomJObjectSerializerDelegate<Connector>?  CustomConnectorSerializer   = null)
 
@@ -300,10 +305,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Standard           [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("standard",
-                                             "connector standard",
-                                             out ConnectorTypes Standard,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("standard",
+                                         "connector standard",
+                                         ConnectorType.TryParse,
+                                         out ConnectorType Standard,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -442,7 +448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var JSON = JSONObject.Create(
 
                            new JProperty("id",                          Id.                   ToString()),
-                           new JProperty("standard",                    Standard.             AsText()),
+                           new JProperty("standard",                    Standard.             ToString()),
                            new JProperty("format",                      Format.               AsText()),
                            new JProperty("power_type",                  PowerType.            AsText()),
                            new JProperty("voltage",                     Voltage),
@@ -829,7 +835,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   Id,
+                   " (",
+                   Standard,           ", ",
+                   Format.   AsText(), ", ",
+                   PowerType.AsText(), ", ",
+                   Voltage,            " V, ",
+                   Amperage,           "A",
+
+                   TariffId.HasValue
+                       ? ", " + TariffId.Value.ToString()
+                       : "",
+
+                   ")"
+
+               );
 
         #endregion
 

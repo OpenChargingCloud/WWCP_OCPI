@@ -316,7 +316,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMix> CustomEnergyMixSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMix>? CustomEnergyMixSerializer = null)
         {
 
             var JSON = JSONObject.Create(

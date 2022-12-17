@@ -3953,7 +3953,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = Location.LastUpdated.ToIso8601(),
-                                                       ETag                       = Location.SHA256Hash
+                                                       ETag                       = Location.ETag
                                                    }
                                             });
 
@@ -4050,7 +4050,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = addOrUpdateResult.Data.SHA256Hash
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -4139,7 +4139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedLocation.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedLocation.PatchedData.SHA256Hash
+                                                               ETag                       = patchedLocation.PatchedData.ETag
                                                            }
                                                        };
 
@@ -4312,7 +4312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = EVSE.LastUpdated.ToIso8601(),
-                                                       ETag                       = EVSE.SHA256Hash
+                                                       ETag                       = EVSE.ETag
                                                    }
                                             });
 
@@ -4410,7 +4410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newOrUpdatedEVSE.LastUpdated.ToIso8601(),
-                                                           ETag                       = newOrUpdatedEVSE.SHA256Hash
+                                                           ETag                       = newOrUpdatedEVSE.ETag
                                                        }
                                                    };
 
@@ -4499,7 +4499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedEVSE.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedEVSE.PatchedData.SHA256Hash
+                                                               ETag                       = patchedEVSE.PatchedData.ETag
                                                            }
                                                        };
 
@@ -4677,7 +4677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = Connector.LastUpdated.ToIso8601(),
-                                                       ETag                       = Connector.SHA256Hash
+                                                       ETag                       = Connector.ETag
                                                    }
                                             });
 
@@ -4778,7 +4778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newOrUpdatedConnector.LastUpdated.ToIso8601(),
-                                                           ETag                       = newOrUpdatedConnector.SHA256Hash
+                                                           ETag                       = newOrUpdatedConnector.ETag
                                                        }
                                                    };
 
@@ -4870,7 +4870,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedConnector.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedConnector.PatchedData.SHA256Hash
+                                                               ETag                       = patchedConnector.PatchedData.ETag
                                                            }
                                                        };
 

@@ -73,7 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Address of the location. // 3
         /// </summary>
         [Mandatory]
-        public String                              Country                  { get; }
+        public Country                             Country                  { get; }
 
         /// <summary>
         /// The geographical location of this location.
@@ -101,7 +101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The standard of the installed connector.
         /// </summary>
-        public ConnectorTypes                      ConnectorStandard        { get; }
+        public ConnectorType                       ConnectorStandard        { get; }
 
         /// <summary>
         /// The format (socket/cable) of the installed connector.
@@ -124,17 +124,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public CDRLocation(Location_Id       Id,
                            String            Address,
                            String            City,
-                           String            Country,
+                           Country           Country,
                            GeoCoordinate     Coordinates,
                            EVSE_UId          EVSEUId,
                            EVSE_Id           EVSEId,
                            Connector_Id      ConnectorId,
-                           ConnectorTypes    ConnectorStandard,
+                           ConnectorType     ConnectorStandard,
                            ConnectorFormats  ConnectorFormat,
                            PowerTypes        ConnectorPowerType,
 
-                           String            Name         = null,
-                           String            PostalCode   = null)
+                           String?           Name         = null,
+                           String?           PostalCode   = null)
 
         {
 
@@ -279,10 +279,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Country                   [mandatory]
 
-                if (!JSON.ParseMandatoryText("country",
-                                             "country",
-                                             out String Country,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("country",
+                                         "country",
+                                         org.GraphDefined.Vanaheimr.Illias.Country.TryParse,
+                                         out Country Country,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -343,10 +344,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse ConnectorStandard         [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("connector_standard",
-                                             "connector standard/type",
-                                             out ConnectorTypes ConnectorStandard,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("connector_standard",
+                                         "connector standard/type",
+                                         ConnectorType.TryParse,
+                                         out ConnectorType ConnectorStandard,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

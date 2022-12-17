@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    EVSE_UId.        Parse("DE*GEF*E*LOC0001*1"),
                                    EVSE_Id.         Parse("DE*GEF*E*LOC0001*1"),
                                    Connector_Id.    Parse("1"),
-                                   ConnectorTypes.  IEC_62196_T2,
+                                   ConnectorType.   IEC_62196_T2,
                                    ConnectorFormats.SOCKET,
                                    PowerTypes.      AC_3_PHASE,
                                    "Name?",

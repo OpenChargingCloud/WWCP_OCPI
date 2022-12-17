@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -35,10 +32,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The Location object describes the location and its properties
+    /// The location object describes the charging location and its properties
     /// where a group of EVSEs that belong together are installed.
     /// 
-    /// Typically the Location object is the exact location of the group
+    /// Typically a charging location is the exact location of the group
     /// of EVSEs, but it can also be the entrance of a parking garage
     /// which contains these EVSEs. The exact way to reach each EVSE
     /// can then be further specified by its own properties.
@@ -59,162 +56,164 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this location.
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
         /// </summary>
-        [Optional]
+        [Mandatory]
         public CountryCode                         CountryCode              { get; }
 
         /// <summary>
-        /// The Id of the CPO that 'owns' this location (following the ISO-15118 standard).
+        /// The identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).
         /// </summary>
-        [Optional]
+        [Mandatory]
         public Party_Id                            PartyId                  { get; }
 
         /// <summary>
-        /// The identification of the location within the CPOs platform (and suboperator platforms). 
+        /// The identification of the charging location within the CPOs platform (and suboperator platforms).
+        /// This field can never be changed, modified or renamed.
         /// </summary>
         [Mandatory]
         public Location_Id                         Id                       { get; }
 
         /// <summary>
-        /// Whether this location may be published on an website or app etc., or not.
+        /// Whether this charging location may be published on an website or app etc., or not.
         /// </summary>
         [Mandatory]
         public Boolean                             Publish                  { get; }
 
         /// <summary>
         /// This field may only be used when the publish field is set to false.
-        /// Only owners of Tokens that match all the set fields of one PublishToken in the list are allowed to be shown this location.
+        /// Only owners of tokens that match all the set fields of one PublishToken in the list are allowed to be shown this charging location.
         /// </summary>
         [Optional]
         public IEnumerable<PublishTokenType>       PublishAllowedTo         { get; }
 
         /// <summary>
-        /// Display name of the location. // 255
+        /// The optional display name of the charging location.
+        /// string(255)
         /// </summary>
         [Optional]
-        public String                              Name                     { get; }
+        public String?                             Name                     { get; }
 
         /// <summary>
-        /// Address of the location. // 45
+        /// The address of the charging location.
+        /// string(45)
         /// </summary>
         [Mandatory]
         public String                              Address                  { get; }
 
         /// <summary>
-        /// Address of the location. // 45
+        /// The city or town of the charging location.
+        /// string(45)
         /// </summary>
         [Mandatory]
         public String                              City                     { get; }
 
         /// <summary>
-        /// Address of the location. // 10
+        /// The optional postal code of the charging location.
+        /// string(10)
         /// </summary>
         [Optional]
-        public String                              PostalCode               { get; }
+        public String?                             PostalCode               { get; }
 
         /// <summary>
-        /// Address of the location. // 20
+        /// The optional state or province of the charging location.
+        /// string(20)
         /// </summary>
         [Optional]
-        public String                              State                    { get; }
+        public String?                             State                    { get; }
 
         /// <summary>
-        /// Address of the location. // 3
+        /// The ISO 3166-1 alpha-3 code of the country of the charging location.
         /// </summary>
         [Mandatory]
-        public String                              Country                  { get; }
+        public Country                             Country                  { get; }
 
         /// <summary>
-        /// The geographical location of this location.
+        /// The geographical location of this charging location.
         /// </summary>
         [Mandatory]
         public GeoCoordinate                       Coordinates              { get; }
 
         /// <summary>
-        /// Geographical location of related geo coordinates relevant to the ev customer.
+        /// The optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.
         /// </summary>
         [Optional]
         public IEnumerable<AdditionalGeoLocation>  RelatedLocations         { get; }
 
         /// <summary>
-        /// The general type of parking at the charge point location.
+        /// The optional general type of parking at the charging location.
         /// </summary>
         [Optional]
-        public ParkingTypes?                       ParkingType              { get; }
+        public ParkingType?                        ParkingType              { get; }
 
         /// <summary>
-        /// All Electric Vehicle Supply Equipments (EVSE) present
-        /// within this charging station.
+        /// The optional enumeration of all Electric Vehicle Supply Equipments (EVSE) at this charging location.
         /// </summary>
         [Optional]
         public IEnumerable<EVSE>                   EVSEs                    { get; private set; }
 
         /// <summary>
-        /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
-        /// present within this charging station.
+        /// The optional enumeration of all EVSE identifications at this charging location.
         /// </summary>
         [Optional]
         public IEnumerable<EVSE_Id>                EVSEIds
-            => EVSEs.Where(evse => evse.EVSEId.HasValue).Select(evse => evse.EVSEId.Value);
+            => EVSEs.Where (evse => evse.EVSEId.HasValue).
+                     Select(evse => evse.EVSEId!.Value);
 
         /// <summary>
-        /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
-        /// present within this charging station.
+        /// The enumeration of all internal EVSE (unique) identifications at this charging location.
         /// </summary>
-        [Optional]
+        [Mandatory]
         public IEnumerable<EVSE_UId>               EVSEUIds
-            => EVSEs.SafeSelect(evse => evse.UId);
+            => EVSEs.Select(evse => evse.UId);
 
         /// <summary>
-        /// Human-readable directions on how to reach the location.
+        /// The optional enumeration of human-readable directions on how to reach the location.
         /// </summary>
         [Optional]
         public IEnumerable<DisplayText>            Directions               { get; }
 
         /// <summary>
-        /// Information of the charging station operator.
+        /// Optional information about the charging station operator.
         /// </summary>
-        /// <remarks>When not specified, the information retrieved from the Credentials module should be used instead.</remarks>
+        /// <remarks>When not specified, the information retrieved from the credentials module matching the country_code and party_id should be used instead.</remarks>
         [Optional]
-        public BusinessDetails                     Operator                 { get; }
+        public BusinessDetails?                    Operator                 { get; }
 
         /// <summary>
-        /// Information of the suboperator if available.
+        /// Optional information about the suboperator.
         /// </summary>
         [Optional]
-        public BusinessDetails                     SubOperator              { get; }
+        public BusinessDetails?                    SubOperator              { get; }
 
         /// <summary>
-        /// Information of the suboperator if available.
+        /// Optional information about the owner.
         /// </summary>
         [Optional]
-        public BusinessDetails                     Owner                    { get; }
+        public BusinessDetails?                    Owner                    { get; }
 
         /// <summary>
-        /// Information of the suboperator if available.
+        /// The optional enumeration of facilities this charging location directly belongs to.
         /// </summary>
         [Optional]
         public IEnumerable<Facilities>             Facilities               { get; }
 
         /// <summary>
-        /// One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).
+        /// One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).
         /// </summary>
         /// <example>"Europe/Oslo", "Europe/Zurich"</example>
         [Mandatory]
         public String                              Timezone                 { get; }
 
         /// <summary>
-        /// Information of the Charging Station Operator. When not specified,
-        /// the information retreived from the api_info endpoint
-        /// should be used instead.
+        /// The optional times when the EVSEs at the charging location can be accessed for charging.
         /// </summary>
         [Optional]
-        public Hours                               OpeningTimes             { get; }
+        public Hours?                              OpeningTimes             { get; }
 
         /// <summary>
         /// Indicates if the EVSEs are still charging outside the opening
-        /// hours of the location. E.g. when the parking garage closes its
+        /// hours of the charging location. E.g. when the parking garage closes its
         /// barriers over night, is it allowed to charge till the next
         /// morning? [Default: true]
         /// </summary>
@@ -222,19 +221,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean?                            ChargingWhenClosed       { get; }
 
         /// <summary>
-        /// Links to images related to the location such as photos or logos.
+        /// The optional enumeration of images related to the charging location such as photos or logos.
         /// </summary>
         [Optional]
         public IEnumerable<Image>                  Images                   { get; }
 
         /// <summary>
-        /// Links to images related to the location such as photos or logos.
+        /// Optional details on the energy supplied at this charging location.
         /// </summary>
         [Optional]
-        public EnergyMix                           EnergyMix                { get; }
+        public EnergyMix?                          EnergyMix                { get; }
 
         /// <summary>
-        /// Timestamp when this location was last updated (or created).
+        /// The timestamp when this charging location was last updated (or created).
         /// </summary>
         [Mandatory]
         public DateTime                            LastUpdated              { get; }
@@ -242,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The SHA256 hash of the JSON representation of this location.
         /// </summary>
-        public String                              SHA256Hash               { get; private set; }
+        public String                              ETag                     { get; private set; }
 
         #endregion
 
@@ -255,34 +254,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Id">Uniquely identifies the location within the CPOs platform (and suboperator platforms).</param>
         /// <param name="Operator">Information of the evse operator.</param>
         /// <param name="SubOperator">Information of the evse suboperator if available.</param>
-        public Location(CountryCode                         CountryCode,
-                        Party_Id                            PartyId,
-                        Location_Id                         Id,
-                        Boolean                             Publish,
-                        String                              Address,
-                        String                              City,
-                        String                              Country,
-                        GeoCoordinate                       Coordinates,
-                        String                              Timezone,
+        public Location(CountryCode                                              CountryCode,
+                        Party_Id                                                 PartyId,
+                        Location_Id                                              Id,
+                        Boolean                                                  Publish,
+                        String                                                   Address,
+                        String                                                   City,
+                        Country                                                  Country,
+                        GeoCoordinate                                            Coordinates,
+                        String                                                   Timezone,
 
-                        IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
-                        String                              Name                 = null,
-                        String                              PostalCode           = null,
-                        String                              State                = null,
-                        IEnumerable<AdditionalGeoLocation>  RelatedLocations     = null,
-                        ParkingTypes?                       ParkingType          = null,
-                        IEnumerable<EVSE>                   EVSEs                = null,
-                        IEnumerable<DisplayText>            Directions           = null,
-                        BusinessDetails                     Operator             = null,
-                        BusinessDetails                     SubOperator          = null,
-                        BusinessDetails                     Owner                = null,
-                        IEnumerable<Facilities>             Facilities           = null,
-                        Hours                               OpeningTimes         = null,
-                        Boolean?                            ChargingWhenClosed   = null,
-                        IEnumerable<Image>                  Images               = null,
-                        EnergyMix                           EnergyMix            = null,
+                        IEnumerable<PublishTokenType>?                           PublishAllowedTo                        = null,
+                        String?                                                  Name                                    = null,
+                        String?                                                  PostalCode                              = null,
+                        String?                                                  State                                   = null,
+                        IEnumerable<AdditionalGeoLocation>?                      RelatedLocations                        = null,
+                        ParkingType?                                             ParkingType                             = null,
+                        IEnumerable<EVSE>?                                       EVSEs                                   = null,
+                        IEnumerable<DisplayText>?                                Directions                              = null,
+                        BusinessDetails?                                         Operator                                = null,
+                        BusinessDetails?                                         SubOperator                             = null,
+                        BusinessDetails?                                         Owner                                   = null,
+                        IEnumerable<Facilities>?                                 Facilities                              = null,
+                        Hours?                                                   OpeningTimes                            = null,
+                        Boolean?                                                 ChargingWhenClosed                      = null,
+                        IEnumerable<Image>?                                      Images                                  = null,
+                        EnergyMix?                                               EnergyMix                               = null,
 
-                        DateTime?                           LastUpdated          = null)
+                        DateTime?                                                LastUpdated                             = null,
+                        CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
+                        CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
+                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
+                        CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
+                        CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
+                        CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
+                        CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
+                        CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
+                        CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
+                        CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null)
 
         {
 
@@ -296,30 +305,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Coordinates          = Coordinates;
             this.Timezone             = Timezone;
 
-            this.PublishAllowedTo     = PublishAllowedTo  ?? new PublishTokenType[0];
+            this.PublishAllowedTo     = PublishAllowedTo?.Distinct() ?? Array.Empty<PublishTokenType>();
             this.Name                 = Name;
             this.PostalCode           = PostalCode;
             this.State                = State;
-            this.RelatedLocations     = RelatedLocations  ?? new AdditionalGeoLocation[0];
+            this.RelatedLocations     = RelatedLocations?.Distinct() ?? Array.Empty<AdditionalGeoLocation>();
             this.ParkingType          = ParkingType;
-            this.EVSEs                = EVSEs?.Distinct() ?? new EVSE[0];
-            this.Directions           = Directions        ?? new DisplayText[0];
+            this.EVSEs                = EVSEs?.           Distinct() ?? Array.Empty<EVSE>();
+            this.Directions           = Directions?.      Distinct() ?? Array.Empty<DisplayText>();
             this.Operator             = Operator;
             this.SubOperator          = SubOperator;
             this.Owner                = Owner;
-            this.Facilities           = Facilities        ?? new Facilities[0];
+            this.Facilities           = Facilities?.      Distinct() ?? Array.Empty<Facilities>();
             this.OpeningTimes         = OpeningTimes;
             this.ChargingWhenClosed   = ChargingWhenClosed;
-            this.Images               = Images            ?? new Image[0];
+            this.Images               = Images?.          Distinct() ?? Array.Empty<Image>();
             this.EnergyMix            = EnergyMix;
 
-            this.LastUpdated          = LastUpdated       ?? Timestamp.Now;
+            this.LastUpdated          = LastUpdated                  ?? Timestamp.Now;
 
-            if (EVSEs != null)
-                foreach (var evse in EVSEs)
-                    evse.ParentLocation = this;
+            foreach (var evse in this.EVSEs)
+                evse.ParentLocation = this;
 
-            CalcSHA256Hash();
+            this.ETag                 = CalcSHA256Hash(CustomLocationSerializer,
+                                                       CustomPublishTokenTypeSerializer,
+                                                       CustomAdditionalGeoLocationSerializer,
+                                                       CustomEVSESerializer,
+                                                       CustomStatusScheduleSerializer,
+                                                       CustomConnectorSerializer,
+                                                       CustomDisplayTextSerializer,
+                                                       CustomBusinessDetailsSerializer,
+                                                       CustomHoursSerializer,
+                                                       CustomImageSerializer);
 
         }
 
@@ -528,10 +545,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Country               [mandatory]
 
-                if (!JSON.ParseMandatoryText("country",
-                                             "country",
-                                             out String Country,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("country",
+                                         "country",
+                                         org.GraphDefined.Vanaheimr.Illias.Country.TryParse,
+                                         out Country Country,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -612,10 +630,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse ParkingType           [optional]
 
-                if (JSON.ParseOptionalEnum("parking_type",
-                                           "parking type",
-                                           out ParkingTypes? ParkingType,
-                                           out ErrorResponse))
+                if (JSON.ParseOptional("parking_type",
+                                       "parking type",
+                                       OCPIv2_2.ParkingType.TryParse,
+                                       out ParkingType? ParkingType,
+                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -776,31 +795,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                Location = new Location(CountryCodeBody ?? CountryCodeURL.Value,
-                                        PartyIdBody     ?? PartyIdURL.Value,
-                                        LocationIdBody  ?? LocationIdURL.Value,
+                Location = new Location(CountryCodeBody ?? CountryCodeURL!.Value,
+                                        PartyIdBody     ?? PartyIdURL!.    Value,
+                                        LocationIdBody  ?? LocationIdURL!. Value,
                                         Publish,
-                                        Address?.   Trim(),
-                                        City?.      Trim(),
-                                        Country?.   Trim(),
+                                        Address,
+                                        City,
+                                        Country,
                                         Coordinates,
-                                        TimeZone?.  Trim(),
+                                        TimeZone,
 
                                         PublishTokenTypes,
-                                        Name?.      Trim(),
-                                        PostalCode?.Trim(),
-                                        State?.     Trim(),
-                                        RelatedLocations?.Distinct(),
+                                        Name,
+                                        PostalCode,
+                                        State,
+                                        RelatedLocations,
                                         ParkingType,
-                                        EVSEs?.           Distinct(),
-                                        Directions?.      Distinct(),
+                                        EVSEs,
+                                        Directions,
                                         Operator,
                                         Suboperator,
                                         Owner,
                                         Facilities,
                                         OpeningTimes,
                                         ChargingWhenClosed,
-                                        Images?.          Distinct(),
+                                        Images,
                                         EnergyMix,
                                         LastUpdated);
 
@@ -837,16 +856,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
-                              CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
-                              CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
-                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
-                              CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
-                              CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
+                              CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
+                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
+                              CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
+                              CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
+                              CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
+                              CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
+                              CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null)
         {
 
             var JSON = JSONObject.Create(
@@ -857,7 +878,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("publish",                         Publish),
 
                            Publish == false && PublishAllowedTo.SafeAny()
-                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
+                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishTokenType => publishTokenType.ToJSON(CustomPublishTokenTypeSerializer))))
                                : null,
 
                            Name.IsNotNullOrEmpty()
@@ -875,22 +896,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("state",                     State)
                                : null,
 
-                           new JProperty("country",                         Country),
+                           new JProperty("country",                         Country.ToString()),
+
                            new JProperty("coordinates",                     new JObject(
                                                                                 new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
                                                                                 new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
                                                                             )),
 
-                           RelatedLocations.SafeAny()
-                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(location => location.ToJSON(CustomAdditionalGeoLocationSerializer,
-                                                                                                                                           CustomDisplayTextSerializer))))
+                           RelatedLocations.Any()
+                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
+                                                                                                                                                                     CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingType.HasValue
                                ? new JProperty("parking_type",              ParkingType.Value.ToString())
                                : null,
 
-                           EVSEs.SafeAny()
+                           EVSEs.Any()
                                ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
                                                                                                                         CustomStatusScheduleSerializer,
                                                                                                                         CustomConnectorSerializer,
@@ -898,29 +920,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                                                                         CustomImageSerializer))))
                                : null,
 
-                           Directions.SafeAny()
-                               ? new JProperty("directions",                new JArray(Directions.Select(evse => evse.ToJSON(CustomDisplayTextSerializer))))
+                           Directions.Any()
+                               ? new JProperty("directions",                new JArray(Directions.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
-                           Operator != null
+                           Operator is not null
                                ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
-                           SubOperator != null
+                           SubOperator is not null
                                ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
-                           Owner != null
+                           Owner is not null
                                ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
-                           Facilities.SafeAny()
+                           Facilities.Any()
                                ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
                                : null,
 
                            new JProperty("time_zone",                       Timezone),
 
-                           OpeningTimes != null
+                           OpeningTimes is not null
                                ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
                                : null,
 
@@ -928,12 +950,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
                                : null,
 
-                           Images.SafeAny()
+                           Images.Any()
                                ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
                                : null,
 
-                           EnergyMix != null
-                               ? new JProperty("energy_mix",                EnergyMix.ToJSON())
+                           EnergyMix is not null
+                               ? new JProperty("energy_mix",                EnergyMix.ToJSON(CustomEnergyMixSerializer))
                                : null,
 
                            new JProperty("last_updated",                    LastUpdated.ToIso8601())
@@ -1096,7 +1118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                               Boolean  AllowDowngrades = false)
         {
 
-            if (LocationPatch == null)
+            if (LocationPatch is null)
                 return PatchResult<Location>.Failed(this,
                                                     "The given location patch must not be null!");
 
@@ -1123,40 +1145,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                         patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
-                             out Location  PatchedLocation,
-                             out String    ErrorResponse))
+                             out var patchedLocation,
+                             out var errorResponse))
                 {
 
-                    return PatchResult<Location>.Success(PatchedLocation,
-                                                         ErrorResponse);
+                    return PatchResult<Location>.Success(patchedLocation,
+                                                         errorResponse);
 
                 }
 
                 else
                     return PatchResult<Location>.Failed(this,
-                                                        "Invalid JSON merge patch of a location: " + ErrorResponse);
-
-            }
-
-        }
-
-        #endregion
-
-
-        #region (internal) SetEVSE(EVSE)
-
-        internal void SetEVSE(EVSE EVSE)
-        {
-
-            if (EVSE is null)
-                return;
-
-            lock (EVSEs)
-            {
-
-                EVSEs = EVSEs.Where  (evse => evse.UId != EVSE.UId).
-                              Concat (new EVSE[] { EVSE }).
-                              ToArray();
+                                                        "Invalid JSON merge patch of a location: " + errorResponse);
 
             }
 
@@ -1285,6 +1285,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        #region (internal) SetEVSE(EVSE)
+
+        internal void SetEVSE(EVSE EVSE)
+        {
+
+            if (EVSE is null)
+                return;
+
+            lock (EVSEs)
+            {
+
+                EVSEs = EVSEs.Where  (evse => evse.UId != EVSE.UId).
+                              Concat (new EVSE[] { EVSE }).
+                              ToArray();
+
+            }
+
+        }
+
+        #endregion
+
         #region (internal) RemoveEVSE(EVSE)
 
         internal void RemoveEVSE(EVSE EVSE)
@@ -1320,8 +1341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-
-        #region CalcSHA256Hash(CustomLocationSerializer = null, CustomEVSESerializer = null, ...)
+        #region CalcSHA256Hash(CustomLocationSerializer = null, CustomPublishTokenTypeSerializer = null, ...)
 
         /// <summary>
         /// Calculate the SHA256 hash of the JSON representation of this location in HEX.
@@ -1336,38 +1356,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
-                                     CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
-                                     CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
-                                     CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
-                                     CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
-                                     CustomJObjectSerializerDelegate<Connector>              CustomConnectorSerializer               = null,
-                                     CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null,
-                                     CustomJObjectSerializerDelegate<BusinessDetails>        CustomBusinessDetailsSerializer         = null,
-                                     CustomJObjectSerializerDelegate<Hours>                  CustomHoursSerializer                   = null,
-                                     CustomJObjectSerializerDelegate<Image>                  CustomImageSerializer                   = null)
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
+                                     CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
+                                     CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
+                                     CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
+                                     CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
+                                     CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
+                                     CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
+                                     CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
+                                     CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null)
         {
 
-            using (var SHA256 = new SHA256Managed())
-            {
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomLocationSerializer,
+                                                           CustomPublishTokenTypeSerializer,
+                                                           CustomAdditionalGeoLocationSerializer,
+                                                           CustomEVSESerializer,
+                                                           CustomStatusScheduleSerializer,
+                                                           CustomConnectorSerializer,
+                                                           CustomDisplayTextSerializer,
+                                                           CustomBusinessDetailsSerializer,
+                                                           CustomHoursSerializer,
+                                                           CustomImageSerializer,
+                                                           CustomEnergyMixSerializer).ToUTF8Bytes()).ToBase64();
 
-                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomLocationSerializer,
-                                                                         CustomPublishTokenTypeSerializer,
-                                                                         CustomAdditionalGeoLocationSerializer,
-                                                                         CustomEVSESerializer,
-                                                                         CustomStatusScheduleSerializer,
-                                                                         CustomConnectorSerializer,
-                                                                         CustomDisplayTextSerializer,
-                                                                         CustomBusinessDetailsSerializer,
-                                                                         CustomHoursSerializer,
-                                                                         CustomImageSerializer).
-                                                                  ToString(Newtonsoft.Json.Formatting.None)
-                                                              )).
-                                                  Select(value => String.Format("{0:x2}", value)).
-                                                  Aggregate();
-
-            }
+            return this.ETag;
 
         }
 
@@ -1486,10 +1501,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two locations.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A location to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Location location
                    ? CompareTo(location)
@@ -1501,10 +1516,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Location)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two locations.
         /// </summary>
-        /// <param name="Location">An Location to compare with.</param>
-        public Int32 CompareTo(Location Location)
+        /// <param name="Location">A location to compare with.</param>
+        public Int32 CompareTo(Location? Location)
 
             => Location is null
                    ? throw new ArgumentNullException(nameof(Location), "The given charging location must not be null!")
@@ -1519,11 +1534,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two locations for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A location to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Location location &&
                    Equals(location);
@@ -1536,10 +1550,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two locations for equality.
         /// </summary>
         /// <param name="Location">A location to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Location Location)
+        public Boolean Equals(Location? Location)
 
-            => !(Location is null) &&
+            => Location is not null &&
                    Id.Equals(Location.Id);
 
         #endregion
@@ -1577,34 +1590,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="NewLocationId">An optional new location identification.</param>
         public Builder ToBuilder(Location_Id? NewLocationId = null)
 
-            => new Builder(CountryCode,
-                           PartyId,
-                           NewLocationId ?? Id,
-                           Publish,
-                           Address,
-                           City,
-                           Country,
-                           Coordinates,
-                           Timezone,
+            => new (CountryCode,
+                    PartyId,
+                    NewLocationId ?? Id,
+                    Publish,
+                    Address,
+                    City,
+                    Country,
+                    Coordinates,
+                    Timezone,
 
-                           PublishAllowedTo,
-                           Name,
-                           PostalCode,
-                           State,
-                           RelatedLocations,
-                           ParkingType,
-                           EVSEs,
-                           Directions,
-                           Operator,
-                           SubOperator,
-                           Owner,
-                           Facilities,
-                           OpeningTimes,
-                           ChargingWhenClosed,
-                           Images,
-                           EnergyMix,
+                    PublishAllowedTo,
+                    Name,
+                    PostalCode,
+                    State,
+                    RelatedLocations,
+                    ParkingType,
+                    EVSEs,
+                    Directions,
+                    Operator,
+                    SubOperator,
+                    Owner,
+                    Facilities,
+                    OpeningTimes,
+                    ChargingWhenClosed,
+                    Images,
+                    EnergyMix,
 
-                           LastUpdated);
+                    LastUpdated);
 
         #endregion
 
@@ -1672,7 +1685,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <summary>
             /// Address of the location. // 3
             /// </summary>
-            public String                          Country                  { get; set; }
+            public Country                         Country                  { get; set; }
 
             /// <summary>
             /// The geographical location of this location.
@@ -1687,7 +1700,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <summary>
             /// The general type of parking at the charge point location.
             /// </summary>
-            public ParkingTypes?                   ParkingType              { get; set; }
+            public ParkingType?                    ParkingType              { get; set; }
 
             /// <summary>
             /// All Electric Vehicle Supply Equipments (EVSE) present
@@ -1784,34 +1797,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// <param name="Id">Uniquely identifies the location within the CPOs platform (and suboperator platforms).</param>
             /// <param name="Operator">Information of the evse operator.</param>
             /// <param name="SubOperator">Information of the evse suboperator if available.</param>
-            public Builder(CountryCode?                        CountryCode          = null,
-                           Party_Id?                           PartyId              = null,
-                           Location_Id?                        Id                   = null,
-                           Boolean?                            Publish              = null,
-                           String                              Address              = null,
-                           String                              City                 = null,
-                           String                              Country              = null,
-                           GeoCoordinate?                      Coordinates          = null,
-                           String                              Timezone             = null,
+            public Builder(CountryCode?                         CountryCode          = null,
+                           Party_Id?                            PartyId              = null,
+                           Location_Id?                         Id                   = null,
+                           Boolean?                             Publish              = null,
+                           String?                              Address              = null,
+                           String?                              City                 = null,
+                           Country?                             Country              = null,
+                           GeoCoordinate?                       Coordinates          = null,
+                           String?                              Timezone             = null,
 
-                           IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
-                           String                              Name                 = null,
-                           String                              PostalCode           = null,
-                           String                              State                = null,
-                           IEnumerable<AdditionalGeoLocation>  RelatedLocations     = null,
-                           ParkingTypes?                       ParkingType          = null,
-                           IEnumerable<EVSE>                   EVSEs                = null,
-                           IEnumerable<DisplayText>            Directions           = null,
-                           BusinessDetails                     Operator             = null,
-                           BusinessDetails                     SubOperator          = null,
-                           BusinessDetails                     Owner                = null,
-                           IEnumerable<Facilities>             Facilities           = null,
-                           Hours                               OpeningTimes         = null,
-                           Boolean?                            ChargingWhenClosed   = null,
-                           IEnumerable<Image>                  Images               = null,
-                           EnergyMix                           EnergyMix            = null,
+                           IEnumerable<PublishTokenType>?       PublishAllowedTo     = null,
+                           String?                              Name                 = null,
+                           String?                              PostalCode           = null,
+                           String?                              State                = null,
+                           IEnumerable<AdditionalGeoLocation>?  RelatedLocations     = null,
+                           ParkingType?                         ParkingType          = null,
+                           IEnumerable<EVSE>?                   EVSEs                = null,
+                           IEnumerable<DisplayText>?            Directions           = null,
+                           BusinessDetails?                     Operator             = null,
+                           BusinessDetails?                     SubOperator          = null,
+                           BusinessDetails?                     Owner                = null,
+                           IEnumerable<Facilities>?             Facilities           = null,
+                           Hours?                               OpeningTimes         = null,
+                           Boolean?                             ChargingWhenClosed   = null,
+                           IEnumerable<Image>?                  Images               = null,
+                           EnergyMix?                           EnergyMix            = null,
 
-                           DateTime?                           LastUpdated          = null)
+                           DateTime?                            LastUpdated          = null)
 
             {
 
@@ -1825,21 +1838,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 this.Coordinates         = Coordinates;
                 this.Timezone            = Timezone;
 
-                this.PublishAllowedTo    = PublishAllowedTo != null ? new HashSet<PublishTokenType>     (PublishAllowedTo) : new HashSet<PublishTokenType>();
+                this.PublishAllowedTo    = PublishAllowedTo is not null ? new HashSet<PublishTokenType>     (PublishAllowedTo) : new HashSet<PublishTokenType>();
                 this.Name                = Name;
                 this.PostalCode          = PostalCode;
                 this.State               = State;
-                this.RelatedLocations    = RelatedLocations != null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : new HashSet<AdditionalGeoLocation>();
+                this.RelatedLocations    = RelatedLocations is not null ? new HashSet<AdditionalGeoLocation>(RelatedLocations) : new HashSet<AdditionalGeoLocation>();
                 this.ParkingType         = ParkingType;
-                this.EVSEs               = EVSEs            != null ? new HashSet<EVSE>                 (EVSEs)            : new HashSet<EVSE>();
-                this.Directions          = Directions       != null ? new HashSet<DisplayText>          (Directions)       : new HashSet<DisplayText>();
+                this.EVSEs               = EVSEs            is not null ? new HashSet<EVSE>                 (EVSEs)            : new HashSet<EVSE>();
+                this.Directions          = Directions       is not null ? new HashSet<DisplayText>          (Directions)       : new HashSet<DisplayText>();
                 this.Operator            = Operator;
                 this.SubOperator         = SubOperator;
                 this.Owner               = Owner;
-                this.Facilities          = Facilities       != null ? new HashSet<Facilities>           (Facilities)       : new HashSet<Facilities>();
+                this.Facilities          = Facilities       is not null ? new HashSet<Facilities>           (Facilities)       : new HashSet<Facilities>();
                 this.OpeningTimes        = OpeningTimes;
                 this.ChargingWhenClosed  = ChargingWhenClosed;
-                this.Images              = Images           != null ? new HashSet<Image>                (Images)           : new HashSet<Image>();
+                this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : new HashSet<Image>();
                 this.EnergyMix           = EnergyMix;
 
                 this.LastUpdated         = LastUpdated;

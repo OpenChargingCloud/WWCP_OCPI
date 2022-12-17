@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -31,7 +29,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     /// <summary>
     /// A multi-language text.
     /// </summary>
-    public readonly struct DisplayText : IEquatable<DisplayText>
+    public readonly struct DisplayText : IEquatable<DisplayText>,
+                                         IComparable<DisplayText>,
+                                         IComparable
     {
 
         #region Properties
@@ -57,15 +57,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Language">The language of the text.</param>
         /// <param name="Text">The text.</param>
-        public DisplayText(Languages Language,
-                           String    Text)
+        public DisplayText(Languages  Language,
+                           String     Text)
         {
 
             if (Text.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Text), "The given multi-language text must not be null or empty!");
 
             this.Language  = Language;
-            this.Text      = Text?.Trim();
+            this.Text      = Text.Trim();
 
         }
 
@@ -82,8 +82,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static DisplayText Create(Languages  Language,
                                          String     Text)
 
-            => new DisplayText(Language,
-                               Text);
+            => new (Language,
+                    Text);
 
         #endregion
 
@@ -94,44 +94,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomDisplayTextParser">A delegate to parse custom multi-language text JSON objects.</param>
-        public static DisplayText Parse(JObject                                   JSON,
-                                        CustomJObjectParserDelegate<DisplayText>  CustomDisplayTextParser   = null)
+        public static DisplayText Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<DisplayText>?  CustomDisplayTextParser   = null)
         {
 
             if (TryParse(JSON,
-                         out DisplayText displayText,
-                         out String      ErrorResponse,
+                         out var displayText,
+                         out var errorResponse,
                          CustomDisplayTextParser))
             {
                 return displayText;
             }
 
-            throw new ArgumentException("The given JSON representation of a multi-language text is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomDisplayTextParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a multi-language text.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomDisplayTextParser">A delegate to parse custom multi-language text JSON objects.</param>
-        public static DisplayText Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<DisplayText>  CustomDisplayTextParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out DisplayText displayText,
-                         out String      ErrorResponse,
-                         CustomDisplayTextParser))
-            {
-                return displayText;
-            }
-
-            throw new ArgumentException("The given text representation of a multi-language text is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a multi-language text is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -149,7 +125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject          JSON,
                                        out DisplayText  DisplayText,
-                                       out String       ErrorResponse)
+                                       out String?      ErrorResponse)
 
             => TryParse(JSON,
                         out DisplayText,
@@ -164,10 +140,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="DisplayText">The parsed multi-language text.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomDisplayTextParser">A delegate to parse custom multi-language text JSON objects.</param>
-        public static Boolean TryParse(JObject                                   JSON,
-                                       out DisplayText                           DisplayText,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<DisplayText>  CustomDisplayTextParser)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out DisplayText                            DisplayText,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<DisplayText>?  CustomDisplayTextParser)
         {
 
             try
@@ -181,7 +157,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Language     [mandatory]
+                #region Parse Language    [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("language",
                                              "language",
@@ -193,7 +169,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Text         [mandatory]
+                #region Parse Text        [mandatory]
 
                 if (!JSON.ParseMandatoryText("text",
                                              "text",
@@ -228,48 +204,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out DisplayText, out ErrorResponse, CustomDisplayTextParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a displayText.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="DisplayText">The parsed multi-language text.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomDisplayTextParser">A delegate to parse custom displayText JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out DisplayText                           DisplayText,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<DisplayText>  CustomDisplayTextParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out DisplayText,
-                                out ErrorResponse,
-                                CustomDisplayTextParser);
-
-            }
-            catch (Exception e)
-            {
-                DisplayText = default;
-                ErrorResponse  = "The given text representation of a multi-language text is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomDisplayTextSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<DisplayText> CustomDisplayTextSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<DisplayText>? CustomDisplayTextSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -318,6 +259,105 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+        #region Operator <  (DisplayText1, DisplayText2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="DisplayText1">A display text.</param>
+        /// <param name="DisplayText2">Another display text.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (DisplayText DisplayText1,
+                                          DisplayText DisplayText2)
+
+            => DisplayText1.CompareTo(DisplayText2) < 0;
+
+        #endregion
+
+        #region Operator <= (DisplayText1, DisplayText2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="DisplayText1">A display text.</param>
+        /// <param name="DisplayText2">Another display text.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (DisplayText DisplayText1,
+                                           DisplayText DisplayText2)
+
+            => DisplayText1.CompareTo(DisplayText2) <= 0;
+
+        #endregion
+
+        #region Operator >  (DisplayText1, DisplayText2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="DisplayText1">A display text.</param>
+        /// <param name="DisplayText2">Another display text.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (DisplayText DisplayText1,
+                                          DisplayText DisplayText2)
+
+            => DisplayText1.CompareTo(DisplayText2) > 0;
+
+        #endregion
+
+        #region Operator >= (DisplayText1, DisplayText2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="DisplayText1">A display text.</param>
+        /// <param name="DisplayText2">Another display text.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (DisplayText DisplayText1,
+                                           DisplayText DisplayText2)
+
+            => DisplayText1.CompareTo(DisplayText2) >= 0;
+
+        #endregion
+
+        #endregion
+
+        #region IComparable<DisplayText> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two display texts.
+        /// </summary>
+        /// <param name="Object">A display text to compare with.</param>
+        public Int32 CompareTo(Object? Object)
+
+            => Object is DisplayText displayText
+                   ? CompareTo(displayText)
+                   : throw new ArgumentException("The given object is not a display text!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(DisplayText)
+
+        /// <summary>
+        /// Compares two display texts.
+        /// </summary>
+        /// <param name="DisplayText">A display text to compare with.</param>
+        public Int32 CompareTo(DisplayText DisplayText)
+        {
+
+            var c = Language.CompareTo(DisplayText.Language);
+
+            if (c == 0)
+                c = Text.    CompareTo(DisplayText.Text);
+
+            return c;
+
+        }
+
+        #endregion
+
         #endregion
 
         #region IEquatable<DisplayText> Members
@@ -325,11 +365,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two display texts for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A display text to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is DisplayText displayText &&
                    Equals(displayText);
@@ -342,7 +381,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two display texts for equality.
         /// </summary>
         /// <param name="DisplayText">A display text to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(DisplayText DisplayText)
 
             => Language.Equals(DisplayText.Language) &&
@@ -362,8 +400,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
+
                 return Language.GetHashCode() * 3 ^
                        Text.    GetHashCode();
+
             }
         }
 
@@ -376,9 +416,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Language,
-                             " -> ",
-                             Text);
+            => String.Concat(
+
+                   Language,
+                   " -> ",
+                   Text
+
+               );
 
         #endregion
 

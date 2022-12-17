@@ -69,39 +69,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -109,12 +101,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -324,39 +316,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -364,12 +348,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -551,39 +535,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -591,12 +567,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -778,39 +754,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -818,12 +786,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1005,39 +973,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -1045,12 +1005,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1234,39 +1194,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -1274,12 +1226,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1461,39 +1413,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -1501,12 +1445,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1691,39 +1635,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -1731,12 +1667,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -1919,39 +1855,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -1959,12 +1887,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -2146,39 +2074,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -2186,12 +2106,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -2373,39 +2293,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -2413,12 +2325,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )
@@ -2600,39 +2512,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingTypes.PARKING_LOT,
+                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
-                                        StatusTypes.AVAILABLE,
+                                        StatusType.AVAILABLE,
                                         new Connector[] {
                                             new Connector(
                                                 Connector_Id.Parse("1"),
-                                                ConnectorTypes.IEC_62196_T2,
+                                                ConnectorType.IEC_62196_T2,
                                                 ConnectorFormats.SOCKET,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 30,
-                                                12,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0001"),
-                                                    Tariff_Id.Parse("DE*GEF*T0002")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0001"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-21")
                                             ),
                                             new Connector(
                                                 Connector_Id.Parse("2"),
-                                                ConnectorTypes.IEC_62196_T2_COMBO,
+                                                ConnectorType.IEC_62196_T2_COMBO,
                                                 ConnectorFormats.CABLE,
                                                 PowerTypes.AC_3_PHASE,
                                                 400,
                                                 20,
-                                                8,
-                                                new Tariff_Id[] {
-                                                    Tariff_Id.Parse("DE*GEF*T0003"),
-                                                    Tariff_Id.Parse("DE*GEF*T0004")
-                                                },
+                                                Tariff_Id.Parse("DE*GEF*T0003"),
                                                 URL.Parse("https://open.charging.cloud/terms"),
                                                 DateTime.Parse("2020-09-22")
                                             )
@@ -2640,12 +2544,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                                         new StatusSchedule[] {
                                             new StatusSchedule(
-                                                StatusTypes.INOPERATIVE,
+                                                StatusType.INOPERATIVE,
                                                 DateTime.Parse("2020-09-23"),
                                                 DateTime.Parse("2020-09-24")
                                             ),
                                             new StatusSchedule(
-                                                StatusTypes.OUTOFORDER,
+                                                StatusType.OUTOFORDER,
                                                 DateTime.Parse("2020-12-30"),
                                                 DateTime.Parse("2020-12-31")
                                             )

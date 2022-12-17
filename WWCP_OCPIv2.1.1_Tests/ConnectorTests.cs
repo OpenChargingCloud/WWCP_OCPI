@@ -47,16 +47,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -70,30 +66,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(400,                                  JSON["max_voltage"].         Value<UInt16>());
             Assert.AreEqual(30,                                   JSON["max_amperage"].        Value<UInt16>());
             Assert.AreEqual(12,                                   JSON["max_electric_power"].  Value<UInt16>());
-            Assert.AreEqual("DE*GEF*T0001",                       JSON["tariff_ids"][0].       Value<String>());
-            Assert.AreEqual("DE*GEF*T0002",                       JSON["tariff_ids"][1].       Value<String>());
+            Assert.AreEqual("DE*GEF*T0001",                       JSON["tariff_id"].           Value<String>());
             Assert.AreEqual("https://open.charging.cloud/terms",  JSON["terms_and_conditions"].Value<String>());
             Assert.AreEqual("2020-09-21T00:00:00.000Z",           JSON["last_updated"].        Value<String>());
 
-            Assert.IsTrue(Connector.TryParse(JSON, out Connector Connector2, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Connector.TryParse(JSON, out var connector2, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(new Tariff_Id[] {
-                                Tariff_Id.Parse("DE*GEF*T0001"),
-                                Tariff_Id.Parse("DE*GEF*T0002")
-                            },
-                            Connector2.TariffIds);
-
-            Assert.AreEqual(Connector1.Id,                        Connector2.Id);
-            Assert.AreEqual(Connector1.Standard,                  Connector2.Standard);
-            Assert.AreEqual(Connector1.Format,                    Connector2.Format);
-            Assert.AreEqual(Connector1.PowerType,                 Connector2.PowerType);
-            Assert.AreEqual(Connector1.Voltage,                Connector2.Voltage);
-            Assert.AreEqual(Connector1.Amperage,               Connector2.Amperage);
-            Assert.AreEqual(Connector1.MaxElectricPower,          Connector2.MaxElectricPower);
-            Assert.AreEqual(Connector1.TariffIds,                 Connector2.TariffIds);
-            Assert.AreEqual(Connector1.TermsAndConditionsURL,     Connector2.TermsAndConditionsURL);
-            Assert.AreEqual(Connector1.LastUpdated.ToIso8601(),   Connector2.LastUpdated.ToIso8601());
+            Assert.AreEqual(Connector1.Id,                        connector2.Id);
+            Assert.AreEqual(Connector1.Standard,                  connector2.Standard);
+            Assert.AreEqual(Connector1.Format,                    connector2.Format);
+            Assert.AreEqual(Connector1.PowerType,                 connector2.PowerType);
+            Assert.AreEqual(Connector1.Voltage,                   connector2.Voltage);
+            Assert.AreEqual(Connector1.Amperage,                  connector2.Amperage);
+            Assert.AreEqual(Connector1.TariffId,                  connector2.TariffId);
+            Assert.AreEqual(Connector1.TermsAndConditionsURL,     connector2.TermsAndConditionsURL);
+            Assert.AreEqual(Connector1.LastUpdated.ToIso8601(),   connector2.LastUpdated.ToIso8601());
 
         }
 
@@ -111,16 +99,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -135,15 +119,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                             patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                                                              patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                                                              patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (2,                                                               patchResult.PatchedData.TariffIds.        Count());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                 patchResult.PatchedData.TariffIds.        First());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                                 patchResult.PatchedData.TariffIds.Skip(1).First());
+            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                 patchResult.PatchedData.TariffId);
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),                  patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                      patchResult.PatchedData.LastUpdated.ToIso8601());
 
@@ -162,16 +143,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -185,15 +162,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual   (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual   (ConnectorTypes.TESLA_S,                          patchResult.PatchedData.Standard);
+            Assert.AreEqual   (ConnectorType.TESLA_S,                           patchResult.PatchedData.Standard);
             Assert.AreEqual   (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual   (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual   (400,                                             patchResult.PatchedData.Voltage);
             Assert.AreEqual   (30,                                              patchResult.PatchedData.Amperage);
-            Assert.AreEqual   (12,                                              patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual   (2,                                               patchResult.PatchedData.TariffIds.        Count());
-            Assert.AreEqual   (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffIds.        First());
-            Assert.AreEqual   (Tariff_Id.Parse("DE*GEF*T0002"),                 patchResult.PatchedData.TariffIds.Skip(1).First());
+            Assert.AreEqual   (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffId);
             Assert.AreEqual   (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),          patchResult.PatchedData.LastUpdated);
 
@@ -214,16 +188,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -237,15 +207,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.CABLE,                          patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                             patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                                              patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (2,                                               patchResult.PatchedData.TariffIds.        Count());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffIds.        First());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                 patchResult.PatchedData.TariffIds.Skip(1).First());
+            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                 patchResult.PatchedData.TariffId);
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToIso8601());
 
@@ -264,16 +231,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -287,14 +250,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                             patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                                              patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (1,                                               patchResult.PatchedData.TariffIds.Count());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0003"),                 patchResult.PatchedData.TariffIds.First());
+            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0003"),                 patchResult.PatchedData.TariffId);
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToIso8601());
 
@@ -313,16 +274,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -336,13 +293,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                             patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                                              patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                                              patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (0,                                               patchResult.PatchedData.TariffIds.Count());
+            Assert.IsNull   (                                                 patchResult.PatchedData.TariffId);
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),  patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-10-15T00:00:00.000Z",                      patchResult.PatchedData.LastUpdated.ToIso8601());
 
@@ -361,16 +317,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -384,15 +336,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),          patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,      patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,       patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,          patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,            patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                              patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                               patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                               patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (2,                                patchResult.PatchedData.TariffIds.        Count());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),  patchResult.PatchedData.TariffIds.        First());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),  patchResult.PatchedData.TariffIds.Skip(1).First());
+            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),  patchResult.PatchedData.TariffId);
             Assert.AreEqual (null,                             patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-10-15T00:00:00.000Z",       patchResult.PatchedData.LastUpdated.ToIso8601());
 
@@ -411,16 +360,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -435,15 +380,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                                   patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                               patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                                patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                                   patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                                     patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                                       patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                                                                        patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                                                                        patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (2,                                                                         patchResult.PatchedData.TariffIds.        Count());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                           patchResult.PatchedData.TariffIds.        First());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                                           patchResult.PatchedData.TariffIds.Skip(1).First());
+            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                           patchResult.PatchedData.TariffId);
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),                            patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                                patchResult.PatchedData.LastUpdated.ToIso8601());
 
@@ -462,16 +404,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
                                  30,
-                                 12,
-                                 new Tariff_Id[] {
-                                     Tariff_Id.Parse("DE*GEF*T0001"),
-                                     Tariff_Id.Parse("DE*GEF*T0002")
-                                 },
+                                 Tariff_Id.Parse("DE*GEF*T0001"),
                                  URL.Parse("https://open.charging.cloud/terms"),
                                  DateTime.Parse("2020-09-21T00:00:00Z")
                              );
@@ -486,15 +424,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                             patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                         patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                          patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                             patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                               patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                                 patchResult.PatchedData.Voltage);
             Assert.AreEqual (30,                                                                  patchResult.PatchedData.Amperage);
-            Assert.AreEqual (12,                                                                  patchResult.PatchedData.MaxElectricPower);
-            Assert.AreEqual (2,                                                                   patchResult.PatchedData.TariffIds.        Count());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                     patchResult.PatchedData.TariffIds.        First());
-            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0002"),                                     patchResult.PatchedData.TariffIds.Skip(1).First());
+            Assert.AreEqual (Tariff_Id.Parse("DE*GEF*T0001"),                                     patchResult.PatchedData.TariffId);
             Assert.AreEqual (URL.Parse("https://open.charging.cloud/terms"),                      patchResult.PatchedData.TermsAndConditionsURL);
             Assert.AreEqual ("2020-09-21T00:00:00.000Z",                                          patchResult.PatchedData.LastUpdated.ToIso8601());
 

@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -111,7 +111,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -135,7 +135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                             patchResult.PatchedData.MaxVoltage);
@@ -162,7 +162,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -185,7 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual   (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual   (ConnectorTypes.TESLA_S,                          patchResult.PatchedData.Standard);
+            Assert.AreEqual   (ConnectorType.TESLA_S,                          patchResult.PatchedData.Standard);
             Assert.AreEqual   (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual   (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual   (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -214,7 +214,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -237,7 +237,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.CABLE,                          patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -264,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -287,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -313,7 +313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -336,7 +336,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                         patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                     patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                     patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                         patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                           patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                             patchResult.PatchedData.MaxVoltage);
@@ -361,7 +361,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),          patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,      patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,      patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,          patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,            patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                              patchResult.PatchedData.MaxVoltage);
@@ -411,7 +411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -435,7 +435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                                   patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                               patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                               patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                                   patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                                     patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                                       patchResult.PatchedData.MaxVoltage);
@@ -462,7 +462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             var Connector1 = new Connector(
                                  Connector_Id.Parse("1"),
-                                 ConnectorTypes.IEC_62196_T2,
+                                 ConnectorType.IEC_62196_T2,
                                  ConnectorFormats.SOCKET,
                                  PowerTypes.AC_3_PHASE,
                                  400,
@@ -486,7 +486,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsNotNull(patchResult.PatchedData);
 
             Assert.AreEqual (Connector_Id.Parse("1"),                                             patchResult.PatchedData.Id);
-            Assert.AreEqual (ConnectorTypes.IEC_62196_T2,                                         patchResult.PatchedData.Standard);
+            Assert.AreEqual (ConnectorType.IEC_62196_T2,                                         patchResult.PatchedData.Standard);
             Assert.AreEqual (ConnectorFormats.SOCKET,                                             patchResult.PatchedData.Format);
             Assert.AreEqual (PowerTypes.AC_3_PHASE,                                               patchResult.PatchedData.PowerType);
             Assert.AreEqual (400,                                                                 patchResult.PatchedData.MaxVoltage);

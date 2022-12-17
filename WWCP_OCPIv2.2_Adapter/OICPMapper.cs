@@ -34,44 +34,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region AsWWCPEVSEStatus(this EVSEStatus)
 
         /// <summary>
-        /// Convert an OCPI v2.0 EVSE status into a corresponding WWCP EVSE status.
+        /// Convert the given OCPI EVSE/connector status into a corresponding WWCP EVSE status.
         /// </summary>
-        /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
-        /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this StatusTypes EVSEStatus)
+        /// <param name="EVSEStatus">An OCPI EVSE/connector status.</param>
+        public static WWCP.EVSEStatusTypes AsWWCPEVSEStatus(this StatusType EVSEStatus)
         {
 
-            switch (EVSEStatus)
-            {
+            if (EVSEStatus == StatusType.AVAILABLE)
+                return WWCP.EVSEStatusTypes.Available;
 
-                case StatusTypes.AVAILABLE:
-                    return WWCP.EVSEStatusTypes.Available;
+            if (EVSEStatus == StatusType.BLOCKED)
+                return WWCP.EVSEStatusTypes.OutOfService;
 
-                case StatusTypes.BLOCKED:
-                    return WWCP.EVSEStatusTypes.OutOfService;
+            if (EVSEStatus == StatusType.CHARGING)
+                return WWCP.EVSEStatusTypes.Charging;
 
-                case StatusTypes.CHARGING:
-                    return WWCP.EVSEStatusTypes.Charging;
+            if (EVSEStatus == StatusType.INOPERATIVE)
+                return WWCP.EVSEStatusTypes.OutOfService;
 
-                case StatusTypes.INOPERATIVE:
-                    return WWCP.EVSEStatusTypes.OutOfService;
+            if (EVSEStatus == StatusType.OUTOFORDER)
+                return WWCP.EVSEStatusTypes.Error;
 
-                case StatusTypes.OUTOFORDER:
-                    return WWCP.EVSEStatusTypes.Error;
+            //if (EVSEStatus == StatusType.PLANNED)
+            //    return WWCP.EVSEStatusTypes.Planned;
 
-                //case EVSEStatusType.Planned:
-                //    return WWCP.EVSEStatusTypes.Planned;
+            //if (EVSEStatus == StatusType.REMOVED)
+            //    return WWCP.EVSEStatusTypes.Removed;
 
-                //case StatusTypes.REMOVED:
-                //    return WWCP.EVSEStatusTypes.UnknownEVSE;
+            if (EVSEStatus == StatusType.RESERVED)
+                return WWCP.EVSEStatusTypes.Reserved;
 
-                case StatusTypes.RESERVED:
-                    return WWCP.EVSEStatusTypes.Reserved;
-
-                default:
-                    return WWCP.EVSEStatusTypes.Unspecified;
-
-            }
+            return WWCP.EVSEStatusTypes.Unspecified;
 
         }
 
@@ -84,7 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="EVSEStatus">An OCPI v2.0 EVSE status.</param>
         /// <returns>The corresponding WWCP EVSE status.</returns>
-        public static StatusTypes AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
+        public static StatusType AsOCPIEVSEStatus(this WWCP.EVSEStatusTypes EVSEStatus)
         {
 
             //case WWCP.EVSEStatusTypes.Planned:
@@ -94,31 +87,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             //    return OCPIv2_2.EVSEStatusType.Planned;
 
             if (EVSEStatus == WWCP.EVSEStatusTypes.Available)
-                return StatusTypes.AVAILABLE;
+                return StatusType.AVAILABLE;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Charging)
-                return StatusTypes.CHARGING;
+                return StatusType.CHARGING;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Error)
-                return StatusTypes.OUTOFORDER;
+                return StatusType.OUTOFORDER;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.OutOfService)
-                return StatusTypes.INOPERATIVE;
+                return StatusType.INOPERATIVE;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Offline)
-                return StatusTypes.UNKNOWN;
+                return StatusType.UNKNOWN;
 
             else if (EVSEStatus == WWCP.EVSEStatusTypes.Reserved)
-                return StatusTypes.RESERVED;
+                return StatusType.RESERVED;
 
             //case WWCP.EVSEStatusTypes.Private:
             //    return OCPIv2_2.EVSEStatusType.Unknown;
 
             //else if (EVSEStatus == WWCP.EVSEStatusTypes.UnknownEVSE)
-            //    return StatusTypes.REMOVED;
+            //    return StatusType.REMOVED;
 
             else
-                return StatusTypes.UNKNOWN;
+                return StatusType.UNKNOWN;
 
         }
 
@@ -144,7 +137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                       true,
                                       pool.Address.Street + pool.Address.HouseNumber,
                                       pool.Address.City.FirstText(),
-                                      pool.Address.Country.Alpha3Code,
+                                      pool.Address.Country,
                                       pool.GeoLocation ?? default,
                                       "timezone",
                                       null,
