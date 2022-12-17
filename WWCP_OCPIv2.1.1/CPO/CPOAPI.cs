@@ -2283,10 +2283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters                 = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations            = CommonAPI.   GetLocations(DefaultCountryCode,
-                                                                                                DefaultPartyId).
-                                                                                   ToArray();
-
+                                        var allLocations            = CommonAPI.GetLocations().ToArray();
                                         var allLocationsCount       = allLocations.Length;
 
 

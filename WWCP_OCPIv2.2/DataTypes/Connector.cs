@@ -835,9 +835,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             ((!TermsAndConditionsURL.HasValue    && !Connector.TermsAndConditionsURL.HasValue)    ||
               (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
 
-             //((ParentEVSE            is     null &&  Connector.ParentEVSE            is     null) ||
-             // (ParentEVSE            is not null &&  Connector.ParentEVSE            is not null && ParentEVSE.                 Equals(Connector.ParentEVSE)));
-
         #endregion
 
         #endregion

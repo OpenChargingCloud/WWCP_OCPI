@@ -63,7 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    Location_Id.     Parse("LOC0001"),
                                    "Biberweg 18",
                                    "Jena",
-                                   "Deutschland",
+                                   "Country.Germany",
                                    GeoCoordinate.   Parse(10, 20),
                                    EVSE_UId.        Parse("DE*GEF*E*LOC0001*1"),
                                    EVSE_Id.         Parse("DE*GEF*E*LOC0001*1"),

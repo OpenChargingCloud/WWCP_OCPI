@@ -728,7 +728,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             => base.ToJSON(nameof(CPOClient));
 
 
-        #region GetLocation    (CountryCode, PartyId, LocationId, ...)
+        #region GetLocation    (LocationId, ...)
 
         /// <summary>
         /// Get the charging location specified by the given location identification from the remote API.
@@ -739,9 +739,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            GetLocation(CountryCode         CountryCode,
-                        Party_Id            PartyId,
-                        Location_Id         LocationId,
+            GetLocation(Location_Id         LocationId,
 
                         Request_Id?         RequestId           = null,
                         Correlation_Id?     CorrelationId       = null,
@@ -749,7 +747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
@@ -814,8 +812,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -825,9 +823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString(),
+                                                                                     remoteURL.Value.Path + LocationId.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
@@ -944,7 +940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1012,8 +1008,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1023,9 +1019,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Location.CountryCode.ToString() +
-                                                                                                            Location.PartyId.    ToString() +
-                                                                                                            Location.Id.         ToString(),
+                                                                                     remoteURL.Value.Path + Location.Id.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
@@ -1134,9 +1128,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            PatchLocation(CountryCode         CountryCode,
-                          Party_Id            PartyId,
-                          Location_Id         LocationId,
+            PatchLocation(Location_Id         LocationId,
                           JObject             LocationPatch,
 
                           Request_Id?         RequestId           = null,
@@ -1145,7 +1137,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                           DateTime?           Timestamp           = null,
                           CancellationToken?  CancellationToken   = null,
-                          EventTracking_Id    EventTrackingId     = null,
+                          EventTracking_Id?   EventTrackingId     = null,
                           TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1213,8 +1205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1224,9 +1216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString(),
+                                                                                     remoteURL.Value.Path + LocationId. ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
@@ -1325,7 +1315,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region GetEVSE        (CountryCode, PartyId, LocationId, EVSEUId, ...)
+        #region GetEVSE        (LocationId, EVSEUId, ...)
 
         /// <summary>
         /// Get the EVSE specified by the given EVSE unique identification from the remote API.
@@ -1336,9 +1326,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Location>>
 
-            GetEVSE(CountryCode         CountryCode,
-                    Party_Id            PartyId,
-                    Location_Id         LocationId,
+            GetEVSE(Location_Id         LocationId,
                     EVSE_UId            EVSEUId,
 
                     Request_Id?         RequestId           = null,
@@ -1347,7 +1335,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1412,8 +1400,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1423,9 +1411,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString() +
+                                                                                     remoteURL.Value.Path + LocationId. ToString() +
                                                                                                             EVSEUId.    ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
@@ -1543,7 +1529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1552,8 +1538,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 throw new ArgumentNullException(nameof(EVSE.ParentLocation), "The parent location of the given EVSE must not be null!");
 
             return await PutEVSE(EVSE,
-                                 EVSE.ParentLocation.CountryCode,
-                                 EVSE.ParentLocation.PartyId,
                                  EVSE.ParentLocation.Id,
 
                                  RequestId,
@@ -1569,63 +1553,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region PutEVSE        (EVSE, Location, ...)
+        #region PutEVSE        (EVSE, LocationId, ...)
 
         /// <summary>
         /// Put/store the given EVSE on/within the remote API.
         /// </summary>
         /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
-        /// <param name="Location">The location where to store the given EVSE.</param>
-        /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
-        /// <param name="CancellationToken">An optional location to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<EVSE>>
-
-            PutEVSE(EVSE                EVSE,
-                    Location            Location,
-
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
-                    Version_Id?         VersionId           = null,
-
-                    DateTime?           Timestamp           = null,
-                    CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null)
-
-        {
-
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The location of the given EVSE must not be null!");
-
-            return await PutEVSE(EVSE,
-                                 Location.CountryCode,
-                                 Location.PartyId,
-                                 Location.Id,
-
-                                 RequestId,
-                                 CorrelationId,
-                                 VersionId,
-
-                                 Timestamp,
-                                 CancellationToken,
-                                 EventTrackingId,
-                                 RequestTimeout);
-
-        }
-
-        #endregion
-
-        #region PutEVSE        (EVSE, CountryCode, PartyId, LocationId, ...)
-
-        /// <summary>
-        /// Put/store the given EVSE on/within the remote API.
-        /// </summary>
-        /// <param name="EVSE">The EVSE to store/put at/onto the remote API.</param>
-        /// <param name="CountryCode">The country code of the location where to store the given EVSE.</param>
-        /// <param name="PartyId">The party identification of the location where to store the given EVSE.</param>
         /// <param name="LocationId">The identification of the location where to store the given EVSE.</param>
         /// 
         /// <param name="Timestamp">The optional timestamp of the request.</param>
@@ -1635,8 +1568,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public async Task<OCPIResponse<EVSE>>
 
             PutEVSE(EVSE                EVSE,
-                    CountryCode         CountryCode,
-                    Party_Id            PartyId,
                     Location_Id         LocationId,
 
                     Request_Id?         RequestId           = null,
@@ -1645,7 +1576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
@@ -1713,8 +1644,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1724,9 +1655,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString() +
+                                                                                     remoteURL.Value.Path + LocationId. ToString() +
                                                                                                             EVSE.UId.   ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
@@ -1825,7 +1754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region PatchEVSE      (CountryCode, PartyId, LocationId, EVSEUId, EVSEPatch, ...)
+        #region PatchEVSE      (LocationId, EVSEUId, EVSEPatch, ...)
 
         /// <summary>
         /// Patch a location.
@@ -1836,9 +1765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<EVSE>>
 
-            PatchEVSE(CountryCode         CountryCode,
-                      Party_Id            PartyId,
-                      Location_Id         LocationId,
+            PatchEVSE(Location_Id         LocationId,
                       EVSE_UId            EVSEUId,
                       JObject             EVSEPatch,
 
@@ -1916,8 +1843,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1927,9 +1854,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString() +
+                                                                                     remoteURL.Value.Path + LocationId. ToString() +
                                                                                                             EVSEUId.    ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
@@ -2029,7 +1954,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region GetConnector   (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ...)
+        #region GetConnector   (LocationId, EVSEUId, ConnectorId, ...)
 
         /// <summary>
         /// Get the connector specified by the given connector identification from the remote API.
@@ -2040,9 +1965,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            GetConnector(CountryCode         CountryCode,
-                         Party_Id            PartyId,
-                         Location_Id         LocationId,
+            GetConnector(Location_Id         LocationId,
                          EVSE_UId            EVSEUId,
                          Connector_Id        ConnectorId,
 
@@ -2052,7 +1975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2117,8 +2040,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2128,9 +2051,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString() +
+                                                                                     remoteURL.Value.Path + LocationId. ToString() +
                                                                                                             EVSEUId.    ToString() +
                                                                                                             ConnectorId.ToString(),
                                                                                      requestbuilder => {
@@ -2249,7 +2170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
@@ -2328,11 +2249,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Connector.ParentEVSE.ParentLocation.CountryCode.ToString() +
-                                                                                                            Connector.ParentEVSE.ParentLocation.PartyId.    ToString() +
-                                                                                                            Connector.ParentEVSE.ParentLocation.Id.         ToString() +
-                                                                                                            Connector.ParentEVSE.               UId.        ToString() +
-                                                                                                            Connector.                          Id.         ToString(),
+                                                                                     remoteURL.Value.Path + Connector.ParentEVSE.ParentLocation.Id. ToString() +
+                                                                                                            Connector.ParentEVSE.               UId.ToString() +
+                                                                                                            Connector.                          Id. ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
@@ -2430,7 +2349,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region PatchConnector (CountryCode, PartyId, LocationId, EVSEUId, ConnectorId, ConnectorPatch, ...)
+        #region PatchConnector (LocationId, EVSEUId, ConnectorId, ConnectorPatch, ...)
 
         /// <summary>
         /// Patch a connector.
@@ -2441,9 +2360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
         public async Task<OCPIResponse<Connector>>
 
-            PatchConnector(CountryCode         CountryCode,
-                           Party_Id            PartyId,
-                           Location_Id         LocationId,
+            PatchConnector(Location_Id         LocationId,
                            EVSE_UId            EVSEUId,
                            Connector_Id        ConnectorId,
                            JObject             ConnectorPatch,
@@ -2522,8 +2439,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2533,9 +2450,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
-                                                                                     remoteURL.Value.Path + CountryCode.ToString() +
-                                                                                                            PartyId.    ToString() +
-                                                                                                            LocationId. ToString() +
+                                                                                     remoteURL.Value.Path + LocationId. ToString() +
                                                                                                             EVSEUId.    ToString() +
                                                                                                             ConnectorId.ToString(),
                                                                                      requestbuilder => {

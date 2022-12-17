@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Note: This field may only be used when the publish field is set to false.
         /// </summary>
         [Optional]
-        public IEnumerable<PublishToken>       PublishAllowedTo         { get; }
+        public IEnumerable<PublishToken>           PublishAllowedTo         { get; }
 
         /// <summary>
         /// The optional display name of the charging location.
@@ -251,10 +251,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new charging location.
         /// </summary>
-        /// <param name="Id">Uniquely identifies the location within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Operator">Information of the evse operator.</param>
-        /// <param name="SubOperator">Information of the evse suboperator if available.</param>
-        /// 
         /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.</param>
         /// <param name="PartyId">An identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).</param>
         /// <param name="Id">An identification of the charging location within the CPOs platform (and suboperator platforms).</param>
@@ -918,95 +914,95 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                CountryCode.ToString()),
-                           new JProperty("party_id",                    PartyId.    ToString()),
-                           new JProperty("id",                          Id.         ToString()),
-                           new JProperty("publish",                     Publish),
+                                 new JProperty("country_code",           CountryCode.ToString()),
+                                 new JProperty("party_id",               PartyId.    ToString()),
+                                 new JProperty("id",                     Id.         ToString()),
+                                 new JProperty("publish",                Publish),
 
-                           Publish == false && PublishAllowedTo.SafeAny()
-                               ? new JProperty("publish_allowed_to",    new JArray(PublishAllowedTo.Select(publishTokenType => publishTokenType.ToJSON(CustomPublishTokenSerializer))))
+                           Publish == false && PublishAllowedTo.Any()
+                               ? new JProperty("publish_allowed_to",     new JArray(PublishAllowedTo.Select(publishTokenType => publishTokenType.ToJSON(CustomPublishTokenSerializer))))
                                : null,
 
                            Name.IsNotNullOrEmpty()
-                               ? new JProperty("name",                  Name)
+                               ? new JProperty("name",                   Name)
                                : null,
 
-                           new JProperty("address",                     Address),
-                           new JProperty("city",                        City),
+                                 new JProperty("address",                Address),
+                                 new JProperty("city",                   City),
 
                            PostalCode.IsNotNullOrEmpty()
-                               ? new JProperty("postal_code",           PostalCode)
+                               ? new JProperty("postal_code",            PostalCode)
                                : null,
 
                            State.IsNotNullOrEmpty()
-                               ? new JProperty("state",                 State)
+                               ? new JProperty("state",                  State)
                                : null,
 
-                           new JProperty("country",                     Country.Alpha3Code),
+                                 new JProperty("country",                Country.Alpha3Code),
 
-                           new JProperty("coordinates",                 new JObject(
-                                                                            new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
-                                                                            new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
-                                                                        )),
+                                 new JProperty("coordinates",            new JObject(
+                                                                             new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                             new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
+                                                                         )),
 
                            RelatedLocations.Any()
-                               ? new JProperty("related_locations",     new JArray(RelatedLocations.Select(additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
-                                                                                                                                                                 CustomDisplayTextSerializer))))
+                               ? new JProperty("related_locations",      new JArray(RelatedLocations.Select(additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
+                                                                                                                                                                  CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingType.HasValue
-                               ? new JProperty("parking_type",          ParkingType.Value.ToString())
+                               ? new JProperty("parking_type",           ParkingType.Value.ToString())
                                : null,
 
                            EVSEs.Any()
-                               ? new JProperty("evses",                 new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
-                                                                                                                    CustomStatusScheduleSerializer,
-                                                                                                                    CustomConnectorSerializer,
-                                                                                                                    CustomDisplayTextSerializer,
-                                                                                                                    CustomImageSerializer))))
+                               ? new JProperty("evses",                  new JArray(EVSEs.           Select(evse                  => evse.ToJSON(CustomEVSESerializer,
+                                                                                                                                                 CustomStatusScheduleSerializer,
+                                                                                                                                                 CustomConnectorSerializer,
+                                                                                                                                                 CustomDisplayTextSerializer,
+                                                                                                                                                 CustomImageSerializer))))
                                : null,
 
                            Directions.Any()
-                               ? new JProperty("directions",            new JArray(Directions.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",             new JArray(Directions.      Select(displayText           => displayText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            Operator is not null
-                               ? new JProperty("operator",              Operator.   ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("operator",               Operator.   ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            SubOperator is not null
-                               ? new JProperty("suboperator",           SubOperator.ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("suboperator",            SubOperator.ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            Owner is not null
-                               ? new JProperty("owner",                 Owner.      ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("owner",                  Owner.      ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            Facilities.Any()
-                               ? new JProperty("facilities",            new JArray(Facilities.Select(facility => facility.ToString())))
+                               ? new JProperty("facilities",             new JArray(Facilities.      Select(facility              => facility.ToString())))
                                : null,
 
-                           new JProperty("time_zone",                   Timezone),
+                           new JProperty("time_zone",                    Timezone),
 
                            OpeningTimes is not null
-                               ? new JProperty("opening_times",         OpeningTimes.ToJSON(CustomHoursSerializer))
+                               ? new JProperty("opening_times",          OpeningTimes.ToJSON(CustomHoursSerializer))
                                : null,
 
                            ChargingWhenClosed.HasValue
-                               ? new JProperty("charging_when_closed",  ChargingWhenClosed.Value)
+                               ? new JProperty("charging_when_closed",   ChargingWhenClosed.Value)
                                : null,
 
                            Images.Any()
-                               ? new JProperty("images",                new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",                 new JArray(Images.          Select(image                 => image.ToJSON(CustomImageSerializer))))
                                : null,
 
                            EnergyMix is not null
-                               ? new JProperty("energy_mix",            EnergyMix.  ToJSON(CustomEnergyMixSerializer,
-                                                                                           CustomEnergySourceSerializer,
-                                                                                           CustomEnvironmentalImpactSerializer))
+                               ? new JProperty("energy_mix",             EnergyMix.  ToJSON(CustomEnergyMixSerializer,
+                                                                                            CustomEnergySourceSerializer,
+                                                                                            CustomEnvironmentalImpactSerializer))
                                : null,
 
-                           new JProperty("last_updated",                LastUpdated.ToIso8601())
+                           new JProperty("last_updated",                 LastUpdated.ToIso8601())
 
                        );
 
@@ -1663,21 +1659,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
               (EnergyMix          is not null &&  Location.EnergyMix          is not null && EnergyMix.            Equals(Location.EnergyMix)))                &&
 
                PublishAllowedTo.Count().Equals(Location.PublishAllowedTo.Count()) &&
-               PublishAllowedTo.All(publishTokenType      => Location.PublishAllowedTo.Contains(publishTokenType))      &&
-
                RelatedLocations.Count().Equals(Location.RelatedLocations.Count()) &&
-               RelatedLocations.All(additionalGeoLocation => Location.RelatedLocations.Contains(additionalGeoLocation)) &&
-
                EVSEs.           Count().Equals(Location.EVSEs.           Count()) &&
-               EVSEs.           All(evse                  => Location.EVSEs.           Contains(evse))                  &&
-
                Directions.      Count().Equals(Location.Directions.      Count()) &&
-               Directions.      All(displayText           => Location.Directions.      Contains(displayText))           &&
-
                Facilities.      Count().Equals(Location.Facilities.      Count()) &&
-               Facilities.      All(facility              => Location.Facilities.      Contains(facility))              &&
-
                Images.          Count().Equals(Location.Images.          Count()) &&
+
+               PublishAllowedTo.All(publishTokenType      => Location.PublishAllowedTo.Contains(publishTokenType))      &&
+               RelatedLocations.All(additionalGeoLocation => Location.RelatedLocations.Contains(additionalGeoLocation)) &&
+               EVSEs.           All(evse                  => Location.EVSEs.           Contains(evse))                  &&
+               Directions.      All(displayText           => Location.Directions.      Contains(displayText))           &&
+               Facilities.      All(facility              => Location.Facilities.      Contains(facility))              &&
                Images.          All(image                 => Location.Images.          Contains(image));
 
         #endregion
@@ -2103,15 +2095,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         throw new ArgumentNullException(nameof(PartyId),      "The party identification must not be null or empty!");
 
                     if (!Id.         HasValue)
-                        throw new ArgumentNullException(nameof(Id),           "The identification code must not be null or empty!");
+                        throw new ArgumentNullException(nameof(Id),           "The location identification must not be null or empty!");
 
                     if (!Publish.    HasValue)
                         throw new ArgumentNullException(nameof(Publish),      "The publish parameter must not be null or empty!");
 
-                    if ( Address is null || Address.IsNullOrEmpty())
+                    if (Address  is null || Address. IsNullOrEmpty())
                         throw new ArgumentNullException(nameof(Address),      "The address parameter must not be null or empty!");
 
-                    if (City     is null || City.IsNullOrEmpty())
+                    if (City     is null || City.    IsNullOrEmpty())
                         throw new ArgumentNullException(nameof(City),         "The city parameter must not be null or empty!");
 
                     if (Country  is null)

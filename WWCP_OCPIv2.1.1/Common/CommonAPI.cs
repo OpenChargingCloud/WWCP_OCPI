@@ -378,11 +378,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.Disable_RootServices     = Disable_RootServices;
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
-            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.Tokens                   = new Dictionary<Token_Id,    TokenStatus>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.Locations                = new Dictionary<Location_Id,    Location>();
+            this.Tariffs                  = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.Sessions                 = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.Tokens                   = new Dictionary<Token_Id,       TokenStatus>();
+            this.ChargeDetailRecords      = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -467,11 +467,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.Disable_RootServices     = Disable_RootServices;
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
-            this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.Tokens                   = new Dictionary<Token_Id,    TokenStatus>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.Locations                = new Dictionary<Location_Id,    Location>();
+            this.Tariffs                  = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.Sessions                 = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.Tokens                   = new Dictionary<Token_Id,       TokenStatus>();
+            this.ChargeDetailRecords      = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -2145,7 +2145,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Locations
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id , Location>>> Locations;
+        private readonly Dictionary<Location_Id , Location> Locations;
 
 
         public delegate Task OnLocationAddedDelegate(Location Location);
@@ -2170,22 +2170,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    Locations.Add(Location.CountryCode, parties);
-                }
 
-                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
-                {
-                    locations = new Dictionary<Location_Id, Location>();
-                    parties.Add(Location.PartyId, locations);
-                }
-
-                if (!locations.ContainsKey(Location.Id))
+                if (!Locations.ContainsKey(Location.Id))
                 {
 
-                    locations.Add(Location.Id, Location);
+                    Locations.Add(Location.Id, Location);
 
                     if (!SkipNotifications)
                     {
@@ -2231,22 +2220,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                    Locations.Add(Location.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
-                {
-                    locations = new Dictionary<Location_Id, Location>();
-                    parties.Add(Location.PartyId, locations);
-                }
-
-                if (!locations.ContainsKey(Location.Id))
+                if (!Locations.ContainsKey(Location.Id))
                 {
 
-                    locations.Add(Location.Id, Location);
+                    Locations.Add(Location.Id, Location);
 
                     if (!SkipNotifications)
                     {
@@ -2288,20 +2265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
                                                           "The given location must not be null!");
 
-
-            if (!Locations.TryGetValue(newOrUpdatedLocation.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-            {
-                parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
-                Locations.Add(newOrUpdatedLocation.CountryCode, parties);
-            }
-
-            if (!parties.TryGetValue(newOrUpdatedLocation.PartyId, out Dictionary<Location_Id, Location> locations))
-            {
-                locations = new Dictionary<Location_Id, Location>();
-                parties.Add(newOrUpdatedLocation.PartyId, locations);
-            }
-
-            if (locations.TryGetValue(newOrUpdatedLocation.Id, out Location existingLocation))
+            if (Locations.TryGetValue(newOrUpdatedLocation.Id, out var existingLocation))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -2311,7 +2275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                               "The 'lastUpdated' timestamp of the new location must be newer then the timestamp of the existing location!");
                 }
 
-                locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
+                Locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
 
                 var OnLocationChangedLocal = OnLocationChanged;
                 if (OnLocationChangedLocal != null)
@@ -2349,7 +2313,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
+            Locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
 
             var OnLocationAddedLocal = OnLocationAdded;
             if (OnLocationAddedLocal != null)
@@ -2394,7 +2358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region UpdateLocation        (Location)
 
-        public Location UpdateLocation(Location Location)
+        public Location? UpdateLocation(Location Location)
         {
 
             if (Location is null)
@@ -2403,12 +2367,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
-                    parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
-                    locations.ContainsKey(Location.Id))
+                if (Locations.ContainsKey(Location.Id))
                 {
 
-                    locations[Location.Id] = Location;
+                    Locations[Location.Id] = Location;
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
                     if (OnEVSEChangedLocal != null)
@@ -2460,9 +2422,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
-                    parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
-                    locations.TryGetValue(Location.Id,          out Location                                                existingLocation))
+                if (Locations.TryGetValue(Location.Id, out var existingLocation))
                 {
 
                     var patchResult = existingLocation.TryPatch(LocationPatch,
@@ -2471,7 +2431,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        locations[Location.Id] = patchResult.PatchedData;
+                        Locations[Location.Id] = patchResult.PatchedData;
 
                         var OnLocationChangedLocal = OnLocationChanged;
                         if (OnLocationChangedLocal != null)
@@ -2950,15 +2910,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
-                    {
-                        return locations.ContainsKey(LocationId);
-                    }
-                }
-
-                return false;
+                return Locations.ContainsKey(LocationId);
 
             }
 
@@ -2968,23 +2920,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region TryGetLocation(CountryCode, PartyId, LocationId, out Location)
 
-        public Boolean TryGetLocation(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Location_Id   LocationId,
-                                      out Location  Location)
+        public Boolean TryGetLocation(CountryCode    CountryCode,
+                                      Party_Id       PartyId,
+                                      Location_Id    LocationId,
+                                      out Location?  Location)
         {
 
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
-                    {
-                        if (locations.TryGetValue(LocationId, out Location))
-                            return true;
-                    }
-                }
+                if (Locations.TryGetValue(LocationId, out Location))
+                    return true;
 
                 Location = null;
                 return false;
@@ -2995,78 +2941,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetLocations  (CountryCode = null, PartyId = null)
+        #region GetLocations  ()
 
-        public IEnumerable<Location> GetLocations(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<Location> GetLocations()
         {
 
             lock (Locations)
             {
 
-                if (CountryCode.HasValue && PartyId.HasValue)
-                {
-                    if (Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                    {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
-                        {
-                            return locations.Values.ToArray();
-                        }
-                    }
-                }
-
-                else if (!CountryCode.HasValue && PartyId.HasValue)
-                {
-
-                    var allLocations = new List<Location>();
-
-                    foreach (var party in Locations.Values)
-                    {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
-                        {
-                            allLocations.AddRange(locations.Values);
-                        }
-                    }
-
-                    return allLocations;
-
-                }
-
-                else if (CountryCode.HasValue && !PartyId.HasValue)
-                {
-                    if (Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                    {
-
-                        var allLocations = new List<Location>();
-
-                        foreach (var locations in parties.Values)
-                        {
-                            allLocations.AddRange(locations.Values);
-                        }
-
-                        return allLocations;
-
-                    }
-                }
-
-                else
-                {
-
-                    var allLocations = new List<Location>();
-
-                    foreach (var party in Locations.Values)
-                    {
-                        foreach (var locations in party.Values)
-                        {
-                            allLocations.AddRange(locations.Values);
-                        }
-                    }
-
-                    return allLocations;
-
-                }
-
-                return new Location[0];
+                return Locations.Values.ToArray();
 
             }
 
@@ -3077,7 +2960,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveLocation    (Location)
 
-        public Location RemoveLocation(Location Location)
+        public Location? RemoveLocation(Location Location)
         {
 
             if (Location is null)
@@ -3086,28 +2969,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
+                if (Locations.Remove(Location.Id, out var location))
+                    return location;
 
-                    if (parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
-                    {
-
-                        if (locations.ContainsKey(Location.Id))
-                        {
-                            locations.Remove(Location.Id);
-                        }
-
-                        if (!locations.Any())
-                            parties.Remove(Location.PartyId);
-
-                    }
-
-                    if (!parties.Any())
-                        Locations.Remove(Location.CountryCode);
-
-                }
-
-                return Location;
+                return null;
 
             }
 
@@ -3126,34 +2991,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Locations)
             {
                 Locations.Clear();
-            }
-
-        }
-
-        #endregion
-
-        #region RemoveAllLocations(CountryCode, PartyId)
-
-        /// <summary>
-        /// Remove all locations owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllLocations(CountryCode  CountryCode,
-                                       Party_Id     PartyId)
-        {
-
-            lock (Locations)
-            {
-
-                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
-                    {
-                        locations.Clear();
-                    }
-                }
-
             }
 
         }

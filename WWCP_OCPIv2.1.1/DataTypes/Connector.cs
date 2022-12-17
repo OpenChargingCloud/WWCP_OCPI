@@ -796,10 +796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
               (TariffId.             HasValue    &&  Connector.TariffId.             HasValue    && TariffId.             Value.Equals(Connector.TariffId.             Value))) &&
 
             ((!TermsAndConditionsURL.HasValue    && !Connector.TermsAndConditionsURL.HasValue)    ||
-              (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value))) &&
-
-             ((ParentEVSE            is     null &&  Connector.ParentEVSE            is     null) ||
-              (ParentEVSE            is not null &&  Connector.ParentEVSE            is not null && ParentEVSE.                 Equals(Connector.ParentEVSE)));
+              (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
 
         #endregion
 

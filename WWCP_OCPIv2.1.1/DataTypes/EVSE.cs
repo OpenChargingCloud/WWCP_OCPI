@@ -1195,21 +1195,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
               (PhysicalReference is not null &&  EVSE.PhysicalReference is not null && PhysicalReference.Equals(EVSE.PhysicalReference))) &&
 
                Connectors.         Count().Equals(EVSE.Connectors.         Count()) &&
-               Connectors.         All(connector          => EVSE.Connectors.         Contains(connector))          &&
-
                StatusSchedule.     Count().Equals(EVSE.StatusSchedule.     Count()) &&
-               StatusSchedule.     All(statusSchedule     => EVSE.StatusSchedule.     Contains(statusSchedule))     &&
-
                Capabilities.       Count().Equals(EVSE.Capabilities.       Count()) &&
-               Capabilities.       All(capabilityType     => EVSE.Capabilities.       Contains(capabilityType))     &&
-
                Directions.         Count().Equals(EVSE.Directions.         Count()) &&
-               Directions.         All(displayText        => EVSE.Directions.         Contains(displayText))        &&
-
                ParkingRestrictions.Count().Equals(EVSE.ParkingRestrictions.Count()) &&
-               ParkingRestrictions.All(parkingRestriction => EVSE.ParkingRestrictions.Contains(parkingRestriction)) &&
-
                Images.             Count().Equals(EVSE.Images.             Count()) &&
+
+               Connectors.         All(connector          => EVSE.Connectors.         Contains(connector))          &&
+               StatusSchedule.     All(statusSchedule     => EVSE.StatusSchedule.     Contains(statusSchedule))     &&
+               Capabilities.       All(capabilityType     => EVSE.Capabilities.       Contains(capabilityType))     &&
+               Directions.         All(displayText        => EVSE.Directions.         Contains(displayText))        &&
+               ParkingRestrictions.All(parkingRestriction => EVSE.ParkingRestrictions.Contains(parkingRestriction)) &&
                Images.             All(image              => EVSE.Images.Contains(image));
 
         #endregion

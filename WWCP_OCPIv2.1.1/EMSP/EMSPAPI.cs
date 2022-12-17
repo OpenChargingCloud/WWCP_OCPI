@@ -3745,26 +3745,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check country code and party identification
-
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return Task.FromResult(OCPIResponse);
-                                        }
-
-                                        #endregion
-
 
                                         var filters                 = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations            = CommonAPI.GetLocations(CountryCode, PartyId).
-                                                                                ToArray();
-
+                                        var allLocations            = CommonAPI.GetLocations().ToArray();
                                         var allLocationsCount       = allLocations.Length;
-
 
                                         var filteredLocations       = CommonAPI.GetLocations().
                                                                           Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
@@ -3825,22 +3810,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check CountryCode & PartyId
-
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return OCPIResponse;
-                                        }
-
-                                        #endregion
-
 
                                         //ToDo: await...
-                                        CommonAPI.RemoveAllLocations(CountryCode.Value,
-                                                                     PartyId.    Value);
+                                        CommonAPI.RemoveAllLocations();
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -3945,7 +3917,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = Location.LastUpdated.ToIso8601(),
-                                                       ETag                       = Location.SHA256Hash
+                                                       ETag                       = Location.ETag
                                                    }
                                             });
 
@@ -4041,7 +4013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = addOrUpdateResult.Data.SHA256Hash
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -4129,7 +4101,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedLocation.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedLocation.PatchedData.SHA256Hash
+                                                               ETag                       = patchedLocation.PatchedData.ETag
                                                            }
                                                        };
 

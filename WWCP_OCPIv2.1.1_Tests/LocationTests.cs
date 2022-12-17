@@ -49,18 +49,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -68,7 +64,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -181,6 +176,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -234,7 +230,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -248,8 +245,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue(Location.TryParse(JSON, out Location Location2, out String ErrorResponse));
             Assert.IsNull(ErrorResponse);
 
-            Assert.AreEqual(Location1.CountryCode,              Location2.CountryCode);
-            Assert.AreEqual(Location1.PartyId,                  Location2.PartyId);
             Assert.AreEqual(Location1.Id,                       Location2.Id);
 
             Assert.AreEqual(Location1.Publish,                  Location2.Publish);
@@ -261,9 +256,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             Assert.AreEqual(Location1.Name,                     Location2.Name);
             Assert.AreEqual(Location1.PostalCode,               Location2.PostalCode);
-            Assert.AreEqual(Location1.State,                    Location2.State);
             Assert.AreEqual(Location1.RelatedLocations,         Location2.RelatedLocations);
-            Assert.AreEqual(Location1.ParkingType,              Location2.ParkingType);
+            Assert.AreEqual(Location1.LocationType,              Location2.LocationType);
             //Assert.AreEqual(LocationA.EVSEs,                    LocationB.EVSEs);
             Assert.AreEqual(Location1.Directions,               Location2.Directions);
             Assert.AreEqual(Location1.Operator,                 Location2.Operator);
@@ -294,18 +288,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -313,7 +303,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -426,6 +415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -479,7 +469,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -512,18 +503,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -531,7 +518,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -644,6 +630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -697,7 +684,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -730,18 +718,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -749,7 +733,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -862,6 +845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -915,7 +899,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -948,18 +933,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -967,7 +948,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -1080,6 +1060,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1133,7 +1114,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -1168,18 +1150,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -1187,7 +1165,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -1300,6 +1277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1353,7 +1331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -1386,18 +1365,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -1405,7 +1380,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -1518,6 +1492,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1571,7 +1546,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -1607,18 +1583,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -1626,7 +1598,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -1739,6 +1710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -1792,7 +1764,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -1826,18 +1799,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -1845,7 +1814,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -1958,6 +1926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2011,7 +1980,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2044,18 +2014,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -2063,7 +2029,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -2176,6 +2141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2229,7 +2195,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2262,18 +2229,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -2281,7 +2244,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -2394,6 +2356,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2447,7 +2410,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2480,18 +2444,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                CountryCode.Parse("DE"),
-                                Party_Id.   Parse("GEF"),
                                 Location_Id.Parse("LOC0001"),
-                                true,
+                                LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
-                                "Deutschland",
-                                GeoCoordinate.Parse(10, 20),
-                                "Europe/Berlin",
-                                "Location 0001",
                                 "07749",
-                                "Thüringen",
+                                Country.Germany,
+                                GeoCoordinate.Parse(10, 20),
+                                "Location 0001",
                                 new AdditionalGeoLocation[] {
                                     new AdditionalGeoLocation(
                                         Latitude.Parse(11),
@@ -2499,7 +2459,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                         Name: DisplayText.Create(Languages.de, "Postkasten")
                                     )
                                 },
-                                ParkingType.PARKING_LOT,
                                 new EVSE[] {
                                     new EVSE(
                                         EVSE_UId.Parse("DE*GEF*E*LOC0001*1"),
@@ -2612,6 +2571,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 new Facilities[] {
                                     Facilities.CAFE
                                 },
+                                "Europe/Berlin",
                                 new Hours(
                                     new RegularHours[] {
                                         new RegularHours(DayOfWeek.Monday,    new HourMin(08, 00), new HourMin(15, 00)),
@@ -2665,7 +2625,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     "Stadtwerke Jena-Ost",
                                     "New Green Deal"
                                 ),
-                                DateTime.Parse("2020-09-21T00:00:00Z")
+                                null,
+                                DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                             );
 
             #endregion
@@ -2779,8 +2740,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
-            Assert.AreEqual(CountryCode.Parse("BE"),                                    parsedLocation.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("BEC"),                                   parsedLocation.PartyId);
             Assert.AreEqual(Location_Id.Parse("LOC1"),                                  parsedLocation.Id);
             Assert.AreEqual(true,                                                       parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
@@ -2890,8 +2849,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
-            Assert.AreEqual(CountryCode.Parse("SE"),                                    parsedLocation.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("EVC"),                                   parsedLocation.PartyId);
             Assert.AreEqual(Location_Id.Parse("cbb0df21-d17d-40ba-a4aa-dc588c8f98cb"),  parsedLocation.Id);
             Assert.AreEqual(true,                                                       parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
@@ -2969,8 +2926,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
-            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
             Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
             Assert.AreEqual(true,                                                       parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
@@ -3047,8 +3002,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
-            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("ALF"),                                   parsedLocation.PartyId);
             Assert.AreEqual(Location_Id.Parse("3e7b39c2-10d0-4138-a8b3-8509a25f9920"),  parsedLocation.Id);
             Assert.AreEqual(false,                                                      parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
@@ -3135,8 +3088,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
-            Assert.AreEqual(CountryCode.Parse("NL"),                                    parsedLocation.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
             Assert.AreEqual(Location_Id.Parse("f76c2e0c-a6ef-4f67-bf23-6a187e5ca0e0"),  parsedLocation.Id);
             Assert.AreEqual(false,                                                      parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
@@ -3216,8 +3167,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(ErrorResponse);
             Assert.IsTrue(result);
 
-            Assert.AreEqual(CountryCode.Parse("DE"),                                    parsedLocation.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("ALL"),                                   parsedLocation.PartyId);
             Assert.AreEqual(Location_Id.Parse("a5295927-09b9-4a71-b4b9-a5fffdfa0b77"),  parsedLocation.Id);
             Assert.AreEqual(false,                                                      parsedLocation.Publish);
             //Assert.AreEqual(Location1.Start.    ToIso8601(),                            parsedLocation.Start.    ToIso8601());
