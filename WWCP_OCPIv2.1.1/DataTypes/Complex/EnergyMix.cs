@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,6 @@
  */
 
 #region Usings
-
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -60,13 +56,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The name of the energy supplier.
         /// </summary>
         [Optional]
-        public String                            SupplierName            { get; }
+        public String?                           SupplierName            { get; }
 
         /// <summary>
         /// The name of the energy product.
         /// </summary>
         [Optional]
-        public String                            EnergyProductName       { get; }
+        public String?                           EnergyProductName       { get; }
 
         #endregion
 
@@ -80,17 +76,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EnvironmentalImpacts">The optional environmental impacts.</param>
         /// <param name="SupplierName">The optional name of the energy supplier.</param>
         /// <param name="EnergyProductName">The optional name of the energy product.</param>
-        public EnergyMix(Boolean                           IsGreenEnergy,
-                         IEnumerable<EnergySource>         EnergySources          = null,
-                         IEnumerable<EnvironmentalImpact>  EnvironmentalImpacts   = null,
-                         String                            SupplierName           = null,
-                         String                            EnergyProductName      = null)
+        public EnergyMix(Boolean                            IsGreenEnergy,
+                         IEnumerable<EnergySource>?         EnergySources          = null,
+                         IEnumerable<EnvironmentalImpact>?  EnvironmentalImpacts   = null,
+                         String?                            SupplierName           = null,
+                         String?                            EnergyProductName      = null)
 
         {
 
             this.IsGreenEnergy         = IsGreenEnergy;
-            this.EnergySources         = EnergySources?.       Distinct() ?? new EnergySource[0];
-            this.EnvironmentalImpacts  = EnvironmentalImpacts?.Distinct() ?? new EnvironmentalImpact[0];
+            this.EnergySources         = EnergySources?.       Distinct() ?? Array.Empty<EnergySource>();
+            this.EnvironmentalImpacts  = EnvironmentalImpacts?.Distinct() ?? Array.Empty<EnvironmentalImpact>();
             this.SupplierName          = SupplierName;
             this.EnergyProductName     = EnergyProductName;
 
@@ -106,44 +102,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
-        public static EnergyMix Parse(JObject                                 JSON,
-                                      CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser   = null)
+        public static EnergyMix Parse(JObject                                  JSON,
+                                      CustomJObjectParserDelegate<EnergyMix>?  CustomEnergyMixParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EnergyMix energyMix,
-                         out String    ErrorResponse,
+                         out var energyMix,
+                         out var errorResponse,
                          CustomEnergyMixParser))
             {
-                return energyMix;
+                return energyMix!;
             }
 
-            throw new ArgumentException("The given JSON representation of an energy mix is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomEnergyMixParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an energy mix.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
-        public static EnergyMix Parse(String                                         Text,
-                                             CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EnergyMix energyMix,
-                         out String    ErrorResponse,
-                         CustomEnergyMixParser))
-            {
-                return energyMix;
-            }
-
-            throw new ArgumentException("The given text representation of an energy mix is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an energy mix is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -159,9 +131,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="EnergyMix">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject        JSON,
-                                       out EnergyMix  EnergyMix,
-                                       out String     ErrorResponse)
+        public static Boolean TryParse(JObject         JSON,
+                                       out EnergyMix?  EnergyMix,
+                                       out String?     ErrorResponse)
 
             => TryParse(JSON,
                         out EnergyMix,
@@ -176,10 +148,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EnergyMix">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
-        public static Boolean TryParse(JObject                                 JSON,
-                                       out EnergyMix                           EnergyMix,
-                                       out String                              ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser)
+        public static Boolean TryParse(JObject                                  JSON,
+                                       out EnergyMix?                           EnergyMix,
+                                       out String?                              ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergyMix>?  CustomEnergyMixParser)
         {
 
             try
@@ -207,32 +179,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse EnergySources           [optional]
 
-                if (JSON.ParseOptionalJSON("energy_sources",
-                                           "energy sources",
-                                           EnergySource.TryParse,
-                                           out IEnumerable<EnergySource> EnergySources,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("energy_sources",
+                                              "energy sources",
+                                              EnergySource.TryParse,
+                                              out HashSet<EnergySource> EnergySources,
+                                              out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
                 #region Parse EnvironmentalImpacts    [optional]
 
-                if (JSON.ParseOptionalJSON("environ_impact",
-                                           "environmental impacts",
-                                           EnvironmentalImpact.TryParse,
-                                           out IEnumerable<EnvironmentalImpact> EnvironmentalImpacts,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("environ_impact",
+                                              "environmental impacts",
+                                              EnvironmentalImpact.TryParse,
+                                              out HashSet<EnvironmentalImpact> EnvironmentalImpacts,
+                                              out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -259,14 +227,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (CustomEnergyMixParser is not null)
                     EnergyMix = CustomEnergyMixParser(JSON,
-                                              EnergyMix);
+                                                      EnergyMix);
 
                 return true;
 
             }
             catch (Exception e)
             {
-                EnergyMix          = default;
+                EnergyMix      = default;
                 ErrorResponse  = "The given JSON representation of an energy mix is invalid: " + e.Message;
                 return false;
             }
@@ -275,60 +243,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out EnergyMix, out ErrorResponse, CustomEnergyMixParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an energy mix.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EnergyMix">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomEnergyMixParser">A delegate to parse custom energy mix JSON objects.</param>
-        public static Boolean TryParse(String                                  Text,
-                                       out EnergyMix                           EnergyMix,
-                                       out String                              ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergyMix>  CustomEnergyMixParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EnergyMix,
-                                out ErrorResponse,
-                                CustomEnergyMixParser);
-
-            }
-            catch (Exception e)
-            {
-                EnergyMix          = default;
-                ErrorResponse  = "The given text representation of an energy mix is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region ToJSON(CustomEnergyMixSerializer = null)
+        #region ToJSON(CustomEnergyMixSerializer = null, CustomEnergySourceSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMix> CustomEnergyMixSerializer = null)
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("is_green_energy",            IsGreenEnergy),
+                                 new JProperty("is_green_energy",      IsGreenEnergy),
 
                            EnergySources.       SafeAny()
-                               ? new JProperty("energy_sources",       new JArray(EnergySources.       Select(energysource        => energysource.       ToJSON())))
+                               ? new JProperty("energy_sources",       new JArray(EnergySources.       Select(energySource        => energySource.       ToJSON(CustomEnergySourceSerializer))))
                                : null,
 
                            EnvironmentalImpacts.SafeAny()
-                               ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.Select(environmentalimpact => environmentalimpact.ToJSON())))
+                               ? new JProperty("environ_impact",       new JArray(EnvironmentalImpacts.Select(environmentalImpact => environmentalImpact.ToJSON(CustomEnvironmentalImpactSerializer))))
                                : null,
 
                            SupplierName.IsNotNullOrEmpty()
@@ -398,11 +335,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy mixes for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An energy mix to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is EnergyMix energyMix &&
                    Equals(energyMix);
@@ -412,26 +348,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(EnergyMix)
 
         /// <summary>
-        /// Compares two energy mixs for equality.
+        /// Compares two energy mixes for equality.
         /// </summary>
-        /// <param name="EnergyMix">A energy mix to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(EnergyMix EnergyMix)
+        /// <param name="EnergyMix">An energy mix to compare with.</param>
+        public Boolean Equals(EnergyMix? EnergyMix)
 
-            => !(EnergyMix is null) &&
+            => EnergyMix is not null &&
 
                IsGreenEnergy.Equals(EnergyMix.IsGreenEnergy) &&
 
-               EnergySources.       Count().Equals(EnergyMix.EnergySources.Count())                 &&
+               EnergySources.       Count().Equals(EnergyMix.EnergySources.       Count())          &&
                EnvironmentalImpacts.Count().Equals(EnergyMix.EnvironmentalImpacts.Count())          &&
                EnergySources.       All(source =>  EnergyMix.EnergySources.       Contains(source)) &&
                EnvironmentalImpacts.All(impact =>  EnergyMix.EnvironmentalImpacts.Contains(impact)) &&
 
-               ((SupplierName.     IsNullOrEmpty()         && EnergyMix.SupplierName.     IsNullOrEmpty()) ||
-                (SupplierName.     IsNeitherNullNorEmpty() && EnergyMix.SupplierName.     IsNeitherNullNorEmpty() && SupplierName.     Equals(EnergyMix.SupplierName))) &&
+             ((SupplierName      is     null && EnergyMix.SupplierName      is     null) ||
+              (SupplierName      is not null && EnergyMix.SupplierName      is not null && SupplierName.     Equals(EnergyMix.SupplierName))) &&
 
-               ((EnergyProductName.IsNullOrEmpty()         && EnergyMix.EnergyProductName.IsNullOrEmpty()) ||
-                (EnergyProductName.IsNeitherNullNorEmpty() && EnergyMix.EnergyProductName.IsNeitherNullNorEmpty() && EnergyProductName.Equals(EnergyMix.EnergyProductName)));
+             ((EnergyProductName is     null && EnergyMix.EnergyProductName is     null) ||
+              (EnergyProductName is not null && EnergyMix.EnergyProductName is not null && EnergyProductName.Equals(EnergyMix.EnergyProductName)));
 
         #endregion
 
@@ -448,13 +383,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return IsGreenEnergy.      GetHashCode()       * 5 ^
-
-                       EnergySources.       Aggregate(0, (hashCode, energySource)        => hashCode ^ energySource.       GetHashCode()) ^
-                       EnvironmentalImpacts.Aggregate(0, (hashCode, environmentalImpact) => hashCode ^ environmentalImpact.GetHashCode()) ^
-
-                       (SupplierName?.     GetHashCode() ?? 0) * 3 ^
-                       (EnergyProductName?.GetHashCode() ?? 0);
+                return IsGreenEnergy.       GetHashCode()       * 11 ^
+                       EnergySources.       CalcHashCode()      *  7 ^
+                       EnvironmentalImpacts.CalcHashCode()      *  5 ^
+                       (SupplierName?.      GetHashCode() ?? 0) *  3 ^
+                       (EnergyProductName?. GetHashCode() ?? 0);
 
             }
         }
@@ -468,15 +401,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(IsGreenEnergy
-                                 ? "Green energy"
-                                 : "No green energy",
-                             EnergyProductName.IsNotNullOrEmpty()
-                                 ? " (" + EnergyProductName + ")"
-                                 : "",
-                             SupplierName.IsNotNullOrEmpty()
-                                 ? " from " + SupplierName
-                                 : "");
+            => String.Concat(
+
+                   IsGreenEnergy
+                       ? "Green energy"
+                       : "No green energy",
+
+                   EnergyProductName.IsNotNullOrEmpty()
+                       ? " (" + EnergyProductName + ")"
+                       : "",
+
+                   SupplierName.IsNotNullOrEmpty()
+                       ? " from " + SupplierName
+                       : ""
+
+               );
 
         #endregion
 

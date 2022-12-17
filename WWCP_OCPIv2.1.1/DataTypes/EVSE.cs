@@ -220,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.ParkingRestrictions   = ParkingRestrictions?.Distinct() ?? Array.Empty<ParkingRestrictions>();
             this.Images                = Images?.             Distinct() ?? Array.Empty<Image>();
 
-            this.LastUpdated           = LastUpdated ?? Timestamp.Now;
+            this.LastUpdated           = LastUpdated                     ?? Timestamp.Now;
 
             foreach (var connector in this.Connectors)
                 connector.ParentEVSE = this;
@@ -1137,10 +1137,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="EVSE">An EVSE to compare with.</param>
         public Int32 CompareTo(EVSE? EVSE)
+{
 
-            => EVSE is null
-                   ? throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!")
-                   : UId.CompareTo(EVSE.UId);
+            if (EVSE is null)
+                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
+
+            var c = UId.        CompareTo(EVSE.UId);
+
+            if (c == 0)
+                c = Status.     CompareTo(EVSE.Status);
+
+            if (c == 0)
+                c = LastUpdated.CompareTo(EVSE.LastUpdated);
+
+            if (c == 0)
+                c = ETag.       CompareTo(EVSE.ETag);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -1251,14 +1266,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
-                   UId, 
+                   UId,
 
                    EVSEId.HasValue
                        ? " (" + EVSEId.Value + ")"
                        : "",
 
                    ", ",
-                   Connectors.Count(), " connector(s)"
+                   Connectors.Count(), " connector(s), ",
+
+                   LastUpdated.ToIso8601()
 
                );
 
@@ -1306,91 +1323,105 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// The parent location of this EVSE.
             /// </summary>
-            public Location?                     ParentLocation             { get; internal set; }
+            public Location?                         ParentLocation             { get; set; }
 
             /// <summary>
             /// The unique identification of the EVSE within the CPOs platform.
             /// For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!
             /// </summary>
-            public EVSE_UId?                     UId                        { get; set; }
+            [Mandatory]
+            public EVSE_UId?                         UId                        { get; set; }
 
             /// <summary>
             /// The official unique identification of the EVSE.
             /// For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!
             /// </summary>
-            public EVSE_Id?                      EVSEId                     { get; set; }
+            [Optional]
+            public EVSE_Id?                          EVSEId                     { get; set; }
 
             /// <summary>
             /// The current status of the EVSE.
             /// </summary>
-            public StatusType?                   Status                     { get; set; }
+            [Mandatory]
+            public StatusType?                       Status                     { get; set; }
 
             /// <summary>
             /// The enumeration of planned future status of the EVSE.
             /// </summary>
-            public HashSet<StatusSchedule>       StatusSchedule             { get; }
+            [Optional]
+            public HashSet<StatusSchedule>           StatusSchedule             { get; }
 
             /// <summary>
             /// The enumeration of functionalities that the EVSE is capable of.
             /// </summary>
-            public HashSet<CapabilityTypes>      Capabilities               { get; }
+            [Optional]
+            public HashSet<CapabilityTypes>          Capabilities               { get; }
 
             /// <summary>
             /// The enumeration of available connectors attached to this EVSE.
             /// </summary>
-            public HashSet<Connector>            Connectors                 { get; }
+            [Mandatory]
+            public HashSet<Connector>                Connectors                 { get; }
 
             /// <summary>
             /// The enumeration of connector identifications attached to this EVSE.
             /// </summary>
-            public IEnumerable<Connector_Id>     ConnectorIds
-                => Connectors.SafeSelect(connector => connector.Id);
+            [Optional]
+            public IEnumerable<Connector_Id>         ConnectorIds
+                => Connectors.Select(connector => connector.Id);
 
             /// <summary>
             /// The optional floor level on which the EVSE is located (in garage buildings)
             /// in the locally displayed numbering scheme.
             /// string(4)
             /// </summary>
-            public String?                       FloorLevel                 { get; set; }
+            [Optional]
+            public String?                           FloorLevel                 { get; set; }
 
             /// <summary>
             /// The optional geographical location of the EVSE.
             /// </summary>
-            public GeoCoordinate?                Coordinates                { get; set; }
+            [Optional]
+            public GeoCoordinate?                    Coordinates                { get; set; }
 
             /// <summary>
             /// The optional number/string printed on the outside of the EVSE for visual identification.
             /// string(16)
             /// </summary>
-            public String?                       PhysicalReference          { get; set; }
+            [Optional]
+            public String?                           PhysicalReference          { get; set; }
 
             /// <summary>
             /// The optional multi-language human-readable directions when more detailed
             /// information on how to reach the EVSE from the location is required.
             /// </summary>
-            public HashSet<DisplayText>          Directions                 { get; }
+            [Optional]
+            public HashSet<DisplayText>              Directions                 { get; }
 
             /// <summary>
             /// The optional enumeration of restrictions that apply to the parking spot.
             /// </summary>
-            public HashSet<ParkingRestrictions>  ParkingRestrictions        { get; }
+            [Optional]
+            public HashSet<ParkingRestrictions>      ParkingRestrictions        { get; }
 
             /// <summary>
             /// The optional enumeration of images related to the EVSE such as photos or logos.
             /// </summary>
-            public HashSet<Image>                Images                     { get; }
+            [Optional]
+            public HashSet<Image>                    Images                     { get; }
 
             /// <summary>
             /// Timestamp when this EVSE was last updated (or created).
             /// </summary>
-            public DateTime?                     LastUpdated                { get; set; }
+            [Mandatory]
+            public DateTime                          LastUpdated                { get; set; }
 
             #endregion
 
             #region Constructor(s)
 
             /// <summary>
-            /// Create a new EVSE.
+            /// Create a new EVSE builder.
             /// </summary>
             /// <param name="ParentLocation">The parent location of this EVSE.</param>
             /// 
@@ -1444,7 +1475,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 this.ParkingRestrictions   = ParkingRestrictions is not null ? new HashSet<ParkingRestrictions>(ParkingRestrictions) : new HashSet<ParkingRestrictions>();
                 this.Images                = Images              is not null ? new HashSet<Image>              (Images)              : new HashSet<Image>();
 
-                this.LastUpdated           = LastUpdated;
+                this.LastUpdated           = LastUpdated ?? Timestamp.Now;
 
             }
 

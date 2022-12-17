@@ -17,11 +17,8 @@
 
 #region Usings
 
-using System;
-using System.Globalization;
 using Newtonsoft.Json.Linq;
 
-using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -30,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// The amount of waste produced/emitted per kWh.
+    /// The environmental impact specifies the amount of waste produced/emitted per kWh.
     /// </summary>
     public readonly struct EnvironmentalImpact : IEquatable<EnvironmentalImpact>,
                                                  IComparable<EnvironmentalImpact>,
@@ -43,25 +40,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The environmental impact.
         /// </summary>
         [Mandatory]
-        public EnvironmentalImpactCategories  Category    { get; }
+        public EnvironmentalImpactCategory  Category    { get; }
 
         /// <summary>
         /// The amount of this environmental impact.
         /// </summary>
         [Mandatory]
-        public Double                         Amount      { get; }
+        public Double                       Amount      { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Amount of waste produced/emitted per kWh.
+        /// Create a new environmental impact.
         /// </summary>
         /// <param name="Category">The environmental impact category.</param>
         /// <param name="Amount">The amount of this environmental impact.</param>
-        public EnvironmentalImpact(EnvironmentalImpactCategories  Category,
-                                   Double                         Amount)
+        public EnvironmentalImpact(EnvironmentalImpactCategory  Category,
+                                   Double                       Amount)
         {
 
             this.Category  = Category;
@@ -79,44 +76,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
-        public static EnvironmentalImpact Parse(JObject                                           JSON,
-                                                CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser   = null)
+        public static EnvironmentalImpact Parse(JObject                                            JSON,
+                                                CustomJObjectParserDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EnvironmentalImpact energySource,
-                         out String              ErrorResponse,
+                         out var energySource,
+                         out var errorResponse,
                          CustomEnvironmentalImpactParser))
             {
                 return energySource;
             }
 
-            throw new ArgumentException("The given JSON representation of a hour is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomEnvironmentalImpactParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a hour.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
-        public static EnvironmentalImpact Parse(String                                            Text,
-                                                CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EnvironmentalImpact energySource,
-                         out String              ErrorResponse,
-                         CustomEnvironmentalImpactParser))
-            {
-                return energySource;
-            }
-
-            throw new ArgumentException("The given text representation of a hour is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a hour is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -134,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                  JSON,
                                        out EnvironmentalImpact  EnvironmentalImpact,
-                                       out String               ErrorResponse)
+                                       out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out EnvironmentalImpact,
@@ -149,10 +122,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EnvironmentalImpact">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
-        public static Boolean TryParse(JObject                                           JSON,
-                                       out EnvironmentalImpact                           EnvironmentalImpact,
-                                       out String                                        ErrorResponse,
-                                       CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser)
+        public static Boolean TryParse(JObject                                            JSON,
+                                       out EnvironmentalImpact                            EnvironmentalImpact,
+                                       out String?                                        ErrorResponse,
+                                       CustomJObjectParserDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactParser)
         {
 
             try
@@ -168,10 +141,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse EnvironmentalImpactCategory    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("category",
-                                             "environmental impact category",
-                                             out EnvironmentalImpactCategories EnvironmentalImpactCategory,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("category",
+                                         "environmental impact category",
+                                         OCPIv2_1_1.EnvironmentalImpactCategory.TryParse,
+                                         out EnvironmentalImpactCategory EnvironmentalImpactCategory,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -213,48 +187,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out EnvironmentalImpact, out ErrorResponse, CustomEnvironmentalImpactParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a hour.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EnvironmentalImpact">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomEnvironmentalImpactParser">A delegate to parse custom environmental impact JSON objects.</param>
-        public static Boolean TryParse(String                                            Text,
-                                       out EnvironmentalImpact                           EnvironmentalImpact,
-                                       out String                                        ErrorResponse,
-                                       CustomJObjectParserDelegate<EnvironmentalImpact>  CustomEnvironmentalImpactParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EnvironmentalImpact,
-                                out ErrorResponse,
-                                CustomEnvironmentalImpactParser);
-
-            }
-            catch (Exception e)
-            {
-                EnvironmentalImpact = default;
-                ErrorResponse  = "The given text representation of a hour is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomEnvironmentalImpactSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EnvironmentalImpact> CustomEnvironmentalImpactSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnvironmentalImpact>? CustomEnvironmentalImpactSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -299,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (EnvironmentalImpact EnvironmentalImpact1,
                                            EnvironmentalImpact EnvironmentalImpact2)
 
-            => !(EnvironmentalImpact1 == EnvironmentalImpact2);
+            => !EnvironmentalImpact1.Equals(EnvironmentalImpact2);
 
         #endregion
 
@@ -329,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (EnvironmentalImpact EnvironmentalImpact1,
                                            EnvironmentalImpact EnvironmentalImpact2)
 
-            => !(EnvironmentalImpact1 > EnvironmentalImpact2);
+            => EnvironmentalImpact1.CompareTo(EnvironmentalImpact2) <= 0;
 
         #endregion
 
@@ -359,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (EnvironmentalImpact EnvironmentalImpact1,
                                            EnvironmentalImpact EnvironmentalImpact2)
 
-            => !(EnvironmentalImpact1 < EnvironmentalImpact2);
+            => EnvironmentalImpact1.CompareTo(EnvironmentalImpact2) >= 0;
 
         #endregion
 
@@ -370,10 +309,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two environmental impacts.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An environmental impact to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is EnvironmentalImpact environmentalImpact
                    ? CompareTo(environmentalImpact)
@@ -385,9 +324,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(EnvironmentalImpact)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two environmental impacts.
         /// </summary>
-        /// <param name="EnvironmentalImpact">An object to compare with.</param>
+        /// <param name="EnvironmentalImpact">An environmental impact to compare with.</param>
         public Int32 CompareTo(EnvironmentalImpact EnvironmentalImpact)
         {
 
@@ -409,11 +348,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two environmental impacts for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An environmental impact to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is EnvironmentalImpact environmentalImpact &&
                    Equals(environmentalImpact);
@@ -423,10 +361,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(EnvironmentalImpact)
 
         /// <summary>
-        /// Compares two EnvironmentalImpacts for equality.
+        /// Compares two environmental impacts for equality.
         /// </summary>
-        /// <param name="EnvironmentalImpact">A EnvironmentalImpact to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="EnvironmentalImpact">An environmental impact to compare with.</param>
         public Boolean Equals(EnvironmentalImpact EnvironmentalImpact)
 
             => Category.Equals(EnvironmentalImpact.Category) &&
@@ -462,9 +399,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Category,
-                             " - ",
-                             Amount);
+            => String.Concat(
+
+                   Category,
+                   ": ",
+                   Amount
+
+               );
 
         #endregion
 

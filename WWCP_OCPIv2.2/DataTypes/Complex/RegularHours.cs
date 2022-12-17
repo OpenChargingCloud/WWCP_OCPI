@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -29,9 +27,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Regular recurring operation or access regular hours.
+    /// The regular hours specify regular and recurring access or operations.
     /// </summary>
-    public readonly struct RegularHours : IEquatable<RegularHours>
+    public readonly struct RegularHours : IEquatable<RegularHours>,
+                                          IComparable<RegularHours>,
+                                          IComparable
     {
 
         #region Properties
@@ -59,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new specification of a regular recurring operation or access regular hours.
+        /// Create a new regular hours specification.
         /// </summary>
         /// <param name="Weekday">Day of the week, from Monday till Sunday.</param>
         /// <param name="Begin">Begin of the regular period given in regular hours and minutes. Must be in 24h format.</param>
@@ -84,48 +84,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (JSON, CustomRegularHoursParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a regular hour.
+        /// Parse the given JSON representation of a regular hours specification.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
-        public static RegularHours Parse(JObject                                    JSON,
-                                         CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser   = null)
+        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hours specification JSON objects.</param>
+        public static RegularHours Parse(JObject                                     JSON,
+                                         CustomJObjectParserDelegate<RegularHours>?  CustomRegularHoursParser   = null)
         {
 
             if (TryParse(JSON,
-                         out RegularHours  regularHours,
-                         out String        ErrorResponse,
+                         out var regularHours,
+                         out var errorResponse,
                          CustomRegularHoursParser))
             {
                 return regularHours;
             }
 
-            throw new ArgumentException("The given JSON representation of a regular hour is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomRegularHoursParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a regular hour.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
-        public static RegularHours Parse(String                                     Text,
-                                         CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out RegularHours  regularHours,
-                         out String        ErrorResponse,
-                         CustomRegularHoursParser))
-            {
-                return regularHours;
-            }
-
-            throw new ArgumentException("The given text representation of a regular hour is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a regular hours specification is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -136,14 +112,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a regular hour.
+        /// Try to parse the given JSON representation of a regular hours specification.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="RegularHours">The parsed connector.</param>
+        /// <param name="RegularHours">The parsed regular hours specification.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject           JSON,
                                        out RegularHours  RegularHours,
-                                       out String        ErrorResponse)
+                                       out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out RegularHours,
@@ -155,13 +131,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Try to parse the given JSON representation of a regular hour.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="RegularHours">The parsed connector.</param>
+        /// <param name="RegularHours">The parsed regular hours specification.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
-        public static Boolean TryParse(JObject                                    JSON,
-                                       out RegularHours                           RegularHours,
-                                       out String                                 ErrorResponse,
-                                       CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser)
+        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hours specification JSON objects.</param>
+        public static Boolean TryParse(JObject                                     JSON,
+                                       out RegularHours                            RegularHours,
+                                       out String                                  ErrorResponse,
+                                       CustomJObjectParserDelegate<RegularHours>?  CustomRegularHoursParser)
         {
 
             try
@@ -234,42 +210,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 RegularHours   = default;
-                ErrorResponse  = "The given JSON representation of a regular hour is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out RegularHours, out ErrorResponse, CustomRegularHoursParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a regular hour.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="RegularHours">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomRegularHoursParser">A delegate to parse custom regular hour JSON objects.</param>
-        public static Boolean TryParse(String                                     Text,
-                                       out RegularHours                           RegularHours,
-                                       out String                                 ErrorResponse,
-                                       CustomJObjectParserDelegate<RegularHours>  CustomRegularHoursParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out RegularHours,
-                                out ErrorResponse,
-                                CustomRegularHoursParser);
-
-            }
-            catch (Exception e)
-            {
-                RegularHours = default;
-                ErrorResponse  = "The given text representation of a regular hour is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a regular hours specification is invalid: " + e.Message;
                 return false;
             }
 
@@ -282,8 +223,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomRegularHoursSerializer">A delegate to serialize custom regular hours JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<RegularHours> CustomRegularHoursSerializer = null)
+        /// <param name="CustomRegularHoursSerializer">A delegate to serialize custom regular hours specifications JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<RegularHours>? CustomRegularHoursSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -308,66 +249,166 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Operator overloading
 
-        #region Operator == (RegularRegularHours1, RegularRegularHours2)
+        #region Operator == (RegularHours1, RegularHours2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RegularRegularHours1">A specification of a regular recurring operation or access regular hours.</param>
-        /// <param name="RegularRegularHours2">Another specification of a regular recurring operation or access regular hours.</param>
+        /// <param name="RegularHours1">A regular hours specification.</param>
+        /// <param name="RegularHours2">Another regular hours specification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator == (RegularHours RegularRegularHours1,
-                                           RegularHours RegularRegularHours2)
+        public static Boolean operator == (RegularHours RegularHours1,
+                                           RegularHours RegularHours2)
 
-            => RegularRegularHours1.Equals(RegularRegularHours2);
+            => RegularHours1.Equals(RegularHours2);
 
         #endregion
 
-        #region Operator != (RegularRegularHours1, RegularRegularHours2)
+        #region Operator != (RegularHours1, RegularHours2)
 
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="RegularRegularHours1">A specification of a regular recurring operation or access regular hours.</param>
-        /// <param name="RegularRegularHours2">Another specification of a regular recurring operation or access regular hours.</param>
+        /// <param name="RegularHours1">A regular hours specification.</param>
+        /// <param name="RegularHours2">Another regular hours specification.</param>
         /// <returns>true|false</returns>
-        public static Boolean operator != (RegularHours RegularRegularHours1,
-                                           RegularHours RegularRegularHours2)
+        public static Boolean operator != (RegularHours RegularHours1,
+                                           RegularHours RegularHours2)
 
-            => !(RegularRegularHours1 == RegularRegularHours2);
+            => !RegularHours1.Equals(RegularHours2);
+
+        #endregion
+
+        #region Operator <  (RegularHours1, RegularHours2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RegularHours1">A regular hours specification.</param>
+        /// <param name="RegularHours2">Another regular hours specification.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator < (RegularHours RegularHours1,
+                                          RegularHours RegularHours2)
+
+            => RegularHours1.CompareTo(RegularHours2) < 0;
+
+        #endregion
+
+        #region Operator <= (RegularHours1, RegularHours2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RegularHours1">A regular hours specification.</param>
+        /// <param name="RegularHours2">Another regular hours specification.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator <= (RegularHours RegularHours1,
+                                           RegularHours RegularHours2)
+
+            => RegularHours1.CompareTo(RegularHours2) <= 0;
+
+        #endregion
+
+        #region Operator >  (RegularHours1, RegularHours2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RegularHours1">A regular hours specification.</param>
+        /// <param name="RegularHours2">Another regular hours specification.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator > (RegularHours RegularHours1,
+                                          RegularHours RegularHours2)
+
+            => RegularHours1.CompareTo(RegularHours2) > 0;
+
+        #endregion
+
+        #region Operator >= (RegularHours1, RegularHours2)
+
+        /// <summary>
+        /// Compares two instances of this object.
+        /// </summary>
+        /// <param name="RegularHours1">A regular hours specification.</param>
+        /// <param name="RegularHours2">Another regular hours specification.</param>
+        /// <returns>true|false</returns>
+        public static Boolean operator >= (RegularHours RegularHours1,
+                                           RegularHours RegularHours2)
+
+            => RegularHours1.CompareTo(RegularHours2) >= 0;
 
         #endregion
 
         #endregion
 
-        #region IEquatable<RegularRegularHours> Members
+        #region IComparable<RegularHours> Members
+
+        #region CompareTo(Object)
+
+        /// <summary>
+        /// Compares two regular hours specifications.
+        /// </summary>
+        /// <param name="Object">A regular hours specification to compare with.</param>
+        public Int32 CompareTo(Object? Object)
+
+            => Object is RegularHours regularHours
+                   ? CompareTo(regularHours)
+                   : throw new ArgumentException("The given object is not a regular hours specification!",
+                                                 nameof(Object));
+
+        #endregion
+
+        #region CompareTo(RegularHours)
+
+        /// <summary>
+        /// Compares two regular hours specifications.
+        /// </summary>
+        /// <param name="RegularHours">A regular hours specification to compare with.</param>
+        public Int32 CompareTo(RegularHours RegularHours)
+        {
+
+            var c = Weekday.CompareTo(RegularHours.Weekday);
+
+            if (c == 0)
+                c = Begin.  CompareTo(RegularHours.Begin);
+
+            if (c == 0)
+                c = End.    CompareTo(RegularHours.End);
+
+            return c;
+
+        }
+
+        #endregion
+
+        #endregion
+
+        #region IEquatable<RegularHours> Members
 
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two regular hours specifications for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A regular hours specification to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is RegularHours RegularRegularHours &&
-                   Equals(RegularRegularHours);
+            => Object is RegularHours RegularHours &&
+                   Equals(RegularHours);
 
         #endregion
 
-        #region Equals(RegularRegularHours)
+        #region Equals(RegularHours)
 
         /// <summary>
-        /// Compares two RegularRegularHourss for equality.
+        /// Compares two regular hours specifications for equality.
         /// </summary>
-        /// <param name="RegularRegularHours">A RegularRegularHours to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(RegularHours RegularRegularHours)
+        /// <param name="RegularHours">A regular hours specification to compare with.</param>
+        public Boolean Equals(RegularHours RegularHours)
 
-            => Weekday.Equals(RegularRegularHours.Weekday) &&
-               Begin.  Equals(RegularRegularHours.Begin)   &&
-               End.    Equals(RegularRegularHours.End);
+            => Weekday.Equals(RegularHours.Weekday) &&
+               Begin.  Equals(RegularHours.Begin)   &&
+               End.    Equals(RegularHours.End);
 
         #endregion
 
@@ -383,9 +424,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
             unchecked
             {
+
                 return Weekday.GetHashCode() * 5 ^
                        Begin.  GetHashCode() * 3 ^
                        End.    GetHashCode();
+
             }
         }
 
@@ -398,11 +441,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Weekday.ToString(),
-                             "s from ",
-                             Begin.  ToString(),
-                             " to ",
-                             End.    ToString());
+            => String.Concat(
+
+                   Weekday.ToString(),
+                   "s from ",
+                   Begin.  ToString(),
+                   " to ",
+                   End.    ToString()
+
+               );
 
         #endregion
 

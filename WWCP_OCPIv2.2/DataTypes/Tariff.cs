@@ -654,7 +654,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>              CustomTariffSerializer               = null,
                               CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
                               CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
-                              CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null)
+                              CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null,
+                              CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
@@ -699,8 +702,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("end_date_time",    End.  Value.ToIso8601())
                                : null,
 
-                           EnergyMix != null
-                               ? new JProperty("energy_mix",       EnergyMix.  ToJSON())
+                           EnergyMix is not null
+                               ? new JProperty("energy_mix",       EnergyMix.  ToJSON(CustomEnergyMixSerializer,
+                                                                                      CustomEnergySourceSerializer,
+                                                                                      CustomEnvironmentalImpactSerializer))
                                : null,
 
                            new JProperty("last_updated",           LastUpdated.ToIso8601())

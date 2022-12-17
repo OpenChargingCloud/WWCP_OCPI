@@ -748,6 +748,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (c == 0)
                 c = LastUpdated.CompareTo(Connector.LastUpdated);
 
+            if (c == 0)
+                c = ETag.       CompareTo(Connector.ETag);
+
             return c;
 
         }

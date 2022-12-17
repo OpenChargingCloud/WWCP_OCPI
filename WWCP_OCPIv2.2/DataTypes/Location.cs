@@ -32,8 +32,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The location object describes the charging location and its properties
-    /// where a group of EVSEs that belong together are installed.
+    /// The charging location is a group of EVSEs at more or less the same geographical location
+    /// and operated by the same charge point operator.
     /// 
     /// Typically a charging location is the exact location of the group
     /// of EVSEs, but it can also be the entrance of a parking garage
@@ -81,8 +81,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean                             Publish                  { get; }
 
         /// <summary>
-        /// This field may only be used when the publish field is set to false.
-        /// Only owners of tokens that match all the set fields of one PublishToken in the list are allowed to be shown this charging location.
+        /// The optional enumeration of publish tokens. Only owners of tokens that match all the
+        /// set fields of one publish token in the list are allowed to be shown this charging location.
+        /// Note: This field may only be used when the publish field is set to false.
         /// </summary>
         [Optional]
         public IEnumerable<PublishTokenType>       PublishAllowedTo         { get; }
@@ -123,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public String?                             State                    { get; }
 
         /// <summary>
-        /// The ISO 3166-1 alpha-3 code of the country of the charging location.
+        /// The country of the charging location.
         /// </summary>
         [Mandatory]
         public Country                             Country                  { get; }
@@ -147,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public ParkingType?                        ParkingType              { get; }
 
         /// <summary>
-        /// The optional enumeration of all Electric Vehicle Supply Equipments (EVSE) at this charging location.
+        /// The optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.
         /// </summary>
         [Optional]
         public IEnumerable<EVSE>                   EVSEs                    { get; private set; }
@@ -248,12 +249,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// The Location object describes the location and its properties
-        /// where a group of EVSEs that belong together are installed.
+        /// Create a new charging location.
         /// </summary>
         /// <param name="Id">Uniquely identifies the location within the CPOs platform (and suboperator platforms).</param>
         /// <param name="Operator">Information of the evse operator.</param>
         /// <param name="SubOperator">Information of the evse suboperator if available.</param>
+        /// 
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.</param>
+        /// <param name="PartyId">An identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).</param>
+        /// <param name="Id">An identification of the charging location within the CPOs platform (and suboperator platforms).</param>
+        /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
+        /// <param name="Address">The address of the charging location.</param>
+        /// <param name="City">The city or town of the charging location.</param>
+        /// <param name="Country">The country of the charging location.</param>
+        /// <param name="Coordinates">The geographical location of this charging location.</param>
+        /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).</param>
+        /// 
+        /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this charging location.</param>
+        /// <param name="Name">An optional display name of the charging location.</param>
+        /// <param name="PostalCode">An optional postal code of the charging location.</param>
+        /// <param name="State">An optional state or province of the charging location.</param>
+        /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
+        /// <param name="ParkingType">An optional general type of parking at the charging location.</param>
+        /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.</param>
+        /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
+        /// <param name="Operator">Optional information about the charging station operator.</param>
+        /// <param name="SubOperator">Optional information about the suboperator.</param>
+        /// <param name="Owner">Optional information about the owner.</param>
+        /// <param name="Facilities">An optional enumeration of facilities this charging location directly belongs to.</param>
+        /// <param name="OpeningTimes">An optional times when the EVSEs at the charging location can be accessed for charging.</param>
+        /// <param name="ChargingWhenClosed">Indicates if the EVSEs are still charging outside the opening hours of the charging location. </param>
+        /// <param name="Images">An optional enumeration of images related to the charging location such as photos or logos.</param>
+        /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
+        /// 
+        /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         public Location(CountryCode                                              CountryCode,
                         Party_Id                                                 PartyId,
                         Location_Id                                              Id,
@@ -291,7 +331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
                         CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
-                        CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null)
+                        CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
+                        CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null)
 
         {
 
@@ -336,7 +377,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        CustomDisplayTextSerializer,
                                                        CustomBusinessDetailsSerializer,
                                                        CustomHoursSerializer,
-                                                       CustomImageSerializer);
+                                                       CustomImageSerializer,
+                                                       CustomEnergyMixSerializer);
 
         }
 
@@ -841,7 +883,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomLocationSerializer = null, CustomEVSESerializer = null, ...)
+        #region ToJSON(CustomLocationSerializer = null, CustomPublishTokenTypeSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
@@ -857,6 +899,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
                               CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
@@ -867,7 +911,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
                               CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
                               CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
-                              CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null)
+                              CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?           CustomEnergySourceSerializer            = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?    CustomEnvironmentalImpactSerializer     = null)
         {
 
             var JSON = JSONObject.Create(
@@ -955,7 +1001,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                : null,
 
                            EnergyMix is not null
-                               ? new JProperty("energy_mix",                EnergyMix.ToJSON(CustomEnergyMixSerializer))
+                               ? new JProperty("energy_mix",                EnergyMix.  ToJSON(CustomEnergyMixSerializer,
+                                                                                               CustomEnergySourceSerializer,
+                                                                                               CustomEnvironmentalImpactSerializer))
                                : null,
 
                            new JProperty("last_updated",                    LastUpdated.ToIso8601())
@@ -1520,10 +1568,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Location">A location to compare with.</param>
         public Int32 CompareTo(Location? Location)
+        {
 
-            => Location is null
-                   ? throw new ArgumentNullException(nameof(Location), "The given charging location must not be null!")
-                   : Id.CompareTo(Location.Id);
+            if (Location is null)
+                throw new ArgumentNullException(nameof(Location), "The given connector must not be null!");
+
+            var c = CountryCode.CompareTo(Location.CountryCode);
+
+            if (c == 0)
+                c = PartyId.    CompareTo(Location.PartyId);
+
+            if (c == 0)
+                c = Id.         CompareTo(Location.Id);
+
+            if (c == 0)
+                c = LastUpdated.CompareTo(Location.LastUpdated);
+
+            if (c == 0)
+                c = ETag.       CompareTo(Location.ETag);
+
+            return c;
+
+        }
 
         #endregion
 
@@ -1553,7 +1619,65 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Boolean Equals(Location? Location)
 
             => Location is not null &&
-                   Id.Equals(Location.Id);
+
+               Id.         Equals(Location.Id)          &&
+               LastUpdated.Equals(Location.LastUpdated) &&
+               CountryCode.Equals(Location.CountryCode) &&
+               PartyId.    Equals(Location.PartyId)     &&
+               Publish.    Equals(Location.Publish)     &&
+               Address.    Equals(Location.Address)     &&
+               City.       Equals(Location.City)        &&
+               Country.    Equals(Location.Country)     &&
+               Coordinates.Equals(Location.Coordinates) &&
+               Timezone.   Equals(Location.Timezone)    &&
+
+             ((Name               is     null &&  Location.Name               is     null) ||
+              (Name               is not null &&  Location.Name               is not null && Name.                 Equals(Location.Name)))                     &&
+
+             ((PostalCode         is     null &&  Location.PostalCode         is     null) ||
+              (PostalCode         is not null &&  Location.PostalCode         is not null && PostalCode.           Equals(Location.PostalCode)))               &&
+
+             ((State              is     null &&  Location.State              is     null) ||
+              (State              is not null &&  Location.State              is not null && State.                Equals(Location.State)))                    &&
+
+            ((!ParkingType.       HasValue    && !Location.ParkingType.       HasValue)    ||
+              (ParkingType.       HasValue    &&  Location.ParkingType.       HasValue && ParkingType.       Value.Equals(Location.ParkingType.       Value))) &&
+
+             ((Operator           is     null &&  Location.Operator           is     null) ||
+              (Operator           is not null &&  Location.Operator           is not null && Operator.             Equals(Location.Operator)))                 &&
+
+             ((SubOperator        is     null &&  Location.SubOperator        is     null) ||
+              (SubOperator        is not null &&  Location.SubOperator        is not null && SubOperator.          Equals(Location.SubOperator)))              &&
+
+             ((Owner              is     null &&  Location.Owner              is     null) ||
+              (Owner              is not null &&  Location.Owner              is not null && Owner.                Equals(Location.Owner)))                    &&
+
+             ((OpeningTimes       is     null &&  Location.OpeningTimes       is     null) ||
+              (OpeningTimes       is not null &&  Location.OpeningTimes       is not null && OpeningTimes.         Equals(Location.OpeningTimes)))             &&
+
+            ((!ChargingWhenClosed.HasValue    && !Location.ChargingWhenClosed.HasValue)    ||
+              (ChargingWhenClosed.HasValue    &&  Location.ChargingWhenClosed.HasValue && ChargingWhenClosed.Value.Equals(Location.ChargingWhenClosed.Value))) &&
+
+             ((EnergyMix          is     null &&  Location.EnergyMix          is     null) ||
+              (EnergyMix          is not null &&  Location.EnergyMix          is not null && EnergyMix.            Equals(Location.EnergyMix)))                &&
+
+               PublishAllowedTo.Count().Equals(Location.PublishAllowedTo.Count()) &&
+               PublishAllowedTo.All(publishTokenType      => Location.PublishAllowedTo.Contains(publishTokenType))      &&
+
+               RelatedLocations.Count().Equals(Location.RelatedLocations.Count()) &&
+               RelatedLocations.All(additionalGeoLocation => Location.RelatedLocations.Contains(additionalGeoLocation)) &&
+
+               EVSEs.           Count().Equals(Location.EVSEs.           Count()) &&
+               EVSEs.           All(evse                  => Location.EVSEs.           Contains(evse))                  &&
+
+               Directions.      Count().Equals(Location.Directions.      Count()) &&
+               Directions.      All(displayText           => Location.Directions.      Contains(displayText))           &&
+
+               Facilities.      Count().Equals(Location.Facilities.      Count()) &&
+               Facilities.      All(facility              => Location.Facilities.      Contains(facility))              &&
+
+               Images.          Count().Equals(Location.Images.          Count()) &&
+               Images.          All(image                 => Location.Images.          Contains(image));
 
         #endregion
 
@@ -1566,7 +1690,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override Int32 GetHashCode()
 
-            => Id.GetHashCode();
+            => CountryCode.        GetHashCode()       * 103 ^
+               PartyId.            GetHashCode()       * 101 ^
+               Id.                 GetHashCode()       *  97 ^
+               Publish.            GetHashCode()       *  89 ^
+               Address.            GetHashCode()       *  83 ^
+               City.               GetHashCode()       *  79 ^
+               Country.            GetHashCode()       *  73 ^
+               Coordinates.        GetHashCode()       *  71 ^
+               Timezone.           GetHashCode()       *  67 ^
+               LastUpdated.        GetHashCode()       *  61 ^
+
+              (PublishAllowedTo?.  GetHashCode() ?? 0) *  59 ^
+              (Name?.              GetHashCode() ?? 0) *  53 ^
+              (PostalCode?.        GetHashCode() ?? 0) *  47 ^
+              (State?.             GetHashCode() ?? 0) *  41 ^
+              (RelatedLocations?.  GetHashCode() ?? 0) *  37 ^
+              (ParkingType?.       GetHashCode() ?? 0) *  31^
+              (EVSEs?.             GetHashCode() ?? 0) *  29 ^
+              (Directions?.        GetHashCode() ?? 0) *  23 ^
+              (Operator?.          GetHashCode() ?? 0) *  19 ^
+              (SubOperator?.       GetHashCode() ?? 0) *  17 ^
+              (Owner?.             GetHashCode() ?? 0) *  13 ^
+              (Facilities?.        GetHashCode() ?? 0) *  11 ^
+              (OpeningTimes?.      GetHashCode() ?? 0) *   7 ^
+              (ChargingWhenClosed?.GetHashCode() ?? 0) *   5 ^
+              (Images?.            GetHashCode() ?? 0) *   3 ^
+              (EnergyMix?.         GetHashCode() ?? 0);
 
         #endregion
 
@@ -1577,7 +1727,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   CountryCode, "-",
+                   PartyId,     "-",
+                   Id,          ", ",
+
+                   ", ",
+                   EVSEs.Count(), " EVSE(s), ",
+
+                   LastUpdated.ToIso8601()
+
+               );
 
         #endregion
 
@@ -1632,171 +1793,226 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             #region Properties
 
             /// <summary>
-            /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this location.
+            /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
             /// </summary>
-            public CountryCode?                    CountryCode              { get; set; }
+            [Mandatory]
+            public CountryCode?                        CountryCode              { get; set; }
 
             /// <summary>
-            /// The Id of the CPO that 'owns' this location (following the ISO-15118 standard).
+            /// The identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).
             /// </summary>
-            public Party_Id?                       PartyId                  { get; set; }
+            [Mandatory]
+            public Party_Id?                           PartyId                  { get; set; }
 
             /// <summary>
-            /// The identification of the location within the CPOs platform (and suboperator platforms). 
+            /// The identification of the charging location within the CPOs platform (and suboperator platforms).
+            /// This field can never be changed, modified or renamed.
             /// </summary>
-            public Location_Id?                    Id                       { get; set; }
+            [Mandatory]
+            public Location_Id?                        Id                       { get; set; }
 
             /// <summary>
-            /// Whether this location may be published on an website or app etc., or not.
+            /// Whether this charging location may be published on an website or app etc., or not.
             /// </summary>
-            public Boolean?                        Publish                  { get; set; }
+            [Mandatory]
+            public Boolean?                            Publish                  { get; set; }
 
             /// <summary>
-            /// This field may only be used when the publish field is set to false.
-            /// Only owners of Tokens that match all the set fields of one PublishToken in the list are allowed to be shown this location.
+            /// The optional enumeration of publish tokens. Only owners of tokens that match all the
+            /// set fields of one publish token in the list are allowed to be shown this charging location.
+            /// Note: This field may only be used when the publish field is set to false.
             /// </summary>
-            public HashSet<PublishTokenType>       PublishAllowedTo         { get; }
+            [Optional]
+            public HashSet<PublishTokenType>           PublishAllowedTo         { get; }
 
             /// <summary>
-            /// Display name of the location. // 255
+            /// The optional display name of the charging location.
+            /// string(255)
             /// </summary>
-            public String                          Name                     { get; set; }
+            [Optional]
+            public String?                             Name                     { get; set; }
 
             /// <summary>
-            /// Address of the location. // 45
+            /// The address of the charging location.
+            /// string(45)
             /// </summary>
-            public String                          Address                  { get; set; }
+            [Mandatory]
+            public String?                             Address                  { get; set; }
 
             /// <summary>
-            /// Address of the location. // 45
+            /// The city or town of the charging location.
+            /// string(45)
             /// </summary>
-            public String                          City                     { get; set; }
+            [Mandatory]
+            public String?                             City                     { get; set; }
 
             /// <summary>
-            /// Address of the location. // 10
+            /// The optional postal code of the charging location.
+            /// string(10)
             /// </summary>
-            public String                          PostalCode               { get; set; }
+            [Optional]
+            public String?                             PostalCode               { get; set; }
 
             /// <summary>
-            /// Address of the location. // 20
+            /// The optional state or province of the charging location.
+            /// string(20)
             /// </summary>
-            public String                          State                    { get; set; }
+            [Optional]
+            public String?                             State                    { get; set; }
 
             /// <summary>
-            /// Address of the location. // 3
+            /// The country of the charging location.
             /// </summary>
-            public Country                         Country                  { get; set; }
+            [Mandatory]
+            public Country?                            Country                  { get; set; }
 
             /// <summary>
-            /// The geographical location of this location.
+            /// The geographical location of this charging location.
             /// </summary>
-            public GeoCoordinate?                  Coordinates              { get; set; }
+            [Mandatory]
+            public GeoCoordinate?                      Coordinates              { get; set; }
 
             /// <summary>
-            /// Geographical location of related geo coordinates relevant to the ev customer.
+            /// The optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.
             /// </summary>
-            public HashSet<AdditionalGeoLocation>  RelatedLocations         { get; }
+            [Optional]
+            public HashSet<AdditionalGeoLocation>      RelatedLocations         { get; }
 
             /// <summary>
-            /// The general type of parking at the charge point location.
+            /// The optional general type of parking at the charging location.
             /// </summary>
-            public ParkingType?                    ParkingType              { get; set; }
+            [Optional]
+            public ParkingType?                        ParkingType              { get; set; }
 
             /// <summary>
-            /// All Electric Vehicle Supply Equipments (EVSE) present
-            /// within this charging station.
+            /// The optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.
             /// </summary>
-            public HashSet<EVSE>                   EVSEs                    { get; }
+            [Optional]
+            public HashSet<EVSE>                       EVSEs                    { get; }
 
             /// <summary>
-            /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
-            /// present within this charging station.
+            /// The optional enumeration of all EVSE identifications at this charging location.
             /// </summary>
             [Optional]
             public IEnumerable<EVSE_Id>                EVSEIds
-                => EVSEs.Where(evse => evse.EVSEId.HasValue).Select(evse => evse.EVSEId.Value);
+                => EVSEs.Where (evse => evse.EVSEId.HasValue).
+                         Select(evse => evse.EVSEId!.Value);
 
             /// <summary>
-            /// The unique identifications of all Electric Vehicle Supply Equipment (EVSEs)
-            /// present within this charging station.
+            /// The enumeration of all internal EVSE (unique) identifications at this charging location.
             /// </summary>
-            [Optional]
+            [Mandatory]
             public IEnumerable<EVSE_UId>               EVSEUIds
                 => EVSEs.Select(evse => evse.UId);
 
             /// <summary>
-            /// Human-readable directions on how to reach the location.
+            /// The optional enumeration of human-readable directions on how to reach the location.
             /// </summary>
-            public HashSet<DisplayText>            Directions               { get; }
+            [Optional]
+            public HashSet<DisplayText>                Directions               { get; }
 
             /// <summary>
-            /// Information of the charging station operator.
+            /// Optional information about the charging station operator.
             /// </summary>
-            /// <remarks>When not specified, the information retrieved from the Credentials module should be used instead.</remarks>
-            public BusinessDetails                 Operator                 { get; set; }
+            /// <remarks>When not specified, the information retrieved from the credentials module matching the country_code and party_id should be used instead.</remarks>
+            [Optional]
+            public BusinessDetails?                    Operator                 { get; set; }
 
             /// <summary>
-            /// Information of the suboperator if available.
+            /// Optional information about the suboperator.
             /// </summary>
-            public BusinessDetails                 SubOperator              { get; set; }
+            [Optional]
+            public BusinessDetails?                    SubOperator              { get; set; }
 
             /// <summary>
-            /// Information of the suboperator if available.
+            /// Optional information about the owner.
             /// </summary>
-            public BusinessDetails                 Owner                    { get; set; }
+            [Optional]
+            public BusinessDetails?                    Owner                    { get; set; }
 
             /// <summary>
-            /// Information of the suboperator if available.
+            /// The optional enumeration of facilities this charging location directly belongs to.
             /// </summary>
-            public HashSet<Facilities>             Facilities               { get; }
+            [Optional]
+            public HashSet<Facilities>                 Facilities               { get; }
 
             /// <summary>
-            /// One of IANA tzdata’s TZ-values representing the time zone of the location (http://www.iana.org/time-zones).
+            /// One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).
             /// </summary>
             /// <example>"Europe/Oslo", "Europe/Zurich"</example>
-            public String                          Timezone                 { get; set; }
+            [Mandatory]
+            public String?                             Timezone                 { get; set; }
 
             /// <summary>
-            /// Information of the Charging Station Operator. When not specified,
-            /// the information retreived from the api_info endpoint
-            /// should be used instead.
+            /// The optional times when the EVSEs at the charging location can be accessed for charging.
             /// </summary>
-            public Hours                           OpeningTimes             { get; set; }
+            [Optional]
+            public Hours?                              OpeningTimes             { get; set; }
 
             /// <summary>
             /// Indicates if the EVSEs are still charging outside the opening
-            /// hours of the location. E.g. when the parking garage closes its
+            /// hours of the charging location. E.g. when the parking garage closes its
             /// barriers over night, is it allowed to charge till the next
             /// morning? [Default: true]
             /// </summary>
-            public Boolean?                        ChargingWhenClosed       { get; set; }
+            [Optional]
+            public Boolean?                            ChargingWhenClosed       { get; set; }
 
             /// <summary>
-            /// Links to images related to the location such as photos or logos.
+            /// The optional enumeration of images related to the charging location such as photos or logos.
             /// </summary>
-            public HashSet<Image>                  Images                   { get; }
+            [Optional]
+            public HashSet<Image>                      Images                   { get; }
 
             /// <summary>
-            /// Links to images related to the location such as photos or logos.
+            /// Optional details on the energy supplied at this charging location.
             /// </summary>
-            public EnergyMix                       EnergyMix                { get; set; }
+            [Optional]
+            public EnergyMix?                          EnergyMix                { get; set; }
 
             /// <summary>
-            /// Timestamp when this location was last updated (or created).
+            /// The timestamp when this charging location was last updated (or created).
             /// </summary>
-            public DateTime?                       LastUpdated              { get; set; }
+            [Mandatory]
+            public DateTime                            LastUpdated              { get; set; }
 
             #endregion
 
             #region Constructor(s)
 
             /// <summary>
-            /// The Location object describes the location and its properties
-            /// where a group of EVSEs that belong together are installed.
+            /// Create a new charging location builder.
             /// </summary>
             /// <param name="Id">Uniquely identifies the location within the CPOs platform (and suboperator platforms).</param>
             /// <param name="Operator">Information of the evse operator.</param>
             /// <param name="SubOperator">Information of the evse suboperator if available.</param>
+            /// 
+            /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.</param>
+            /// <param name="PartyId">An identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).</param>
+            /// <param name="Id">An identification of the charging location within the CPOs platform (and suboperator platforms).</param>
+            /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
+            /// <param name="Address">The address of the charging location.</param>
+            /// <param name="City">The city or town of the charging location.</param>
+            /// <param name="Country">The country of the charging location.</param>
+            /// <param name="Coordinates">The geographical location of this charging location.</param>
+            /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).</param>
+            /// 
+            /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this charging location.</param>
+            /// <param name="Name">An optional display name of the charging location.</param>
+            /// <param name="PostalCode">An optional postal code of the charging location.</param>
+            /// <param name="State">An optional state or province of the charging location.</param>
+            /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
+            /// <param name="ParkingType">An optional general type of parking at the charging location.</param>
+            /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.</param>
+            /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
+            /// <param name="Operator">Optional information about the charging station operator.</param>
+            /// <param name="SubOperator">Optional information about the suboperator.</param>
+            /// <param name="Owner">Optional information about the owner.</param>
+            /// <param name="Facilities">An optional enumeration of facilities this charging location directly belongs to.</param>
+            /// <param name="OpeningTimes">An optional times when the EVSEs at the charging location can be accessed for charging.</param>
+            /// <param name="ChargingWhenClosed">Indicates if the EVSEs are still charging outside the opening hours of the charging location. </param>
+            /// <param name="Images">An optional enumeration of images related to the charging location such as photos or logos.</param>
+            /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
             public Builder(CountryCode?                         CountryCode          = null,
                            Party_Id?                            PartyId              = null,
                            Location_Id?                         Id                   = null,
@@ -1855,7 +2071,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 this.Images              = Images           is not null ? new HashSet<Image>                (Images)           : new HashSet<Image>();
                 this.EnergyMix           = EnergyMix;
 
-                this.LastUpdated         = LastUpdated;
+                this.LastUpdated         = LastUpdated ?? Timestamp.Now;
 
             }
 

@@ -226,17 +226,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -481,17 +481,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -708,17 +708,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -935,17 +935,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -1162,17 +1162,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -1391,17 +1391,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -1618,17 +1618,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -1848,17 +1848,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -2076,17 +2076,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -2303,17 +2303,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -2530,17 +2530,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },
@@ -2757,17 +2757,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     true,
                                     new EnergySource[] {
                                         new EnergySource(
-                                            EnergySourceCategories.SOLAR,
+                                            EnergySourceCategory.SOLAR,
                                             80
                                         ),
                                         new EnergySource(
-                                            EnergySourceCategories.WIND,
+                                            EnergySourceCategory.WIND,
                                             20
                                         )
                                     },
                                     new EnvironmentalImpact[] {
                                         new EnvironmentalImpact(
-                                            EnvironmentalImpactCategories.CARBON_DIOXIDE,
+                                            EnvironmentalImpactCategory.CARBON_DIOXIDE,
                                             0.1
                                         )
                                     },

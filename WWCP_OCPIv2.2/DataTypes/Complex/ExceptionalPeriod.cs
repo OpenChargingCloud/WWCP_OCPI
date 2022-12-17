@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -29,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Specifies one exceptional period for opening or access hours.
+    /// The exceptional period specifies exceptional opening or access hours.
     /// </summary>
     public readonly struct ExceptionalPeriod : IEquatable<ExceptionalPeriod>,
                                                IComparable<ExceptionalPeriod>,
@@ -55,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create new exceptional period for opening or access hours.
+        /// Create a new exceptional period for opening or access hours.
         /// </summary>
         /// <param name="Begin">Begin of the opening or access hours exception.</param>
         /// <param name="End">End of the opening or access hours exception.</param>
@@ -78,44 +76,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
-        public static ExceptionalPeriod Parse(JObject                                         JSON,
-                                              CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
+        public static ExceptionalPeriod Parse(JObject                                          JSON,
+                                              CustomJObjectParserDelegate<ExceptionalPeriod>?  CustomExceptionalPeriodParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ExceptionalPeriod  exceptionalPeriod,
-                         out String             ErrorResponse,
+                         out var exceptionalPeriod,
+                         out var errorResponse,
                          CustomExceptionalPeriodParser))
             {
                 return exceptionalPeriod;
             }
 
-            throw new ArgumentException("The given JSON representation of an exceptional period is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomExceptionalPeriodParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an exceptional period.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
-        public static ExceptionalPeriod Parse(String                                          Text,
-                                              CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ExceptionalPeriod  exceptionalPeriod,
-                         out String             ErrorResponse,
-                         CustomExceptionalPeriodParser))
-            {
-                return exceptionalPeriod;
-            }
-
-            throw new ArgumentException("The given text representation of an exceptional period is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an exceptional period is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -133,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                JSON,
                                        out ExceptionalPeriod  ExceptionalPeriod,
-                                       out String             ErrorResponse)
+                                       out String?            ErrorResponse)
 
             => TryParse(JSON,
                         out ExceptionalPeriod,
@@ -148,10 +122,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ExceptionalPeriod">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
-        public static Boolean TryParse(JObject                                         JSON,
-                                       out ExceptionalPeriod                           ExceptionalPeriod,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser)
+        public static Boolean TryParse(JObject                                          JSON,
+                                       out ExceptionalPeriod                            ExceptionalPeriod,
+                                       out String?                                      ErrorResponse,
+                                       CustomJObjectParserDelegate<ExceptionalPeriod>?  CustomExceptionalPeriodParser)
         {
 
             try
@@ -203,43 +177,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                ExceptionalPeriod   = default;
-                ErrorResponse  = "The given JSON representation of an exceptional period is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out ExceptionalPeriod, out ErrorResponse, CustomExceptionalPeriodParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an exceptional period.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ExceptionalPeriod">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomExceptionalPeriodParser">A delegate to parse custom exceptional period JSON objects.</param>
-        public static Boolean TryParse(String                                          Text,
-                                       out ExceptionalPeriod                           ExceptionalPeriod,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<ExceptionalPeriod>  CustomExceptionalPeriodParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ExceptionalPeriod,
-                                out ErrorResponse,
-                                CustomExceptionalPeriodParser);
-
-            }
-            catch (Exception e)
-            {
                 ExceptionalPeriod  = default;
-                ErrorResponse      = "The given text representation of an exceptional period is invalid: " + e.Message;
+                ErrorResponse      = "The given JSON representation of an exceptional period is invalid: " + e.Message;
                 return false;
             }
 
@@ -252,8 +191,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomExceptionalPeriodSerializer">A delegate to serialize custom regular hours JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ExceptionalPeriod> CustomExceptionalPeriodSerializer = null)
+        /// <param name="CustomExceptionalPeriodSerializer">A delegate to serialize custom exceptional period JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ExceptionalPeriod>? CustomExceptionalPeriodSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -369,10 +308,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two exceptional periods.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An exceptional period to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ExceptionalPeriod exceptionalPeriod
                    ? CompareTo(exceptionalPeriod)
@@ -384,16 +323,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(ExceptionalPeriod)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two exceptional periods.
         /// </summary>
-        /// <param name="ExceptionalPeriod">An object to compare with.</param>
+        /// <param name="ExceptionalPeriod">An exceptional period to compare with.</param>
         public Int32 CompareTo(ExceptionalPeriod ExceptionalPeriod)
         {
 
             var c = Begin.CompareTo(ExceptionalPeriod.Begin);
 
             if (c == 0)
-                c = End.CompareTo(ExceptionalPeriod.End);
+                c = End.  CompareTo(ExceptionalPeriod.End);
 
             return c;
 
@@ -408,11 +347,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two exceptional periods for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An exceptional period to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ExceptionalPeriod exceptionalPeriod &&
                    Equals(exceptionalPeriod);
@@ -422,10 +360,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(ExceptionalPeriod)
 
         /// <summary>
-        /// Compares two ExceptionalPeriods for equality.
+        /// Compares two exceptional periods for equality.
         /// </summary>
-        /// <param name="ExceptionalPeriod">A ExceptionalPeriod to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="ExceptionalPeriod">An exceptional period to compare with.</param>
         public Boolean Equals(ExceptionalPeriod ExceptionalPeriod)
 
             => Begin.Equals(ExceptionalPeriod.Begin) &&
@@ -461,9 +398,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Begin,
-                             " - ",
-                             End);
+            => String.Concat(
+
+                   Begin,
+                   " - ",
+                   End
+
+               );
 
         #endregion
 

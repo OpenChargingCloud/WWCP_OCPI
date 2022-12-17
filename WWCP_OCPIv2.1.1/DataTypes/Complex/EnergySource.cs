@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -39,16 +37,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// The energy source.
+        /// The energy source category.
         /// </summary>
         [Mandatory]
-        public EnergySourceCategories  Source        { get; }
+        public EnergySourceCategory  Source        { get; }
 
         /// <summary>
         /// The percentage of this energy source.
         /// </summary>
         [Mandatory]
-        public Double                  Percentage    { get; }
+        public Double                Percentage    { get; }
 
         #endregion
 
@@ -57,10 +55,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// A single energy source.
         /// </summary>
-        /// <param name="Source">The energy source.</param>
+        /// <param name="Source">The energy source category.</param>
         /// <param name="Percentage">The percentage of this energy source.</param>
-        public EnergySource(EnergySourceCategories  Source,
-                            Double                  Percentage)
+        public EnergySource(EnergySourceCategory  Source,
+                            Double                Percentage)
         {
 
             this.Source      = Source;
@@ -78,44 +76,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
-        public static EnergySource Parse(JObject                                    JSON,
-                                         CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser   = null)
+        public static EnergySource Parse(JObject                                     JSON,
+                                         CustomJObjectParserDelegate<EnergySource>?  CustomEnergySourceParser   = null)
         {
 
             if (TryParse(JSON,
-                         out EnergySource energySource,
-                         out String       ErrorResponse,
+                         out var energySource,
+                         out var errorResponse,
                          CustomEnergySourceParser))
             {
                 return energySource;
             }
 
-            throw new ArgumentException("The given JSON representation of an energy source is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomEnergySourceParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an energy source.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
-        public static EnergySource Parse(String                                     Text,
-                                         CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EnergySource energySource,
-                         out String       ErrorResponse,
-                         CustomEnergySourceParser))
-            {
-                return energySource;
-            }
-
-            throw new ArgumentException("The given text representation of an energy source is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an energy source is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -133,7 +107,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject           JSON,
                                        out EnergySource  EnergySource,
-                                       out String        ErrorResponse)
+                                       out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out EnergySource,
@@ -148,10 +122,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EnergySource">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
-        public static Boolean TryParse(JObject                                    JSON,
-                                       out EnergySource                           EnergySource,
-                                       out String                                 ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser)
+        public static Boolean TryParse(JObject                                     JSON,
+                                       out EnergySource                            EnergySource,
+                                       out String?                                 ErrorResponse,
+                                       CustomJObjectParserDelegate<EnergySource>?  CustomEnergySourceParser)
         {
 
             try
@@ -167,10 +141,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse EnergySourceCategory    [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("source",
-                                             "energy source",
-                                             out EnergySourceCategories EnergySourceCategory,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("source",
+                                         "energy source",
+                                         OCPIv2_1_1.EnergySourceCategory.TryParse,
+                                         out EnergySourceCategory EnergySourceCategory,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -212,48 +187,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out EnergySource, out ErrorResponse, CustomEnergySourceParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an energy source.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EnergySource">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomEnergySourceParser">A delegate to parse custom energy source JSON objects.</param>
-        public static Boolean TryParse(String                                     Text,
-                                       out EnergySource                           EnergySource,
-                                       out String                                 ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergySource>  CustomEnergySourceParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EnergySource,
-                                out ErrorResponse,
-                                CustomEnergySourceParser);
-
-            }
-            catch (Exception e)
-            {
-                EnergySource = default;
-                ErrorResponse  = "The given text representation of an energy source is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomEnergySourceSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergySource> CustomEnergySourceSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<EnergySource>? CustomEnergySourceSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -369,10 +309,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy sources.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">An energy source to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is EnergySource energySource
                    ? CompareTo(energySource)
@@ -384,9 +324,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(EnergySource)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy sources.
         /// </summary>
-        /// <param name="EnergySource">An object to compare with.</param>
+        /// <param name="EnergySource">An energy source to compare with.</param>
         public Int32 CompareTo(EnergySource EnergySource)
         {
 
@@ -408,11 +348,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two energy sources for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An energy source to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is EnergySource energySource &&
                    Equals(energySource);
@@ -424,8 +363,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two energy sources for equality.
         /// </summary>
-        /// <param name="EnergySource">A energy source to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="EnergySource">An energy source to compare with.</param>
         public Boolean Equals(EnergySource EnergySource)
 
             => Source.    Equals(EnergySource.Source) &&
@@ -461,8 +399,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Percentage, "% ",
-                             Source);
+            => String.Concat(
+
+                   Source,
+                   ": ",
+                   Percentage,
+                   "% "
+
+               );
 
         #endregion
 

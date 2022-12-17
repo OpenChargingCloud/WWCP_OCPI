@@ -127,31 +127,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Parse   (Text, CustomPublishTokenTypeParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a publish token type.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomPublishTokenTypeParser">A delegate to parse custom publish token type JSON objects.</param>
-        public static PublishTokenType Parse(String                                         Text,
-                                             CustomJObjectParserDelegate<PublishTokenType>  CustomPublishTokenTypeParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out PublishTokenType publishTokenType,
-                         out String         ErrorResponse,
-                         CustomPublishTokenTypeParser))
-            {
-                return publishTokenType;
-            }
-
-            throw new ArgumentException("The given text representation of a publish token type is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
         #region (static) TryParse(JSON, out PublishTokenType, out ErrorResponse, CustomPublishTokenTypeParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
@@ -287,53 +262,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out PublishTokenType, out ErrorResponse, CustomPublishTokenTypeParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a publish token type.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="PublishTokenType">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomPublishTokenTypeParser">A delegate to parse custom publish token type JSON objects.</param>
-        public static Boolean TryParse(String                                         Text,
-                                       out PublishTokenType                           PublishTokenType,
-                                       out String                                     ErrorResponse,
-                                       CustomJObjectParserDelegate<PublishTokenType>  CustomPublishTokenTypeParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out PublishTokenType,
-                                out ErrorResponse,
-                                CustomPublishTokenTypeParser);
-
-            }
-            catch (Exception e)
-            {
-                PublishTokenType = default;
-                ErrorResponse  = "The given text representation of a publish token type is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomPublishTokenTypeSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<PublishTokenType> CustomPublishTokenTypeSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<PublishTokenType>? CustomPublishTokenTypeSerializer = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("uid",                  Id.     ToString()),
+                                 new JProperty("uid",            Id.     ToString()),
 
                            Type.HasValue
                                ? new JProperty("type",           Type.   ToString())
