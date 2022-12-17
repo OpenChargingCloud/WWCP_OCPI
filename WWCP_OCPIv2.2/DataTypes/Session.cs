@@ -914,7 +914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 if (SessionPatch["last_updated"] is null)
-                    SessionPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    SessionPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         SessionPatch["last_updated"].Type == JTokenType.Date &&

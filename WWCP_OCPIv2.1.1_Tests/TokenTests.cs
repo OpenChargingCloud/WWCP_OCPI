@@ -45,9 +45,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         {
 
             var Token1 = new Token(
-                             Token_Id.   Parse("Token0001"),
-                             TokenTypes. RFID,
-                             Auth_Id.Parse("0815"),
+                             Token_Id. Parse("Token0001"),
+                             TokenType.RFID,
+                             Auth_Id.  Parse("0815"),
                              "GraphDefined GmbH",
                              true,
                              WhitelistTypes.NEVER,
@@ -117,9 +117,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue(Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse));
             Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(Token_Id.   Parse("012345678"),                      parsedToken.Id);
-            Assert.AreEqual(TokenTypes. RFID,                                    parsedToken.Type);
-            Assert.AreEqual(Auth_Id.Parse("DE8ACC12E46L89"),                     parsedToken.AuthId);
+            Assert.AreEqual(Token_Id. Parse("012345678"),                        parsedToken.Id);
+            Assert.AreEqual(TokenType.RFID,                                      parsedToken.Type);
+            Assert.AreEqual(Auth_Id.  Parse("DE8ACC12E46L89"),                   parsedToken.AuthId);
             Assert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
             Assert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
             Assert.AreEqual(true,                                                parsedToken.IsValid);
@@ -167,9 +167,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue(Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse));
             Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(Token_Id.   Parse("12345678905880"),                 parsedToken.Id);
-            Assert.AreEqual(TokenTypes. RFID,                                    parsedToken.Type);
-            Assert.AreEqual(Auth_Id.Parse("DE8ACC12E46L89"),                     parsedToken.AuthId);
+            Assert.AreEqual(Token_Id. Parse("12345678905880"),                   parsedToken.Id);
+            Assert.AreEqual(TokenType.RFID,                                      parsedToken.Type);
+            Assert.AreEqual(Auth_Id.  Parse("DE8ACC12E46L89"),                   parsedToken.AuthId);
             Assert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
             Assert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
             Assert.AreEqual(true,                                                parsedToken.IsValid);
@@ -210,9 +210,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsTrue(Token.TryParse(JObject.Parse(JSON), out var parsedToken, out var errorResponse));
             Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(Token_Id.   Parse("bdf21bce-fc97-11e8-8eb2-f2801f1b9fd1"),  parsedToken.Id);
-            Assert.AreEqual(TokenTypes. RFID,                                           parsedToken.Type);
-            Assert.AreEqual(Auth_Id.Parse("DE8ACC12E46L89"),                            parsedToken.AuthId);
+            Assert.AreEqual(Token_Id. Parse("bdf21bce-fc97-11e8-8eb2-f2801f1b9fd1"),    parsedToken.Id);
+            Assert.AreEqual(TokenType.RFID,                                             parsedToken.Type);
+            Assert.AreEqual(Auth_Id.  Parse("DE8ACC12E46L89"),                          parsedToken.AuthId);
             Assert.AreEqual("TheNewMotion",                                             parsedToken.Issuer);
             Assert.AreEqual(true,                                                       parsedToken.IsValid);
             Assert.AreEqual(WhitelistTypes.ALLOWED,                                     parsedToken.WhitelistType);

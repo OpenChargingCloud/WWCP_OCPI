@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -44,7 +42,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public GeoCoordinate  GeoLocation    { get; }
 
         /// <summary>
-        /// An optional name for this geo location.
+        /// An optional name for this geo location in the local language or as written at the location
         /// </summary>
         /// <example>The street name of a parking lot entrance or it's number.</example>
         [Optional]
@@ -54,11 +52,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Constructor(s)
 
+        #region AdditionalGeoLocation(GeoLocation,                          Name = null)
+
         /// <summary>
         /// Create a new geographical coordinate or position on a map.
         /// </summary>
         /// <param name="GeoLocation">The geo location.</param>
-        /// <param name="Name">An optional name for this geo location.</param>
+        /// <param name="Name">An optional name for this geo location in the local language or as written at the location.</param>
         public AdditionalGeoLocation(GeoCoordinate  GeoLocation,
                                      DisplayText?   Name   = null)
         {
@@ -68,13 +68,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         }
 
+        #endregion
+
+        #region AdditionalGeoLocation(Latitude, Longitude, Altitude = null, Name = null)
+
         /// <summary>
         /// Create a new geographical coordinate or position on a map.
         /// </summary>
         /// <param name="Latitude">The Latitude (south to nord).</param>
         /// <param name="Longitude">The Longitude (parallel to equator).</param>
         /// <param name="Altitude">The (optional) Altitude.</param>
-        /// <param name="Name">An optional name for this geo location.</param>
+        /// <param name="Name">An optional name for this geo locationin the local language or as written at the location.</param>
         public AdditionalGeoLocation(Latitude      Latitude,
                                      Longitude     Longitude,
                                      Altitude?     Altitude   = null,
@@ -89,6 +93,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+        #endregion
+
 
         #region (static) Parse   (JSON, CustomAdditionalGeoLocationParser = null)
 
@@ -97,44 +103,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
-        public static AdditionalGeoLocation Parse(JObject                                             JSON,
-                                                  CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser   = null)
+        public static AdditionalGeoLocation Parse(JObject                                              JSON,
+                                                  CustomJObjectParserDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationParser   = null)
         {
 
             if (TryParse(JSON,
-                         out AdditionalGeoLocation  additionalGeoLocation,
-                         out String                 ErrorResponse,
+                         out var additionalGeoLocation,
+                         out var errorResponse,
                          CustomAdditionalGeoLocationParser))
             {
                 return additionalGeoLocation;
             }
 
-            throw new ArgumentException("The given JSON representation of an additional geo location is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomAdditionalGeoLocationParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an additional geo location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
-        public static AdditionalGeoLocation Parse(String                                         Text,
-                                             CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out AdditionalGeoLocation  additionalGeoLocation,
-                         out String                 ErrorResponse,
-                         CustomAdditionalGeoLocationParser))
-            {
-                return additionalGeoLocation;
-            }
-
-            throw new ArgumentException("The given text representation of an additional geo location is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an additional geo location is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -152,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                    JSON,
                                        out AdditionalGeoLocation  AdditionalGeoLocation,
-                                       out String                 ErrorResponse)
+                                       out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out AdditionalGeoLocation,
@@ -167,10 +149,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="AdditionalGeoLocation">The parsed connector.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
-        public static Boolean TryParse(JObject                                             JSON,
-                                       out AdditionalGeoLocation                           AdditionalGeoLocation,
-                                       out String                                          ErrorResponse,
-                                       CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser)
+        public static Boolean TryParse(JObject                                              JSON,
+                                       out AdditionalGeoLocation                            AdditionalGeoLocation,
+                                       out String?                                          ErrorResponse,
+                                       CustomJObjectParserDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationParser)
         {
 
             try
@@ -248,41 +230,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out AdditionalGeoLocation, out ErrorResponse, CustomAdditionalGeoLocationParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an additional geo location.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="AdditionalGeoLocation">The parsed connector.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomAdditionalGeoLocationParser">A delegate to parse custom additional geo location JSON objects.</param>
-        public static Boolean TryParse(String                                              Text,
-                                       out AdditionalGeoLocation                           AdditionalGeoLocation,
-                                       out String                                          ErrorResponse,
-                                       CustomJObjectParserDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationParser)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out AdditionalGeoLocation,
-                                out ErrorResponse,
-                                CustomAdditionalGeoLocationParser);
-
-            }
-            catch (Exception e)
-            {
-                AdditionalGeoLocation  = default;
-                ErrorResponse          = "The given text representation of an additional geo location is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomAdditionalGeoLocationSerializer = null, CustomDisplayTextSerializer = null)
 
         /// <summary>
@@ -290,17 +237,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
-                              CustomJObjectSerializerDelegate<DisplayText>            CustomDisplayTextSerializer             = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("latitude",  GeoLocation.Latitude. Value.ToString()),
-                           new JProperty("longitude", GeoLocation.Longitude.Value.ToString()),
+                                 new JProperty("latitude",   GeoLocation.Latitude. Value.ToString()),
+                                 new JProperty("longitude",  GeoLocation.Longitude.Value.ToString()),
 
                            Name.HasValue
-                               ? new JProperty("name", Name.Value.ToJSON(CustomDisplayTextSerializer))
+                               ? new JProperty("name",       Name.                 Value.ToJSON(CustomDisplayTextSerializer))
                                : null
 
                        );
@@ -353,11 +300,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two additional geo locations for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An additional geo location to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is AdditionalGeoLocation AdditionalGeoLocation &&
                    Equals(AdditionalGeoLocation);
@@ -367,16 +313,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(AdditionalGeoLocation)
 
         /// <summary>
-        /// Compares two AdditionalGeoLocations for equality.
+        /// Compares two additional geo locations for equality.
         /// </summary>
-        /// <param name="AdditionalGeoLocation">A AdditionalGeoLocation to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="AdditionalGeoLocation">An additional geo location to compare with.</param>
         public Boolean Equals(AdditionalGeoLocation AdditionalGeoLocation)
 
             => GeoLocation.Equals(AdditionalGeoLocation.GeoLocation) &&
 
-               ((!Name.HasValue && !AdditionalGeoLocation.Name.HasValue) ||
-                 (Name.HasValue &&  AdditionalGeoLocation.Name.HasValue && Name.Value.Equals(AdditionalGeoLocation.Name.Value)));
+            ((!Name.HasValue && !AdditionalGeoLocation.Name.HasValue) ||
+              (Name.HasValue &&  AdditionalGeoLocation.Name.HasValue && Name.Value.Equals(AdditionalGeoLocation.Name.Value)));
 
         #endregion
 
@@ -394,10 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 return GeoLocation.GetHashCode() * 3 ^
-
-                       (Name.HasValue
-                            ? Name.GetHashCode()
-                            : 0);
+                       Name?.      GetHashCode() ?? 0;
 
             }
         }
@@ -411,12 +353,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(GeoLocation.Latitude,
-                             " / ",
-                             GeoLocation.Longitude,
-                             Name.HasValue
-                                 ? " : Name = " + Name.ToString()
-                                 : "");
+            => String.Concat(
+
+                   GeoLocation.Latitude,
+                   " / ",
+                   GeoLocation.Longitude,
+
+                   Name.HasValue
+                       ? ", " + Name.Value.ToString()
+                       : ""
+
+               );
 
         #endregion
 

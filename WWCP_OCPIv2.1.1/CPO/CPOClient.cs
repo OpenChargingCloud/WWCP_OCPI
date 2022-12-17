@@ -4837,7 +4837,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public async Task<OCPIResponse<Token>>
 
             PostToken(Token               Token,
-                      TokenTypes?         TokenType           = null,
+                      TokenType?          TokenType           = null,
                       LocationReference?  LocationReference   = null,
 
                       Request_Id?         RequestId           = null,
@@ -5044,7 +5044,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public async Task<OCPIResponse<AuthorizationInfo>>
 
             PostToken(Token_Id            TokenId,
-                      TokenTypes?         TokenType           = null,
+                      TokenType?          TokenType           = null,
                       LocationReference?  LocationReference   = null,
 
                       Request_Id?         RequestId           = null,

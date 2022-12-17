@@ -91,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.PartyId      = PartyId;
             this.Role         = Role;
             this.Status       = Status;
-            this.LastUpdated  = LastUpdated ?? DateTime.UtcNow;
+            this.LastUpdated  = LastUpdated ?? Timestamp.Now;
         }
 
         #endregion

@@ -1081,8 +1081,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       : (loggingPath, context, logfilename) => String.Concat(loggingPath,
                                                                                              context != null ? context + "_" : "",
                                                                                              logfilename, "_",
-                                                                                             DateTime.UtcNow.Year, "-",
-                                                                                             DateTime.UtcNow.Month.ToString("D2"),
+                                                                                             Timestamp.Now.Year, "-",
+                                                                                             Timestamp.Now.Month.ToString("D2"),
                                                                                              ".log");
 
             #endregion

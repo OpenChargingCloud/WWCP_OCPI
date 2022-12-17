@@ -789,7 +789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionsRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -933,7 +933,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionsResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1011,7 +1011,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionDetailsRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1213,7 +1213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetVersionDetailsResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1342,7 +1342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCredentialsHTTPRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1462,7 +1462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCredentialsHTTPResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1548,7 +1548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostCredentialsHTTPRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1665,7 +1665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPostCredentialsHTTPResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1751,7 +1751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutCredentialsHTTPRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1896,7 +1896,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutCredentialsHTTPResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1975,7 +1975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteCredentialsHTTPRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2092,7 +2092,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnDeleteCredentialsHTTPResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2195,7 +2195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnRegisterRequest event
 
-            var startTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2388,7 +2388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnRegisterResponse event
 
-            var endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {

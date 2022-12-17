@@ -86,7 +86,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Note: This field may only be used when the publish field is set to false.
         /// </summary>
         [Optional]
-        public IEnumerable<PublishTokenType>       PublishAllowedTo         { get; }
+        public IEnumerable<PublishToken>       PublishAllowedTo         { get; }
 
         /// <summary>
         /// The optional display name of the charging location.
@@ -284,7 +284,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// 
         /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
@@ -304,7 +304,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         GeoCoordinate                                            Coordinates,
                         String                                                   Timezone,
 
-                        IEnumerable<PublishTokenType>?                           PublishAllowedTo                        = null,
+                        IEnumerable<PublishToken>?                               PublishAllowedTo                        = null,
                         String?                                                  Name                                    = null,
                         String?                                                  PostalCode                              = null,
                         String?                                                  State                                   = null,
@@ -323,7 +323,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                         DateTime?                                                LastUpdated                             = null,
                         CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                        CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
+                        CustomJObjectSerializerDelegate<PublishToken>?           CustomPublishTokenSerializer            = null,
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
                         CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
                         CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
@@ -346,7 +346,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Coordinates          = Coordinates;
             this.Timezone             = Timezone;
 
-            this.PublishAllowedTo     = PublishAllowedTo?.Distinct() ?? Array.Empty<PublishTokenType>();
+            this.PublishAllowedTo     = PublishAllowedTo?.Distinct() ?? Array.Empty<PublishToken>();
             this.Name                 = Name;
             this.PostalCode           = PostalCode;
             this.State                = State;
@@ -369,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 evse.ParentLocation = this;
 
             this.ETag                 = CalcSHA256Hash(CustomLocationSerializer,
-                                                       CustomPublishTokenTypeSerializer,
+                                                       CustomPublishTokenSerializer,
                                                        CustomAdditionalGeoLocationSerializer,
                                                        CustomEVSESerializer,
                                                        CustomStatusScheduleSerializer,
@@ -626,11 +626,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PublishTokenTypes     [optional]
 
-                if (JSON.ParseOptionalJSON("publish_allowed_to",
-                                           "publish allowed to",
-                                           PublishTokenType.TryParse,
-                                           out IEnumerable<PublishTokenType> PublishTokenTypes,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("publish_allowed_to",
+                                              "publish allowed to",
+                                              PublishToken.TryParse,
+                                              out HashSet<PublishToken> PublishTokenTypes,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -658,11 +658,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse RelatedLocations      [optional]
 
-                if (JSON.ParseOptionalJSON("related_locations",
-                                           "related locations",
-                                           AdditionalGeoLocation.TryParse,
-                                           out IEnumerable<AdditionalGeoLocation> RelatedLocations,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("related_locations",
+                                              "related locations",
+                                              AdditionalGeoLocation.TryParse,
+                                              out HashSet<AdditionalGeoLocation> RelatedLocations,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -686,11 +686,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse EVSEs                 [optional]
 
-                if (JSON.ParseOptionalJSON("evses",
-                                           "evses",
-                                           EVSE.TryParse,
-                                           out IEnumerable<EVSE> EVSEs,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("evses",
+                                              "evses",
+                                              EVSE.TryParse,
+                                              out HashSet<EVSE> EVSEs,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -700,11 +700,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Directions            [optional]
 
-                if (JSON.ParseOptionalJSON("directions",
-                                           "multi-language directions",
-                                           DisplayText.TryParse,
-                                           out IEnumerable<DisplayText> Directions,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("directions",
+                                              "multi-language directions",
+                                              DisplayText.TryParse,
+                                              out HashSet<DisplayText> Directions,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -756,11 +756,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Facilities            [optional]
 
-                if (JSON.ParseOptional("facilities",
-                                       "facilities",
-                                       OCPIv2_2.Facilities.TryParse,
-                                       out IEnumerable<Facilities> Facilities,
-                                       out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("facilities",
+                                              "facilities",
+                                              OCPIv2_2.Facilities.TryParse,
+                                              out HashSet<Facilities> Facilities,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -797,11 +797,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Images                [optional]
 
-                if (JSON.ParseOptionalJSON("images",
-                                           "images",
-                                           Image.TryParse,
-                                           out IEnumerable<Image> Images,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("images",
+                                              "images",
+                                              Image.TryParse,
+                                              out HashSet<Image> Images,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -883,13 +883,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region ToJSON(CustomLocationSerializer = null, CustomPublishTokenTypeSerializer = null, ...)
+        #region ToJSON(CustomLocationSerializer = null, CustomPublishTokenSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
@@ -902,7 +902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
+                              CustomJObjectSerializerDelegate<PublishToken>?           CustomPublishTokenSerializer            = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
                               CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
@@ -918,95 +918,95 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                    CountryCode.ToString()),
-                           new JProperty("party_id",                        PartyId.    ToString()),
-                           new JProperty("id",                              Id.         ToString()),
-                           new JProperty("publish",                         Publish),
+                           new JProperty("country_code",                CountryCode.ToString()),
+                           new JProperty("party_id",                    PartyId.    ToString()),
+                           new JProperty("id",                          Id.         ToString()),
+                           new JProperty("publish",                     Publish),
 
                            Publish == false && PublishAllowedTo.SafeAny()
-                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishTokenType => publishTokenType.ToJSON(CustomPublishTokenTypeSerializer))))
+                               ? new JProperty("publish_allowed_to",    new JArray(PublishAllowedTo.Select(publishTokenType => publishTokenType.ToJSON(CustomPublishTokenSerializer))))
                                : null,
 
                            Name.IsNotNullOrEmpty()
-                               ? new JProperty("name",                      Name)
+                               ? new JProperty("name",                  Name)
                                : null,
 
-                           new JProperty("address",                         Address),
-                           new JProperty("city",                            City),
+                           new JProperty("address",                     Address),
+                           new JProperty("city",                        City),
 
                            PostalCode.IsNotNullOrEmpty()
-                               ? new JProperty("postal_code",               PostalCode)
+                               ? new JProperty("postal_code",           PostalCode)
                                : null,
 
                            State.IsNotNullOrEmpty()
-                               ? new JProperty("state",                     State)
+                               ? new JProperty("state",                 State)
                                : null,
 
-                           new JProperty("country",                         Country.ToString()),
+                           new JProperty("country",                     Country.Alpha3Code),
 
-                           new JProperty("coordinates",                     new JObject(
-                                                                                new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
-                                                                                new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
-                                                                            )),
+                           new JProperty("coordinates",                 new JObject(
+                                                                            new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
+                                                                            new JProperty("longitude", Coordinates.Longitude.Value.ToString("0.00000##").Replace(",", "."))
+                                                                        )),
 
                            RelatedLocations.Any()
-                               ? new JProperty("related_locations",         new JArray(RelatedLocations.Select(additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
-                                                                                                                                                                     CustomDisplayTextSerializer))))
+                               ? new JProperty("related_locations",     new JArray(RelatedLocations.Select(additionalGeoLocation => additionalGeoLocation.ToJSON(CustomAdditionalGeoLocationSerializer,
+                                                                                                                                                                 CustomDisplayTextSerializer))))
                                : null,
 
                            ParkingType.HasValue
-                               ? new JProperty("parking_type",              ParkingType.Value.ToString())
+                               ? new JProperty("parking_type",          ParkingType.Value.ToString())
                                : null,
 
                            EVSEs.Any()
-                               ? new JProperty("evses",                     new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
-                                                                                                                        CustomStatusScheduleSerializer,
-                                                                                                                        CustomConnectorSerializer,
-                                                                                                                        CustomDisplayTextSerializer,
-                                                                                                                        CustomImageSerializer))))
+                               ? new JProperty("evses",                 new JArray(EVSEs.Select(evse => evse.ToJSON(CustomEVSESerializer,
+                                                                                                                    CustomStatusScheduleSerializer,
+                                                                                                                    CustomConnectorSerializer,
+                                                                                                                    CustomDisplayTextSerializer,
+                                                                                                                    CustomImageSerializer))))
                                : null,
 
                            Directions.Any()
-                               ? new JProperty("directions",                new JArray(Directions.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("directions",            new JArray(Directions.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            Operator is not null
-                               ? new JProperty("operator",                  Operator.   ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("operator",              Operator.   ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            SubOperator is not null
-                               ? new JProperty("suboperator",               SubOperator.ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("suboperator",           SubOperator.ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            Owner is not null
-                               ? new JProperty("owner",                     Owner.      ToJSON(CustomBusinessDetailsSerializer))
+                               ? new JProperty("owner",                 Owner.      ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
                            Facilities.Any()
-                               ? new JProperty("facilities",                new JArray(Facilities.Select(facility => facility.ToString())))
+                               ? new JProperty("facilities",            new JArray(Facilities.Select(facility => facility.ToString())))
                                : null,
 
-                           new JProperty("time_zone",                       Timezone),
+                           new JProperty("time_zone",                   Timezone),
 
                            OpeningTimes is not null
-                               ? new JProperty("opening_times",             OpeningTimes.ToJSON(CustomHoursSerializer))
+                               ? new JProperty("opening_times",         OpeningTimes.ToJSON(CustomHoursSerializer))
                                : null,
 
                            ChargingWhenClosed.HasValue
-                               ? new JProperty("charging_when_closed",      ChargingWhenClosed.Value)
+                               ? new JProperty("charging_when_closed",  ChargingWhenClosed.Value)
                                : null,
 
                            Images.Any()
-                               ? new JProperty("images",                    new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
+                               ? new JProperty("images",                new JArray(Images.Select(image => image.ToJSON(CustomImageSerializer))))
                                : null,
 
                            EnergyMix is not null
-                               ? new JProperty("energy_mix",                EnergyMix.  ToJSON(CustomEnergyMixSerializer,
-                                                                                               CustomEnergySourceSerializer,
-                                                                                               CustomEnvironmentalImpactSerializer))
+                               ? new JProperty("energy_mix",            EnergyMix.  ToJSON(CustomEnergyMixSerializer,
+                                                                                           CustomEnergySourceSerializer,
+                                                                                           CustomEnvironmentalImpactSerializer))
                                : null,
 
-                           new JProperty("last_updated",                    LastUpdated.ToIso8601())
+                           new JProperty("last_updated",                LastUpdated.ToIso8601())
 
                        );
 
@@ -1174,7 +1174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 if (LocationPatch["last_updated"] is null)
-                    LocationPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    LocationPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         LocationPatch["last_updated"].Type == JTokenType.Date &&
@@ -1194,7 +1194,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (TryParse(patchResult.PatchedData,
                              out var patchedLocation,
-                             out var errorResponse))
+                             out var errorResponse) &&
+                    patchedLocation is not null)
                 {
 
                     return PatchResult<Location>.Success(patchedLocation,
@@ -1389,13 +1390,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region CalcSHA256Hash(CustomLocationSerializer = null, CustomPublishTokenTypeSerializer = null, ...)
+        #region CalcSHA256Hash(CustomLocationSerializer = null, CustomPublishTokenSerializer = null, ...)
 
         /// <summary>
         /// Calculate the SHA256 hash of the JSON representation of this location in HEX.
         /// </summary>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomPublishTokenTypeSerializer">A delegate to serialize custom publish token type JSON objects.</param>
+        /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
@@ -1406,7 +1407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                                     CustomJObjectSerializerDelegate<PublishTokenType>?       CustomPublishTokenTypeSerializer        = null,
+                                     CustomJObjectSerializerDelegate<PublishToken>?           CustomPublishTokenSerializer            = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
@@ -1419,7 +1420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         {
 
             this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomLocationSerializer,
-                                                           CustomPublishTokenTypeSerializer,
+                                                           CustomPublishTokenSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
@@ -1823,7 +1824,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// Note: This field may only be used when the publish field is set to false.
             /// </summary>
             [Optional]
-            public HashSet<PublishTokenType>           PublishAllowedTo         { get; }
+            public HashSet<PublishToken>           PublishAllowedTo         { get; }
 
             /// <summary>
             /// The optional display name of the charging location.
@@ -2023,7 +2024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            GeoCoordinate?                       Coordinates          = null,
                            String?                              Timezone             = null,
 
-                           IEnumerable<PublishTokenType>?       PublishAllowedTo     = null,
+                           IEnumerable<PublishToken>?           PublishAllowedTo     = null,
                            String?                              Name                 = null,
                            String?                              PostalCode           = null,
                            String?                              State                = null,
@@ -2054,7 +2055,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 this.Coordinates         = Coordinates;
                 this.Timezone            = Timezone;
 
-                this.PublishAllowedTo    = PublishAllowedTo is not null ? new HashSet<PublishTokenType>     (PublishAllowedTo) : new HashSet<PublishTokenType>();
+                this.PublishAllowedTo    = PublishAllowedTo is not null ? new HashSet<PublishToken>         (PublishAllowedTo) : new HashSet<PublishToken>();
                 this.Name                = Name;
                 this.PostalCode          = PostalCode;
                 this.State               = State;
@@ -2084,7 +2085,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// </summary>
             public static implicit operator Location(Builder Builder)
 
-                => Builder?.ToImmutable;
+                => Builder.ToImmutable;
 
 
             /// <summary>
@@ -2098,17 +2099,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     if (!CountryCode.HasValue)
                         throw new ArgumentNullException(nameof(CountryCode),  "The country code must not be null or empty!");
 
-                    if (!PartyId.HasValue)
+                    if (!PartyId.    HasValue)
                         throw new ArgumentNullException(nameof(PartyId),      "The party identification must not be null or empty!");
 
-                    if (!Id.HasValue)
+                    if (!Id.         HasValue)
                         throw new ArgumentNullException(nameof(Id),           "The identification code must not be null or empty!");
 
-                    if (!Publish.HasValue)
+                    if (!Publish.    HasValue)
                         throw new ArgumentNullException(nameof(Publish),      "The publish parameter must not be null or empty!");
+
+                    if ( Address is null || Address.IsNullOrEmpty())
+                        throw new ArgumentNullException(nameof(Address),      "The address parameter must not be null or empty!");
+
+                    if (City     is null || City.IsNullOrEmpty())
+                        throw new ArgumentNullException(nameof(City),         "The city parameter must not be null or empty!");
+
+                    if (Country  is null)
+                        throw new ArgumentNullException(nameof(Country),      "The country parameter must not be null or empty!");
 
                     if (!Coordinates.HasValue)
                         throw new ArgumentNullException(nameof(Coordinates),  "The geo coordinates must not be null or empty!");
+
+                    if (Timezone is null || Timezone.IsNullOrEmpty())
+                        throw new ArgumentNullException(nameof(Timezone),     "The timezone parameter must not be null or empty!");
 
 
                     return new Location(CountryCode.Value,

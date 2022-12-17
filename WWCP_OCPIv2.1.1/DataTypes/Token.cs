@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenTypes      Type             { get; }
+        public TokenType       Type             { get; }
 
         /// <summary>
         /// The unique identification of the EV driver contract token within the eMSP’s platform.
@@ -126,7 +126,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="UILanguage">An optional ISO 639-1 language code of the token owner’s preferred interface language.</param>
         /// <param name="LastUpdated">The timestamp when this token was last updated (or created).</param>
         public Token(Token_Id                                 Id,
-                     TokenTypes                               Type,
+                     TokenType                                Type,
                      Auth_Id                                  AuthId,
                      String                                   Issuer,
                      Boolean                                  IsValid,
@@ -262,8 +262,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
-                                         TokenTypesExtensions.TryParse,
-                                         out TokenTypes Type,
+                                         TokenType.TryParse,
+                                         out TokenType Type,
                                          out ErrorResponse))
                 {
                     return false;
@@ -395,9 +395,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("uid",                  Id.           ToString()),
-                           new JProperty("type",                 Type.         AsText()),
-                           new JProperty("auth_id",              AuthId.       ToString()),
+                           new JProperty("uid",                  Id.              ToString()),
+                           new JProperty("type",                 Type.            ToString()),
+                           new JProperty("auth_id",              AuthId.          ToString()),
 
                            VisualNumber.IsNotNullOrEmpty()
                                ? new JProperty("visual_number",  VisualNumber)
@@ -406,13 +406,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("issuer",               Issuer),
 
                            new JProperty("valid",                IsValid),
-                           new JProperty("whitelist",            WhitelistType.AsText()),
+                           new JProperty("whitelist",            WhitelistType.   AsText()),
 
                            UILanguage.HasValue
-                               ? new JProperty("language",       UILanguage.   ToString())
+                               ? new JProperty("language",       UILanguage.Value.ToString())
                                : null,
 
-                           new JProperty("last_updated",         LastUpdated.  ToIso8601())
+                           new JProperty("last_updated",         LastUpdated.     ToIso8601())
 
                        );
 

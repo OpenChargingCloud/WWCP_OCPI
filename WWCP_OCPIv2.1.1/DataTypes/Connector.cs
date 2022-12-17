@@ -815,16 +815,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return (ParentEVSE?.           GetHashCode() ?? 0) * 29 ^
-                        Id.                    GetHashCode()       * 23 ^
-                        Standard.              GetHashCode()       * 19 ^
-                        Format.                GetHashCode()       * 17 ^
-                        PowerType.             GetHashCode()       * 13 ^
-                        Voltage.               GetHashCode()       * 11 ^
-                        Amperage.              GetHashCode()       *  7 ^
-                       (TariffId?.             GetHashCode() ?? 0) *  5 ^
-                       (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
-                        LastUpdated.           GetHashCode();
+                return Id.                    GetHashCode()       * 23 ^
+                       Standard.              GetHashCode()       * 19 ^
+                       Format.                GetHashCode()       * 17 ^
+                       PowerType.             GetHashCode()       * 13 ^
+                       Voltage.               GetHashCode()       * 11 ^
+                       Amperage.              GetHashCode()       *  7 ^
+                      (TariffId?.             GetHashCode() ?? 0) *  5 ^
+                      (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                       LastUpdated.           GetHashCode();
 
             }
         }

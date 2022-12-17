@@ -807,7 +807,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 if (TariffPatch["last_updated"] is null)
-                    TariffPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    TariffPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         TariffPatch["last_updated"].Type == JTokenType.Date &&

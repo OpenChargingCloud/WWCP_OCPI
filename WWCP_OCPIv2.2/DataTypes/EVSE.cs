@@ -84,7 +84,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The enumeration of functionalities that the EVSE is capable of.
         /// </summary>
         [Optional]
-        public IEnumerable<CapabilityTypes>      Capabilities               { get; }
+        public IEnumerable<Capability>           Capabilities               { get; }
 
         /// <summary>
         /// The enumeration of available connectors attached to this EVSE.
@@ -187,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                       IEnumerable<Connector>                            Connectors,
                       EVSE_Id?                                          EVSEId                           = null,
                       IEnumerable<StatusSchedule>?                      StatusSchedule                   = null,
-                      IEnumerable<CapabilityTypes>?                     Capabilities                     = null,
+                      IEnumerable<Capability>?                          Capabilities                     = null,
                       String?                                           FloorLevel                       = null,
                       GeoCoordinate?                                    Coordinates                      = null,
                       String?                                           PhysicalReference                = null,
@@ -212,7 +212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.EVSEId                = EVSEId;
             this.StatusSchedule        = StatusSchedule?.     Distinct() ?? Array.Empty<StatusSchedule>();
-            this.Capabilities          = Capabilities?.       Distinct() ?? Array.Empty<CapabilityTypes>();
+            this.Capabilities          = Capabilities?.       Distinct() ?? Array.Empty<Capability>();
             this.FloorLevel            = FloorLevel?.       Trim();
             this.Coordinates           = Coordinates;
             this.PhysicalReference     = PhysicalReference?.Trim();
@@ -264,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     IEnumerable<Connector>                            Connectors,
                     EVSE_Id?                                          EVSEId                           = null,
                     IEnumerable<StatusSchedule>?                      StatusSchedule                   = null,
-                    IEnumerable<CapabilityTypes>?                     Capabilities                     = null,
+                    IEnumerable<Capability>?                          Capabilities                     = null,
                     String?                                           FloorLevel                       = null,
                     GeoCoordinate?                                    Coordinates                      = null,
                     String?                                           PhysicalReference                = null,
@@ -384,7 +384,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse UId                       [optional]
+                #region Parse UId                    [optional]
 
                 if (JSON.ParseOptional("uid",
                                        "internal EVSE identification",
@@ -392,10 +392,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out EVSE_UId? EVSEUIdBody,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!EVSEUIdURL.HasValue && !EVSEUIdBody.HasValue)
@@ -412,7 +410,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Status                    [mandatory]
+                #region Parse Status                 [mandatory]
 
                 if (!JSON.ParseMandatory("status",
                                          "EVSE status",
@@ -425,7 +423,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Connectors                [mandatory]
+                #region Parse Connectors             [mandatory]
 
                 if (!JSON.ParseMandatoryJSON<Connector, Connector_Id>("connectors",
                                                                       "connectors",
@@ -439,7 +437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                #region Parse EVSEId                    [optional]
+                #region Parse EVSEId                 [optional]
 
                 if (JSON.ParseOptional("evse_id",
                                        "offical EVSE identification",
@@ -447,15 +445,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out EVSE_Id? EVSEId,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
-                #region Parse StatusSchedule            [optional]
+                #region Parse StatusSchedule         [optional]
 
                 if (JSON.ParseOptionalJSON("status_schedule",
                                            "status schedule",
@@ -463,20 +459,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<StatusSchedule> StatusSchedule,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
-                #region Parse Capabilities              [optional]
+                #region Parse Capabilities           [optional]
 
-                if (JSON.ParseOptionalEnums("capabilities",
-                                            "capabilities",
-                                            out HashSet<CapabilityTypes> Capabilities,
-                                            out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("capabilities",
+                                              "capabilities",
+                                              Capability.TryParse,
+                                              out HashSet<Capability> Capabilities,
+                                              out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -484,13 +479,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse FloorLevel                [optional]
+                #region Parse FloorLevel             [optional]
 
                 var FloorLevel = JSON.GetString("floor_level");
 
                 #endregion
 
-                #region Parse Coordinates               [optional]
+                #region Parse Coordinates            [optional]
 
                 if (JSON.ParseOptionalJSON("coordinates",
                                            "geo coordinates",
@@ -498,21 +493,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out GeoCoordinate? Coordinates,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
-                #region Parse PhysicalReference         [optional]
+                #region Parse PhysicalReference      [optional]
 
                 var PhysicalReference = JSON.GetString("physical_reference");
 
                 #endregion
 
-                #region Parse Directions                [optional]
+                #region Parse Directions             [optional]
 
                 if (JSON.ParseOptionalJSON("directions",
                                            "directions",
@@ -520,15 +513,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<DisplayText> Directions,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
-                #region Parse ParkingRestrictions       [optional]
+                #region Parse ParkingRestrictions    [optional]
 
                 if (JSON.ParseOptionalEnums("parking_restrictions",
                                             "parking restrictions",
@@ -541,7 +532,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Images                    [optional]
+                #region Parse Images                 [optional]
 
                 if (JSON.ParseOptionalJSON("images",
                                            "images",
@@ -549,16 +540,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out IEnumerable<Image> Images,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
 
 
-                #region Parse LastUpdated               [mandatory]
+                #region Parse LastUpdated            [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -625,20 +614,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("uid",                         UId.   ToString()),
+                           new JProperty("uid",                         UId.         ToString()),
 
                            EVSEId.HasValue
-                               ? new JProperty("evse_id",               EVSEId.ToString())
+                               ? new JProperty("evse_id",               EVSEId.Value.ToString())
                                : null,
 
-                           new JProperty("status",                      Status.ToString()),
+                           new JProperty("status",                      Status.      ToString()),
 
                            StatusSchedule.Any()
                                ? new JProperty("status_schedule",       new JArray(StatusSchedule.     Select(statusSchedule     => statusSchedule.    ToJSON(CustomStatusScheduleSerializer))))
                                : null,
 
                            Capabilities.Any()
-                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select(capabilityType     => capabilityType.    ToString())))
+                               ? new JProperty("capabilities",          new JArray(Capabilities.       Select(capability         => capability.        ToString())))
                                : null,
 
                            Connectors.Any()
@@ -1236,20 +1225,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return (ParentLocation?.    GetHashCode() ?? 0) * 43 ^
-                        UId.                GetHashCode()       * 41 ^
-                        Status.             GetHashCode()       * 37 ^
-                        Connectors.         CalcHashCode()      * 31 ^
-                       (EVSEId?.            GetHashCode() ?? 0) * 29 ^
-                        StatusSchedule.     GetHashCode()       * 23 ^
-                        Capabilities.       CalcHashCode()      * 19 ^
-                       (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
-                       (Coordinates?.       GetHashCode() ?? 0) * 13 ^
-                       (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
-                        Directions.         CalcHashCode()      *  7 ^
-                        ParkingRestrictions.CalcHashCode()      *  5 ^
-                        Images.             CalcHashCode()      *  3 ^
-                        LastUpdated.        GetHashCode();
+                return UId.                GetHashCode()       * 41 ^
+                       Status.             GetHashCode()       * 37 ^
+                       Connectors.         CalcHashCode()      * 31 ^
+                      (EVSEId?.            GetHashCode() ?? 0) * 29 ^
+                       StatusSchedule.     GetHashCode()       * 23 ^
+                       Capabilities.       CalcHashCode()      * 19 ^
+                      (FloorLevel?.        GetHashCode() ?? 0) * 17 ^
+                      (Coordinates?.       GetHashCode() ?? 0) * 13 ^
+                      (PhysicalReference?. GetHashCode() ?? 0) * 11 ^
+                       Directions.         CalcHashCode()      *  7 ^
+                       ParkingRestrictions.CalcHashCode()      *  5 ^
+                       Images.             CalcHashCode()      *  3 ^
+                       LastUpdated.        GetHashCode();
 
             }
         }
@@ -1354,7 +1342,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             /// The enumeration of functionalities that the EVSE is capable of.
             /// </summary>
             [Optional]
-            public HashSet<CapabilityTypes>          Capabilities               { get; }
+            public HashSet<Capability>               Capabilities               { get; }
 
             /// <summary>
             /// The enumeration of available connectors attached to this EVSE.
@@ -1447,7 +1435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                              EVSE_Id?                           EVSEId                = null,
                              IEnumerable<StatusSchedule>?       StatusSchedule        = null,
-                             IEnumerable<CapabilityTypes>?      Capabilities          = null,
+                             IEnumerable<Capability>?           Capabilities          = null,
                              String?                            FloorLevel            = null,
                              GeoCoordinate?                     Coordinates           = null,
                              String?                            PhysicalReference     = null,
@@ -1467,7 +1455,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 this.EVSEId                = EVSEId;
                 this.StatusSchedule        = StatusSchedule      is not null ? new HashSet<StatusSchedule>     (StatusSchedule)      : new HashSet<StatusSchedule>();
-                this.Capabilities          = Capabilities        is not null ? new HashSet<CapabilityTypes>    (Capabilities)        : new HashSet<CapabilityTypes>();
+                this.Capabilities          = Capabilities        is not null ? new HashSet<Capability>         (Capabilities)        : new HashSet<Capability>();
                 this.FloorLevel            = FloorLevel;
                 this.Coordinates           = Coordinates;
                 this.PhysicalReference     = PhysicalReference;

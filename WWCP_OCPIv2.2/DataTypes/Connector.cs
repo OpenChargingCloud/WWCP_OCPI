@@ -589,7 +589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 if (ConnectorPatch["last_updated"] is null)
-                    ConnectorPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    ConnectorPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         ConnectorPatch["last_updated"].Type == JTokenType.Date &&
@@ -833,10 +833,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                TariffIds.All(tariffId => Connector.TariffIds.Contains(tariffId)) &&
 
             ((!TermsAndConditionsURL.HasValue    && !Connector.TermsAndConditionsURL.HasValue)    ||
-              (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value))) &&
+              (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
 
-             ((ParentEVSE            is     null &&  Connector.ParentEVSE            is     null) ||
-              (ParentEVSE            is not null &&  Connector.ParentEVSE            is not null && ParentEVSE.                 Equals(Connector.ParentEVSE)));
+             //((ParentEVSE            is     null &&  Connector.ParentEVSE            is     null) ||
+             // (ParentEVSE            is not null &&  Connector.ParentEVSE            is not null && ParentEVSE.                 Equals(Connector.ParentEVSE)));
 
         #endregion
 
@@ -852,17 +852,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return (ParentEVSE?.           GetHashCode() ?? 0) * 31 ^
-                        Id.                    GetHashCode()       * 29 ^
-                        Standard.              GetHashCode()       * 23 ^
-                        Format.                GetHashCode()       * 19 ^
-                        PowerType.             GetHashCode()       * 17 ^
-                        MaxVoltage.            GetHashCode()       * 13 ^
-                        MaxAmperage.           GetHashCode()       * 11 ^
-                        TariffIds.             CalcHashCode()      *  7 ^
-                       (MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
-                       (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
-                        LastUpdated.           GetHashCode();
+                return Id.                    GetHashCode()       * 29 ^
+                       Standard.              GetHashCode()       * 23 ^
+                       Format.                GetHashCode()       * 19 ^
+                       PowerType.             GetHashCode()       * 17 ^
+                       MaxVoltage.            GetHashCode()       * 13 ^
+                       MaxAmperage.           GetHashCode()       * 11 ^
+                       TariffIds.             CalcHashCode()      *  7 ^
+                      (MaxElectricPower?.     GetHashCode() ?? 0) *  5 ^
+                      (TermsAndConditionsURL?.GetHashCode() ?? 0) *  3 ^
+                       LastUpdated.           GetHashCode();
 
             }
         }

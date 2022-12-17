@@ -3221,7 +3221,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         //ToDo: What exactly to do with this information?
-                                        var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+                                        var tokenType  = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
 
                                         return Task.FromResult(
@@ -3340,13 +3340,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         var wasCreated = CommonAPI.TokenExists(newOrUpdatedToken.Id);
 
                                         //ToDo: What exactly to do with this information?
-                                        var TokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+                                        var tokenType  = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateToken(newOrUpdatedToken,
                                                                                                  AllowDowngrades: AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
-
-                                        
 
                                         if (addOrUpdateResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {
@@ -3423,7 +3421,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
                                         //ToDo: What exactly to do with this information?
-                                        var TokenType = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+                                        var tokenType = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
                                         #region Parse and apply Token JSON patch
 
@@ -3514,7 +3512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                                         //ToDo: What exactly to do with this information?
-                                        var TokenType     = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+                                        var tokenType     = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
                                         var RemovedToken  = CommonAPI.RemoveToken(ExistingTokenStatus.Token);
 

@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenTypes   TokenType     { get; }
+        public TokenType    TokenType     { get; }
 
         /// <summary>
         /// Uniquely identifies the EV driver contract token within the eMSP’s
@@ -68,7 +68,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TokenType">The type of the token.</param>
         /// <param name="ContractId">Uniquely identifies the EV driver contract token within the eMSP’s platform (and suboperator platforms).</param>
         public CDRToken(Token_Id     UID,
-                        TokenTypes   TokenType,
+                        TokenType    TokenType,
                         Contract_Id  ContractId)
         {
 
@@ -242,8 +242,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
-                                         TokenTypesExtensions.TryParse,
-                                         out TokenTypes TokenType,
+                                         OCPIv2_1_1.TokenType.TryParse,
+                                         out TokenType TokenType,
                                          out ErrorResponse))
                 {
                     return false;

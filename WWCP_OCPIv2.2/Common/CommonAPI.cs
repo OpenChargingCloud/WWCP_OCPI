@@ -559,7 +559,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = DefaultHTTPServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      Allow                      = new List<HTTPMethod> {
@@ -615,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = DefaultHTTPServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET",
                                                      AccessControlAllowHeaders  = "Authorization",
@@ -5374,7 +5374,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 HTTPServer.Shutdown(Message, Wait);
 
-                //SendCompleted(this, DateTime.UtcNow, Message);
+                //SendCompleted(this, Timestamp.Now, Message);
 
             }
 

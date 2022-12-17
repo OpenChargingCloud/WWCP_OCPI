@@ -80,7 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.StatusCode             = StatusCode;
             this.StatusMessage          = StatusMessage;
             this.AdditionalInformation  = AdditionalInformation;
-            this.Timestamp              = Timestamp ?? DateTime.UtcNow;
+            this.Timestamp              = Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             this.HTTPResponse           = HTTPResponse;
             this.RequestId              = RequestId;
@@ -110,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.StatusCode             = StatusCode;
             this.StatusMessage          = StatusMessage;
             this.AdditionalInformation  = AdditionalInformation;
-            this.Timestamp              = Timestamp ?? DateTime.UtcNow;
+            this.Timestamp              = Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             this.HTTPResponse           = HTTPResponse;
             this.RequestId              = RequestId;
@@ -211,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 if (!Timestamp.HasValue)
-                    Timestamp = DateTime.UtcNow;
+                    Timestamp = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
                 HTTPResponseBuilder.Server                    = Request.HTTPRequest.HTTPServer.DefaultServerName;
                 HTTPResponseBuilder.Date                      = Timestamp.Value;
@@ -248,7 +248,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                               ? new JProperty("correlationId",           CorrelationId.Value.ToString())
                                                               : null,
 
-                                                          new JProperty("timestamp",                    (Timestamp ?? DateTime.UtcNow).ToIso8601())
+                                                          new JProperty("timestamp",                    (Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now).ToIso8601())
 
                                                       ).ToUTF8Bytes();
 
@@ -270,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                     StatusCode ?? 3000,
                                     StatusMessage,
                                     AdditionalInformation,
-                                    Timestamp ?? DateTime.UtcNow,
+                                    Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
                                     ToHTTPResponseBuilder().AsImmutable);
 
 
@@ -478,7 +478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                           statusCode,
                                                                           statusMessage,
                                                                           exceptions.Any() ? exceptions.AggregateWith(Environment.NewLine) : null,
-                                                                          timestamp ?? DateTime.UtcNow,
+                                                                          timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
 
                                                                           Response,
                                                                           RemoteRequestId,
@@ -495,7 +495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                           statusCode,
                                                                           statusMessage,
                                                                           Response.EntirePDU,
-                                                                          timestamp ?? DateTime.UtcNow,
+                                                                          timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
 
                                                                           Response,
                                                                           RemoteRequestId,
@@ -530,7 +530,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                   -1,
                                                                   e.Message,
                                                                   e.StackTrace,
-                                                                  DateTime.UtcNow,
+                                                                  org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
                                                                   Response,
                                                                   RequestId,
                                                                   CorrelationId);

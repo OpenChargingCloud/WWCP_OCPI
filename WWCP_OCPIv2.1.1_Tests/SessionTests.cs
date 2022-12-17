@@ -54,8 +54,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                DateTime.Parse("2020-08-21T00:00:00.000Z"), // Start
                                1.11M, // KWh
                                new CDRToken(
-                                   Token_Id.Parse("1234"),
-                                   TokenTypes.RFID,
+                                   Token_Id.   Parse("1234"),
+                                   TokenType.  RFID,
                                    Contract_Id.Parse("Contract0815")
                                ),
                                AuthMethods.AUTH_REQUEST,

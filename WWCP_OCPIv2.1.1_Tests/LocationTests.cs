@@ -58,7 +58,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -111,9 +110,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -260,7 +259,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(Location1.Coordinates,              Location2.Coordinates);
             Assert.AreEqual(Location1.Timezone,                 Location2.Timezone);
 
-            Assert.AreEqual(Location1.PublishAllowedTo,         Location2.PublishAllowedTo);
             Assert.AreEqual(Location1.Name,                     Location2.Name);
             Assert.AreEqual(Location1.PostalCode,               Location2.PostalCode);
             Assert.AreEqual(Location1.State,                    Location2.State);
@@ -305,7 +303,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -358,9 +355,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -524,7 +521,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -577,9 +573,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -743,7 +739,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -796,9 +791,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -962,7 +957,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -1015,9 +1009,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1183,7 +1177,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -1236,9 +1229,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1402,7 +1395,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -1455,9 +1447,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1624,7 +1616,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -1677,9 +1668,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1844,7 +1835,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -1897,9 +1887,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2063,7 +2053,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -2116,9 +2105,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2282,7 +2271,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -2335,9 +2323,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2501,7 +2489,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                 "Deutschland",
                                 GeoCoordinate.Parse(10, 20),
                                 "Europe/Berlin",
-                                null,
                                 "Location 0001",
                                 "07749",
                                 "Thüringen",
@@ -2554,9 +2541,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),

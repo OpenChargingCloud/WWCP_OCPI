@@ -48,7 +48,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                              CountryCode.Parse("DE"),
                              Party_Id.   Parse("GEF"),
                              Token_Id.   Parse("Token0001"),
-                             TokenTypes. RFID,
+                             TokenType. RFID,
                              Contract_Id.Parse("0815"),
                              "GraphDefined GmbH",
                              true,
@@ -139,7 +139,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual(CountryCode.Parse("DE"),                             parsedToken.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
             Assert.AreEqual(Token_Id.   Parse("012345678"),                      parsedToken.Id);
-            Assert.AreEqual(TokenTypes. RFID,                                    parsedToken.Type);
+            Assert.AreEqual(TokenType. RFID,                                    parsedToken.Type);
             Assert.AreEqual(Contract_Id.Parse("DE8ACC12E46L89"),                 parsedToken.ContractId);
             Assert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
             Assert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
@@ -192,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual(CountryCode.Parse("DE"),                             parsedToken.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("TNM"),                            parsedToken.PartyId);
             Assert.AreEqual(Token_Id.   Parse("12345678905880"),                 parsedToken.Id);
-            Assert.AreEqual(TokenTypes. RFID,                                    parsedToken.Type);
+            Assert.AreEqual(TokenType. RFID,                                    parsedToken.Type);
             Assert.AreEqual(Contract_Id.Parse("DE8ACC12E46L89"),                 parsedToken.ContractId);
             Assert.AreEqual("DF000-2001-8999-1",                                 parsedToken.VisualNumber);
             Assert.AreEqual("TheNewMotion",                                      parsedToken.Issuer);
@@ -241,7 +241,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual(CountryCode.Parse("DE"),                                    parsedToken.CountryCode);
             Assert.AreEqual(Party_Id.   Parse("TNM"),                                   parsedToken.PartyId);
             Assert.AreEqual(Token_Id.   Parse("bdf21bce-fc97-11e8-8eb2-f2801f1b9fd1"),  parsedToken.Id);
-            Assert.AreEqual(TokenTypes. APP_USER,                                       parsedToken.Type);
+            Assert.AreEqual(TokenType. APP_USER,                                       parsedToken.Type);
             Assert.AreEqual(Contract_Id.Parse("DE8ACC12E46L89"),                        parsedToken.ContractId);
             Assert.AreEqual("TheNewMotion",                                             parsedToken.Issuer);
             Assert.AreEqual(true,                                                       parsedToken.IsValid);

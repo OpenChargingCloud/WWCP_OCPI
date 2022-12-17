@@ -223,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             List<Task>  _invocationList;
             Task        WorkDone;
             Task<T>     Result;
-            DateTime    StartTime    = DateTime.UtcNow;
+            DateTime    StartTime    = Timestamp.Now;
             Task        TimeoutTask  = null;
 
             #endregion
@@ -274,7 +274,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
             while (!(WorkDone == TimeoutTask || _invocationList.Count == 0));
 
-            return Task.FromResult(DefaultResult(DateTime.UtcNow - StartTime));
+            return Task.FromResult(DefaultResult(Timestamp.Now - StartTime));
 
         }
 

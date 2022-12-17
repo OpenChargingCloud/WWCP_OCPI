@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenTypes       Type              { get; }
+        public TokenType       Type              { get; }
 
         /// <summary>
         /// The unique identification of the EV driver contract token within the eMSP’s platform.
@@ -171,7 +171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Token(CountryCode                                       CountryCode,
                      Party_Id                                          PartyId,
                      Token_Id                                          Id,
-                     TokenTypes                                        Type,
+                     TokenType                                        Type,
                      Contract_Id                                       ContractId,
                      String                                            Issuer,
                      Boolean                                           IsValid,
@@ -387,8 +387,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
-                                         TokenTypesExtensions.TryParse,
-                                         out TokenTypes Type,
+                                         TokenType.TryParse,
+                                         out TokenType Type,
                                          out ErrorResponse))
                 {
                     return false;
@@ -577,7 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("country_code",                CountryCode.         ToString()),
                            new JProperty("party_id",                    PartyId.             ToString()),
                            new JProperty("uid",                         Id.                  ToString()),
-                           new JProperty("type",                        Type.                AsText()),
+                           new JProperty("type",                        Type.                ToString()),
                            new JProperty("contract_id",                 ContractId.          ToString()),
 
                            VisualNumber.IsNotNullOrEmpty()
@@ -587,18 +587,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("issuer",                      Issuer),
 
                            GroupId.HasValue
-                               ? new JProperty("group_id",              GroupId.             ToString())
+                               ? new JProperty("group_id",              GroupId.       Value.ToString())
                                : null,
 
                            new JProperty("valid",                       IsValid),
                            new JProperty("whitelist",                   WhitelistType.       AsText()),
 
                            UILanguage.HasValue
-                               ? new JProperty("language",              UILanguage.          ToString())
+                               ? new JProperty("language",              UILanguage.    Value.ToString())
                                : null,
 
                            DefaultProfile.HasValue
-                               ? new JProperty("default_profile_type",  DefaultProfile.      ToString())
+                               ? new JProperty("default_profile_type",  DefaultProfile.Value.ToString())
                                : null,
 
                            EnergyContract.HasValue
@@ -696,7 +696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
 
                 if (TokenPatch["last_updated"] is null)
-                    TokenPatch["last_updated"] = DateTime.UtcNow.ToIso8601();
+                    TokenPatch["last_updated"] = Timestamp.Now.ToIso8601();
 
                 else if (AllowDowngrades == false &&
                         TokenPatch["last_updated"].Type == JTokenType.Date &&

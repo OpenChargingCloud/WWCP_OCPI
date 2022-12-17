@@ -318,7 +318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Role                = Role;
             this.BusinessDetails     = BusinessDetails;
             this.Status              = Status;
-            this.LastUpdated         = LastUpdated ?? DateTime.UtcNow;
+            this.LastUpdated         = LastUpdated ?? Timestamp.Now;
 
             this._AccessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
             this._RemoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();

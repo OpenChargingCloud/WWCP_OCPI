@@ -84,8 +84,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// This field may only be used when the publish field is set to false.
         /// Only owners of Tokens that match all the set fields of one PublishToken in the list are allowed to be shown this location.
         /// </summary>
-        [Optional]
-        public IEnumerable<PublishTokenType>       PublishAllowedTo         { get; }
+     //   [Optional]
+     //   public IEnumerable<PublishTokenType>       PublishAllowedTo         { get; }
 
         /// <summary>
         /// Display name of the location. // 255
@@ -263,7 +263,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         GeoCoordinate                       Coordinates,
                         String                              Timezone,
 
-                        IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
+                 //       IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
                         String                              Name                 = null,
                         String                              PostalCode           = null,
                         String                              State                = null,
@@ -294,7 +294,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.Coordinates          = Coordinates;
             this.Timezone             = Timezone;
 
-            this.PublishAllowedTo     = PublishAllowedTo  ?? new PublishTokenType[0];
+     //       this.PublishAllowedTo     = PublishAllowedTo  ?? new PublishTokenType[0];
             this.Name                 = Name;
             this.PostalCode           = PostalCode;
             this.State                = State;
@@ -563,17 +563,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse PublishTokenTypes     [optional]
 
-                if (JSON.ParseOptionalJSON("publish_allowed_to",
-                                           "publish allowed to",
-                                           PublishTokenType.TryParse,
-                                           out IEnumerable<PublishTokenType> PublishTokenTypes,
-                                           out ErrorResponse))
-                {
+                //if (JSON.ParseOptionalJSON("publish_allowed_to",
+                //                           "publish allowed to",
+                //                           PublishTokenType.TryParse,
+                //                           out IEnumerable<PublishTokenType> PublishTokenTypes,
+                //                           out ErrorResponse))
+                //{
 
-                    if (ErrorResponse is not null)
-                        return false;
+                //    if (ErrorResponse is not null)
+                //        return false;
 
-                }
+                //}
 
                 #endregion
 
@@ -808,7 +808,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         Coordinates,
                                         TimeZone?.  Trim(),
 
-                                        PublishTokenTypes,
+                                //        PublishTokenTypes,
                                         Name?.      Trim(),
                                         PostalCode?.Trim(),
                                         State?.     Trim(),
@@ -860,7 +860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
-                              CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
+                          //    CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
                               CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
@@ -878,9 +878,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            new JProperty("id",                              Id.         ToString()),
                            new JProperty("publish",                         Publish),
 
-                           Publish == false && PublishAllowedTo.SafeAny()
-                               ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
-                               : null,
+                           //Publish == false && PublishAllowedTo.SafeAny()
+                           //    ? new JProperty("publish_allowed_to",        new JArray(PublishAllowedTo.Select(publishAllowedTo => publishAllowedTo.ToJSON(CustomPublishTokenTypeSerializer))))
+                           //    : null,
 
                            Name.IsNotNullOrEmpty()
                                ? new JProperty("name",                      Name)
@@ -1359,7 +1359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>               CustomLocationSerializer                = null,
-                                     CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
+                                 //    CustomJObjectSerializerDelegate<PublishTokenType>       CustomPublishTokenTypeSerializer        = null,
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>  CustomAdditionalGeoLocationSerializer   = null,
                                      CustomJObjectSerializerDelegate<EVSE>                   CustomEVSESerializer                    = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>         CustomStatusScheduleSerializer          = null,
@@ -1375,7 +1375,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
                                                                   ToJSON(CustomLocationSerializer,
-                                                                         CustomPublishTokenTypeSerializer,
+                                                                         //CustomPublishTokenTypeSerializer,
                                                                          CustomAdditionalGeoLocationSerializer,
                                                                          CustomEVSESerializer,
                                                                          CustomStatusScheduleSerializer,
@@ -1609,7 +1609,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            Coordinates,
                            Timezone,
 
-                           PublishAllowedTo,
+                           //PublishAllowedTo,
                            Name,
                            PostalCode,
                            State,
@@ -1664,7 +1664,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// This field may only be used when the publish field is set to false.
             /// Only owners of Tokens that match all the set fields of one PublishToken in the list are allowed to be shown this location.
             /// </summary>
-            public HashSet<PublishTokenType>       PublishAllowedTo         { get; }
+      //      public HashSet<PublishTokenType>       PublishAllowedTo         { get; }
 
             /// <summary>
             /// Display name of the location. // 255
@@ -1816,7 +1816,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                            GeoCoordinate?                      Coordinates          = null,
                            String                              Timezone             = null,
 
-                           IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
+                         //  IEnumerable<PublishTokenType>       PublishAllowedTo     = null,
                            String                              Name                 = null,
                            String                              PostalCode           = null,
                            String                              State                = null,
@@ -1847,7 +1847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 this.Coordinates         = Coordinates;
                 this.Timezone            = Timezone;
 
-                this.PublishAllowedTo    = PublishAllowedTo != null ? new HashSet<PublishTokenType>     (PublishAllowedTo) : new HashSet<PublishTokenType>();
+             //   this.PublishAllowedTo    = PublishAllowedTo != null ? new HashSet<PublishTokenType>     (PublishAllowedTo) : new HashSet<PublishTokenType>();
                 this.Name                = Name;
                 this.PostalCode          = PostalCode;
                 this.State               = State;
@@ -1914,7 +1914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                         Coordinates.Value,
                                         Timezone,
 
-                                        PublishAllowedTo,
+                                       // PublishAllowedTo,
                                         Name,
                                         PostalCode,
                                         State,

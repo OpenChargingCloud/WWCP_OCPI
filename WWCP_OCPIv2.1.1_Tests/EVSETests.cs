@@ -88,9 +88,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                     DateTime.Parse("2020-12-31T00:00:00.000Z")
                                 )
                             },
-                            new CapabilityTypes[] {
-                                CapabilityTypes.RFID_READER,
-                                CapabilityTypes.RESERVABLE
+                            new Capability[] {
+                                Capability.RFID_READER,
+                                Capability.RESERVABLE
                             },
                             "1. Stock",
                             GeoCoordinate.Parse(10.1, 20.2),

@@ -55,7 +55,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                1.11M, // KWh
                                new CDRToken(
                                    Token_Id.Parse("1234"),
-                                   TokenTypes.RFID,
+                                   TokenType.RFID,
                                    Contract_Id.Parse("Contract0815")
                                ),
                                AuthMethods.AUTH_REQUEST,

@@ -6679,7 +6679,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        var requestedTokenType  = Request.QueryString.TryParseEnum<TokenTypes>("type") ?? TokenTypes.RFID;
+                                        var requestedTokenType  = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
                                         #region Parse optional LocationReference JSON
 

@@ -1405,7 +1405,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1556,7 +1556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1639,7 +1639,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1778,7 +1778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetLocationByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -1863,7 +1863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetEVSEByUIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2002,7 +2002,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetEVSEByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2089,7 +2089,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetConnectorByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2228,7 +2228,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetConnectorByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2309,7 +2309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTariffsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2448,7 +2448,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTariffsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2531,7 +2531,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTariffByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2670,7 +2670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTariffByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2751,7 +2751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetSessionsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2890,7 +2890,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetSessionsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -2973,7 +2973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetSessionByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3112,7 +3112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetSessionByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3195,7 +3195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCDRsRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3334,7 +3334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCDRsResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3417,7 +3417,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCDRByIdRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3556,7 +3556,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetCDRByIdResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3636,7 +3636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3754,7 +3754,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnGetTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3836,7 +3836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -3956,7 +3956,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPutTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4039,7 +4039,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchTokenRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4159,7 +4159,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnPatchTokenResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4245,7 +4245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnReserveNowRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4387,7 +4387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnReserveNowResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4465,7 +4465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnCancelReservationRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4602,7 +4602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnCancelReservationResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4683,7 +4683,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnStartSessionRequest event
 
-            var StartTime = DateTime.UtcNow;
+            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4823,7 +4823,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnStartSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -4901,7 +4901,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnStopSessionRequest event
 
-            var StopTime = DateTime.UtcNow;
+            var StopTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5038,7 +5038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnStopSessionResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5118,7 +5118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnUnlockConnectorRequest event
 
-            var StopTime = DateTime.UtcNow;
+            var StopTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {
@@ -5257,7 +5257,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region Send OnUnlockConnectorResponse event
 
-            var Endtime = DateTime.UtcNow;
+            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
             try
             {

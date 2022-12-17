@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Aegir;
@@ -119,9 +120,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -374,9 +375,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -601,9 +602,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -828,9 +829,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1055,9 +1056,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1196,7 +1197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual   ("Location 0001a",                        patchResult.PatchedData.Name);
             Assert.AreNotEqual(DateTime.Parse("2020-09-21T00:00:00Z"),  patchResult.PatchedData.LastUpdated);
 
-            Assert.IsTrue     (DateTime.UtcNow - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
+            Assert.IsTrue     (Timestamp.Now - patchResult.PatchedData.LastUpdated < TimeSpan.FromSeconds(5));
 
         }
 
@@ -1284,9 +1285,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1511,9 +1512,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1741,9 +1742,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -1969,9 +1970,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2196,9 +2197,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2423,9 +2424,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2650,9 +2651,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                 DateTime.Parse("2020-12-31")
                                             )
                                         },
-                                        new CapabilityTypes[] {
-                                            CapabilityTypes.RFID_READER,
-                                            CapabilityTypes.RESERVABLE
+                                        new Capability[] {
+                                            Capability.RFID_READER,
+                                            Capability.RESERVABLE
                                         },
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
@@ -2837,8 +2838,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""CABLE"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 220,
-                               ""amperage"": 16,
+                               ""max_voltage"": 220,
+                               ""max_amperage"": 16,
                                ""tariff_ids"": [""11""],
                                ""last_updated"": ""2015-03-16T10:10:02Z""
                              }, {
@@ -2846,8 +2847,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 220,
-                               ""amperage"": 16,
+                               ""max_voltage"": 220,
+                               ""max_amperage"": 16,
                                ""tariff_ids"": [""13""],
                                ""last_updated"": ""2015-03-18T08:12:01Z""
                              }],
@@ -2866,8 +2867,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 220,
-                               ""amperage"": 16,
+                               ""max_voltage"": 220,
+                               ""max_amperage"": 16,
                                ""tariff_ids"": [""12""],
                                ""last_updated"": ""2015-06-29T20:39:09Z""
                              }],
@@ -2950,8 +2951,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 230,
-                               ""amperage"": 32,
+                               ""max_voltage"": 230,
+                               ""max_amperage"": 32,
                                ""last_updated"": ""2017-03-07T02:21:22Z""
                              }],
                              ""last_updated"": ""2017-03-07T02:21:22Z""
@@ -3061,8 +3062,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 220,
-                               ""amperage"": 16,
+                               ""max_voltage"": 220,
+                               ""max_amperage"": 16,
                                ""last_updated"": ""2019-07-01T12:12:11Z""
                              }],
                              ""parking_restrictions"": ""CUSTOMERS"",
@@ -3139,8 +3140,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 220,
-                               ""amperage"": 16,
+                               ""max_voltage"": 220,
+                               ""max_amperage"": 16,
                                ""last_updated"": ""2019-07-01T12:12:11Z""
                              }],
                              ""parking_restrictions"": ""CUSTOMERS"",
@@ -3228,8 +3229,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_3_PHASE"",
-                               ""voltage"": 230,
-                               ""amperage"": 16,
+                               ""max_voltage"": 230,
+                               ""max_amperage"": 16,
                                ""last_updated"": ""2019-09-27T00:19:45Z""
                              }],
                              ""last_updated"": ""2019-09-27T00:19:45Z""
@@ -3309,8 +3310,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                ""standard"": ""IEC_62196_T2"",
                                ""format"": ""SOCKET"",
                                ""power_type"": ""AC_1_PHASE"",
-                               ""voltage"": 230,
-                               ""amperage"": 8,
+                               ""max_voltage"": 230,
+                               ""max_amperage"": 8,
                                ""last_updated"": ""2019-04-05T17:17:56Z""
                              }],
                              ""last_updated"": ""2019-04-05T17:17:56Z""

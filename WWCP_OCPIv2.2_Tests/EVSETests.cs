@@ -65,7 +65,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Tariff_Id.Parse("DE*GEF*T0002")
                                     },
                                     URL.Parse("https://open.charging.cloud/terms"),
-                                    DateTime.Parse("2020-09-21T00:00:00Z")
+                                    DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 ),
                                 new Connector(
                                     Connector_Id.Parse("2"),
@@ -80,25 +80,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                         Tariff_Id.Parse("DE*GEF*T0004")
                                     },
                                     URL.Parse("https://open.charging.cloud/terms"),
-                                    DateTime.Parse("2020-09-21T00:00:00Z")
+                                    DateTime.Parse("2020-09-21T00:00:00Z").ToUniversalTime()
                                 )
                             },
                             EVSE_Id.Parse("DE*GEF*E*LOC0001*1"),
                             new StatusSchedule[] {
                                 new StatusSchedule(
                                     StatusType.INOPERATIVE,
-                                    DateTime.Parse("2020-09-22T00:00:00.000Z"),
-                                    DateTime.Parse("2020-09-23T00:00:00.000Z")
+                                    DateTime.Parse("2020-09-22T00:00:00.000Z").ToUniversalTime(),
+                                    DateTime.Parse("2020-09-23T00:00:00.000Z").ToUniversalTime()
                                 ),
                                 new StatusSchedule(
                                     StatusType.OUTOFORDER,
-                                    DateTime.Parse("2020-12-30T00:00:00.000Z"),
-                                    DateTime.Parse("2020-12-31T00:00:00.000Z")
+                                    DateTime.Parse("2020-12-30T00:00:00.000Z").ToUniversalTime(),
+                                    DateTime.Parse("2020-12-31T00:00:00.000Z").ToUniversalTime()
                                 )
                             },
-                            new CapabilityTypes[] {
-                                CapabilityTypes.RFID_READER,
-                                CapabilityTypes.RESERVABLE
+                            new Capability[] {
+                                Capability.RFID_READER,
+                                Capability.RESERVABLE
                             },
                             "1. Stock",
                             GeoCoordinate.Parse(10.1, 20.2),
@@ -129,7 +129,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                     URL.Parse("http://example.com/kleine_wellensittiche.jpg")
                                 )
                             },
-                            DateTime.Parse("2020-09-18T00:00:00Z")
+                            DateTime.Parse("2020-09-18T00:00:00Z").ToUniversalTime()
                         );
 
             #endregion
@@ -168,22 +168,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual("http://example.com/wellensittiche.jpg",  JSON["images"]              [1]["url"].         Value<String>());
             Assert.AreEqual("2020-09-18T00:00:00.000Z",               JSON["last_updated"].                           Value<String>());
 
-            Assert.IsTrue(EVSE.TryParse(JSON, out EVSE EVSE2, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(EVSE.TryParse(JSON, out var evse2, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(EVSE1.UId,                                EVSE2.UId);
-            Assert.AreEqual(EVSE1.Status,                             EVSE2.Status);
-            Assert.AreEqual(EVSE1.Connectors,                         EVSE2.Connectors);
-            Assert.AreEqual(EVSE1.EVSEId,                             EVSE2.EVSEId);
-            Assert.AreEqual(EVSE1.StatusSchedule,                     EVSE2.StatusSchedule);
-            Assert.AreEqual(EVSE1.Capabilities,                       EVSE2.Capabilities);
-            Assert.AreEqual(EVSE1.FloorLevel,                         EVSE2.FloorLevel);
-            Assert.AreEqual(EVSE1.Coordinates,                        EVSE2.Coordinates);
-            Assert.AreEqual(EVSE1.PhysicalReference,                  EVSE2.PhysicalReference);
-            Assert.AreEqual(EVSE1.Directions,                         EVSE2.Directions);
-            Assert.AreEqual(EVSE1.ParkingRestrictions,                EVSE2.ParkingRestrictions);
-            Assert.AreEqual(EVSE1.Images,                             EVSE2.Images);
-            Assert.AreEqual(EVSE1.LastUpdated.ToIso8601(),            EVSE2.LastUpdated.ToIso8601());
+            Assert.AreEqual(EVSE1.UId,                                evse2.UId);
+            Assert.AreEqual(EVSE1.Status,                             evse2.Status);
+            Assert.AreEqual(EVSE1.Connectors,                         evse2.Connectors);
+            Assert.IsTrue  (EVSE1.Connectors.        First().Equals(evse2.Connectors.        First()));
+            Assert.IsTrue  (EVSE1.Connectors.Skip(1).First().Equals(evse2.Connectors.Skip(1).First()));
+            Assert.AreEqual(EVSE1.EVSEId,                             evse2.EVSEId);
+            Assert.AreEqual(EVSE1.StatusSchedule,                     evse2.StatusSchedule);
+            Assert.AreEqual(EVSE1.Capabilities,                       evse2.Capabilities);
+            Assert.AreEqual(EVSE1.FloorLevel,                         evse2.FloorLevel);
+            Assert.AreEqual(EVSE1.Coordinates,                        evse2.Coordinates);
+            Assert.AreEqual(EVSE1.PhysicalReference,                  evse2.PhysicalReference);
+            Assert.AreEqual(EVSE1.Directions,                         evse2.Directions);
+            Assert.AreEqual(EVSE1.ParkingRestrictions,                evse2.ParkingRestrictions);
+            Assert.AreEqual(EVSE1.Images,                             evse2.Images);
+            Assert.AreEqual(EVSE1.LastUpdated.ToIso8601(),            evse2.LastUpdated.ToIso8601());
 
         }
 
