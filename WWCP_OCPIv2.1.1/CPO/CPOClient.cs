@@ -2836,8 +2836,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2847,9 +2847,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Tariff.CountryCode.ToString() +
-                                                                                                            Tariff.PartyId.    ToString() +
-                                                                                                            Tariff.Id.         ToString(),
+                                                                                     remoteURL.Value.Path + Tariff.Id.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
@@ -3629,8 +3627,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3640,9 +3638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
-                                                                                     remoteURL.Value.Path + Session.CountryCode.ToString() +
-                                                                                                            Session.PartyId.    ToString() +
-                                                                                                            Session.Id.         ToString(),
+                                                                                     remoteURL.Value.Path + Session.Id.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
@@ -4431,9 +4427,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                     remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
-                                                                                                            CDR.PartyId.    ToString() +
-                                                                                                            CDR.Id.         ToString(),
+                                                                                     remoteURL.Value.Path + CDR.Id.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;

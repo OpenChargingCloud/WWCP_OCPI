@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -63,7 +59,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public TariffElement(params PriceComponent[]  PriceComponents)
 
             : this(PriceComponents,
-                   new TariffRestrictions[0])
+                   Array.Empty<TariffRestrictions>())
 
         { }
 
@@ -76,15 +72,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="PriceComponents">An enumeration of price components that make up the pricing of this tariff.</param>
         /// <param name="TariffRestrictions">An enumeration of tariff restrictions.</param>
-        public TariffElement(IEnumerable<PriceComponent>      PriceComponents,
-                             IEnumerable<TariffRestrictions>  TariffRestrictions = null)
+        public TariffElement(IEnumerable<PriceComponent>       PriceComponents,
+                             IEnumerable<TariffRestrictions>?  TariffRestrictions   = null)
         {
 
-            if (!PriceComponents.SafeAny())
+            if (!PriceComponents.Any())
                 throw new ArgumentNullException(nameof(PriceComponents),  "The given enumeration of price components must not be null or empty!");
 
             this.PriceComponents     = PriceComponents.    Distinct();
-            this.TariffRestrictions  = TariffRestrictions?.Distinct() ?? new TariffRestrictions[0];
+            this.TariffRestrictions  = TariffRestrictions?.Distinct() ?? Array.Empty<TariffRestrictions>();
 
         }
 
@@ -100,13 +96,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public TariffElement(PriceComponent      PriceComponent,
                              TariffRestrictions  TariffRestriction)
         {
-
-            if (PriceComponent    == null)
-                throw new ArgumentNullException(nameof(PriceComponent),     "The given price component must not be null!");
-
-            if (TariffRestriction == null)
-                throw new ArgumentNullException(nameof(TariffRestriction),  "The given charging tariff restriction must not be null!");
-
 
             this.PriceComponents     = new PriceComponent[]     { PriceComponent };
             this.TariffRestrictions  = new TariffRestrictions[] { TariffRestriction };
@@ -125,44 +114,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
-        public static TariffElement Parse(JObject                                     JSON,
-                                          CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        public static TariffElement Parse(JObject                                      JSON,
+                                          CustomJObjectParserDelegate<TariffElement>?  CustomTariffElementParser   = null)
         {
 
             if (TryParse(JSON,
-                         out TariffElement  tariffElement,
-                         out String         ErrorResponse,
+                         out var tariffElement,
+                         out var errorResponse,
                          CustomTariffElementParser))
             {
                 return tariffElement;
             }
 
-            throw new ArgumentException("The given JSON representation of a tariff element is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomTariffElementParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a tariff element.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
-        public static TariffElement Parse(String                                      Text,
-                                          CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TariffElement  tariffElement,
-                         out String         ErrorResponse,
-                         CustomTariffElementParser))
-            {
-                return tariffElement;
-            }
-
-            throw new ArgumentException("The given text representation of a tariff element is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a tariff element is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -175,38 +140,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
-        public static TariffElement? TryParse(JObject                                     JSON,
-                                              CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        public static TariffElement? TryParse(JObject                                      JSON,
+                                              CustomJObjectParserDelegate<TariffElement>?  CustomTariffElementParser   = null)
         {
 
             if (TryParse(JSON,
-                         out TariffElement  tariffElement,
-                         out String         ErrorResponse,
-                         CustomTariffElementParser))
-            {
-                return tariffElement;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomTariffElementParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a tariff element.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
-        public static TariffElement? TryParse(String                                      Text,
-                                              CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TariffElement  tariffElement,
-                         out String         ErrorResponse,
+                         out var tariffElement,
+                         out var errorResponse,
                          CustomTariffElementParser))
             {
                 return tariffElement;
@@ -230,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject            JSON,
                                        out TariffElement  TariffElement,
-                                       out String         ErrorResponse)
+                                       out String?        ErrorResponse)
 
             => TryParse(JSON,
                         out TariffElement,
@@ -245,10 +185,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="TariffElement">The parsed tariff element.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
-        public static Boolean TryParse(JObject                                     JSON,
-                                       out TariffElement                           TariffElement,
-                                       out String                                  ErrorResponse,
-                                       CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
+        public static Boolean TryParse(JObject                                      JSON,
+                                       out TariffElement                            TariffElement,
+                                       out String?                                  ErrorResponse,
+                                       CustomJObjectParserDelegate<TariffElement>?  CustomTariffElementParser   = null)
         {
 
             try
@@ -264,11 +204,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse PriceComponents           [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("price_components",
-                                             "price components",
-                                             PriceComponent.TryParse,
-                                             out IEnumerable<PriceComponent> PriceComponents,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatoryHashSet("price_components",
+                                                "price components",
+                                                PriceComponent.TryParse,
+                                                out HashSet<PriceComponent> PriceComponents,
+                                                out ErrorResponse))
                 {
                     return false;
                 }
@@ -277,16 +217,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse TariffRestrictions        [optional]
 
-                if (JSON.ParseOptionalJSON("restrictions",
-                                           "tariff restrictions",
-                                           OCPIv2_2.TariffRestrictions.TryParse,
-                                           out IEnumerable<TariffRestrictions> TariffRestrictions,
-                                           out ErrorResponse))
+                if (JSON.ParseOptionalHashSet("restrictions",
+                                              "tariff restrictions",
+                                              OCPIv2_2.TariffRestrictions.TryParse,
+                                              out HashSet<TariffRestrictions> TariffRestrictions,
+                                              out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -314,41 +252,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out TariffElement, out ErrorResponse, CustomTariffElementParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a tariff element.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TariffElement">The parsed tariffElement.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomTariffElementParser">A delegate to parse custom tariff element JSON objects.</param>
-        public static Boolean TryParse(String                                      Text,
-                                       out TariffElement                           TariffElement,
-                                       out String                                  ErrorResponse,
-                                       CustomJObjectParserDelegate<TariffElement>  CustomTariffElementParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out TariffElement,
-                                out ErrorResponse,
-                                CustomTariffElementParser);
-
-            }
-            catch (Exception e)
-            {
-                TariffElement  = default;
-                ErrorResponse  = "The given text representation of a tariff element is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomTariffElementSerializer = null, CustomPriceComponentSerializer = null, ...)
 
         /// <summary>
@@ -357,17 +260,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
-                              CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
-                              CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TariffElement>?       CustomTariffElementSerializer        = null,
+                              CustomJObjectSerializerDelegate<PriceComponent>?      CustomPriceComponentSerializer       = null,
+                              CustomJObjectSerializerDelegate<TariffRestrictions>?  CustomTariffRestrictionsSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("price_components",    new JArray(PriceComponents.   SafeSelect(PriceComponent    => PriceComponent.   ToJSON(CustomPriceComponentSerializer)))),
+                                 new JProperty("price_components",  new JArray(PriceComponents.   Select(priceComponent    => priceComponent.   ToJSON(CustomPriceComponentSerializer)))),
 
                            TariffRestrictions.SafeAny()
-                               ? new JProperty("restrictions",  new JArray(TariffRestrictions.SafeSelect(TariffRestriction => TariffRestriction.ToJSON(CustomTariffRestrictionsSerializer))))
+                               ? new JProperty("restrictions",      new JArray(TariffRestrictions.Select(tariffRestriction => tariffRestriction.ToJSON(CustomTariffRestrictionsSerializer))))
                                : null
 
                        );
@@ -420,11 +323,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging tariff elements for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charging tariff element to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is TariffElement tariffElement &&
                    Equals(tariffElement);
@@ -434,16 +336,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(TariffElement)
 
         /// <summary>
-        /// Compares two TariffElements for equality.
+        /// Compares two charging tariff elements for equality.
         /// </summary>
-        /// <param name="TariffElement">A TariffElement to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="TariffElement">A charging tariff element to compare with.</param>
         public Boolean Equals(TariffElement TariffElement)
 
             => PriceComponents.   Count().Equals(TariffElement.PriceComponents.   Count())        &&
                TariffRestrictions.Count().Equals(TariffElement.TariffRestrictions.Count())        &&
-               PriceComponents.   All(price  => TariffElement.PriceComponents.   Contains(price)) &&
-               TariffRestrictions.All(tariff => TariffElement.TariffRestrictions.Contains(tariff));
+
+               PriceComponents.   All(priceComponents    => TariffElement.PriceComponents.   Contains(priceComponents)) &&
+               TariffRestrictions.All(tariffRestrictions => TariffElement.TariffRestrictions.Contains(tariffRestrictions));
 
         #endregion
 
@@ -460,8 +362,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return PriceComponents.   Aggregate(0, (hashCode, price)  => hashCode ^ price. GetHashCode()) ^
-                       TariffRestrictions.Aggregate(0, (hashCode, tariff) => hashCode ^ tariff.GetHashCode());
+                return PriceComponents.   CalcHashCode() * 3 ^
+                       TariffRestrictions.CalcHashCode();
 
             }
         }
@@ -475,8 +377,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(PriceComponents?.   Count() ?? 0, " price components, ",
-                             TariffRestrictions?.Count() ?? 0, " tariff restrictions");
+            => String.Concat(
+
+                   PriceComponents.   Count(), " price component(s), ",
+                   TariffRestrictions.Count(), " tariff restriction(s)"
+
+               );
 
         #endregion
 

@@ -164,31 +164,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Parse   (Text, CustomTransparencySoftwareParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a transparency software.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
-        public static TransparencySoftware Parse(String                                             Text,
-                                                 CustomJObjectParserDelegate<TransparencySoftware>  CustomTransparencySoftwareParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TransparencySoftware  transparencySoftware,
-                         out String                ErrorResponse,
-                         CustomTransparencySoftwareParser))
-            {
-                return transparencySoftware;
-            }
-
-            throw new ArgumentException("The given text representation of a transparency software is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
         #region (static) TryParse(JSON, out TransparencySoftware, out ErrorResponse, CustomTransparencySoftwareParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
@@ -371,41 +346,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
                 TransparencySoftware  = default;
                 ErrorResponse         = "The given JSON representation of a transparency software is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out TransparencySoftware, out ErrorResponse, CustomTransparencySoftwareParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a transparency software.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TransparencySoftware">The parsed transparencySoftware.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
-        public static Boolean TryParse(String                                             Text,
-                                       out TransparencySoftware                           TransparencySoftware,
-                                       out String                                         ErrorResponse,
-                                       CustomJObjectParserDelegate<TransparencySoftware>  CustomTransparencySoftwareParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out TransparencySoftware,
-                                out ErrorResponse,
-                                CustomTransparencySoftwareParser);
-
-            }
-            catch (Exception e)
-            {
-                TransparencySoftware  = default;
-                ErrorResponse         = "The given text representation of a transparency software is invalid: " + e.Message;
                 return false;
             }
 

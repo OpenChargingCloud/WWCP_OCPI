@@ -1274,11 +1274,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Parse Token                     [mandatory]
 
-                                             if (!JSON.ParseMandatoryJSON2("token",
-                                                                           "token",
-                                                                           OCPIv2_1_1.Token.TryParse,
-                                                                           out Token  Token,
-                                                                           out String ErrorResponse))
+                                             if (!JSON.ParseMandatoryJSON("token",
+                                                                          "token",
+                                                                          OCPIv2_1_1.Token.TryParse,
+                                                                          out Token? Token,
+                                                                          out String? ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
@@ -1289,7 +1289,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2088,11 +2088,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #region Parse Token                     [mandatory]
 
-                                             if (!JSON.ParseMandatoryJSON2("token",
-                                                                           "token",
-                                                                           OCPIv2_1_1.Token.TryParse,
-                                                                           out Token  Token,
-                                                                           out String ErrorResponse))
+                                             if (!JSON.ParseMandatoryJSON("token",
+                                                                          "token",
+                                                                          OCPIv2_1_1.Token.TryParse,
+                                                                          out Token?  Token,
+                                                                          out String? ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
@@ -2103,7 +2103,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),

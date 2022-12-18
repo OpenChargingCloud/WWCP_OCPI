@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-//using System.Management.Instrumentation;
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -29,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// CDR token.
+    /// The CDR token.
     /// </summary>
     public readonly struct CDRToken : IEquatable<CDRToken>,
                                       IComparable<CDRToken>,
@@ -48,7 +46,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenType   TokenType     { get; }
+        public TokenType    TokenType     { get; }
 
         /// <summary>
         /// Uniquely identifies the EV driver contract token within the eMSP’s
@@ -62,14 +60,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// A charging period consists of a start timestamp and a
+        /// A CDR token consists of a start timestamp and a
         /// list of possible values that influence this period.
         /// </summary>
         /// <param name="UID">The unique identification by which this token can be identified.</param>
         /// <param name="TokenType">The type of the token.</param>
         /// <param name="ContractId">Uniquely identifies the EV driver contract token within the eMSP’s platform (and suboperator platforms).</param>
         public CDRToken(Token_Id     UID,
-                        TokenType   TokenType,
+                        TokenType    TokenType,
                         Contract_Id  ContractId)
         {
 
@@ -89,44 +87,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static CDRToken Parse(JObject                                JSON,
-                                     CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        public static CDRToken Parse(JObject                                 JSON,
+                                     CustomJObjectParserDelegate<CDRToken>?  CustomCDRTokenParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CDRToken  cdrToken,
-                         out String    ErrorResponse,
+                         out var cdrToken,
+                         out var errorResponse,
                          CustomCDRTokenParser))
             {
                 return cdrToken;
             }
 
-            throw new ArgumentException("The given JSON representation of an charge detail record token is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCDRTokenParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an charge detail record token.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static CDRToken Parse(String                                 Text,
-                                     CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CDRToken  cdrToken,
-                         out String    ErrorResponse,
-                         CustomCDRTokenParser))
-            {
-                return cdrToken;
-            }
-
-            throw new ArgumentException("The given text representation of an charge detail record token is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an charge detail record token is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -139,38 +113,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static CDRToken? TryParse(JObject                                JSON,
-                                         CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        public static CDRToken? TryParse(JObject                                 JSON,
+                                         CustomJObjectParserDelegate<CDRToken>?  CustomCDRTokenParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CDRToken  cdrToken,
-                         out String    ErrorResponse,
-                         CustomCDRTokenParser))
-            {
-                return cdrToken;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomCDRTokenParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charge detail record token.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static CDRToken? TryParse(String                                 Text,
-                                         CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CDRToken  cdrToken,
-                         out String    ErrorResponse,
+                         out var cdrToken,
+                         out var errorResponse,
                          CustomCDRTokenParser))
             {
                 return cdrToken;
@@ -194,7 +143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject       JSON,
                                        out CDRToken  CDRToken,
-                                       out String    ErrorResponse)
+                                       out String?   ErrorResponse)
 
             => TryParse(JSON,
                         out CDRToken,
@@ -209,10 +158,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CDRToken">The parsed charge detail record token.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static Boolean TryParse(JObject                                JSON,
-                                       out CDRToken                           CDRToken,
-                                       out String                             ErrorResponse,
-                                       CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
+        public static Boolean TryParse(JObject                                 JSON,
+                                       out CDRToken                            CDRToken,
+                                       out String?                             ErrorResponse,
+                                       CustomJObjectParserDelegate<CDRToken>?  CustomCDRTokenParser   = null)
         {
 
             try
@@ -226,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse UID               [mandatory]
+                #region Parse UID           [mandatory]
 
                 if (!JSON.ParseMandatory("uid",
                                          "token identification",
@@ -239,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TokenType         [mandatory]
+                #region Parse TokenType     [mandatory]
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
@@ -252,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ContractId        [mandatory]
+                #region Parse ContractId    [mandatory]
 
                 if (!JSON.ParseMandatory("contract_id",
                                          "contract identification",
@@ -289,48 +238,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CDRToken, out ErrorResponse, CustomCDRTokenParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an cdrToken.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CDRToken">The parsed cdrToken.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCDRTokenParser">A delegate to parse custom charge detail record token JSON objects.</param>
-        public static Boolean TryParse(String                                 Text,
-                                       out CDRToken                           CDRToken,
-                                       out String                             ErrorResponse,
-                                       CustomJObjectParserDelegate<CDRToken>  CustomCDRTokenParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CDRToken,
-                                out ErrorResponse,
-                                CustomCDRTokenParser);
-
-            }
-            catch (Exception e)
-            {
-                CDRToken       = default;
-                ErrorResponse  = "The given text representation of an charge detail record token is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCDRTokenSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRToken> CustomCDRTokenSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRToken>? CustomCDRTokenSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -357,8 +271,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRToken1">A charging period.</param>
-        /// <param name="CDRToken2">Another charging period.</param>
+        /// <param name="CDRToken1">A CDR token.</param>
+        /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (CDRToken CDRToken1,
                                            CDRToken CDRToken2)
@@ -372,13 +286,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRToken1">A charging period.</param>
-        /// <param name="CDRToken2">Another charging period.</param>
+        /// <param name="CDRToken1">A CDR token.</param>
+        /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (CDRToken CDRToken1,
                                            CDRToken CDRToken2)
 
-            => !(CDRToken1 == CDRToken2);
+            => !CDRToken1.Equals(CDRToken2);
 
         #endregion
 
@@ -387,8 +301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRToken1">A charging period.</param>
-        /// <param name="CDRToken2">Another charging period.</param>
+        /// <param name="CDRToken1">A CDR token.</param>
+        /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (CDRToken CDRToken1,
                                           CDRToken CDRToken2)
@@ -402,13 +316,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRToken1">A charging period.</param>
-        /// <param name="CDRToken2">Another charging period.</param>
+        /// <param name="CDRToken1">A CDR token.</param>
+        /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (CDRToken CDRToken1,
                                            CDRToken CDRToken2)
 
-            => !(CDRToken1 > CDRToken2);
+            => CDRToken1.CompareTo(CDRToken2) <= 0;
 
         #endregion
 
@@ -417,8 +331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRToken1">A charging period.</param>
-        /// <param name="CDRToken2">Another charging period.</param>
+        /// <param name="CDRToken1">A CDR token.</param>
+        /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (CDRToken CDRToken1,
                                           CDRToken CDRToken2)
@@ -432,13 +346,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CDRToken1">A charging period.</param>
-        /// <param name="CDRToken2">Another charging period.</param>
+        /// <param name="CDRToken1">A CDR token.</param>
+        /// <param name="CDRToken2">Another CDR token.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (CDRToken CDRToken1,
                                            CDRToken CDRToken2)
 
-            => !(CDRToken1 < CDRToken2);
+            => CDRToken1.CompareTo(CDRToken2) >= 0;
 
         #endregion
 
@@ -449,14 +363,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two CDR tokens.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A CDR token to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is CDRToken token
-                   ? CompareTo(token)
-                   : throw new ArgumentException("The given object is not a charging period!",
+            => Object is CDRToken cdrToken
+                   ? CompareTo(cdrToken)
+                   : throw new ArgumentException("The given object is not a CDR token!",
                                                  nameof(Object));
 
         #endregion
@@ -464,9 +378,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(CDRToken)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two CDR tokens.
         /// </summary>
-        /// <param name="CDRToken">An object to compare with.</param>
+        /// <param name="CDRToken">A CDR token to compare with.</param>
         public Int32 CompareTo(CDRToken CDRToken)
         {
 
@@ -491,11 +405,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two CDR tokens for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A CDR token to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CDRToken token &&
                    Equals(token);
@@ -505,10 +418,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(CDRToken)
 
         /// <summary>
-        /// Compares two charging periods for equality.
+        /// Compares two CDR tokens for equality.
         /// </summary>
-        /// <param name="CDRToken">A charging period to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="CDRToken">A CDR token to compare with.</param>
         public Boolean Equals(CDRToken CDRToken)
 
             => UID.       Equals(CDRToken.UID)       &&
@@ -546,9 +458,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(UID,
-                             " (", TokenType, ") => ",
-                             ContractId);
+            => String.Concat(
+
+                   UID,
+                   " (", TokenType, ") => ",
+
+                   ContractId
+
+               );
 
         #endregion
 

@@ -1341,7 +1341,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetTariff(CountryCode.Value, PartyId.Value, TariffId.Value, out Tariff) &&
+            if (!EMSPAPI.CommonAPI.TryGetTariff(TariffId.Value, out Tariff) &&
                  FailOnMissingTariff)
             {
 
@@ -1599,7 +1599,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetSession(CountryCode.Value, PartyId.Value, SessionId.Value, out Session) &&
+            if (!EMSPAPI.CommonAPI.TryGetSession(SessionId.Value, out Session) &&
                 FailOnMissingSession)
             {
 
@@ -1755,14 +1755,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDR(this OCPIRequest          Request,
-                                       EMSPAPI                   EMSPAPI,
-                                       out CountryCode?          CountryCode,
-                                       out Party_Id?             PartyId,
-                                       out CDR_Id?               CDRId,
-                                       out CDR                   CDR,
-                                       out OCPIResponse.Builder  OCPIResponseBuilder,
-                                       Boolean                   FailOnMissingCDR = true)
+        public static Boolean ParseCDR(this OCPIRequest           Request,
+                                       EMSPAPI                    EMSPAPI,
+                                       out CDR_Id?                CDRId,
+                                       out CDR?                   CDR,
+                                       out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                       Boolean                    FailOnMissingCDR = true)
         {
 
             #region Initial checks
@@ -1775,18 +1773,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            CountryCode          = default;
-            PartyId              = default;
             CDRId                = default;
             CDR                  = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
+            if (Request.ParsedURLParameters.Length < 1)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
+                    StatusMessage        = "Missing charge detail record identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1798,45 +1794,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[2]);
+            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!CDRId.HasValue) {
 
@@ -1855,7 +1813,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetCDR(CountryCode.Value, PartyId.Value, CDRId.Value, out CDR) &&
+            if (!EMSPAPI.CommonAPI.TryGetCDR(CDRId.Value, out CDR) &&
                 FailOnMissingCDR)
             {
 
@@ -5100,11 +5058,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters               = Request.GetDateAndPaginationFilters();
 
-                                        var allTariffs            = CommonAPI.GetTariffs(CountryCode, PartyId).
-                                                                              ToArray();
-
+                                        var allTariffs            = CommonAPI.GetTariffs().ToArray();
                                         var allTariffsCount       = allTariffs.Length;
-
 
                                         var filteredTariffs       = CommonAPI.GetTariffs().
                                                                           Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
@@ -5165,22 +5120,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check CountryCode & PartyId
 
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return OCPIResponse;
-                                        }
-
-                                        #endregion
-
-
-                                        CommonAPI.RemoveAllTariffs(CountryCode.Value,
-                                                                   PartyId.    Value);
-
+                                        CommonAPI.RemoveAllTariffs();
 
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
@@ -5336,14 +5277,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse new or updated tariff
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject TariffJSON, out OCPIResponseBuilder))
+                                        if (!Request.TryParseJObjectRequestBody(out var TariffJSON, out OCPIResponseBuilder))
                                             return OCPIResponseBuilder;
 
                                         if (!Tariff.TryParse(TariffJSON,
-                                                             out Tariff  newOrUpdatedTariff,
-                                                             out String  ErrorResponse,
-                                                             CountryCode,
-                                                             PartyId,
+                                                             out Tariff? newOrUpdatedTariff,
+                                                             out String? ErrorResponse,
                                                              TariffId))
                                         {
 
@@ -5628,11 +5567,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters                = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions            = CommonAPI.GetSessions(CountryCode, PartyId).
-                                                                               ToArray();
-
+                                        var allSessions            = CommonAPI.GetSessions().ToArray();
                                         var allSessionsCount       = allSessions.Length;
-
 
                                         var filteredSessions       = CommonAPI.GetSessions().
                                                                           Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
@@ -5664,11 +5600,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/sessions/{country_code}/{party_id}                [NonStandard]
+            #region DELETE   ~/sessions                [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}",
+                                    URLPathPrefix + "sessions",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteSessionsRequest,
                                     OCPIResponseLogger:  DeleteSessionsResponse,
@@ -5693,21 +5629,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check CountryCode & PartyId
 
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return OCPIResponse;
-                                        }
-
-                                        #endregion
-
-
-                                        CommonAPI.RemoveAllSessions(CountryCode.Value,
-                                                                    PartyId.    Value);
+                                        CommonAPI.RemoveAllSessions();
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -5870,10 +5793,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             return OCPIResponseBuilder;
 
                                         if (!Session.TryParse(SessionJSON,
-                                                              out Session  newOrUpdatedSession,
-                                                              out String   ErrorResponse,
-                                                              CountryCode,
-                                                              PartyId,
+                                                              out Session?  newOrUpdatedSession,
+                                                              out String?   ErrorResponse,
                                                               SessionId))
                                         {
 
@@ -6150,11 +6071,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
                                         // X-Limit          The maximum number of objects that the server WILL return.
 
-                                        var allCDRs            = CommonAPI.GetCDRs(CountryCode, PartyId).
-                                                                           ToArray();
-
+                                        var allCDRs            = CommonAPI.GetCDRs().ToArray();
                                         var allCDRsCount       = allCDRs.Length;
-
 
                                         var filteredCDRs       = CommonAPI.GetCDRs().
                                                                           Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
@@ -6273,11 +6191,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        Data                 = newCDR.ToJSON(),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Created,
-                                                           Location                   = URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString(),
+                                                           Location                   = URLPathPrefix + "cdrs" + newCDR.Id.ToString(),
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newCDR.LastUpdated.ToIso8601(),
-                                                           ETag                       = newCDR.SHA256Hash
+                                                           ETag                       = newCDR.ETag
                                                        }
                                                    };
 
@@ -6285,11 +6203,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/cdrs/{country_code}/{party_id}           [NonStandard]
+            #region DELETE   ~/cdrs           [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    URLPathPrefix + "cdrs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRsRequest,
                                     OCPIResponseLogger:  DeleteCDRsResponse,
@@ -6314,21 +6232,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check CountryCode & PartyId
 
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return OCPIResponse;
-                                        }
-
-                                        #endregion
-
-
-                                        CommonAPI.RemoveAllCDRs(CountryCode.Value,
-                                                                PartyId.    Value);
+                                        CommonAPI.RemoveAllCDRs();
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -6409,14 +6314,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing CDR
 
                                         if (!Request.ParseCDR(this,
-                                                              out CountryCode?          CountryCode,
-                                                              out Party_Id?             PartyId,
-                                                              out CDR_Id?               CDRId,
-                                                              out CDR                   CDR,
-                                                              out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                              out var CDRId,
+                                                              out var CDR,
+                                                              out var OCPIResponseBuilder,
                                                               FailOnMissingCDR: true))
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(OCPIResponseBuilder!);
                                         }
 
                                         #endregion
@@ -6431,7 +6334,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = CDR.LastUpdated.ToIso8601(),
-                                                       ETag                       = CDR.SHA256Hash
+                                                       ETag                       = CDR.ETag
                                                    }
                                             });
 
@@ -6471,27 +6374,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing CDR
 
                                         if (!Request.ParseCDR(this,
-                                                              out CountryCode?          CountryCode,
-                                                              out Party_Id?             PartyId,
-                                                              out CDR_Id?               CDRId,
-                                                              out CDR                   ExistingCDR,
-                                                              out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                              out var CDRId,
+                                                              out var ExistingCDR,
+                                                              out var OCPIResponseBuilder,
                                                               FailOnMissingCDR: true))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return OCPIResponseBuilder!;
                                         }
 
                                         #endregion
 
 
                                         //ToDo: await...
-                                        CommonAPI.RemoveCDR(ExistingCDR);
+                                        CommonAPI.RemoveCDR(ExistingCDR!);
 
 
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = ExistingCDR.ToJSON(),
+                                                       Data                 = ExistingCDR!.ToJSON(),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, DELETE",

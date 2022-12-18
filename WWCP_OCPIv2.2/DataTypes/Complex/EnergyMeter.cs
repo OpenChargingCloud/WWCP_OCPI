@@ -142,31 +142,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) Parse   (Text, CustomEnergyMeterParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an energy meter.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomEnergyMeterParser">A delegate to parse custom energy meter JSON objects.</param>
-        public static EnergyMeter Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<EnergyMeter>  CustomEnergyMeterParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out EnergyMeter  energyMeter,
-                         out String       ErrorResponse,
-                         CustomEnergyMeterParser))
-            {
-                return energyMeter;
-            }
-
-            throw new ArgumentException("The given text representation of an energy meter is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
         #region (static) TryParse(JSON, out EnergyMeter, out ErrorResponse, CustomEnergyMeterParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
@@ -288,41 +263,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
                 EnergyMeter    = default;
                 ErrorResponse  = "The given JSON representation of an energy meter is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out EnergyMeter, out ErrorResponse, CustomEnergyMeterParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an energy meter.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="EnergyMeter">The parsed energyMeter.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomEnergyMeterParser">A delegate to parse custom energy meter JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out EnergyMeter                           EnergyMeter,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<EnergyMeter>  CustomEnergyMeterParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out EnergyMeter,
-                                out ErrorResponse,
-                                CustomEnergyMeterParser);
-
-            }
-            catch (Exception e)
-            {
-                EnergyMeter    = default;
-                ErrorResponse  = "The given text representation of an energy meter is invalid: " + e.Message;
                 return false;
             }
 

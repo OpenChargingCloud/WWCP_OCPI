@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015-2022 GraphDefined GmbH
+ * Copyright (c) 2015-2022 GraphDefined GmbH <achim.friedland@graphdefined.com>
  * This file is part of WWCP OCPI <https://github.com/OpenChargingCloud/WWCP_OCPI>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,6 @@
  */
 
 #region Usings
-
-using System;
-using System.Linq;
-using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -80,11 +76,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                               Tariff_Id?                 TariffId   = null)
         {
 
-            if (!Dimensions.SafeAny())
+            if (!Dimensions.Any())
                 throw new ArgumentNullException(nameof(Dimensions), "The given enumeration of relevant values for this charging period must not be null or empty!");
 
             this.StartTimestamp  = StartTimestamp;
-            this.Dimensions      = Dimensions?.Distinct();
+            this.Dimensions      = Dimensions?.Distinct() ?? Array.Empty<CDRDimension>();
             this.TariffId        = TariffId;
 
         }
@@ -99,44 +95,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
-        public static ChargingPeriod Parse(JObject                                      JSON,
-                                           CustomJObjectParserDelegate<ChargingPeriod>  CustomChargingPeriodParser   = null)
+        public static ChargingPeriod Parse(JObject                                       JSON,
+                                           CustomJObjectParserDelegate<ChargingPeriod>?  CustomChargingPeriodParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingPeriod  chargingPeriod,
-                         out String          ErrorResponse,
+                         out var chargingPeriod,
+                         out var errorResponse,
                          CustomChargingPeriodParser))
             {
                 return chargingPeriod;
             }
 
-            throw new ArgumentException("The given JSON representation of a charging period is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomChargingPeriodParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a charging period.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
-        public static ChargingPeriod Parse(String                                       Text,
-                                           CustomJObjectParserDelegate<ChargingPeriod>  CustomChargingPeriodParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingPeriod  chargingPeriod,
-                         out String          ErrorResponse,
-                         CustomChargingPeriodParser))
-            {
-                return chargingPeriod;
-            }
-
-            throw new ArgumentException("The given text representation of a charging period is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a charging period is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -149,38 +121,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
-        public static ChargingPeriod? TryParse(JObject                                         JSON,
-                                                  CustomJObjectParserDelegate<ChargingPeriod>  CustomChargingPeriodParser   = null)
+        public static ChargingPeriod? TryParse(JObject                                       JSON,
+                                               CustomJObjectParserDelegate<ChargingPeriod>?  CustomChargingPeriodParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingPeriod  chargingPeriod,
-                         out String          ErrorResponse,
-                         CustomChargingPeriodParser))
-            {
-                return chargingPeriod;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomChargingPeriodParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charging period.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
-        public static ChargingPeriod? TryParse(String                                       Text,
-                                               CustomJObjectParserDelegate<ChargingPeriod>  CustomChargingPeriodParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingPeriod  chargingPeriod,
-                         out String          ErrorResponse,
+                         out var chargingPeriod,
+                         out var errorResponse,
                          CustomChargingPeriodParser))
             {
                 return chargingPeriod;
@@ -204,7 +151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject             JSON,
                                        out ChargingPeriod  ChargingPeriod,
-                                       out String          ErrorResponse)
+                                       out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out ChargingPeriod,
@@ -219,10 +166,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ChargingPeriod">The parsed charging period.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
-        public static Boolean TryParse(JObject                                      JSON,
-                                       out ChargingPeriod                           ChargingPeriod,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingPeriod>  CustomChargingPeriodParser   = null)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       out ChargingPeriod                            ChargingPeriod,
+                                       out String?                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<ChargingPeriod>?  CustomChargingPeriodParser   = null)
         {
 
             try
@@ -299,41 +246,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out ChargingPeriod, out ErrorResponse, CustomChargingPeriodParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an chargingPeriod.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ChargingPeriod">The parsed chargingPeriod.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomChargingPeriodParser">A delegate to parse custom charging period JSON objects.</param>
-        public static Boolean TryParse(String                                       Text,
-                                       out ChargingPeriod                           ChargingPeriod,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingPeriod>  CustomChargingPeriodParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ChargingPeriod,
-                                out ErrorResponse,
-                                CustomChargingPeriodParser);
-
-            }
-            catch (Exception e)
-            {
-                ChargingPeriod  = default;
-                ErrorResponse   = "The given text representation of a charging period is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomChargingPeriodSerializer = null)
 
         /// <summary>
@@ -341,18 +253,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingPeriod>  CustomChargingPeriodSerializer   = null,
-                              CustomJObjectSerializerDelegate<CDRDimension>    CustomCDRDimensionSerializer     = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("start_date_time",  StartTimestamp.ToIso8601()),
-                           new JProperty("dimensions",       new JArray(Dimensions.Select(dimension => dimension.ToJSON(CustomCDRDimensionSerializer)))),
+                                 new JProperty("start_date_time",   StartTimestamp.ToIso8601()),
+
+                                 new JProperty("dimensions",        new JArray(Dimensions.Select(cdrDimension => cdrDimension.ToJSON(CustomCDRDimensionSerializer)))),
 
                            TariffId.HasValue
-                               ? new JProperty("tariff_id",  TariffId.Value.ToString())
+                               ? new JProperty("tariff_id",         TariffId.Value.ToString())
                                : null
+
                        );
 
             return CustomChargingPeriodSerializer is not null
@@ -463,10 +377,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging periods.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charging period to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ChargingPeriod chargingPeriod
                    ? CompareTo(chargingPeriod)
@@ -478,9 +392,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(ChargingPeriod)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging periods.
         /// </summary>
-        /// <param name="ChargingPeriod">An object to compare with.</param>
+        /// <param name="ChargingPeriod">A charging period to compare with.</param>
         public Int32 CompareTo(ChargingPeriod ChargingPeriod)
         {
 
@@ -502,11 +416,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging periods for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charging period to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ChargingPeriod chargingPeriod &&
                    Equals(chargingPeriod);
@@ -519,16 +432,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two charging periods for equality.
         /// </summary>
         /// <param name="ChargingPeriod">A charging period to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(ChargingPeriod ChargingPeriod)
 
-            => StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601())         &&
-
-               Dimensions.Count().        Equals(ChargingPeriod.Dimensions.    Count())             &&
-               Dimensions.All(dimension =>       ChargingPeriod.Dimensions.    Contains(dimension)) &&
+            => StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601()) &&
 
             ((!TariffId.HasValue && !ChargingPeriod.TariffId.HasValue) ||
-              (TariffId.HasValue &&  ChargingPeriod.TariffId.HasValue && TariffId.Value.Equals(ChargingPeriod.TariffId.Value)));
+              (TariffId.HasValue &&  ChargingPeriod.TariffId.HasValue && TariffId.Value.Equals(ChargingPeriod.TariffId.Value))) &&
+
+               Dimensions.Count().        Equals(ChargingPeriod.Dimensions.    Count()) &&
+               Dimensions.All(dimension =>       ChargingPeriod.Dimensions.    Contains(dimension));
 
         #endregion
 
@@ -545,13 +457,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return StartTimestamp.GetHashCode() * 3 ^
-
-                       Dimensions.Aggregate(0, (hashCode, dimension) => hashCode ^ dimension.GetHashCode()) ^
-
-                       (TariffId.HasValue
-                            ? TariffId.GetHashCode()
-                            : 0);
+                return StartTimestamp.GetHashCode()  * 5 ^
+                       Dimensions.    CalcHashCode() * 3 ^
+                       TariffId?.     GetHashCode() ?? 0;
 
             }
         }
@@ -565,16 +473,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(StartTimestamp,
+            => String.Concat(
 
-                             " -> ",
+                   StartTimestamp,
+                   ": ",
 
-                             Dimensions.OrderBy(dimension => dimension.Type).
-                                        AggregateWith(", "),
+                   Dimensions.Count(),
+                   " charging dimension(s)",
 
-                             TariffId.HasValue
-                                 ? ", tariff: " + TariffId.ToString()
-                                 : "");
+                   TariffId.HasValue
+                       ? ", tariffId: " + TariffId
+                       : ""
+
+               );
 
         #endregion
 

@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -31,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// Reference to location details.
+    /// The reference to location details.
     /// </summary>
     public readonly struct LocationReference : IEquatable<LocationReference>,
                                                IComparable<LocationReference>,
@@ -41,13 +37,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Unique identifier for the location.
+        /// The unique identifier of the location.
         /// </summary>
         [Mandatory]
         public Location_Id            LocationId    { get; }
 
         /// <summary>
-        /// Optional enumeration of EVSE identifiers within the CPO’s platform.
+        /// The optional enumeration of internal EVSE identifications within the CPO platform.
         /// </summary>
         [Optional]
         public IEnumerable<EVSE_UId>  EVSEUIds      { get; }
@@ -57,16 +53,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new references to location details.
+        /// Create a new reference to location details.
         /// </summary>
-        /// <param name="LocationId">Unique identifier for the location..</param>
-        /// <param name="EVSEUIds">Optional enumeration of EVSE identifiers within the CPO’s platform.</param>
-        public LocationReference(Location_Id            LocationId,
-                                 IEnumerable<EVSE_UId>  EVSEUIds   = null)
+        /// <param name="LocationId">An unique identifier of the location.</param>
+        /// <param name="EVSEUIds">An optional enumeration of internal EVSE identifications within the CPO platform.</param>
+        public LocationReference(Location_Id             LocationId,
+                                 IEnumerable<EVSE_UId>?  EVSEUIds   = null)
         {
 
             this.LocationId  = LocationId;
-            this.EVSEUIds    = EVSEUIds?.Distinct().OrderBy(evseUId => evseUId).ToArray() ?? new EVSE_UId[0];
+            this.EVSEUIds    = EVSEUIds?.Distinct() ?? Array.Empty<EVSE_UId>();
 
         }
 
@@ -80,44 +76,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
-        public static LocationReference Parse(JObject                                         JSON,
-                                              CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
+        public static LocationReference Parse(JObject                                          JSON,
+                                              CustomJObjectParserDelegate<LocationReference>?  CustomLocationReferenceParser   = null)
         {
 
             if (TryParse(JSON,
-                         out LocationReference  locationReference,
-                         out String             ErrorResponse,
+                         out var locationReference,
+                         out var errorResponse,
                          CustomLocationReferenceParser))
             {
                 return locationReference;
             }
 
-            throw new ArgumentException("The given JSON representation of a location reference is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomLocationReferenceParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a location reference.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
-        public static LocationReference Parse(String                                          Text,
-                                              CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out LocationReference  locationReference,
-                         out String             ErrorResponse,
-                         CustomLocationReferenceParser))
-            {
-                return locationReference;
-            }
-
-            throw new ArgumentException("The given text representation of a location reference is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a location reference is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -130,38 +102,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
-        public static LocationReference? TryParse(JObject                                         JSON,
-                                                  CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
+        public static LocationReference? TryParse(JObject                                          JSON,
+                                                  CustomJObjectParserDelegate<LocationReference>?  CustomLocationReferenceParser   = null)
         {
 
             if (TryParse(JSON,
-                         out LocationReference  locationReference,
-                         out String             ErrorResponse,
-                         CustomLocationReferenceParser))
-            {
-                return locationReference;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomLocationReferenceParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a location reference.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
-        public static LocationReference? TryParse(String                                          Text,
-                                                  CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out LocationReference  locationReference,
-                         out String             ErrorResponse,
+                         out var locationReference,
+                         out var errorResponse,
                          CustomLocationReferenceParser))
             {
                 return locationReference;
@@ -185,7 +132,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                JSON,
                                        out LocationReference  LocationReference,
-                                       out String             ErrorResponse)
+                                       out String?            ErrorResponse)
 
             => TryParse(JSON,
                         out LocationReference,
@@ -200,10 +147,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationReference">The parsed location reference.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomLocationReferenceParser">A delegate to parse custom location reference JSON objects.</param>
-        public static Boolean TryParse(JObject                                         JSON,
-                                       out LocationReference                           LocationReference,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
+        public static Boolean TryParse(JObject                                          JSON,
+                                       out LocationReference                            LocationReference,
+                                       out String?                                      ErrorResponse,
+                                       CustomJObjectParserDelegate<LocationReference>?  CustomLocationReferenceParser   = null)
         {
 
             try
@@ -217,7 +164,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse LocationId        [mandatory]
+                #region Parse LocationId    [mandatory]
 
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
@@ -230,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse EVSEUIds          [optional]
+                #region Parse EVSEUIds      [optional]
 
                 if (JSON.ParseOptionalJSON("evse_uids",
                                            "EVSE identifications",
@@ -267,74 +214,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out LocationReference, out ErrorResponse, CustomLocationReferenceParser = null)
-
-        // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
-
-        /// <summary>
-        /// Try to parse the given text representation of a location reference.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="LocationReference">The parsed location reference.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(String                 Text,
-                                       out LocationReference  LocationReference,
-                                       out String             ErrorResponse)
-
-            => TryParse(Text,
-                        out LocationReference,
-                        out ErrorResponse,
-                        null);
-
-
-        /// <summary>
-        /// Try to parse the given text representation of an locationReference.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="LocationReference">The parsed locationReference.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomLocationReferenceParser">A delegate to parse custom locationReference JSON objects.</param>
-        public static Boolean TryParse(String                                          Text,
-                                       out LocationReference                           LocationReference,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<LocationReference>  CustomLocationReferenceParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out LocationReference,
-                                out ErrorResponse,
-                                CustomLocationReferenceParser);
-
-            }
-            catch (Exception e)
-            {
-                LocationReference  = default;
-                ErrorResponse      = "The given text representation of a location reference is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomLocationReferenceSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom location reference JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<LocationReference> CustomLocationReferenceSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<LocationReference>? CustomLocationReferenceSerializer = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("location_id",      LocationId.ToString()),
+                                 new JProperty("location_id",  LocationId.ToString()),
 
                            EVSEUIds.SafeAny()
-                               ? new JProperty("evse_uids",  EVSEUIds.Select(evseUId => evseUId.ToString()))
+                               ? new JProperty("evse_uids",    EVSEUIds.Select(evseUId => evseUId.ToString()))
                                : null
 
                        );
@@ -376,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (LocationReference LocationReference1,
                                            LocationReference LocationReference2)
 
-            => !(LocationReference1 == LocationReference2);
+            => !LocationReference1.Equals(LocationReference2);
 
         #endregion
 
@@ -406,7 +300,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (LocationReference LocationReference1,
                                            LocationReference LocationReference2)
 
-            => !(LocationReference1 > LocationReference2);
+            => LocationReference1.CompareTo(LocationReference2) <= 0;
 
         #endregion
 
@@ -436,7 +330,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (LocationReference LocationReference1,
                                            LocationReference LocationReference2)
 
-            => !(LocationReference1 < LocationReference2);
+            => LocationReference1.CompareTo(LocationReference2) >= 0;
 
         #endregion
 
@@ -447,10 +341,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two location references.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A location reference to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is LocationReference locationReference
                    ? CompareTo(locationReference)
@@ -462,16 +356,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(LocationReference)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two location references.
         /// </summary>
-        /// <param name="LocationReference">An object to compare with.</param>
+        /// <param name="LocationReference">A location reference to compare with.</param>
         public Int32 CompareTo(LocationReference LocationReference)
         {
 
             var c = LocationId.CompareTo(LocationReference.LocationId);
 
-            if (c == 0 && EVSEUIds.SafeAny() && LocationReference.EVSEUIds.SafeAny())
-                c = EVSEUIds.AggregateWith("-").CompareTo(LocationReference.EVSEUIds.AggregateWith("|"));
+            if (c == 0)
+                c = EVSEUIds.OrderBy      (evseUId => evseUId.ToString()).
+                             AggregateWith(",").
+                             CompareTo(LocationReference.EVSEUIds.
+                                                         OrderBy(evseUId => evseUId.ToString()).
+                                                         AggregateWith(","));
 
             return c;
 
@@ -486,11 +384,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two location references for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A location reference to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is LocationReference locationReference &&
                    Equals(locationReference);
@@ -503,15 +400,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two location references for equality.
         /// </summary>
         /// <param name="LocationReference">A location reference to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(LocationReference LocationReference)
 
             => LocationId.Equals(LocationReference.LocationId) &&
 
-               ((!EVSEUIds.SafeAny() && !LocationReference.EVSEUIds.SafeAny()) ||
-                ( EVSEUIds.SafeAny() &&  LocationReference.EVSEUIds.SafeAny() &&
-                  EVSEUIds.Count() == LocationReference.EVSEUIds.Count() &&
-                  EVSEUIds.All(evseUId => LocationReference.EVSEUIds.Contains(evseUId))));
+               EVSEUIds.Count().Equals(LocationReference.EVSEUIds.Count()) &&
+               EVSEUIds.All(evseUId => LocationReference.EVSEUIds.Contains(evseUId));
 
         #endregion
 
@@ -543,11 +437,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(LocationId,
-                             EVSEUIds.SafeAny()
-                                 ? " -> " + EVSEUIds.OrderBy(evse_uid => evse_uid).
-                                                     AggregateWith(", ")
-                                 : "");
+            => String.Concat(
+
+                   LocationId,
+
+                   EVSEUIds.Any()
+                       ? " -> " + EVSEUIds.OrderBy(evse_uid => evse_uid).
+                                           AggregateWith(", ")
+                       : ""
+
+               );
 
         #endregion
 

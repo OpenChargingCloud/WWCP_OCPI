@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -73,12 +71,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            String             SignedData)
         {
 
-            if (PlainData. IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(PlainData),   "The given plain data must not be null or empty!");
-
-            if (SignedData.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(SignedData),  "The given signed data must not be null or empty!");
-
             this.Nature      = Nature;
             this.PlainData   = PlainData;
             this.SignedData  = SignedData;
@@ -95,44 +87,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
-        public static SignedValue Parse(JObject                                   JSON,
-                                        CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
+        public static SignedValue Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<SignedValue>?  CustomSignedValueParser   = null)
         {
 
             if (TryParse(JSON,
-                         out SignedValue  signedValue,
-                         out String       ErrorResponse,
+                         out var signedValue,
+                         out var errorResponse,
                          CustomSignedValueParser))
             {
-                return signedValue;
+                return signedValue!;
             }
 
-            throw new ArgumentException("The given JSON representation of a signed value is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomSignedValueParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a signed value.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
-        public static SignedValue Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out SignedValue  signedValue,
-                         out String       ErrorResponse,
-                         CustomSignedValueParser))
-            {
-                return signedValue;
-            }
-
-            throw new ArgumentException("The given text representation of a signed value is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a signed value is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -148,9 +116,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="SignedValue">The parsed signed value.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject          JSON,
-                                       out SignedValue  SignedValue,
-                                       out String       ErrorResponse)
+        public static Boolean TryParse(JObject           JSON,
+                                       out SignedValue?  SignedValue,
+                                       out String?       ErrorResponse)
 
             => TryParse(JSON,
                         out SignedValue,
@@ -165,10 +133,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="SignedValue">The parsed signed value.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
-        public static Boolean TryParse(JObject                                   JSON,
-                                       out SignedValue                           SignedValue,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out SignedValue?                           SignedValue,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<SignedValue>?  CustomSignedValueParser   = null)
         {
 
             try
@@ -182,7 +150,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Nature            [mandatory]
+                #region Parse Nature        [mandatory]
 
                 if (!JSON.ParseMandatory("nature",
                                          "signed value nature",
@@ -195,7 +163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PlainData         [mandatory]
+                #region Parse PlainData     [mandatory]
 
                 if (!JSON.ParseMandatoryText("plain_data",
                                              "plain data",
@@ -207,7 +175,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse SignedData        [mandatory]
+                #region Parse SignedData    [mandatory]
 
                 if (!JSON.ParseMandatoryText("signed_data",
                                              "signed data",
@@ -243,48 +211,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out SignedValue, out ErrorResponse, CustomSignedValueParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an signedValue.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="SignedValue">The parsed signedValue.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomSignedValueParser">A delegate to parse custom signed value JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out SignedValue                           SignedValue,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<SignedValue>  CustomSignedValueParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out SignedValue,
-                                out ErrorResponse,
-                                CustomSignedValueParser);
-
-            }
-            catch (Exception e)
-            {
-                SignedValue    = default;
-                ErrorResponse  = "The given text representation of a signed value is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomSignedValueSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<SignedValue> CustomSignedValueSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<SignedValue>? CustomSignedValueSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -352,11 +285,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two signed values for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A signed value to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is SignedValue signedValue &&
                    Equals(signedValue);
@@ -369,10 +301,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two signed values for equality.
         /// </summary>
         /// <param name="SignedValue">A signed value to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(SignedValue SignedValue)
+        public Boolean Equals(SignedValue? SignedValue)
 
-            => !(SignedValue is null) &&
+            => SignedValue is not null &&
 
                Nature.    Equals(SignedValue.Nature)    &&
                PlainData. Equals(SignedValue.PlainData) &&
@@ -409,10 +340,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Nature,
-                             " -> ",
-                             PlainData. SubstringMax(10),
-                             SignedData.SubstringMax(10));
+            => String.Concat(
+
+                   Nature,
+                   " -> ",
+                   PlainData. SubstringMax(10),
+                   SignedData.SubstringMax(10)
+
+               );
 
         #endregion
 

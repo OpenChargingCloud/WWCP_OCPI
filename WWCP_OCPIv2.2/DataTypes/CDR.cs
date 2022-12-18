@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -33,7 +30,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The CDR object describes the charging session and its costs,
+    /// The charge detail record describes the charging session and its costs,
     /// how these costs are composed, etc.
     /// </summary>
     public class CDR : IHasId<CDR_Id>,
@@ -45,212 +42,222 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this charge detail record.
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.
         /// </summary>
         [Optional]
         public CountryCode                         CountryCode                 { get; }
 
         /// <summary>
-        /// The Id of the CPO that 'owns' this charge detail record (following the ISO-15118 standard).
+        /// The identification of the charge point operator that 'owns' this charge detail record
+        /// (following the ISO-15118 standard).
         /// </summary>
         [Optional]
         public Party_Id                            PartyId                     { get; }
 
         /// <summary>
-        /// The identification of the charge detail record within the CPOs platform (and suboperator platforms). 
+        /// The identification of the charge detail record within the charge point operator's platform
+        /// (and suboperator platforms).
+        /// CiString(39)
         /// </summary>
         [Mandatory]
         public CDR_Id                              Id                          { get; }
 
-
         /// <summary>
-        /// Start timestamp of the charging session, or in-case of a reservation
+        /// The start timestamp of the charging session, or in-case of a reservation
         /// (before the start of a session) the start of the reservation.
         /// </summary>
         [Mandatory]
         public DateTime                            Start                       { get; }
 
         /// <summary>
-        /// The timestamp when the session was completed/finished, charging might
-        /// have finished before the session ends, for example:
+        /// The timestamp when the session was completed/finished.
+        /// Charging might have finished before the session ends, for example:
         /// EV is full, but parking cost also has to be paid.
         /// </summary>
         [Mandatory]
         public DateTime                            End                         { get; }
 
         /// <summary>
-        /// Unique ID of the Session for which this CDR is sent. Is only allowed to be omitted
-        /// when the CPO has not implemented the sessions module or this charge detail record
-        /// is the result of a reservation that never became a charging session, thus no OCPI session.
+        /// The optional unique identification of the charging session.
+        /// Is only allowed to be omitted when the CPO has not implemented the sessions module or this
+        /// charge detail record is the result of a reservation that never became a charging session.
         /// </summary>
         [Optional]
         public Session_Id?                         SessionId                   { get; }
 
         /// <summary>
-        /// Token used to start this charging session, includes all the relevant information
+        /// The token used to start this charging session, includes all relevant information
         /// to identify the unique token.
         /// </summary>
         [Mandatory]
         public CDRToken                            CDRToken                    { get; }
 
         /// <summary>
-        /// Method used for authentication.
+        /// The authentication method used.
         /// </summary>
         [Mandatory]
         public AuthMethods                         AuthMethod                  { get; }
 
         /// <summary>
-        /// Reference to the authorization given by the eMSP. When the eMSP provided an
-        /// authorization_reference in either: real-time authorization or StartSession,
-        /// this field SHALL contain the same value. When different authorization_reference
-        /// values have been given by the eMSP that are relevant to this Session, the last
-        /// given value SHALL be used here.
+        /// The optional reference to the authorization given by the eMSP.
+        /// When the eMSP provided an authorization_reference in either:
+        /// real-time authorization or StartSession, this field SHALL contain the same value.
+        /// When different authorization_reference values have been given by the eMSP that
+        /// are relevant to this session, the last given value SHALL be used here.
         /// </summary>
+        [Optional]
         public AuthorizationReference?             AuthorizationReference      { get; }
 
         /// <summary>
-        /// Location where the charging session took place, including only the relevant
+        /// The location where the charging session took place, including only the relevant
         /// EVSE and connector.
         /// </summary>
         [Mandatory]
         public CDRLocation                         Location                    { get; }
 
         /// <summary>
-        /// Optional identification of the kWh energy meter.
+        /// The optional identification of the energy meter.
         /// </summary>
         [Optional]
         public Meter_Id?                           MeterId                     { get; }
 
         /// <summary>
-        /// An optional energy meter.
+        /// The optional energy meter.
         /// </summary>
         [Optional, NonStandard]
-        public EnergyMeter                         EnergyMeter                 { get; }
+        public EnergyMeter?                        EnergyMeter                 { get; }
 
         /// <summary>
-        /// An enumeration of transparency softwares which can be used to validate the charging session data.
+        /// The enumeration of valid transparency softwares which can be used to validate
+        /// the singed charging session and metering data.
         /// </summary>
         [Optional, NonStandard]
         public IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
 
         /// <summary>
-        /// ISO 4217 code of the currency used for this CDR.
+        /// The ISO 4217 code of the currency used for this charge detail record.
         /// </summary>
         [Mandatory]
         public Currency                            Currency                    { get; }
 
         /// <summary>
-        /// Enumeration of relevant tariffs.
+        /// The enumeration of relevant charging tariffs.
         /// </summary>
         [Optional]
         public IEnumerable<Tariff>                 Tariffs                     { get; }
 
         /// <summary>
-        /// Enumeration of charging periods that make up this charging session.
+        /// The enumeration of charging periods that make up this charging session.
         /// A session consist of 1 or more periodes with, each period has a
-        /// different relevant Tariff.
+        /// different relevant charging tariff.
         /// </summary>
         [Mandatory]
         public IEnumerable<ChargingPeriod>         ChargingPeriods             { get; }
 
         /// <summary>
-        /// Signed data that belongs to this charging session.
+        /// The optional signed metering data that belongs to this charging session.
         /// </summary>
         [Optional]
-        public SignedData                          SignedData                  { get; }
+        public SignedData?                         SignedData                  { get; }
 
         /// <summary>
-        /// Total sum of all the costs of this transaction in the specified currency.
+        /// The total sum of all the costs of this transaction in the specified currency.
         /// </summary>
         [Mandatory]
         public Price                               TotalCosts                  { get; }
 
         /// <summary>
-        /// Total sum of all the costs of this transaction in the specified currency.
+        /// The optional total sum of all the costs of this transaction in the specified currency.
         /// </summary>
         [Optional]
         public Price?                              TotalFixedCosts             { get; }
 
         /// <summary>
-        /// Total energy charged, in kWh.
+        /// The total energy charged in kWh.
         /// </summary>
         [Mandatory]
         public Decimal                             TotalEnergy                 { get; }
 
         /// <summary>
-        /// Total sum of all the cost of all the energy used, in the specified currency.
+        /// The optional total sum of all the cost of all the energy used, in the specified currency.
         /// </summary>
         [Optional]
         public Price?                              TotalEnergyCost             { get; }
 
-
         /// <summary>
-        /// Total duration of the charging session (including the duration of charging and not charging), in hours.
+        /// The total duration of the charging session, including the duration of charging and not charging.
         /// </summary>
         [Mandatory]
         public TimeSpan                            TotalTime                   { get; }
 
         /// <summary>
-        /// Total sum of all the cost related to duration of charging during this transaction, in the specified currency.
+        /// The optional total sum of all the cost related to duration of charging during this transaction,
+        /// in the specified currency.
         /// </summary>
         [Optional]
         public Price?                              TotalTimeCost               { get; }
 
-
         /// <summary>
-        /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
+        /// The optional total duration of the charging session where the EV was not charging
+        /// (no energy was transferred between EVSE and EV).
         /// </summary>
         [Optional]
         public TimeSpan?                           TotalParkingTime            { get; }
 
         /// <summary>
-        /// Total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV), in hours.
+        /// The optional total duration of the charging session where the EV was not charging
+        /// (no energy was transferred between EVSE and EV).
         /// </summary>
         [Optional]
         public TimeSpan                            TotalChargingTime
             => TotalTime - (TotalParkingTime ?? TimeSpan.Zero);
 
         /// <summary>
-        /// Total sum of all the cost related to parking of this transaction, including fixed price components, in the specified currency.
+        /// The optional total sum of all the cost related to parking of this transaction,
+        /// including fixed price components, in the specified currency.
         /// </summary>
         [Optional]
         public Price?                              TotalParkingCost            { get; }
 
         /// <summary>
-        /// Total sum of all the cost related to a reservation of a Charge Point, including fixed price components, in the specified currency.
+        /// The optional total sum of all the cost related to a reservation of a charge point,
+        /// including fixed price components, in the specified currency.
         /// </summary>
         [Optional]
         public Price?                              TotalReservationCost        { get; }
 
         /// <summary>
-        /// Optional remark, can be used to provide addition human
-        /// readable information to the charge detail record, for example:
+        /// The optional remark can be used to provide addition human
+        /// readable information to the charge detail record, for example a
         /// reason why a transaction was stopped.
         /// </summary>
         [Optional]
-        public String                              Remark                      { get; }
+        public String?                             Remark                      { get; }
 
         /// <summary>
-        /// This field can be used to reference an invoice, that will later be send for this CDR. Making it easier to link a CDR to a given invoice. Maybe even group CDRs that will be on the same invoice.
+        /// The optional invoice reference identification can be used to reference an invoice,
+        /// that will later be send for this charge detail record.
+        /// Might even group multiple charge detail records that will be on the same invoice.
         /// </summary>
         [Optional]
         public InvoiceReference_Id?                InvoiceReferenceId          { get; }
 
-
         /// <summary>
-        /// When set to true, this is a Credit CDR, and the field credit_reference_id needs to be set as well.
+        /// The optional indication, that this charge detail record is a "credit CDR".
+        /// When set to true the field credit_reference_id needs to be set as well.
         /// </summary>
         [Optional]
         public Boolean?                            Credit                      { get; }
 
         /// <summary>
-        /// Is required to be set for a Credit CDR. This SHALL contain the id of the CDR for which this is a Credit CDR.
+        /// The optional credit reference identification is required to be set for a "credit CDR".
+        /// This SHALL contain the identification of the charge detail record for which this is a "credit CDR".
         /// </summary>
         [Optional]
         public CreditReference_Id?                 CreditReferenceId           { get; }
 
         /// <summary>
-        /// Timestamp when this charge detail record was last updated (or created).
+        /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
         public DateTime                            LastUpdated                 { get; }
@@ -258,53 +265,113 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charge detail record.
         /// </summary>
-        public String                              SHA256Hash                  { get; private set; }
+        public String                              ETag                        { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// Create a new charge detail record describing the charging session and its costs,
-        /// how these costs are composed, etc.
+        /// Create a new charge detail record.
         /// </summary>
-        public CDR(CountryCode                        CountryCode,
-                   Party_Id                           PartyId,
-                   CDR_Id                             Id,
-                   DateTime                           Start,
-                   DateTime                           End,
-                   CDRToken                           CDRToken,
-                   AuthMethods                        AuthMethod,
-                   CDRLocation                        Location,
-                   Currency                           Currency,
-                   IEnumerable<ChargingPeriod>        ChargingPeriods,
-                   Price                              TotalCosts,
-                   Decimal                            TotalEnergy,
-                   TimeSpan                           TotalTime,
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.</param>
+        /// <param name="PartyId">An identification of the charge point operator that 'owns' this charge detail record (following the ISO-15118 standard).</param>
+        /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
+        /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
+        /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
+        /// <param name="CDRToken">The token used to start this charging session, includes all relevant information to identify the unique token.</param>
+        /// <param name="AuthMethod">The authentication method used.</param>
+        /// <param name="Location">The location where the charging session took place, including only the relevant EVSE and connector.</param>
+        /// <param name="Currency">The ISO 4217 code of the currency used for this charge detail record.</param>
+        /// <param name="ChargingPeriods">The enumeration of charging periods that make up this charging session. A session consist of 1 or more periodes with, each period has a different relevant charging tariff.</param>
+        /// <param name="TotalCosts">The total sum of all the costs of this transaction in the specified currency.</param>
+        /// <param name="TotalEnergy">The total energy charged in kWh.</param>
+        /// <param name="TotalTime">The total duration of the charging session, including the duration of charging and not charging.</param>
+        /// 
+        /// <param name="SessionId">The optional unique identification of the charging session. Is only allowed to be omitted when the CPO has not implemented the sessions module or this charge detail record is the result of a reservation that never became a charging session.</param>
+        /// <param name="AuthorizationReference">The optional reference to the authorization given by the eMSP.</param>
+        /// <param name="MeterId">The optional identification of the energy meter.</param>
+        /// <param name="EnergyMeter">The optional energy meter.</param>
+        /// <param name="TransparencySoftwares">The enumeration of valid transparency softwares which can be used to validate the singed charging session and metering data.</param>
+        /// <param name="Tariffs">The enumeration of relevant charging tariffs.</param>
+        /// <param name="SignedData">The optional signed metering data that belongs to this charging session.</param>
+        /// <param name="TotalFixedCosts">The optional total sum of all the costs of this transaction in the specified currency.</param>
+        /// <param name="TotalEnergyCost">The optional total sum of all the cost of all the energy used, in the specified currency.</param>
+        /// <param name="TotalTimeCost">The optional total sum of all the cost related to duration of charging during this transaction, in the specified currency.</param>
+        /// <param name="TotalParkingTime">The optional total duration of the charging session where the EV was not charging (no energy was transferred between EVSE and EV).</param>
+        /// <param name="TotalParkingCost">The optional total sum of all the cost related to parking of this transaction, including fixed price components, in the specified currency.</param>
+        /// <param name="TotalReservationCost">The optional total sum of all the cost related to a reservation of a charge point, including fixed price components, in the specified currency.</param>
+        /// <param name="Remark">The optional remark can be used to provide addition human readable information to the charge detail record, for example a reason why a transaction was stopped.</param>
+        /// <param name="InvoiceReferenceId">The optional invoice reference identification can be used to reference an invoice, that will later be send for this charge detail record. Might even group multiple charge detail records that will be on the same invoice.</param>
+        /// <param name="Credit">The optional indication, that this charge detail record is a "credit CDR". When set to true the field credit_reference_id needs to be set as well.</param>
+        /// <param name="CreditReferenceId">The optional credit reference identification is required to be set for a "credit CDR". This SHALL contain the identification of the charge detail record for which this is a "credit CDR".</param>
+        /// 
+        /// <param name="LastUpdated">The timestamp when this charge detail record was last updated (or created).</param>
+        /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
+        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
+        /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
+        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
+        public CDR(CountryCode                                             CountryCode,
+                   Party_Id                                                PartyId,
+                   CDR_Id                                                  Id,
+                   DateTime                                                Start,
+                   DateTime                                                End,
+                   CDRToken                                                CDRToken,
+                   AuthMethods                                             AuthMethod,
+                   CDRLocation                                             Location,
+                   Currency                                                Currency,
+                   IEnumerable<ChargingPeriod>                             ChargingPeriods,
+                   Price                                                   TotalCosts,
+                   Decimal                                                 TotalEnergy,
+                   TimeSpan                                                TotalTime,
 
-                   Session_Id?                        SessionId                = null,
-                   AuthorizationReference?            AuthorizationReference   = null,
-                   Meter_Id?                          MeterId                  = null,
-                   EnergyMeter                        EnergyMeter              = null,
-                   IEnumerable<TransparencySoftware>  TransparencySoftwares    = null,
-                   IEnumerable<Tariff>                Tariffs                  = null,
-                   SignedData                         SignedData               = null,
-                   Price?                             TotalFixedCosts          = null,
-                   Price?                             TotalEnergyCost          = null,
-                   Price?                             TotalTimeCost            = null,
-                   TimeSpan?                          TotalParkingTime         = null,
-                   Price?                             TotalParkingCost         = null,
-                   Price?                             TotalReservationCost     = null,
-                   String                             Remark                   = null,
-                   InvoiceReference_Id?               InvoiceReferenceId       = null,
-                   Boolean?                           Credit                   = null,
-                   CreditReference_Id?                CreditReferenceId        = null,
+                   Session_Id?                                             SessionId                              = null,
+                   AuthorizationReference?                                 AuthorizationReference                 = null,
+                   Meter_Id?                                               MeterId                                = null,
+                   EnergyMeter?                                            EnergyMeter                            = null,
+                   IEnumerable<TransparencySoftware>?                      TransparencySoftwares                  = null,
+                   IEnumerable<Tariff>?                                    Tariffs                                = null,
+                   SignedData?                                             SignedData                             = null,
+                   Price?                                                  TotalFixedCosts                        = null,
+                   Price?                                                  TotalEnergyCost                        = null,
+                   Price?                                                  TotalTimeCost                          = null,
+                   TimeSpan?                                               TotalParkingTime                       = null,
+                   Price?                                                  TotalParkingCost                       = null,
+                   Price?                                                  TotalReservationCost                   = null,
+                   String?                                                 Remark                                 = null,
+                   InvoiceReference_Id?                                    InvoiceReferenceId                     = null,
+                   Boolean?                                                Credit                                 = null,
+                   CreditReference_Id?                                     CreditReferenceId                      = null,
 
-                   DateTime?                          LastUpdated              = null)
+                   DateTime?                                               LastUpdated                            = null,
+                   CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
+                   CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
+                   CustomJObjectSerializerDelegate<CDRLocation>?           CustomCDRLocationSerializer            = null,
+                   CustomJObjectSerializerDelegate<EnergyMeter>?           CustomEnergyMeterSerializer            = null,
+                   CustomJObjectSerializerDelegate<TransparencySoftware>?  CustomTransparencySoftwareSerializer   = null,
+                   CustomJObjectSerializerDelegate<Tariff>?                CustomTariffSerializer                 = null,
+                   CustomJObjectSerializerDelegate<TariffElement>?         CustomTariffElementSerializer          = null,
+                   CustomJObjectSerializerDelegate<PriceComponent>?        CustomPriceComponentSerializer         = null,
+                   CustomJObjectSerializerDelegate<TariffRestrictions>?    CustomTariffRestrictionsSerializer     = null,
+                   CustomJObjectSerializerDelegate<ChargingPeriod>?        CustomChargingPeriodSerializer         = null,
+                   CustomJObjectSerializerDelegate<CDRDimension>?          CustomCDRDimensionSerializer           = null,
+                   CustomJObjectSerializerDelegate<SignedData>?            CustomSignedDataSerializer             = null,
+                   CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null,
+                   CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null)
 
         {
 
-            if (!ChargingPeriods.SafeAny())
+            if (!ChargingPeriods.Any())
                 throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration of charging periods must not be null or empty!");
 
             this.CountryCode              = CountryCode;
@@ -314,9 +381,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.End                      = End;
             this.CDRToken                 = CDRToken;
             this.AuthMethod               = AuthMethod;
-            this.Location                 = Location              ?? throw new ArgumentNullException(nameof(Location),  "The given charging location must not be null!");
+            this.Location                 = Location;
             this.Currency                 = Currency;
-            this.ChargingPeriods          = ChargingPeriods       ?? new ChargingPeriod[0];
+            this.ChargingPeriods          = ChargingPeriods       ?? Array.Empty<ChargingPeriod>();
             this.TotalCosts               = TotalCosts;
             this.TotalEnergy              = TotalEnergy;
             this.TotalTime                = TotalTime;
@@ -325,8 +392,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.AuthorizationReference   = AuthorizationReference;
             this.MeterId                  = MeterId;
             this.EnergyMeter              = EnergyMeter;
-            this.TransparencySoftwares    = TransparencySoftwares ?? new TransparencySoftware[0];
-            this.Tariffs                  = Tariffs               ?? new Tariff[0];
+            this.TransparencySoftwares    = TransparencySoftwares ?? Array.Empty<TransparencySoftware>();
+            this.Tariffs                  = Tariffs               ?? Array.Empty<Tariff>();
             this.SignedData               = SignedData;
             this.TotalFixedCosts          = TotalFixedCosts;
             this.TotalEnergyCost          = TotalEnergyCost;
@@ -341,72 +408,53 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.LastUpdated              = LastUpdated           ?? Timestamp.Now;
 
-            CalcSHA256Hash();
+            this.ETag                     = SHA256.Create().ComputeHash(ToJSON(CustomCDRSerializer,
+                                                                               CustomCDRTokenSerializer,
+                                                                               CustomCDRLocationSerializer,
+                                                                               CustomEnergyMeterSerializer,
+                                                                               CustomTransparencySoftwareSerializer,
+                                                                               CustomTariffSerializer,
+                                                                               CustomTariffElementSerializer,
+                                                                               CustomPriceComponentSerializer,
+                                                                               CustomTariffRestrictionsSerializer,
+                                                                               CustomChargingPeriodSerializer,
+                                                                               CustomCDRDimensionSerializer,
+                                                                               CustomSignedDataSerializer,
+                                                                               CustomSignedValueSerializer,
+                                                                               CustomPriceSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 
         #endregion
 
 
-        #region (static) Parse   (JSON, CDRIdURL = null, CustomCDRParser = null)
+        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, CDRIdURL = null, CustomCDRParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a CDR.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static CDR Parse(JObject                           JSON,
-                                CountryCode?                      CountryCodeURL    = null,
-                                Party_Id?                         PartyIdURL        = null,
-                                CDR_Id?                           CDRIdURL          = null,
-                                CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
+        /// <param name="CDRIdURL">An optional charge detail record identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomCDRParser">A delegate to parse custom charge detail record JSON objects.</param>
+        public static CDR Parse(JObject                            JSON,
+                                CountryCode?                       CountryCodeURL    = null,
+                                Party_Id?                          PartyIdURL        = null,
+                                CDR_Id?                            CDRIdURL          = null,
+                                CustomJObjectParserDelegate<CDR>?  CustomCDRParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CDR     CDR,
-                         out String  ErrorResponse,
+                         out var CDR,
+                         out var errorResponse,
                          CountryCodeURL,
                          PartyIdURL,
                          CDRIdURL,
                          CustomCDRParser))
             {
-                return CDR;
+                return CDR!;
             }
 
-            throw new ArgumentException("The given JSON representation of a CDR is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CDRIdURL = null, CustomCDRParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a CDR.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static CDR Parse(String                            Text,
-                                CountryCode?                      CountryCodeURL    = null,
-                                Party_Id?                         PartyIdURL        = null,
-                                CDR_Id?                           CDRIdURL          = null,
-                                CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CDR     CDR,
-                         out String  ErrorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
-                         CDRIdURL,
-                         CustomCDRParser))
-            {
-                return CDR;
-            }
-
-            throw new ArgumentException("The given text representation of a CDR is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a charge detail record is invalid: " + errorResponse, nameof(JSON));
 
         }
 
@@ -422,9 +470,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CDR">The parsed CDR.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out CDR     CDR,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out CDR?     CDR,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out CDR,
@@ -628,14 +676,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Location                  [mandatory]
 
-                if (!JSON.ParseMandatoryJSON2("cdr_location",
-                                              "charge detail record location",
-                                              CDRLocation.TryParse,
-                                              out CDRLocation Location,
-                                              out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("cdr_location",
+                                             "charge detail record location",
+                                             CDRLocation.TryParse,
+                                             out CDRLocation? Location,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
+
+                if (Location is null)
+                    return false;
 
                 #endregion
 
@@ -792,11 +843,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("total_time",
                                          "total time",
-                                         out Double TotalTimeHours,
+                                         out Double totalTimeHours,
                                          out ErrorResponse))
                 {
                     return false;
                 }
+
+                var TotalTimeHours = TimeSpan.FromHours(totalTimeHours);
 
                 #endregion
 
@@ -915,9 +968,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                CDR = new CDR(CountryCodeBody ?? CountryCodeURL.Value,
-                              PartyIdBody     ?? PartyIdURL.Value,
-                              CDRIdBody       ?? CDRIdURL.Value,
+                CDR = new CDR(CountryCodeBody ?? CountryCodeURL!.Value,
+                              PartyIdBody     ?? PartyIdURL!.    Value,
+                              CDRIdBody       ?? CDRIdURL!.      Value,
                               Start,
                               End,
                               CDRToken,
@@ -927,7 +980,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               ChargingPeriods,
                               TotalCosts,
                               TotalEnergy,
-                              TimeSpan.FromHours(TotalTimeHours),
+                              TotalTimeHours,
 
                               SessionId,
                               AuthorizationReference,
@@ -968,54 +1021,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CDR, out ErrorResponse, CDRIdURL = null, CustomCDRParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a CDR.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CDR">The parsed CDR.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CDRIdURL">An optional CDR identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomCDRParser">A delegate to parse custom CDR JSON objects.</param>
-        public static Boolean TryParse(String                            Text,
-                                       out CDR                           CDR,
-                                       out String                        ErrorResponse,
-                                       CountryCode?                      CountryCodeURL    = null,
-                                       Party_Id?                         PartyIdURL        = null,
-                                       CDR_Id?                           CDRIdURL          = null,
-                                       CustomJObjectParserDelegate<CDR>  CustomCDRParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CDR,
-                                out ErrorResponse,
-                                CountryCodeURL,
-                                PartyIdURL,
-                                CDRIdURL,
-                                CustomCDRParser);
-
-            }
-            catch (Exception e)
-            {
-                CDR            = null;
-                ErrorResponse  = "The given text representation of a CDR is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCDRSerializer = null, CustomCDRTokenSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomCDRSerializer">A delegate to serialize custom CDR JSON objects.</param>
+        /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
         /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
@@ -1029,20 +1040,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>                   CustomCDRSerializer                    = null,
-                              CustomJObjectSerializerDelegate<CDRToken>              CustomCDRTokenSerializer               = null,
-                              CustomJObjectSerializerDelegate<CDRLocation>           CustomCDRLocationSerializer            = null,
-                              CustomJObjectSerializerDelegate<EnergyMeter>           CustomEnergyMeterSerializer            = null,
-                              CustomJObjectSerializerDelegate<TransparencySoftware>  CustomTransparencySoftwareSerializer   = null,
-                              CustomJObjectSerializerDelegate<Tariff>                CustomTariffSerializer                 = null,
-                              CustomJObjectSerializerDelegate<TariffElement>         CustomTariffElementSerializer          = null,
-                              CustomJObjectSerializerDelegate<PriceComponent>        CustomPriceComponentSerializer         = null,
-                              CustomJObjectSerializerDelegate<TariffRestrictions>    CustomTariffRestrictionsSerializer     = null,
-                              CustomJObjectSerializerDelegate<ChargingPeriod>        CustomChargingPeriodSerializer         = null,
-                              CustomJObjectSerializerDelegate<CDRDimension>          CustomCDRDimensionSerializer           = null,
-                              CustomJObjectSerializerDelegate<SignedData>            CustomSignedDataSerializer             = null,
-                              CustomJObjectSerializerDelegate<SignedValue>           CustomSignedValueSerializer            = null,
-                              CustomJObjectSerializerDelegate<Price>                 CustomPriceSerializer                  = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
+                              CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
+                              CustomJObjectSerializerDelegate<CDRLocation>?           CustomCDRLocationSerializer            = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter>?           CustomEnergyMeterSerializer            = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftware>?  CustomTransparencySoftwareSerializer   = null,
+                              CustomJObjectSerializerDelegate<Tariff>?                CustomTariffSerializer                 = null,
+                              CustomJObjectSerializerDelegate<TariffElement>?         CustomTariffElementSerializer          = null,
+                              CustomJObjectSerializerDelegate<PriceComponent>?        CustomPriceComponentSerializer         = null,
+                              CustomJObjectSerializerDelegate<TariffRestrictions>?    CustomTariffRestrictionsSerializer     = null,
+                              CustomJObjectSerializerDelegate<ChargingPeriod>?        CustomChargingPeriodSerializer         = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>?          CustomCDRDimensionSerializer           = null,
+                              CustomJObjectSerializerDelegate<SignedData>?            CustomSignedDataSerializer             = null,
+                              CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null,
+                              CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null)
         {
 
             var JSON = JSONObject.Create(
@@ -1070,29 +1081,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("meter_id",                  MeterId.               Value.ToString())
                                : null,
 
-                           EnergyMeter != null
+                           EnergyMeter is not null
                                ? new JProperty("energy_meter",              EnergyMeter.                 ToJSON(CustomEnergyMeterSerializer))
                                : null,
 
-                           TransparencySoftwares.SafeAny()
+                           TransparencySoftwares.Any()
                                ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(software => software.ToJSON(CustomTransparencySoftwareSerializer))))
                                : null,
 
                            new JProperty("currency",                        Currency.                    ToString()),
 
-                           Tariffs.SafeAny()
+                           Tariffs.Any()
                                ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff   => tariff.  ToJSON(CustomTariffSerializer,
                                                                                                                                                 CustomTariffElementSerializer,
                                                                                                                                                 CustomPriceComponentSerializer,
                                                                                                                                                 CustomTariffRestrictionsSerializer))))
                                : null,
 
-                           ChargingPeriods.SafeAny()
+                           ChargingPeriods.Any()
                                ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(period   => period.  ToJSON(CustomChargingPeriodSerializer,
                                                                                                                                                 CustomCDRDimensionSerializer))))
                                : null,
 
-                           SignedData != null
+                           SignedData is not null
                                ? new JProperty("signed_data",               SignedData.                  ToJSON(CustomSignedDataSerializer,
                                                                                                                 CustomSignedValueSerializer))
                                : null,
@@ -1150,71 +1161,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             return CustomCDRSerializer is not null
                        ? CustomCDRSerializer(this, JSON)
                        : JSON;
-
-        }
-
-        #endregion
-
-
-        #region CalcSHA256Hash(CustomCDRSerializer = null, CustomCDRTokenSerializer = null, ...)
-
-        /// <summary>
-        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
-        /// </summary>
-        /// <param name="CustomCDRSerializer">A delegate to serialize custom CDR JSON objects.</param>
-        /// <param name="CustomCDRTokenSerializer">A delegate to serialize custom charge detail record token JSON objects.</param>
-        /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
-        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
-        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
-        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
-        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
-        /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<CDR>                   CustomCDRSerializer                    = null,
-                                     CustomJObjectSerializerDelegate<CDRToken>              CustomCDRTokenSerializer               = null,
-                                     CustomJObjectSerializerDelegate<CDRLocation>           CustomCDRLocationSerializer            = null,
-                                     CustomJObjectSerializerDelegate<EnergyMeter>           CustomEnergyMeterSerializer            = null,
-                                     CustomJObjectSerializerDelegate<TransparencySoftware>  CustomTransparencySoftwareSerializer   = null,
-                                     CustomJObjectSerializerDelegate<Tariff>                CustomTariffSerializer                 = null,
-                                     CustomJObjectSerializerDelegate<TariffElement>         CustomTariffElementSerializer          = null,
-                                     CustomJObjectSerializerDelegate<PriceComponent>        CustomPriceComponentSerializer         = null,
-                                     CustomJObjectSerializerDelegate<TariffRestrictions>    CustomTariffRestrictionsSerializer     = null,
-                                     CustomJObjectSerializerDelegate<ChargingPeriod>        CustomChargingPeriodSerializer         = null,
-                                     CustomJObjectSerializerDelegate<CDRDimension>          CustomCDRDimensionSerializer           = null,
-                                     CustomJObjectSerializerDelegate<SignedData>            CustomSignedDataSerializer             = null,
-                                     CustomJObjectSerializerDelegate<SignedValue>           CustomSignedValueSerializer            = null,
-                                     CustomJObjectSerializerDelegate<Price>                 CustomPriceSerializer                  = null)
-        {
-
-            using (var SHA256 = new SHA256Managed())
-            {
-
-                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomCDRSerializer,
-                                                                         CustomCDRTokenSerializer,
-                                                                         CustomCDRLocationSerializer,
-                                                                         CustomEnergyMeterSerializer,
-                                                                         CustomTransparencySoftwareSerializer,
-                                                                         CustomTariffSerializer,
-                                                                         CustomTariffElementSerializer,
-                                                                         CustomPriceComponentSerializer,
-                                                                         CustomTariffRestrictionsSerializer,
-                                                                         CustomChargingPeriodSerializer,
-                                                                         CustomCDRDimensionSerializer,
-                                                                         CustomSignedDataSerializer,
-                                                                         CustomSignedValueSerializer,
-                                                                         CustomPriceSerializer).
-                                                                  ToString(Newtonsoft.Json.Formatting.None)
-                                                              )).
-                                                  Select(value => String.Format("{0:x2}", value)).
-                                                  Aggregate();
-
-            }
 
         }
 
@@ -1332,11 +1278,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region CompareTo(Object)
 
-        /// <summary>
-        /// Compares two instances of this object.
+        /// <summary>s
+        /// Compares two charge detail records.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charge detail record to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is CDR cdr
                    ? CompareTo(cdr)
@@ -1347,14 +1293,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region CompareTo(CDR)
 
-        /// <summary>
-        /// Compares two instances of this object.
+        /// <summary>s
+        /// Compares two charge detail records.
         /// </summary>
-        /// <param name="CDR">An CDR to compare with.</param>
-        public Int32 CompareTo(CDR CDR)
+        /// <param name="Object">A charge detail record to compare with.</param>
+        public Int32 CompareTo(CDR? CDR)
 
             => CDR is null
-                   ? throw new ArgumentNullException(nameof(CDR), "The given CDR must not be null!")
+                   ? throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!")
                    : Id.CompareTo(CDR.Id);
 
         #endregion
@@ -1365,12 +1311,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Equals(Object)
 
-        /// <summary>
-        /// Compares two instances of this object.
+        /// <summary>s
+        /// Compares two charge detail records for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charge detail record to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CDR cdr &&
                    Equals(cdr);
@@ -1379,15 +1324,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Equals(CDR)
 
-        /// <summary>
-        /// Compares two CDRs for equality.
+        /// <summary>s
+        /// Compares two charge detail records for equality.
         /// </summary>
-        /// <param name="CDR">An CDR to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CDR CDR)
+        /// <param name="CDR">A charge detail record to compare with.</param>
+        public Boolean Equals(CDR? CDR)
 
-            => !(CDR is null) &&
-                   Id.Equals(CDR.Id);
+            => CDR is not null &&
+
+               Id.         Equals(CDR.Id) &&
+               LastUpdated.Equals(CDR.LastUpdated);
 
         #endregion
 
@@ -1399,8 +1345,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
+        {
+            unchecked
+            {
 
-            => Id.GetHashCode();
+                return Id.                    GetHashCode()       * 29 ^
+                       LastUpdated.           GetHashCode();
+
+            }
+        }
 
         #endregion
 
@@ -1411,7 +1364,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   Id,
+                   ", ",
+                   LastUpdated.ToIso8601()
+
+               );
 
         #endregion
 

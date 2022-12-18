@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using org.GraphDefined.Vanaheimr.Aegir;
 
 #endregion
 
@@ -48,25 +49,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Session1
 
             var Session1 = new Session(
-                               CountryCode.Parse("DE"),
-                               Party_Id.   Parse("GEF"),
                                Session_Id. Parse("Session0001"),
-                               DateTime.Parse("2020-08-21T00:00:00.000Z"), // Start
+                               DateTime.Parse("2020-08-21T00:00:00.000Z").ToUniversalTime(), // Start
                                1.11M, // KWh
-                               new CDRToken(
-                                   Token_Id.   Parse("1234"),
-                                   TokenType.  RFID,
-                                   Contract_Id.Parse("Contract0815")
-                               ),
+                               Auth_Id.   Parse("1234"),
                                AuthMethods.AUTH_REQUEST,
-                               Location_Id.Parse("LOC0001"),
-                               EVSE_UId.Parse("EVSE0001"),
-                               Connector_Id.Parse("C1"),
+
+                               new Location(
+                                   Location_Id.Parse("LOC0001"),
+                                   LocationType.UNDERGROUND_GARAGE,
+                                   "Biberweg 18",
+                                   "Jena",
+                                   "07749",
+                                   Country.Germany,
+                                   GeoCoordinate.Parse(10, 20)
+                               ),
+
                                Currency.EUR,
                                SessionStatusTypes.ACTIVE,
-                               DateTime.Parse("2020-08-22T00:00:00.000Z"), // End
-                               AuthorizationReference.Parse("Auth1234"),
-
+                               DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                Meter_Id.Parse("Meter0001"),
 
                                // OCPI Computer Science Extensions
@@ -108,20 +109,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                new ChargingPeriod[] {
                                    new ChargingPeriod(
-                                       DateTime.Parse("2020-04-12T18:21:49Z"),
+                                       DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               CDRDimensions.ENERGY,
+                                               CDRDimensionType.ENERGY,
                                                1.33M
                                            )
                                        },
                                        Tariff_Id.Parse("DE*GEF*T0001")
                                    ),
                                    new ChargingPeriod(
-                                       DateTime.Parse("2020-04-12T18:21:50Z"),
+                                       DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               CDRDimensions.TIME,
+                                               CDRDimensionType.TIME,
                                                5.12M
                                            )
                                        },
@@ -130,20 +131,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                },
 
                                // Total Costs
-                               new Price(
-                                   1.12,
-                                   2.24
-                               ),
+                               1.12M,
 
-                               DateTime.Parse("2020-09-21T00:00:00.000Z")
+                               DateTime.Parse("2020-09-21T00:00:00.000Z").ToUniversalTime()
+
                            );
 
             #endregion
 
             var JSON = Session1.ToJSON();
 
-            Assert.AreEqual("DE",                              JSON["country_code"].                    Value<String>());
-            Assert.AreEqual("GEF",                             JSON["party_id"].                        Value<String>());
             Assert.AreEqual("Session0001",                     JSON["id"].                              Value<String>());
             Assert.AreEqual("2020-08-21T00:00:00.000Z",        JSON["start_date_time"].                 Value<String>());
             Assert.AreEqual("2020-08-22T00:00:00.000Z",        JSON["end_date_time"].                   Value<String>());
@@ -164,27 +161,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual("ACTIVE",                          JSON["status"].                          Value<String>());
             Assert.AreEqual("2020-09-21T00:00:00.000Z",        JSON["last_updated"].                    Value<String>());
 
-            Assert.IsTrue(Session.TryParse(JSON, out Session Session2, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Session.TryParse(JSON, out var Session2, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(Session1.CountryCode,              Session2.CountryCode);
-            Assert.AreEqual(Session1.PartyId,                  Session2.PartyId);
             Assert.AreEqual(Session1.Id,                       Session2.Id);
             Assert.AreEqual(Session1.Start.    ToIso8601(),    Session2.Start.    ToIso8601());
             Assert.AreEqual(Session1.End.Value.ToIso8601(),    Session2.End.Value.ToIso8601());
             Assert.AreEqual(Session1.kWh,                      Session2.kWh);
-            Assert.AreEqual(Session1.CDRToken,                 Session2.CDRToken);
+            Assert.AreEqual(Session1.AuthId,                   Session2.AuthId);
             Assert.AreEqual(Session1.AuthMethod,               Session2.AuthMethod);
-            Assert.AreEqual(Session1.AuthorizationReference,   Session2.AuthorizationReference);
-            Assert.AreEqual(Session1.LocationId,               Session2.LocationId);
-            Assert.AreEqual(Session1.EVSEUId,                  Session2.EVSEUId);
-            Assert.AreEqual(Session1.ConnectorId,              Session2.ConnectorId);
+            Assert.AreEqual(Session1.Location,                 Session2.Location);
             Assert.AreEqual(Session1.MeterId,                  Session2.MeterId);
             Assert.AreEqual(Session1.EnergyMeter,              Session2.EnergyMeter);
             Assert.AreEqual(Session1.TransparencySoftwares,    Session2.TransparencySoftwares);
             Assert.AreEqual(Session1.Currency,                 Session2.Currency);
             Assert.AreEqual(Session1.ChargingPeriods,          Session2.ChargingPeriods);
-            Assert.AreEqual(Session1.TotalCosts,               Session2.TotalCosts);
+            Assert.AreEqual(Session1.TotalCost,                Session2.TotalCost);
             Assert.AreEqual(Session1.Status,                   Session2.Status);
             Assert.AreEqual(Session1.LastUpdated.ToIso8601(),  Session2.LastUpdated.ToIso8601());
 
@@ -232,11 +224,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Session.TryParse(JSON, out Session parsedSession, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("NL"),                   parsedSession.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("STK"),                  parsedSession.PartyId);
             Assert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
             //Assert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
             //Assert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
@@ -325,11 +315,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Session.TryParse(JSON, out Session parsedSession, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("BEC"),                  parsedSession.PartyId);
             Assert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
             //Assert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
             //Assert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());

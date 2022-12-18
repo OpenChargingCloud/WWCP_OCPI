@@ -6339,7 +6339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newCDR.LastUpdated.ToIso8601(),
-                                                           ETag                       = newCDR.SHA256Hash
+                                                           ETag                       = newCDR.ETag
                                                        }
                                                    };
 
@@ -6495,7 +6495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = CDR.LastUpdated.ToIso8601(),
-                                                       ETag                       = CDR.SHA256Hash
+                                                       ETag                       = CDR.ETag
                                                    }
                                             });
 

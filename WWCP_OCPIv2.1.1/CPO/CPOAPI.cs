@@ -981,9 +981,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetTariff(CPOAPI.DefaultCountryCode,
-                                               CPOAPI.DefaultPartyId,
-                                               TariffId.Value,
+            if (!CPOAPI.CommonAPI.TryGetTariff(TariffId.Value,
                                                out Tariff)) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1151,9 +1149,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetSession(CPOAPI.DefaultCountryCode,
-                                                CPOAPI.DefaultPartyId,
-                                                SessionId.Value,
+            if (!CPOAPI.CommonAPI.TryGetSession(SessionId.Value,
                                                 out Session)) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1321,9 +1317,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetCDR(CPOAPI.DefaultCountryCode,
-                                            CPOAPI.DefaultPartyId,
-                                            CDRId.Value,
+            if (!CPOAPI.CommonAPI.TryGetCDR(CDRId.Value,
                                             out CDR)) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -2546,12 +2540,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters               = Request.GetDateAndPaginationFilters();
 
-                                        var allTariffs            = CommonAPI.GetTariffs(DefaultCountryCode,
-                                                                                         DefaultPartyId).
-                                                                              ToArray();
-
+                                        var allTariffs            = CommonAPI.GetTariffs().ToArray();
                                         var allTariffsCount       = allTariffs.Length;
-
 
                                         var filteredTariffs       = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
                                                                                Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
@@ -2703,12 +2693,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters                = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions            = CommonAPI.GetSessions(DefaultCountryCode,
-                                                                                           DefaultPartyId).
-                                                                               ToArray();
-
+                                        var allSessions            = CommonAPI.GetSessions().ToArray();
                                         var allSessionsCount       = allSessions.Length;
-
 
                                         var filteredSessions       = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
                                                                                  Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
@@ -2890,12 +2876,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         var filters            = Request.GetDateAndPaginationFilters();
 
-                                        var allCDRs            = CommonAPI.GetCDRs(DefaultCountryCode,
-                                                                                   DefaultPartyId).
-                                                                           ToArray();
-
+                                        var allCDRs            = CommonAPI.GetCDRs().ToArray();
                                         var allCDRsCount       = allCDRs.Length;
-
 
                                         var filteredCDRs       = allCDRs.Where(CDR => !filters.From.HasValue || CDR.LastUpdated >  filters.From.Value).
                                                                          Where(CDR => !filters.To.  HasValue || CDR.LastUpdated <= filters.To.  Value).

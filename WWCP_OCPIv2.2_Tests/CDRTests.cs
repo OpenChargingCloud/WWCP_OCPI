@@ -81,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               CDRDimensions.ENERGY,
+                                               CDRDimensionType.ENERGY,
                                                1.33M
                                            )
                                        },
@@ -91,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               CDRDimensions.TIME,
+                                               CDRDimensionType.TIME,
                                                5.12M
                                            )
                                        },
@@ -430,7 +430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(CDR.TryParse(JSON, out CDR parsedCDR, out String ErrorResponse));
+            Assert.IsTrue(CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var ErrorResponse));
             Assert.IsNull(ErrorResponse);
 
             Assert.AreEqual(CountryCode.Parse("BE"),                               parsedCDR.CountryCode);

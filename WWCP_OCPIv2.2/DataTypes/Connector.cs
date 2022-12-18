@@ -829,11 +829,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                MaxElectricPower.Equals(Connector.MaxElectricPower) &&
                LastUpdated.     Equals(Connector.LastUpdated)      &&
 
-               TariffIds.Count().Equals(Connector.TariffIds.Count())     &&
+               TariffIds.Count().Equals(Connector.TariffIds.Count()) &&
                TariffIds.All(tariffId => Connector.TariffIds.Contains(tariffId)) &&
 
-            ((!TermsAndConditionsURL.HasValue    && !Connector.TermsAndConditionsURL.HasValue)    ||
-              (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
+            ((!TermsAndConditionsURL.HasValue && !Connector.TermsAndConditionsURL.HasValue) ||
+              (TermsAndConditionsURL.HasValue &&  Connector.TermsAndConditionsURL.HasValue && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
 
         #endregion
 

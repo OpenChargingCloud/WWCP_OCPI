@@ -49,7 +49,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Display name of the location. // 255
         /// </summary>
         [Optional]
-        public String                              Name                     { get; }
+        public String?                             Name                     { get; }
 
         /// <summary>
         /// Address of the location. // 45
@@ -67,7 +67,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Address of the location. // 10
         /// </summary>
         [Optional]
-        public String                              PostalCode               { get; }
+        public String?                             PostalCode               { get; }
 
         /// <summary>
         /// Address of the location. // 3

@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -72,9 +70,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            LocationReference?  LocationReference   = null)
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null or empty!");
-
             this.Token              = Token;
             this.Status             = Status;
             this.LocationReference  = LocationReference;
@@ -91,44 +86,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTokenStatusParser">A delegate to parse custom token status JSON objects.</param>
-        public static TokenStatus Parse(JObject                                   JSON,
-                                        CustomJObjectParserDelegate<TokenStatus>  CustomTokenStatusParser   = null)
+        public static TokenStatus Parse(JObject                                    JSON,
+                                        CustomJObjectParserDelegate<TokenStatus>?  CustomTokenStatusParser   = null)
         {
 
             if (TryParse(JSON,
-                         out TokenStatus  energyContract,
-                         out String       ErrorResponse,
+                         out var tokenStatus,
+                         out var errorResponse,
                          CustomTokenStatusParser))
             {
-                return energyContract;
+                return tokenStatus;
             }
 
-            throw new ArgumentException("The given JSON representation of a token status is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomTokenStatusParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a token status.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomTokenStatusParser">A delegate to parse custom token status JSON objects.</param>
-        public static TokenStatus Parse(String                                    Text,
-                                        CustomJObjectParserDelegate<TokenStatus>  CustomTokenStatusParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TokenStatus  energyContract,
-                         out String       ErrorResponse,
-                         CustomTokenStatusParser))
-            {
-                return energyContract;
-            }
-
-            throw new ArgumentException("The given text representation of a token status is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a token status is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -141,41 +112,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTokenStatusParser">A delegate to parse custom token status JSON objects.</param>
-        public static TokenStatus? TryParse(JObject                                   JSON,
-                                            CustomJObjectParserDelegate<TokenStatus>  CustomTokenStatusParser   = null)
+        public static TokenStatus? TryParse(JObject                                    JSON,
+                                            CustomJObjectParserDelegate<TokenStatus>?  CustomTokenStatusParser   = null)
         {
 
             if (TryParse(JSON,
-                         out TokenStatus  energyContract,
-                         out String       ErrorResponse,
+                         out var tokenStatus,
+                         out var errorResponse,
                          CustomTokenStatusParser))
             {
-                return energyContract;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomTokenStatusParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a token status.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomTokenStatusParser">A delegate to parse custom token status JSON objects.</param>
-        public static TokenStatus? TryParse(String                                    Text,
-                                            CustomJObjectParserDelegate<TokenStatus>  CustomTokenStatusParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TokenStatus  energyContract,
-                         out String       ErrorResponse,
-                         CustomTokenStatusParser))
-            {
-                return energyContract;
+                return tokenStatus;
             }
 
             return default;
@@ -196,7 +142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject          JSON,
                                        out TokenStatus  TokenStatus,
-                                       out String       ErrorResponse)
+                                       out String?      ErrorResponse)
 
             => TryParse(JSON,
                         out TokenStatus,
@@ -211,10 +157,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="TokenStatus">The parsed token status.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTokenStatusParser">A delegate to parse custom token status JSON objects.</param>
-        public static Boolean TryParse(JObject                                   JSON,
-                                       out TokenStatus                           TokenStatus,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<TokenStatus>  CustomTokenStatusParser   = null)
+        public static Boolean TryParse(JObject                                    JSON,
+                                       out TokenStatus                            TokenStatus,
+                                       out String?                                ErrorResponse,
+                                       CustomJObjectParserDelegate<TokenStatus>?  CustomTokenStatusParser   = null)
         {
 
             try
@@ -228,20 +174,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Token                     [mandatory]
+                #region Parse Token                [mandatory]
 
-                if (!JSON.ParseMandatoryJSON2("token",
-                                              "token",
-                                              OCPIv2_2.Token.TryParse,
-                                              out Token Token,
-                                              out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("token",
+                                             "token",
+                                             OCPIv2_2.Token.TryParse,
+                                             out Token? Token,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
 
+                if (Token is null)
+                    return false;
+
                 #endregion
 
-                #region Parse Status                    [mandatory]
+                #region Parse Status               [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("status",
                                              "token status",
@@ -253,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse LocationReference         [optional]
+                #region Parse LocationReference    [optional]
 
                 if (JSON.ParseOptionalEnum("locationReference",
                                            "location reference",
@@ -290,57 +239,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out TokenStatus, out ErrorResponse, CustomTokenStatusParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a token status.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TokenStatus">The parsed energyContract.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomTokenStatusParser">A delegate to parse custom token status JSON objects.</param>
-        public static Boolean TryParse(String                                    Text,
-                                       out TokenStatus                           TokenStatus,
-                                       out String                                ErrorResponse,
-                                       CustomJObjectParserDelegate<TokenStatus>  CustomTokenStatusParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out TokenStatus,
-                                out ErrorResponse,
-                                CustomTokenStatusParser);
-
-            }
-            catch (Exception e)
-            {
-                TokenStatus    = default;
-                ErrorResponse  = "The given text representation of a token status is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region ToJSON(CustomTokenStatusSerializer = null)
+        #region ToJSON(CustomTokenStatusSerializer = null, CustomLocationReferenceSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTokenStatusSerializer">A delegate to serialize custom token status JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<TokenStatus> CustomTokenStatusSerializer = null)
+        /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom location reference JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TokenStatus>?        CustomTokenStatusSerializer         = null,
+                              CustomJObjectSerializerDelegate<LocationReference>?  CustomLocationReferenceSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",                Token),
-                           new JProperty("status",               Status.ToString()),
+                                 new JProperty("token",              Token),
+                                 new JProperty("status",             Status.ToString()),
 
                            LocationReference.HasValue
-                               ? new JProperty("locationReference",  LocationReference.Value.ToJSON())
+                               ? new JProperty("locationReference",  LocationReference.Value.ToJSON(CustomLocationReferenceSerializer))
                                : null
 
                        );
@@ -382,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (TokenStatus TokenStatus1,
                                            TokenStatus TokenStatus2)
 
-            => !(TokenStatus1 == TokenStatus2);
+            => !TokenStatus1.Equals(TokenStatus2);
 
         #endregion
 
@@ -412,7 +328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (TokenStatus TokenStatus1,
                                            TokenStatus TokenStatus2)
 
-            => !(TokenStatus1 > TokenStatus2);
+            => TokenStatus1.CompareTo(TokenStatus2) <= 0;
 
         #endregion
 
@@ -442,7 +358,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (TokenStatus TokenStatus1,
                                            TokenStatus TokenStatus2)
 
-            => !(TokenStatus1 < TokenStatus2);
+            => TokenStatus1.CompareTo(TokenStatus2) >= 0;
 
         #endregion
 
@@ -453,13 +369,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two token status.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A token status to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            => Object is TokenStatus energyContract
-                   ? CompareTo(energyContract)
+            => Object is TokenStatus tokenStatus
+                   ? CompareTo(tokenStatus)
                    : throw new ArgumentException("The given object is not a token status!",
                                                  nameof(Object));
 
@@ -468,9 +384,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(TokenStatus)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two token status.
         /// </summary>
-        /// <param name="TokenStatus">An object to compare with.</param>
+        /// <param name="TokenStatus">A token status to compare with.</param>
         public Int32 CompareTo(TokenStatus TokenStatus)
         {
 
@@ -495,24 +411,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two token status for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A token status to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is TokenStatus energyContract &&
-                   Equals(energyContract);
+            => Object is TokenStatus tokenStatus &&
+                   Equals(tokenStatus);
 
         #endregion
 
         #region Equals(TokenStatus)
 
         /// <summary>
-        /// Compares two token statuss for equality.
+        /// Compares two token status for equality.
         /// </summary>
         /// <param name="TokenStatus">A token status to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(TokenStatus TokenStatus)
 
             => Token.            Equals(TokenStatus.Token)  &&
@@ -534,9 +448,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Token.              GetHashCode() * 5 ^
-                       Status.             GetHashCode() * 3 ^
-                       (LocationReference?.GetHashCode() ?? 0);
+                return Token.             GetHashCode() * 5 ^
+                       Status.            GetHashCode() * 3 ^
+                       LocationReference?.GetHashCode() ?? 0;
 
             }
         }
@@ -550,15 +464,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Token,
-                             " (", Status, ")",
-                             LocationReference.HasValue
-                                 ? " at " +
-                                   LocationReference.Value.LocationId +
-                                  (LocationReference.Value.EVSEUIds.SafeAny()
-                                       ? " (" + LocationReference.Value.EVSEUIds.AggregateWith(", ") + ")"
-                                       : "")
-                                 : "");
+            => String.Concat(
+
+                   Token,
+                   " (", Status, ")",
+
+                   LocationReference.HasValue
+                       ? " at " + LocationReference.Value
+                       : ""
+
+               );
 
         #endregion
 

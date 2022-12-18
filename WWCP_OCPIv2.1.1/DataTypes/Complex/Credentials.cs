@@ -195,11 +195,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Business details    [mandatory]
 
-                if (!JSON.ParseMandatoryJSON2("business_details",
-                                              "business details",
-                                              OCPIv2_1_1.BusinessDetails.TryParse,
-                                              out BusinessDetails? BusinessDetails,
-                                              out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("business_details",
+                                             "business details",
+                                             OCPIv2_1_1.BusinessDetails.TryParse,
+                                             out BusinessDetails? BusinessDetails,
+                                             out ErrorResponse))
                 {
                     return false;
                 }

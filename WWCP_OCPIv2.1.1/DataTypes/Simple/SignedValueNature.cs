@@ -17,20 +17,41 @@
 
 #region Usings
 
-using System;
-
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_2
+namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// A signed value nature.
+    /// Extension methods for signed value natures.
+    /// </summary>
+    public static class SignedValueNatureExtensions
+    {
+
+        /// <summary>
+        /// Indicates whether this signed value nature is null or empty.
+        /// </summary>
+        /// <param name="SignedValueNature">A signed value nature.</param>
+        public static Boolean IsNullOrEmpty(this SignedValueNature? SignedValueNature)
+            => !SignedValueNature.HasValue || SignedValueNature.Value.IsNullOrEmpty;
+
+        /// <summary>
+        /// Indicates whether this signed value nature is NOT null or empty.
+        /// </summary>
+        /// <param name="SignedValueNature">A signed value nature.</param>
+        public static Boolean IsNotNullOrEmpty(this SignedValueNature? SignedValueNature)
+            => SignedValueNature.HasValue && SignedValueNature.Value.IsNotNullOrEmpty;
+
+    }
+
+
+    /// <summary>
+    /// The unique identification of a meter.
+    /// string(255)
     /// </summary>
     public readonly struct SignedValueNature : IId<SignedValueNature>
-
     {
 
         #region Data
@@ -45,18 +66,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Indicates whether this identification is null or empty.
+        /// Indicates whether this signed value nature is null or empty.
         /// </summary>
         public Boolean IsNullOrEmpty
-
             => InternalId.IsNullOrEmpty();
+
+        /// <summary>
+        /// Indicates whether this signed value nature is NOT null or empty.
+        /// </summary>
+        public Boolean IsNotNullOrEmpty
+            => InternalId.IsNotNullOrEmpty();
 
         /// <summary>
         /// The length of the signed value nature.
         /// </summary>
         public UInt64 Length
-
-            => (UInt64) (InternalId?.Length ?? 0);
+            => (UInt64) InternalId.Length;
 
         #endregion
 
@@ -77,19 +102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (Text)
 
         /// <summary>
-        /// Parse the given string as a signed value nature.
+        /// Parse the given text as a signed value nature.
         /// </summary>
         /// <param name="Text">A text representation of a signed value nature.</param>
         public static SignedValueNature Parse(String Text)
         {
 
-            if (TryParse(Text, out SignedValueNature signedValueNature))
+            if (TryParse(Text, out var signedValueNature))
                 return signedValueNature;
 
-            if (Text.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(Text), "The given text representation of a signed value nature must not be null or empty!");
-
-            throw new ArgumentException("The given text representation of a signed value nature is invalid!", nameof(Text));
+            throw new ArgumentException("Invalid text representation of a signed value nature: '" + Text + "'!",
+                                        nameof(Text));
 
         }
 
@@ -104,7 +127,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static SignedValueNature? TryParse(String Text)
         {
 
-            if (TryParse(Text, out SignedValueNature signedValueNature))
+            if (TryParse(Text, out var signedValueNature))
                 return signedValueNature;
 
             return null;
@@ -123,11 +146,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean TryParse(String Text, out SignedValueNature SignedValueNature)
         {
 
+            Text = Text.Trim();
+
             if (Text.IsNotNullOrEmpty())
             {
                 try
                 {
-                    SignedValueNature = new SignedValueNature(Text.Trim());
+                    SignedValueNature = new SignedValueNature(Text);
                     return true;
                 }
                 catch (Exception)
@@ -148,27 +173,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public SignedValueNature Clone
 
-            => new SignedValueNature(
+            => new (
                    new String(InternalId?.ToCharArray())
                );
 
         #endregion
 
 
+        #region Static definitions
+
         /// <summary>
         /// Signed value at the start of the charging session.
         /// </summary>
-        public static SignedValueNature START         = Parse("START");
+        public static SignedValueNature START
+            => new ("START");
 
         /// <summary>
         /// Signed values take during the charging session, after start, before end.
         /// </summary>
-        public static SignedValueNature INTERMEDIATE  = Parse("INTERMEDIATE");
+        public static SignedValueNature INTERMEDIATE
+            => new ("INTERMEDIATE");
 
         /// <summary>
         /// Signed value at the end of the charging session.
         /// </summary>
-        public static SignedValueNature END           = Parse("END");
+        public static SignedValueNature END
+            => new ("END");
+
+        #endregion
 
 
         #region Operator overloading
@@ -199,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (SignedValueNature SignedValueNature1,
                                            SignedValueNature SignedValueNature2)
 
-            => !(SignedValueNature1 == SignedValueNature2);
+            => !SignedValueNature1.Equals(SignedValueNature2);
 
         #endregion
 
@@ -229,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (SignedValueNature SignedValueNature1,
                                            SignedValueNature SignedValueNature2)
 
-            => !(SignedValueNature1 > SignedValueNature2);
+            => SignedValueNature1.CompareTo(SignedValueNature2) <= 0;
 
         #endregion
 
@@ -259,7 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (SignedValueNature SignedValueNature1,
                                            SignedValueNature SignedValueNature2)
 
-            => !(SignedValueNature1 < SignedValueNature2);
+            => SignedValueNature1.CompareTo(SignedValueNature2) >= 0;
 
         #endregion
 
@@ -270,28 +302,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two signed value natures.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
-        {
+        /// <param name="Object">A signed value nature to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
-            if (Object is SignedValueNature signedValueNature)
-                return CompareTo(signedValueNature);
-
-            throw new ArgumentException("The given object is not a signed value nature!",
-                                        nameof(Object));
-
-        }
+            => Object is SignedValueNature signedValueNature
+                   ? CompareTo(signedValueNature)
+                   : throw new ArgumentException("The given object is not a signed value nature!",
+                                                 nameof(Object));
 
         #endregion
 
         #region CompareTo(SignedValueNature)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two signed value natures.
         /// </summary>
-        /// <param name="SignedValueNature">An object to compare with.</param>
+        /// <param name="SignedValueNature">A signed value nature to compare with.</param>
         public Int32 CompareTo(SignedValueNature SignedValueNature)
 
             => String.Compare(InternalId,
@@ -307,19 +335,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two signed value natures for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
-        {
+        /// <param name="Object">A signed value nature to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            if (Object is SignedValueNature signedValueNature)
-                return Equals(signedValueNature);
-
-            return false;
-
-        }
+            => Object is SignedValueNature signedValueNature &&
+                   Equals(signedValueNature);
 
         #endregion
 
@@ -328,8 +350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two signed value natures for equality.
         /// </summary>
-        /// <param name="SignedValueNature">An signed value nature to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="SignedValueNature">A signed value nature to compare with.</param>
         public Boolean Equals(SignedValueNature SignedValueNature)
 
             => String.Equals(InternalId,

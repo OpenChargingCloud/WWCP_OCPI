@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -78,44 +76,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
-        public static Price Parse(JObject                             JSON,
-                                  CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        public static Price Parse(JObject                              JSON,
+                                  CustomJObjectParserDelegate<Price>?  CustomPriceParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Price   price,
-                         out String  ErrorResponse,
+                         out var price,
+                         out var errorResponse,
                          CustomPriceParser))
             {
                 return price;
             }
 
-            throw new ArgumentException("The given JSON representation of a price is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomPriceParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a price.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
-        public static Price Parse(String                              Text,
-                                  CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Price   price,
-                         out String  ErrorResponse,
-                         CustomPriceParser))
-            {
-                return price;
-            }
-
-            throw new ArgumentException("The given text representation of a price is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a price is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -128,38 +102,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
-        public static Price? TryParse(JObject                             JSON,
-                                      CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        public static Price? TryParse(JObject                              JSON,
+                                      CustomJObjectParserDelegate<Price>?  CustomPriceParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Price   price,
-                         out String  ErrorResponse,
-                         CustomPriceParser))
-            {
-                return price;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomPriceParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a price.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
-        public static Price? TryParse(String                              Text,
-                                      CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Price   price,
-                         out String  ErrorResponse,
+                         out var price,
+                         out var errorResponse,
                          CustomPriceParser))
             {
                 return price;
@@ -181,9 +130,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Price">The parsed price.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out Price   Price,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out Price    Price,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Price,
@@ -198,10 +147,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Price">The parsed price.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
-        public static Boolean TryParse(JObject                             JSON,
-                                       out Price                           Price,
-                                       out String                          ErrorResponse,
-                                       CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
+        public static Boolean TryParse(JObject                              JSON,
+                                       out Price                            Price,
+                                       out String?                          ErrorResponse,
+                                       CustomJObjectParserDelegate<Price>?  CustomPriceParser   = null)
         {
 
             try
@@ -254,43 +203,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
             catch (Exception e)
             {
-                Price  = default;
-                ErrorResponse      = "The given JSON representation of a price is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out Price, out ErrorResponse, CustomPriceParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a price.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Price">The parsed price.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomPriceParser">A delegate to parse custom price JSON objects.</param>
-        public static Boolean TryParse(String                              Text,
-                                       out Price                           Price,
-                                       out String                          ErrorResponse,
-                                       CustomJObjectParserDelegate<Price>  CustomPriceParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Price,
-                                out ErrorResponse,
-                                CustomPriceParser);
-
-            }
-            catch (Exception e)
-            {
                 Price          = default;
-                ErrorResponse  = "The given text representation of a price is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a price is invalid: " + e.Message;
                 return false;
             }
 
@@ -304,12 +218,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Price> CustomPriceSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Price>? CustomPriceSerializer = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("excl_vat",        ExcludingVAT),
+                                 new JProperty("excl_vat",  ExcludingVAT),
 
                            IncludingVAT.HasValue
                                ? new JProperty("incl_vat",  IncludingVAT)
@@ -354,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (Price Price1,
                                            Price Price2)
 
-            => !(Price1 == Price2);
+            => !Price1.Equals(Price2);
 
         #endregion
 
@@ -384,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (Price Price1,
                                            Price Price2)
 
-            => !(Price1 > Price2);
+            => Price1.CompareTo(Price2) <= 0;
 
         #endregion
 
@@ -414,7 +328,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (Price Price1,
                                            Price Price2)
 
-            => !(Price1 < Price2);
+            => Price1.CompareTo(Price2) >= 0;
 
         #endregion
 
@@ -425,10 +339,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two prices.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A price to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Price price
                    ? CompareTo(price)
@@ -440,9 +354,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Price)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two prices.
         /// </summary>
-        /// <param name="Price">An object to compare with.</param>
+        /// <param name="Price">A price to compare with.</param>
         public Int32 CompareTo(Price Price)
         {
 
@@ -464,11 +378,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two prices for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A price to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Price price &&
                    Equals(price);
@@ -481,13 +394,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two prices for equality.
         /// </summary>
         /// <param name="Price">A price to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Price Price)
 
             => ExcludingVAT.Equals(Price.ExcludingVAT) &&
 
-               ((!IncludingVAT.HasValue && !Price.IncludingVAT.HasValue) ||
-                 (IncludingVAT.HasValue &&  Price.IncludingVAT.HasValue && IncludingVAT.Value.Equals(Price.IncludingVAT.Value)));
+            ((!IncludingVAT.HasValue && !Price.IncludingVAT.HasValue) ||
+              (IncludingVAT.HasValue &&  Price.IncludingVAT.HasValue && IncludingVAT.Value.Equals(Price.IncludingVAT.Value)));
 
         #endregion
 
@@ -504,11 +416,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return ExcludingVAT.GetHashCode() * 3 ^
-
-                       (IncludingVAT.HasValue
-                            ? IncludingVAT.GetHashCode()
-                            : 0);
+                return ExcludingVAT. GetHashCode() * 3 ^
+                       IncludingVAT?.GetHashCode() ?? 0;
 
             }
         }
@@ -522,8 +431,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(ExcludingVAT,
-                             IncludingVAT.HasValue ? " / " + IncludingVAT : "");
+            => String.Concat(
+
+                   ExcludingVAT,
+
+                   IncludingVAT.HasValue
+                       ? " / " + IncludingVAT
+                       : ""
+
+               );
 
         #endregion
 

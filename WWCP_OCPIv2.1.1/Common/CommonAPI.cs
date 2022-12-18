@@ -379,10 +379,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<Location_Id,    Location>();
-            this.Tariffs                  = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.Sessions                 = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.Tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
+            this.Sessions                 = new Dictionary<Session_Id,     Session>();
             this.Tokens                   = new Dictionary<Token_Id,       TokenStatus>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.ChargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -468,10 +468,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<Location_Id,    Location>();
-            this.Tariffs                  = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
-            this.Sessions                 = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
+            this.Tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
+            this.Sessions                 = new Dictionary<Session_Id,     Session>();
             this.Tokens                   = new Dictionary<Token_Id,       TokenStatus>();
-            this.ChargeDetailRecords      = new Dictionary<CountryCode,    Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
+            this.ChargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
 
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -3001,7 +3001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Tariffs
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> Tariffs;
+        private readonly Dictionary<Tariff_Id , Tariff> Tariffs;
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -3025,22 +3025,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Tariffs)
             {
 
-                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    Tariffs.Add(Tariff.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                {
-                    tariffs = new Dictionary<Tariff_Id, Tariff>();
-                    parties.Add(Tariff.PartyId, tariffs);
-                }
-
-                if (!tariffs.ContainsKey(Tariff.Id))
+                if (!Tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    tariffs.Add(Tariff.Id, Tariff);
+                    Tariffs.Add(Tariff.Id, Tariff);
 
                     var OnTariffAddedLocal = OnTariffAdded;
                     if (OnTariffAddedLocal != null)
@@ -3080,22 +3068,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Tariffs)
             {
 
-                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    Tariffs.Add(Tariff.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                {
-                    tariffs = new Dictionary<Tariff_Id, Tariff>();
-                    parties.Add(Tariff.PartyId, tariffs);
-                }
-
-                if (!tariffs.ContainsKey(Tariff.Id))
+                if (!Tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    tariffs.Add(Tariff.Id, Tariff);
+                    Tariffs.Add(Tariff.Id, Tariff);
 
                     var OnTariffAddedLocal = OnTariffAdded;
                     if (OnTariffAddedLocal != null)
@@ -3134,19 +3110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Tariffs)
             {
 
-                if (!Tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    Tariffs.Add(newOrUpdatedTariff.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(newOrUpdatedTariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                {
-                    tariffs = new Dictionary<Tariff_Id, Tariff>();
-                    parties.Add(newOrUpdatedTariff.PartyId, tariffs);
-                }
-
-                if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out Tariff existingTariff))
+                if (Tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3156,7 +3120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
                     }
 
-                    tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
+                    Tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal != null)
@@ -3178,7 +3142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
+                Tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
 
                 var OnTariffAddedLocal = OnTariffAdded;
                 if (OnTariffAddedLocal != null)
@@ -3215,12 +3179,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
-                    tariffs.ContainsKey(Tariff.Id))
+                if (Tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    tariffs[Tariff.Id] = Tariff;
+                    Tariffs[Tariff.Id] = Tariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal != null)
@@ -3271,9 +3233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
-                    tariffs.TryGetValue(Tariff.Id,          out Tariff                                              tariff))
+                if (Tariffs.TryGetValue(Tariff.Id, out var tariff))
                 {
 
                     var patchResult = tariff.TryPatch(TariffPatch,
@@ -3282,7 +3242,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        tariffs[Tariff.Id] = patchResult.PatchedData;
+                        Tariffs[Tariff.Id] = patchResult.PatchedData;
 
                         var OnTariffChangedLocal = OnTariffChanged;
                         if (OnTariffChangedLocal != null)
@@ -3317,51 +3277,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region TariffExists(CountryCode, PartyId, TariffId)
+        #region TariffExists(TariffId)
 
-        public Boolean TariffExists(CountryCode  CountryCode,
-                                    Party_Id     PartyId,
-                                    Tariff_Id    TariffId)
+        public Boolean TariffExists(Tariff_Id TariffId)
         {
 
             lock (Tariffs)
             {
-
-                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                    {
-                        return tariffs.ContainsKey(TariffId);
-                    }
-                }
-
-                return false;
-
+                return Tariffs.ContainsKey(TariffId);
             }
 
         }
 
         #endregion
 
-        #region TryGetTariff(CountryCode, PartyId, TariffId, out Tariff)
+        #region TryGetTariff(TariffId, out Tariff)
 
-        public Boolean TryGetTariff(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Tariff_Id   TariffId,
-                                      out Tariff  Tariff)
+        public Boolean TryGetTariff(Tariff_Id    TariffId,
+                                    out Tariff?  Tariff)
         {
 
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                    {
-                        if (tariffs.TryGetValue(TariffId, out Tariff))
-                            return true;
-                    }
-                }
+                if (Tariffs.TryGetValue(TariffId, out Tariff))
+                    return true;
 
                 Tariff = null;
                 return false;
@@ -3372,79 +3312,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetTariffs  (CountryCode = null, PartyId = null)
+        #region GetTariffs  ()
 
-        public IEnumerable<Tariff> GetTariffs(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<Tariff> GetTariffs()
         {
 
             lock (Tariffs)
             {
-
-                if (CountryCode.HasValue && PartyId.HasValue)
-                {
-                    if (Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                    {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
-                        {
-                            return tariffs.Values.ToArray();
-                        }
-                    }
-                }
-
-                else if (!CountryCode.HasValue && PartyId.HasValue)
-                {
-
-                    var allTariffs = new List<Tariff>();
-
-                    foreach (var party in Tariffs.Values)
-                    {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
-                        {
-                            allTariffs.AddRange(tariffs.Values);
-                        }
-                    }
-
-                    return allTariffs;
-
-                }
-
-                else if (CountryCode.HasValue && !PartyId.HasValue)
-                {
-                    if (Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                    {
-
-                        var allTariffs = new List<Tariff>();
-
-                        foreach (var tariffs in parties.Values)
-                        {
-                            allTariffs.AddRange(tariffs.Values);
-                        }
-
-                        return allTariffs;
-
-                    }
-                }
-
-                else
-                {
-
-                    var allTariffs = new List<Tariff>();
-
-                    foreach (var party in Tariffs.Values)
-                    {
-                        foreach (var tariffs in party.Values)
-                        {
-                            allTariffs.AddRange(tariffs.Values);
-                        }
-                    }
-
-                    return allTariffs;
-
-                }
-
-                return new Tariff[0];
-
+                return Tariffs.Values.ToArray();
             }
 
         }
@@ -3454,7 +3329,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveTariff(Tariff)
 
-        public Tariff RemoveTariff(Tariff Tariff)
+        public Tariff? RemoveTariff(Tariff Tariff)
         {
 
             if (Tariff is null)
@@ -3463,28 +3338,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
+                if (Tariffs.Remove(Tariff.Id, out var _tariff))
+                    return _tariff;
 
-                    if (parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                    {
-
-                        if (tariffs.ContainsKey(Tariff.Id))
-                        {
-                            tariffs.Remove(Tariff.Id);
-                        }
-
-                        if (!tariffs.Any())
-                            parties.Remove(Tariff.PartyId);
-
-                    }
-
-                    if (!parties.Any())
-                        Tariffs.Remove(Tariff.CountryCode);
-
-                }
-
-                return Tariff;
+                return null;
 
             }
 
@@ -3509,39 +3366,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveAllTariffs(CountryCode, PartyId)
-
-        /// <summary>
-        /// Remove all tariffs owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllTariffs(CountryCode  CountryCode,
-                                     Party_Id     PartyId)
-        {
-
-            lock (Tariffs)
-            {
-
-                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
-                    {
-                        tariffs.Clear();
-                    }
-                }
-
-            }
-
-        }
-
-        #endregion
-
         #endregion
 
         #region Sessions
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id , Session>>> Sessions;
+        private readonly Dictionary<Session_Id , Session> Sessions;
 
 
         public delegate Task OnSessionCreatedDelegate(Session Session);
@@ -3564,22 +3393,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
 
-                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
-                    Sessions.Add(Session.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
-                {
-                    sessions = new Dictionary<Session_Id, Session>();
-                    parties.Add(Session.PartyId, sessions);
-                }
-
-                if (!sessions.ContainsKey(Session.Id))
+                if (!Sessions.ContainsKey(Session.Id))
                 {
 
-                    sessions.Add(Session.Id, Session);
+                    Sessions.Add(Session.Id, Session);
 
                     var OnSessionCreatedLocal = OnSessionCreated;
                     if (OnSessionCreatedLocal != null)
@@ -3619,22 +3436,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
 
-                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
-                    Sessions.Add(Session.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
-                {
-                    sessions = new Dictionary<Session_Id, Session>();
-                    parties.Add(Session.PartyId, sessions);
-                }
-
-                if (!sessions.ContainsKey(Session.Id))
+                if (!Sessions.ContainsKey(Session.Id))
                 {
 
-                    sessions.Add(Session.Id, Session);
+                    Sessions.Add(Session.Id, Session);
 
                     var OnSessionCreatedLocal = OnSessionCreated;
                     if (OnSessionCreatedLocal != null)
@@ -3673,19 +3478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
 
-                if (!Sessions.TryGetValue(newOrUpdatedSession.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
-                    Sessions.Add(newOrUpdatedSession.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(newOrUpdatedSession.PartyId, out Dictionary<Session_Id, Session> sessions))
-                {
-                    sessions = new Dictionary<Session_Id, Session>();
-                    parties.Add(newOrUpdatedSession.PartyId, sessions);
-                }
-
-                if (sessions.TryGetValue(newOrUpdatedSession.Id, out Session existingSession))
+                if (Sessions.TryGetValue(newOrUpdatedSession.Id, out Session existingSession))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3695,7 +3488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
                     }
 
-                    sessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
+                    Sessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
 
                     var OnSessionChangedLocal = OnSessionChanged;
                     if (OnSessionChangedLocal != null)
@@ -3717,7 +3510,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                sessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
+                Sessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
 
                 var OnSessionCreatedLocal = OnSessionCreated;
                 if (OnSessionCreatedLocal != null)
@@ -3754,12 +3547,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
-                    parties.  TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
-                    sessions.ContainsKey(Session.Id))
+                if (Sessions.ContainsKey(Session.Id))
                 {
 
-                    sessions[Session.Id] = Session;
+                    Sessions[Session.Id] = Session;
 
                     var OnSessionChangedLocal = OnSessionChanged;
                     if (OnSessionChangedLocal != null)
@@ -3810,9 +3601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
-                    parties. TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
-                    sessions.TryGetValue(Session.Id,          out Session                                               session))
+                if (Sessions.TryGetValue(Session.Id, out var session))
                 {
 
                     var patchResult = session.TryPatch(SessionPatch,
@@ -3821,7 +3610,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        sessions[Session.Id] = patchResult.PatchedData;
+                        Sessions[Session.Id] = patchResult.PatchedData;
 
                         var OnSessionChangedLocal = OnSessionChanged;
                         if (OnSessionChangedLocal != null)
@@ -3855,26 +3644,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region SessionExists(CountryCode, PartyId, SessionId)
+        #region SessionExists(SessionId)
 
-        public Boolean SessionExists(CountryCode  CountryCode,
-                                     Party_Id     PartyId,
-                                     Session_Id   SessionId)
+        public Boolean SessionExists(Session_Id SessionId)
         {
 
             lock (Sessions)
             {
-
-                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
-                    {
-                        return sessions.ContainsKey(SessionId);
-                    }
-                }
-
-                return false;
-
+                return Sessions.ContainsKey(SessionId);
             }
 
         }
@@ -3883,23 +3660,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region TryGetSession(CountryCode, PartyId, SessionId, out Session)
 
-        public Boolean TryGetSession(CountryCode  CountryCode,
-                                     Party_Id     PartyId,
-                                     Session_Id   SessionId,
-                                     out Session  Session)
+        public Boolean TryGetSession(Session_Id    SessionId,
+                                     out Session?  Session)
         {
 
             lock (Sessions)
             {
-
-                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
-                    {
-                        if (sessions.TryGetValue(SessionId, out Session))
-                            return true;
-                    }
-                }
+                if (Sessions.TryGetValue(SessionId, out Session))
+                    return true;
 
                 Session = null;
                 return false;
@@ -3910,79 +3678,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetSessions  (CountryCode = null, PartyId = null)
+        #region GetSessions  ()
 
-        public IEnumerable<Session> GetSessions(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<Session> GetSessions()
         {
 
             lock (Sessions)
             {
-
-                if (CountryCode.HasValue && PartyId.HasValue)
-                {
-                    if (Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                    {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
-                        {
-                            return sessions.Values.ToArray();
-                        }
-                    }
-                }
-
-                else if (!CountryCode.HasValue && PartyId.HasValue)
-                {
-
-                    var allSessions = new List<Session>();
-
-                    foreach (var party in Sessions.Values)
-                    {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
-                        {
-                            allSessions.AddRange(sessions.Values);
-                        }
-                    }
-
-                    return allSessions;
-
-                }
-
-                else if (CountryCode.HasValue && !PartyId.HasValue)
-                {
-                    if (Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                    {
-
-                        var allSessions = new List<Session>();
-
-                        foreach (var sessions in parties.Values)
-                        {
-                            allSessions.AddRange(sessions.Values);
-                        }
-
-                        return allSessions;
-
-                    }
-                }
-
-                else
-                {
-
-                    var allSessions = new List<Session>();
-
-                    foreach (var party in Sessions.Values)
-                    {
-                        foreach (var sessions in party.Values)
-                        {
-                            allSessions.AddRange(sessions.Values);
-                        }
-                    }
-
-                    return allSessions;
-
-                }
-
-                return new Session[0];
-
+                return Sessions.Values.ToArray();
             }
 
         }
@@ -3992,7 +3695,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveSession(Session)
 
-        public Session RemoveSession(Session Session)
+        public Session? RemoveSession(Session Session)
         {
 
             if (Session is null)
@@ -4001,28 +3704,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
+                if (Sessions.Remove(Session.Id, out var _session))
+                    return _session;
 
-                    if (parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
-                    {
-
-                        if (sessions.ContainsKey(Session.Id))
-                        {
-                            sessions.Remove(Session.Id);
-                        }
-
-                        if (!sessions.Any())
-                            parties.Remove(Session.PartyId);
-
-                    }
-
-                    if (!parties.Any())
-                        Sessions.Remove(Session.CountryCode);
-
-                }
-
-                return Session;
+                return null;
 
             }
 
@@ -4041,34 +3726,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (Sessions)
             {
                 Sessions.Clear();
-            }
-
-        }
-
-        #endregion
-
-        #region RemoveAllSessions(CountryCode, PartyId)
-
-        /// <summary>
-        /// Remove all sessions owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllSessions(CountryCode  CountryCode,
-                                      Party_Id     PartyId)
-        {
-
-            lock (Sessions)
-            {
-
-                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
-                    {
-                        sessions.Clear();
-                    }
-                }
-
             }
 
         }
@@ -4453,7 +4110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region ChargeDetailRecords
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>> ChargeDetailRecords;
+        private readonly Dictionary<CDR_Id, CDR> ChargeDetailRecords;
 
 
         public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
@@ -4477,22 +4134,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
-                    ChargeDetailRecords.Add(CDR.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
-                {
-                    partyCDRs = new Dictionary<CDR_Id, CDR>();
-                    parties.Add(CDR.PartyId, partyCDRs);
-                }
-
-                if (!partyCDRs.ContainsKey(CDR.Id))
+                if (!ChargeDetailRecords.ContainsKey(CDR.Id))
                 {
 
-                    partyCDRs.Add(CDR.Id, CDR);
+                    ChargeDetailRecords.Add(CDR.Id, CDR);
 
                     var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
                     if (OnChargeDetailRecordAddedLocal != null)
@@ -4532,22 +4177,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
-                    ChargeDetailRecords.Add(CDR.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
-                {
-                    partyCDRs = new Dictionary<CDR_Id, CDR>();
-                    parties.Add(CDR.PartyId, partyCDRs);
-                }
-
-                if (!partyCDRs.ContainsKey(CDR.Id))
+                if (!ChargeDetailRecords.ContainsKey(CDR.Id))
                 {
 
-                    partyCDRs.Add(CDR.Id, CDR);
+                    ChargeDetailRecords.Add(CDR.Id, CDR);
 
                     var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
                     if (OnChargeDetailRecordAddedLocal != null)
@@ -4586,19 +4219,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.TryGetValue(newOrUpdatedCDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
-                    parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
-                    ChargeDetailRecords.Add(newOrUpdatedCDR.CountryCode, parties);
-                }
-
-                if (!parties.TryGetValue(newOrUpdatedCDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
-                {
-                    CDRs = new Dictionary<CDR_Id, CDR>();
-                    parties.Add(newOrUpdatedCDR.PartyId, CDRs);
-                }
-
-                if (CDRs.TryGetValue(newOrUpdatedCDR.Id, out CDR existingCDR))
+                if (ChargeDetailRecords.TryGetValue(newOrUpdatedCDR.Id, out var existingCDR))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -4608,7 +4229,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
                     }
 
-                    CDRs[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
+                    ChargeDetailRecords[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
 
                     var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
                     if (OnChargeDetailRecordChangedLocal != null)
@@ -4630,7 +4251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                CDRs.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
+                ChargeDetailRecords.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
 
                 var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
                 if (OnChargeDetailRecordAddedLocal != null)
@@ -4667,12 +4288,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties)   &&
-                    parties.            TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  partyCDRs) &&
-                    partyCDRs.          ContainsKey(CDR.Id))
+                if (ChargeDetailRecords.ContainsKey(CDR.Id))
                 {
 
-                    partyCDRs[CDR.Id] = CDR;
+                    ChargeDetailRecords[CDR.Id] = CDR;
 
                     var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
                     if (OnChargeDetailRecordChangedLocal != null)
@@ -4702,51 +4321,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region CDRExists(CountryCode, PartyId, CDRId)
+        #region CDRExists(CDRId)
 
-        public Boolean CDRExists(CountryCode  CountryCode,
-                                 Party_Id     PartyId,
-                                 CDR_Id       CDRId)
+        public Boolean CDRExists(CDR_Id CDRId)
         {
 
             lock (ChargeDetailRecords)
             {
-
-                if (ChargeDetailRecords.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
-                    {
-                        return partyCDRs.ContainsKey(CDRId);
-                    }
-                }
-
-                return false;
-
+                return ChargeDetailRecords.ContainsKey(CDRId);
             }
 
         }
 
         #endregion
 
-        #region TryGetCDR(CountryCode, PartyId, CDRId, out CDR)
+        #region TryGetCDR(CDRId, out CDR)
 
-        public Boolean TryGetCDR(CountryCode  CountryCode,
-                                 Party_Id     PartyId,
-                                 CDR_Id       CDRId,
-                                 out CDR      CDR)
+        public Boolean TryGetCDR(CDR_Id    CDRId,
+                                 out CDR?  CDR)
         {
 
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
-                    {
-                        if (partyCDRs.TryGetValue(CDRId, out CDR))
-                            return true;
-                    }
-                }
+                if (ChargeDetailRecords.TryGetValue(CDRId, out CDR))
+                    return true;
 
                 CDR = null;
                 return false;
@@ -4757,79 +4356,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetCDRs  (CountryCode = null, PartyId = null)
+        #region GetCDRs  ()
 
-        public IEnumerable<CDR> GetCDRs(CountryCode?  CountryCode   = null,
-                                        Party_Id?     PartyId       = null)
+        public IEnumerable<CDR> GetCDRs()
         {
 
             lock (ChargeDetailRecords)
             {
-
-                if (CountryCode.HasValue && PartyId.HasValue)
-                {
-                    if (ChargeDetailRecords.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                    {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> partyCDRs))
-                        {
-                            return partyCDRs.Values.ToArray();
-                        }
-                    }
-                }
-
-                else if (!CountryCode.HasValue && PartyId.HasValue)
-                {
-
-                    var allCDRs = new List<CDR>();
-
-                    foreach (var party in ChargeDetailRecords.Values)
-                    {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> partyCDRs))
-                        {
-                            allCDRs.AddRange(partyCDRs.Values);
-                        }
-                    }
-
-                    return allCDRs;
-
-                }
-
-                else if (CountryCode.HasValue && !PartyId.HasValue)
-                {
-                    if (ChargeDetailRecords.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                    {
-
-                        var allCDRs = new List<CDR>();
-
-                        foreach (var partyCDRs in parties.Values)
-                        {
-                            allCDRs.AddRange(partyCDRs.Values);
-                        }
-
-                        return allCDRs;
-
-                    }
-                }
-
-                else
-                {
-
-                    var allCDRs = new List<CDR>();
-
-                    foreach (var party in ChargeDetailRecords.Values)
-                    {
-                        foreach (var partyCDRs in party.Values)
-                        {
-                            allCDRs.AddRange(partyCDRs.Values);
-                        }
-                    }
-
-                    return allCDRs;
-
-                }
-
-                return new CDR[0];
-
+                return ChargeDetailRecords.Values.ToArray();
             }
 
         }
@@ -4839,7 +4373,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveCDR(CDR)
 
-        public CDR RemoveCDR(CDR CDR)
+        public CDR? RemoveCDR(CDR CDR)
         {
 
             if (CDR is null)
@@ -4848,28 +4382,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
+                if (ChargeDetailRecords.Remove(CDR.Id, out var _cdr))
+                    return _cdr;
 
-                    if (parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
-                    {
-
-                        if (partyCDRs.ContainsKey(CDR.Id))
-                        {
-                            partyCDRs.Remove(CDR.Id);
-                        }
-
-                        if (!partyCDRs.Any())
-                            parties.Remove(CDR.PartyId);
-
-                    }
-
-                    if (!parties.Any())
-                        ChargeDetailRecords.Remove(CDR.CountryCode);
-
-                }
-
-                return CDR;
+                return null;
 
             }
 
@@ -4888,32 +4404,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (ChargeDetailRecords)
             {
                 ChargeDetailRecords.Clear();
-            }
-
-        }
-
-        #endregion
-
-        #region RemoveAllCDRs(CountryCode, PartyId)
-
-        /// <summary>
-        /// Remove all CDRs owned by the given party.
-        /// </summary>
-        /// <param name="CountryCode">The country code of the party.</param>
-        /// <param name="PartyId">The identification of the party.</param>
-        public void RemoveAllCDRs(CountryCode  CountryCode,
-                                  Party_Id     PartyId)
-        {
-
-            lock (ChargeDetailRecords)
-            {
-
-                if (ChargeDetailRecords.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
-                {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
-                        partyCDRs.Clear();
-                }
-
             }
 
         }

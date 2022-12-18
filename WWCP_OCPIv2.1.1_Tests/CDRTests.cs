@@ -48,31 +48,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #region Defined CDR1
 
-            var CDR1 = new CDR(CountryCode.Parse("DE"),
-                               Party_Id.   Parse("GEF"),
-                               CDR_Id.     Parse("CDR0001"),
-                               DateTime.   Parse("2020-04-12T18:20:19Z"),
-                               DateTime.   Parse("2020-04-12T22:20:19Z"),
-                               new CDRToken(
-                                   Token_Id.   Parse("1234"),
-                                   TokenType.  RFID,
-                                   Contract_Id.Parse("C1234")
-                               ),
+            var CDR1 = new CDR(CDR_Id.     Parse("CDR0001"),
+                               DateTime.   Parse("2020-04-12T18:20:19Z").ToUniversalTime(),
+                               DateTime.   Parse("2020-04-12T22:20:19Z").ToUniversalTime(),
+                               Auth_Id.    Parse("1234"),
                                AuthMethods.AUTH_REQUEST,
-                               new CDRLocation(
+                               new Location(
                                    Location_Id.     Parse("LOC0001"),
+                                   LocationType.UNDERGROUND_GARAGE,
                                    "Biberweg 18",
                                    "Jena",
-                                   "Country.Germany",
-                                   GeoCoordinate.   Parse(10, 20),
-                                   EVSE_UId.        Parse("DE*GEF*E*LOC0001*1"),
-                                   EVSE_Id.         Parse("DE*GEF*E*LOC0001*1"),
-                                   Connector_Id.    Parse("1"),
-                                   ConnectorType.   IEC_62196_T2,
-                                   ConnectorFormats.SOCKET,
-                                   PowerTypes.      AC_3_PHASE,
-                                   "Name?",
-                                   "07749"
+                                   "07749",
+                                   Country.Germany,
+                                   GeoCoordinate.   Parse(10, 20)
                                ),
                                Currency.EUR,
 
@@ -81,7 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DateTime.Parse("2020-04-12T18:21:49Z"),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               CDRDimensions.ENERGY,
+                                               CDRDimensionType.ENERGY,
                                                1.33M
                                            )
                                        },
@@ -91,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
                                        new CDRDimension[] {
                                            new CDRDimension(
-                                               CDRDimensions.TIME,
+                                               CDRDimensionType.TIME,
                                                5.12M
                                            )
                                        },
@@ -99,20 +87,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    )
                                },
 
-                               // Total costs
-                               new Price(
-                                   10.00,
-                                   11.60
-                               ),
+                               // Total cost
+                               10.00M,
 
                                // Total Energy
                                50.00M,
 
                                // Total time
                                TimeSpan.              FromMinutes(30),
-
-                               Session_Id.            Parse("0815"),
-                               AuthorizationReference.Parse("Auth0815"),
                                Meter_Id.              Parse("Meter0815"),
 
                                // OCPI Computer Science Extensions
@@ -154,8 +136,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                new Tariff[] {
                                    new Tariff(
-                                       CountryCode.Parse("DE"),
-                                       Party_Id.   Parse("GEF"),
                                        Tariff_Id.  Parse("TARIFF0001"),
                                        Currency.EUR,
                                        new TariffElement[] {
@@ -190,22 +170,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                }
                                            )
                                        },
-                                       TariffTypes.PROFILE_GREEN,
                                        new DisplayText[] {
                                            new DisplayText(Languages.de, "Hallo Welt!"),
                                            new DisplayText(Languages.en, "Hello world!"),
                                        },
                                        URL.Parse("https://open.charging.cloud"),
-                                       new Price( // Min Price
-                                           1.10,
-                                           1.26
-                                       ),
-                                       new Price( // Max Price
-                                           2.20,
-                                           2.52
-                                       ),
-                                       DateTime.Parse("2020-12-01"), // Start timestamp
-                                       DateTime.Parse("2020-12-31"), // End timestamp
                                        new EnergyMix(
                                            true,
                                            new EnergySource[] {
@@ -255,45 +224,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                    "https://open.charging.cloud/pools/1/stations/1/evse/1/publicKey"
                                ),
 
-                               // Total Fixed Costs
-                               new Price(
-                                   20.00,
-                                   23.10
-                               ),
-
-                               // Total Energy Cost
-                               new Price(
-                                   20.00,
-                                   23.10
-                               ),
-
-                               // Total Time Cost
-                               new Price(
-                                   20.00,
-                                   23.10
-                               ),
-
                                // Total Parking Time
                                TimeSpan.FromMinutes(120),
 
-                               // Total Parking Cost
-                               new Price(
-                                   20.00,
-                                   23.10
-                               ),
-
-                               // Total Reservation Cost
-                               new Price(
-                                   20.00,
-                                   23.10
-                               ),
-
                                "Remark!",
-                               InvoiceReference_Id.Parse("Invoice:0815"),
-                               true, // IsCredit
-                               CreditReference_Id.Parse("Credit:0815"),
 
-                               DateTime.Parse("2020-09-12")
+                               DateTime.Parse("2020-09-12").ToUniversalTime()
 
                            );
 
@@ -306,43 +242,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual("CDR0001",                     JSON["id"].          Value<String>());
 
 
-            Assert.IsTrue(CDR.TryParse(JSON, out CDR CDR2, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(CDR.TryParse(JSON, out var cdr2, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(CDR1.CountryCode,              CDR2.CountryCode);
-            Assert.AreEqual(CDR1.PartyId,                  CDR2.PartyId);
-            Assert.AreEqual(CDR1.Id,                       CDR2.Id);
+            Assert.AreEqual(CDR1.Id,                       cdr2.Id);
 
-            Assert.AreEqual(CDR1.Start.ToIso8601(),        CDR2.Start.ToIso8601());
-            Assert.AreEqual(CDR1.End.  ToIso8601(),        CDR2.End.  ToIso8601());
-            Assert.AreEqual(CDR1.CDRToken,                 CDR2.CDRToken);
-            Assert.AreEqual(CDR1.AuthMethod,               CDR2.AuthMethod);
-            Assert.AreEqual(CDR1.Location,                 CDR2.Location);
-            Assert.AreEqual(CDR1.Currency,                 CDR2.Currency);
-            Assert.AreEqual(CDR1.ChargingPeriods,          CDR2.ChargingPeriods);
-            Assert.AreEqual(CDR1.TotalCosts,               CDR2.TotalCosts);
-            Assert.AreEqual(CDR1.TotalEnergy,              CDR2.TotalEnergy);
-            Assert.AreEqual(CDR1.TotalTime,                CDR2.TotalTime);
+            Assert.AreEqual(CDR1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
+            Assert.AreEqual(CDR1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
+            Assert.AreEqual(CDR1.AuthId,                   cdr2.AuthId);
+            Assert.AreEqual(CDR1.AuthMethod,               cdr2.AuthMethod);
+            Assert.AreEqual(CDR1.Location,                 cdr2.Location);
+            Assert.AreEqual(CDR1.Currency,                 cdr2.Currency);
+            Assert.AreEqual(CDR1.ChargingPeriods,          cdr2.ChargingPeriods);
+            Assert.AreEqual(CDR1.TotalCost,                cdr2.TotalCost);
+            Assert.AreEqual(CDR1.TotalEnergy,              cdr2.TotalEnergy);
+            Assert.AreEqual(CDR1.TotalTime,                cdr2.TotalTime);
 
-            Assert.AreEqual(CDR1.SessionId,                CDR2.SessionId);
-            Assert.AreEqual(CDR1.AuthorizationReference,   CDR2.AuthorizationReference);
-            Assert.AreEqual(CDR1.MeterId,                  CDR2.MeterId);
-            Assert.AreEqual(CDR1.EnergyMeter,              CDR2.EnergyMeter);
-            Assert.AreEqual(CDR1.TransparencySoftwares,    CDR2.TransparencySoftwares);
-            Assert.AreEqual(CDR1.Tariffs,                  CDR2.Tariffs);
-            Assert.AreEqual(CDR1.SignedData,               CDR2.SignedData);
-            Assert.AreEqual(CDR1.TotalFixedCosts,          CDR2.TotalFixedCosts);
-            Assert.AreEqual(CDR1.TotalEnergyCost,          CDR2.TotalEnergyCost);
-            Assert.AreEqual(CDR1.TotalTimeCost,            CDR2.TotalTimeCost);
-            Assert.AreEqual(CDR1.TotalParkingTime,         CDR2.TotalParkingTime);
-            Assert.AreEqual(CDR1.TotalParkingCost,         CDR2.TotalParkingCost);
-            Assert.AreEqual(CDR1.TotalReservationCost,     CDR2.TotalReservationCost);
-            Assert.AreEqual(CDR1.Remark,                   CDR2.Remark);
-            Assert.AreEqual(CDR1.InvoiceReferenceId,       CDR2.InvoiceReferenceId);
-            Assert.AreEqual(CDR1.Credit,                   CDR2.Credit);
-            Assert.AreEqual(CDR1.CreditReferenceId,        CDR2.CreditReferenceId);
+            Assert.AreEqual(CDR1.MeterId,                  cdr2.MeterId);
+            Assert.AreEqual(CDR1.EnergyMeter,              cdr2.EnergyMeter);
+            Assert.AreEqual(CDR1.TransparencySoftwares,    cdr2.TransparencySoftwares);
+            Assert.AreEqual(CDR1.Tariffs,                  cdr2.Tariffs);
+            Assert.AreEqual(CDR1.SignedData,               cdr2.SignedData);
+            Assert.AreEqual(CDR1.TotalParkingTime,         cdr2.TotalParkingTime);
+            Assert.AreEqual(CDR1.Remark,                   cdr2.Remark);
 
-            Assert.AreEqual(CDR1.LastUpdated.ToIso8601(),  CDR2.LastUpdated.ToIso8601());
+            Assert.AreEqual(CDR1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
 
         }
 
@@ -430,11 +354,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            Assert.IsTrue(CDR.TryParse(JSON, out CDR parsedCDR, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(CDR.TryParse(JObject.Parse(JSON), out var parsedCDR, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(CountryCode.Parse("BE"),                               parsedCDR.CountryCode);
-            Assert.AreEqual(Party_Id.   Parse("BEC"),                              parsedCDR.PartyId);
             Assert.AreEqual(CDR_Id.Parse("12345"),                                 parsedCDR.Id);
             //Assert.AreEqual(true,                                                  parsedCDR.Publish);
             //Assert.AreEqual(CDR1.Start.    ToIso8601(),                            parsedCDR.Start.    ToIso8601());

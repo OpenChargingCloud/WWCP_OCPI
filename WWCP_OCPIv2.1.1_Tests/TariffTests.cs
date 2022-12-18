@@ -46,8 +46,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         {
 
             var TariffA = new Tariff(
-                              CountryCode.Parse("DE"),
-                              Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
                               Currency.EUR,
                               new TariffElement[] {
@@ -82,22 +80,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       }
                                   )
                               },
-                              TariffTypes.PROFILE_GREEN,
                               new DisplayText[] {
                                   new DisplayText(Languages.de, "Hallo Welt!"),
                                   new DisplayText(Languages.en, "Hello world!"),
                               },
                               URL.Parse("https://open.charging.cloud"),
-                              new Price( // Min Price
-                                  1.10,
-                                  1.26
-                              ),
-                              new Price( // Max Price
-                                  2.20,
-                                  2.52
-                              ),
-                              DateTime.Parse("2020-12-01"), // Start timestamp
-                              DateTime.Parse("2020-12-31"), // End timestamp
                               new EnergyMix(
                                   true,
                                   new EnergySource[] {
@@ -119,31 +106,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                   "Stadtwerke Jena-Ost",
                                   "New Green Deal"
                               ),
-                              DateTime.Parse("2020-09-22")
+                              DateTime.Parse("2020-09-22").ToUniversalTime()
                           );
 
             var JSON = TariffA.ToJSON();
 
-            Assert.AreEqual("DE",                             JSON["country_code"].Value<String>());
-            Assert.AreEqual("GEF",                            JSON["party_id"].    Value<String>());
             Assert.AreEqual("TARIFF0001",                     JSON["id"].          Value<String>());
 
-            Assert.IsTrue(Tariff.TryParse(JSON, out Tariff TariffB, out String ErrorResponse));
-            Assert.IsNull(ErrorResponse);
+            Assert.IsTrue(Tariff.TryParse(JSON, out var TariffB, out var errorResponse));
+            Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(TariffA.CountryCode,              TariffB.CountryCode);
-            Assert.AreEqual(TariffA.PartyId,                  TariffB.PartyId);
             Assert.AreEqual(TariffA.Id,                       TariffB.Id);
             Assert.AreEqual(TariffA.Currency,                 TariffB.Currency);
             Assert.AreEqual(TariffA.TariffElements,           TariffB.TariffElements);
-
-            Assert.AreEqual(TariffA.TariffType,               TariffB.TariffType);
             Assert.AreEqual(TariffA.TariffAltText,            TariffB.TariffAltText);
             Assert.AreEqual(TariffA.TariffAltURL,             TariffB.TariffAltURL);
-            Assert.AreEqual(TariffA.MinPrice,                 TariffB.MinPrice);
-            Assert.AreEqual(TariffA.MaxPrice,                 TariffB.MaxPrice);
-            Assert.AreEqual(TariffA.Start,                    TariffB.Start);
-            Assert.AreEqual(TariffA.End,                      TariffB.End);
             Assert.AreEqual(TariffA.EnergyMix,                TariffB.EnergyMix);
 
             Assert.AreEqual(TariffA.LastUpdated.ToIso8601(),  TariffB.LastUpdated.ToIso8601());

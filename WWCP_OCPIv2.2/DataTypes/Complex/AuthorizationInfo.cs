@@ -206,11 +206,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Token                     [mandatory]
 
-                if (!JSON.ParseMandatoryJSON2("token",
-                                              "token",
-                                              OCPIv2_2.Token.TryParse,
-                                              out Token Token,
-                                              out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("token",
+                                             "token",
+                                             OCPIv2_2.Token.TryParse,
+                                             out Token Token,
+                                             out ErrorResponse))
                 {
                     return false;
                 }

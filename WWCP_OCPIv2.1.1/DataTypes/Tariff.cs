@@ -54,18 +54,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// The ISO-3166 alpha-2 country code of the CPO that 'owns' this session.
-        /// </summary>
-        [Optional]
-        public CountryCode                      CountryCode             { get; }
-
-        /// <summary>
-        /// The Id of the CPO that 'owns' this session (following the ISO-15118 standard).
-        /// </summary>
-        [Optional]
-        public Party_Id                         PartyId                 { get; }
-
-        /// <summary>
         /// The identification of the tariff within the CPOs platform (and suboperator platforms). 
         /// </summary>
         [Mandatory]
@@ -76,13 +64,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         [Mandatory]
         public Currency                         Currency                { get; }
-
-        /// <summary>
-        /// Defines the type of the tariff. This allows for distinction in case of given
-        /// charging preferences. When omitted, this tariff is valid for all charging sessions.
-        /// </summary>
-        [Optional]
-        public TariffTypes?                     TariffType              { get; }
 
         /// <summary>
         /// Multi-language alternative tariff info text.
@@ -98,51 +79,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public URL?                             TariffAltURL            { get; }
 
         /// <summary>
-        /// When this field is set, a charging session with this tariff will at least cost
-        /// this amount. This is different from a FLAT fee (Start Tariff, Transaction Fee),
-        /// as a FLAT fee is a fixed amount that has to be paid for any Charging Session.
-        /// A minimum price indicates that when the cost of a charging session is lower
-        /// than this amount, the cost of the charging session will be equal to this amount.
-        /// </summary>
-        [Optional]
-        public Price?                           MinPrice                { get; }
-
-        /// <summary>
-        /// When this field is set, a charging session with this tariff will NOT cost more
-        /// than this amount.
-        /// </summary>
-        [Optional]
-        public Price?                           MaxPrice                { get; }
-
-        /// <summary>
         /// An enumeration of tariff elements.
         /// </summary>
         [Mandatory]
         public IEnumerable<TariffElement>       TariffElements          { get; }
 
         /// <summary>
-        /// The time when this tariff becomes active, in UTC, time_zone field of the
-        /// charging location can be used to convert to local time. Typically used for
-        /// a new tariff that is already given with the charging location, before it
-        /// becomes active.
-        /// </summary>
-        [Optional]
-        public DateTime?                        Start                   { get; }
-
-        /// <summary>
-        /// The time after which this tariff is no longer valid, in UTC, time_zone field
-        /// if the charging location can be used to convert to local time. Typically used
-        /// when this tariff is going to be replaced with a different tariff in the near
-        /// future.
-        /// </summary>
-        [Optional]
-        public DateTime?                        End                     { get; }
-
-        /// <summary>
         /// Optional details on the energy supplied with this tariff.
         /// </summary>
         [Optional]
-        public EnergyMix                        EnergyMix               { get;  }
+        public EnergyMix?                       EnergyMix               { get;  }
 
         /// <summary>
         /// Timestamp when this tariff was last updated (or created).
@@ -162,35 +108,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charging tariff.
         /// </summary>
-        /// <param name="CountryCode">The ISO-3166 alpha-2 country code of the CPO that 'owns' this session.</param>
-        /// <param name="PartyId">The Id of the CPO that 'owns' this session (following the ISO-15118 standard).</param>
         /// <param name="Id">The identification of the tariff within the CPOs platform (and suboperator platforms).</param>
         /// <param name="Currency">ISO 4217 code of the currency used for this tariff.</param>
         /// <param name="TariffElements">An enumeration of tariff elements.</param>
         /// 
-        /// <param name="TariffType">Defines the type of the tariff.</param>
         /// <param name="TariffAltText">Multi-language alternative tariff info text.</param>
         /// <param name="TariffAltURL">URL to a web page that contains an explanation of the tariff information in human readable form.</param>
-        /// <param name="MinPrice">Minimum charging price.</param>
-        /// <param name="MaxPrice">Maximum charging price.</param>
-        /// <param name="Start">The timestamp when this tariff becomes active.</param>
-        /// <param name="End">The timestamp after which this tariff is no longer valid.</param>
         /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
         /// <param name="LastUpdated">Timestamp when this tariff was last updated (or created).</param>
-        public Tariff(CountryCode                 CountryCode,
-                      Party_Id                    PartyId,
-                      Tariff_Id                   Id ,
+        public Tariff(Tariff_Id                   Id ,
                       Currency                    Currency,
                       IEnumerable<TariffElement>  TariffElements,
 
-                      TariffTypes?                TariffType      = null,
-                      IEnumerable<DisplayText>    TariffAltText   = null,
+                      IEnumerable<DisplayText>?   TariffAltText   = null,
                       URL?                        TariffAltURL    = null,
-                      Price?                      MinPrice        = null,
-                      Price?                      MaxPrice        = null,
-                      DateTime?                   Start           = null,
-                      DateTime?                   End             = null,
-                      EnergyMix                   EnergyMix       = null,
+                      EnergyMix?                  EnergyMix       = null,
                       DateTime?                   LastUpdated     = null)
 
         {
@@ -198,19 +130,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (!TariffElements.SafeAny())
                 throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration of tariff elements must not be null or empty!");
 
-            this.CountryCode     = CountryCode;
-            this.PartyId         = PartyId;
             this.Id              = Id;
             this.Currency        = Currency;
             this.TariffElements  = TariffElements.Distinct();
 
-            this.TariffType      = TariffType;
-            this.TariffAltText   = TariffAltText?.Distinct() ?? new DisplayText[0];
+            this.TariffAltText   = TariffAltText?.Distinct() ?? Array.Empty<DisplayText>();
             this.TariffAltURL    = TariffAltURL;
-            this.MinPrice        = MinPrice;
-            this.MaxPrice        = MaxPrice;
-            this.Start           = Start;
-            this.End             = End;
             this.EnergyMix       = EnergyMix;
 
             this.LastUpdated     = LastUpdated ?? Timestamp.Now;
@@ -230,57 +155,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
-        public static Tariff Parse(JObject                              JSON,
-                                   CountryCode?                         CountryCodeURL       = null,
-                                   Party_Id?                            PartyIdURL           = null,
-                                   Tariff_Id?                           TariffIdURL          = null,
-                                   CustomJObjectParserDelegate<Tariff>  CustomTariffParser   = null)
+        public static Tariff Parse(JObject                               JSON,
+                                   Tariff_Id?                            TariffIdURL          = null,
+                                   CustomJObjectParserDelegate<Tariff>?  CustomTariffParser   = null)
         {
 
             if (TryParse(JSON,
-                         out Tariff  tariff,
-                         out String  ErrorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
+                         out var tariff,
+                         out var errorResponse,
                          TariffIdURL,
                          CustomTariffParser))
             {
-                return tariff;
+                return tariff!;
             }
 
-            throw new ArgumentException("The given JSON representation of a tariff is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, TariffIdURL = null, CustomTariffParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a tariff.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
-        public static Tariff Parse(String                               Text,
-                                   CountryCode?                         CountryCodeURL       = null,
-                                   Party_Id?                            PartyIdURL           = null,
-                                   Tariff_Id?                           TariffIdURL          = null,
-                                   CustomJObjectParserDelegate<Tariff>  CustomTariffParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out Tariff  tariff,
-                         out String  ErrorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
-                         TariffIdURL,
-                         CustomTariffParser))
-            {
-                return tariff;
-            }
-
-            throw new ArgumentException("The given text representation of a tariff is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a tariff is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -296,15 +186,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Tariff">The parsed tariff.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject     JSON,
-                                       out Tariff  Tariff,
-                                       out String  ErrorResponse)
+        public static Boolean TryParse(JObject      JSON,
+                                       out Tariff?  Tariff,
+                                       out String?  ErrorResponse)
 
             => TryParse(JSON,
                         out Tariff,
                         out ErrorResponse,
-                        null,
-                        null,
                         null,
                         null);
 
@@ -318,13 +206,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
-        public static Boolean TryParse(JObject                              JSON,
-                                       out Tariff                           Tariff,
-                                       out String                           ErrorResponse,
-                                       CountryCode?                         CountryCodeURL       = null,
-                                       Party_Id?                            PartyIdURL           = null,
-                                       Tariff_Id?                           TariffIdURL          = null,
-                                       CustomJObjectParserDelegate<Tariff>  CustomTariffParser   = null)
+        public static Boolean TryParse(JObject                               JSON,
+                                       out Tariff?                           Tariff,
+                                       out String?                           ErrorResponse,
+                                       Tariff_Id?                            TariffIdURL          = null,
+                                       CustomJObjectParserDelegate<Tariff>?  CustomTariffParser   = null)
         {
 
             try
@@ -337,58 +223,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
                 }
-
-                #region Parse CountryCode           [optional]
-
-                if (JSON.ParseOptional("country_code",
-                                       "country code",
-                                       CountryCode.TryParse,
-                                       out CountryCode? CountryCodeBody,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
-                {
-                    ErrorResponse = "The country code is missing!";
-                    return false;
-                }
-
-                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
-                {
-                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse PartyIdURL            [optional]
-
-                if (JSON.ParseOptional("party_id",
-                                       "party identification",
-                                       Party_Id.TryParse,
-                                       out Party_Id? PartyIdBody,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
-                {
-                    ErrorResponse = "The party identification is missing!";
-                    return false;
-                }
-
-                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
-                {
-                    ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
-                    return false;
-                }
-
-                #endregion
 
                 #region Parse Id                    [optional]
 
@@ -429,19 +263,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse TariffType            [optional]
-
-                if (JSON.ParseOptionalEnum("type",
-                                           "tariff type",
-                                           out TariffTypes? TariffType,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
                 #region Parse TariffAltText         [optional]
 
                 if (JSON.ParseOptionalJSON("tariff_alt_text",
@@ -471,34 +292,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse MinPrice              [optional]
-
-                if (JSON.ParseOptionalJSON("min_price",
-                                           "minimum price",
-                                           Price.TryParse,
-                                           out Price? MinPrice,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                #region Parse MaxPrice              [optional]
-
-                if (JSON.ParseOptionalJSON("max_price",
-                                           "maximum price",
-                                           Price.TryParse,
-                                           out Price? MaxPrice,
-                                           out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
                 #region Parse TariffElements        [mandatory]
 
                 if (JSON.ParseMandatoryJSON("elements",
@@ -506,32 +299,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             TariffElement.TryParse,
                                             out IEnumerable<TariffElement> TariffElements,
                                             out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                #region Parse Start                 [optional]
-
-                if (JSON.ParseOptional("start_date_time",
-                                       "start timestamp",
-                                       out DateTime? Start,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
-                #region Parse End                   [optional]
-
-                if (JSON.ParseOptional("end_date_time",
-                                       "end timestamp",
-                                       out DateTime? End,
-                                       out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
@@ -566,19 +333,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Tariff = new Tariff(CountryCodeBody ?? CountryCodeURL.Value,
-                                    PartyIdBody     ?? PartyIdURL.    Value,
-                                    TariffIdBody    ?? TariffIdURL.   Value,
+                Tariff = new Tariff(TariffIdBody ?? TariffIdURL!.Value,
                                     Currency,
                                     TariffElements,
 
-                                    TariffType,
                                     TariffAltText,
                                     TariffAltURL,
-                                    MinPrice,
-                                    MaxPrice,
-                                    Start,
-                                    End,
                                     EnergyMix,
                                     LastUpdated);
 
@@ -600,49 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out Tariff, out ErrorResponse, TariffIdURL = null, CustomTariffParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a tariff.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="Tariff">The parsed tariff.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomTariffParser">A delegate to parse custom tariff JSON objects.</param>
-        public static Boolean TryParse(String                               Text,
-                                       out Tariff                           Tariff,
-                                       out String                           ErrorResponse,
-                                       CountryCode?                         CountryCodeURL       = null,
-                                       Party_Id?                            PartyIdURL           = null,
-                                       Tariff_Id?                           TariffIdURL          = null,
-                                       CustomJObjectParserDelegate<Tariff>  CustomTariffParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out Tariff,
-                                out ErrorResponse,
-                                CountryCodeURL,
-                                PartyIdURL,
-                                TariffIdURL,
-                                CustomTariffParser);
-
-            }
-            catch (Exception e)
-            {
-                Tariff      = null;
-                ErrorResponse  = "The given text representation of a tariff is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region ToJSON(CustomTariffSerializer = null, CustomEVSESerializer = null, ...)
+        #region ToJSON(CustomTariffSerializer = null, CustomDisplayTextSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
@@ -651,38 +369,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>              CustomTariffSerializer               = null,
-                              CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
-                              CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
-                              CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null)
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
+                              CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
+                              CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
+                              CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
+                              CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",           CountryCode.ToString()),
-                           new JProperty("party_id",               PartyId.    ToString()),
                            new JProperty("id",                     Id.         ToString()),
 
                            new JProperty("currency",               Currency.   ToString()),
 
-                           TariffType.HasValue
-                               ? new JProperty("type",             TariffType.Value.ToString())
-                               : null,
-
                            TariffAltText.SafeAny()
-                               ? new JProperty("tariff_alt_text",  new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON())))
+                               ? new JProperty("tariff_alt_text",  new JArray(TariffAltText.Select(tariffAltText => tariffAltText.ToJSON(CustomDisplayTextSerializer))))
                                : null,
 
                            TariffAltURL.HasValue
                                ? new JProperty("tariff_alt_url",   TariffAltURL.  ToString())
-                               : null,
-
-                           MinPrice.HasValue
-                               ? new JProperty("min_price",        MinPrice.Value.ToJSON())
-                               : null,
-
-                           MaxPrice.HasValue
-                               ? new JProperty("max_price",        MaxPrice.Value.ToJSON())
                                : null,
 
                            TariffElements.SafeAny()
@@ -691,16 +402,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                                           CustomTariffRestrictionsSerializer))))
                                : null,
 
-                           Start.HasValue
-                               ? new JProperty("start_date_time",  Start.Value.ToIso8601())
-                               : null,
-
-                           End.HasValue
-                               ? new JProperty("end_date_time",    End.  Value.ToIso8601())
-                               : null,
-
-                           EnergyMix != null
-                               ? new JProperty("energy_mix",       EnergyMix.  ToJSON())
+                           EnergyMix is not null
+                               ? new JProperty("energy_mix",       EnergyMix.  ToJSON(CustomEnergyMixSerializer,
+                                                                                      CustomEnergySourceSerializer,
+                                                                                      CustomEnvironmentalImpactSerializer))
                                : null,
 
                            new JProperty("last_updated",           LastUpdated.ToIso8601())
@@ -860,10 +565,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomTariffSerializer,
-                                                                         CustomTariffElementSerializer,
-                                                                         CustomPriceComponentSerializer,
-                                                                         CustomTariffRestrictionsSerializer).
+                                                                  ToJSON(CustomTariffSerializer
+                                                                        // CustomTariffElementSerializer,
+                                                                        // CustomPriceComponentSerializer,
+                                                                        // CustomTariffRestrictionsSerializer
+                                                                        ).
                                                                   ToString(Newtonsoft.Json.Formatting.None)
                                                               )).
                                                   Select(value => String.Format("{0:x2}", value)).

@@ -792,11 +792,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                Amperage.   Equals(Connector.Amperage)    &&
                LastUpdated.Equals(Connector.LastUpdated) &&
 
-            ((!TariffId.             HasValue    && !Connector.TariffId.             HasValue)    ||
-              (TariffId.             HasValue    &&  Connector.TariffId.             HasValue    && TariffId.             Value.Equals(Connector.TariffId.             Value))) &&
+            ((!TariffId.             HasValue && !Connector.TariffId.             HasValue) ||
+              (TariffId.             HasValue &&  Connector.TariffId.             HasValue && TariffId.             Value.Equals(Connector.TariffId.             Value))) &&
 
-            ((!TermsAndConditionsURL.HasValue    && !Connector.TermsAndConditionsURL.HasValue)    ||
-              (TermsAndConditionsURL.HasValue    &&  Connector.TermsAndConditionsURL.HasValue    && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
+            ((!TermsAndConditionsURL.HasValue && !Connector.TermsAndConditionsURL.HasValue) ||
+              (TermsAndConditionsURL.HasValue &&  Connector.TermsAndConditionsURL.HasValue && TermsAndConditionsURL.Value.Equals(Connector.TermsAndConditionsURL.Value)));
 
         #endregion
 
