@@ -458,8 +458,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse LocationType          [mandatory]
 
-                if (!JSON.ParseMandatory("parking_type",
-                                         "parking type",
+                if (!JSON.ParseMandatory("location_type",
+                                         "location type",
                                          OCPIv2_1_1.LocationType.TryParse,
                                          out LocationType LocationType,
                                          out ErrorResponse))
@@ -1491,14 +1491,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Location is not null &&
 
-               Id.          Equals(Location.Id)           &&
-               LastUpdated. Equals(Location.LastUpdated)  &&
-               LocationType.Equals(Location.LocationType) &&
-               Address.     Equals(Location.Address)      &&
-               City.        Equals(Location.City)         &&
-               PostalCode.  Equals(Location.PostalCode)   &&
-               Country.     Equals(Location.Country)      &&
-               Coordinates. Equals(Location.Coordinates)  &&
+               Id.                     Equals(Location.Id)                      &&
+               LocationType.           Equals(Location.LocationType)            &&
+               Address.                Equals(Location.Address)                 &&
+               City.                   Equals(Location.City)                    &&
+               PostalCode.             Equals(Location.PostalCode)              &&
+               Country.                Equals(Location.Country)                 &&
+               Coordinates.            Equals(Location.Coordinates)             &&
+               LastUpdated.ToIso8601().Equals(Location.LastUpdated.ToIso8601()) &&
 
              ((Name               is     null &&  Location.Name               is     null) ||
               (Name               is not null &&  Location.Name               is not null && Name.                    Equals(Location.Name)))                     &&

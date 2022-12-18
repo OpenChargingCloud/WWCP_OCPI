@@ -18,10 +18,11 @@
 #region Usings
 
 using NUnit.Framework;
+
 using Newtonsoft.Json.Linq;
 
-using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Aegir;
+using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
@@ -196,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                            "Stadtwerke Jena-Ost",
                                            "New Green Deal"
                                        ),
-                                       DateTime.Parse("2020-09-22")
+                                       DateTime.Parse("2020-09-22").ToUniversalTime()
                                    )
                                },
 
@@ -237,8 +238,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             var JSON = CDR1.ToJSON();
 
-            Assert.AreEqual("DE",                          JSON["country_code"].Value<String>());
-            Assert.AreEqual("GEF",                         JSON["party_id"].    Value<String>());
             Assert.AreEqual("CDR0001",                     JSON["id"].          Value<String>());
 
 
@@ -251,7 +250,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.AreEqual(CDR1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
             Assert.AreEqual(CDR1.AuthId,                   cdr2.AuthId);
             Assert.AreEqual(CDR1.AuthMethod,               cdr2.AuthMethod);
-            Assert.AreEqual(CDR1.Location,                 cdr2.Location);
+            Assert.IsTrue  (CDR1.Location.Equals(cdr2.Location));
             Assert.AreEqual(CDR1.Currency,                 cdr2.Currency);
             Assert.AreEqual(CDR1.ChargingPeriods,          cdr2.ChargingPeriods);
             Assert.AreEqual(CDR1.TotalCost,                cdr2.TotalCost);
@@ -277,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
         /// <summary>
         /// Tries to deserialize a charge detail record example from GitHub.
-        /// https://github.com/ocpi/ocpi/blob/release-2.2-bugfixes/examples/cdr_example.json
+        /// https://github.com/ocpi/ocpi/blob/release-2.1.1-bugfixes/mod_cdrs.md#example-of-a-cdr
         /// </summary>
         [Test]
         public static void CDR_DeserializeGitHub_Test01()
@@ -286,20 +285,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define JSON
 
             var JSON = @"{
-                           ""country_code"": ""BE"",
-                           ""party_id"": ""BEC"",
                            ""id"": ""12345"",
                            ""start_date_time"": ""2015-06-29T21:39:09Z"",
                            ""end_date_time"": ""2015-06-29T23:37:32Z"",
-                           ""cdr_token"": {
-                             ""uid"": ""012345678"",
-                             ""type"": ""RFID"",
-                             ""contract_id"": ""DE8ACC12E46L89""
-                           },
+                           ""auth_id"": ""012345678"",
                            ""auth_method"": ""WHITELIST"",
-                           ""cdr_location"": {
+                           ""location"": {
                              ""id"": ""LOC1"",
-                             ""name"": ""Gent Zuid"",
+                             ""location_type"": ""UNDERGROUND_GARAGE"",
                              ""address"": ""F.Rooseveltlaan 3A"",
                              ""city"": ""Gent"",
                              ""postal_code"": ""9000"",
@@ -308,17 +301,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                ""latitude"": ""3.729944"",
                                ""longitude"": ""51.047599""
                              },
-                             ""evse_uid"": ""3256"",
-                             ""evse_id"": ""BE*BEC*E041503003"",
-                             ""connector_id"": ""1"",
-                             ""connector_standard"": ""IEC_62196_T2"",
-                             ""connector_format"": ""SOCKET"",
-                             ""connector_power_type"": ""AC_1_PHASE""
+                             ""evses"": [{
+                                 ""uid"": ""3256"",
+                                 ""evse_id"": ""BE-BEC-E041503003"",
+                                 ""status"": ""AVAILABLE"",
+                                 ""connectors"": [{
+                                     ""id"": ""1"",
+                                     ""standard"": ""IEC_62196_T2"",
+                                     ""format"": ""SOCKET"",
+                                     ""power_type"": ""AC_1_PHASE"",
+                                     ""voltage"": 230,
+                                     ""amperage"": 64,
+                                     ""tariff_id"": ""11"",
+                                     ""last_updated"": ""2015-06-29T21:39:01Z""
+                                 }],
+                                 ""last_updated"": ""2015-06-29T21:39:01Z""
+                             }],
+                             ""last_updated"": ""2015-06-29T21:39:01Z""
                            },
                            ""currency"": ""EUR"",
                            ""tariffs"": [{
-                             ""country_code"": ""BE"",
-                             ""party_id"": ""BEC"",
                              ""id"": ""12"",
                              ""currency"": ""EUR"",
                              ""elements"": [{
@@ -339,16 +341,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                              }],
                              ""tariff_id"": ""12""
                            }],
-                           ""total_cost"": {
-                             ""excl_vat"": 4.00,
-                             ""incl_vat"": 4.40
-                           },
+                           ""total_cost"": 4.00,
                            ""total_energy"": 15.342,
                            ""total_time"": 1.973,
-                           ""total_time_cost"": {
-                             ""excl_vat"": 4.00,
-                             ""incl_vat"": 4.40
-                           },
+                           ""meter_id"": ""metr123"",
+                           ""remark"": ""CDR_DeserializeGitHub_Test01()"",
                            ""last_updated"": ""2015-06-29T22:01:13Z""
                          }";
 

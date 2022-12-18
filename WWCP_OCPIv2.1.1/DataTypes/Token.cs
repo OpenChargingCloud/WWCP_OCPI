@@ -731,13 +731,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Token is not null &&
 
-               Id.           Equals(Token.Id)            &&
-               Type.         Equals(Token.Type)          &&
-               AuthId.       Equals(Token.AuthId)        &&
-               Issuer.       Equals(Token.Issuer)        &&
-               IsValid.      Equals(Token.IsValid)       &&
-               WhitelistType.Equals(Token.WhitelistType) &&
-               LastUpdated.  Equals(Token.LastUpdated)   &&
+               Id.                     Equals(Token.Id)                      &&
+               Type.                   Equals(Token.Type)                    &&
+               AuthId.                 Equals(Token.AuthId)                  &&
+               Issuer.                 Equals(Token.Issuer)                  &&
+               IsValid.                Equals(Token.IsValid)                 &&
+               WhitelistType.          Equals(Token.WhitelistType)           &&
+               LastUpdated.ToIso8601().Equals(Token.LastUpdated.ToIso8601()) &&
 
              ((VisualNumber is     null &&  Token.VisualNumber is     null) ||
               (VisualNumber is not null &&  Token.VisualNumber is not null && VisualNumber.      Equals(Token.VisualNumber))) &&

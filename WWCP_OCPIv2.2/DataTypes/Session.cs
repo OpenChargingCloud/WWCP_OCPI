@@ -1173,8 +1173,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => !(Session is null) &&
 
-               Id.         Equals(Session.Id) &&
-               LastUpdated.Equals(Session.LastUpdated);
+               Id.                     Equals(Session.Id) &&
+               LastUpdated.ToIso8601().Equals(Session.LastUpdated.ToIso8601());
 
         #endregion
 

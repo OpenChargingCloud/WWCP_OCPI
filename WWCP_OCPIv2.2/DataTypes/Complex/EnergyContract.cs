@@ -62,9 +62,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               EnergyContract_Id  ContractId)
         {
 
-            if (SupplierName.IsNullOrEmpty())
-                throw new ArgumentNullException(nameof(SupplierName), "The given energy supplier name must not be null or empty!");
-
             this.SupplierName  = SupplierName;
             this.ContractId    = ContractId;
 

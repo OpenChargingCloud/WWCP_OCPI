@@ -1175,9 +1175,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => EVSE is not null &&
 
-               UId.                Equals(EVSE.UId)         &&
-               Status.             Equals(EVSE.Status)      &&
-               LastUpdated.        Equals(EVSE.LastUpdated) &&
+               UId.                    Equals(EVSE.UId)                     &&
+               Status.                 Equals(EVSE.Status)                  &&
+               LastUpdated.ToIso8601().Equals(EVSE.LastUpdated.ToIso8601()) &&
 
             ((!EVSEId.           HasValue    && !EVSE.EVSEId.           HasValue)    ||
               (EVSEId.           HasValue    &&  EVSE.EVSEId.           HasValue    && EVSEId.     Value.Equals(EVSE.EVSEId.     Value))) &&

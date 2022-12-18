@@ -214,11 +214,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse SignedValues             [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("signed_values",
-                                             "signed values",
-                                             SignedValue.TryParse,
-                                             out IEnumerable<SignedValue> SignedValues,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatoryHashSet("signed_values",
+                                                "signed values",
+                                                SignedValue.TryParse,
+                                                out HashSet<SignedValue> SignedValues,
+                                                out ErrorResponse))
                 {
                     return false;
                 }
@@ -380,7 +380,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                SignedValues.Count().Equals(SignedData.SignedValues.Count()) &&
                SignedValues.All(signedValue => SignedData.SignedValues.Contains(signedValue));
-
 
         #endregion
 

@@ -1617,16 +1617,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => Location is not null &&
 
-               Id.         Equals(Location.Id)          &&
-               LastUpdated.Equals(Location.LastUpdated) &&
-               CountryCode.Equals(Location.CountryCode) &&
-               PartyId.    Equals(Location.PartyId)     &&
-               Publish.    Equals(Location.Publish)     &&
-               Address.    Equals(Location.Address)     &&
-               City.       Equals(Location.City)        &&
-               Country.    Equals(Location.Country)     &&
-               Coordinates.Equals(Location.Coordinates) &&
-               Timezone.   Equals(Location.Timezone)    &&
+               Id.                     Equals(Location.Id)                      &&
+               CountryCode.            Equals(Location.CountryCode)             &&
+               PartyId.                Equals(Location.PartyId)                 &&
+               Publish.                Equals(Location.Publish)                 &&
+               Address.                Equals(Location.Address)                 &&
+               City.                   Equals(Location.City)                    &&
+               Country.                Equals(Location.Country)                 &&
+               Coordinates.            Equals(Location.Coordinates)             &&
+               Timezone.               Equals(Location.Timezone)                &&
+               LastUpdated.ToIso8601().Equals(Location.LastUpdated.ToIso8601()) &&
 
              ((Name               is     null &&  Location.Name               is     null) ||
               (Name               is not null &&  Location.Name               is not null && Name.                 Equals(Location.Name)))                     &&

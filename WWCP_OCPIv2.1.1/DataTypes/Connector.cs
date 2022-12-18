@@ -784,13 +784,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Connector is not null &&
 
-               Id.         Equals(Connector.Id)          &&
-               Standard.   Equals(Connector.Standard)    &&
-               Format.     Equals(Connector.Format)      &&
-               PowerType.  Equals(Connector.PowerType)   &&
-               Voltage.    Equals(Connector.Voltage)     &&
-               Amperage.   Equals(Connector.Amperage)    &&
-               LastUpdated.Equals(Connector.LastUpdated) &&
+               Id.                     Equals(Connector.Id)                      &&
+               Standard.               Equals(Connector.Standard)                &&
+               Format.                 Equals(Connector.Format)                  &&
+               PowerType.              Equals(Connector.PowerType)               &&
+               Voltage.                Equals(Connector.Voltage)                 &&
+               Amperage.               Equals(Connector.Amperage)                &&
+               LastUpdated.ToIso8601().Equals(Connector.LastUpdated.ToIso8601()) &&
 
             ((!TariffId.             HasValue && !Connector.TariffId.             HasValue) ||
               (TariffId.             HasValue &&  Connector.TariffId.             HasValue && TariffId.             Value.Equals(Connector.TariffId.             Value))) &&

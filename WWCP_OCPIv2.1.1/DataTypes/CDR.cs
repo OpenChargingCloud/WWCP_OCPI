@@ -426,10 +426,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                        out CDR_Id? CDRIdBody,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 if (!CDRIdURL.HasValue && !CDRIdBody.HasValue)
@@ -777,12 +775,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("id",                              Id.                          ToString()),
-                           new JProperty("start_date_time",                 Start.                       ToIso8601()),
-                           new JProperty("end_date_time",                   End.                         ToIso8601()),
-                           new JProperty("auth_id",                         AuthId.                      ToString()),
-                           new JProperty("auth_method",                     AuthMethod.                  ToString()),
-                           new JProperty("location",                        Location.                    ToJSON(CustomLocationSerializer,
+                                 new JProperty("id",                        Id.                          ToString()),
+                                 new JProperty("start_date_time",           Start.                       ToIso8601()),
+                                 new JProperty("end_date_time",             End.                         ToIso8601()),
+                                 new JProperty("auth_id",                   AuthId.                      ToString()),
+                                 new JProperty("auth_method",               AuthMethod.                  ToString()),
+                                 new JProperty("location",                  Location.                    ToJSON(CustomLocationSerializer,
                                                                                                                 CustomAdditionalGeoLocationSerializer,
                                                                                                                 CustomEVSESerializer,
                                                                                                                 CustomStatusScheduleSerializer,
@@ -809,30 +807,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                : null,
 
                            TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(software => software.ToJSON(CustomTransparencySoftwareSerializer))))
+                               ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareSerializer))))
                                : null,
 
-                           new JProperty("currency",                        Currency.                    ToString()),
+                                 new JProperty("currency",                  Currency.                    ToString()),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff   => tariff.  ToJSON(CustomTariffSerializer,
-                                                                                                                                                CustomDisplayTextSerializer,
-                                                                                                                                                CustomTariffElementSerializer,
-                                                                                                                                                CustomPriceComponentSerializer,
-                                                                                                                                                CustomTariffRestrictionsSerializer,
-                                                                                                                                                CustomEnergyMixSerializer,
-                                                                                                                                                CustomEnergySourceSerializer,
-                                                                                                                                                CustomEnvironmentalImpactSerializer))))
+                               ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(CustomTariffSerializer,
+                                                                                                                                                                        CustomDisplayTextSerializer,
+                                                                                                                                                                        CustomTariffElementSerializer,
+                                                                                                                                                                        CustomPriceComponentSerializer,
+                                                                                                                                                                        CustomTariffRestrictionsSerializer,
+                                                                                                                                                                        CustomEnergyMixSerializer,
+                                                                                                                                                                        CustomEnergySourceSerializer,
+                                                                                                                                                                        CustomEnvironmentalImpactSerializer))))
                                : null,
 
                            ChargingPeriods.Any()
-                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(period   => period.  ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                                        CustomCDRDimensionSerializer))))
                                : null,
 
-                           new JProperty("total_cost",                      TotalCost),
-                           new JProperty("total_energy",                    TotalEnergy),
-                           new JProperty("total_time",                      TotalTime.                   TotalHours),
+                                 new JProperty("total_cost",                TotalCost),
+                                 new JProperty("total_energy",              TotalEnergy),
+                                 new JProperty("total_time",                TotalTime.                   TotalHours),
 
                            TotalParkingTime.HasValue
                                ? new JProperty("total_parking_time",        TotalParkingTime.      Value.TotalHours)
@@ -842,7 +840,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("remark",                    Remark)
                                : null,
 
-                           new JProperty("last_updated",                    LastUpdated.ToIso8601())
+                                 new JProperty("last_updated",              LastUpdated.                 ToIso8601())
 
                        );
 
@@ -984,12 +982,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>s
         /// Compares two charge detail records.
         /// </summary>
-        /// <param name="Object">A charge detail record to compare with.</param>
+        /// <param name="CDR">A charge detail record to compare with.</param>
         public Int32 CompareTo(CDR? CDR)
+        {
 
-            => CDR is null
-                   ? throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!")
-                   : Id.CompareTo(CDR.Id);
+            if (CDR is null)
+                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
+
+            var c = Id.         CompareTo(CDR.Id);
+
+            if (c == 0)
+                c = Start.      CompareTo(CDR.Start);
+
+            if (c == 0)
+                c = End.        CompareTo(CDR.End);
+
+            if (c == 0)
+                c = AuthId.     CompareTo(CDR.AuthId);
+
+            if (c == 0)
+                c = AuthMethod. CompareTo(CDR.AuthMethod);
+
+            if (c == 0)
+                c = Currency.   CompareTo(CDR.Currency);
+
+            if (c == 0)
+                c = TotalCost.  CompareTo(CDR.TotalCost);
+
+            if (c == 0)
+                c = TotalEnergy.CompareTo(CDR.TotalEnergy);
+
+            if (c == 0)
+                c = TotalTime.  CompareTo(CDR.TotalTime);
+
+            if (c == 0)
+                c = LastUpdated.CompareTo(CDR.LastUpdated);
+
+            // Location,
+            // ChargingPeriods,
+            // 
+            // MeterId                   
+            // EnergyMeter               
+            // TransparencySoftwares     
+            // Tariffs                   
+            // SignedData                
+            // TotalParkingTime          
+            // Remark                    
+
+            return c;
+
+        }
 
         #endregion
 
@@ -1020,8 +1062,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => CDR is not null &&
 
-               Id.         Equals(CDR.Id) &&
-               LastUpdated.Equals(CDR.LastUpdated);
+               Id.                     Equals(CDR.Id)                      &&
+               Start.                  Equals(CDR.Start)                   &&
+               End.                    Equals(CDR.End)                     &&
+               AuthId.                 Equals(CDR.AuthId)                  &&
+               AuthMethod.             Equals(CDR.AuthMethod)              &&
+               Location.               Equals(CDR.Location)                &&
+               Currency.               Equals(CDR.Currency)                &&
+               TotalCost.              Equals(CDR.TotalCost)               &&
+               TotalEnergy.            Equals(CDR.TotalEnergy)             &&
+               TotalTime.              Equals(CDR.TotalTime)               &&
+               LastUpdated.ToIso8601().Equals(CDR.LastUpdated.ToIso8601()) &&
+
+            ((!MeterId.              HasValue    && !CDR.MeterId.              HasValue)    ||
+              (MeterId.              HasValue    &&  CDR.MeterId.              HasValue    && MeterId.        Value.Equals(CDR.MeterId.        Value)))  &&
+
+             ((EnergyMeter           is     null &&  CDR.EnergyMeter           is     null) ||
+              (EnergyMeter           is not null &&  CDR.EnergyMeter           is not null && EnergyMeter.          Equals(CDR.EnergyMeter)))            &&
+
+             ((TransparencySoftwares is     null &&  CDR.TransparencySoftwares is     null) ||
+              (TransparencySoftwares is not null &&  CDR.TransparencySoftwares is not null && TransparencySoftwares.Equals(CDR.TransparencySoftwares)))  &&
+
+             ((SignedData            is     null &&  CDR.SignedData            is     null) ||
+              (SignedData            is not null &&  CDR.SignedData            is not null && SignedData.           Equals(CDR.SignedData)))             &&
+
+            ((!TotalParkingTime.     HasValue    && !CDR.TotalParkingTime.     HasValue)    ||
+              (TotalParkingTime.     HasValue    &&  CDR.TotalParkingTime.     HasValue && TotalParkingTime.Value.  Equals(CDR.TotalParkingTime.Value))) &&
+
+             ((Remark                is     null &&  CDR.Remark                is     null) ||
+              (Remark                is not null &&  CDR.Remark                is not null && Remark.               Equals(CDR.Remark)))                 &&
+
+               ChargingPeriods.Count().Equals(CDR.ChargingPeriods.Count()) &&
+               ChargingPeriods.Count().Equals(CDR.ChargingPeriods.Count()) &&
+
+               Tariffs.All(data => CDR.Tariffs.Contains(data)) &&
+               Tariffs.All(data => CDR.Tariffs.Contains(data));
 
         #endregion
 
@@ -1037,8 +1112,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.                    GetHashCode()       * 29 ^
-                       LastUpdated.           GetHashCode();
+                return Id.                     GetHashCode()        * 67 ^
+                       Start.                  GetHashCode()        * 61 ^
+                       End.                    GetHashCode()        * 59 ^
+                       AuthId.                 GetHashCode()        * 53 ^
+                       AuthMethod.             GetHashCode()        * 47 ^
+                       Location.               GetHashCode()        * 43 ^
+                       Currency.               GetHashCode()        * 41 ^
+                       ChargingPeriods.        CalcHashCode()       * 37 ^
+                       Tariffs.                CalcHashCode()       * 31 ^
+                       TotalCost.              GetHashCode()        * 29 ^
+                       TotalEnergy.            GetHashCode()        * 23 ^
+                       TotalTime.              GetHashCode()        * 19 ^
+                       LastUpdated.            GetHashCode()        * 17 ^
+
+                       (MeterId?.              GetHashCode()  ?? 0) * 13 ^
+                       (EnergyMeter?.          GetHashCode()  ?? 0) * 11 ^
+                       (TransparencySoftwares?.CalcHashCode() ?? 0) *  7 ^
+                       (SignedData?.           GetHashCode()  ?? 0) *  5 ^
+                       (TotalParkingTime?.     GetHashCode()  ?? 0) *  3 ^
+                        Remark?.               GetHashCode()  ?? 0;
 
             }
         }
@@ -1054,9 +1147,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
-                   Id,
-                   ", ",
+                   Id,                       ", ",
+                   Start.      ToIso8601(),  ", ",
+                   End.        ToIso8601(),  ", ",
+                   AuthId.     ToString(),   ", ",
+                   AuthMethod. ToString(),   ", ",
+                   Location.   ToString(),   ", ",
+
+                   TotalCost.  ToString(),   " ",
+                   Currency.   ToString(),   ", ",
+                   TotalEnergy.ToString(),   " kWh, ",
+                   TotalTime.  ToString(),   " h, ",
+
+                   TotalParkingTime.HasValue
+                       ? TotalParkingTime.ToString() + " h parking, "
+                       : "",
+
+                   ChargingPeriods.Count(), " charging period(s), ",
+
+                   Tariffs.Any()
+                       ? Tariffs.Count() + " tariff(s), "
+                       : "",
+
+                   MeterId.HasValue
+                       ? "meter id: " + MeterId.Value.ToString() + ", "
+                       : "",
+
+                   Remark is not null
+                       ? "remark: " + Remark + ", "
+                       : "",
+
                    LastUpdated.ToIso8601()
+
+                   // EnergyMeter
+                   // TransparencySoftwares
+                   // SignedData
 
                );
 

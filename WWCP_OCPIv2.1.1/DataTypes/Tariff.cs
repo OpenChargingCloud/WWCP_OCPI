@@ -749,7 +749,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => !(Tariff is null) &&
 
-                 Id.Equals(Tariff.Id);
+                 Id.Equals(Tariff.Id) &&
+                 LastUpdated.ToIso8601().Equals(Tariff.LastUpdated.ToIso8601());
 
         #endregion
 

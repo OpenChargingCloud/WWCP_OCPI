@@ -439,7 +439,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                ? new JProperty("postal_code",     PostalCode)
                                : null,
 
-                           new JProperty("country",               Country),
+                           new JProperty("country",               Country.Alpha3Code),
 
                            new JProperty("coordinates",           new JObject(
                                                                       new JProperty("latitude",  Coordinates.Latitude. Value.ToString("0.00000##").Replace(",", ".")),
