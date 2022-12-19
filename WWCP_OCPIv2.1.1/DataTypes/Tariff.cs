@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -34,8 +30,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// A Tariff Object consists of a list of one or more TariffElements,
-    /// these elements can be used to create complex Tariff structures.
+    /// The charging tariff consists of a list of one or more chrging tariff elements,
+    /// these elements can be used to create complex tariff structures.
     /// When the list of elements contains more then 1 element, then the
     /// first tariff in the list with matching restrictions will be used.
     /// </summary>
@@ -57,49 +53,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The identification of the tariff within the CPOs platform (and suboperator platforms). 
         /// </summary>
         [Mandatory]
-        public Tariff_Id                        Id                      { get; }
+        public Tariff_Id                   Id                { get; }
 
         /// <summary>
-        /// ISO 4217 code of the currency used for this tariff.
+        /// The ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public Currency                         Currency                { get; }
+        public Currency                    Currency          { get; }
 
         /// <summary>
-        /// Multi-language alternative tariff info text.
+        /// The optional multi-language alternative tariff info text.
         /// </summary>
         [Optional]
-        public IEnumerable<DisplayText>         TariffAltText           { get; }
+        public IEnumerable<DisplayText>    TariffAltText     { get; }
 
         /// <summary>
-        /// URL to a web page that contains an explanation of the tariff information
+        /// The optional URL to a web page that contains an explanation of the tariff information
         /// in human readable form.
         /// </summary>
         [Optional]
-        public URL?                             TariffAltURL            { get; }
+        public URL?                        TariffAltURL      { get; }
 
         /// <summary>
-        /// An enumeration of tariff elements.
+        /// The enumeration of tariff elements.
         /// </summary>
         [Mandatory]
-        public IEnumerable<TariffElement>       TariffElements          { get; }
+        public IEnumerable<TariffElement>  TariffElements    { get; }
 
         /// <summary>
         /// Optional details on the energy supplied with this tariff.
         /// </summary>
         [Optional]
-        public EnergyMix?                       EnergyMix               { get;  }
+        public EnergyMix?                  EnergyMix         { get;  }
 
         /// <summary>
-        /// Timestamp when this tariff was last updated (or created).
+        /// The timestamp when this tariff was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                         LastUpdated             { get; }
+        public DateTime                    LastUpdated       { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging tariff.
         /// </summary>
-        public String                           SHA256Hash              { get; private set; }
+        public String                      ETag              { get; private set; }
 
         #endregion
 
@@ -108,26 +104,43 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charging tariff.
         /// </summary>
-        /// <param name="Id">The identification of the tariff within the CPOs platform (and suboperator platforms).</param>
-        /// <param name="Currency">ISO 4217 code of the currency used for this tariff.</param>
+        /// <param name="Id">An identification of the tariff within the CPOs platform (and suboperator platforms).</param>
+        /// <param name="Currency">An ISO 4217 code of the currency used for this tariff.</param>
         /// <param name="TariffElements">An enumeration of tariff elements.</param>
         /// 
-        /// <param name="TariffAltText">Multi-language alternative tariff info text.</param>
-        /// <param name="TariffAltURL">URL to a web page that contains an explanation of the tariff information in human readable form.</param>
+        /// <param name="TariffAltText">An optional multi-language alternative tariff info text.</param>
+        /// <param name="TariffAltURL">An optional URL to a web page that contains an explanation of the tariff information in human readable form.</param>
         /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
-        /// <param name="LastUpdated">Timestamp when this tariff was last updated (or created).</param>
-        public Tariff(Tariff_Id                   Id ,
-                      Currency                    Currency,
-                      IEnumerable<TariffElement>  TariffElements,
+        /// 
+        /// <param name="LastUpdated">A timestamp when this tariff was last updated (or created).</param>
+        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
+        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
+        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public Tariff(Tariff_Id                                              Id ,
+                      Currency                                               Currency,
+                      IEnumerable<TariffElement>                             TariffElements,
 
-                      IEnumerable<DisplayText>?   TariffAltText   = null,
-                      URL?                        TariffAltURL    = null,
-                      EnergyMix?                  EnergyMix       = null,
-                      DateTime?                   LastUpdated     = null)
+                      IEnumerable<DisplayText>?                              TariffAltText                         = null,
+                      URL?                                                   TariffAltURL                          = null,
+                      EnergyMix?                                             EnergyMix                             = null,
+
+                      DateTime?                                              LastUpdated                           = null,
+                      CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
+                      CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
+                      CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
+                      CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
+                      CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
+                      CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
+                      CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
+                      CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
 
         {
 
-            if (!TariffElements.SafeAny())
+            if (!TariffElements.Any())
                 throw new ArgumentNullException(nameof(TariffElements),  "The given enumeration of tariff elements must not be null or empty!");
 
             this.Id              = Id;
@@ -140,7 +153,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated     = LastUpdated ?? Timestamp.Now;
 
-            CalcSHA256Hash();
+            this.ETag            = CalcSHA256Hash(CustomTariffSerializer,
+                                                  CustomDisplayTextSerializer,
+                                                  CustomTariffElementSerializer,
+                                                  CustomPriceComponentSerializer,
+                                                  CustomTariffRestrictionsSerializer,
+                                                  CustomEnergyMixSerializer,
+                                                  CustomEnergySourceSerializer,
+                                                  CustomEnvironmentalImpactSerializer);
 
         }
 
@@ -150,7 +170,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region (static) Parse   (JSON, TariffIdURL = null, CustomTariffParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of a tariff.
+        /// Parse the given JSON representation of a charging tariff.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TariffIdURL">An optional tariff identification, e.g. from the HTTP URL.</param>
@@ -169,7 +189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 return tariff!;
             }
 
-            throw new ArgumentException("The given JSON representation of a tariff is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a charging tariff is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -181,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of a tariff.
+        /// Try to parse the given JSON representation of a charging tariff.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Tariff">The parsed tariff.</param>
@@ -197,7 +217,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         null);
 
         /// <summary>
-        /// Try to parse the given JSON representation of a tariff.
+        /// Try to parse the given JSON representation of a charging tariff.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Tariff">The parsed tariff.</param>
@@ -352,7 +372,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             catch (Exception e)
             {
                 Tariff         = default;
-                ErrorResponse  = "The given JSON representation of a tariff is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a charging tariff is invalid: " + e.Message;
                 return false;
             }
 
@@ -499,7 +519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Boolean  AllowDowngrades = false)
         {
 
-            if (TariffPatch == null)
+            if (TariffPatch is null)
                 return PatchResult<Tariff>.Failed(this,
                                                   "The given charging tariff patch must not be null!");
 
@@ -526,18 +546,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                       patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
-                             out Tariff  PatchedTariff,
-                             out String  ErrorResponse))
+                             out var patchedTariff,
+                             out var errorResponse))
                 {
 
-                    return PatchResult<Tariff>.Success(PatchedTariff,
-                                                       ErrorResponse);
+                    return PatchResult<Tariff>.Success(patchedTariff,
+                                                       errorResponse);
 
                 }
 
                 else
                     return PatchResult<Tariff>.Failed(this,
-                                                      "Invalid JSON merge patch of a charging tariff: " + ErrorResponse);
+                                                      "Invalid JSON merge patch of a charging tariff: " + errorResponse);
 
             }
 
@@ -546,7 +566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region CalcSHA256Hash(CustomTariffSerializer = null, CustomTariffElementSerializer = null, ...)
+        #region CalcSHA256Hash(CustomTariffSerializer = null, CustomDisplayTextSerializer = null, ...)
 
         /// <summary>
         /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
@@ -555,27 +575,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Tariff>              CustomTariffSerializer               = null,
-                                     CustomJObjectSerializerDelegate<TariffElement>       CustomTariffElementSerializer        = null,
-                                     CustomJObjectSerializerDelegate<PriceComponent>      CustomPriceComponentSerializer       = null,
-                                     CustomJObjectSerializerDelegate<TariffRestrictions>  CustomTariffRestrictionsSerializer   = null)
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
+                                     CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
+                                     CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
+                                     CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
+                                     CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
+                                     CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
+                                     CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
         {
 
-            using (var SHA256 = new SHA256Managed())
-            {
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomTariffSerializer,
+                                                           CustomDisplayTextSerializer,
+                                                           CustomTariffElementSerializer,
+                                                           CustomPriceComponentSerializer,
+                                                           CustomTariffRestrictionsSerializer,
+                                                           CustomEnergyMixSerializer,
+                                                           CustomEnergySourceSerializer,
+                                                           CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
 
-                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomTariffSerializer
-                                                                        // CustomTariffElementSerializer,
-                                                                        // CustomPriceComponentSerializer,
-                                                                        // CustomTariffRestrictionsSerializer
-                                                                        ).
-                                                                  ToString(Newtonsoft.Json.Formatting.None)
-                                                              )).
-                                                  Select(value => String.Format("{0:x2}", value)).
-                                                  Aggregate();
-
-            }
+            return this.ETag;
 
         }
 
@@ -589,8 +611,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Tariff Tariff1,
                                            Tariff Tariff2)
@@ -613,8 +635,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Tariff Tariff1,
                                            Tariff Tariff2)
@@ -628,8 +650,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Tariff Tariff1,
                                           Tariff Tariff2)
@@ -645,8 +667,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Tariff Tariff1,
                                            Tariff Tariff2)
@@ -660,8 +682,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Tariff Tariff1,
                                           Tariff Tariff2)
@@ -677,8 +699,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Tariff1">A tariff.</param>
-        /// <param name="Tariff2">Another tariff.</param>
+        /// <param name="Tariff1">A charging tariff.</param>
+        /// <param name="Tariff2">Another charging tariff.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Tariff Tariff1,
                                            Tariff Tariff2)
@@ -694,10 +716,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging tariffs.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charging tariff to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Tariff tariff
                    ? CompareTo(tariff)
@@ -709,14 +731,32 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Tariff)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging tariffs.
         /// </summary>
-        /// <param name="Tariff">An Tariff to compare with.</param>
-        public Int32 CompareTo(Tariff Tariff)
+        /// <param name="Object">A charging tariff to compare with.</param>
+        public Int32 CompareTo(Tariff? Tariff)
+        {
 
-            => Tariff is null
-                   ? throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!")
-                   : Id.CompareTo(Tariff.Id);
+            if (Tariff is null)
+                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!");
+
+            var c = Id.         CompareTo(Tariff.Id);
+
+            if (c == 0)
+                c = LastUpdated.CompareTo(Tariff.LastUpdated);
+
+            if (c == 0)
+                c = Currency.   CompareTo(Tariff.Currency);
+
+            // TariffElements
+            // 
+            // TariffAltText
+            // TariffAltURL
+            // EnergyMix
+
+            return c;
+
+        }
 
         #endregion
 
@@ -727,11 +767,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging tariffs for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charging tariff to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Tariff tariff &&
                    Equals(tariff);
@@ -741,16 +780,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Tariff)
 
         /// <summary>
-        /// Compares two Tariffs for equality.
+        /// Compares two charging tariffs for equality.
         /// </summary>
-        /// <param name="Tariff">An Tariff to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Tariff Tariff)
+        /// <param name="Tariff">A charging tariff to compare with.</param>
+        public Boolean Equals(Tariff? Tariff)
 
-            => !(Tariff is null) &&
+            => Tariff is not null &&
 
-                 Id.Equals(Tariff.Id) &&
-                 LastUpdated.ToIso8601().Equals(Tariff.LastUpdated.ToIso8601());
+               Id.                     Equals(Tariff.Id)                      &&
+               Currency.               Equals(Tariff.Currency)                &&
+               LastUpdated.ToIso8601().Equals(Tariff.LastUpdated.ToIso8601()) &&
+
+            ((!TariffAltURL.HasValue    && !Tariff.TariffAltURL.HasValue)    ||
+              (TariffAltURL.HasValue    &&  Tariff.TariffAltURL.HasValue && TariffAltURL.Value.Equals(Tariff.TariffAltURL.Value))) &&
+
+             ((EnergyMix    is     null &&  Tariff.EnergyMix    is     null) ||
+              (EnergyMix    is not null &&  Tariff.EnergyMix    is not null && EnergyMix.      Equals(Tariff.EnergyMix)))          &&
+
+               TariffElements.Count().Equals(Tariff.TariffElements.Count()) &&
+               TariffAltText. Count().Equals(Tariff.TariffAltText. Count()) &&
+
+               TariffElements.All(tariffElement => Tariff.TariffElements.Contains(tariffElement)) &&
+               TariffAltText. All(displayText   => Tariff.TariffAltText. Contains(displayText));
 
         #endregion
 
@@ -762,8 +813,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
+        {
+            unchecked
+            {
 
-            => Id.GetHashCode();
+                return Id.            GetHashCode()        * 17 ^
+                       Currency.      GetHashCode()        * 13 ^
+                       TariffElements.CalcHashCode()       * 11 ^
+                       LastUpdated.   GetHashCode()        *  7 ^
+                       TariffAltText. CalcHashCode()       *  5 ^
+                      (TariffAltURL?. GetHashCode()  ?? 0) *  3 ^
+                       EnergyMix?.    GetHashCode()  ?? 0;
+
+            }
+        }
 
         #endregion
 
@@ -774,7 +837,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   Id,       ", ",
+                   Currency, ", ",
+
+                   TariffElements.Count(), " tariff element(s), ",
+
+                   TariffAltText.Any()
+                       ? "text: " + TariffAltText.First().Text + ", "
+                       : "",
+
+                   TariffAltURL.HasValue
+                       ? "url: "  + TariffAltURL.Value + ", "
+                       : "",
+
+                   EnergyMix is not null
+                       ? "energy mix: " + EnergyMix + ", "
+                       : "",
+
+                   "last updated: " + LastUpdated.ToIso8601()
+
+               );
 
         #endregion
 

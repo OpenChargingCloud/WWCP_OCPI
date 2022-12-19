@@ -45,20 +45,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// the last period ends when the session ends.
         /// </summary>
         [Mandatory]
-        public DateTime                   StartTimestamp     { get; }
+        public DateTime                   StartTimestamp    { get; }
 
         /// <summary>
         /// List of relevant values for this charging period.
         /// </summary>
         [Mandatory]
-        public IEnumerable<CDRDimension>  Dimensions         { get; }
-
-        /// <summary>
-        /// Unique identifier of the tariff that is relevant for this charging period.
-        /// If not provided, no tariff is relevant during this period.
-        /// </summary>
-        [Optional]
-        public Tariff_Id?                 TariffId           { get;}
+        public IEnumerable<CDRDimension>  Dimensions        { get; }
 
         #endregion
 
@@ -70,18 +63,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="StartTimestamp">Start timestamp of the charging period.</param>
         /// <param name="Dimensions">List of relevant values for this charging period.</param>
-        /// <param name="TariffId">Unique identifier of the tariff that is relevant for this charging period.</param>
         public ChargingPeriod(DateTime                   StartTimestamp,
-                              IEnumerable<CDRDimension>  Dimensions,
-                              Tariff_Id?                 TariffId   = null)
+                              IEnumerable<CDRDimension>  Dimensions)
         {
 
             if (!Dimensions.Any())
                 throw new ArgumentNullException(nameof(Dimensions), "The given enumeration of relevant values for this charging period must not be null or empty!");
 
             this.StartTimestamp  = StartTimestamp;
-            this.Dimensions      = Dimensions?.Distinct() ?? Array.Empty<CDRDimension>();
-            this.TariffId        = TariffId;
+            this.Dimensions      = Dimensions.Distinct();
 
         }
 
@@ -208,24 +198,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse TariffId          [optional]
-
-                if (JSON.ParseOptional("tariff_id",
-                                       "tariff identification",
-                                       Tariff_Id.TryParse,
-                                       out Tariff_Id? TariffId,
-                                       out ErrorResponse))
-                {
-                    if (ErrorResponse is not null)
-                        return false;
-                }
-
-                #endregion
-
 
                 ChargingPeriod = new ChargingPeriod(StartTimestamp,
-                                                    Dimensions,
-                                                    TariffId);
+                                                    Dimensions);
 
 
                 if (CustomChargingPeriodParser is not null)
@@ -259,13 +234,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                                 new JProperty("start_date_time",   StartTimestamp.ToIso8601()),
+                           new JProperty("start_date_time",  StartTimestamp.ToIso8601()),
 
-                                 new JProperty("dimensions",        new JArray(Dimensions.Select(cdrDimension => cdrDimension.ToJSON(CustomCDRDimensionSerializer)))),
-
-                           TariffId.HasValue
-                               ? new JProperty("tariff_id",         TariffId.Value.ToString())
-                               : null
+                           new JProperty("dimensions",       new JArray(Dimensions.Select(cdrDimension => cdrDimension.ToJSON(CustomCDRDimensionSerializer))))
 
                        );
 
@@ -306,7 +277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (ChargingPeriod ChargingPeriod1,
                                            ChargingPeriod ChargingPeriod2)
 
-            => !(ChargingPeriod1 == ChargingPeriod2);
+            => !ChargingPeriod1.Equals(ChargingPeriod2);
 
         #endregion
 
@@ -336,7 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (ChargingPeriod ChargingPeriod1,
                                            ChargingPeriod ChargingPeriod2)
 
-            => !(ChargingPeriod1 > ChargingPeriod2);
+            => ChargingPeriod1.CompareTo(ChargingPeriod2) <= 0;
 
         #endregion
 
@@ -366,7 +337,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (ChargingPeriod ChargingPeriod1,
                                            ChargingPeriod ChargingPeriod2)
 
-            => !(ChargingPeriod1 < ChargingPeriod2);
+            => ChargingPeriod1.CompareTo(ChargingPeriod2) >= 0;
 
         #endregion
 
@@ -436,9 +407,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => StartTimestamp.ToIso8601().Equals(ChargingPeriod.StartTimestamp.ToIso8601()) &&
 
-            ((!TariffId.HasValue && !ChargingPeriod.TariffId.HasValue) ||
-              (TariffId.HasValue &&  ChargingPeriod.TariffId.HasValue && TariffId.Value.Equals(ChargingPeriod.TariffId.Value))) &&
-
                Dimensions.Count().        Equals(ChargingPeriod.Dimensions.    Count()) &&
                Dimensions.All(dimension =>       ChargingPeriod.Dimensions.    Contains(dimension));
 
@@ -457,9 +425,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return StartTimestamp.GetHashCode()  * 5 ^
-                       Dimensions.    CalcHashCode() * 3 ^
-                       TariffId?.     GetHashCode() ?? 0;
+                return StartTimestamp.GetHashCode() * 3 ^
+                       Dimensions.    CalcHashCode();
 
             }
         }
@@ -479,11 +446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                    ": ",
 
                    Dimensions.Count(),
-                   " charging dimension(s)",
-
-                   TariffId.HasValue
-                       ? ", tariffId: " + TariffId
-                       : ""
+                   " charging dimension(s)"
 
                );
 

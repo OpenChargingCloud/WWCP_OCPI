@@ -15,12 +15,6 @@
  * limitations under the License.
  */
 
-#region Usings
-
-using System;
-
-#endregion
-
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
@@ -135,10 +129,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Time Parse(String Text)
         {
 
-            if (TryParse(Text, out Time time))
+            if (TryParse(Text, out var time))
                 return time;
 
-            throw new ArgumentException("Could not parse the given text as a time.!");
+            throw new ArgumentException("The given JSON representation of tariff restrictions is invalid: " + Text,
+                                        nameof(Text));
 
         }
 
@@ -153,7 +148,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Time? TryParse(String Text)
         {
 
-            if (TryParse(Text, out Time time))
+            if (TryParse(Text, out var time))
                 return time;
 
             return null;
@@ -182,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             else if (Fragments.Length == 1)
             {
 
-                if (!Byte.TryParse(Fragments[0], out Byte Hour))
+                if (!Byte.TryParse(Fragments[0], out var Hour))
                     return false;
 
                 Time = Time.FromHour(Hour);
@@ -193,10 +188,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             else if (Fragments.Length == 2)
             {
 
-                if (!Byte.TryParse(Fragments[0], out Byte Hour))
+                if (!Byte.TryParse(Fragments[0], out var Hour))
                     return false;
 
-                if (!Byte.TryParse(Fragments[1], out Byte Minute))
+                if (!Byte.TryParse(Fragments[1], out var Minute))
                     return false;
 
                 Time = Time.FromHourMin(Hour, Minute);
@@ -207,13 +202,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             else if (Fragments.Length == 3)
             {
 
-                if (!Byte.TryParse(Fragments[0], out Byte Hour))
+                if (!Byte.TryParse(Fragments[0], out var Hour))
                     return false;
 
-                if (!Byte.TryParse(Fragments[1], out Byte Minute))
+                if (!Byte.TryParse(Fragments[1], out var Minute))
                     return false;
 
-                if (!Byte.TryParse(Fragments[2], out Byte Second))
+                if (!Byte.TryParse(Fragments[2], out var Second))
                     return false;
 
                 Time = Time.FromHourMinSec(Hour, Minute, Second);
@@ -256,7 +251,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (Time Time1,
                                            Time Time2)
 
-            => !(Time1 == Time2);
+            => !Time1.Equals(Time2);
 
         #endregion
 
@@ -286,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (Time Time1,
                                            Time Time2)
 
-            => !(Time1 > Time2);
+            => Time1.CompareTo(Time2) <= 0;
 
         #endregion
 
@@ -316,7 +311,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (Time Time1,
                                            Time Time2)
 
-            => !(Time1 < Time2);
+            => Time1.CompareTo(Time2) >= 0;
 
         #endregion
 
@@ -331,31 +326,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Time Time2)
         {
 
-            var Days     = 0;
-            var Hours    = Time1.Hour   + Time2.Hour;
-            var Minutes  = Time1.Minute + Time2.Minute;
-            var Seconds  = Time1.Second + Time2.Second;
+            var days     = 0;
 
-            if (Seconds > 59)
+            var hours    = Time1.Hour   + Time2.Hour;
+
+            var minutes  = Time1.Minute + Time2.Minute;
+
+            var seconds  = Time1.Second.HasValue || Time2.Second.HasValue
+                               ? new Int32?((Time1.Second ?? 0) + (Time2.Second ?? 0))
+                               : null;
+
+
+            if (seconds > 59)
             {
-                Seconds -= 59;
-                Minutes++;
+                seconds -= 59;
+                minutes++;
             }
 
-            if (Minutes > 59)
+            if (minutes > 59)
             {
-                Minutes -= 59;
-                Hours++;
+                minutes -= 59;
+                hours++;
             }
 
-            if (Hours > 23)
+            if (hours > 23)
             {
-                Hours -= 23;
-                Days++;
+                hours -= 23;
+                days++;
             }
 
-            return new TimeSpan(Hours, Minutes, Seconds.Value).
-                       Add(TimeSpan.FromDays(Days));
+            return new TimeSpan(hours, minutes, seconds ?? 0).
+                       Add(TimeSpan.FromDays(days));
 
         }
 
@@ -372,13 +373,24 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                             Time Time2)
         {
 
-            var Hours    = Time1.Hour   - Time2.Hour;
-            var Minutes  = Time1.Minute - Time2.Minute;
-            var Seconds  = Time1.Second - Time2.Second;
+            var hours    = Time1.Hour   - Time2.Hour;
 
-            return new TimeSpan(Hours   >= 0 ? Hours         : 0,
-                                Minutes >= 0 ? Minutes       : 0,
-                                Seconds >= 0 ? Seconds.Value : 0);
+            var minutes  = Time1.Minute - Time2.Minute;
+
+            var seconds  = Time1.Second.HasValue || Time2.Second.HasValue
+                               ? new Int32?((Time1.Second ?? 0) - (Time2.Second ?? 0))
+                               : null;
+
+            return new TimeSpan(
+
+                       hours   >= 0 ? hours   : 0,
+                       minutes >= 0 ? minutes : 0,
+
+                       seconds.HasValue && seconds.Value >= 0
+                           ? seconds.Value
+                           : 0
+
+                   );
 
         }
 
@@ -391,10 +403,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two times.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A time to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Time time
                    ? CompareTo(time)
@@ -406,9 +418,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Time)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two times.
         /// </summary>
-        /// <param name="Time">An object to compare with.</param>
+        /// <param name="Time">A time to compare with.</param>
         public Int32 CompareTo(Time Time)
         {
 
@@ -433,11 +445,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two times for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A time to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Time time &&
                    Equals(time);
@@ -447,10 +458,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Time)
 
         /// <summary>
-        /// Compares two price components for equality.
+        /// Compares two times for equality.
         /// </summary>
         /// <param name="Time">A time to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(Time Time)
 
             => Hour.  Equals(Time.Hour)   &&
@@ -471,12 +481,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Hour.  GetHashCode() * 5 ^
-                       Minute.GetHashCode() * 3 ^
-
-                       (Second.HasValue
-                            ? Second.GetHashCode()
-                            : 0);
+                return Hour.   GetHashCode() * 5 ^
+                       Minute. GetHashCode() * 3 ^
+                       Second?.GetHashCode() ?? 0;
 
             }
         }

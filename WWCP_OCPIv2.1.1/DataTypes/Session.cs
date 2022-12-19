@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -50,106 +46,94 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// The identification of the session within the CPOs platform (and suboperator platforms). 
+        /// The unique identification of the session within the CPOs platform (and suboperator platforms).
         /// </summary>
         [Mandatory]
         public Session_Id                          Id                           { get; }
 
         /// <summary>
-        /// The time when the session became active.
+        /// The timestamp when the session became active.
         /// </summary>
         [Mandatory]
         public DateTime                            Start                        { get; }
 
         /// <summary>
-        /// The time when the session is completed.
+        /// The optional timestamp when the session was completed.
         /// </summary>
         [Optional]
         public DateTime?                           End                          { get; }
 
+#pragma warning disable IDE1006 // Naming Styles
         /// <summary>
-        /// How many kWh are charged.
+        /// The amount of kWhs that had been charged.
         /// </summary>
         [Mandatory]
         public Decimal                             kWh                          { get; }
+#pragma warning restore IDE1006 // Naming Styles
 
         /// <summary>
-        /// 
+        /// The authentication identification.
         /// </summary>
         [Mandatory]
         public Auth_Id                             AuthId                       { get; }
 
         /// <summary>
-        /// Method used for authentication.
+        /// The method used for authentication.
         /// </summary>
         [Mandatory]
         public AuthMethods                         AuthMethod                   { get; }
 
         /// <summary>
-        /// The location where this session took place, including only the relevant EVSE and connector
+        /// The location where this session took place, including only the relevant EVSE and connector.
         /// </summary>
         [Mandatory]
         public Location                            Location                     { get; }
 
-        ///// <summary>
-        ///// The UID of the EVSE of this Location on which the charging session is/was happening.
-        ///// </summary>
-        //[Mandatory]
-        //public EVSE_UId                            EVSEUId                      { get; }
-
-        ///// <summary>
-        ///// Identification of the connector of this location the charging session is/was happening.
-        ///// </summary>
-        //[Mandatory]
-        //public Connector_Id                        ConnectorId                  { get; }
-
         /// <summary>
-        /// Optional identification of the kWh energy meter.
+        /// The optional identification of the kWh energy meter.
         /// </summary>
         [Optional]
         public Meter_Id?                           MeterId                      { get; }
 
         /// <summary>
-        /// An optional energy meter, e.g. for the German calibration law.
+        /// The optional energy meter, e.g. for the German calibration law.
         /// </summary>
         [Optional, NonStandard]
         public EnergyMeter?                        EnergyMeter                  { get; }
 
         /// <summary>
-        /// An enumeration of transparency softwares which can be used to validate the charging session data.
+        /// The enumeration of transparency softwares which can be used to validate the charging session data.
         /// </summary>
         [Optional, NonStandard]
         public IEnumerable<TransparencySoftware>   TransparencySoftwares        { get; }
 
         /// <summary>
-        /// ISO 4217 code of the currency used for this session.
+        /// The ISO 4217 code of the currency used for this session.
         /// </summary>
         [Mandatory]
         public Currency                            Currency                     { get; }
 
         /// <summary>
-        /// An optional enumeration of charging periods that can be used to calculate and verify
-        /// the total cost.
+        /// The optional enumeration of charging periods that can be used to calculate and verify the total cost.
         /// </summary>
         [Optional]
         public IEnumerable<ChargingPeriod>         ChargingPeriods              { get; }
 
         /// <summary>
         /// The total cost (excluding VAT) of the session in the specified currency.
-        /// This is the price that the eMSP will have to pay to the CPO.
+        /// This is the price that the eMSP will have to pay to the charge point operator.
         /// </summary>
         [Optional]
         public Decimal?                            TotalCost                    { get; }
 
         /// <summary>
-        /// The total cost (excluding VAT) of the session in the specified currency.
-        /// This is the price that the eMSP will have to pay to the CPO.
+        /// The status of the session.
         /// </summary>
         [Mandatory]
         public SessionStatusTypes                  Status                       { get; }
 
         /// <summary>
-        /// Timestamp when this session was last updated (or created).
+        /// The timestamp when this session was last updated (or created).
         /// </summary>
         [Mandatory]
         public DateTime                            LastUpdated                  { get; }
@@ -157,7 +141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging session.
         /// </summary>
-        public String                              SHA256Hash                   { get; private set; }
+        public String                              ETag                         { get; private set; }
 
         #endregion
 
@@ -166,45 +150,112 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charging session.
         /// </summary>
-        public Session(Session_Id                          Id,
-                       DateTime                            Start,
-                       Decimal                             kWh,
-                       Auth_Id                             AuthId,
-                       AuthMethods                         AuthMethod,
-                       Location                            Location,
-                       Currency                            Currency,
-                       SessionStatusTypes                  Status,
+        /// <param name="Id">An unique identification of the session within the CPOs platform (and suboperator platforms).</param>
+        /// <param name="Start">A timestamp when the session became active.</param>
+        /// <param name="kWh">An amount of kWhs that had been charged.</param>
+        /// <param name="AuthId">An authentication identification.</param>
+        /// <param name="AuthMethod">A method used for authentication.</param>
+        /// <param name="Location">A location where this session took place, including only the relevant EVSE and connector.</param>
+        /// <param name="Currency">An ISO 4217 code of the currency used for this session.</param>
+        /// <param name="Status">A status of the session.</param>
+        /// 
+        /// <param name="End">An optional timestamp when the session was completed.</param>
+        /// <param name="MeterId">The optional identification of the kWh energy meter.</param>
+        /// <param name="EnergyMeter">An optional energy meter, e.g. for the German calibration law.</param>
+        /// <param name="TransparencySoftwares">An enumeration of transparency softwares which can be used to validate the charging session data.</param>
+        /// <param name="ChargingPeriods">An optional enumeration of charging periods that can be used to calculate and verify the total cost.</param>
+        /// <param name="TotalCost">The total cost (excluding VAT) of the session in the specified currency. This is the price that the eMSP will have to pay to the charge point operator.</param>
+        /// 
+        /// <param name="LastUpdated">A timestamp when this session was last updated (or created).</param>
+        /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
+        /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
+        public Session(Session_Id                                               Id,
+                       DateTime                                                 Start,
+                       Decimal                                                  kWh,
+                       Auth_Id                                                  AuthId,
+                       AuthMethods                                              AuthMethod,
+                       Location                                                 Location,
+                       Currency                                                 Currency,
+                       SessionStatusTypes                                       Status,
 
-                       DateTime?                           End                     = null,
-                       Meter_Id?                           MeterId                 = null,
-                       EnergyMeter?                        EnergyMeter             = null,
-                       IEnumerable<TransparencySoftware>?  TransparencySoftwares   = null,
-                       IEnumerable<ChargingPeriod>?        ChargingPeriods         = null,
-                       Decimal?                            TotalCost               = null,
+                       DateTime?                                                End                                     = null,
+                       Meter_Id?                                                MeterId                                 = null,
+                       EnergyMeter?                                             EnergyMeter                             = null,
+                       IEnumerable<TransparencySoftware>?                       TransparencySoftwares                   = null,
+                       IEnumerable<ChargingPeriod>?                             ChargingPeriods                         = null,
+                       Decimal?                                                 TotalCost                               = null,
 
-                       DateTime?                           LastUpdated             = null)
+                       DateTime?                                                LastUpdated                             = null,
+                       CustomJObjectSerializerDelegate<Session>?                CustomSessionSerializer                 = null,
+                       CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
+                       CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
+                       CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
+                       CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
+                       CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
+                       CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
+                       CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
+                       CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
+                       CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
+                       CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null,
+                       CustomJObjectSerializerDelegate<EnergySource>?           CustomEnergySourceSerializer            = null,
+                       CustomJObjectSerializerDelegate<EnvironmentalImpact>?    CustomEnvironmentalImpactSerializer     = null,
+                       CustomJObjectSerializerDelegate<EnergyMeter>?            CustomEnergyMeterSerializer             = null,
+                       CustomJObjectSerializerDelegate<TransparencySoftware>?   CustomTransparencySoftwareSerializer    = null,
+                       CustomJObjectSerializerDelegate<ChargingPeriod>?         CustomChargingPeriodSerializer          = null,
+                       CustomJObjectSerializerDelegate<CDRDimension>?           CustomCDRDimensionSerializer            = null)
 
         {
 
-            this.Id                       = Id;
-            this.Start                    = Start;
-            this.kWh                      = kWh;
-            this.AuthId                   = AuthId;
-            this.AuthMethod               = AuthMethod;
-            this.Location                 = Location;
-            this.Currency                 = Currency;
-            this.Status                   = Status;
+            this.Id                     = Id;
+            this.Start                  = Start;
+            this.kWh                    = kWh;
+            this.AuthId                 = AuthId;
+            this.AuthMethod             = AuthMethod;
+            this.Location               = Location;
+            this.Currency               = Currency;
+            this.Status                 = Status;
 
-            this.End                      = End;
-            this.MeterId                  = MeterId;
-            this.EnergyMeter              = EnergyMeter;
-            this.TransparencySoftwares    = TransparencySoftwares?.Distinct() ?? Array.Empty<TransparencySoftware>();
-            this.ChargingPeriods          = ChargingPeriods?.      Distinct() ?? Array.Empty<ChargingPeriod>();
-            this.TotalCost                = TotalCost;
+            this.End                    = End;
+            this.MeterId                = MeterId;
+            this.EnergyMeter            = EnergyMeter;
+            this.TransparencySoftwares  = TransparencySoftwares?.Distinct() ?? Array.Empty<TransparencySoftware>();
+            this.ChargingPeriods        = ChargingPeriods?.      Distinct() ?? Array.Empty<ChargingPeriod>();
+            this.TotalCost              = TotalCost;
 
-            this.LastUpdated              = LastUpdated ?? Timestamp.Now;
+            this.LastUpdated            = LastUpdated ?? Timestamp.Now;
 
-            CalcSHA256Hash();
+            this.ETag                   = CalcSHA256Hash(CustomSessionSerializer,
+                                                         CustomLocationSerializer,
+                                                         CustomAdditionalGeoLocationSerializer,
+                                                         CustomEVSESerializer,
+                                                         CustomStatusScheduleSerializer,
+                                                         CustomConnectorSerializer,
+                                                         CustomDisplayTextSerializer,
+                                                         CustomBusinessDetailsSerializer,
+                                                         CustomHoursSerializer,
+                                                         CustomImageSerializer,
+                                                         CustomEnergyMixSerializer,
+                                                         CustomEnergySourceSerializer,
+                                                         CustomEnvironmentalImpactSerializer,
+                                                         CustomEnergyMeterSerializer,
+                                                         CustomTransparencySoftwareSerializer,
+                                                         CustomChargingPeriodSerializer,
+                                                         CustomCDRDimensionSerializer);
 
         }
 
@@ -230,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                          SessionIdURL,
                          CustomSessionParser))
             {
-                return session;
+                return session!;
             }
 
             throw new ArgumentException("The given JSON representation of a session is invalid: " + errorResponse,
@@ -287,7 +338,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return false;
                 }
 
-                #region Parse Id                        [optional]
+                #region Parse Id                       [optional]
 
                 if (JSON.ParseOptional("id",
                                        "session identification",
@@ -313,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse Start                     [mandatory]
+                #region Parse Start                    [mandatory]
 
                 if (!JSON.ParseMandatory("start_date_time",
                                          "start timestamp",
@@ -325,7 +376,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse End                       [optional]
+                #region Parse End                      [optional]
 
                 if (JSON.ParseOptional("end_date_time",
                                        "end timestamp",
@@ -338,7 +389,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse KWh                       [mandatory]
+                #region Parse KWh                      [mandatory]
 
                 if (!JSON.ParseMandatory("kwh",
                                          "charged kWh",
@@ -350,7 +401,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse AuthId                    [mandatory]
+                #region Parse AuthId                   [mandatory]
 
                 if (!JSON.ParseMandatory("auth_id",
                                          "authorization identification",
@@ -363,7 +414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse AuthMethod                [mandatory]
+                #region Parse AuthMethod               [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("auth_method",
                                              "authentication method",
@@ -375,7 +426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse Location                  [mandatory]
+                #region Parse Location                 [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("location",
                                              "location",
@@ -391,7 +442,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse MeterId                   [optional]
+                #region Parse MeterId                  [optional]
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
@@ -405,7 +456,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse EnergyMeter               [optional]
+                #region Parse EnergyMeter              [optional]
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
@@ -419,7 +470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse TransparencySoftwares     [optional]
+                #region Parse TransparencySoftwares    [optional]
 
                 if (JSON.ParseOptionalJSON("transparency_softwares",
                                            "transparency softwares",
@@ -433,7 +484,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse Currency                  [mandatory]
+                #region Parse Currency                 [mandatory]
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
@@ -446,7 +497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse ChargingPeriods           [optional]
+                #region Parse ChargingPeriods          [optional]
 
                 if (JSON.ParseOptionalJSON("charging_periods",
                                            "charging periods",
@@ -460,7 +511,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse TotalCost                 [optional]
+                #region Parse TotalCost                [optional]
 
                 if (JSON.ParseOptional("total_cost",
                                        "total cost",
@@ -473,7 +524,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse Status                    [mandatory]
+                #region Parse Status                   [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("status",
                                              "session status",
@@ -485,7 +536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse LastUpdated               [mandatory]
+                #region Parse LastUpdated              [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -498,7 +549,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Session = new Session(SessionIdBody   ?? SessionIdURL.  Value,
+                Session = new Session(SessionIdBody ?? SessionIdURL!.Value,
                                       Start,
                                       KWh,
                                       AuthId,
@@ -541,6 +592,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
@@ -588,7 +651,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                          CustomBusinessDetailsSerializer,
                                                                                                          CustomHoursSerializer,
                                                                                                          CustomImageSerializer,
-                                                                                                         CustomEnergyMixSerializer)),
+                                                                                                         CustomEnergyMixSerializer,
+                                                                                                         CustomEnergySourceSerializer,
+                                                                                                         CustomEnvironmentalImpactSerializer)),
 
                            MeterId.HasValue
                                ? new JProperty("meter_id",                 MeterId.               ToString())
@@ -707,7 +772,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                              Boolean  AllowDowngrades = false)
         {
 
-            if (SessionPatch == null)
+            if (SessionPatch is null)
                 return PatchResult<Session>.Failed(this,
                                                    "The given charging session patch must not be null!");
 
@@ -734,18 +799,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                        patchResult.ErrorResponse);
 
                 if (TryParse(patchResult.PatchedData,
-                             out Session  PatchedSession,
-                             out String   ErrorResponse))
+                             out var patchedSession,
+                             out var errorResponse))
                 {
 
-                    return PatchResult<Session>.Success(PatchedSession,
-                                                        ErrorResponse);
+                    return PatchResult<Session>.Success(patchedSession,
+                                                        errorResponse);
 
                 }
 
                 else
                     return PatchResult<Session>.Failed(this,
-                                                       "Invalid JSON merge patch of a charging session: " + ErrorResponse);
+                                                       "Invalid JSON merge patch of a charging session: " + errorResponse);
 
             }
 
@@ -760,33 +825,60 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Calculate the SHA256 hash of the JSON representation of this charging session in HEX.
         /// </summary>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
+        /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
+        /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
+        /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>               CustomSessionSerializer                = null,
-                                     CustomJObjectSerializerDelegate<EnergyMeter>           CustomEnergyMeterSerializer            = null,
-                                     CustomJObjectSerializerDelegate<TransparencySoftware>  CustomTransparencySoftwareSerializer   = null,
-                                     CustomJObjectSerializerDelegate<ChargingPeriod>        CustomChargingPeriodSerializer         = null,
-                                     CustomJObjectSerializerDelegate<CDRDimension>          CustomCDRDimensionSerializer           = null)
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>?                CustomSessionSerializer                 = null,
+                                     CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
+                                     CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
+                                     CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
+                                     CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
+                                     CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
+                                     CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
+                                     CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
+                                     CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null,
+                                     CustomJObjectSerializerDelegate<EnergySource>?           CustomEnergySourceSerializer            = null,
+                                     CustomJObjectSerializerDelegate<EnvironmentalImpact>?    CustomEnvironmentalImpactSerializer     = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter>?            CustomEnergyMeterSerializer             = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftware>?   CustomTransparencySoftwareSerializer    = null,
+                                     CustomJObjectSerializerDelegate<ChargingPeriod>?         CustomChargingPeriodSerializer          = null,
+                                     CustomJObjectSerializerDelegate<CDRDimension>?           CustomCDRDimensionSerializer            = null)
         {
 
-            using (var SHA256 = new SHA256Managed())
-            {
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomSessionSerializer,
+                                                           CustomLocationSerializer,
+                                                           CustomAdditionalGeoLocationSerializer,
+                                                           CustomEVSESerializer,
+                                                           CustomStatusScheduleSerializer,
+                                                           CustomConnectorSerializer,
+                                                           CustomDisplayTextSerializer,
+                                                           CustomBusinessDetailsSerializer,
+                                                           CustomHoursSerializer,
+                                                           CustomImageSerializer,
+                                                           CustomEnergyMixSerializer,
+                                                           CustomEnergySourceSerializer,
+                                                           CustomEnvironmentalImpactSerializer,
+                                                           CustomEnergyMeterSerializer,
+                                                           CustomTransparencySoftwareSerializer,
+                                                           CustomChargingPeriodSerializer,
+                                                           CustomCDRDimensionSerializer).ToUTF8Bytes()).ToBase64();
 
-                return SHA256Hash = "0x" + SHA256.ComputeHash(Encoding.Unicode.GetBytes(
-                                                                  ToJSON(CustomSessionSerializer
-                                                                         //CustomEnergyMeterSerializer,
-                                                                         //CustomTransparencySoftwareSerializer,
-                                                                         //CustomChargingPeriodSerializer,
-                                                                         //CustomCDRDimensionSerializer
-                                                                         ).
-                                                                  ToString(Newtonsoft.Json.Formatting.None)
-                                                              )).
-                                                  Select(value => String.Format("{0:x2}", value)).
-                                                  Aggregate();
-
-            }
+            return this.ETag;
 
         }
 
@@ -905,10 +997,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging sessions.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charging session to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is Session session
                    ? CompareTo(session)
@@ -920,19 +1012,46 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Session)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging sessions.
         /// </summary>
-        /// <param name="Session">An Session to compare with.</param>
-        public Int32 CompareTo(Session Session)
+        /// <param name="Session">A charging session to compare with.</param>
+        public Int32 CompareTo(Session? Session)
         {
 
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!");
 
-            var c = Id.CompareTo(Session.Id);
+            var c = Id.         CompareTo(Session.Id);
+
+            if (c == 0)
+                c = Start.      CompareTo(Session.Start);
+
+            if (c == 0)
+                c = kWh.        CompareTo(Session.kWh);
+
+            if (c == 0)
+                c = AuthId.     CompareTo(Session.AuthId);
+
+            if (c == 0)
+                c = AuthMethod. CompareTo(Session.AuthMethod);
+
+            if (c == 0)
+                c = Currency.   CompareTo(Session.Currency);
+
+            if (c == 0)
+                c = Status.     CompareTo(Session.Status);
 
             if (c == 0)
                 c = LastUpdated.CompareTo(Session.LastUpdated);
+
+            // Location,
+            // 
+            // End
+            // MeterId
+            // EnergyMeter
+            // TransparencySoftwares
+            // ChargingPeriods
+            // TotalCost
 
             return c;
 
@@ -947,11 +1066,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging sessions for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charging session to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is Session session &&
                    Equals(session);
@@ -961,16 +1079,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Session)
 
         /// <summary>
-        /// Compares two Sessions for equality.
+        /// Compares two charging sessions for equality.
         /// </summary>
-        /// <param name="Session">An Session to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(Session Session)
+        /// <param name="Session">A charging session to compare with.</param>
+        public Boolean Equals(Session? Session)
 
-            => !(Session is null) &&
+            => Session is not null &&
 
-               Id.                     Equals(Session.Id) &&
-               LastUpdated.ToIso8601().Equals(Session.LastUpdated.ToIso8601());
+               Id.                     Equals(Session.Id)                      &&
+               Start.                  Equals(Session.Start)                   &&
+               kWh.                    Equals(Session.kWh)                     &&
+               AuthId.                 Equals(Session.AuthId)                  &&
+               AuthMethod.             Equals(Session.AuthMethod)              &&
+               Location.               Equals(Session.Location)                &&
+               Currency.               Equals(Session.Currency)                &&
+               Status.                 Equals(Session.Status)                  &&
+               LastUpdated.ToIso8601().Equals(Session.LastUpdated.ToIso8601()) &&
+
+            ((!End.                  HasValue    && !Session.End.                  HasValue)    ||
+              (End.                  HasValue    &&  Session.End.                  HasValue    && End.            Value.Equals(Session.End.      Value)))       &&
+
+            ((!MeterId.              HasValue    && !Session.MeterId.              HasValue)    ||
+              (MeterId.              HasValue    &&  Session.MeterId.              HasValue    && MeterId.        Value.Equals(Session.MeterId.  Value)))       &&
+
+            ((!TotalCost.            HasValue    && !Session.TotalCost.            HasValue)    ||
+              (TotalCost.            HasValue    &&  Session.TotalCost.            HasValue    && TotalCost.      Value.Equals(Session.TotalCost.Value)))       &&
+
+             ((EnergyMeter           is     null &&  Session.EnergyMeter           is     null) ||
+              (EnergyMeter           is not null &&  Session.EnergyMeter           is not null && EnergyMeter.          Equals(Session.EnergyMeter)))           &&
+
+             ((TransparencySoftwares is     null &&  Session.TransparencySoftwares is     null) ||
+              (TransparencySoftwares is not null &&  Session.TransparencySoftwares is not null && TransparencySoftwares.Equals(Session.TransparencySoftwares))) &&
+
+               ChargingPeriods.Count().Equals(Session.ChargingPeriods.Count())     &&
+               ChargingPeriods.All(chargingPeriod => Session.ChargingPeriods.Contains(chargingPeriod));
+
 
         #endregion
 
@@ -982,8 +1125,29 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Get the hashcode of this object.
         /// </summary>
         public override Int32 GetHashCode()
+        {
+            unchecked
+            {
 
-            => Id.GetHashCode();
+                return Id.                    GetHashCode()       * 47 ^
+                       Start.                 GetHashCode()       * 43 ^
+                       kWh.                   GetHashCode()       * 41 ^
+                       AuthId.                GetHashCode()       * 37 ^
+                       AuthMethod.            GetHashCode()       * 31 ^
+                       Location.              GetHashCode()       * 29 ^
+                       Currency.              GetHashCode()       * 23 ^
+                       Status.                GetHashCode()       * 19 ^
+                       LastUpdated.           GetHashCode()       * 17 ^
+
+                      (End?.                  GetHashCode() ?? 0) * 13 ^
+                      (MeterId?.              GetHashCode() ?? 0) * 11 ^
+                      (EnergyMeter?.          GetHashCode() ?? 0) *  7 ^
+                      (TransparencySoftwares?.GetHashCode() ?? 0) *  5 ^
+                      (ChargingPeriods?.      GetHashCode() ?? 0) *  3 ^
+                       TotalCost?.            GetHashCode() ?? 0;
+
+            }
+        }
 
         #endregion
 
@@ -994,7 +1158,43 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   Id,                      " (",
+                   Status,                  "), ",
+
+                   Start.ToIso8601(),
+
+                   End.HasValue
+                       ? " - " + End.Value.ToIso8601() + ", "
+                       : ", ",
+
+                   AuthId,                  " (",
+                   AuthMethod,              "), ",
+
+                   "location: ",
+                   Location.Id.ToString(),  ", ",
+
+                   kWh,                     " kWh, ",
+
+                   TotalCost.HasValue
+                       ? TotalCost.Value.ToString() + " " + Currency.ToString() + ", "
+                       : "",
+
+                   ChargingPeriods.Any()
+                       ? ChargingPeriods.Count() + " charging period(s), "
+                       : "",
+
+                   MeterId.HasValue
+                       ? "meter: " + MeterId.Value.ToString() + ", "
+                       : "",
+
+                   // EnergyMeter
+                   // TransparencySoftwares
+
+                   "last updated: " + LastUpdated.ToIso8601()
+
+               );
 
         #endregion
 
