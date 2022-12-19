@@ -17,6 +17,7 @@
 
 #region Usings
 
+using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Illias;
 
 #endregion
@@ -188,6 +189,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => new ("CHADEMO");
 
         /// <summary>
+        /// The ChaoJi connector.
+        /// The new generation charging connector, harmonized between CHAdeMO and GB/T.
+        /// DC.
+        /// </summary>
+        public static ConnectorType CHAOJI
+            => new("CHAOJI");
+
+        /// <summary>
         /// Standard/Domestic household, type "A", NEMA 1-15, 2 pins
         /// </summary>
         public static ConnectorType DOMESTIC_A
@@ -260,6 +269,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => new ("DOMESTIC_L");
 
         /// <summary>
+        /// Standard/Domestic household, type "M", BS 546, 3 pins
+        /// </summary>
+        public static ConnectorType DOMESTIC_M
+            => new("DOMESTIC_M");
+
+        /// <summary>
+        /// Standard/Domestic household, type "N", NBR 14136, 3 pins
+        /// </summary>
+        public static ConnectorType DOMESTIC_N
+            => new("DOMESTIC_N");
+
+        /// <summary>
+        /// Standard/Domestic household, type "O", TIS 166-2549, 3 pins
+        /// </summary>
+        public static ConnectorType DOMESTIC_O
+            => new("DOMESTIC_O");
+
+        /// <summary>
+        /// Guobiao GB/T 20234.2 AC socket/connector
+        /// </summary>
+        public static ConnectorType GBT_AC
+            => new("GBT_AC");
+
+        /// <summary>
+        /// Guobiao GB/T 20234.3 DC connector
+        /// </summary>
+        public static ConnectorType GBT_DC
+            => new("GBT_DC");
+
+        /// <summary>
         /// IEC 60309-2 Industrial Connector single phase 16 Amperes (usually blue)
         /// </summary>
         public static ConnectorType IEC_60309_2_single_16
@@ -318,6 +357,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public static ConnectorType IEC_62196_T3C
             => new ("IEC_62196_T3C");
+
+        /// <summary>
+        /// NEMA 5-20, 3 pins
+        /// </summary>
+        public static ConnectorType NEMA_5_20
+            => new ("NEMA_5_20");
+
+        /// <summary>
+        /// NEMA 6-30, 3 pins
+        /// </summary>
+        public static ConnectorType NEMA_6_30
+            => new("NEMA_6_30");
+
+        /// <summary>
+        /// NEMA 6-50, 3 pins
+        /// </summary>
+        public static ConnectorType NEMA_6_50
+            => new("NEMA_6_50");
+
+        /// <summary>
+        /// NEMA 10-30, 3 pins
+        /// </summary>
+        public static ConnectorType NEMA_10_30
+            => new("NEMA_10_30");
+
+        /// <summary>
+        /// NEMA 10-50, 3 pins
+        /// </summary>
+        public static ConnectorType NEMA_10_50
+            => new("NEMA_10_50");
+
+        /// <summary>
+        /// NEMA 14-30, 3 pins, rating of 30 A
+        /// </summary>
+        public static ConnectorType NEMA_14_30
+            => new("NEMA_14_30");
+
+        /// <summary>
+        /// NEMA 14-50, 3 pins, rating of 50 A
+        /// </summary>
+        public static ConnectorType NEMA_14_50
+            => new("NEMA_14_50");
 
         /// <summary>
         /// On-board Bottom-up-Pantograph typically for bus charging.

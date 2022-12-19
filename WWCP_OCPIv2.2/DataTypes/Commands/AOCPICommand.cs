@@ -17,9 +17,8 @@
 
 #region Usings
 
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Illias;
-using System;
+using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 #endregion
 
@@ -113,11 +112,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        public abstract Int32   CompareTo(Object Command);
+        public abstract Int32   CompareTo(Object? Command);
 
-        public abstract Int32   CompareTo(T Command);
+        public abstract Int32   CompareTo(T? Command);
 
-        public abstract Boolean Equals   (T Command);
+        public abstract Boolean Equals   (T? Command);
 
 
     }

@@ -28,8 +28,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// The CdrLocation class contains only the relevant information from the
-    /// location object that is needed in a CDR.
+    /// The charge detail record location is a copy of the location object, but contains
+    /// only the relevant information needed for creating a charge detail record.
     /// </summary>
     public class CDRLocation : IHasId<Location_Id>,
                                IEquatable<CDRLocation>,
@@ -40,37 +40,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// The identification of the location within the CPOs platform (and suboperator platforms). 
+        /// The unique identification of the location within the charge point operator's platform (and suboperator platforms).
         /// </summary>
         [Mandatory]
         public Location_Id                         Id                       { get; }
 
         /// <summary>
-        /// Display name of the location. // 255
+        /// The optional display name of the location.
+        /// string(255)
         /// </summary>
         [Optional]
         public String?                             Name                     { get; }
 
         /// <summary>
-        /// Address of the location. // 45
+        /// The address (street/block name and house number if available) of the location.
+        /// string(45)
         /// </summary>
         [Mandatory]
         public String                              Address                  { get; }
 
         /// <summary>
-        /// Address of the location. // 45
+        /// The city or town of the location.
+        /// string(45)
         /// </summary>
         [Mandatory]
         public String                              City                     { get; }
 
         /// <summary>
-        /// Address of the location. // 10
+        /// The optional postal code of the location.
+        /// string(10)
         /// </summary>
         [Optional]
         public String?                             PostalCode               { get; }
 
         /// <summary>
-        /// Address of the location. // 3
+        /// The optional state of the location.
+        /// string(20)
+        /// </summary>
+        [Optional]
+        public String?                             State                    { get; }
+
+        /// <summary>
+        /// The ISO 3166-1 alpha-3 code of the country of the location.
         /// </summary>
         [Mandatory]
         public Country                             Country                  { get; }
@@ -81,13 +92,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public GeoCoordinate                       Coordinates              { get; }
 
         /// <summary>
-        /// The internal identification of the Electric Vehicle Supply Equipment (EVSE).
+        /// The internal identification of the Electric Vehicle Supply Equipment (EVSE)
+        /// within the charge point operator's platform.
+        /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
         public EVSE_UId                            EVSEUId                  { get; }
 
         /// <summary>
-        /// The official identification of the Electric Vehicle Supply Equipment (EVSE).
+        /// The official unique identification of the Electric Vehicle Supply Equipment (EVSE).
+        /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
         public EVSE_Id                             EVSEId                   { get; }
@@ -121,6 +135,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new charge detail record location containing only the relevant
         /// information from the official location.
         /// </summary>
+        /// <param name="Id">The unique identification of the location within the charge point operator's platform (and suboperator platforms).</param>
+        /// <param name="Address">The optional display name of the location.</param>
+        /// <param name="City">The city or town of the location.</param>
+        /// <param name="Country">The ISO 3166-1 alpha-3 code of the country of the location.</param>
+        /// <param name="Coordinates">The geographical location of this location.</param>
+        /// <param name="EVSEUId">The internal identification of the Electric Vehicle Supply Equipment (EVSE) within the charge point operator's platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="EVSEId">The official unique identification of the Electric Vehicle Supply Equipment (EVSE). For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="ConnectorId">The official identification of the connector within the EVSE.</param>
+        /// <param name="ConnectorStandard">The standard of the installed connector.</param>
+        /// <param name="ConnectorFormat">The format (socket/cable) of the installed connector.</param>
+        /// <param name="ConnectorPowerType">The power type of the installed connector.</param>
+        /// 
+        /// <param name="Name">The optional display name of the location.</param>
+        /// <param name="PostalCode">The optional postal code of the location.</param>
+        /// <param name="State">The optional state of the location.</param>
         public CDRLocation(Location_Id       Id,
                            String            Address,
                            String            City,
@@ -134,7 +163,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            PowerTypes        ConnectorPowerType,
 
                            String?           Name         = null,
-                           String?           PostalCode   = null)
+                           String?           PostalCode   = null,
+                           String?           State        = null)
 
         {
 
@@ -152,6 +182,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             this.Name                 = Name;
             this.PostalCode           = PostalCode;
+            this.State                = State;
 
         }
 
@@ -177,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return location!;
             }
 
-            throw new ArgumentException("The given JSON representation of a cdr location is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a charge detail record location is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -274,6 +305,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #region Parse PostalCode                [optional]
 
                 var PostalCode = JSON.GetString("postal_code");
+
+                #endregion
+
+                #region Parse State                     [optional]
+
+                var State = JSON.GetString("state");
 
                 #endregion
 
@@ -394,7 +431,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                               ConnectorFormat,
                                               ConnectorPowerType,
                                               Name,
-                                              PostalCode);
+                                              PostalCode,
+                                              State);
 
 
                 if (CustomCDRLocationParser is not null)
@@ -407,7 +445,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 CDRLocation    = default;
-                ErrorResponse  = "The given JSON representation of a cdr location is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a charge detail record location is invalid: " + e.Message;
                 return false;
             }
 
@@ -421,7 +459,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomCDRLocationSerializer">A delegate to serialize custom location JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRLocation> CustomCDRLocationSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDRLocation>? CustomCDRLocationSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -437,6 +475,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            PostalCode.IsNotNullOrEmpty()
                                ? new JProperty("postal_code",     PostalCode)
+                               : null,
+
+                           State.IsNotNullOrEmpty()
+                               ? new JProperty("state",           State)
                                : null,
 
                            new JProperty("country",               Country.Alpha3Code),
@@ -576,14 +618,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charge detail record locations.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charge detail record location to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is CDRLocation location
                    ? CompareTo(location)
-                   : throw new ArgumentException("The given object is not a charging location!",
+                   : throw new ArgumentException("The given object is not a charge detail record location!",
                                                  nameof(Object));
 
         #endregion
@@ -591,14 +633,47 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(CDRLocation)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charge detail record locations.
         /// </summary>
-        /// <param name="CDRLocation">An CDRLocation to compare with.</param>
-        public Int32 CompareTo(CDRLocation CDRLocation)
+        /// <param name="CDRLocation">A charge detail record location to compare with.</param>
+        public Int32 CompareTo(CDRLocation? CDRLocation)
+        {
 
-            => CDRLocation is null
-                   ? throw new ArgumentNullException(nameof(CDRLocation), "The given charging location must not be null!")
-                   : Id.CompareTo(CDRLocation.Id);
+            if (CDRLocation is null)
+                throw new ArgumentNullException(nameof(CDRLocation), "The given charge detail record location must not be null!");
+
+            var c = Id.                CompareTo(CDRLocation.Id);
+
+            if (c == 0)
+                c = EVSEUId.           CompareTo(CDRLocation.EVSEUId);
+
+            if (c == 0)
+                c = EVSEId.            CompareTo(CDRLocation.EVSEId);
+
+            if (c == 0)
+                c = ConnectorId.       CompareTo(CDRLocation.ConnectorId);
+
+            if (c == 0)
+                c = ConnectorStandard. CompareTo(CDRLocation.ConnectorStandard);
+
+            if (c == 0)
+                c = ConnectorFormat.   CompareTo(CDRLocation.ConnectorFormat);
+
+            if (c == 0)
+                c = ConnectorPowerType.CompareTo(CDRLocation.ConnectorPowerType);
+
+            // Address
+            // City
+            // Country
+            // Coordinates
+
+            // Name
+            // PostalCode
+            // State
+
+            return c;
+
+        }
 
         #endregion
 
@@ -609,11 +684,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charge detail record locations for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charge detail record location to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CDRLocation location &&
                    Equals(location);
@@ -623,14 +697,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(CDRLocation)
 
         /// <summary>
-        /// Compares two locations for equality.
+        /// Compares two charge detail record locations for equality.
         /// </summary>
-        /// <param name="CDRLocation">A location to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CDRLocation CDRLocation)
+        /// <param name="CDRLocation">A charge detail record location to compare with.</param>
+        public Boolean Equals(CDRLocation? CDRLocation)
 
-            => !(CDRLocation is null) &&
-                   Id.Equals(CDRLocation.Id);
+            => CDRLocation is not null &&
+
+               Id.                Equals(CDRLocation.Id)                 &&
+               Address.           Equals(CDRLocation.Address)            &&
+               City.              Equals(CDRLocation.City)               &&
+               Country.           Equals(CDRLocation.Country)            &&
+               Coordinates.       Equals(CDRLocation.Coordinates)        &&
+               EVSEUId.           Equals(CDRLocation.EVSEUId)            &&
+               EVSEId.            Equals(CDRLocation.EVSEId)             &&
+               ConnectorId.       Equals(CDRLocation.ConnectorId)        &&
+               ConnectorStandard. Equals(CDRLocation.ConnectorStandard)  &&
+               ConnectorFormat.   Equals(CDRLocation.ConnectorFormat)    &&
+               ConnectorPowerType.Equals(CDRLocation.ConnectorPowerType) &&
+
+             ((Name       is     null &&  CDRLocation.Name       is     null) ||
+              (Name       is not null &&  CDRLocation.Name       is not null && Name.      Equals(CDRLocation.Name)))       &&
+
+             ((PostalCode is     null &&  CDRLocation.PostalCode is     null) ||
+              (PostalCode is not null &&  CDRLocation.PostalCode is not null && PostalCode.Equals(CDRLocation.PostalCode))) &&
+
+             ((State      is     null &&  CDRLocation.State      is     null) ||
+              (State      is not null &&  CDRLocation.State      is not null && State.     Equals(CDRLocation.State)));
 
         #endregion
 
@@ -643,7 +736,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override Int32 GetHashCode()
 
-            => Id.GetHashCode();
+            => Id.                GetHashCode()       * 43 ^
+               Address.           GetHashCode()       * 41 ^
+               City.              GetHashCode()       * 37 ^
+               Country.           GetHashCode()       * 31 ^
+               Coordinates.       GetHashCode()       * 29 ^
+               EVSEUId.           GetHashCode()       * 23 ^
+               EVSEId.            GetHashCode()       * 19 ^
+               ConnectorId.       GetHashCode()       * 17 ^
+               ConnectorStandard. GetHashCode()       * 13 ^
+               ConnectorFormat.   GetHashCode()       * 11 ^
+               ConnectorPowerType.GetHashCode()       *  7 ^
+              (Name?.             GetHashCode() ?? 0) *  5 ^
+              (PostalCode?.       GetHashCode() ?? 0) *  3 ^
+               State?.            GetHashCode() ?? 0;
 
         #endregion
 
@@ -654,7 +760,29 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => Id.ToString();
+            => String.Concat(
+
+                   Id,                ", ",
+
+                   Name is not null
+                       ? Name +       ", "
+                       : "",
+
+                   EVSEUId,           ", ",
+                   EVSEId,            ", ",
+                   ConnectorId,       ", ",
+                   ConnectorStandard, ", ",
+                   ConnectorFormat,   ", ",
+                   ConnectorPowerType
+
+               );
+
+        // Address,
+        // City,
+        // Country,
+        // Coordinates,
+        // PostalCode  
+        // State       
 
         #endregion
 

@@ -49,12 +49,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #region Defined CDR1
 
-            var CDR1 = new CDR(CountryCode.Parse("DE"),
+            var cdr1 = new CDR(CountryCode.Parse("DE"),
                                Party_Id.   Parse("GEF"),
                                CDR_Id.     Parse("CDR0001"),
-                               DateTime.   Parse("2020-04-12T18:20:19Z"),
-                               DateTime.   Parse("2020-04-12T22:20:19Z"),
+                               DateTime.   Parse("2020-04-12T18:20:19Z").ToUniversalTime(),
+                               DateTime.   Parse("2020-04-12T22:20:19Z").ToUniversalTime(),
                                new CDRToken(
+                                   CountryCode.Parse("DE"),
+                                   Party_Id.   Parse("GEF"),
                                    Token_Id.   Parse("1234"),
                                    TokenType. RFID,
                                    Contract_Id.Parse("C1234")
@@ -79,7 +81,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
                                new ChargingPeriod[] {
                                    new ChargingPeriod(
-                                       DateTime.Parse("2020-04-12T18:21:49Z"),
+                                       DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
                                        new CDRDimension[] {
                                            new CDRDimension(
                                                CDRDimensionType.ENERGY,
@@ -89,7 +91,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                        Tariff_Id.Parse("DE*GEF*T0001")
                                    ),
                                    new ChargingPeriod(
-                                       DateTime.Parse("2020-04-12T18:21:50Z"),
+                                       DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
                                        new CDRDimension[] {
                                            new CDRDimension(
                                                CDRDimensionType.TIME,
@@ -205,8 +207,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                            2.20,
                                            2.52
                                        ),
-                                       DateTime.Parse("2020-12-01"), // Start timestamp
-                                       DateTime.Parse("2020-12-31"), // End timestamp
+                                       DateTime.Parse("2020-12-01").ToUniversalTime(), // Start timestamp
+                                       DateTime.Parse("2020-12-31").ToUniversalTime(), // End timestamp
                                        new EnergyMix(
                                            true,
                                            new EnergySource[] {
@@ -228,7 +230,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                            "Stadtwerke Jena-Ost",
                                            "New Green Deal"
                                        ),
-                                       DateTime.Parse("2020-09-22")
+                                       DateTime.Parse("2020-09-22").ToUniversalTime()
                                    )
                                },
 
@@ -293,14 +295,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                InvoiceReference_Id.Parse("Invoice:0815"),
                                true, // IsCredit
                                CreditReference_Id.Parse("Credit:0815"),
+                               false,
 
-                               DateTime.Parse("2020-09-12")
+                               DateTime.Parse("2020-09-12").ToUniversalTime()
 
                            );
 
             #endregion
 
-            var JSON = CDR1.ToJSON();
+            var JSON = cdr1.ToJSON();
 
             Assert.AreEqual("DE",                          JSON["country_code"].Value<String>());
             Assert.AreEqual("GEF",                         JSON["party_id"].    Value<String>());
@@ -310,40 +313,40 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.IsTrue(CDR.TryParse(JSON, out var cdr2, out var errorResponse));
             Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(CDR1.CountryCode,              cdr2.CountryCode);
-            Assert.AreEqual(CDR1.PartyId,                  cdr2.PartyId);
-            Assert.AreEqual(CDR1.Id,                       cdr2.Id);
+            Assert.AreEqual(cdr1.CountryCode,              cdr2.CountryCode);
+            Assert.AreEqual(cdr1.PartyId,                  cdr2.PartyId);
+            Assert.AreEqual(cdr1.Id,                       cdr2.Id);
 
-            Assert.AreEqual(CDR1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
-            Assert.AreEqual(CDR1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
-            Assert.AreEqual(CDR1.CDRToken,                 cdr2.CDRToken);
-            Assert.AreEqual(CDR1.AuthMethod,               cdr2.AuthMethod);
-            Assert.AreEqual(CDR1.Location,                 cdr2.Location);
-            Assert.AreEqual(CDR1.Currency,                 cdr2.Currency);
-            Assert.AreEqual(CDR1.ChargingPeriods,          cdr2.ChargingPeriods);
-            Assert.AreEqual(CDR1.TotalCosts,               cdr2.TotalCosts);
-            Assert.AreEqual(CDR1.TotalEnergy,              cdr2.TotalEnergy);
-            Assert.AreEqual(CDR1.TotalTime,                cdr2.TotalTime);
+            Assert.AreEqual(cdr1.Start.ToIso8601(),        cdr2.Start.ToIso8601());
+            Assert.AreEqual(cdr1.End.  ToIso8601(),        cdr2.End.  ToIso8601());
+            Assert.AreEqual(cdr1.CDRToken,                 cdr2.CDRToken);
+            Assert.AreEqual(cdr1.AuthMethod,               cdr2.AuthMethod);
+            Assert.AreEqual(cdr1.Location,                 cdr2.Location);
+            Assert.AreEqual(cdr1.Currency,                 cdr2.Currency);
+            Assert.AreEqual(cdr1.ChargingPeriods,          cdr2.ChargingPeriods);
+            Assert.AreEqual(cdr1.TotalCosts,               cdr2.TotalCosts);
+            Assert.AreEqual(cdr1.TotalEnergy,              cdr2.TotalEnergy);
+            Assert.AreEqual(cdr1.TotalTime,                cdr2.TotalTime);
 
-            Assert.AreEqual(CDR1.SessionId,                cdr2.SessionId);
-            Assert.AreEqual(CDR1.AuthorizationReference,   cdr2.AuthorizationReference);
-            Assert.AreEqual(CDR1.MeterId,                  cdr2.MeterId);
-            Assert.AreEqual(CDR1.EnergyMeter,              cdr2.EnergyMeter);
-            Assert.AreEqual(CDR1.TransparencySoftwares,    cdr2.TransparencySoftwares);
-            Assert.AreEqual(CDR1.Tariffs,                  cdr2.Tariffs);
-            Assert.AreEqual(CDR1.SignedData,               cdr2.SignedData);
-            Assert.AreEqual(CDR1.TotalFixedCosts,          cdr2.TotalFixedCosts);
-            Assert.AreEqual(CDR1.TotalEnergyCost,          cdr2.TotalEnergyCost);
-            Assert.AreEqual(CDR1.TotalTimeCost,            cdr2.TotalTimeCost);
-            Assert.AreEqual(CDR1.TotalParkingTime,         cdr2.TotalParkingTime);
-            Assert.AreEqual(CDR1.TotalParkingCost,         cdr2.TotalParkingCost);
-            Assert.AreEqual(CDR1.TotalReservationCost,     cdr2.TotalReservationCost);
-            Assert.AreEqual(CDR1.Remark,                   cdr2.Remark);
-            Assert.AreEqual(CDR1.InvoiceReferenceId,       cdr2.InvoiceReferenceId);
-            Assert.AreEqual(CDR1.Credit,                   cdr2.Credit);
-            Assert.AreEqual(CDR1.CreditReferenceId,        cdr2.CreditReferenceId);
+            Assert.AreEqual(cdr1.SessionId,                cdr2.SessionId);
+            Assert.AreEqual(cdr1.AuthorizationReference,   cdr2.AuthorizationReference);
+            Assert.AreEqual(cdr1.MeterId,                  cdr2.MeterId);
+            Assert.AreEqual(cdr1.EnergyMeter,              cdr2.EnergyMeter);
+            Assert.AreEqual(cdr1.TransparencySoftwares,    cdr2.TransparencySoftwares);
+            Assert.AreEqual(cdr1.Tariffs,                  cdr2.Tariffs);
+            Assert.AreEqual(cdr1.SignedData,               cdr2.SignedData);
+            Assert.AreEqual(cdr1.TotalFixedCosts,          cdr2.TotalFixedCosts);
+            Assert.AreEqual(cdr1.TotalEnergyCost,          cdr2.TotalEnergyCost);
+            Assert.AreEqual(cdr1.TotalTimeCost,            cdr2.TotalTimeCost);
+            Assert.AreEqual(cdr1.TotalParkingTime,         cdr2.TotalParkingTime);
+            Assert.AreEqual(cdr1.TotalParkingCost,         cdr2.TotalParkingCost);
+            Assert.AreEqual(cdr1.TotalReservationCost,     cdr2.TotalReservationCost);
+            Assert.AreEqual(cdr1.Remark,                   cdr2.Remark);
+            Assert.AreEqual(cdr1.InvoiceReferenceId,       cdr2.InvoiceReferenceId);
+            Assert.AreEqual(cdr1.Credit,                   cdr2.Credit);
+            Assert.AreEqual(cdr1.CreditReferenceId,        cdr2.CreditReferenceId);
 
-            Assert.AreEqual(CDR1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
+            Assert.AreEqual(cdr1.LastUpdated.ToIso8601(),  cdr2.LastUpdated.ToIso8601());
 
         }
 

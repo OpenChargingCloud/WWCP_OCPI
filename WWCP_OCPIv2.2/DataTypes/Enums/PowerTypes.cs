@@ -126,6 +126,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         AC_1_PHASE,
 
         /// <summary>
+        /// AC two phases, only two of the three available phases connected.
+        /// </summary>
+        AC_2_PHASE,
+
+        /// <summary>
+        /// AC two phases using split phase system.
+        /// </summary>
+        AC_2_PHASE_SPLIT,
+
+        /// <summary>
         /// AC three phases.
         /// </summary>
         AC_3_PHASE,

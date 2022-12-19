@@ -243,6 +243,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => new("RFID_READER");
 
         /// <summary>
+        /// When a StartSession is sent to this EVSE, the MSP is required to add the
+        /// optional connector_id field in the StartSession object.
+        /// </summary>
+        public static Capability START_SESSION_CONNECTOR_REQUIRED
+            => new("START_SESSION_CONNECTOR_REQUIRED");
+
+        /// <summary>
         /// This EVSE supports token groups, two or more tokens work as one, so that a session can be
         /// started with one token and stopped with another (handy when a card and key-fob are given
         /// to the EV-driver).

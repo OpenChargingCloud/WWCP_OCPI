@@ -37,23 +37,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.
+        /// </summary>
+        [Mandatory]
+        public CountryCode  CountryCode    { get; }
+
+        /// <summary>
+        /// The identification of the charge point operator that 'owns' this charge detail record
+        /// (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id     PartyId        { get; }
+
+        /// <summary>
         /// The unique identification by which this token can be identified.
         /// </summary>
         [Mandatory]
-        public Token_Id     UID           { get; }
+        public Token_Id     UID            { get; }
 
         /// <summary>
         /// The type of the token.
         /// </summary>
         [Mandatory]
-        public TokenType    TokenType     { get; }
+        public TokenType    TokenType      { get; }
 
         /// <summary>
         /// Uniquely identifies the EV driver contract token within the eMSP’s
         /// platform (and suboperator platforms).
         /// </summary>
         [Mandatory]
-        public Contract_Id  ContractId    { get; }
+        public Contract_Id  ContractId     { get; }
 
         #endregion
 
@@ -63,17 +76,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// A CDR token consists of a start timestamp and a
         /// list of possible values that influence this period.
         /// </summary>
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.</param>
+        /// <param name="PartyId">The identification of the charge point operator that 'owns' this charge detail record (following the ISO-15118 standard).</param>
         /// <param name="UID">The unique identification by which this token can be identified.</param>
         /// <param name="TokenType">The type of the token.</param>
         /// <param name="ContractId">Uniquely identifies the EV driver contract token within the eMSP’s platform (and suboperator platforms).</param>
-        public CDRToken(Token_Id     UID,
+        public CDRToken(CountryCode  CountryCode,
+                        Party_Id     PartyId,
+                        Token_Id     UID,
                         TokenType    TokenType,
                         Contract_Id  ContractId)
         {
 
-            this.UID         = UID;
-            this.TokenType   = TokenType;
-            this.ContractId  = ContractId;
+            this.CountryCode  = CountryCode;
+            this.PartyId      = PartyId;
+            this.UID          = UID;
+            this.TokenType    = TokenType;
+            this.ContractId   = ContractId;
 
         }
 
@@ -175,7 +194,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse UID           [mandatory]
+                #region Parse CountryCode    [mandatory]
+
+                if (!JSON.ParseMandatory("country_code",
+                                         "country code",
+                                         OCPIv2_2.CountryCode.TryParse,
+                                         out CountryCode CountryCode,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyIdURL     [mandatory]
+
+                if (!JSON.ParseMandatory("party_id",
+                                         "party identification",
+                                         Party_Id.TryParse,
+                                         out Party_Id PartyId,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse UID            [mandatory]
 
                 if (!JSON.ParseMandatory("uid",
                                          "token identification",
@@ -188,7 +233,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TokenType     [mandatory]
+                #region Parse TokenType      [mandatory]
 
                 if (!JSON.ParseMandatory("type",
                                          "token type",
@@ -201,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ContractId    [mandatory]
+                #region Parse ContractId     [mandatory]
 
                 if (!JSON.ParseMandatory("contract_id",
                                          "contract identification",
@@ -215,7 +260,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 #endregion
 
 
-                CDRToken = new CDRToken(UID,
+                CDRToken = new CDRToken(CountryCode,
+                                        PartyId,
+                                        UID,
                                         TokenType,
                                         ContractId);
 
@@ -249,9 +296,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("uid",          UID.       ToString()),
-                           new JProperty("type",         TokenType. ToString()),
-                           new JProperty("contract_id",  ContractId.ToString())
+                           new JProperty("country_code", CountryCode.ToString()),
+                           new JProperty("party_id",     PartyId.    ToString()),
+                           new JProperty("uid",          UID.        ToString()),
+                           new JProperty("type",         TokenType.  ToString()),
+                           new JProperty("contract_id",  ContractId. ToString())
 
                        );
 
@@ -384,13 +433,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public Int32 CompareTo(CDRToken CDRToken)
         {
 
-            var c = UID.       CompareTo(CDRToken.UID);
+            var c = CountryCode.CompareTo(CDRToken.CountryCode);
 
             if (c == 0)
-                c = TokenType. CompareTo(CDRToken.TokenType);
+                c = PartyId.    CompareTo(CDRToken.PartyId);
 
             if (c == 0)
-                c = ContractId.CompareTo(CDRToken.ContractId);
+                c = UID.        CompareTo(CDRToken.UID);
+
+            if (c == 0)
+                c = TokenType.  CompareTo(CDRToken.TokenType);
+
+            if (c == 0)
+                c = ContractId. CompareTo(CDRToken.ContractId);
 
             return c;
 
@@ -423,9 +478,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CDRToken">A CDR token to compare with.</param>
         public Boolean Equals(CDRToken CDRToken)
 
-            => UID.       Equals(CDRToken.UID)       &&
-               TokenType. Equals(CDRToken.TokenType) &&
-               ContractId.Equals(CDRToken.ContractId);
+            => CountryCode.Equals(CDRToken.CountryCode) &&
+               PartyId.    Equals(CDRToken.PartyId)     &&
+               UID.        Equals(CDRToken.UID)         &&
+               TokenType.  Equals(CDRToken.TokenType)   &&
+               ContractId. Equals(CDRToken.ContractId);
 
         #endregion
 
@@ -442,9 +499,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return UID.       GetHashCode() * 5 ^
-                       TokenType. GetHashCode() * 3 ^
-                       ContractId.GetHashCode();
+                return CountryCode.GetHashCode() * 11 ^
+                       PartyId.    GetHashCode() *  7 ^
+                       UID.        GetHashCode() *  5 ^
+                       TokenType.  GetHashCode() *  3 ^
+                       ContractId. GetHashCode();
 
             }
         }
@@ -460,6 +519,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
+                   CountryCode,
+                   "-",
+                   PartyId,
+                   "*",
                    UID,
                    " (", TokenType, ") => ",
 

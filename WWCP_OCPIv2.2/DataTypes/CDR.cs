@@ -44,14 +44,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.
         /// </summary>
-        [Optional]
+        [Mandatory]
         public CountryCode                         CountryCode                 { get; }
 
         /// <summary>
         /// The identification of the charge point operator that 'owns' this charge detail record
         /// (following the ISO-15118 standard).
         /// </summary>
-        [Optional]
+        [Mandatory]
         public Party_Id                            PartyId                     { get; }
 
         /// <summary>
@@ -257,6 +257,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public CreditReference_Id?                 CreditReferenceId           { get; }
 
         /// <summary>
+        /// When set to true, this charge detail record is for a charging session using the home charger
+        /// of the EV driver for which the energy cost needs to be financial compensated to the EV driver.
+        /// </summary>
+        [Optional]
+        public Boolean?                            HomeChargingCompensation    { get; }
+
+        /// <summary>
         /// The timestamp when this charge detail record was last updated (or created).
         /// </summary>
         [Mandatory]
@@ -305,6 +312,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="InvoiceReferenceId">The optional invoice reference identification can be used to reference an invoice, that will later be send for this charge detail record. Might even group multiple charge detail records that will be on the same invoice.</param>
         /// <param name="Credit">The optional indication, that this charge detail record is a "credit CDR". When set to true the field credit_reference_id needs to be set as well.</param>
         /// <param name="CreditReferenceId">The optional credit reference identification is required to be set for a "credit CDR". This SHALL contain the identification of the charge detail record for which this is a "credit CDR".</param>
+        /// <param name="HomeChargingCompensation">When set to true, this charge detail record is for a charging session using the home charger of the EV driver for which the energy cost needs to be financial compensated to the EV driver.</param>
         /// 
         /// <param name="LastUpdated">The timestamp when this charge detail record was last updated (or created).</param>
         /// <param name="CustomCDRSerializer">A delegate to serialize custom charge detail record JSON objects.</param>
@@ -352,6 +360,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    InvoiceReference_Id?                                    InvoiceReferenceId                     = null,
                    Boolean?                                                Credit                                 = null,
                    CreditReference_Id?                                     CreditReferenceId                      = null,
+                   Boolean?                                                HomeChargingCompensation               = null,
 
                    DateTime?                                               LastUpdated                            = null,
                    CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
@@ -374,54 +383,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (!ChargingPeriods.Any())
                 throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration of charging periods must not be null or empty!");
 
-            this.CountryCode              = CountryCode;
-            this.PartyId                  = PartyId;
-            this.Id                       = Id;
-            this.Start                    = Start;
-            this.End                      = End;
-            this.CDRToken                 = CDRToken;
-            this.AuthMethod               = AuthMethod;
-            this.Location                 = Location;
-            this.Currency                 = Currency;
-            this.ChargingPeriods          = ChargingPeriods       ?? Array.Empty<ChargingPeriod>();
-            this.TotalCosts               = TotalCosts;
-            this.TotalEnergy              = TotalEnergy;
-            this.TotalTime                = TotalTime;
+            this.CountryCode               = CountryCode;
+            this.PartyId                   = PartyId;
+            this.Id                        = Id;
+            this.Start                     = Start;
+            this.End                       = End;
+            this.CDRToken                  = CDRToken;
+            this.AuthMethod                = AuthMethod;
+            this.Location                  = Location;
+            this.Currency                  = Currency;
+            this.ChargingPeriods           = ChargingPeriods       ?? Array.Empty<ChargingPeriod>();
+            this.TotalCosts                = TotalCosts;
+            this.TotalEnergy               = TotalEnergy;
+            this.TotalTime                 = TotalTime;
 
-            this.SessionId                = SessionId;
-            this.AuthorizationReference   = AuthorizationReference;
-            this.MeterId                  = MeterId;
-            this.EnergyMeter              = EnergyMeter;
-            this.TransparencySoftwares    = TransparencySoftwares ?? Array.Empty<TransparencySoftware>();
-            this.Tariffs                  = Tariffs               ?? Array.Empty<Tariff>();
-            this.SignedData               = SignedData;
-            this.TotalFixedCosts          = TotalFixedCosts;
-            this.TotalEnergyCost          = TotalEnergyCost;
-            this.TotalTimeCost            = TotalTimeCost;
-            this.TotalParkingTime         = TotalParkingTime;
-            this.TotalParkingCost         = TotalParkingCost;
-            this.TotalReservationCost     = TotalReservationCost;
-            this.Remark                   = Remark;
-            this.InvoiceReferenceId       = InvoiceReferenceId;
-            this.Credit                   = Credit;
-            this.CreditReferenceId        = CreditReferenceId;
+            this.SessionId                 = SessionId;
+            this.AuthorizationReference    = AuthorizationReference;
+            this.MeterId                   = MeterId;
+            this.EnergyMeter               = EnergyMeter;
+            this.TransparencySoftwares     = TransparencySoftwares ?? Array.Empty<TransparencySoftware>();
+            this.Tariffs                   = Tariffs               ?? Array.Empty<Tariff>();
+            this.SignedData                = SignedData;
+            this.TotalFixedCosts           = TotalFixedCosts;
+            this.TotalEnergyCost           = TotalEnergyCost;
+            this.TotalTimeCost             = TotalTimeCost;
+            this.TotalParkingTime          = TotalParkingTime;
+            this.TotalParkingCost          = TotalParkingCost;
+            this.TotalReservationCost      = TotalReservationCost;
+            this.Remark                    = Remark;
+            this.InvoiceReferenceId        = InvoiceReferenceId;
+            this.Credit                    = Credit;
+            this.CreditReferenceId         = CreditReferenceId;
+            this.HomeChargingCompensation  = HomeChargingCompensation;
 
-            this.LastUpdated              = LastUpdated           ?? Timestamp.Now;
+            this.LastUpdated               = LastUpdated           ?? Timestamp.Now;
 
-            this.ETag                     = SHA256.Create().ComputeHash(ToJSON(CustomCDRSerializer,
-                                                                               CustomCDRTokenSerializer,
-                                                                               CustomCDRLocationSerializer,
-                                                                               CustomEnergyMeterSerializer,
-                                                                               CustomTransparencySoftwareSerializer,
-                                                                               CustomTariffSerializer,
-                                                                               CustomTariffElementSerializer,
-                                                                               CustomPriceComponentSerializer,
-                                                                               CustomTariffRestrictionsSerializer,
-                                                                               CustomChargingPeriodSerializer,
-                                                                               CustomCDRDimensionSerializer,
-                                                                               CustomSignedDataSerializer,
-                                                                               CustomSignedValueSerializer,
-                                                                               CustomPriceSerializer).ToUTF8Bytes()).ToBase64();
+            this.ETag                      = SHA256.Create().ComputeHash(ToJSON(CustomCDRSerializer,
+                                                                                CustomCDRTokenSerializer,
+                                                                                CustomCDRLocationSerializer,
+                                                                                CustomEnergyMeterSerializer,
+                                                                                CustomTransparencySoftwareSerializer,
+                                                                                CustomTariffSerializer,
+                                                                                CustomTariffElementSerializer,
+                                                                                CustomPriceComponentSerializer,
+                                                                                CustomTariffRestrictionsSerializer,
+                                                                                CustomChargingPeriodSerializer,
+                                                                                CustomCDRDimensionSerializer,
+                                                                                CustomSignedDataSerializer,
+                                                                                CustomSignedValueSerializer,
+                                                                                CustomPriceSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 
@@ -515,7 +525,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse CountryCode               [optional]
+                #region Parse CountryCode                 [optional]
 
                 if (JSON.ParseOptional("country_code",
                                        "country code",
@@ -541,7 +551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse PartyIdURL                [optional]
+                #region Parse PartyIdURL                  [optional]
 
                 if (JSON.ParseOptional("party_id",
                                        "party identification",
@@ -567,7 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Id                        [optional]
+                #region Parse Id                          [optional]
 
                 if (JSON.ParseOptional("id",
                                        "CDR identification",
@@ -593,7 +603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Start                     [mandatory]
+                #region Parse Start                       [mandatory]
 
                 if (!JSON.ParseMandatory("start_date_time",
                                          "start timestamp",
@@ -605,7 +615,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse End                       [mandatory]
+                #region Parse End                         [mandatory]
 
                 if (!JSON.ParseMandatory("end_date_time",
                                          "end timestamp",
@@ -617,7 +627,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse SessionId                 [optional]
+                #region Parse SessionId                   [optional]
 
                 if (JSON.ParseOptional("session_id",
                                        "session identification",
@@ -631,7 +641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse CDRToken                  [mandatory]
+                #region Parse CDRToken                    [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("cdr_token",
                                              "charge detail record token",
@@ -644,7 +654,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse AuthMethod                [mandatory]
+                #region Parse AuthMethod                  [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("auth_method",
                                              "authentication method",
@@ -656,7 +666,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse AuthorizationReference    [optional]
+                #region Parse AuthorizationReference      [optional]
 
                 if (JSON.ParseOptional("authorization_reference",
                                        "authorization reference",
@@ -670,7 +680,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Location                  [mandatory]
+                #region Parse Location                    [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("cdr_location",
                                              "charge detail record location",
@@ -686,7 +696,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse MeterId                   [optional]
+                #region Parse MeterId                     [optional]
 
                 if (JSON.ParseOptional("meter_id",
                                        "meter identification",
@@ -700,7 +710,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse EnergyMeter               [optional]
+                #region Parse EnergyMeter                 [optional]
 
                 if (JSON.ParseOptionalJSON("energy_meter",
                                            "energy meter",
@@ -714,7 +724,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TransparencySoftwares     [optional]
+                #region Parse TransparencySoftwares       [optional]
 
                 if (JSON.ParseOptionalJSON("transparency_softwares",
                                            "transparency softwares",
@@ -728,7 +738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Currency                  [mandatory]
+                #region Parse Currency                    [mandatory]
 
                 if (!JSON.ParseMandatory("currency",
                                          "currency",
@@ -741,7 +751,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse Tariffs                   [optional]
+                #region Parse Tariffs                     [optional]
 
                 if (JSON.ParseOptionalJSON("tariffs",
                                            "tariffs",
@@ -755,7 +765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ChargingPeriods           [mandatory]
+                #region Parse ChargingPeriods             [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("charging_periods",
                                              "charging periods",
@@ -768,7 +778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse SignedData                [optional]
+                #region Parse SignedData                  [optional]
 
                 if (JSON.ParseOptionalJSON("signed_data",
                                            "signed data",
@@ -782,7 +792,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalCosts                [mandatory]
+                #region Parse TotalCosts                  [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("total_cost",
                                              "total costs",
@@ -795,7 +805,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalFixedCosts           [optional]
+                #region Parse TotalFixedCosts             [optional]
 
                 if (JSON.ParseOptionalJSON("total_fixed_cost",
                                            "total fixed costs",
@@ -809,7 +819,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalEnergy               [mandatory]
+                #region Parse TotalEnergy                 [mandatory]
 
                 if (!JSON.ParseMandatory("total_energy",
                                          "total energy",
@@ -821,7 +831,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalEnergyCost           [optional]
+                #region Parse TotalEnergyCost             [optional]
 
                 if (JSON.ParseOptionalJSON("total_energy_cost",
                                            "total energy cost",
@@ -835,7 +845,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalTime                 [mandatory]
+                #region Parse TotalTime                   [mandatory]
 
                 if (!JSON.ParseMandatory("total_time",
                                          "total time",
@@ -849,7 +859,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalTimeCost             [optional]
+                #region Parse TotalTimeCost               [optional]
 
                 if (JSON.ParseOptionalJSON("total_time_cost",
                                            "total time cost",
@@ -863,20 +873,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalParkingTime          [optional]
+                #region Parse TotalParkingTime            [optional]
 
                 if (JSON.ParseOptional("total_parking_time",
                                        "total parking time",
-                                       out Double? TotalParkingTimeHours,
+                                       out Double? totalParkingTimeHours,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
                         return false;
                 }
 
+                var TotalParkingTimeHours = totalParkingTimeHours.HasValue
+                                                ? new TimeSpan?(TimeSpan.FromHours(totalParkingTimeHours.Value))
+                                                : null;
+
                 #endregion
 
-                #region Parse TotalParkingCost          [optional]
+                #region Parse TotalParkingCost            [optional]
 
                 if (JSON.ParseOptionalJSON("total_parking_cost",
                                            "total parking cost",
@@ -890,7 +904,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse TotalReservationCost      [optional]
+                #region Parse TotalReservationCost        [optional]
 
                 if (JSON.ParseOptionalJSON("total_reservation_cost",
                                            "total reservation cost",
@@ -904,13 +918,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Remark                          [optional]
+                #region Remark                            [optional]
 
                 var Remark = JSON.GetString("remark");
 
                 #endregion
 
-                #region Parse InvoiceReferenceId        [optional]
+                #region Parse InvoiceReferenceId          [optional]
 
                 if (JSON.ParseOptional("invoice_reference_id",
                                        "invoice reference identification",
@@ -924,7 +938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Credit                          [optional]
+                #region Credit                            [optional]
 
                 if (JSON.ParseOptional("credit",
                                        "credit charge detail record",
@@ -937,7 +951,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse CreditReferenceId         [optional]
+                #region Parse CreditReferenceId           [optional]
 
                 if (JSON.ParseOptional("credit_reference_id",
                                        "credit reference identification",
@@ -951,7 +965,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse LastUpdated               [mandatory]
+                #region Parse HomeChargingCompensation    [optional]
+
+                if (JSON.ParseOptional("home_charging_compensation",
+                                       "home charging compensation",
+                                       out Boolean? HomeChargingCompensation,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse LastUpdated                 [mandatory]
 
                 if (!JSON.ParseMandatory("last_updated",
                                          "last updated",
@@ -988,13 +1015,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               TotalFixedCosts,
                               TotalEnergyCost,
                               TotalTimeCost,
-                              TotalParkingTimeHours.HasValue ? new TimeSpan?(TimeSpan.FromHours(TotalParkingTimeHours.Value)) : null,
+                              TotalParkingTimeHours,
                               TotalParkingCost,
                               TotalReservationCost,
                               Remark,
                               InvoiceReferenceId,
                               Credit,
                               CreditReferenceId,
+                              HomeChargingCompensation,
 
                               LastUpdated);
 
@@ -1054,103 +1082,107 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var JSON = JSONObject.Create(
 
-                                 new JProperty("country_code",              CountryCode.                 ToString()),
-                                 new JProperty("party_id",                  PartyId.                     ToString()),
-                                 new JProperty("id",                        Id.                          ToString()),
-                                 new JProperty("start_date_time",           Start.                       ToIso8601()),
-                                 new JProperty("end_date_time",             End.                         ToIso8601()),
+                                 new JProperty("country_code",                 CountryCode.                   ToString()),
+                                 new JProperty("party_id",                     PartyId.                       ToString()),
+                                 new JProperty("id",                           Id.                            ToString()),
+                                 new JProperty("start_date_time",              Start.                         ToIso8601()),
+                                 new JProperty("end_date_time",                End.                           ToIso8601()),
 
                            SessionId.HasValue
-                               ? new JProperty("session_id",                SessionId.             Value.ToString())
+                               ? new JProperty("session_id",                   SessionId.               Value.ToString())
                                : null,
 
-                                 new JProperty("cdr_token",                 CDRToken.                    ToJSON(CustomCDRTokenSerializer)),
-                                 new JProperty("auth_method",               AuthMethod.                  ToString()),
+                                 new JProperty("cdr_token",                    CDRToken.                      ToJSON(CustomCDRTokenSerializer)),
+                                 new JProperty("auth_method",                  AuthMethod.                    ToString()),
 
                            AuthorizationReference.HasValue
-                               ? new JProperty("authorization_reference",   AuthorizationReference.Value.ToString())
+                               ? new JProperty("authorization_reference",      AuthorizationReference.  Value.ToString())
                                : null,
 
-                                 new JProperty("cdr_location",              Location.                    ToJSON(CustomCDRLocationSerializer)),
+                                 new JProperty("cdr_location",                 Location.                      ToJSON(CustomCDRLocationSerializer)),
 
                            MeterId.HasValue
-                               ? new JProperty("meter_id",                  MeterId.               Value.ToString())
+                               ? new JProperty("meter_id",                     MeterId.                 Value.ToString())
                                : null,
 
                            EnergyMeter is not null
-                               ? new JProperty("energy_meter",              EnergyMeter.                 ToJSON(CustomEnergyMeterSerializer))
+                               ? new JProperty("energy_meter",                 EnergyMeter.                   ToJSON(CustomEnergyMeterSerializer))
                                : null,
 
                            TransparencySoftwares.Any()
-                               ? new JProperty("transparency_softwares",    new JArray(TransparencySoftwares.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareSerializer))))
+                               ? new JProperty("transparency_softwares",       new JArray(TransparencySoftwares.Select(transparencySoftware => transparencySoftware.ToJSON(CustomTransparencySoftwareSerializer))))
                                : null,
 
-                                 new JProperty("currency",                  Currency.                    ToString()),
+                                 new JProperty("currency",                     Currency.                      ToString()),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(CustomTariffSerializer,
-                                                                                                                                                                        CustomTariffElementSerializer,
-                                                                                                                                                                        CustomPriceComponentSerializer,
-                                                                                                                                                                        CustomTariffRestrictionsSerializer))))
+                               ? new JProperty("tariffs",                      new JArray(Tariffs.                Select(tariff               => tariff.              ToJSON(CustomTariffSerializer,
+                                                                                                                                                                             CustomTariffElementSerializer,
+                                                                                                                                                                             CustomPriceComponentSerializer,
+                                                                                                                                                                             CustomTariffRestrictionsSerializer))))
                                : null,
 
                            ChargingPeriods.Any()
-                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.      Select(chargingPeriod       => chargingPeriod.      ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                                        CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",             new JArray(ChargingPeriods.        Select(chargingPeriod       => chargingPeriod.      ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                                             CustomCDRDimensionSerializer))))
                                : null,
 
                            SignedData is not null
-                               ? new JProperty("signed_data",               SignedData.                  ToJSON(CustomSignedDataSerializer,
-                                                                                                                CustomSignedValueSerializer))
+                               ? new JProperty("signed_data",                  SignedData.                    ToJSON(CustomSignedDataSerializer,
+                                                                                                                     CustomSignedValueSerializer))
                                : null,
 
-                                 new JProperty("total_cost",                TotalCosts.                  ToJSON(CustomPriceSerializer)),
+                                 new JProperty("total_cost",                   TotalCosts.                    ToJSON(CustomPriceSerializer)),
 
                            TotalFixedCosts.HasValue
-                               ? new JProperty("total_fixed_cost",          TotalFixedCosts.       Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_fixed_cost",             TotalFixedCosts.         Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                                 new JProperty("total_energy",              TotalEnergy),
+                                 new JProperty("total_energy",                 TotalEnergy),
 
                            TotalEnergyCost.HasValue
-                               ? new JProperty("total_energy_cost",         TotalEnergyCost.       Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_energy_cost",            TotalEnergyCost.         Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                                 new JProperty("total_time",                TotalTime.                   TotalHours),
+                                 new JProperty("total_time",                   TotalTime.                     TotalHours),
 
                            TotalTimeCost.HasValue
-                               ? new JProperty("total_time_cost",           TotalTimeCost.         Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_time_cost",              TotalTimeCost.           Value.ToJSON(CustomPriceSerializer))
                                : null,
 
                            TotalParkingTime.HasValue
-                               ? new JProperty("total_parking_time",        TotalParkingTime.      Value.TotalHours)
+                               ? new JProperty("total_parking_time",           TotalParkingTime.        Value.TotalHours)
                                : null,
 
                            TotalParkingCost.HasValue
-                               ? new JProperty("total_parking_cost",        TotalParkingCost.      Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_parking_cost",           TotalParkingCost.        Value.ToJSON(CustomPriceSerializer))
                                : null,
 
                            TotalReservationCost.HasValue
-                               ? new JProperty("total_reservation_cost",    TotalReservationCost.  Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_reservation_cost",       TotalReservationCost.    Value.ToJSON(CustomPriceSerializer))
                                : null,
 
                            Remark.IsNotNullOrEmpty()
-                               ? new JProperty("remark",                    Remark)
+                               ? new JProperty("remark",                       Remark)
                                : null,
 
                            InvoiceReferenceId.HasValue
-                               ? new JProperty("invoice_reference_id",      InvoiceReferenceId.    Value.ToString())
+                               ? new JProperty("invoice_reference_id",         InvoiceReferenceId.      Value.ToString())
                                : null,
 
                            Credit.HasValue
-                               ? new JProperty("credit",                    Credit)
+                               ? new JProperty("credit",                       Credit.                  Value)
                                : null,
 
                            CreditReferenceId.HasValue
-                               ? new JProperty("credit_reference_id",       CreditReferenceId.     Value.ToString())
+                               ? new JProperty("credit_reference_id",          CreditReferenceId.       Value.ToString())
                                : null,
 
-                                 new JProperty("last_updated",              LastUpdated.                 ToIso8601())
+                           HomeChargingCompensation.HasValue
+                               ? new JProperty("home_charging_compensation",   HomeChargingCompensation.Value)
+                               : null,
+
+                                 new JProperty("last_updated",                 LastUpdated.                   ToIso8601())
 
                        );
 
@@ -1337,23 +1369,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             // Location,
             // ChargingPeriods,
             // 
-            // SessionId              
-            // AuthorizationReference 
-            // MeterId                
-            // EnergyMeter            
-            // TransparencySoftwares  
-            // Tariffs                
-            // SignedData             
-            // TotalFixedCosts        
-            // TotalEnergyCost        
-            // TotalTimeCost          
-            // TotalParkingTime       
-            // TotalParkingCost       
-            // TotalReservationCost   
-            // Remark                 
-            // InvoiceReferenceId     
-            // Credit                 
-            // CreditReferenceId      
+            // SessionId
+            // AuthorizationReference
+            // MeterId
+            // EnergyMeter
+            // TransparencySoftwares
+            // Tariffs
+            // SignedData
+            // TotalFixedCosts
+            // TotalEnergyCost
+            // TotalTimeCost
+            // TotalParkingTime
+            // TotalParkingCost
+            // TotalReservationCost
+            // Remark
+            // InvoiceReferenceId
+            // Credit
+            // CreditReferenceId
+            // HomeChargingCompensation
 
             return c;
 
@@ -1404,53 +1437,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                TotalTime.              Equals(CDR.TotalTime)               &&
                LastUpdated.ToIso8601().Equals(CDR.LastUpdated.ToIso8601()) &&
 
-            ((!SessionId.             HasValue    && !CDR.SessionId.             HasValue)    ||
-              (SessionId.             HasValue    &&  CDR.SessionId.             HasValue    && SessionId.             Value.Equals(CDR.SessionId.             Value))) &&
+            ((!SessionId.               HasValue    && !CDR.SessionId.               HasValue)  ||
+              (SessionId.               HasValue    &&  CDR.SessionId.               HasValue    && SessionId.               Value.Equals(CDR.SessionId.               Value))) &&
 
-            ((!AuthorizationReference.HasValue    && !CDR.AuthorizationReference.HasValue)    ||
-              (AuthorizationReference.HasValue    &&  CDR.AuthorizationReference.HasValue    && AuthorizationReference.Value.Equals(CDR.AuthorizationReference.Value))) &&
+            ((!AuthorizationReference.  HasValue    && !CDR.AuthorizationReference.  HasValue)  ||
+              (AuthorizationReference.  HasValue    &&  CDR.AuthorizationReference.  HasValue    && AuthorizationReference.  Value.Equals(CDR.AuthorizationReference.  Value))) &&
 
-            ((!MeterId.               HasValue    && !CDR.MeterId.               HasValue)    ||
-              (MeterId.               HasValue    &&  CDR.MeterId.               HasValue    && MeterId.               Value.Equals(CDR.MeterId.               Value))) &&
+            ((!MeterId.                 HasValue    && !CDR.MeterId.                 HasValue)  ||
+              (MeterId.                 HasValue    &&  CDR.MeterId.                 HasValue    && MeterId.                 Value.Equals(CDR.MeterId.                 Value))) &&
 
-            ((!TotalFixedCosts.       HasValue    && !CDR.TotalFixedCosts.       HasValue)    ||
-              (TotalFixedCosts.       HasValue    &&  CDR.TotalFixedCosts.       HasValue    && TotalFixedCosts.       Value.Equals(CDR.TotalFixedCosts.       Value))) &&
+            ((!TotalFixedCosts.         HasValue    && !CDR.TotalFixedCosts.         HasValue)  ||
+              (TotalFixedCosts.         HasValue    &&  CDR.TotalFixedCosts.         HasValue    && TotalFixedCosts.         Value.Equals(CDR.TotalFixedCosts.         Value))) &&
 
-            ((!TotalEnergyCost.       HasValue    && !CDR.TotalEnergyCost.       HasValue)    ||
-              (TotalEnergyCost.       HasValue    &&  CDR.TotalEnergyCost.       HasValue    && TotalEnergyCost.       Value.Equals(CDR.TotalEnergyCost.       Value))) &&
+            ((!TotalEnergyCost.         HasValue    && !CDR.TotalEnergyCost.         HasValue)  ||
+              (TotalEnergyCost.         HasValue    &&  CDR.TotalEnergyCost.         HasValue    && TotalEnergyCost.         Value.Equals(CDR.TotalEnergyCost.         Value))) &&
 
-            ((!TotalTimeCost.         HasValue    && !CDR.TotalTimeCost.         HasValue)    ||
-              (TotalTimeCost.         HasValue    &&  CDR.TotalTimeCost.         HasValue    && TotalTimeCost.         Value.Equals(CDR.TotalTimeCost.         Value))) &&
+            ((!TotalTimeCost.           HasValue    && !CDR.TotalTimeCost.           HasValue)  ||
+              (TotalTimeCost.           HasValue    &&  CDR.TotalTimeCost.           HasValue    && TotalTimeCost.           Value.Equals(CDR.TotalTimeCost.           Value))) &&
 
-            ((!TotalParkingTime.      HasValue    && !CDR.TotalParkingTime.      HasValue)    ||
-              (TotalParkingTime.      HasValue    &&  CDR.TotalParkingTime.      HasValue    && TotalParkingTime.      Value.Equals(CDR.TotalParkingTime.      Value))) &&
+            ((!TotalParkingTime.        HasValue    && !CDR.TotalParkingTime.        HasValue)  ||
+              (TotalParkingTime.        HasValue    &&  CDR.TotalParkingTime.        HasValue    && TotalParkingTime.        Value.Equals(CDR.TotalParkingTime.        Value))) &&
 
-            ((!TotalParkingCost.      HasValue    && !CDR.TotalParkingCost.      HasValue)    ||
-              (TotalParkingCost.      HasValue    &&  CDR.TotalParkingCost.      HasValue    && TotalParkingCost.      Value.Equals(CDR.TotalParkingCost.      Value))) &&
+            ((!TotalParkingCost.        HasValue    && !CDR.TotalParkingCost.        HasValue)  ||
+              (TotalParkingCost.        HasValue    &&  CDR.TotalParkingCost.        HasValue    && TotalParkingCost.        Value.Equals(CDR.TotalParkingCost.        Value))) &&
 
-            ((!TotalReservationCost.  HasValue    && !CDR.TotalReservationCost.  HasValue)    ||
-              (TotalReservationCost.  HasValue    &&  CDR.TotalReservationCost.  HasValue    && TotalReservationCost.  Value.Equals(CDR.TotalReservationCost.  Value))) &&
+            ((!TotalReservationCost.    HasValue    && !CDR.TotalReservationCost.    HasValue)  ||
+              (TotalReservationCost.    HasValue    &&  CDR.TotalReservationCost.    HasValue    && TotalReservationCost.    Value.Equals(CDR.TotalReservationCost.    Value))) &&
 
-            ((!InvoiceReferenceId.    HasValue    && !CDR.InvoiceReferenceId.    HasValue)    ||
-              (InvoiceReferenceId.    HasValue    &&  CDR.InvoiceReferenceId.    HasValue    && InvoiceReferenceId.    Value.Equals(CDR.InvoiceReferenceId.    Value))) &&
+            ((!InvoiceReferenceId.      HasValue    && !CDR.InvoiceReferenceId.      HasValue)  ||
+              (InvoiceReferenceId.      HasValue    &&  CDR.InvoiceReferenceId.      HasValue    && InvoiceReferenceId.      Value.Equals(CDR.InvoiceReferenceId.      Value))) &&
 
-            ((!Credit.                HasValue    && !CDR.Credit.                HasValue)    ||
-              (Credit.                HasValue    &&  CDR.Credit.                HasValue    && Credit.                Value.Equals(CDR.Credit.                Value))) &&
+            ((!Credit.                  HasValue    && !CDR.Credit.                  HasValue)  ||
+              (Credit.                  HasValue    &&  CDR.Credit.                  HasValue    && Credit.                  Value.Equals(CDR.Credit.                  Value))) &&
 
-            ((!CreditReferenceId.     HasValue    && !CDR.CreditReferenceId.     HasValue)    ||
-              (CreditReferenceId.     HasValue    &&  CDR.CreditReferenceId.     HasValue    && CreditReferenceId.     Value.Equals(CDR.CreditReferenceId.     Value))) &&
+            ((!CreditReferenceId.       HasValue    && !CDR.CreditReferenceId.       HasValue)  ||
+              (CreditReferenceId.       HasValue    &&  CDR.CreditReferenceId.       HasValue    && CreditReferenceId.       Value.Equals(CDR.CreditReferenceId.       Value))) &&
 
-             ((Remark                 is     null &&  CDR.Remark                 is     null) ||
-              (Remark                 is not null &&  CDR.Remark                 is not null && Remark.                      Equals(CDR.Remark)))                       &&
+            ((!HomeChargingCompensation.HasValue    && !CDR.HomeChargingCompensation.HasValue)    ||
+              (HomeChargingCompensation.HasValue    &&  CDR.HomeChargingCompensation.HasValue    && HomeChargingCompensation.Value.Equals(CDR.HomeChargingCompensation.Value))) &&
 
-             ((EnergyMeter            is     null &&  CDR.EnergyMeter            is     null) ||
-              (EnergyMeter            is not null &&  CDR.EnergyMeter            is not null && EnergyMeter.                 Equals(CDR.EnergyMeter)))                  &&
 
-             ((TransparencySoftwares  is     null &&  CDR.TransparencySoftwares  is     null) ||
-              (TransparencySoftwares  is not null &&  CDR.TransparencySoftwares  is not null && TransparencySoftwares.       Equals(CDR.TransparencySoftwares)))        &&
+             ((Remark                   is     null &&  CDR.Remark                   is     null) ||
+              (Remark                   is not null &&  CDR.Remark                   is not null && Remark.                        Equals(CDR.Remark)))                         &&
 
-             ((SignedData             is     null &&  CDR.SignedData             is     null) ||
-              (SignedData             is not null &&  CDR.SignedData             is not null && SignedData.                  Equals(CDR.SignedData)))                   &&
+             ((EnergyMeter              is     null &&  CDR.EnergyMeter              is     null) ||
+              (EnergyMeter              is not null &&  CDR.EnergyMeter              is not null && EnergyMeter.                   Equals(CDR.EnergyMeter)))                    &&
+
+             ((TransparencySoftwares    is     null &&  CDR.TransparencySoftwares    is     null) ||
+              (TransparencySoftwares    is not null &&  CDR.TransparencySoftwares    is not null && TransparencySoftwares.         Equals(CDR.TransparencySoftwares)))          &&
+
+             ((SignedData               is     null &&  CDR.SignedData               is     null) ||
+              (SignedData               is not null &&  CDR.SignedData               is not null && SignedData.                    Equals(CDR.SignedData)))                     &&
 
                ChargingPeriods.Count().Equals(CDR.ChargingPeriods.Count()) &&
                ChargingPeriods.Count().Equals(CDR.ChargingPeriods.Count()) &&
@@ -1472,38 +1509,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return CountryCode.             GetHashCode()        * 127 ^
-                       PartyId.                 GetHashCode()        * 113 ^
-                       Id.                      GetHashCode()        * 109 ^
-                       Start.                   GetHashCode()        * 107 ^
-                       End.                     GetHashCode()        * 103 ^
-                       CDRToken.                GetHashCode()        * 101 ^
-                       AuthMethod.              GetHashCode()        *  97 ^
-                       Location.                GetHashCode()        *  89 ^
-                       Currency.                GetHashCode()        *  83 ^
-                       ChargingPeriods.         CalcHashCode()       *  79 ^
-                       Tariffs.                 CalcHashCode()       *  73 ^
-                       TotalCosts.              GetHashCode()        *  71 ^
-                       TotalEnergy.             GetHashCode()        *  67 ^
-                       TotalTime.               GetHashCode()        *  61 ^
-                       LastUpdated.             GetHashCode()        *  59 ^
+                return CountryCode.               GetHashCode()        * 131 ^
+                       PartyId.                   GetHashCode()        * 127 ^
+                       Id.                        GetHashCode()        * 113 ^
+                       Start.                     GetHashCode()        * 109 ^
+                       End.                       GetHashCode()        * 107 ^
+                       CDRToken.                  GetHashCode()        * 103 ^
+                       AuthMethod.                GetHashCode()        * 101 ^
+                       Location.                  GetHashCode()        *  97 ^
+                       Currency.                  GetHashCode()        *  89 ^
+                       ChargingPeriods.           CalcHashCode()       *  83 ^
+                       Tariffs.                   CalcHashCode()       *  79 ^
+                       TotalCosts.                GetHashCode()        *  73 ^
+                       TotalEnergy.               GetHashCode()        *  71 ^
+                       TotalTime.                 GetHashCode()        *  67 ^
+                       LastUpdated.               GetHashCode()        *  61 ^
 
-                       (SessionId?.             GetHashCode()  ?? 0) *  53 ^
-                       (AuthorizationReference?.GetHashCode()  ?? 0) *  47 ^
-                       (MeterId?.               GetHashCode()  ?? 0) *  43 ^
-                       (EnergyMeter?.           GetHashCode()  ?? 0) *  41 ^
-                       (TransparencySoftwares?. CalcHashCode() ?? 0) *  37 ^
-                       (SignedData?.            GetHashCode()  ?? 0) *  31 ^
-                       (TotalFixedCosts?.       GetHashCode()  ?? 0) *  29 ^
-                       (TotalEnergyCost?.       GetHashCode()  ?? 0) *  23 ^
-                       (TotalTimeCost?.         GetHashCode()  ?? 0) *  19 ^
-                       (TotalParkingTime?.      GetHashCode()  ?? 0) *  17 ^
-                       (TotalParkingCost?.      GetHashCode()  ?? 0) *  13 ^
-                       (TotalReservationCost?.  GetHashCode()  ?? 0) *  11 ^
-                       (Remark?.                GetHashCode()  ?? 0) *   7 ^
-                       (InvoiceReferenceId?.    GetHashCode()  ?? 0) *   5 ^
-                       (Credit?.                GetHashCode()  ?? 0) *   3 ^
-                        CreditReferenceId?.     GetHashCode()  ?? 0;
+                       (SessionId?.               GetHashCode()  ?? 0) *  59 ^
+                       (AuthorizationReference?.  GetHashCode()  ?? 0) *  53 ^
+                       (MeterId?.                 GetHashCode()  ?? 0) *  47 ^
+                       (EnergyMeter?.             GetHashCode()  ?? 0) *  43 ^
+                       (TransparencySoftwares?.   CalcHashCode() ?? 0) *  41 ^
+                       (SignedData?.              GetHashCode()  ?? 0) *  37 ^
+                       (TotalFixedCosts?.         GetHashCode()  ?? 0) *  31 ^
+                       (TotalEnergyCost?.         GetHashCode()  ?? 0) *  29 ^
+                       (TotalTimeCost?.           GetHashCode()  ?? 0) *  23 ^
+                       (TotalParkingTime?.        GetHashCode()  ?? 0) *  19 ^
+                       (TotalParkingCost?.        GetHashCode()  ?? 0) *  17 ^
+                       (TotalReservationCost?.    GetHashCode()  ?? 0) *  13 ^
+                       (Remark?.                  GetHashCode()  ?? 0) *  11 ^
+                       (InvoiceReferenceId?.      GetHashCode()  ?? 0) *   7 ^
+                       (Credit?.                  GetHashCode()  ?? 0) *   5 ^
+                       (CreditReferenceId?.       GetHashCode()  ?? 0) *   3 ^
+                        HomeChargingCompensation?.GetHashCode()  ?? 0;
 
             }
         }
@@ -1542,6 +1580,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    // InvoiceReferenceId
                    // Credit
                    // CreditReferenceId
+                   // HomeChargingCompensation
 
                    TotalParkingTime.HasValue
                        ? TotalParkingTime.ToString() + " h parking, "

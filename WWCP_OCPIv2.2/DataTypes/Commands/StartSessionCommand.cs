@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -54,8 +52,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Optional EVSE identification of the EVSE of this location on which a session is to be started.
         /// </summary>
-        [Mandatory]
+        [Optional]
         public EVSE_UId?                EVSEUId                   { get; }
+
+        /// <summary>
+        /// Optional connector identification of the connector of the EVSE on which a session is to be started.
+        /// This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.
+        /// </summary>
+        [Optional]
+        public Connector_Id?            ConnectorId               { get; }
 
         /// <summary>
         /// Reference to the authorization given by the eMSP, when given, this reference will be provided
@@ -75,6 +80,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationId">Location identification of the location (belonging to the CPO this request is send to) on which a session is to be started.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'start session' command requests.</param>
         /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
+        /// <param name="ConnectorId">Optional connector identification of the connector of the EVSE on which a session is to be started. This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.</param>
         /// <param name="AuthorizationReference">Optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant session and/or CDR.</param>
         /// 
         /// <param name="RequestId">An optional request identification.</param>
@@ -83,6 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                    Location_Id              LocationId,
                                    URL                      ResponseURL,
                                    EVSE_UId?                EVSEUId                  = null,
+                                   Connector_Id?            ConnectorId              = null,
                                    AuthorizationReference?  AuthorizationReference   = null,
 
                                    Request_Id?              RequestId                = null,
@@ -97,6 +104,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.Token                   = Token;
             this.LocationId              = LocationId;
             this.EVSEUId                 = EVSEUId;
+            this.ConnectorId             = ConnectorId;
             this.AuthorizationReference  = AuthorizationReference;
 
         }
@@ -111,44 +119,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static StartSessionCommand Parse(JObject                                           JSON,
-                                                CustomJObjectParserDelegate<StartSessionCommand>  CustomStartSessionCommandParser   = null)
+        public static StartSessionCommand Parse(JObject                                            JSON,
+                                                CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
         {
 
             if (TryParse(JSON,
-                         out StartSessionCommand  startSessionCommand,
-                         out String               ErrorResponse,
+                         out var startSessionCommand,
+                         out var errorResponse,
                          CustomStartSessionCommandParser))
             {
-                return startSessionCommand;
+                return startSessionCommand!;
             }
 
-            throw new ArgumentException("The given JSON representation of a 'start session' command is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomStartSessionCommandParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a 'start session' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static StartSessionCommand Parse(String                                            Text,
-                                                CustomJObjectParserDelegate<StartSessionCommand>  CustomStartSessionCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out StartSessionCommand  startSessionCommand,
-                         out String               ErrorResponse,
-                         CustomStartSessionCommandParser))
-            {
-                return startSessionCommand;
-            }
-
-            throw new ArgumentException("The given text representation of a 'start session' command is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a 'start session' command is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -161,38 +145,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static StartSessionCommand? TryParse(JObject                                           JSON,
-                                                    CustomJObjectParserDelegate<StartSessionCommand>  CustomStartSessionCommandParser   = null)
+        public static StartSessionCommand? TryParse(JObject                                            JSON,
+                                                    CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
         {
 
             if (TryParse(JSON,
-                         out StartSessionCommand  startSessionCommand,
-                         out String               ErrorResponse,
-                         CustomStartSessionCommandParser))
-            {
-                return startSessionCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomStartSessionCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'start session' command.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static StartSessionCommand? TryParse(String                                            Text,
-                                                    CustomJObjectParserDelegate<StartSessionCommand>  CustomStartSessionCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out StartSessionCommand  startSessionCommand,
-                         out String               ErrorResponse,
+                         out var startSessionCommand,
+                         out var errorResponse,
                          CustomStartSessionCommandParser))
             {
                 return startSessionCommand;
@@ -214,9 +173,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="StartSessionCommand">The parsed 'start session' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                  JSON,
-                                       out StartSessionCommand  StartSessionCommand,
-                                       out String               ErrorResponse)
+        public static Boolean TryParse(JObject                   JSON,
+                                       out StartSessionCommand?  StartSessionCommand,
+                                       out String?               ErrorResponse)
 
             => TryParse(JSON,
                         out StartSessionCommand,
@@ -231,10 +190,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="StartSessionCommand">The parsed 'start session' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static Boolean TryParse(JObject                                           JSON,
-                                       out StartSessionCommand                           StartSessionCommand,
-                                       out String                                        ErrorResponse,
-                                       CustomJObjectParserDelegate<StartSessionCommand>  CustomStartSessionCommandParser   = null)
+        public static Boolean TryParse(JObject                                            JSON,
+                                       out StartSessionCommand?                           StartSessionCommand,
+                                       out String?                                        ErrorResponse,
+                                       CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
         {
 
             try
@@ -253,11 +212,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
                                              OCPIv2_2.Token.TryParse,
-                                             out Token Token,
+                                             out Token? Token,
                                              out ErrorResponse))
                 {
                     return false;
                 }
+
+                if (Token is null)
+                    return false;
 
                 #endregion
 
@@ -280,6 +242,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        "EVSE identification",
                                        EVSE_UId.TryParse,
                                        out EVSE_UId? EVSEUId,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                #endregion
+
+                #region Parse ConnectorId               [optional]
+
+                if (JSON.ParseOptional("connector_id",
+                                       "connector identification",
+                                       Connector_Id.TryParse,
+                                       out Connector_Id? ConnectorId,
                                        out ErrorResponse))
                 {
                     if (ErrorResponse is not null)
@@ -319,8 +295,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 StartSessionCommand = new StartSessionCommand(Token,
                                                               LocationId,
                                                               ResponseURL,
-
                                                               EVSEUId,
+                                                              ConnectorId,
                                                               AuthorizationReference);
 
                 if (CustomStartSessionCommandParser is not null)
@@ -341,41 +317,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out StartSessionCommand, out ErrorResponse, CustomStartSessionCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a 'start session' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="StartSessionCommand">The parsed startSessionCommand.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static Boolean TryParse(String                                            Text,
-                                       out StartSessionCommand                           StartSessionCommand,
-                                       out String                                        ErrorResponse,
-                                       CustomJObjectParserDelegate<StartSessionCommand>  CustomStartSessionCommandParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out StartSessionCommand,
-                                out ErrorResponse,
-                                CustomStartSessionCommandParser);
-
-            }
-            catch (Exception e)
-            {
-                StartSessionCommand  = default;
-                ErrorResponse        = "The given text representation of a 'start session' command is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomStartSessionCommandSerializer = null, CustomTokenSerializer = null, ...)
 
         /// <summary>
@@ -384,26 +325,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomStartSessionCommandSerializer">A delegate to serialize custom 'start session' command JSON objects.</param>
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
         /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<StartSessionCommand>  CustomStartSessionCommandSerializer   = null,
-                              CustomJObjectSerializerDelegate<Token>                CustomTokenSerializer                 = null,
-                              CustomJObjectSerializerDelegate<EnergyContract>       CustomEnergyContractSerializer        = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<StartSessionCommand>?  CustomStartSessionCommandSerializer   = null,
+                              CustomJObjectSerializerDelegate<Token>?                CustomTokenSerializer                 = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>?       CustomEnergyContractSerializer        = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",                          Token.                 ToJSON(CustomTokenSerializer,
+                                 new JProperty("token",                    Token.                 ToJSON(CustomTokenSerializer,
                                                                                                          CustomEnergyContractSerializer)),
-                           new JProperty("location_id",                    LocationId.            ToString()),
+
+                                 new JProperty("location_id",              LocationId.            ToString()),
 
                            EVSEUId.HasValue
                                ? new JProperty("evse_uid",                 EVSEUId.               ToString())
+                               : null,
+
+                           ConnectorId.HasValue
+                               ? new JProperty("connector_id",             ConnectorId.           ToString())
                                : null,
 
                            AuthorizationReference.HasValue
                                ? new JProperty("authorization_reference",  AuthorizationReference.ToString())
                                : null,
 
-                           new JProperty("response_url",                   ResponseURL.           ToString())
+                                 new JProperty("response_url",             ResponseURL.           ToString())
 
                        );
 
@@ -528,10 +474,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'start session' commands.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public override Int32 CompareTo(Object Object)
+        /// <param name="StartSessionCommand">A 'start session' command to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
             => Object is StartSessionCommand startSessionCommand
                    ? CompareTo(startSessionCommand)
@@ -543,28 +489,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(StartSessionCommand)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'start session' commands.
         /// </summary>
-        /// <param name="StartSessionCommand">An object to compare with.</param>
-        public override Int32 CompareTo(StartSessionCommand StartSessionCommand)
+        /// <param name="StartSessionCommand">A 'start session' command to compare with.</param>
+        public override Int32 CompareTo(StartSessionCommand? StartSessionCommand)
         {
 
             if (StartSessionCommand is null)
                 throw new ArgumentNullException(nameof(StartSessionCommand), "The given 'start session' command must not be null!");
 
-            var c = Token.     CompareTo(StartSessionCommand.Token);
+            var c = Token.                       CompareTo(StartSessionCommand.Token);
 
             if (c == 0)
-                c = LocationId.CompareTo(StartSessionCommand.LocationId);
+                c = LocationId.                  CompareTo(StartSessionCommand.LocationId);
+
+            if (c == 0)
+                c = RequestId.                   CompareTo(StartSessionCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.               CompareTo(StartSessionCommand.CorrelationId);
+
+            if (c == 0)
+                c = ResponseURL.                 CompareTo(StartSessionCommand.ResponseURL);
 
             if (c == 0 && EVSEUId.HasValue && StartSessionCommand.EVSEUId.HasValue)
-                c = EVSEUId.Value.CompareTo(StartSessionCommand.EVSEUId.Value);
+                c = EVSEUId.               Value.CompareTo(StartSessionCommand.EVSEUId.Value);
+
+            if (c == 0 && ConnectorId.HasValue && StartSessionCommand.ConnectorId.HasValue)
+                c = ConnectorId.           Value.CompareTo(StartSessionCommand.ConnectorId.Value);
 
             if (c == 0 && AuthorizationReference.HasValue && StartSessionCommand.AuthorizationReference.HasValue)
                 c = AuthorizationReference.Value.CompareTo(StartSessionCommand.AuthorizationReference.Value);
-
-            if (c == 0)
-                c = ResponseURL.CompareTo(StartSessionCommand.ResponseURL);
 
             return c;
 
@@ -579,11 +534,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'start session' commands for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A 'start session' command to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is StartSessionCommand startSessionCommand &&
                    Equals(startSessionCommand);
@@ -595,21 +549,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two 'start session' commands for equality.
         /// </summary>
-        /// <param name="StartSessionCommand">An 'start session' command to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public override Boolean Equals(StartSessionCommand StartSessionCommand)
-        {
+        /// <param name="StartSessionCommand">A 'start session' command to compare with.</param>
+        public override Boolean Equals(StartSessionCommand? StartSessionCommand)
 
-            if (StartSessionCommand is null)
-                throw new ArgumentNullException(nameof(StartSessionCommand), "The given 'start session' command must not be null!");
+            => StartSessionCommand is not null &&
 
-            return Token.                 Equals(StartSessionCommand.Token)                  &&
-                   LocationId.            Equals(StartSessionCommand.LocationId)             &&
-                   EVSEUId.               Equals(StartSessionCommand.EVSEUId)                &&
-                   AuthorizationReference.Equals(StartSessionCommand.AuthorizationReference) &&
-                   ResponseURL.           Equals(StartSessionCommand.ResponseURL);
-
-        }
+               Token.                 Equals(StartSessionCommand.Token)         &&
+               LocationId.            Equals(StartSessionCommand.LocationId)    &&
+               RequestId.             Equals(StartSessionCommand.RequestId)     &&
+               CorrelationId.         Equals(StartSessionCommand.CorrelationId) &&
+               ResponseURL.           Equals(StartSessionCommand.ResponseURL)   &&
+               EVSEUId.               Equals(StartSessionCommand.EVSEUId)       &&
+               ConnectorId.           Equals(StartSessionCommand.ConnectorId)   &&
+               AuthorizationReference.Equals(StartSessionCommand.AuthorizationReference);
 
         #endregion
 
@@ -626,18 +578,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Token.     GetHashCode() * 11 ^
-                       LocationId.GetHashCode() *  7 ^
-
-                       (EVSEUId.HasValue
-                            ? EVSEUId.GetHashCode()
-                            : 0) * 5 ^
-
-                       (AuthorizationReference.HasValue
-                            ? AuthorizationReference.GetHashCode()
-                            : 0) * 3 ^
-
-                       ResponseURL.GetHashCode();
+                return Token.                   GetHashCode()       * 23 ^
+                       LocationId.              GetHashCode()       * 19 ^
+                       RequestId.               GetHashCode()       * 13 ^
+                       CorrelationId.           GetHashCode()       * 11 ^
+                       ResponseURL.             GetHashCode()       *  7 ^
+                       (EVSEUId?.               GetHashCode() ?? 0) *  5 ^
+                       (ConnectorId?.           GetHashCode() ?? 0) *  3 ^
+                        AuthorizationReference?.GetHashCode() ?? 0;
 
             }
         }
@@ -651,11 +599,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Token, " / ", LocationId,
-                             EVSEUId.               HasValue ? " / " + EVSEUId : "",
-                             AuthorizationReference.HasValue ? " / " + AuthorizationReference : "",
-                             " => ",
-                             ResponseURL);
+            => String.Concat(
+
+                   Token,
+                   " @ ",
+                   LocationId,
+
+                   EVSEUId.HasValue
+                       ? ", EVSE UId: " + EVSEUId
+                       : "",
+
+                   ConnectorId.HasValue
+                       ? ", connectorId: " + ConnectorId
+                       : "",
+
+                   AuthorizationReference.HasValue
+                       ? ", authorization reference: " + AuthorizationReference
+                       : "",
+
+                   " => ",
+                   ResponseURL);
 
         #endregion
 

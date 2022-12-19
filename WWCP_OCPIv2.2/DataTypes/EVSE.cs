@@ -56,14 +56,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         /// <summary>
         /// The unique identification of the EVSE within the CPOs platform.
-        /// For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!
+        /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Mandatory]
         public EVSE_UId                          UId                        { get; }
 
         /// <summary>
         /// The official unique identification of the EVSE.
-        /// For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!
+        /// For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!
         /// </summary>
         [Optional]
         public EVSE_Id?                          EVSEId                     { get; }
@@ -161,10 +161,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="ParentLocation">The parent location of this EVSE.</param>
         /// 
-        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">A current status of the EVSE.</param>
         /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
-        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!</param>
+        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
         /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
         /// <param name="FloorLevel">An optional floor level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>
@@ -240,10 +240,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new EVSE.
         /// </summary>
-        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the EVSE UId has the same value as the official EVSE Id!</param>
+        /// <param name="UId">An unique identification of the EVSE within the CPOs platform. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="Status">A current status of the EVSE.</param>
         /// <param name="Connectors">An enumeration of available connectors attached to this EVSE.</param>
-        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the official EVSE Id has the same value as the internal EVSE UId!</param>
+        /// <param name="EVSEId">The official unique identification of the EVSE. For interoperability please make sure, that the internal EVSE UId has the same value as the official EVSE Id!</param>
         /// <param name="StatusSchedule">An enumeration of planned future status of the EVSE.</param>
         /// <param name="Capabilities">An enumeration of functionalities that the EVSE is capable of.</param>
         /// <param name="FloorLevel">An optional floor level on which the EVSE is located (in garage buildings) in the locally displayed numbering scheme.</param>

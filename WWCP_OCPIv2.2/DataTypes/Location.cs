@@ -384,11 +384,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (JSON, LocationIdURL = null, CustomLocationParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of an Location.
+        /// Parse the given JSON representation of a charging location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
+        /// <param name="LocationIdURL">An optional charging location identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomLocationParser">A delegate to parse custom charging location JSON objects.</param>
         public static Location Parse(JObject                                 JSON,
                                      CountryCode?                            CountryCodeURL         = null,
                                      Party_Id?                               PartyIdURL             = null,
@@ -407,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 return location!;
             }
 
-            throw new ArgumentException("The given JSON representation of a location is invalid: " + errorResponse,
+            throw new ArgumentException("The given JSON representation of a charging location is invalid: " + errorResponse,
                                         nameof(JSON));
 
         }
@@ -419,10 +419,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of an Location.
+        /// Try to parse the given JSON representation of a charging location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="Location">The parsed location.</param>
+        /// <param name="Location">The parsed charging location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject        JSON,
                                        out Location?  Location,
@@ -438,15 +438,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of an Location.
+        /// Try to parse the given JSON representation of a charging location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="Location">The parsed location.</param>
+        /// <param name="Location">The parsed charging location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
         /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
-        /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
-        /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
+        /// <param name="LocationIdURL">An optional charging location identification, e.g. from the HTTP URL.</param>
+        /// <param name="CustomLocationParser">A delegate to parse custom charging location JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
                                        out Location?                           Location,
                                        out String?                             ErrorResponse,
@@ -871,7 +871,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 Location       = default;
-                ErrorResponse  = "The given JSON representation of a location is invalid: " + e.Message;
+                ErrorResponse  = "The given JSON representation of a charging location is invalid: " + e.Message;
                 return false;
             }
 
@@ -884,7 +884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
-        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom charging location JSON objects.</param>
         /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
@@ -1026,31 +1026,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if      (property.Key == "country_code")
                     return PatchResult<JObject>.Failed(JSON,
-                                                       "Patching the 'country code' of a location is not allowed!");
+                                                       "Patching the 'country code' of a charging location is not allowed!");
 
                 else if (property.Key == "party_id")
                     return PatchResult<JObject>.Failed(JSON,
-                                                       "Patching the 'party identification' of a location is not allowed!");
+                                                       "Patching the 'party identification' of a charging location is not allowed!");
 
                 else if (property.Key == "id")
                     return PatchResult<JObject>.Failed(JSON,
-                                                       "Patching the 'identification' of a location is not allowed!");
+                                                       "Patching the 'identification' of a charging location is not allowed!");
 
                 else if (property.Key == "evses")
                     return PatchResult<JObject>.Failed(JSON,
-                                                       "Patching the 'evses' array of a location is not allowed!");
+                                                       "Patching the 'evses' array of a charging location is not allowed!");
                 //{
 
                 //    if (property.Value == null)
                 //        return PatchResult<JObject>.Failed(JSON,
-                //                                           "Patching the 'evses' array of a location to 'null' is not allowed!");
+                //                                           "Patching the 'evses' array of a charging location to 'null' is not allowed!");
 
                 //    else if (property.Value is JArray EVSEArray)
                 //    {
 
                 //        if (EVSEArray.Count == 0)
                 //            return PatchResult<JObject>.Failed(JSON,
-                //                                               "Patching the 'evses' array of a location to '[]' is not allowed!");
+                //                                               "Patching the 'evses' array of a charging location to '[]' is not allowed!");
 
                 //        else
                 //        {
@@ -1069,7 +1069,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 //                    {
 
                 //                        return PatchResult<JObject>.Failed(JSON,
-                //                                                           "Patching the 'evses' array of a location led to an error: " + ErrorResponse);
+                //                                                           "Patching the 'evses' array of a charging location led to an error: " + ErrorResponse);
 
                 //                    }
 
@@ -1090,7 +1090,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 //                else
                 //                {
                 //                    return PatchResult<JObject>.Failed(JSON,
-                //                                                       "Invalid JSON merge patch for 'evses' array of a location: Data within the 'evses' array is not a valid EVSE object!");
+                //                                                       "Invalid JSON merge patch for 'evses' array of a charging location: Data within the 'evses' array is not a valid EVSE object!");
                 //                }
 
                 //            }
@@ -1100,7 +1100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 //    else
                 //    {
                 //        return PatchResult<JObject>.Failed(JSON,
-                //                                           "Invalid JSON merge patch for 'evses' array of a location: JSON property 'evses' is not an array!");
+                //                                           "Invalid JSON merge patch for 'evses' array of a charging location: JSON property 'evses' is not an array!");
                 //    }
 
                 //}
@@ -1201,7 +1201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 else
                     return PatchResult<Location>.Failed(this,
-                                                        "Invalid JSON merge patch of a location: " + errorResponse);
+                                                        "Invalid JSON merge patch of a charging location: " + errorResponse);
 
             }
 
@@ -1441,7 +1441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Location1">A location.</param>
+        /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (Location Location1,
@@ -1465,7 +1465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Location1">A location.</param>
+        /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (Location Location1,
@@ -1480,7 +1480,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Location1">A location.</param>
+        /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (Location Location1,
@@ -1497,7 +1497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Location1">A location.</param>
+        /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (Location Location1,
@@ -1512,7 +1512,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Location1">A location.</param>
+        /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (Location Location1,
@@ -1529,7 +1529,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="Location1">A location.</param>
+        /// <param name="Location1">A charging location.</param>
         /// <param name="Location2">Another location.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (Location Location1,
@@ -1548,7 +1548,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two locations.
         /// </summary>
-        /// <param name="Object">A location to compare with.</param>
+        /// <param name="Object">A charging location to compare with.</param>
         public Int32 CompareTo(Object? Object)
 
             => Object is Location location
@@ -1563,12 +1563,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two locations.
         /// </summary>
-        /// <param name="Location">A location to compare with.</param>
+        /// <param name="Location">A charging location to compare with.</param>
         public Int32 CompareTo(Location? Location)
         {
 
             if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given connector must not be null!");
+                throw new ArgumentNullException(nameof(Location), "The given charging location must not be null!");
 
             var c = CountryCode.CompareTo(Location.CountryCode);
 
@@ -1599,7 +1599,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two locations for equality.
         /// </summary>
-        /// <param name="Object">A location to compare with.</param>
+        /// <param name="Object">A charging location to compare with.</param>
         public override Boolean Equals(Object? Object)
 
             => Object is Location location &&
@@ -1612,7 +1612,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two locations for equality.
         /// </summary>
-        /// <param name="Location">A location to compare with.</param>
+        /// <param name="Location">A charging location to compare with.</param>
         public Boolean Equals(Location? Location)
 
             => Location is not null &&
@@ -1778,7 +1778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (class) Builder
 
         /// <summary>
-        /// A location builder.
+        /// A charging location builder.
         /// </summary>
         public class Builder
         {

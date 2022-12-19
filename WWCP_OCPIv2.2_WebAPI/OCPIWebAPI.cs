@@ -20,7 +20,6 @@
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 
 using social.OpenData.UsersAPI;
@@ -80,7 +79,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                 };
 
                 return false;
@@ -93,7 +92,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid RoamingNetworkId!"" }".ToUTF8Bytes()
                 };
@@ -111,7 +110,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown RoamingNetworkId!"" }".ToUTF8Bytes()
                 };
@@ -164,7 +163,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     Connection      = "close"
                 };
 
@@ -180,7 +179,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
@@ -235,7 +234,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     Connection      = "close"
                 };
 
@@ -250,7 +249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.BadRequest,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Invalid remote party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
@@ -265,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                 HTTPResponse = new HTTPResponse.Builder(HTTPRequest) {
                     HTTPStatusCode  = HTTPStatusCode.NotFound,
                     Server          = OCPIWebAPI.HTTPServer.DefaultServerName,
-                    Date            = DateTime.UtcNow,
+                    Date            = Timestamp.Now,
                     ContentType     = HTTPContentType.JSON_UTF8,
                     Content         = @"{ ""description"": ""Unknown remote party identification!"" }".ToUTF8Bytes(),
                     Connection      = "close"
@@ -592,7 +591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          //Server                     = DefaultHTTPServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "OPTIONS, GET",
                                                          AccessControlAllowHeaders  = "Authorization",
@@ -623,7 +622,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          //Server                     = DefaultHTTPServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "OPTIONS, GET",
                                                          AccessControlAllowHeaders  = "Authorization",
@@ -648,7 +647,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          //Server                     = DefaultHTTPServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "OPTIONS, GET",
                                                          AccessControlAllowHeaders  = "Authorization",
@@ -681,7 +680,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "OPTIONS, GET, ReserveNow, CancelReservation, StartSession, StopSession, UnlockConnector",
                                                      Allow                      = new List<HTTPMethod> {
@@ -767,7 +766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode                = HTTPStatusCode.OK,
                                                      Server                        = HTTPServer.DefaultServerName,
-                                                     Date                          = DateTime.UtcNow,
+                                                     Date                          = Timestamp.Now,
                                                      AccessControlAllowOrigin      = "*",
                                                      AccessControlAllowMethods     = "GET, OPTIONS",
                                                      AccessControlAllowHeaders     = "Content-Type, Accept, Authorization",
@@ -819,7 +818,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -851,7 +850,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET, OPTIONS",
                                                      Allow                      = new List<HTTPMethod> {
@@ -917,7 +916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -939,7 +938,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -998,7 +997,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1014,7 +1013,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                              //               Server                     = HTTPServer.DefaultServerName,
-                                             //               Date                       = DateTime.UtcNow,
+                                             //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = "GET",
                                              //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1044,7 +1043,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET, OPTIONS",
                                                      Allow                      = new List<HTTPMethod> {
@@ -1110,7 +1109,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -1132,7 +1131,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1191,7 +1190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1207,7 +1206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                              //               Server                     = HTTPServer.DefaultServerName,
-                                             //               Date                       = DateTime.UtcNow,
+                                             //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = "GET",
                                              //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1270,19 +1269,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              if (!JSON.ParseMandatoryJSON("token",
                                                                           "token",
                                                                           OCPIv2_2.Token.TryParse,
-                                                                          out Token  Token,
-                                                                          out String ErrorResponse))
+                                                                          out Token Token,
+                                                                          out var ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1295,21 +1294,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              #region Parse ExpirationTimestamp       [mandatory]
 
-                                             if (!JSON.ParseMandatory("expiryTimestamp",
-                                                                      "expiry timestamp",
+                                             if (!JSON.ParseMandatory("expirationTimestamp",
+                                                                      "expiration timestamp",
                                                                       out DateTime ExpirationTimestamp,
-                                                                      out          ErrorResponse))
+                                                                      out ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1326,18 +1325,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                       "reservation identification",
                                                                       Reservation_Id.TryParse,
                                                                       out Reservation_Id ReservationId,
-                                                                      out                ErrorResponse))
+                                                                      out ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1354,18 +1353,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                       "location identification",
                                                                       Location_Id.TryParse,
                                                                       out Location_Id LocationId,
-                                                                      out             ErrorResponse))
+                                                                      out ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1378,7 +1377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              #region Parse EVSEUId                   [optional]
 
-                                             if (JSON.ParseOptional("EVSEUId",
+                                             if (JSON.ParseOptional("evseUId",
                                                                     "EVSE unique identification",
                                                                     EVSE_UId.TryParse,
                                                                     out EVSE_UId? EVSEUId,
@@ -1389,12 +1388,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      return new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                                 Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = DateTime.UtcNow,
+                                                                Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = "GET, SET",
                                                                 AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
                                                                                                         ToUTF8Bytes(),
@@ -1418,12 +1417,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      return new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                                 Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = DateTime.UtcNow,
+                                                                Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = "GET, SET",
                                                                 AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
                                                                                                         ToUTF8Bytes(),
@@ -1444,12 +1443,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1474,7 +1473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -1496,7 +1495,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1524,7 +1523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET, OPTIONS",
                                                      Allow                      = new List<HTTPMethod> {
@@ -1590,7 +1589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -1612,7 +1611,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1671,7 +1670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1687,7 +1686,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                              //               Server                     = HTTPServer.DefaultServerName,
-                                             //               Date                       = DateTime.UtcNow,
+                                             //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = "GET",
                                              //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1751,18 +1750,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                       "reservation identification",
                                                                       Reservation_Id.TryParse,
                                                                       out Reservation_Id ReservationId,
-                                                                      out String         ErrorResponse))
+                                                                      out var ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1783,12 +1782,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -1808,7 +1807,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -1830,7 +1829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -1858,7 +1857,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET, OPTIONS",
                                                      Allow                      = new List<HTTPMethod> {
@@ -1924,7 +1923,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -1946,7 +1945,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2005,7 +2004,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2021,7 +2020,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                              //               Server                     = HTTPServer.DefaultServerName,
-                                             //               Date                       = DateTime.UtcNow,
+                                             //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = "GET",
                                              //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2084,20 +2083,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              if (!JSON.ParseMandatoryJSON("token",
                                                                           "token",
                                                                           OCPIv2_2.Token.TryParse,
-                                                                          out Token?  Token,
-                                                                          out String? ErrorResponse))
+                                                                          out Token? Token,
+                                                                          out var ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
                                                             Content                    = I18NString.Create(Languages.en,
-                                                                                                           ErrorResponse).
+                                                                                                           ErrorResponse!).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
                                                             Connection                 = "close"
@@ -2113,18 +2112,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                       "location identification",
                                                                       Location_Id.TryParse,
                                                                       out Location_Id LocationId,
-                                                                      out             ErrorResponse))
+                                                                      out ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2135,29 +2134,59 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              #endregion
 
-                                             #region Parse EVSEUId                   [mandatory]
+                                             #region Parse EVSEUId                   [optional]
 
-                                             if (!JSON.ParseMandatory("EVSEUId",
-                                                                      "EVSE unique identification",
-                                                                      EVSE_UId.TryParse,
-                                                                      out EVSE_UId EVSEUId,
-                                                                      out          ErrorResponse))
+                                             if (JSON.ParseOptional("evseUId",
+                                                                    "EVSE unique identification",
+                                                                    EVSE_UId.TryParse,
+                                                                    out EVSE_UId? EVSEUId,
+                                                                    out ErrorResponse))
                                              {
 
-                                                 return new HTTPResponse.Builder(Request) {
-                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                            Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
-                                                            AccessControlAllowOrigin   = "*",
-                                                            AccessControlAllowMethods  = "GET, SET",
-                                                            AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
-                                                            ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                           ErrorResponse).
-                                                                                                    ToJSON().
-                                                                                                    ToUTF8Bytes(),
-                                                            Connection                 = "close"
-                                                        }.AsImmutable;
+                                                 if (ErrorResponse is not null)
+                                                     return new HTTPResponse.Builder(Request) {
+                                                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                                Server                     = HTTPServer.DefaultServerName,
+                                                                Date                       = Timestamp.Now,
+                                                                AccessControlAllowOrigin   = "*",
+                                                                AccessControlAllowMethods  = "GET, SET",
+                                                                AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                Content                    = I18NString.Create(Languages.en,
+                                                                                                               ErrorResponse).
+                                                                                                        ToJSON().
+                                                                                                        ToUTF8Bytes(),
+                                                                Connection                 = "close"
+                                                            }.AsImmutable;
+
+                                             }
+
+                                             #endregion
+
+                                             #region Parse ConnectorId               [optional]
+
+                                             if (JSON.ParseOptional("connectorId",
+                                                                    "connector identification",
+                                                                    Connector_Id.TryParse,
+                                                                    out Connector_Id? ConnectorId,
+                                                                    out ErrorResponse))
+                                             {
+
+                                                 if (ErrorResponse is not null)
+                                                     return new HTTPResponse.Builder(Request) {
+                                                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
+                                                                Server                     = HTTPServer.DefaultServerName,
+                                                                Date                       = Timestamp.Now,
+                                                                AccessControlAllowOrigin   = "*",
+                                                                AccessControlAllowMethods  = "GET, SET",
+                                                                AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
+                                                                ContentType                = HTTPContentType.JSON_UTF8,
+                                                                Content                    = I18NString.Create(Languages.en,
+                                                                                                               ErrorResponse).
+                                                                                                        ToJSON().
+                                                                                                        ToUTF8Bytes(),
+                                                                Connection                 = "close"
+                                                            }.AsImmutable;
 
                                              }
 
@@ -2172,16 +2201,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                     out                         ErrorResponse))
                                              {
 
-                                                 if (ErrorResponse != null)
+                                                 if (ErrorResponse is not null)
                                                      return new HTTPResponse.Builder(Request) {
                                                                 HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                                 Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = DateTime.UtcNow,
+                                                                Date                       = Timestamp.Now,
                                                                 AccessControlAllowOrigin   = "*",
                                                                 AccessControlAllowMethods  = "GET, SET",
                                                                 AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                                 ContentType                = HTTPContentType.JSON_UTF8,
-                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                                Content                    = I18NString.Create(Languages.en,
                                                                                                                ErrorResponse).
                                                                                                         ToJSON().
                                                                                                         ToUTF8Bytes(),
@@ -2202,12 +2231,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2220,6 +2249,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              var startSessionResult = await emspClient.StartSession(Token,
                                                                                                     LocationId,
                                                                                                     EVSEUId,
+                                                                                                    ConnectorId,
                                                                                                     AuthorizationReference);
 
                                              return 
@@ -2230,7 +2260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -2252,7 +2282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2280,7 +2310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET, OPTIONS",
                                                      Allow                      = new List<HTTPMethod> {
@@ -2346,7 +2376,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -2368,7 +2398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2427,7 +2457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2443,7 +2473,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                              //               Server                     = HTTPServer.DefaultServerName,
-                                             //               Date                       = DateTime.UtcNow,
+                                             //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = "GET",
                                              //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2513,12 +2543,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2539,12 +2569,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2564,7 +2594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -2583,7 +2613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2611,7 +2641,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  new HTTPResponse.Builder(Request) {
                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                      Server                     = HTTPServer.DefaultServerName,
-                                                     Date                       = DateTime.UtcNow,
+                                                     Date                       = Timestamp.Now,
                                                      AccessControlAllowOrigin   = "*",
                                                      AccessControlAllowMethods  = "GET, OPTIONS",
                                                      Allow                      = new List<HTTPMethod> {
@@ -2677,7 +2707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -2699,7 +2729,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2758,7 +2788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                      new HTTPResponse.Builder(Request) {
                                                          HTTPStatusCode             = HTTPStatusCode.OK,
                                                          Server                     = HTTPServer.DefaultServerName,
-                                                         Date                       = DateTime.UtcNow,
+                                                         Date                       = Timestamp.Now,
                                                          AccessControlAllowOrigin   = "*",
                                                          AccessControlAllowMethods  = "GET",
                                                          AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2774,7 +2804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                              //           new HTTPResponse.Builder(Request) {
                                              //               HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                              //               Server                     = HTTPServer.DefaultServerName,
-                                             //               Date                       = DateTime.UtcNow,
+                                             //               Date                       = Timestamp.Now,
                                              //               AccessControlAllowOrigin   = "*",
                                              //               AccessControlAllowMethods  = "GET",
                                              //               AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
@@ -2838,18 +2868,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                       "location identification",
                                                                       Location_Id.TryParse,
                                                                       out Location_Id LocationId,
-                                                                      out String      ErrorResponse))
+                                                                      out var ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2862,22 +2892,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
 
                                              #region Parse EVSEUId       [mandatory]
 
-                                             if (!JSON.ParseMandatory("EVSEUId",
+                                             if (!JSON.ParseMandatory("evseUId",
                                                                       "EVSE unique identification",
                                                                       EVSE_UId.TryParse,
                                                                       out EVSE_UId EVSEUId,
-                                                                      out          ErrorResponse))
+                                                                      out ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2894,18 +2924,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                                       "connector identification",
                                                                       Connector_Id.TryParse,
                                                                       out Connector_Id ConnectorId,
-                                                                      out              ErrorResponse))
+                                                                      out ErrorResponse))
                                              {
 
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            ErrorResponse).
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2926,12 +2956,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                  return new HTTPResponse.Builder(Request) {
                                                             HTTPStatusCode             = HTTPStatusCode.BadGateway,
                                                             Server                     = HTTPServer.DefaultServerName,
-                                                            Date                       = DateTime.UtcNow,
+                                                            Date                       = Timestamp.Now,
                                                             AccessControlAllowOrigin   = "*",
                                                             AccessControlAllowMethods  = "GET, SET",
                                                             AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
                                                             ContentType                = HTTPContentType.JSON_UTF8,
-                                                            Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
+                                                            Content                    = I18NString.Create(Languages.en,
                                                                                                            "Could not find a apropriate EMSP client for this request!").
                                                                                                     ToJSON().
                                                                                                     ToUTF8Bytes(),
@@ -2953,7 +2983,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             ? new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.OK,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
@@ -2972,7 +3002,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.WebAPI
                                                             : new HTTPResponse.Builder(Request) {
                                                                   HTTPStatusCode             = HTTPStatusCode.Unauthorized,
                                                                   Server                     = HTTPServer.DefaultServerName,
-                                                                  Date                       = DateTime.UtcNow,
+                                                                  Date                       = Timestamp.Now,
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",

@@ -4665,6 +4665,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             StartSession(Token                    Token,
                          Location_Id              LocationId,
                          EVSE_UId?                EVSEUId                  = null,
+                         Connector_Id?            ConnectorId              = null,
                          AuthorizationReference?  AuthorizationReference   = null,
 
                          Command_Id?              CommandId                = null,
@@ -4674,7 +4675,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          DateTime?                Timestamp                = null,
                          CancellationToken?       CancellationToken        = null,
-                         EventTracking_Id         EventTrackingId          = null,
+                         EventTracking_Id?        EventTrackingId          = null,
                          TimeSpan?                RequestTimeout           = null)
 
         {
@@ -4736,6 +4737,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                       SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
                                                              EVSEUId,
+                                                             ConnectorId,
                                                              AuthorizationReference,
                                                              requestId,
                                                              correlationId);
