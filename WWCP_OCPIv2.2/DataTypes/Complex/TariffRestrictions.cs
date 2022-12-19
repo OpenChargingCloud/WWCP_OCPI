@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -189,7 +185,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                   Decimal?                      MaxPower      = null,
                                   TimeSpan?                     MinDuration   = null,
                                   TimeSpan?                     MaxDuration   = null,
-                                  IEnumerable<DayOfWeek>        DayOfWeek     = null,
+                                  IEnumerable<DayOfWeek>?       DayOfWeek     = null,
                                   ReservationRestrictionTypes?  Reservation   = null)
         {
 
@@ -205,7 +201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             this.MaxPower      = MaxPower;
             this.MinDuration   = MinDuration;
             this.MaxDuration   = MaxDuration;
-            this.DayOfWeek     = DayOfWeek?.Distinct() ?? new DayOfWeek[0];
+            this.DayOfWeek     = DayOfWeek?.Distinct() ?? Array.Empty<DayOfWeek>();
             this.Reservation   = Reservation;
 
         }
@@ -233,31 +229,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             }
 
             throw new ArgumentException("The given JSON representation of tariff restrictions is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomTariffRestrictionsParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of tariff restrictions.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomTariffRestrictionsParser">A delegate to parse custom tariff restrictions JSON objects.</param>
-        public static TariffRestrictions Parse(String                                           Text,
-                                               CustomJObjectParserDelegate<TariffRestrictions>  CustomTariffRestrictionsParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TariffRestrictions  tariffRestrictions,
-                         out String              ErrorResponse,
-                         CustomTariffRestrictionsParser))
-            {
-                return tariffRestrictions;
-            }
-
-            throw new ArgumentException("The given text representation of tariff restrictions is invalid: " + ErrorResponse, nameof(Text));
 
         }
 
@@ -538,41 +509,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             {
                 TariffRestrictions  = default;
                 ErrorResponse       = "The given JSON representation of tariff restrictions is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out TariffRestrictions, out ErrorResponse, CustomTariffRestrictionsParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of tariff restrictions.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TariffRestrictions">The parsed tariffRestrictions.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomTariffRestrictionsParser">A delegate to parse custom tariff restrictions JSON objects.</param>
-        public static Boolean TryParse(String                                           Text,
-                                       out TariffRestrictions                           TariffRestrictions,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<TariffRestrictions>  CustomTariffRestrictionsParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out TariffRestrictions,
-                                out ErrorResponse,
-                                CustomTariffRestrictionsParser);
-
-            }
-            catch (Exception e)
-            {
-                TariffRestrictions  = default;
-                ErrorResponse       = "The given text representation of tariff restrictions is invalid: " + e.Message;
                 return false;
             }
 

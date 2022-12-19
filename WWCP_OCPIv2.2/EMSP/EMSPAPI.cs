@@ -5333,7 +5333,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = Tariff.LastUpdated.ToIso8601(),
-                                                       ETag                       = Tariff.SHA256Hash
+                                                       ETag                       = Tariff.ETag
                                                    }
                                             });
 
@@ -5430,7 +5430,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = addOrUpdateResult.Data.SHA256Hash
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -5521,7 +5521,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedTariff.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedTariff.PatchedData.SHA256Hash
+                                                               ETag                       = patchedTariff.PatchedData.ETag
                                                            }
                                                        };
 

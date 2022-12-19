@@ -37,16 +37,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Type of tariff dimension.
+        /// The tariff dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimensions  Type           { get; }
+        public TariffDimension  Type           { get; }
 
         /// <summary>
-        /// Price per unit (excl. VAT) for this tariff dimension.
+        /// The price per unit (excl. VAT) for this tariff dimension.
         /// </summary>
         [Mandatory]
-        public Decimal           Price          { get; }
+        public Decimal          Price          { get; }
 
         /// <summary>
         /// Minimum amount to be billed. This unit will be billed in this step_size blocks.
@@ -56,7 +56,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
         [Mandatory]
-        public UInt32            StepSize       { get; }
+        public UInt32           StepSize       { get; }
 
         #endregion
 
@@ -65,12 +65,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new price component defining the pricing of a tariff.
         /// </summary>
-        /// <param name="Type">Type of tariff dimension.</param>
+        /// <param name="Type">A tariff dimension.</param>
         /// <param name="Price">Price per unit (excl. VAT) for this tariff dimension.</param>
         /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
-        public PriceComponent(TariffDimensions  Type,
-                              Decimal           Price,
-                              UInt32            StepSize   = 1)
+        public PriceComponent(TariffDimension  Type,
+                              Decimal          Price,
+                              UInt32           StepSize   = 1)
         {
 
             this.Type      = Type;
@@ -87,10 +87,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new flat rate price component.
         /// </summary>
-        /// <param name="Price">Flat rate price (excl. VAT).</param>
+        /// <param name="Price">A flat rate price (excl. VAT).</param>
         public static PriceComponent FlatRate(Decimal Price)
 
-            => new (TariffDimensions.FLAT,
+            => new (TariffDimension.FLAT,
                     Price,
                     1);
 
@@ -101,12 +101,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new time-based charging price component.
         /// </summary>
-        /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
-        /// <param name="Price">Price per time span (excl. VAT).</param>
+        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
+        /// <param name="Price">A price per time span (excl. VAT).</param>
         public static PriceComponent ChargingTime(TimeSpan  BillingIncrement,
                                                   Decimal   Price)
 
-            => new (TariffDimensions.TIME,
+            => new (TariffDimension.TIME,
                     Price,
                     (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
@@ -117,12 +117,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new time-based parking price component.
         /// </summary>
-        /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
-        /// <param name="Price">Price per time span (excl. VAT).</param>
+        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
+        /// <param name="Price">A price per time span (excl. VAT).</param>
         public static PriceComponent ParkingTime(TimeSpan  BillingIncrement,
                                                  Decimal   Price)
 
-            => new (TariffDimensions.PARKING_TIME,
+            => new (TariffDimension.PARKING_TIME,
                     Price,
                     (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
@@ -226,10 +226,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #region Parse Type        [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("type",
-                                             "tariff dimension type",
-                                             out TariffDimensions Type,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("type",
+                                         "tariff dimension type",
+                                         TariffDimension.TryParse,
+                                         out TariffDimension Type,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -338,7 +339,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (PriceComponent PriceComponent1,
                                            PriceComponent PriceComponent2)
 
-            => !(PriceComponent1 == PriceComponent2);
+            => !PriceComponent1.Equals(PriceComponent2);
 
         #endregion
 
@@ -368,7 +369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (PriceComponent PriceComponent1,
                                            PriceComponent PriceComponent2)
 
-            => !(PriceComponent1 > PriceComponent2);
+            => PriceComponent1.CompareTo(PriceComponent2) <= 0;
 
         #endregion
 
@@ -398,7 +399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (PriceComponent PriceComponent1,
                                            PriceComponent PriceComponent2)
 
-            => !(PriceComponent1 < PriceComponent2);
+            => PriceComponent1.CompareTo(PriceComponent2) >= 0;
 
         #endregion
 
@@ -506,9 +507,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
-                   Type,  ", ",
-                   Price, ", ",
-                   StepSize
+                   Type,     ", ",
+                   StepSize, ", ",
+                   Price
 
                );
 

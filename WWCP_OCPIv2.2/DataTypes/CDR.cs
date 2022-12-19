@@ -321,14 +321,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
         public CDR(CountryCode                                             CountryCode,
                    Party_Id                                                PartyId,
                    CDR_Id                                                  Id,
@@ -369,14 +373,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    CustomJObjectSerializerDelegate<EnergyMeter>?           CustomEnergyMeterSerializer            = null,
                    CustomJObjectSerializerDelegate<TransparencySoftware>?  CustomTransparencySoftwareSerializer   = null,
                    CustomJObjectSerializerDelegate<Tariff>?                CustomTariffSerializer                 = null,
+                   CustomJObjectSerializerDelegate<DisplayText>?           CustomDisplayTextSerializer            = null,
+                   CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null,
                    CustomJObjectSerializerDelegate<TariffElement>?         CustomTariffElementSerializer          = null,
                    CustomJObjectSerializerDelegate<PriceComponent>?        CustomPriceComponentSerializer         = null,
                    CustomJObjectSerializerDelegate<TariffRestrictions>?    CustomTariffRestrictionsSerializer     = null,
+                   CustomJObjectSerializerDelegate<EnergyMix>?             CustomEnergyMixSerializer              = null,
+                   CustomJObjectSerializerDelegate<EnergySource>?          CustomEnergySourceSerializer           = null,
+                   CustomJObjectSerializerDelegate<EnvironmentalImpact>?   CustomEnvironmentalImpactSerializer    = null,
                    CustomJObjectSerializerDelegate<ChargingPeriod>?        CustomChargingPeriodSerializer         = null,
                    CustomJObjectSerializerDelegate<CDRDimension>?          CustomCDRDimensionSerializer           = null,
                    CustomJObjectSerializerDelegate<SignedData>?            CustomSignedDataSerializer             = null,
-                   CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null,
-                   CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null)
+                   CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null)
 
         {
 
@@ -424,14 +432,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                                 CustomEnergyMeterSerializer,
                                                                                 CustomTransparencySoftwareSerializer,
                                                                                 CustomTariffSerializer,
+                                                                                CustomDisplayTextSerializer,
+                                                                                CustomPriceSerializer,
                                                                                 CustomTariffElementSerializer,
                                                                                 CustomPriceComponentSerializer,
                                                                                 CustomTariffRestrictionsSerializer,
+                                                                                CustomEnergyMixSerializer,
+                                                                                CustomEnergySourceSerializer,
+                                                                                CustomEnvironmentalImpactSerializer,
                                                                                 CustomChargingPeriodSerializer,
                                                                                 CustomCDRDimensionSerializer,
                                                                                 CustomSignedDataSerializer,
-                                                                                CustomSignedValueSerializer,
-                                                                                CustomPriceSerializer).ToUTF8Bytes()).ToBase64();
+                                                                                CustomSignedValueSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 
@@ -1056,28 +1068,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
+        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
+        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
         public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>?                   CustomCDRSerializer                    = null,
                               CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
                               CustomJObjectSerializerDelegate<CDRLocation>?           CustomCDRLocationSerializer            = null,
                               CustomJObjectSerializerDelegate<EnergyMeter>?           CustomEnergyMeterSerializer            = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?  CustomTransparencySoftwareSerializer   = null,
                               CustomJObjectSerializerDelegate<Tariff>?                CustomTariffSerializer                 = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?           CustomDisplayTextSerializer            = null,
+                              CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null,
                               CustomJObjectSerializerDelegate<TariffElement>?         CustomTariffElementSerializer          = null,
                               CustomJObjectSerializerDelegate<PriceComponent>?        CustomPriceComponentSerializer         = null,
                               CustomJObjectSerializerDelegate<TariffRestrictions>?    CustomTariffRestrictionsSerializer     = null,
+                              CustomJObjectSerializerDelegate<EnergyMix>?             CustomEnergyMixSerializer              = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?          CustomEnergySourceSerializer           = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?   CustomEnvironmentalImpactSerializer    = null,
                               CustomJObjectSerializerDelegate<ChargingPeriod>?        CustomChargingPeriodSerializer         = null,
                               CustomJObjectSerializerDelegate<CDRDimension>?          CustomCDRDimensionSerializer           = null,
                               CustomJObjectSerializerDelegate<SignedData>?            CustomSignedDataSerializer             = null,
-                              CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null,
-                              CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null)
+                              CustomJObjectSerializerDelegate<SignedValue>?           CustomSignedValueSerializer            = null)
         {
 
             var JSON = JSONObject.Create(
@@ -1117,9 +1137,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                            Tariffs.Any()
                                ? new JProperty("tariffs",                      new JArray(Tariffs.                Select(tariff               => tariff.              ToJSON(CustomTariffSerializer,
+                                                                                                                                                                             CustomDisplayTextSerializer,
+                                                                                                                                                                             CustomPriceSerializer,
                                                                                                                                                                              CustomTariffElementSerializer,
                                                                                                                                                                              CustomPriceComponentSerializer,
-                                                                                                                                                                             CustomTariffRestrictionsSerializer))))
+                                                                                                                                                                             CustomTariffRestrictionsSerializer,
+                                                                                                                                                                             CustomEnergyMixSerializer,
+                                                                                                                                                                             CustomEnergySourceSerializer,
+                                                                                                                                                                             CustomEnvironmentalImpactSerializer))))
                                : null,
 
                            ChargingPeriods.Any()

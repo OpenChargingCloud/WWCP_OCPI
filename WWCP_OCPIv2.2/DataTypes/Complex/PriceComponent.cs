@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -39,33 +37,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Type of tariff dimension.
+        /// The tariff dimension.
         /// </summary>
         [Mandatory]
-        public TariffDimensions  Type           { get; }
+        public TariffDimension  Type           { get; }
 
         /// <summary>
-        /// Price per unit (excl. VAT) for this tariff dimension.
+        /// The price per unit (excl. VAT) for this tariff dimension.
         /// </summary>
         [Mandatory]
-        public Decimal           Price          { get; }
+        public Decimal          Price          { get; }
 
         /// <summary>
-        /// Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.
+        /// The applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable.
         /// Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.
         /// </summary>
         [Optional]
-        public Decimal?          VAT            { get; }
+        public Decimal?         VAT            { get; }
 
         /// <summary>
-        /// Minimum amount to be billed. This unit will be billed in this step_size blocks.
+        /// The minimum amount to be billed. This unit will be billed in this step_size blocks.
         /// </summary>
         /// <example>
         /// If type is time and step_size is 300, then time will be billed in blocks of 5 minutes,
         /// so if 6 minutes is used, 10 minutes (2 blocks of step_size) will be billed.
         /// </example>
         [Mandatory]
-        public UInt32            StepSize       { get; }
+        public UInt32           StepSize       { get; }
 
         #endregion
 
@@ -74,19 +72,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Create a new price component defining the pricing of a tariff.
         /// </summary>
-        /// <param name="Type">Type of tariff dimension.</param>
-        /// <param name="Price">Price per unit (excl. VAT) for this tariff dimension.</param>
-        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
-        /// <param name="StepSize">Minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
-        public PriceComponent(TariffDimensions  Type,
-                              Decimal           Price,
-                              Decimal?          VAT_percentage   = null,
-                              UInt32            StepSize         = 1)
+        /// <param name="Type">A tariff dimension.</param>
+        /// <param name="Price">A price per unit (excl. VAT) for this tariff dimension.</param>
+        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="StepSize">The minimum amount to be billed. This unit will be billed in this step_size blocks.</param>
+        public PriceComponent(TariffDimension  Type,
+                              Decimal          Price,
+                              Decimal?         VAT        = null,
+                              UInt32           StepSize   = 1)
         {
 
             this.Type            = Type;
             this.Price           = Price;
-            this.VAT  = VAT_percentage;
+            this.VAT             = VAT;
             this.StepSize        = StepSize;
 
         }
@@ -94,57 +92,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region Flat                          (Price, VAT_percentage = null)
+        #region Flat                          (Price, VAT = null)
 
         /// <summary>
         /// Create a new flat rate price component.
         /// </summary>
-        /// <param name="Price">Flat rate price (excl. VAT).</param>
-        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="Price">A flat rate price (excl. VAT).</param>
+        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent FlatRate(Decimal   Price,
-                                              Decimal?  VAT_percentage = null)
+                                              Decimal?  VAT   = null)
 
-            => new PriceComponent(TariffDimensions.FLAT,
-                                  Price,
-                                  VAT_percentage,
-                                  1);
+            => new (TariffDimension.FLAT,
+                    Price,
+                    VAT,
+                    1);
 
         #endregion
 
-        #region ChargingTime(BillingIncrement, Price, VAT_percentage = null)
+        #region ChargingTime(BillingIncrement, Price, VAT = null)
 
         /// <summary>
         /// Create a new time-based charging price component.
         /// </summary>
-        /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
-        /// <param name="Price">Price per time span (excl. VAT).</param>
-        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
+        /// <param name="Price">A price per time span (excl. VAT).</param>
+        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent ChargingTime(TimeSpan  BillingIncrement,
                                                   Decimal   Price,
-                                                  Decimal?  VAT_percentage = null)
+                                                  Decimal?  VAT   = null)
 
-            => new PriceComponent(TariffDimensions.TIME,
-                                  Price,
-                                  VAT_percentage,
-                                  (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
+            => new (TariffDimension.TIME,
+                    Price,
+                    VAT,
+                    (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         #endregion
 
-        #region ParkingTime (BillingIncrement, Price, VAT_percentage = null)
+        #region ParkingTime (BillingIncrement, Price, VAT = null)
 
         /// <summary>
         /// Create a new time-based parking price component.
         /// </summary>
-        /// <param name="BillingIncrement">The minimum granularity of time in seconds that you will be billed.</param>
-        /// <param name="Price">Price per time span (excl. VAT).</param>
-        /// <param name="VAT_percentage">Applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
+        /// <param name="BillingIncrement">A minimum granularity of time in seconds that you will be billed.</param>
+        /// <param name="Price">A price per time span (excl. VAT).</param>
+        /// <param name="VAT">An applicable VAT percentage for this tariff dimension. If omitted, no VAT is applicable. Not providing a VAT is different from 0% VAT, which would be a value of 0.0 here.</param>
         public static PriceComponent ParkingTime(TimeSpan  BillingIncrement,
                                                  Decimal   Price,
-                                                 Decimal?  VAT_percentage = null)
+                                                 Decimal?  VAT = null)
 
-            => new PriceComponent(TariffDimensions.PARKING_TIME,
+            => new PriceComponent(TariffDimension.PARKING_TIME,
                                   Price,
-                                  VAT_percentage,
+                                  VAT,
                                   (UInt32) Math.Round(BillingIncrement.TotalSeconds, 0));
 
         #endregion
@@ -157,44 +155,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static PriceComponent Parse(JObject                                      JSON,
-                                           CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        public static PriceComponent Parse(JObject                                       JSON,
+                                           CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
         {
 
             if (TryParse(JSON,
-                         out PriceComponent  priceComponent,
-                         out String          ErrorResponse,
+                         out var priceComponent,
+                         out var errorResponse,
                          CustomPriceComponentParser))
             {
                 return priceComponent;
             }
 
-            throw new ArgumentException("The given JSON representation of a price component is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomPriceComponentParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a price component.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static PriceComponent Parse(String                                       Text,
-                                           CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out PriceComponent  priceComponent,
-                         out String          ErrorResponse,
-                         CustomPriceComponentParser))
-            {
-                return priceComponent;
-            }
-
-            throw new ArgumentException("The given text representation of a price component is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a price component is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -207,38 +181,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static PriceComponent? TryParse(JObject                                         JSON,
-                                                  CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        public static PriceComponent? TryParse(JObject                                          JSON,
+                                                  CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
         {
 
             if (TryParse(JSON,
-                         out PriceComponent  priceComponent,
-                         out String          ErrorResponse,
-                         CustomPriceComponentParser))
-            {
-                return priceComponent;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomPriceComponentParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a price component.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static PriceComponent? TryParse(String                                       Text,
-                                               CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out PriceComponent  priceComponent,
-                         out String          ErrorResponse,
+                         out var priceComponent,
+                         out var errorResponse,
                          CustomPriceComponentParser))
             {
                 return priceComponent;
@@ -262,7 +211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject             JSON,
                                        out PriceComponent  PriceComponent,
-                                       out String          ErrorResponse)
+                                       out String?         ErrorResponse)
 
             => TryParse(JSON,
                         out PriceComponent,
@@ -277,10 +226,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="PriceComponent">The parsed price component.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static Boolean TryParse(JObject                                      JSON,
-                                       out PriceComponent                           PriceComponent,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
+        public static Boolean TryParse(JObject                                       JSON,
+                                       out PriceComponent                            PriceComponent,
+                                       out String?                                   ErrorResponse,
+                                       CustomJObjectParserDelegate<PriceComponent>?  CustomPriceComponentParser   = null)
         {
 
             try
@@ -294,19 +243,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Type          [mandatory]
+                #region Parse Type        [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("type",
-                                             "tariff dimension type",
-                                             out TariffDimensions Type,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("type",
+                                         "tariff dimension type",
+                                         TariffDimension.TryParse,
+                                         out TariffDimension Type,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
 
                 #endregion
 
-                #region Parse Price         [mandatory]
+                #region Parse Price       [mandatory]
 
                 if (!JSON.ParseMandatory("price",
                                          "price",
@@ -318,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse VAT           [optional]
+                #region Parse VAT         [optional]
 
                 if (JSON.ParseOptional("vat",
                                        "value added tax",
@@ -331,7 +281,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse StepSize      [mandatory]
+                #region Parse StepSize    [mandatory]
 
                 if (!JSON.ParseMandatory("step_size",
                                          "step size",
@@ -368,48 +318,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out PriceComponent, out ErrorResponse, CustomPriceComponentParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a price component.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="PriceComponent">The parsed priceComponent.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomPriceComponentParser">A delegate to parse custom price component JSON objects.</param>
-        public static Boolean TryParse(String                                       Text,
-                                       out PriceComponent                           PriceComponent,
-                                       out String                                   ErrorResponse,
-                                       CustomJObjectParserDelegate<PriceComponent>  CustomPriceComponentParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out PriceComponent,
-                                out ErrorResponse,
-                                CustomPriceComponentParser);
-
-            }
-            catch (Exception e)
-            {
-                PriceComponent  = default;
-                ErrorResponse   = "The given text representation of a price component is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomPriceComponentSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<PriceComponent> CustomPriceComponentSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<PriceComponent>? CustomPriceComponentSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -462,7 +377,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (PriceComponent PriceComponent1,
                                            PriceComponent PriceComponent2)
 
-            => !(PriceComponent1 == PriceComponent2);
+            => !PriceComponent1.Equals(PriceComponent2);
 
         #endregion
 
@@ -492,7 +407,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (PriceComponent PriceComponent1,
                                            PriceComponent PriceComponent2)
 
-            => !(PriceComponent1 > PriceComponent2);
+            => PriceComponent1.CompareTo(PriceComponent2) <= 0;
 
         #endregion
 
@@ -522,7 +437,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (PriceComponent PriceComponent1,
                                            PriceComponent PriceComponent2)
 
-            => !(PriceComponent1 < PriceComponent2);
+            => PriceComponent1.CompareTo(PriceComponent2) >= 0;
 
         #endregion
 
@@ -533,10 +448,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two price components.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A price component to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is PriceComponent priceComponent
                    ? CompareTo(priceComponent)
@@ -548,9 +463,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(PriceComponent)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two price components.
         /// </summary>
-        /// <param name="PriceComponent">An object to compare with.</param>
+        /// <param name="PriceComponent">A price component to compare with.</param>
         public Int32 CompareTo(PriceComponent PriceComponent)
         {
 
@@ -559,11 +474,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (c == 0)
                 c = Price.   CompareTo(PriceComponent.Price);
 
-            if (c == 0 && VAT.HasValue && PriceComponent.VAT.HasValue)
-                c = Price.CompareTo(PriceComponent.Price);
-
             if (c == 0)
                 c = StepSize.CompareTo(PriceComponent.StepSize);
+
+            if (c == 0 && VAT.HasValue && PriceComponent.VAT.HasValue)
+                c = Price.   CompareTo(PriceComponent.Price);
 
             return c;
 
@@ -578,11 +493,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two price components for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A price component to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is PriceComponent priceComponent &&
                    Equals(priceComponent);
@@ -595,7 +509,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two price components for equality.
         /// </summary>
         /// <param name="PriceComponent">A price component to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(PriceComponent PriceComponent)
 
             => Type.    Equals(PriceComponent.Type)  &&
@@ -620,8 +533,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 return Type.    GetHashCode() * 7 ^
                        Price.   GetHashCode() * 5 ^
-                       VAT.     GetHashCode() * 3 ^
-                       StepSize.GetHashCode();
+                       StepSize.GetHashCode() * 3 ^
+                       VAT?.    GetHashCode() ?? 0;
 
             }
         }
@@ -635,9 +548,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Type,  "; ",
-                             Price, "; ",
-                             StepSize);
+            => String.Concat(
+
+                   Type,     ", ",
+                   StepSize, ", ",
+                   Price,
+
+                   VAT.HasValue
+                       ? ", " + VAT.Value
+                       : ""
+
+               );
 
         #endregion
 

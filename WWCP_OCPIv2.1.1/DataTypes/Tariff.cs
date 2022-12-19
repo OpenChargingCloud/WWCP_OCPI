@@ -53,49 +53,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// The identification of the tariff within the CPOs platform (and suboperator platforms). 
         /// </summary>
         [Mandatory]
-        public Tariff_Id                   Id                { get; }
+        public Tariff_Id                   Id                   { get; }
 
         /// <summary>
         /// The ISO 4217 code of the currency used for this tariff.
         /// </summary>
         [Mandatory]
-        public Currency                    Currency          { get; }
+        public Currency                    Currency             { get; }
 
         /// <summary>
         /// The optional multi-language alternative tariff info text.
         /// </summary>
         [Optional]
-        public IEnumerable<DisplayText>    TariffAltText     { get; }
+        public IEnumerable<DisplayText>    TariffAltText        { get; }
 
         /// <summary>
         /// The optional URL to a web page that contains an explanation of the tariff information
         /// in human readable form.
         /// </summary>
         [Optional]
-        public URL?                        TariffAltURL      { get; }
+        public URL?                        TariffAltURL         { get; }
 
         /// <summary>
         /// The enumeration of tariff elements.
         /// </summary>
         [Mandatory]
-        public IEnumerable<TariffElement>  TariffElements    { get; }
+        public IEnumerable<TariffElement>  TariffElements       { get; }
 
         /// <summary>
         /// Optional details on the energy supplied with this tariff.
         /// </summary>
         [Optional]
-        public EnergyMix?                  EnergyMix         { get;  }
+        public EnergyMix?                  EnergyMix            { get;  }
 
         /// <summary>
         /// The timestamp when this tariff was last updated (or created).
         /// </summary>
         [Mandatory]
-        public DateTime                    LastUpdated       { get; }
+        public DateTime                    LastUpdated          { get; }
 
         /// <summary>
         /// The SHA256 hash of the JSON representation of this charging tariff.
         /// </summary>
-        public String                      ETag              { get; private set; }
+        public String                      ETag                 { get; }
 
         #endregion
 
@@ -113,6 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="EnergyMix">Optional details on the energy supplied with this tariff.</param>
         /// 
         /// <param name="LastUpdated">A timestamp when this tariff was last updated (or created).</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
@@ -153,14 +154,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated     = LastUpdated ?? Timestamp.Now;
 
-            this.ETag            = CalcSHA256Hash(CustomTariffSerializer,
-                                                  CustomDisplayTextSerializer,
-                                                  CustomTariffElementSerializer,
-                                                  CustomPriceComponentSerializer,
-                                                  CustomTariffRestrictionsSerializer,
-                                                  CustomEnergyMixSerializer,
-                                                  CustomEnergySourceSerializer,
-                                                  CustomEnvironmentalImpactSerializer);
+            this.ETag            = SHA256.Create().ComputeHash(ToJSON(CustomTariffSerializer,
+                                                                      CustomDisplayTextSerializer,
+                                                                      CustomTariffElementSerializer,
+                                                                      CustomPriceComponentSerializer,
+                                                                      CustomTariffRestrictionsSerializer,
+                                                                      CustomEnergyMixSerializer,
+                                                                      CustomEnergySourceSerializer,
+                                                                      CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 
@@ -386,6 +387,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
+        /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
         /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
@@ -566,44 +568,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region CalcSHA256Hash(CustomTariffSerializer = null, CustomDisplayTextSerializer = null, ...)
-
-        /// <summary>
-        /// Calculate the SHA256 hash of the JSON representation of this charging tariff in HEX.
-        /// </summary>
-        /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
-        /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
-        /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
-        /// <param name="CustomTariffRestrictionsSerializer">A delegate to serialize custom tariff restrictions JSON objects.</param>
-        /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
-        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Tariff>?               CustomTariffSerializer                = null,
-                                     CustomJObjectSerializerDelegate<DisplayText>?          CustomDisplayTextSerializer           = null,
-                                     CustomJObjectSerializerDelegate<TariffElement>?        CustomTariffElementSerializer         = null,
-                                     CustomJObjectSerializerDelegate<PriceComponent>?       CustomPriceComponentSerializer        = null,
-                                     CustomJObjectSerializerDelegate<TariffRestrictions>?   CustomTariffRestrictionsSerializer    = null,
-                                     CustomJObjectSerializerDelegate<EnergyMix>?            CustomEnergyMixSerializer             = null,
-                                     CustomJObjectSerializerDelegate<EnergySource>?         CustomEnergySourceSerializer          = null,
-                                     CustomJObjectSerializerDelegate<EnvironmentalImpact>?  CustomEnvironmentalImpactSerializer   = null)
-        {
-
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomTariffSerializer,
-                                                           CustomDisplayTextSerializer,
-                                                           CustomTariffElementSerializer,
-                                                           CustomPriceComponentSerializer,
-                                                           CustomTariffRestrictionsSerializer,
-                                                           CustomEnergyMixSerializer,
-                                                           CustomEnergySourceSerializer,
-                                                           CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
-
-            return this.ETag;
-
-        }
-
-        #endregion
-
-
         #region Operator overloading
 
         #region Operator == (Tariff1, Tariff2)
@@ -743,10 +707,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             var c = Id.         CompareTo(Tariff.Id);
 
             if (c == 0)
-                c = LastUpdated.CompareTo(Tariff.LastUpdated);
+                c = Currency.   CompareTo(Tariff.Currency);
 
             if (c == 0)
-                c = Currency.   CompareTo(Tariff.Currency);
+                c = LastUpdated.CompareTo(Tariff.LastUpdated);
 
             // TariffElements
             // 
