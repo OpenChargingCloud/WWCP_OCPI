@@ -100,6 +100,54 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                 Capability.RFID_READER,
                                 Capability.RESERVABLE
                             },
+
+                            // OCPI Computer Science Extensions
+                            new EnergyMeter(
+                                Meter_Id.Parse("Meter0815"),
+                                "EnergyMeter Model #1",
+                                "hw. v1.80",
+                                "fw. v1.20",
+                                "Energy Metering Services",
+                                null,
+                                null,
+                                new TransparencySoftwareStatus[] {
+                                    new TransparencySoftwareStatus(
+                                        new TransparencySoftware(
+                                            "Chargy Transparency Software Desktop Application",
+                                            "v1.00",
+                                            OpenSourceLicenses.GPL3,
+                                            "GraphDefined GmbH",
+                                            URL.Parse("https://open.charging.cloud/logo.svg"),
+                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                            URL.Parse("https://open.charging.cloud/Chargy"),
+                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                        ),
+                                        LegalStatus.GermanCalibrationLaw,
+                                        "cert",
+                                        "German PTB",
+                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                    ),
+                                    new TransparencySoftwareStatus(
+                                        new TransparencySoftware(
+                                            "Chargy Transparency Software Mobile Application",
+                                            "v1.00",
+                                            OpenSourceLicenses.GPL3,
+                                            "GraphDefined GmbH",
+                                            URL.Parse("https://open.charging.cloud/logo.svg"),
+                                            URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                            URL.Parse("https://open.charging.cloud/Chargy"),
+                                            URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                        ),
+                                        LegalStatus.ForInformationOnly,
+                                        "no cert",
+                                        "GraphDefiend",
+                                        NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                        NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                    )
+                                }
+                            ),
+
                             "1. Stock",
                             GeoCoordinate.Parse(10.1, 20.2),
                             "Ladestation #1",

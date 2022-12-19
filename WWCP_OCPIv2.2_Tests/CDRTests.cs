@@ -126,34 +126,45 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                    "fw. v1.20",
                                    "Energy Metering Services",
                                    null,
-                                   null
+                                   null,
+                                   new TransparencySoftwareStatus[] {
+                                       new TransparencySoftwareStatus(
+                                           new TransparencySoftware(
+                                               "Chargy Transparency Software Desktop Application",
+                                               "v1.00",
+                                               OpenSourceLicenses.GPL3,
+                                               "GraphDefined GmbH",
+                                               URL.Parse("https://open.charging.cloud/logo.svg"),
+                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                               URL.Parse("https://open.charging.cloud/Chargy"),
+                                               URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
+                                           ),
+                                           LegalStatus.GermanCalibrationLaw,
+                                           "cert",
+                                           "German PTB",
+                                           NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                           NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                       ),
+                                       new TransparencySoftwareStatus(
+                                           new TransparencySoftware(
+                                               "Chargy Transparency Software Mobile Application",
+                                               "v1.00",
+                                               OpenSourceLicenses.GPL3,
+                                               "GraphDefined GmbH",
+                                               URL.Parse("https://open.charging.cloud/logo.svg"),
+                                               URL.Parse("https://open.charging.cloud/Chargy/howto"),
+                                               URL.Parse("https://open.charging.cloud/Chargy"),
+                                               URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
+                                           ),
+                                           LegalStatus.ForInformationOnly,
+                                           "no cert",
+                                           "GraphDefiend",
+                                           NotBefore: DateTime.Parse("2019-04-01T00:00:00.000Z").ToUniversalTime(),
+                                           NotAfter:  DateTime.Parse("2030-01-01T00:00:00.000Z").ToUniversalTime()
+                                       )
+                                   }
                                ),
-
-                               // OCPI Computer Science Extensions
-                               new TransparencySoftware[] {
-                                   new TransparencySoftware(
-                                       "Chargy Transparency Software Desktop Application",
-                                       "v1.00",
-                                       LegalStatus.LegallyBinding,
-                                       OpenSourceLicenses.GPL3,
-                                       "GraphDefined GmbH",
-                                       URL.Parse("https://open.charging.cloud/logo.svg"),
-                                       URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                       URL.Parse("https://open.charging.cloud/Chargy"),
-                                       URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                   ),
-                                   new TransparencySoftware(
-                                       "Chargy Transparency Software Mobile Application",
-                                       "v1.00",
-                                       LegalStatus.ForInformationOnly,
-                                       OpenSourceLicenses.GPL3,
-                                       "GraphDefined GmbH",
-                                       URL.Parse("https://open.charging.cloud/logo.svg"),
-                                       URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                       URL.Parse("https://open.charging.cloud/Chargy"),
-                                       URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                   )
-                               },
+                               null,
 
                                new Tariff[] {
                                    new Tariff(

@@ -279,56 +279,66 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
         /// 
         /// <param name="LastUpdated">The timestamp when this charging location was last updated (or created).</param>
-        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom charging location JSON objects.</param>
         /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public Location(CountryCode                                              CountryCode,
-                        Party_Id                                                 PartyId,
-                        Location_Id                                              Id,
-                        Boolean                                                  Publish,
-                        String                                                   Address,
-                        String                                                   City,
-                        Country                                                  Country,
-                        GeoCoordinate                                            Coordinates,
-                        String                                                   Timezone,
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public Location(CountryCode                                                   CountryCode,
+                        Party_Id                                                      PartyId,
+                        Location_Id                                                   Id,
+                        Boolean                                                       Publish,
+                        String                                                        Address,
+                        String                                                        City,
+                        Country                                                       Country,
+                        GeoCoordinate                                                 Coordinates,
+                        String                                                        Timezone,
 
-                        IEnumerable<PublishToken>?                               PublishAllowedTo                        = null,
-                        String?                                                  Name                                    = null,
-                        String?                                                  PostalCode                              = null,
-                        String?                                                  State                                   = null,
-                        IEnumerable<AdditionalGeoLocation>?                      RelatedLocations                        = null,
-                        ParkingType?                                             ParkingType                             = null,
-                        IEnumerable<EVSE>?                                       EVSEs                                   = null,
-                        IEnumerable<DisplayText>?                                Directions                              = null,
-                        BusinessDetails?                                         Operator                                = null,
-                        BusinessDetails?                                         SubOperator                             = null,
-                        BusinessDetails?                                         Owner                                   = null,
-                        IEnumerable<Facilities>?                                 Facilities                              = null,
-                        Hours?                                                   OpeningTimes                            = null,
-                        Boolean?                                                 ChargingWhenClosed                      = null,
-                        IEnumerable<Image>?                                      Images                                  = null,
-                        EnergyMix?                                               EnergyMix                               = null,
+                        IEnumerable<PublishToken>?                                    PublishAllowedTo                             = null,
+                        String?                                                       Name                                         = null,
+                        String?                                                       PostalCode                                   = null,
+                        String?                                                       State                                        = null,
+                        IEnumerable<AdditionalGeoLocation>?                           RelatedLocations                             = null,
+                        ParkingType?                                                  ParkingType                                  = null,
+                        IEnumerable<EVSE>?                                            EVSEs                                        = null,
+                        IEnumerable<DisplayText>?                                     Directions                                   = null,
+                        BusinessDetails?                                              Operator                                     = null,
+                        BusinessDetails?                                              SubOperator                                  = null,
+                        BusinessDetails?                                              Owner                                        = null,
+                        IEnumerable<Facilities>?                                      Facilities                                   = null,
+                        Hours?                                                        OpeningTimes                                 = null,
+                        Boolean?                                                      ChargingWhenClosed                           = null,
+                        IEnumerable<Image>?                                           Images                                       = null,
+                        EnergyMix?                                                    EnergyMix                                    = null,
 
-                        DateTime?                                                LastUpdated                             = null,
-                        CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                        CustomJObjectSerializerDelegate<PublishToken>?           CustomPublishTokenSerializer            = null,
-                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
-                        CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
-                        CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
-                        CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
-                        CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
-                        CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
-                        CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
-                        CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
-                        CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null)
+                        DateTime?                                                     LastUpdated                                  = null,
+                        CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+                        CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
+                        CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
+                        CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                        CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                        CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                        CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                        CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                        CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                        CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                        CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
+                        CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                        CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                        CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
+                        CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
+                        CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
 
         {
 
@@ -369,12 +379,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        CustomAdditionalGeoLocationSerializer,
                                                        CustomEVSESerializer,
                                                        CustomStatusScheduleSerializer,
+                                                       CustomEnergyMeterSerializer,
+                                                       CustomTransparencySoftwareStatusSerializer,
+                                                       CustomTransparencySoftwareSerializer,
                                                        CustomConnectorSerializer,
                                                        CustomDisplayTextSerializer,
                                                        CustomBusinessDetailsSerializer,
                                                        CustomHoursSerializer,
                                                        CustomImageSerializer,
-                                                       CustomEnergyMixSerializer);
+                                                       CustomEnergyMixSerializer,
+                                                       CustomEnergySourceSerializer,
+                                                       CustomEnvironmentalImpactSerializer);
 
         }
 
@@ -889,6 +904,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
@@ -897,19 +915,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                              CustomJObjectSerializerDelegate<PublishToken>?           CustomPublishTokenSerializer            = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
-                              CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
-                              CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
-                              CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
-                              CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
-                              CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
-                              CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null,
-                              CustomJObjectSerializerDelegate<EnergySource>?           CustomEnergySourceSerializer            = null,
-                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?    CustomEnvironmentalImpactSerializer     = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+                              CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
+                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
+                              CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                              CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
+                              CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                              CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                              CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
         {
 
             var JSON = JSONObject.Create(
@@ -957,6 +978,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            EVSEs.Any()
                                ? new JProperty("evses",                  new JArray(EVSEs.           Select(evse                  => evse.ToJSON(CustomEVSESerializer,
                                                                                                                                                  CustomStatusScheduleSerializer,
+                                                                                                                                                 CustomEnergyMeterSerializer,
+                                                                                                                                                 CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                                 CustomTransparencySoftwareSerializer,
                                                                                                                                                  CustomConnectorSerializer,
                                                                                                                                                  CustomDisplayTextSerializer,
                                                                                                                                                  CustomImageSerializer))))
@@ -1391,28 +1415,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Calculate the SHA256 hash of the JSON representation of this location in HEX.
         /// </summary>
-        /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
+        /// <param name="CustomLocationSerializer">A delegate to serialize custom charging location JSON objects.</param>
         /// <param name="CustomPublishTokenSerializer">A delegate to serialize custom publish token type JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                                     CustomJObjectSerializerDelegate<PublishToken>?           CustomPublishTokenSerializer            = null,
-                                     CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
-                                     CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
-                                     CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
-                                     CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
-                                     CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
-                                     CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
-                                     CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
-                                     CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
-                                     CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null)
+        /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
+        /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+                                     CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                 = null,
+                                     CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
+                                     CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                                     CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                                     CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                                     CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                                     CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
+                                     CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                                     CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                                     CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
+                                     CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
+                                     CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null)
         {
 
             this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomLocationSerializer,
@@ -1420,12 +1454,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                            CustomAdditionalGeoLocationSerializer,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
+                                                           CustomEnergyMeterSerializer,
+                                                           CustomTransparencySoftwareStatusSerializer,
+                                                           CustomTransparencySoftwareSerializer,
                                                            CustomConnectorSerializer,
                                                            CustomDisplayTextSerializer,
                                                            CustomBusinessDetailsSerializer,
                                                            CustomHoursSerializer,
                                                            CustomImageSerializer,
-                                                           CustomEnergyMixSerializer).ToUTF8Bytes()).ToBase64();
+                                                           CustomEnergyMixSerializer,
+                                                           CustomEnergySourceSerializer,
+                                                           CustomEnvironmentalImpactSerializer).ToUTF8Bytes()).ToBase64();
 
             return this.ETag;
 

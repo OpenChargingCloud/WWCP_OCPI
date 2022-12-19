@@ -18,6 +18,7 @@
 #region Usings
 
 using NUnit.Framework;
+
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -68,46 +69,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                SessionStatusTypes.ACTIVE,
                                DateTime.Parse("2020-08-22T00:00:00.000Z").ToUniversalTime(), // End
                                AuthorizationReference.Parse("Auth1234"),
-
                                Meter_Id.Parse("Meter0001"),
-
-                               // OCPI Computer Science Extensions
-                               new EnergyMeter(
-                                   Meter_Id.Parse("Meter0815"),
-                                   "EnergyMeter Model #1",
-                                   "hw. v1.80",
-                                   "fw. v1.20",
-                                   "Energy Metering Services",
-                                   null,
-                                   null
-                               ),
-
-                               // OCPI Computer Science Extensions
-                               new TransparencySoftware[] {
-                                   new TransparencySoftware(
-                                       "Chargy Transparency Software Desktop Application",
-                                       "v1.00",
-                                       LegalStatus.LegallyBinding,
-                                       OpenSourceLicenses.GPL3,
-                                       "GraphDefined GmbH",
-                                       URL.Parse("https://open.charging.cloud/logo.svg"),
-                                       URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                       URL.Parse("https://open.charging.cloud/Chargy"),
-                                       URL.Parse("https://github.com/OpenChargingCloud/ChargyDesktopApp")
-                                   ),
-                                   new TransparencySoftware(
-                                       "Chargy Transparency Software Mobile Application",
-                                       "v1.00",
-                                       LegalStatus.ForInformationOnly,
-                                       OpenSourceLicenses.GPL3,
-                                       "GraphDefined GmbH",
-                                       URL.Parse("https://open.charging.cloud/logo.svg"),
-                                       URL.Parse("https://open.charging.cloud/Chargy/howto"),
-                                       URL.Parse("https://open.charging.cloud/Chargy"),
-                                       URL.Parse("https://github.com/OpenChargingCloud/ChargyMobileApp")
-                                   )
-                               },
-
                                new ChargingPeriod[] {
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:49Z").ToUniversalTime(),
@@ -182,8 +144,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
             Assert.AreEqual(session1.EVSEUId,                  session2.EVSEUId);
             Assert.AreEqual(session1.ConnectorId,              session2.ConnectorId);
             Assert.AreEqual(session1.MeterId,                  session2.MeterId);
-            Assert.AreEqual(session1.EnergyMeter,              session2.EnergyMeter);
-            Assert.AreEqual(session1.TransparencySoftwares,    session2.TransparencySoftwares);
             Assert.AreEqual(session1.Currency,                 session2.Currency);
             Assert.AreEqual(session1.ChargingPeriods,          session2.ChargingPeriods);
             Assert.AreEqual(session1.TotalCosts,               session2.TotalCosts);
@@ -232,7 +192,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Session.TryParse(JSON, out var parsedSession, out var errorResponse));
+            Assert.IsTrue(Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse));
             Assert.IsNull(errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("NL"),                   parsedSession.CountryCode);
@@ -325,7 +285,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
 
             #endregion
 
-            Assert.IsTrue(Session.TryParse(JSON, out var parsedSession, out var errorResponse));
+            Assert.IsTrue(Session.TryParse(JObject.Parse(JSON), out var parsedSession, out var errorResponse));
             Assert.IsNull(errorResponse);
 
             Assert.AreEqual(CountryCode.Parse("BE"),                   parsedSession.CountryCode);

@@ -5869,7 +5869,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
                                                        LastModified               = Session.LastUpdated.ToIso8601(),
-                                                       ETag                       = Session.SHA256Hash
+                                                       ETag                       = Session.ETag
                                                    }
                                             });
 
@@ -5966,7 +5966,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
-                                                           ETag                       = addOrUpdateResult.Data.SHA256Hash
+                                                           ETag                       = addOrUpdateResult.Data.ETag
                                                        }
                                                    };
 
@@ -6052,7 +6052,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                                AccessControlAllowHeaders  = "Authorization",
                                                                LastModified               = patchedSession.PatchedData.LastUpdated.ToIso8601(),
-                                                               ETag                       = patchedSession.PatchedData.SHA256Hash
+                                                               ETag                       = patchedSession.PatchedData.ETag
                                                            }
                                                        };
 

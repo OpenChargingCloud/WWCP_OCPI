@@ -124,6 +124,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -379,6 +391,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -606,6 +630,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -833,6 +869,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -1060,6 +1108,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -1289,6 +1349,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -1516,6 +1588,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -1746,6 +1830,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -1974,6 +2070,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -2201,6 +2309,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -2428,6 +2548,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
@@ -2655,6 +2787,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                             Capability.RFID_READER,
                                             Capability.RESERVABLE
                                         },
+
+                                        // OCPI Computer Science Extensions
+                                        new EnergyMeter(
+                                            Meter_Id.Parse("Meter0815"),
+                                            "EnergyMeter Model #1",
+                                            "hw. v1.80",
+                                            "fw. v1.20",
+                                            "Energy Metering Services",
+                                            null,
+                                            null
+                                        ),
+
                                         "1. Stock",
                                         GeoCoordinate.Parse(10.1, 20.2),
                                         "Ladestation #1",
