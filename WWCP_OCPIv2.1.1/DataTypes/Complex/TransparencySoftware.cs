@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -30,7 +28,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
     /// <summary>
-    /// A transparency software. This information will e.g. be used for the German calibration law.
+    /// The charging transparency software.
+    /// This information will e.g. be used for the German calibration law.
     /// </summary>
     [NonStandard]
     public class TransparencySoftware : IEquatable<TransparencySoftware>,
@@ -53,12 +52,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String              Version                  { get; }
 
         /// <summary>
-        /// The legal status of the transparency software.
-        /// </summary>
-        [Mandatory]
-        public LegalStatus         LegalStatus              { get; }
-
-        /// <summary>
         /// The Open Source license of the transparency software.
         /// </summary>
         [Mandatory]
@@ -71,25 +64,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public String              Vendor                   { get; }
 
         /// <summary>
-        /// An optional URL where to find a small logo of the transparency software.
+        /// The optional URL where to find a small logo of the transparency software.
         /// </summary>
         [Optional]
         public URL?                Logo                     { get; }
 
         /// <summary>
-        /// An optional URL where to find a manual how to use the transparency software.
+        /// The optional URL where to find a manual how to use the transparency software.
         /// </summary>
         [Optional]
         public URL?                HowToUse                 { get; }
 
         /// <summary>
-        /// An optional URL where to find more information about the transparency software.
+        /// The optional URL where to find more information about the transparency software.
         /// </summary>
         [Optional]
         public URL?                MoreInformation          { get; }
 
         /// <summary>
-        /// An optional URL where to find the source code of the transparency software.
+        /// The optional URL where to find the source code of the transparency software.
         /// </summary>
         [Optional]
         public URL?                SourceCodeRepository     { get; }
@@ -99,11 +92,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Constructor(s)
 
         /// <summary>
-        /// Create new transparency software.
+        /// Create new charging transparency software.
         /// </summary>
         /// <param name="Name">The name of the transparency software.</param>
         /// <param name="Version">The version of the transparency software.</param>
-        /// <param name="LegalStatus">The legal status of the transparency software.</param>
         /// <param name="OpenSourceLicense">The Open Source license of the transparency software.</param>
         /// <param name="Vendor">The vendor of the transparency software.</param>
         /// 
@@ -113,7 +105,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="SourceCodeRepository">An optional URL where to find the source code of the transparency software.</param>
         public TransparencySoftware(String              Name,
                                     String              Version,
-                                    LegalStatus         LegalStatus,
                                     OpenSourceLicenses  OpenSourceLicense,
                                     String              Vendor,
 
@@ -125,7 +116,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.Name                  = Name;
             this.Version               = Version;
-            this.LegalStatus           = LegalStatus;
             this.OpenSourceLicense     = OpenSourceLicense;
             this.Vendor                = Vendor;
 
@@ -146,44 +136,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
-        public static TransparencySoftware Parse(JObject                                            JSON,
-                                                 CustomJObjectParserDelegate<TransparencySoftware>  CustomTransparencySoftwareParser   = null)
+        public static TransparencySoftware Parse(JObject                                             JSON,
+                                                 CustomJObjectParserDelegate<TransparencySoftware>?  CustomTransparencySoftwareParser   = null)
         {
 
             if (TryParse(JSON,
-                         out TransparencySoftware  transparencySoftware,
-                         out String                ErrorResponse,
+                         out var transparencySoftware,
+                         out var errorResponse,
                          CustomTransparencySoftwareParser))
             {
-                return transparencySoftware;
+                return transparencySoftware!;
             }
 
-            throw new ArgumentException("The given JSON representation of a transparency software is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomTransparencySoftwareParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a transparency software.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
-        public static TransparencySoftware Parse(String                                             Text,
-                                                 CustomJObjectParserDelegate<TransparencySoftware>  CustomTransparencySoftwareParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out TransparencySoftware  transparencySoftware,
-                         out String                ErrorResponse,
-                         CustomTransparencySoftwareParser))
-            {
-                return transparencySoftware;
-            }
-
-            throw new ArgumentException("The given text representation of a transparency software is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a transparency software is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -199,9 +165,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="TransparencySoftware">The parsed transparency software.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                   JSON,
-                                       out TransparencySoftware  TransparencySoftware,
-                                       out String                ErrorResponse)
+        public static Boolean TryParse(JObject                    JSON,
+                                       out TransparencySoftware?  TransparencySoftware,
+                                       out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out TransparencySoftware,
@@ -216,10 +182,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TransparencySoftware">The parsed transparency software.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
-        public static Boolean TryParse(JObject                                            JSON,
-                                       out TransparencySoftware                           TransparencySoftware,
-                                       out String                                         ErrorResponse,
-                                       CustomJObjectParserDelegate<TransparencySoftware>  CustomTransparencySoftwareParser   = null)
+        public static Boolean TryParse(JObject                                             JSON,
+                                       out TransparencySoftware?                           TransparencySoftware,
+                                       out String?                                         ErrorResponse,
+                                       CustomJObjectParserDelegate<TransparencySoftware>?  CustomTransparencySoftwareParser   = null)
         {
 
             try
@@ -250,18 +216,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 if (!JSON.ParseMandatoryText("version",
                                              "version",
                                              out String Version,
-                                             out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse LegalStatus               [mandatory]
-
-                if (!JSON.ParseMandatoryEnum("legal_status",
-                                             "legal status",
-                                             out LegalStatus LegalStatus,
                                              out ErrorResponse))
                 {
                     return false;
@@ -352,7 +306,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 TransparencySoftware = new TransparencySoftware(Name,
                                                                 Version,
-                                                                LegalStatus,
                                                                 OpenSourceLicense,
                                                                 Vendor,
                                                                 Logo,
@@ -378,57 +331,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out TransparencySoftware, out ErrorResponse, CustomTransparencySoftwareParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a transparency software.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="TransparencySoftware">The parsed transparencySoftware.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomTransparencySoftwareParser">A delegate to parse custom transparency software JSON objects.</param>
-        public static Boolean TryParse(String                                             Text,
-                                       out TransparencySoftware                           TransparencySoftware,
-                                       out String                                         ErrorResponse,
-                                       CustomJObjectParserDelegate<TransparencySoftware>  CustomTransparencySoftwareParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out TransparencySoftware,
-                                out ErrorResponse,
-                                CustomTransparencySoftwareParser);
-
-            }
-            catch (Exception e)
-            {
-                TransparencySoftware  = default;
-                ErrorResponse         = "The given text representation of a transparency software is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomTransparencySoftwareSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<TransparencySoftware> CustomTransparencySoftwareSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<TransparencySoftware>? CustomTransparencySoftwareSerializer = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("name",                 Name),
-                           new JProperty("version",              Version),
-                           new JProperty("legal_status",         LegalStatus.      ToString()),
-                           new JProperty("open_source_license",  OpenSourceLicense.ToString()),
-                           new JProperty("vendor",               Vendor),
+                                 new JProperty("name",                    Name),
+                                 new JProperty("version",                 Version),
+                                 new JProperty("open_source_license",     OpenSourceLicense.   ToString()),
+                                 new JProperty("vendor",                  Vendor),
 
                            Logo.                HasValue
                                ? new JProperty("logo",                    Logo.                ToString())
@@ -569,10 +486,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two transparency softwares.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A transparency software to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is TransparencySoftware transparencySoftware
                    ? CompareTo(transparencySoftware)
@@ -584,10 +501,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(TransparencySoftware)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two transparency softwares.
         /// </summary>
-        /// <param name="TransparencySoftware">An object to compare with.</param>
-        public Int32 CompareTo(TransparencySoftware TransparencySoftware)
+        /// <param name="TransparencySoftware">A transparency software to compare with.</param>
+        public Int32 CompareTo(TransparencySoftware? TransparencySoftware)
         {
 
             if (TransparencySoftware is null)
@@ -597,9 +514,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             if (c == 0)
                 c = Version.          CompareTo(TransparencySoftware.Version);
-
-            if (c == 0)
-                c = LegalStatus.      CompareTo(TransparencySoftware.LegalStatus);
 
             if (c == 0)
                 c = OpenSourceLicense.CompareTo(TransparencySoftware.OpenSourceLicense);
@@ -632,11 +546,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two transparency softwares for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A transparency software to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is TransparencySoftware transparencySoftware &&
                    Equals(transparencySoftware);
@@ -649,14 +562,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two transparency softwares for equality.
         /// </summary>
         /// <param name="TransparencySoftware">A transparency software to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(TransparencySoftware TransparencySoftware)
+        public Boolean Equals(TransparencySoftware? TransparencySoftware)
 
-            => !(TransparencySoftware is null) &&
+            => TransparencySoftware is not null &&
 
                Name.             Equals(TransparencySoftware.Name)              &&
                Version.          Equals(TransparencySoftware.Version)           &&
-               LegalStatus.      Equals(TransparencySoftware.LegalStatus)       &&
                OpenSourceLicense.Equals(TransparencySoftware.OpenSourceLicense) &&
                Vendor.           Equals(TransparencySoftware.Vendor)            &&
 
@@ -687,27 +598,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Name.             GetHashCode() * 21 ^
-                       Version.          GetHashCode() * 19 ^
-                       LegalStatus.      GetHashCode() * 17 ^
-                       OpenSourceLicense.GetHashCode() * 13 ^
-                       Vendor.           GetHashCode() * 11 ^
-
-                       (Logo.                HasValue
-                           ? Logo.                GetHashCode() * 7
-                           : 0) ^
-
-                       (HowToUse.            HasValue
-                           ? HowToUse.            GetHashCode() * 5
-                           : 0) ^
-
-                       (MoreInformation.     HasValue
-                           ? MoreInformation.     GetHashCode() * 3
-                           : 0) ^
-
-                       (SourceCodeRepository.HasValue
-                           ? SourceCodeRepository.GetHashCode()
-                           : 0);
+                return Name.                 GetHashCode()       * 23 ^
+                       Version.              GetHashCode()       * 19 ^
+                       OpenSourceLicense.    GetHashCode()       * 13 ^
+                       Vendor.               GetHashCode()       * 11 ^
+                      (Logo?.                GetHashCode() ?? 0) * 7 ^
+                      (HowToUse?.            GetHashCode() ?? 0) * 5 ^
+                      (MoreInformation?.     GetHashCode() ?? 0) * 3 ^
+                       SourceCodeRepository?.GetHashCode() ?? 0;
 
             }
         }
@@ -721,10 +619,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Name, " ", Version,
-                             " [", LegalStatus, "] ",
-                             Vendor, " ",
-                             OpenSourceLicense);
+            => String.Concat(
+
+                   Name,    ", ",
+                   Version, ", ",
+                   Vendor,  ", ",
+                   OpenSourceLicense
+
+               );
 
         #endregion
 

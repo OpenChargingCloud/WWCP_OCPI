@@ -215,6 +215,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -222,8 +225,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
@@ -232,50 +233,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        public CDR(CDR_Id                                                   Id,
-                   DateTime                                                 Start,
-                   DateTime                                                 End,
-                   Auth_Id                                                  AuthId,
-                   AuthMethods                                              AuthMethod,
-                   Location                                                 Location,
-                   Currency                                                 Currency,
-                   IEnumerable<ChargingPeriod>                              ChargingPeriods,
-                   Decimal                                                  TotalCost,
-                   Decimal                                                  TotalEnergy,
-                   TimeSpan                                                 TotalTime,
+        public CDR(CDR_Id                                                        Id,
+                   DateTime                                                      Start,
+                   DateTime                                                      End,
+                   Auth_Id                                                       AuthId,
+                   AuthMethods                                                   AuthMethod,
+                   Location                                                      Location,
+                   Currency                                                      Currency,
+                   IEnumerable<ChargingPeriod>                                   ChargingPeriods,
+                   Decimal                                                       TotalCost,
+                   Decimal                                                       TotalEnergy,
+                   TimeSpan                                                      TotalTime,
 
-                   Meter_Id?                                                MeterId                                 = null,
-                   EnergyMeter?                                             EnergyMeter                             = null,
-                   IEnumerable<TransparencySoftware>?                       TransparencySoftwares                   = null,
-                   IEnumerable<Tariff>?                                     Tariffs                                 = null,
-                   SignedData?                                              SignedData                              = null,
-                   TimeSpan?                                                TotalParkingTime                        = null,
-                   String?                                                  Remark                                  = null,
+                   Meter_Id?                                                     MeterId                                      = null,
+                   EnergyMeter?                                                  EnergyMeter                                  = null,
+                   IEnumerable<TransparencySoftware>?                            TransparencySoftwares                        = null,
+                   IEnumerable<Tariff>?                                          Tariffs                                      = null,
+                   SignedData?                                                   SignedData                                   = null,
+                   TimeSpan?                                                     TotalParkingTime                             = null,
+                   String?                                                       Remark                                       = null,
 
-                   DateTime?                                                LastUpdated                             = null,
-                   CustomJObjectSerializerDelegate<CDR>?                    CustomCDRSerializer                     = null,
-                   CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                   CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
-                   CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
-                   CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
-                   CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
-                   CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
-                   CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
-                   CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
-                   CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
-                   CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null,
-                   CustomJObjectSerializerDelegate<EnergySource>?           CustomEnergySourceSerializer            = null,
-                   CustomJObjectSerializerDelegate<EnvironmentalImpact>?    CustomEnvironmentalImpactSerializer     = null,
-                   CustomJObjectSerializerDelegate<EnergyMeter>?            CustomEnergyMeterSerializer             = null,
-                   CustomJObjectSerializerDelegate<TransparencySoftware>?   CustomTransparencySoftwareSerializer    = null,
-                   CustomJObjectSerializerDelegate<Tariff>?                 CustomTariffSerializer                  = null,
-                   CustomJObjectSerializerDelegate<TariffElement>?          CustomTariffElementSerializer           = null,
-                   CustomJObjectSerializerDelegate<PriceComponent>?         CustomPriceComponentSerializer          = null,
-                   CustomJObjectSerializerDelegate<TariffRestrictions>?     CustomTariffRestrictionsSerializer      = null,
-                   CustomJObjectSerializerDelegate<ChargingPeriod>?         CustomChargingPeriodSerializer          = null,
-                   CustomJObjectSerializerDelegate<CDRDimension>?           CustomCDRDimensionSerializer            = null,
-                   CustomJObjectSerializerDelegate<SignedData>?             CustomSignedDataSerializer              = null,
-                   CustomJObjectSerializerDelegate<SignedValue>?            CustomSignedValueSerializer             = null)
+                   DateTime?                                                     LastUpdated                                  = null,
+                   CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
+                   CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+                   CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
+                   CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                   CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                   CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                   CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                   CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                   CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                   CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                   CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
+                   CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                   CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                   CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
+                   CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
+                   CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null,
+                   CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                       = null,
+                   CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                = null,
+                   CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer               = null,
+                   CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           = null,
+                   CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               = null,
+                   CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null,
+                   CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   = null,
+                   CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  = null)
 
         {
 
@@ -310,6 +312,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                CustomEVSESerializer,
                                                                                CustomStatusScheduleSerializer,
                                                                                CustomConnectorSerializer,
+                                                                               CustomEnergyMeterSerializer,
+                                                                               CustomTransparencySoftwareStatusSerializer,
+                                                                               CustomTransparencySoftwareSerializer,
                                                                                CustomDisplayTextSerializer,
                                                                                CustomBusinessDetailsSerializer,
                                                                                CustomHoursSerializer,
@@ -317,8 +322,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                CustomEnergyMixSerializer,
                                                                                CustomEnergySourceSerializer,
                                                                                CustomEnvironmentalImpactSerializer,
-                                                                               CustomEnergyMeterSerializer,
-                                                                               CustomTransparencySoftwareSerializer,
                                                                                CustomTariffSerializer,
                                                                                CustomTariffElementSerializer,
                                                                                CustomPriceComponentSerializer,
@@ -731,6 +734,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
         /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
+        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
+        /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -738,8 +744,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
-        /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
         /// <param name="CustomTariffSerializer">A delegate to serialize custom tariff JSON objects.</param>
         /// <param name="CustomTariffElementSerializer">A delegate to serialize custom tariff element JSON objects.</param>
         /// <param name="CustomPriceComponentSerializer">A delegate to serialize custom price component JSON objects.</param>
@@ -748,29 +752,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>?                    CustomCDRSerializer                     = null,
-                              CustomJObjectSerializerDelegate<Location>?               CustomLocationSerializer                = null,
-                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>?  CustomAdditionalGeoLocationSerializer   = null,
-                              CustomJObjectSerializerDelegate<EVSE>?                   CustomEVSESerializer                    = null,
-                              CustomJObjectSerializerDelegate<StatusSchedule>?         CustomStatusScheduleSerializer          = null,
-                              CustomJObjectSerializerDelegate<Connector>?              CustomConnectorSerializer               = null,
-                              CustomJObjectSerializerDelegate<DisplayText>?            CustomDisplayTextSerializer             = null,
-                              CustomJObjectSerializerDelegate<BusinessDetails>?        CustomBusinessDetailsSerializer         = null,
-                              CustomJObjectSerializerDelegate<Hours>?                  CustomHoursSerializer                   = null,
-                              CustomJObjectSerializerDelegate<Image>?                  CustomImageSerializer                   = null,
-                              CustomJObjectSerializerDelegate<EnergyMix>?              CustomEnergyMixSerializer               = null,
-                              CustomJObjectSerializerDelegate<EnergySource>?           CustomEnergySourceSerializer            = null,
-                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?    CustomEnvironmentalImpactSerializer     = null,
-                              CustomJObjectSerializerDelegate<EnergyMeter>?            CustomEnergyMeterSerializer             = null,
-                              CustomJObjectSerializerDelegate<TransparencySoftware>?   CustomTransparencySoftwareSerializer    = null,
-                              CustomJObjectSerializerDelegate<Tariff>?                 CustomTariffSerializer                  = null,
-                              CustomJObjectSerializerDelegate<TariffElement>?          CustomTariffElementSerializer           = null,
-                              CustomJObjectSerializerDelegate<PriceComponent>?         CustomPriceComponentSerializer          = null,
-                              CustomJObjectSerializerDelegate<TariffRestrictions>?     CustomTariffRestrictionsSerializer      = null,
-                              CustomJObjectSerializerDelegate<ChargingPeriod>?         CustomChargingPeriodSerializer          = null,
-                              CustomJObjectSerializerDelegate<CDRDimension>?           CustomCDRDimensionSerializer            = null,
-                              CustomJObjectSerializerDelegate<SignedData>?             CustomSignedDataSerializer              = null,
-                              CustomJObjectSerializerDelegate<SignedValue>?            CustomSignedValueSerializer             = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
+                              CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+                              CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
+                              CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
+                              CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                              CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                              CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
+                              CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
+                              CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
+                              CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
+                              CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        = null,
+                              CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null,
+                              CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 = null,
+                              CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          = null,
+                              CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                       = null,
+                              CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                = null,
+                              CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer               = null,
+                              CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           = null,
+                              CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null,
+                              CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   = null,
+                              CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  = null)
         {
 
             var JSON = JSONObject.Create(
@@ -785,6 +790,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                                                 CustomEVSESerializer,
                                                                                                                 CustomStatusScheduleSerializer,
                                                                                                                 CustomConnectorSerializer,
+                                                                                                                CustomEnergyMeterSerializer,
+                                                                                                                CustomTransparencySoftwareStatusSerializer,
+                                                                                                                CustomTransparencySoftwareSerializer,
                                                                                                                 CustomDisplayTextSerializer,
                                                                                                                 CustomBusinessDetailsSerializer,
                                                                                                                 CustomHoursSerializer,

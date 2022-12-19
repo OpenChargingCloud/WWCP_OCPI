@@ -284,10 +284,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -328,10 +328,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                         CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                         CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                         CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                        CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                         CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
                         CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                         CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                        CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                         CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                         CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                         CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -379,10 +379,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                        CustomAdditionalGeoLocationSerializer,
                                                        CustomEVSESerializer,
                                                        CustomStatusScheduleSerializer,
+                                                       CustomConnectorSerializer,
                                                        CustomEnergyMeterSerializer,
                                                        CustomTransparencySoftwareStatusSerializer,
                                                        CustomTransparencySoftwareSerializer,
-                                                       CustomConnectorSerializer,
                                                        CustomDisplayTextSerializer,
                                                        CustomBusinessDetailsSerializer,
                                                        CustomHoursSerializer,
@@ -904,10 +904,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -920,10 +920,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                              CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                               CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
                               CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
                               CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                              CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                               CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                               CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                               CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -978,10 +978,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            EVSEs.Any()
                                ? new JProperty("evses",                  new JArray(EVSEs.           Select(evse                  => evse.ToJSON(CustomEVSESerializer,
                                                                                                                                                  CustomStatusScheduleSerializer,
+                                                                                                                                                 CustomConnectorSerializer,
                                                                                                                                                  CustomEnergyMeterSerializer,
                                                                                                                                                  CustomTransparencySoftwareStatusSerializer,
                                                                                                                                                  CustomTransparencySoftwareSerializer,
-                                                                                                                                                 CustomConnectorSerializer,
                                                                                                                                                  CustomDisplayTextSerializer,
                                                                                                                                                  CustomImageSerializer))))
                                : null,
@@ -1420,10 +1420,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
         /// <param name="CustomStatusScheduleSerializer">A delegate to serialize custom status schedule JSON objects.</param>
+        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomEnergyMeterSerializer">A delegate to serialize custom energy meter JSON objects.</param>
         /// <param name="CustomTransparencySoftwareStatusSerializer">A delegate to serialize custom transparency software status JSON objects.</param>
         /// <param name="CustomTransparencySoftwareSerializer">A delegate to serialize custom transparency software JSON objects.</param>
-        /// <param name="CustomConnectorSerializer">A delegate to serialize custom connector JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
         /// <param name="CustomBusinessDetailsSerializer">A delegate to serialize custom business details JSON objects.</param>
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
@@ -1436,10 +1436,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                      CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                                      CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                                      CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
+                                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
                                      CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  = null,
                                      CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   = null,
-                                     CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,
-                                     CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    = null,
+                                     CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         = null,                                     
                                      CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  = null,
                                      CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              = null,
                                      CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        = null,
@@ -1454,10 +1454,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                            CustomAdditionalGeoLocationSerializer,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
+                                                           CustomConnectorSerializer,
                                                            CustomEnergyMeterSerializer,
                                                            CustomTransparencySoftwareStatusSerializer,
                                                            CustomTransparencySoftwareSerializer,
-                                                           CustomConnectorSerializer,
                                                            CustomDisplayTextSerializer,
                                                            CustomBusinessDetailsSerializer,
                                                            CustomHoursSerializer,
