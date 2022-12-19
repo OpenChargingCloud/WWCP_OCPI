@@ -115,8 +115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
-                                       },
-                                       Tariff_Id.Parse("DE*GEF*T0001")
+                                       }
                                    ),
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:50Z").ToUniversalTime(),
@@ -125,8 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )
-                                       },
-                                       Tariff_Id.Parse("DE*GEF*T0002")
+                                       }
                                    )
                                },
 

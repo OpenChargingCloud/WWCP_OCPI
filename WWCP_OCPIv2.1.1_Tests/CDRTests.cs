@@ -73,8 +73,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                CDRDimensionType.ENERGY,
                                                1.33M
                                            )
-                                       },
-                                       Tariff_Id.Parse("DE*GEF*T0001")
+                                       }
                                    ),
                                    new ChargingPeriod(
                                        DateTime.Parse("2020-04-12T18:21:50Z"),
@@ -83,8 +82,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                CDRDimensionType.TIME,
                                                5.12M
                                            )
-                                       },
-                                       Tariff_Id.Parse("DE*GEF*T0002")
+                                       }
                                    )
                                },
 
@@ -144,8 +142,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                new PriceComponent[] {
                                                    PriceComponent.ChargingTime(
                                                        TimeSpan.FromSeconds(300),
-                                                       2.00M,
-                                                       0.10M
+                                                       2.00M
                                                    )
                                                },
                                                new TariffRestrictions [] {
@@ -156,8 +153,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                        DateTime.Parse("2020-12-31"),  // End timestamp
                                                        1.12M,                         // MinkWh
                                                        5.67M,                         // MaxkWh
-                                                       1.34M,                         // MinCurrent
-                                                       8.89M,                         // MaxCurrent
                                                        1.49M,                         // MinPower
                                                        9.91M,                         // MaxPower
                                                        TimeSpan.FromMinutes(10),      // MinDuration
@@ -165,8 +160,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                                        new DayOfWeek[] {
                                                            DayOfWeek.Monday,
                                                            DayOfWeek.Tuesday
-                                                       },
-                                                       ReservationRestrictionTypes.RESERVATION
+                                                       }
                                                    )
                                                }
                                            )

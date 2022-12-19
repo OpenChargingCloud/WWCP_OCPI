@@ -371,8 +371,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var c = StartTimestamp.CompareTo(ChargingPeriod.StartTimestamp);
 
-            if (c == 0 && TariffId.HasValue && ChargingPeriod.TariffId.HasValue)
-                c = TariffId.Value.CompareTo(ChargingPeriod.TariffId.HasValue);
+            // Dimensions
 
             return c;
 
