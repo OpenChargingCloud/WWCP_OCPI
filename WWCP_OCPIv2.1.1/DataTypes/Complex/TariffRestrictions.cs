@@ -35,45 +35,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
-        /// Start time of day, for example "13:30", valid from this time of the day.
+        /// The start time of day, for example "13:30", valid from this time of the day.
         /// </summary>
         [Optional]
         public Time?                         StartTime           { get; }
 
         /// <summary>
-        /// End time of day, for example "19:45", valid from this time of the day.
+        /// The end time of day, for example "19:45", valid from this time of the day.
         /// </summary>
         [Optional]
         public Time?                         EndTime             { get; }
 
         /// <summary>
-        /// Start date, for example: 2015-12-24, valid from this day until that day (excluding that day).
+        /// The start date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
         [Optional]
         public DateTime?                     StartDate           { get; }
 
         /// <summary>
-        /// End date, for example: 2015-12-24, valid from this day until that day (excluding that day).
+        /// The end date, for example: 2015-12-24, valid from this day until that day (excluding that day).
         /// </summary>
         [Optional]
         public DateTime?                     EndDate             { get; }
 
         /// <summary>
-        /// Minimum consumed energy in kWh, for example 20, valid from this amount of energy
+        /// The minimum consumed energy in kWh, for example 20, valid from this amount of energy
         /// (inclusive) being used.
         /// </summary>
         [Optional]
         public Decimal?                      MinkWh              { get; }
 
         /// <summary>
-        /// Maximum consumed energy in kWh, for example 50, valid until this amount of energy
+        /// The maximum consumed energy in kWh, for example 50, valid until this amount of energy
         /// (exclusive) being used.
         /// </summary>
         [Optional]
         public Decimal?                      MaxkWh              { get; }
 
         /// <summary>
-        /// Minimum power in kW, for example 5. When the EV is charging with more than, or equal to,
+        /// The minimum power in kW, for example 5. When the EV is charging with more than, or equal to,
         /// the defined amount of power, this tariff element is/becomes active. If the charging power
         /// is or becomes lower, this tariff element is not or no longer valid and becomes inactive.
         /// This describes NOT the minimum power over the entire charging session. This restriction
@@ -85,7 +85,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Decimal?                      MinPower            { get; }
 
         /// <summary>
-        /// Maximum power in kW, for example 20. When the EV is charging with less than the defined
+        /// The maximum power in kW, for example 20. When the EV is charging with less than the defined
         /// amount of power, this tariff element becomes/is active. If the charging power is or
         /// becomes higher, this tariff element is not or no longer valid and becomes inactive. This
         /// describes NOT the maximum power over the entire Charging Session. This restriction can
@@ -97,7 +97,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public Decimal?                      MaxPower            { get; }
 
         /// <summary>
-        /// Minimum duration in seconds the charging session MUST last (inclusive). When the
+        /// The minimum duration in seconds the charging session MUST last (inclusive). When the
         /// duration of a charging session is longer than the defined value, this tariff element is
         /// or becomes active. Before that moment, this tariff element is not yet active.
         /// </summary>
@@ -105,7 +105,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public TimeSpan?                     MinDuration         { get; }
 
         /// <summary>
-        /// Maximum duration in seconds the charging session MUST last (exclusive). When the
+        /// The maximum duration in seconds the charging session MUST last (exclusive). When the
         /// duration of a Charging Session is shorter than the defined value, this tariff element
         /// is or becomes active. After that moment, this tariff element is no longer active.
         /// </summary>
@@ -113,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public TimeSpan?                     MaxDuration         { get; }
 
         /// <summary>
-        /// Which day(s) of the week this tariff element is active.
+        /// The day(s) of the week this tariff element is active.
         /// </summary>
         [Optional]
         public IEnumerable<DayOfWeek>        DayOfWeek           { get; }
@@ -125,41 +125,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charging tariff restrictions.
         /// </summary>
-        /// <param name="StartTime">Start time of day, for example "13:30", valid from this time of the day.</param>
-        /// <param name="EndTime">End time of day, for example "19:45", valid from this time of the day.</param>
-        /// <param name="StartDate">Start date, for example: 2015-12-24, valid from this day until that day (excluding that day).</param>
-        /// <param name="EndDate">End date, for example: 2015-12-24, valid from this day until that day (excluding that day).</param>
-        /// <param name="MinkWh">Minimum consumed energy in kWh, for example 20, valid from this amount of energy (inclusive) being used.</param>
-        /// <param name="MaxkWh">Maximum consumed energy in kWh, for example 50, valid until this amount of energy (exclusive) being used.</param>
-        /// <param name="MinPower">Minimum power in kW, for example 5.</param>
-        /// <param name="MaxPower">Maximum power in kW, for example 20.</param>
-        /// <param name="MinDuration">Minimum duration in seconds the charging session MUST last (inclusive).</param>
-        /// <param name="MaxDuration">Maximum duration in seconds the charging session MUST last (exclusive).</param>
-        /// <param name="DayOfWeek">Which day(s) of the week this tariff element is active.</param>
-        public TariffRestrictions(Time?                         StartTime     = null,
-                                  Time?                         EndTime       = null,
-                                  DateTime?                     StartDate     = null,
-                                  DateTime?                     EndDate       = null,
-                                  Decimal?                      MinkWh        = null,
-                                  Decimal?                      MaxkWh        = null,
-                                  Decimal?                      MinPower      = null,
-                                  Decimal?                      MaxPower      = null,
-                                  TimeSpan?                     MinDuration   = null,
-                                  TimeSpan?                     MaxDuration   = null,
-                                  IEnumerable<DayOfWeek>?       DayOfWeek     = null)
+        /// <param name="StartTime">A start time of day, for example "13:30", valid from this time of the day.</param>
+        /// <param name="EndTime">An end time of day, for example "19:45", valid from this time of the day.</param>
+        /// <param name="StartDate">A start date, for example: 2015-12-24, valid from this day until that day (excluding that day).</param>
+        /// <param name="EndDate">An end date, for example: 2015-12-24, valid from this day until that day (excluding that day).</param>
+        /// <param name="MinkWh">A minimum consumed energy in kWh, for example 20, valid from this amount of energy (inclusive) being used.</param>
+        /// <param name="MaxkWh">A maximum consumed energy in kWh, for example 50, valid until this amount of energy (exclusive) being used.</param>
+        /// <param name="MinPower">A minimum power in kW, for example 5.</param>
+        /// <param name="MaxPower">A maximum power in kW, for example 20.</param>
+        /// <param name="MinDuration">A minimum duration in seconds the charging session MUST last (inclusive).</param>
+        /// <param name="MaxDuration">A maximum duration in seconds the charging session MUST last (exclusive).</param>
+        /// <param name="DayOfWeek">All day(s) of the week this tariff element is active.</param>
+        public TariffRestrictions(Time?                    StartTime     = null,
+                                  Time?                    EndTime       = null,
+                                  DateTime?                StartDate     = null,
+                                  DateTime?                EndDate       = null,
+                                  Decimal?                 MinkWh        = null,
+                                  Decimal?                 MaxkWh        = null,
+                                  Decimal?                 MinPower      = null,
+                                  Decimal?                 MaxPower      = null,
+                                  TimeSpan?                MinDuration   = null,
+                                  TimeSpan?                MaxDuration   = null,
+                                  IEnumerable<DayOfWeek>?  DayOfWeek     = null)
         {
 
-            this.StartTime     = StartTime;
-            this.EndTime       = EndTime;
-            this.StartDate     = StartDate;
-            this.EndDate       = EndDate;
-            this.MinkWh        = MinkWh;
-            this.MaxkWh        = MaxkWh;
-            this.MinPower      = MinPower;
-            this.MaxPower      = MaxPower;
-            this.MinDuration   = MinDuration;
-            this.MaxDuration   = MaxDuration;
-            this.DayOfWeek     = DayOfWeek?.Distinct() ?? Array.Empty<DayOfWeek>();
+            this.StartTime    = StartTime;
+            this.EndTime      = EndTime;
+            this.StartDate    = StartDate;
+            this.EndDate      = EndDate;
+            this.MinkWh       = MinkWh;
+            this.MaxkWh       = MaxkWh;
+            this.MinPower     = MinPower;
+            this.MaxPower     = MaxPower;
+            this.MinDuration  = MinDuration;
+            this.MaxDuration  = MaxDuration;
+            this.DayOfWeek    = DayOfWeek?.Distinct() ?? Array.Empty<DayOfWeek>();
 
         }
 
@@ -173,8 +173,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomTariffRestrictionsParser">A delegate to parse custom tariff restrictions JSON objects.</param>
-        public static TariffRestrictions Parse(JObject                                           JSON,
-                                               CustomJObjectParserDelegate<TariffRestrictions>?  CustomTariffRestrictionsParser   = null)
+        public static TariffRestrictions Parse(JObject                                            JSON,
+                                               CustomJObjectParserDelegate<TariffRestrictions?>?  CustomTariffRestrictionsParser   = null)
         {
 
             if (TryParse(JSON,
@@ -219,10 +219,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="TariffRestrictions">The parsed tariff restrictions.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomTariffRestrictionsParser">A delegate to parse custom tariff restrictions JSON objects.</param>
-        public static Boolean TryParse(JObject                                           JSON,
-                                       out TariffRestrictions?                           TariffRestrictions,
-                                       out String?                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<TariffRestrictions>?  CustomTariffRestrictionsParser   = null)
+        public static Boolean TryParse(JObject                                            JSON,
+                                       out TariffRestrictions?                            TariffRestrictions,
+                                       out String?                                        ErrorResponse,
+                                       CustomJObjectParserDelegate<TariffRestrictions?>?  CustomTariffRestrictionsParser   = null)
         {
 
             try
@@ -581,10 +581,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             ((!EndTime.    HasValue && !TariffRestrictions.EndTime.    HasValue) ||
               (EndTime.    HasValue &&  TariffRestrictions.EndTime.    HasValue && EndTime.    Value.Equals(TariffRestrictions.EndTime.    Value))) &&
 
-            (( StartDate.  HasValue &&  TariffRestrictions.StartDate.  HasValue) ||
+            ((!StartDate.  HasValue && !TariffRestrictions.StartDate.  HasValue) ||
              ( StartDate.  HasValue &&  TariffRestrictions.StartDate.  HasValue && StartDate.  Value.Equals(TariffRestrictions.StartDate.  Value))) &&
 
-            (( EndDate.    HasValue &&  TariffRestrictions.EndDate.    HasValue) ||
+            ((!EndDate.    HasValue && !TariffRestrictions.EndDate.    HasValue) ||
              ( EndDate.    HasValue &&  TariffRestrictions.EndDate.    HasValue && EndDate.    Value.Equals(TariffRestrictions.EndDate.    Value))) &&
 
             ((!MinkWh.     HasValue && !TariffRestrictions.MinkWh.     HasValue) ||
@@ -665,19 +665,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : "",
 
                    MinkWh.     HasValue
-                       ? ", > "   + MinkWh.     Value.ToString() + " kWh"
+                       ? ", >= "  + MinkWh.     Value.ToString() + " kWh"
                        : "",
 
                    MaxkWh.     HasValue
-                       ? ", < "   + MaxkWh.     Value.ToString() + " kWh"
+                       ? ", <= "  + MaxkWh.     Value.ToString() + " kWh"
                        : "",
 
                    MinPower.   HasValue
-                       ? ", > "   + MinPower.   Value.ToString() + "kW"
+                       ? ", >= "  + MinPower.   Value.ToString() + " kW"
                        : "",
 
                    MaxPower.   HasValue
-                       ? ", < "   + MaxPower.   Value.ToString() + "kW"
+                       ? ", <= "  + MaxPower.   Value.ToString() + " kW"
                        : "",
 
                    MinDuration.HasValue

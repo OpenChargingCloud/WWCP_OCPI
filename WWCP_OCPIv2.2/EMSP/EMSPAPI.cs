@@ -6836,7 +6836,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "The given location is unknown!",
                                                             Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       AllowedType.NOT_ALLOWED,
                                                                                        _tokenStatus.Token,
                                                                                        locationReference.Value,
                                                                                        null,
@@ -6863,7 +6863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "Could not determine the country code and party identification of the given location!",
                                                             Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       AllowedType.NOT_ALLOWED,
                                                                                        _tokenStatus.Token,
                                                                                        locationReference.Value
                                                                                    ).ToJSON(),
@@ -6888,7 +6888,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "The given location is unknown!",
                                                             Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       AllowedType.NOT_ALLOWED,
                                                                                        _tokenStatus.Token,
                                                                                        locationReference.Value,
                                                                                        null,
@@ -6925,7 +6925,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                        ? "The EVSE at the given location is unknown!"
                                                                                        : "The EVSEs at the given location are unknown!",
                                                             Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
+                                                                                       AllowedType.NOT_ALLOWED,
                                                                                        _tokenStatus.Token,
                                                                                        locationReference.Value,
                                                                                        null,
@@ -6959,7 +6959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         if (authorizationInfo == null)
                                             authorizationInfo = new AuthorizationInfo(
-                                                                      AllowedTypes.BLOCKED,
+                                                                      AllowedType.BLOCKED,
                                                                       new Token(
                                                                           CountryCode.Parse("DE"),
                                                                           Party_Id.Parse("XXX"),
@@ -6979,123 +6979,136 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Set a user-friendly response message for the ev driver
 
-                                        var responseText = "Sorry, charging is not allowed!";
+                                        var responseText = "An error occured!";
 
                                         if (!authorizationInfo.Info.HasValue)
                                         {
 
-                                            switch (authorizationInfo.Allowed)
+                                            #region ALLOWED
+
+                                            if (authorizationInfo.Allowed == AllowedType.ALLOWED)
                                             {
 
-                                                #region ALLOWED
+                                                responseText = "Charging allowed!";
 
-                                                case AllowedTypes.ALLOWED:
-
-                                                    responseText = "Charging allowed!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
+                                                if (authorizationInfo.Token.UILanguage.HasValue)
+                                                {
+                                                    switch (authorizationInfo.Token.UILanguage.Value)
                                                     {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Der Ladevorgang wird gestartet!";
-                                                                break;
-                                                        }
+                                                        case Languages.de:
+                                                            responseText = "Der Ladevorgang wird gestartet!";
+                                                            break;
                                                     }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region BLOCKED
-
-                                                case AllowedTypes.BLOCKED:
-
-                                                    responseText = "Sorry, your token is blocked!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Autorisierung fehlgeschlagen!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region EXPIRED
-
-                                                case AllowedTypes.EXPIRED:
-
-                                                    responseText = "Sorry, your token has expired!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Autorisierungstoken ungültig!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region NO_CREDIT
-
-                                                case AllowedTypes.NO_CREDIT:
-
-                                                    responseText = "Sorry, your have not enough credits for charging!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Nicht genügend Ladeguthaben!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region NOT_ALLOWED
-
-                                                case AllowedTypes.NOT_ALLOWED:
-
-                                                    responseText = "Sorry, charging is not allowed!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Autorisierung abgelehnt!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region default
-
-                                                default:
-                                                    responseText = "An error occured!";
-                                                    break;
-
-                                                    #endregion
+                                                }
 
                                             }
+
+                                            #endregion
+
+                                            #region BLOCKED
+
+                                            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                                            {
+
+                                                responseText = "Sorry, your token is blocked!";
+
+                                                if (authorizationInfo.Token.UILanguage.HasValue)
+                                                {
+                                                    switch (authorizationInfo.Token.UILanguage.Value)
+                                                    {
+                                                        case Languages.de:
+                                                            responseText = "Autorisierung fehlgeschlagen!";
+                                                            break;
+                                                    }
+                                                }
+
+                                            }
+
+                                            #endregion
+
+                                            #region EXPIRED
+
+                                            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                                            {
+
+                                                responseText = "Sorry, your token has expired!";
+
+                                                if (authorizationInfo.Token.UILanguage.HasValue)
+                                                {
+                                                    switch (authorizationInfo.Token.UILanguage.Value)
+                                                    {
+                                                        case Languages.de:
+                                                            responseText = "Autorisierungstoken ungültig!";
+                                                            break;
+                                                    }
+                                                }
+
+                                            }
+
+                                            #endregion
+
+                                            #region NO_CREDIT
+
+                                            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                                            {
+
+                                                responseText = "Sorry, your have not enough credits for charging!";
+
+                                                if (authorizationInfo.Token.UILanguage.HasValue)
+                                                {
+                                                    switch (authorizationInfo.Token.UILanguage.Value)
+                                                    {
+                                                        case Languages.de:
+                                                            responseText = "Nicht genügend Ladeguthaben!";
+                                                            break;
+                                                    }
+                                                }
+
+                                            }
+
+                                            #endregion
+
+                                            #region NOT_ALLOWED
+
+                                            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                                            {
+
+                                                responseText = "Sorry, charging is not allowed!";
+
+                                                if (authorizationInfo.Token.UILanguage.HasValue)
+                                                {
+                                                    switch (authorizationInfo.Token.UILanguage.Value)
+                                                    {
+                                                        case Languages.de:
+                                                            responseText = "Autorisierung abgelehnt!";
+                                                            break;
+                                                    }
+                                                }
+
+                                            }
+
+                                            #endregion
+
+                                            #region default
+
+                                            else
+                                            {
+
+                                                responseText = "An error occured!";
+
+                                                if (authorizationInfo.Token.UILanguage.HasValue)
+                                                {
+                                                    switch (authorizationInfo.Token.UILanguage.Value)
+                                                    {
+                                                        case Languages.de:
+                                                            responseText = "Ein Fehler ist aufgetreten!";
+                                                            break;
+                                                    }
+                                                }
+
+                                            }
+
+                                            #endregion
 
                                         }
 

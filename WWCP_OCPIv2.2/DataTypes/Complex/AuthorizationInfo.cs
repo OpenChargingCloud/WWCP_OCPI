@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -31,7 +27,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 {
 
     /// <summary>
-    /// An authorization information.
+    /// The authorization information.
     /// </summary>
     public class AuthorizationInfo : IEquatable<AuthorizationInfo>
     {
@@ -39,48 +35,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Status of the token, and whether charging is allowed at the optionally given
-        /// charging location.
+        /// The status of the token, and whether charging is allowed at the optionally given charging location.
         /// </summary>
         [Mandatory]
-        public AllowedTypes              Allowed                   { get; }
+        public AllowedType              Allowed                   { get; }
 
         /// <summary>
-        /// The complete Token object for which this authorization was requested.
+        /// The complete token object for which this authorization was requested.
         /// </summary>
         [Mandatory]
-        public Token                     Token                     { get; }
+        public Token                    Token                     { get; }
 
         /// <summary>
-        /// Optional reference to the location if it was included in the request, and if
+        /// The optional reference to the location if it was included in the request, and if
         /// the EV driver is allowed to charge at that location. Only the EVSEs the EV
         /// driver is allowed to charge at are returned.
         /// </summary>
         [Optional]
-        public LocationReference?        Location                  { get; }
+        public LocationReference?       Location                  { get; }
 
         /// <summary>
-        /// Reference to the authorization given by the eMSP, when given, this reference
+        /// The optional reference to the authorization given by the eMSP, when given, this reference
         /// will be provided in the relevant charging session and/or charge detail record.
         /// </summary>
         [Optional]
-        public AuthorizationReference?   AuthorizationReference    { get; }
+        public AuthorizationReference?  AuthorizationReference    { get; }
 
         /// <summary>
-        /// Optional display text, additional information to the EV driver.
+        /// Optional additional information to the EV driver.
         /// </summary>
         [Optional]
-        public DisplayText?              Info                      { get; }
+        public DisplayText?             Info                      { get; }
 
         #endregion
 
         #region Constructor(s)
 
         /// <summary>
-        /// An authorization information consists of a start timestamp and a
-        /// list of possible values that influence this period.
+        /// Create a new authorization information.
         /// </summary>
-        public AuthorizationInfo(AllowedTypes              Allowed,
+        /// <param name="Allowed">A status for the token, and whether charging is allowed at the optionally given charging location.</param>
+        /// <param name="Token">A complete token object for which this authorization was requested.</param>
+        /// <param name="Location">An optional reference to the location if it was included in the request, and if the EV driver is allowed to charge at that location. Only the EVSEs the EV driver is allowed to charge at are returned.</param>
+        /// <param name="AuthorizationReference">An optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant charging session and/or charge detail record.</param>
+        /// <param name="Info">An optional additional information to the EV driver.</param>
+        public AuthorizationInfo(AllowedType               Allowed,
                                  Token                     Token,
                                  LocationReference?        Location                 = null,
                                  AuthorizationReference?   AuthorizationReference   = null,
@@ -105,44 +104,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorization information JSON objects.</param>
-        public static AuthorizationInfo Parse(JObject                                         JSON,
-                                              CustomJObjectParserDelegate<AuthorizationInfo>  CustomAuthorizationInfoParser   = null)
+        public static AuthorizationInfo Parse(JObject                                          JSON,
+                                              CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
             if (TryParse(JSON,
-                         out AuthorizationInfo  authorizationInfo,
-                         out String             ErrorResponse,
+                         out var authorizationInfo,
+                         out var errorResponse,
                          CustomAuthorizationInfoParser))
             {
-                return authorizationInfo;
+                return authorizationInfo!;
             }
 
-            throw new ArgumentException("The given JSON representation of an authorization information is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomAuthorizationInfoParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an authorization information.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorization information JSON objects.</param>
-        public static AuthorizationInfo Parse(String                                Text,
-                                    CustomJObjectParserDelegate<AuthorizationInfo>  CustomAuthorizationInfoParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out AuthorizationInfo  authorizationInfo,
-                         out String             ErrorResponse,
-                         CustomAuthorizationInfoParser))
-            {
-                return authorizationInfo;
-            }
-
-            throw new ArgumentException("The given text representation of an authorization information is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of an authorization information is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -158,9 +133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="AuthorizationInfo">The parsed authorization information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                JSON,
-                                       out AuthorizationInfo  AuthorizationInfo,
-                                       out String             ErrorResponse)
+        public static Boolean TryParse(JObject                 JSON,
+                                       out AuthorizationInfo?  AuthorizationInfo,
+                                       out String?             ErrorResponse)
 
             => TryParse(JSON,
                         out AuthorizationInfo,
@@ -175,10 +150,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="AuthorizationInfo">The parsed authorization information.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorization information JSON objects.</param>
-        public static Boolean TryParse(JObject                                         JSON,
-                                       out AuthorizationInfo                           AuthorizationInfo,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<AuthorizationInfo>  CustomAuthorizationInfoParser   = null)
+        public static Boolean TryParse(JObject                                          JSON,
+                                       out AuthorizationInfo?                           AuthorizationInfo,
+                                       out String?                                      ErrorResponse,
+                                       CustomJObjectParserDelegate<AuthorizationInfo>?  CustomAuthorizationInfoParser   = null)
         {
 
             try
@@ -194,10 +169,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Allowed                   [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("allowed",
-                                             "allowed",
-                                             out AllowedTypes Allowed,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("allowed",
+                                         "allowed",
+                                         AllowedType.TryParse,
+                                         out AllowedType Allowed,
+                                         out ErrorResponse))
                 {
                     return false;
                 }
@@ -209,11 +185,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
                                              OCPIv2_2.Token.TryParse,
-                                             out Token Token,
+                                             out Token? Token,
                                              out ErrorResponse))
                 {
                     return false;
                 }
+
+                if (Token is null)
+                    return false;
 
                 #endregion
 
@@ -225,10 +204,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out LocationReference? LocationReference,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -241,10 +218,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                        out AuthorizationReference? AuthorizationReference,
                                        out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -257,10 +232,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                            out DisplayText? Info,
                                            out ErrorResponse))
                 {
-
                     if (ErrorResponse is not null)
                         return false;
-
                 }
 
                 #endregion
@@ -291,41 +264,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out AuthorizationInfo, out ErrorResponse, CustomAuthorizationInfoParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an authorizationInfo.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="AuthorizationInfo">The parsed authorizationInfo.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomAuthorizationInfoParser">A delegate to parse custom authorizationInfo JSON objects.</param>
-        public static Boolean TryParse(String                                          Text,
-                                       out AuthorizationInfo                           AuthorizationInfo,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<AuthorizationInfo>  CustomAuthorizationInfoParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out AuthorizationInfo,
-                                out ErrorResponse,
-                                CustomAuthorizationInfoParser);
-
-            }
-            catch (Exception e)
-            {
-                AuthorizationInfo  = null;
-                ErrorResponse      = "The given text representation of an authorization information is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomAuthorizationInfoSerializer = null, CustomTokenSerializer = null, ...)
 
         /// <summary>
@@ -335,16 +273,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
         /// <param name="CustomLocationReferenceSerializer">A delegate to serialize custom location reference JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<AuthorizationInfo>  CustomAuthorizationInfoSerializer   = null,
-                              CustomJObjectSerializerDelegate<Token>              CustomTokenSerializer               = null,
-                              CustomJObjectSerializerDelegate<LocationReference>  CustomLocationReferenceSerializer   = null,
-                              CustomJObjectSerializerDelegate<DisplayText>        CustomDisplayTextSerializer         = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<AuthorizationInfo>?  CustomAuthorizationInfoSerializer   = null,
+                              CustomJObjectSerializerDelegate<Token>?              CustomTokenSerializer               = null,
+                              CustomJObjectSerializerDelegate<LocationReference>?  CustomLocationReferenceSerializer   = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?        CustomDisplayTextSerializer         = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("allowed",                         Allowed.                     ToString()),
-                           new JProperty("token",                           Token.                       ToJSON(CustomTokenSerializer)),
+                                 new JProperty("allowed",                   Allowed.                     ToString()),
+
+                                 new JProperty("token",                     Token.                       ToJSON(CustomTokenSerializer)),
 
                            Location.HasValue
                                ? new JProperty("location",                  Location.              Value.ToJSON(CustomLocationReferenceSerializer))
@@ -417,11 +356,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two authorization information for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An authorization information to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is AuthorizationInfo authorizationReference &&
                    Equals(authorizationReference);
@@ -431,20 +369,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(AuthorizationInfo)
 
         /// <summary>
-        /// Compares two authorization informations for equality.
+        /// Compares two authorization information for equality.
         /// </summary>
         /// <param name="AuthorizationInfo">An authorization information to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(AuthorizationInfo AuthorizationInfo)
+        public Boolean Equals(AuthorizationInfo? AuthorizationInfo)
 
-            => !(AuthorizationInfo is null) &&
+            => AuthorizationInfo is not null &&
 
                Allowed.               Equals(AuthorizationInfo.Allowed) &&
                Token.                 Equals(AuthorizationInfo.Token)   &&
 
-               Location.              HasValue && AuthorizationInfo.Location.              HasValue && Location.              Value.Equals(AuthorizationInfo.Location.              Value) &&
-               AuthorizationReference.HasValue && AuthorizationInfo.AuthorizationReference.HasValue && AuthorizationReference.Value.Equals(AuthorizationInfo.AuthorizationReference.Value) &&
-               Info.                  HasValue && AuthorizationInfo.Info.                  HasValue && Info.                  Value.Equals(AuthorizationInfo.Info.                  Value);
+            ((!Location.              HasValue && !AuthorizationInfo.Location.              HasValue) ||
+              (Location.              HasValue &&  AuthorizationInfo.Location.              HasValue  && Location.              Value.Equals(AuthorizationInfo.Location.              Value))) &&
+
+            ((!AuthorizationReference.HasValue && !AuthorizationInfo.AuthorizationReference.HasValue) ||
+              (AuthorizationReference.HasValue &&  AuthorizationInfo.AuthorizationReference.HasValue  && AuthorizationReference.Value.Equals(AuthorizationInfo.AuthorizationReference.Value))) &&
+
+            ((!Info.                  HasValue && !AuthorizationInfo.Info.                  HasValue) ||
+              (Info.                  HasValue &&  AuthorizationInfo.Info.                  HasValue  && Info.                  Value.Equals(AuthorizationInfo.Info.                  Value)));
 
         #endregion
 
@@ -461,20 +403,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Allowed.                            GetHashCode() * 11 ^
-                       Token.                              GetHashCode() *  7 ^
-
-                       (Location.HasValue
-                            ? Location.              Value.GetHashCode() *  5
-                            : 0) ^
-
-                       (AuthorizationReference.HasValue
-                            ? AuthorizationReference.Value.GetHashCode() *  3
-                            : 0) ^
-
-                       (Info.HasValue
-                            ? Info.                  Value.GetHashCode()
-                            : 0);
+                return Allowed.                GetHashCode()       * 11 ^
+                       Token.                  GetHashCode()       *  7 ^
+                      (Location?.              GetHashCode() ?? 0) *  5 ^
+                      (AuthorizationReference?.GetHashCode() ?? 0) *  3^
+                       Info?.                  GetHashCode() ?? 0;
 
             }
         }
@@ -488,9 +421,25 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Token,
-                             " -> ",
-                             Allowed);
+            => String.Concat(
+
+                   Token.Id,
+                   " => ",
+                   Allowed,
+
+                   Location.HasValue
+                       ? " @ " + Location.Value.LocationId + " / " + Location.Value.EVSEUIds.AggregateWith(", ")
+                       : "",
+
+                   Info.HasValue
+                       ? ", info: " + Info.Value.Text
+                       : "",
+
+                   AuthorizationReference.HasValue
+                       ? ", ref: " + AuthorizationReference.Value
+                       : ""
+
+               );
 
         #endregion
 

@@ -4276,25 +4276,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public event OnVerifyTokenDelegate OnVerifyToken;
 
 
-        #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
+        #region AddToken           (Token, Status = AllowedType.ALLOWED)
 
         public Token AddToken(Token         Token,
-                              AllowedTypes  Status = AllowedTypes.ALLOWED)
+                              AllowedType?  Status   = null)
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+            Status ??= AllowedType.ALLOWED;
 
             lock (Tokens)
             {
 
-                if (!Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (!Tokens.TryGetValue(Token.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
                     Tokens.Add(Token.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                if (!parties.TryGetValue(Token.PartyId, out var tokens))
                 {
                     tokens = new Dictionary<Token_Id, TokenStatus>();
                     parties.Add(Token.PartyId, tokens);
@@ -4303,7 +4302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (!tokens.ContainsKey(Token.Id))
                 {
 
-                    tokens.Add(Token.Id, new TokenStatus(Token, Status));
+                    tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
                     if (OnTokenAddedLocal != null)
@@ -4335,22 +4334,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED)
 
         public Token AddTokenIfNotExists(Token         Token,
-                                         AllowedTypes  Status = AllowedTypes.ALLOWED)
+                                         AllowedType?  Status   = null)
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+            Status ??= AllowedType.ALLOWED;
 
             lock (Tokens)
             {
 
-                if (!Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (!Tokens.TryGetValue(Token.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
                     Tokens.Add(Token.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                if (!parties.TryGetValue(Token.PartyId, out var tokens))
                 {
                     tokens = new Dictionary<Token_Id, TokenStatus>();
                     parties.Add(Token.PartyId, tokens);
@@ -4359,7 +4357,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 if (!tokens.ContainsKey(Token.Id))
                 {
 
-                    tokens.Add(Token.Id, new TokenStatus(Token, Status));
+                    tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
                     if (OnTokenAddedLocal != null)
@@ -4389,9 +4387,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region AddOrUpdateToken   (newOrUpdatedToken, Status = AllowedTypes.ALLOWED, AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token         newOrUpdatedToken,
-                                                                     AllowedTypes  Status           = AllowedTypes.ALLOWED,
+                                                                     AllowedType?  Status           = null,
                                                                      Boolean?      AllowDowngrades  = false)
         {
+
+            Status ??= AllowedType.ALLOWED;
 
             if (newOrUpdatedToken is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedToken), "The given token must not be null!");
@@ -4399,19 +4399,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tokens)
             {
 
-                if (!Tokens.TryGetValue(newOrUpdatedToken.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (!Tokens.TryGetValue(newOrUpdatedToken.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
                     Tokens.Add(newOrUpdatedToken.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(newOrUpdatedToken.PartyId, out Dictionary<Token_Id, TokenStatus> _tokenStatus))
+                if (!parties.TryGetValue(newOrUpdatedToken.PartyId, out var _tokenStatus))
                 {
                     _tokenStatus = new Dictionary<Token_Id, TokenStatus>();
                     parties.Add(newOrUpdatedToken.PartyId, _tokenStatus);
                 }
 
-                if (_tokenStatus.TryGetValue(newOrUpdatedToken.Id, out TokenStatus existingTokenStatus))
+                if (_tokenStatus.TryGetValue(newOrUpdatedToken.Id, out var existingTokenStatus))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -4422,10 +4422,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
 
                     _tokenStatus[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
-                                                                         Status);
+                                                                         Status.Value);
 
                     var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal != null)
+                    if (OnTokenChangedLocal is not null)
                     {
                         try
                         {
@@ -4445,10 +4445,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 _tokenStatus.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
-                                                                       Status));
+                                                                       Status.Value));
 
                 var OnTokenAddedLocal = OnTokenAdded;
-                if (OnTokenAddedLocal != null)
+                if (OnTokenAddedLocal is not null)
                 {
                     try
                     {
@@ -4493,9 +4493,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tokens)
             {
 
-                if (Tokens. TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties) &&
-                    parties.TryGetValue(Token.PartyId,     out                      Dictionary<Token_Id, TokenStatus>  tokens) &&
-                    tokens. TryGetValue(Token.Id,          out TokenStatus                                             tokenStatus))
+                if (Tokens. TryGetValue(Token.CountryCode, out var parties) &&
+                    parties.TryGetValue(Token.PartyId,     out var tokens) &&
+                    tokens. TryGetValue(Token.Id,          out var tokenStatus))
                 {
 
                     var patchResult = tokenStatus.Token.TryPatch(TokenPatch,
@@ -4549,9 +4549,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tokens)
             {
 
-                if (Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                    if (parties.TryGetValue(PartyId, out var tokens))
                     {
                         return tokens.ContainsKey(TokenId);
                     }
@@ -4576,9 +4576,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tokens)
             {
 
-                if (Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                    if (parties.TryGetValue(PartyId, out var tokens))
                     {
                         if (tokens.TryGetValue(TokenId, out TokenWithStatus))
                             return true;
@@ -4628,9 +4628,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                    if (Tokens.TryGetValue(CountryCode.Value, out var parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Token_Id, TokenStatus> tokens))
+                        if (parties.TryGetValue(PartyId.Value, out var tokens))
                         {
                             return tokens.Values.ToArray();
                         }
@@ -4644,7 +4644,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     foreach (var party in Tokens.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Token_Id, TokenStatus> tokens))
+                        if (party.TryGetValue(PartyId.Value, out var tokens))
                         {
                             allTokens.AddRange(tokens.Values);
                         }
@@ -4656,7 +4656,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Tokens.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                    if (Tokens.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allTokens = new List<TokenStatus>();
@@ -4688,7 +4688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return new TokenStatus[0];
+                return Array.Empty<TokenStatus>();
 
             }
 
@@ -4699,32 +4699,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region RemoveToken(TokenId)
 
-        public Token RemoveToken(Token_Id TokenId)
+        public Token? RemoveToken(Token_Id TokenId)
         {
 
             lock (Tokens)
             {
 
-                Token foundToken = null;
+                Token? foundToken = null;
 
                 foreach (var parties in Tokens.Values)
                 {
 
                     foreach (var tokens in parties.Values)
                     {
-                        if (tokens.TryGetValue(TokenId, out TokenStatus tokenStatus))
+                        if (tokens.TryGetValue(TokenId, out var tokenStatus))
                         {
                             foundToken = tokenStatus.Token;
                             break;
                         }
                     }
 
-                    if (foundToken != null)
+                    if (foundToken is not null)
                         break;
 
                 }
 
-                return foundToken != null
+                return foundToken is not null
                            ? RemoveToken(foundToken)
                            : null;
 
@@ -4745,10 +4745,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tokens)
             {
 
-                if (Tokens.TryGetValue(Token.CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(Token.CountryCode, out var parties))
                 {
 
-                    if (parties.TryGetValue(Token.PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                    if (parties.TryGetValue(Token.PartyId, out var tokens))
                     {
 
                         if (tokens.ContainsKey(Token.Id))
@@ -4805,9 +4805,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tokens)
             {
 
-                if (Tokens.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>> parties))
+                if (Tokens.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Token_Id, TokenStatus> tokens))
+                    if (parties.TryGetValue(PartyId, out var tokens))
                     {
                         tokens.Clear();
                     }

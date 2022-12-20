@@ -4881,7 +4881,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public async Task<OCPIResponse<Token>>
 
             PostToken(Token               Token,
-                      TokenType?         TokenType           = null,
+                      TokenType?          TokenType           = null,
                       LocationReference?  LocationReference   = null,
 
                       Request_Id?         RequestId           = null,
@@ -5090,7 +5090,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public async Task<OCPIResponse<AuthorizationInfo>>
 
             PostToken(Token_Id            TokenId,
-                      TokenType?         TokenType           = null,
+                      TokenType?          TokenType           = null,
                       LocationReference?  LocationReference   = null,
 
                       Request_Id?         RequestId           = null,
@@ -5189,7 +5189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
 
                                                                                          if (TokenType.HasValue)
-                                                                                             requestbuilder.QueryString.Add("type", TokenType.ToString());
+                                                                                             requestbuilder.QueryString.Add("type", TokenType.Value.ToString());
 
                                                                                          if (LocationReference.HasValue)
                                                                                          {

@@ -47,7 +47,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// to the owner of this token.
         /// </summary>
         [Mandatory]
-        public AllowedTypes        Status               { get; }
+        public AllowedType         Status               { get; }
 
         /// <summary>
         /// The reference to location details.
@@ -66,7 +66,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="Status">The optional contract identification at the energy supplier, that belongs to the owner of this token.</param>
         /// <param name="LocationReference">A reference to location details.</param>
         public TokenStatus(Token               Token,
-                           AllowedTypes        Status,
+                           AllowedType         Status,
                            LocationReference?  LocationReference   = null)
         {
 
@@ -192,10 +192,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse Status               [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("status",
-                                             "token status",
-                                             out AllowedTypes Status,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("status",
+                                         "token status",
+                                         AllowedType.TryParse,
+                                         out AllowedType Status,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

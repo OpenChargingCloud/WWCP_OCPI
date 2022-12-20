@@ -199,7 +199,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.UnitTests
                                                            DayOfWeek.Monday,
                                                            DayOfWeek.Tuesday
                                                        },
-                                                       ReservationRestrictionTypes.RESERVATION
+                                                       ReservationRestrictions.RESERVATION
                                                    )
                                                }
                                            )

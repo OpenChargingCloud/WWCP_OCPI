@@ -3757,11 +3757,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region AddToken           (Token, Status = AllowedTypes.ALLOWED)
 
         public Token AddToken(Token         Token,
-                              AllowedTypes  Status = AllowedTypes.ALLOWED)
+                              AllowedType?  Status = null)
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+            Status ??= AllowedType.ALLOWED;
 
             lock (Tokens)
             {
@@ -3769,7 +3768,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!Tokens.ContainsKey(Token.Id))
                 {
 
-                    Tokens.Add(Token.Id, new TokenStatus(Token, Status));
+                    Tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
                     if (OnTokenAddedLocal != null)
@@ -3801,11 +3800,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region AddTokenIfNotExists(Token, Status = AllowedTypes.ALLOWED)
 
         public Token AddTokenIfNotExists(Token         Token,
-                                         AllowedTypes  Status = AllowedTypes.ALLOWED)
+                                         AllowedType?  Status = null)
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
+            Status ??= AllowedType.ALLOWED;
 
             lock (Tokens)
             {
@@ -3813,7 +3811,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 if (!Tokens.ContainsKey(Token.Id))
                 {
 
-                    Tokens.Add(Token.Id, new TokenStatus(Token, Status));
+                    Tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
                     if (OnTokenAddedLocal != null)
@@ -3843,9 +3841,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region AddOrUpdateToken   (newOrUpdatedToken, Status = AllowedTypes.ALLOWED, AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token         newOrUpdatedToken,
-                                                                     AllowedTypes  Status           = AllowedTypes.ALLOWED,
+                                                                     AllowedType?  Status           = null,
                                                                      Boolean?      AllowDowngrades  = false)
         {
+
+            Status ??= AllowedType.ALLOWED;
 
             if (newOrUpdatedToken is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedToken), "The given token must not be null!");
@@ -3864,7 +3864,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     }
 
                     Tokens[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
-                                                                   Status);
+                                                                   Status.Value);
 
                     var OnTokenChangedLocal = OnTokenChanged;
                     if (OnTokenChangedLocal != null)
@@ -3887,7 +3887,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 Tokens.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
-                                                                 Status));
+                                                                 Status.Value));
 
                 var OnTokenAddedLocal = OnTokenAdded;
                 if (OnTokenAddedLocal != null)

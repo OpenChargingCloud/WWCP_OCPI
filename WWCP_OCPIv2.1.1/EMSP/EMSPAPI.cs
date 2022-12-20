@@ -6638,9 +6638,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                             authorizationInfo = new AuthorizationInfo(
                                                                       _tokenStatus.Status,
-                                                                      _tokenStatus.Token,
-                                                                      _tokenStatus.LocationReference,
-                                                                      AuthorizationReference.NewRandom()
+                                                                      _tokenStatus.LocationReference
                                                                       //new DisplayText(
                                                                       //    _tokenStatus.Token.UILanguage ?? Languages.en,
                                                                       //    responseText
@@ -6667,11 +6665,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                             StatusCode           = 2001,
                                                             StatusMessage        = "The given location is unknown!",
                                                             Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
+                                                                                       AllowedType.NOT_ALLOWED,
                                                                                        locationReference.Value,
-                                                                                       null,
-                                                                                       new DisplayText(Languages.en, "The given location is unknown!")
+                                                                                       new DisplayText(Languages.en,
+                                                                                                       "The given location is unknown!")
                                                                                    ).ToJSON(),
                                                             HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                                 HTTPStatusCode             = HTTPStatusCode.NotFound,
@@ -6756,10 +6753,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                        ? "The EVSE at the given location is unknown!"
                                                                                        : "The EVSEs at the given location are unknown!",
                                                             Data                 = new AuthorizationInfo(
-                                                                                       AllowedTypes.NOT_ALLOWED,
-                                                                                       _tokenStatus.Token,
+                                                                                       AllowedType.NOT_ALLOWED,
                                                                                        locationReference.Value,
-                                                                                       null,
                                                                                        new DisplayText(
                                                                                            Languages.en,
                                                                                            locationReference.Value.EVSEUIds.Count() == 1
@@ -6790,16 +6785,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (authorizationInfo is null)
                                             authorizationInfo = new AuthorizationInfo(
-                                                                      AllowedTypes.BLOCKED,
-                                                                      new Token(
-                                                                          TokenId.Value,
-                                                                          requestedTokenType,
-                                                                          Auth_Id.Parse("DE-XXX-" + TokenId.ToString()),
-                                                                          "Error!",
-                                                                          false,
-                                                                          WhitelistTypes.NEVER
-                                                                      )
-                                                                  );
+                                                                    AllowedType.BLOCKED
+                                                                );
 
 
                                         // too little information like e.g. no LocationReferences provided:
@@ -6808,123 +6795,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Set a user-friendly response message for the ev driver
 
-                                        var responseText = "Sorry, charging is not allowed!";
+                                        var responseText = "An error occured!";
 
                                         if (!authorizationInfo.Info.HasValue)
                                         {
 
-                                            switch (authorizationInfo.Allowed)
-                                            {
+                                            if (authorizationInfo.Allowed == AllowedType.ALLOWED)
+                                                responseText = "Charging allowed!";
 
-                                                #region ALLOWED
+                                            else if (authorizationInfo.Allowed == AllowedType.BLOCKED)
+                                                responseText = "Sorry, your token is blocked!";
 
-                                                case AllowedTypes.ALLOWED:
+                                            else if (authorizationInfo.Allowed == AllowedType.EXPIRED)
+                                                responseText = "Sorry, your token has expired!";
 
-                                                    responseText = "Charging allowed!";
+                                            else if (authorizationInfo.Allowed == AllowedType.NO_CREDIT)
+                                                responseText = "Sorry, your have not enough credits for charging!";
 
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Der Ladevorgang wird gestartet!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region BLOCKED
-
-                                                case AllowedTypes.BLOCKED:
-
-                                                    responseText = "Sorry, your token is blocked!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Autorisierung fehlgeschlagen!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region EXPIRED
-
-                                                case AllowedTypes.EXPIRED:
-
-                                                    responseText = "Sorry, your token has expired!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Autorisierungstoken ungültig!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region NO_CREDIT
-
-                                                case AllowedTypes.NO_CREDIT:
-
-                                                    responseText = "Sorry, your have not enough credits for charging!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Nicht genügend Ladeguthaben!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region NOT_ALLOWED
-
-                                                case AllowedTypes.NOT_ALLOWED:
-
-                                                    responseText = "Sorry, charging is not allowed!";
-
-                                                    if (authorizationInfo.Token.UILanguage.HasValue)
-                                                    {
-                                                        switch (authorizationInfo.Token.UILanguage.Value)
-                                                        {
-                                                            case Languages.de:
-                                                                responseText = "Autorisierung abgelehnt!";
-                                                                break;
-                                                        }
-                                                    }
-
-                                                    break;
-
-                                                #endregion
-
-                                                #region default
-
-                                                default:
-                                                    responseText = "An error occured!";
-                                                    break;
-
-                                                    #endregion
-
-                                            }
+                                            else if (authorizationInfo.Allowed == AllowedType.NOT_ALLOWED)
+                                                responseText = "Sorry, charging is not allowed!";
 
                                         }
 
@@ -6936,13 +6825,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new AuthorizationInfo(
                                                                               authorizationInfo.Allowed,
-                                                                              authorizationInfo.Token,
                                                                               authorizationInfo.Location,
-                                                                              authorizationInfo.AuthorizationReference ?? AuthorizationReference.NewRandom(),
-                                                                              authorizationInfo.Info                   ?? new DisplayText(
-                                                                                                                              authorizationInfo.Token.UILanguage ?? Languages.en,
-                                                                                                                              responseText
-                                                                                                                          )
+                                                                              authorizationInfo.Info ?? new DisplayText(
+                                                                                                            Languages.en,
+                                                                                                            responseText
+                                                                                                        )
                                                                           ).ToJSON(),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
