@@ -787,9 +787,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            Byte                                          TransmissionRetry = 0;
-            OCPIResponse<IEnumerable<VersionInformation>> response;
-
             #region Send OnGetVersionsRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -829,13 +826,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
+            Byte                                          TransmissionRetry = 0;
+            OCPIResponse<IEnumerable<VersionInformation>> response;
+
             do
             {
 
                 try
                 {
 
-                    var requestId      = RequestId     ?? Request_Id.NewRandom();
+                    var requestId      = RequestId     ?? Request_Id.    NewRandom();
                     var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                     // ToDo: Add request logging!
@@ -894,10 +894,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<VersionInformation>.ParseJArray<VersionInformation>(HTTPResponse,
-                                                                                                requestId,
-                                                                                                correlationId,
-                                                                                                json => VersionInformation.Parse(json));
+                    response = OCPIResponse<VersionInformation>.ParseJArray(HTTPResponse,
+                                                                            requestId,
+                                                                            correlationId,
+                                                                            json => VersionInformation.Parse(json));
 
                     switch (response.StatusCode)
                     {
@@ -918,12 +918,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 catch (Exception e)
                 {
-
-                    response = new OCPIResponse<IEnumerable<VersionInformation>>(default,
-                                                                                 -1,
-                                                                                 e.Message,
-                                                                                 e.StackTrace);
-
+                    response = OCPIResponse<IEnumerable<VersionInformation>>.Exception(e);
                 }
 
 
@@ -1009,8 +1004,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            OCPIResponse<Version_Id, VersionDetail> response;
-
             #region Send OnGetVersionDetailsRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -1050,19 +1043,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
+            OCPIResponse<Version_Id, VersionDetail> response;
+
             var versionId = VersionId ?? SelectedOCPIVersionId;
 
             if (!versionId.HasValue)
-                response = new OCPIResponse<Version_Id, VersionDetail>(Version_Id.Parse("0"),
-                                                                       default,
-                                                                       -1,
-                                                                       "No versionId available!");
+                response = OCPIResponse<Version_Id, VersionDetail>.Error("No versionId available!");
 
             else if (!Versions.ContainsKey(versionId.Value))
-                return new OCPIResponse<Version_Id, VersionDetail>(versionId.Value,
-                                                                   default,
-                                                                   -1,
-                                                                   "Unkown version identification!");
+                return     OCPIResponse<Version_Id, VersionDetail>.Error("Unkown version identification!");
 
             else
             {
@@ -1200,13 +1189,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 catch (Exception e)
                 {
-
-                    response = new OCPIResponse<Version_Id, VersionDetail>(versionId.Value,
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
-
+                    response = OCPIResponse<Version_Id, VersionDetail>.Exception(e);
                 }
 
             }
@@ -1263,10 +1246,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+
         #region GetRemoteURL(VersionId, ModuleId, InterfaceRole)
 
-        public async Task<URL?> GetRemoteURL(Version_Id?     VersionId,
-                                             Module_Id       ModuleId)
+        public async Task<URL?> GetRemoteURL(Version_Id?  VersionId,
+                                             Module_Id    ModuleId)
         {
 
             var versionId = VersionId ?? SelectedOCPIVersionId;
@@ -1337,8 +1321,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            OCPIResponse<Credentials> response;
-
             #region Send OnGetCredentialsHTTPRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -1377,6 +1359,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
+
+            OCPIResponse<Credentials> response;
+
             try
             {
 
@@ -1387,14 +1372,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                         Module_Id.Credentials);
 
                 if (!versionId.HasValue)
-                    response = new OCPIResponse<Credentials>(default,
-                                                             -1,
-                                                             "No versionId available!");
+                    response = OCPIResponse<Credentials>.Error("No versionId available!");
 
                 else if (!remoteURL.HasValue)
-                    response = new OCPIResponse<Credentials>(default,
-                                                             -1,
-                                                             "No remote URL available!");
+                    response = OCPIResponse<Credentials>.Error("No remote URL available!");
 
                 else
                 {
@@ -1447,13 +1428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Credentials>("",
-                                                                 default,
-                                                                 -1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Credentials>.Exception(e);
             }
 
 
@@ -1538,11 +1513,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            if (Credentials is null)
-                throw new ArgumentNullException(nameof(Credentials), "The given credentials must not be null!");
-
-            OCPIResponse<Credentials> response;
-
             #region Send OnPostCredentialsHTTPRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -1581,10 +1551,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
+
+            OCPIResponse<Credentials> response;
+
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Credentials);
@@ -1639,22 +1612,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Credentials>("",
-                                                                 default,
-                                                                 -1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Credentials>.Exception(e);
             }
 
 
@@ -1739,11 +1703,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            if (Credentials is null)
-                throw new ArgumentNullException(nameof(Credentials), "The given credentials must not be null!");
-
-            OCPIResponse<Credentials> response;
-
             #region Send OnPutCredentialsHTTPRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -1782,10 +1741,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
+
+            OCPIResponse<Credentials> response;
+
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Credentials);
@@ -1867,22 +1829,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Credentials>("",
-                                                                 default,
-                                                                 -1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Credentials>.Exception(e);
             }
 
 
@@ -1963,8 +1916,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            OCPIResponse<Credentials> response;
-
             #region Send OnDeleteCredentialsHTTPRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -2003,10 +1954,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
+
+            OCPIResponse<Credentials> response;
+
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Credentials);
@@ -2061,22 +2015,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Credentials>("",
-                                                                 default,
-                                                                 -1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Credentials>.Exception(e);
             }
 
 
@@ -2179,8 +2124,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            OCPIResponse<Credentials> response;
-
             #region Send OnRegisterRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -2220,6 +2163,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
+            OCPIResponse<Credentials> response;
+
             try
             {
 
@@ -2229,17 +2174,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var remoteURL         = await GetRemoteURL(versionId,
                                                            Module_Id.Credentials);
 
-                if (!versionId.HasValue)
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No versionId available!");
+                if      (!versionId.HasValue)
+                    response = OCPIResponse<String, Credentials>.Error("No version identification available!");
 
                 else if (!remoteURL.HasValue)
-                    response = new OCPIResponse<String, Credentials>("",
-                                                                     default,
-                                                                     -1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Credentials>.Error("No remote URL available!");
 
                 else
                 {
@@ -2349,14 +2288,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Credentials>("",
-                                                                 default,
-                                                                 -1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Credentials>.Exception(e);
             }
+
 
             #region Send OnRegisterResponse event
 

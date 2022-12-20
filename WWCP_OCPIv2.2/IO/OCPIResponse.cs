@@ -331,6 +331,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        public static OCPIResponse<TResponse> Error(String           StatusMessage,
+                                                    String?          AdditionalInformation   = null,
+                                                    DateTime?        Timestamp               = null,
+
+                                                    HTTPResponse?    HTTPResponse            = null,
+                                                    Request_Id?      RequestId               = null,
+                                                    Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   -1,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
         public static OCPIResponse<TResponse> Error(Int32            StatusCode,
                                                     String           StatusMessage,
                                                     String?          AdditionalInformation   = null,
@@ -344,6 +362,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                    StatusCode,
                    StatusMessage,
                    AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+        public static OCPIResponse<TResponse> Exception(Exception        Exception,
+                                                        DateTime?        Timestamp               = null,
+
+                                                        HTTPResponse?    HTTPResponse            = null,
+                                                        Request_Id?      RequestId               = null,
+                                                        Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   -1,
+                   Exception.Message,
+                   Exception.StackTrace,
                    Timestamp,
 
                    HTTPResponse,
@@ -690,10 +725,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                             TResponse        Data,
                             Int32            StatusCode,
                             String           StatusMessage,
-                            String           AdditionalInformation   = null,
+                            String?          AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
 
-                            HTTPResponse     HTTPResponse            = null,
+                            HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
                             Correlation_Id?  CorrelationId           = null,
                             Party_Id?        FromPartyId             = null,
@@ -723,6 +758,109 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
+
+
+        public static new OCPIResponse<TRequest, TResponse> Error(TRequest         Request,
+                                                                  Int32            StatusCode,
+                                                                  String           StatusMessage,
+                                                                  String?          AdditionalInformation   = null,
+                                                                  DateTime?        Timestamp               = null,
+
+                                                                  HTTPResponse?    HTTPResponse            = null,
+                                                                  Request_Id?      RequestId               = null,
+                                                                  Correlation_Id?  CorrelationId           = null)
+
+            => new(Request,
+                   null,
+                   StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+
+        public static new OCPIResponse<TRequest, TResponse> Error(TRequest         Request,
+                                                                  String           StatusMessage,
+                                                                  String?          AdditionalInformation   = null,
+                                                                  DateTime?        Timestamp               = null,
+
+                                                                  HTTPResponse?    HTTPResponse            = null,
+                                                                  Request_Id?      RequestId               = null,
+                                                                  Correlation_Id?  CorrelationId           = null)
+
+            => new(Request,
+                   null,
+                   -1,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+
+        public static new OCPIResponse<TRequest, TResponse> Error(Int32            StatusCode,
+                                                                  String           StatusMessage,
+                                                                  String?          AdditionalInformation   = null,
+                                                                  DateTime?        Timestamp               = null,
+
+                                                                  HTTPResponse?    HTTPResponse            = null,
+                                                                  Request_Id?      RequestId               = null,
+                                                                  Correlation_Id?  CorrelationId           = null)
+
+            => new(default,
+                   null,
+                   StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+
+        public static new OCPIResponse<TRequest, TResponse> Error(String           StatusMessage,
+                                                                  String?          AdditionalInformation   = null,
+                                                                  DateTime?        Timestamp               = null,
+
+                                                                  HTTPResponse?    HTTPResponse            = null,
+                                                                  Request_Id?      RequestId               = null,
+                                                                  Correlation_Id?  CorrelationId           = null)
+
+            => new(default,
+                   null,
+                   -1,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+
+        public static new OCPIResponse<TRequest, TResponse> Exception(Exception        Exception,
+                                                                      DateTime?        Timestamp               = null,
+
+                                                                      HTTPResponse?    HTTPResponse            = null,
+                                                                      Request_Id?      RequestId               = null,
+                                                                      Correlation_Id?  CorrelationId           = null)
+
+            => new(default,
+                   null,
+                   -1,
+                   Exception.Message,
+                   Exception.StackTrace,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
 
 
         public static OCPIResponse<TRequest, IEnumerable<TResponse>> ParseJArray(TRequest                  Request,

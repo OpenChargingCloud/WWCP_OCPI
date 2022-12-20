@@ -796,7 +796,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -849,18 +849,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Location>.Error(-1,
-                                                                    "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Location>.Error(-1,
-                                                                e.Message,
-                                                                e.StackTrace);
-
+                response = OCPIResponse<String, Location>.Exception(e);
             }
 
 
@@ -985,7 +980,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -1040,18 +1035,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Location>.Error(-1,
-                                                                    "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Location>.Error(-1,
-                                                                e.Message,
-                                                                e.StackTrace);
-
+                response = OCPIResponse<String, Location>.Exception(e);
             }
 
 
@@ -1134,8 +1124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region Initial checks
 
             if (!LocationPatch.HasValues)
-                return OCPIResponse<Location>.Error(-1,
-                                                    "The given location patch must not be empty!");
+                return OCPIResponse<Location>.Error("The given location patch must not be empty!");
 
             #endregion
 
@@ -1183,7 +1172,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -1238,18 +1227,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Location>.Error(-1,
-                                                                    "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Location>.Error(-1,
-                                                                e.Message,
-                                                                e.StackTrace);
-
+                response = OCPIResponse<String, Location>.Exception(e);
             }
 
 
@@ -1314,7 +1298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<Location>>
+        public async Task<OCPIResponse<EVSE>>
 
             GetEVSE(Location_Id         LocationId,
                     EVSE_UId            EVSEUId,
@@ -1369,12 +1353,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            OCPIResponse<Location> response;
+            OCPIResponse<EVSE> response;
 
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -1420,26 +1404,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                     #endregion
 
-                    response = OCPIResponse<Location>.ParseJObject(HTTPResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Location.Parse(json));
+                    response = OCPIResponse<EVSE>.ParseJObject(HTTPResponse,
+                                                               requestId,
+                                                               correlationId,
+                                                               json => EVSE.Parse(json));
 
                 }
 
                 else
-                    response = OCPIResponse<String, Location>.Error(-1,
-                                                                    "No remote URL available!");
+                    response = OCPIResponse<String, EVSE>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Location>.Error(- 1,
-                                                                e.Message,
-                                                                e.StackTrace);
-
+                response = OCPIResponse<String, EVSE>.Exception(e);
             }
 
 
@@ -1523,8 +1502,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region Initial checks
 
             if (EVSE.ParentLocation is null)
-                return OCPIResponse<EVSE>.Error(-1,
-                                                "The parent location of the given EVSE must not be null!");
+                return OCPIResponse<EVSE>.Error("The parent location of the given EVSE must not be null!");
 
             #endregion
 
@@ -1616,7 +1594,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -1672,18 +1650,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, EVSE>.Error(-1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, EVSE>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, EVSE>.Error(-1,
-                                                            e.Message,
-                                                            e.StackTrace);
-
+                response = OCPIResponse<String, EVSE>.Exception(e);
             }
 
 
@@ -1816,7 +1789,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -1872,18 +1845,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<EVSE>.Error(-1,
-                                                        "No remote URL available!");
+                    response = OCPIResponse<EVSE>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<EVSE>.Error(-1,
-                                                    e.Message,
-                                                    e.StackTrace);
-
+                response = OCPIResponse<String, EVSE>.Exception(e);
             }
 
 
@@ -2009,7 +1977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -2064,18 +2032,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Connector>.Error(-1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Connector>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Connector>.Error(-1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Connector>.Exception(e);
             }
 
 
@@ -2159,12 +2122,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region Initial checks
 
             if (Connector.ParentEVSE is null)
-                return OCPIResponse<String, Connector>.Error(-1,
-                                                             "The parent EVSE of the connector must not be null!");
+                return OCPIResponse<String, Connector>.Error("The parent EVSE of the connector must not be null!");
 
             if (Connector.ParentEVSE.ParentLocation is null)
-                return OCPIResponse<String, Connector>.Error(-1,
-                                                             "The parent location of the connector must not be null!");
+                return OCPIResponse<String, Connector>.Error("The parent location of the connector must not be null!");
 
             #endregion
 
@@ -2212,7 +2173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -2269,18 +2230,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Connector>.Error(-1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Connector>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Connector>.Error(-1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Connector>.Exception(e);
             }
 
 
@@ -2406,7 +2362,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Locations);
@@ -2463,18 +2419,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Connector>.Error(-1,
-                                                                     "No remote URL available!");
+                    response = OCPIResponse<String, Connector>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Connector>.Error(-1,
-                                                                 e.Message,
-                                                                 e.StackTrace);
-
+                response = OCPIResponse<String, Connector>.Exception(e);
             }
 
 
@@ -2601,7 +2552,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tariffs);
@@ -2656,18 +2607,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Tariff>.Error(-1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Tariff>.Error(-1,
-                                                              e.Message,
-                                                              e.StackTrace);
-
+                response = OCPIResponse<String, Tariff>.Exception(e);
             }
 
 
@@ -2792,7 +2738,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tariffs);
@@ -2847,18 +2793,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Tariff>.Error(-1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Tariff>.Error(-1,
-                                                              e.Message,
-                                                              e.StackTrace);
-
+                response = OCPIResponse<String, Tariff>.Exception(e);
             }
 
 
@@ -2943,8 +2884,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region Initial checks
 
             if (!TariffPatch.HasValues)
-                return OCPIResponse<Tariff>.Error(-1,
-                                                  "The given charging tariff patch must not be null!");
+                return OCPIResponse<Tariff>.Error("The given charging tariff patch must not be null!");
 
             #endregion
 
@@ -2992,7 +2932,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tariffs);
@@ -3049,18 +2989,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Tariff>.Error(-1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Tariff>.Error(-1,
-                                                              e.Message,
-                                                              e.StackTrace);
-
+                response = OCPIResponse<String, Tariff>.Exception(e);
             }
 
 
@@ -3185,7 +3120,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tariffs);
@@ -3240,18 +3175,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Tariff>.Error(-1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Tariff>.Error(-1,
-                                                              e.Message,
-                                                              e.StackTrace);
-
+                response = OCPIResponse<String, Tariff>.Exception(e);
             }
 
 
@@ -3378,7 +3308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Sessions);
@@ -3433,18 +3363,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Session>.Error(-1,
-                                                                   "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Session>.Error(-1,
-                                                               e.Message,
-                                                               e.StackTrace);
-
+                response = OCPIResponse<String, Session>.Exception(e);
             }
 
 
@@ -3569,7 +3494,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Sessions);
@@ -3624,18 +3549,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Session>.Error(-1,
-                                                                   "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Session>.Error(-1,
-                                                               e.Message,
-                                                               e.StackTrace);
-
+                response = OCPIResponse<String, Session>.Exception(e);
             }
 
 
@@ -3720,8 +3640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region Initial checks
 
             if (!SessionPatch.HasValues)
-                return OCPIResponse<Session>.Error(-1,
-                                                   "The given charging session patch must not be null!");
+                return OCPIResponse<Session>.Error("The given charging session patch must not be null!");
 
             #endregion
 
@@ -3769,7 +3688,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Sessions);
@@ -3826,18 +3745,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Session>.Error(-1,
-                                                                   "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Session>.Error(-1,
-                                                               e.Message,
-                                                               e.StackTrace);
-
+                response = OCPIResponse<String, Session>.Exception(e);
             }
 
 
@@ -3962,7 +3876,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Sessions);
@@ -4017,18 +3931,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Session>.Error(-1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Session>.Error(-1,
-                                                               e.Message,
-                                                               e.StackTrace);
-
+                response = OCPIResponse<String, Session>.Exception(e);
             }
 
 
@@ -4153,7 +4062,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.CDRs);
@@ -4206,18 +4115,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, CDR>.Error(-1,
-                                                               "No remote URL available!");
+                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, CDR>.Error(-1,
-                                                           e.Message,
-                                                           e.StackTrace);
-
+                response = OCPIResponse<String, CDR>.Exception(e);
             }
 
 
@@ -4340,7 +4244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.CDRs);
@@ -4395,18 +4299,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, CDR>.Error(-1,
-                                                               "No remote URL available!");
+                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, CDR>.Error(-1,
-                                                           e.Message,
-                                                           e.StackTrace);
-
+                response = OCPIResponse<String, CDR>.Exception(e);
             }
 
 
@@ -4600,18 +4499,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, IEnumerable<Token>>.Error(-1,
-                                                                              "No remote URL available!");
+                    response = OCPIResponse<String, IEnumerable<Token>>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, IEnumerable<Token>>.Error(-1,
-                                                                          e.Message,
-                                                                          e.StackTrace);
-
+                response = OCPIResponse<String, IEnumerable<Token>>.Exception(e);
             }
 
 
@@ -4736,7 +4630,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tokens);
@@ -4800,18 +4694,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, Token>.Error(-1,
-                                                                 "No remote URL available!");
+                    response = OCPIResponse<String, Token>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, Token>.Error(-1,
-                                                             e.Message,
-                                                             e.StackTrace);
-
+                response = OCPIResponse<String, Token>.Exception(e);
             }
 
 
@@ -4936,7 +4825,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tokens);
@@ -5021,18 +4910,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = OCPIResponse<String, AuthorizationInfo>.Error(-1,
-                                                                             "No remote URL available!");
+                    response = OCPIResponse<String, AuthorizationInfo>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = OCPIResponse<String, AuthorizationInfo>.Error(-1,
-                                                                         e.Message,
-                                                                         e.StackTrace);
-
+                response = OCPIResponse<String, AuthorizationInfo>.Exception(e);
             }
 
 
