@@ -17,22 +17,16 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Threading;
 using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
-using System.Security.Authentication;
 
 #endregion
 
@@ -1396,12 +1390,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<IEnumerable<Location>> response;
 
             #region Send OnGetLocationsRequest event
 
@@ -1441,13 +1433,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<IEnumerable<Location>> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -1475,7 +1470,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL LocationsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
@@ -1493,8 +1488,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                              RemoteCertificateValidator,
                                              ClientCertificateSelector,
                                              ClientCert,
-                                             null,
-                                             null,
+                                             TLSProtocol,
+                                             PreferIPv4,
                                              HTTPUserAgent,
                                              RequestTimeout,
                                              TransmissionRetryDelay,
@@ -1541,16 +1536,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                               json => Location.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, IEnumerable<Location>>("",
-                                                                           default,
-                                                                           -1,
-                                                                           e.Message,
-                                                                           e.StackTrace);
-
+                response = OCPIResponse<String, IEnumerable<Location>>.Exception(e);
             }
 
 
@@ -1630,12 +1618,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                             DateTime?           Timestamp           = null,
                             CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
+                            EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Location> response;
 
             #region Send OnGetLocationByIdRequest event
 
@@ -1675,13 +1661,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Location> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -1709,7 +1698,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL LocationsURL = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
@@ -1727,8 +1716,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1763,16 +1752,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                json => Location.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Location>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
-
+                response = OCPIResponse<String, Location>.Exception(e);
             }
 
 
@@ -1854,12 +1836,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<EVSE> response;
 
             #region Send OnGetEVSEByUIdRequest event
 
@@ -1899,13 +1879,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<EVSE> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -1933,7 +1916,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL LocationsURL = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
@@ -1951,8 +1934,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1987,16 +1970,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                            json => EVSE.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, EVSE>("",
-                                                          default,
-                                                          -1,
-                                                          e.Message,
-                                                          e.StackTrace);
-
+                response = OCPIResponse<String, EVSE>.Exception(e);
             }
 
 
@@ -2080,12 +2056,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                              DateTime?           Timestamp           = null,
                              CancellationToken?  CancellationToken   = null,
-                             EventTracking_Id    EventTrackingId     = null,
+                             EventTracking_Id?   EventTrackingId     = null,
                              TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Connector> response;
 
             #region Send OnGetConnectorByIdRequest event
 
@@ -2125,13 +2099,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Connector> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -2159,7 +2136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL LocationsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     LocationsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Locations &&
@@ -2177,8 +2154,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2213,16 +2190,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                 json => Connector.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Connector>("",
-                                                               default,
-                                                               -1,
-                                                               e.Message,
-                                                               e.StackTrace);
-
+                response = OCPIResponse<String, Connector>.Exception(e);
             }
 
 
@@ -2300,12 +2270,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<IEnumerable<Tariff>> response;
 
             #region Send OnGetTariffsRequest event
 
@@ -2345,13 +2313,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<IEnumerable<Tariff>> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -2379,7 +2350,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL TariffsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Tariffs &&
@@ -2397,8 +2368,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2433,16 +2404,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                             json => Tariff.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, IEnumerable<Tariff>>("",
-                                                                         default,
-                                                                         -1,
-                                                                         e.Message,
-                                                                         e.StackTrace);
-
+                response = OCPIResponse<String, IEnumerable<Tariff>>.Exception(e);
             }
 
 
@@ -2522,12 +2486,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                           DateTime?           Timestamp           = null,
                           CancellationToken?  CancellationToken   = null,
-                          EventTracking_Id    EventTrackingId     = null,
+                          EventTracking_Id?   EventTrackingId     = null,
                           TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Tariff> response;
 
             #region Send OnGetTariffByIdRequest event
 
@@ -2567,13 +2529,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Tariff> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -2601,7 +2566,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL TariffsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     TariffsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Tariffs &&
@@ -2619,8 +2584,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2655,16 +2620,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              json => Tariff.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Tariff>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
-
+                response = OCPIResponse<String, Tariff>.Exception(e);
             }
 
 
@@ -2742,12 +2700,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<IEnumerable<Session>> response;
 
             #region Send OnGetSessionsRequest event
 
@@ -2787,13 +2743,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<IEnumerable<Session>> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -2821,7 +2780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL SessionsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     SessionsURL  = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Sessions &&
@@ -2839,8 +2798,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2875,16 +2834,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              json => Session.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, IEnumerable<Session>>("",
-                                                                          default,
-                                                                          -1,
-                                                                          e.Message,
-                                                                          e.StackTrace);
-
+                response = OCPIResponse<String, IEnumerable<Session>>.Exception(e);
             }
 
 
@@ -2964,12 +2916,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                            DateTime?           Timestamp           = null,
                            CancellationToken?  CancellationToken   = null,
-                           EventTracking_Id    EventTrackingId     = null,
+                           EventTracking_Id?   EventTrackingId     = null,
                            TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Session> response;
 
             #region Send OnGetSessionByIdRequest event
 
@@ -3009,13 +2959,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Session> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -3043,7 +2996,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL SessionsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     SessionsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.Sessions &&
@@ -3061,8 +3014,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3097,16 +3050,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                               json => Session.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Session>("",
-                                                             default,
-                                                             -1,
-                                                             e.Message,
-                                                             e.StackTrace);
-
+                response = OCPIResponse<String, Session>.Exception(e);
             }
 
 
@@ -3186,12 +3132,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<IEnumerable<CDR>> response;
 
             #region Send OnGetCDRsRequest event
 
@@ -3231,13 +3175,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<IEnumerable<CDR>> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -3265,7 +3212,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL CDRsURL = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.CDRs &&
@@ -3283,8 +3230,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3319,16 +3266,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                          json => CDR.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, IEnumerable<CDR>>("",
-                                                                      default,
-                                                                      -1,
-                                                                      e.Message,
-                                                                      e.StackTrace);
-
+                response = OCPIResponse<String, IEnumerable<CDR>>.Exception(e);
             }
 
 
@@ -3408,12 +3348,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<CDR> response;
 
             #region Send OnGetCDRByIdRequest event
 
@@ -3453,13 +3391,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<CDR> response;
+
             try
             {
 
                 #region Set versionId, requestId, correlationId
 
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
                 if (!versionId.HasValue)
@@ -3487,7 +3428,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 URL CDRsURL   = default;
 
                 if (versionId.HasValue &&
-                    VersionDetails.TryGetValue(versionId.Value, out VersionDetail versionDetails))
+                    VersionDetails.TryGetValue(versionId.Value, out var versionDetails))
                 {
 
                     CDRsURL = versionDetails.Endpoints.FirstOrDefault(endpoint => endpoint.Identifier == Module_Id.CDRs &&
@@ -3505,8 +3446,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3536,21 +3477,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 #endregion
 
                 response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => CDR.Parse(json));
+                                                          requestId,
+                                                          correlationId,
+                                                          json => CDR.Parse(json));
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, CDR>("",
-                                                         default,
-                                                         -1,
-                                                         e.Message,
-                                                         e.StackTrace);
-
+                response = OCPIResponse<String, CDR>.Exception(e);
             }
 
 
@@ -3627,12 +3561,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                      DateTime?           Timestamp           = null,
                      CancellationToken?  CancellationToken   = null,
-                     EventTracking_Id    EventTrackingId     = null,
+                     EventTracking_Id?   EventTrackingId     = null,
                      TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Token> response;
 
             #region Send OnGetTokenRequest event
 
@@ -3673,10 +3605,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<Token> response;
+
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tokens,
@@ -3693,8 +3627,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3731,24 +3665,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                 json => Token.Parse(json));
 
                 }
-
                 else
-                    response = new OCPIResponse<String, Token>("",
-                                                               default,
-                                                               -1,
-                                                               "No remote URL available!");
+                    response = OCPIResponse<String, Token>.Error("No remote URL available!");
 
             }
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Token>("",
-                                                           default,
-                                                           -1,
-                                                           e.Message,
-                                                           e.StackTrace);
-
+                response = OCPIResponse<String, Token>.Exception(e);
             }
 
 
@@ -3824,15 +3748,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                      DateTime?           Timestamp           = null,
                      CancellationToken?  CancellationToken   = null,
-                     EventTracking_Id    EventTrackingId     = null,
+                     EventTracking_Id?   EventTrackingId     = null,
                      TimeSpan?           RequestTimeout      = null)
 
         {
-
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
-
-            OCPIResponse<Token> response;
 
             #region Send OnPutTokenRequest event
 
@@ -3873,10 +3792,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<Token> response;
+
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tokens,
@@ -3893,8 +3814,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -3935,22 +3856,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Token>("",
-                                                               default,
-                                                               -1,
-                                                               "No remote URL available!");
+                    response = OCPIResponse<String, Token>.Error("No remote URL available!");
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Token>("",
-                                                           default,
-                                                           -1,
-                                                           e.Message,
-                                                           e.StackTrace);
-
+                response = OCPIResponse<String, Token>.Exception(e);
             }
 
 
@@ -4027,15 +3938,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
-
-            if (TokenPatch is null)
-                throw new ArgumentNullException(nameof(TokenPatch), "The given token patch must not be null!");
-
-            OCPIResponse<Token> response;
 
             #region Send OnPatchTokenRequest event
 
@@ -4076,10 +3982,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<Token> response;
+
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.NewRandom();
+                var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
                 var remoteURL      = await GetRemoteURL(VersionId,
                                                         Module_Id.Tokens,
@@ -4096,8 +4004,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4138,22 +4046,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Token>("",
-                                                               default,
-                                                               -1,
-                                                               "No remote URL available!");
+                    response = OCPIResponse<String, Token>.Error("No remote URL available!");
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<String, Token>("",
-                                                           default,
-                                                           -1,
-                                                           e.Message,
-                                                           e.StackTrace);
-
+                response = OCPIResponse<String, Token>.Exception(e);
             }
 
 
@@ -4236,12 +4134,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                        DateTime?                Timestamp                = null,
                        CancellationToken?       CancellationToken        = null,
-                       EventTracking_Id         EventTrackingId          = null,
+                       EventTracking_Id?        EventTrackingId          = null,
                        TimeSpan?                RequestTimeout           = null)
 
         {
-
-            OCPIResponse<ReserveNowCommand, CommandResponse> response;
 
             #region Send OnReserveNowRequest event
 
@@ -4282,6 +4178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<ReserveNowCommand, CommandResponse> response;
+
             try
             {
 
@@ -4320,8 +4218,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4360,28 +4258,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                                            json));
 
                 }
-
                 else
-                    response = new OCPIResponse<ReserveNowCommand, CommandResponse>(null,
-                                                                                    default,
-                                                                                    -1,
-                                                                                    "No remote URL available!");
+                    response = OCPIResponse<ReserveNowCommand, CommandResponse>.Error("No remote URL available!");
 
-
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<ReserveNowCommand, CommandResponse>(null,
-                                                                                default,
-                                                                                -1,
-                                                                                e.Message,
-                                                                                e.StackTrace);
-
+                response = OCPIResponse<ReserveNowCommand, CommandResponse>.Exception(e);
             }
 
 
@@ -4456,12 +4342,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                               DateTime?           Timestamp           = null,
                               CancellationToken?  CancellationToken   = null,
-                              EventTracking_Id    EventTrackingId     = null,
+                              EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<CancelReservationCommand, CommandResponse> response;
 
             #region Send OnCancelReservationRequest event
 
@@ -4502,6 +4386,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<CancelReservationCommand, CommandResponse> response;
+
             try
             {
 
@@ -4535,8 +4421,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4575,28 +4461,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                                                   json));
 
                 }
-
                 else
-                    response = new OCPIResponse<CancelReservationCommand, CommandResponse>(null,
-                                                                                           default,
-                                                                                           -1,
-                                                                                           "No remote URL available!");
+                    response = OCPIResponse<CancelReservationCommand, CommandResponse>.Error("No remote URL available!");
 
-
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<CancelReservationCommand, CommandResponse>(null,
-                                                                                       default,
-                                                                                       -1,
-                                                                                       e.Message,
-                                                                                       e.StackTrace);
-
+                response = OCPIResponse<CancelReservationCommand, CommandResponse>.Exception(e);
             }
 
 
@@ -4680,8 +4554,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<StartSessionCommand, CommandResponse> response;
-
             #region Send OnStartSessionRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -4721,6 +4593,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<StartSessionCommand, CommandResponse> response;
+
             try
             {
 
@@ -4758,8 +4632,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -4798,28 +4672,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                                              json));
 
                 }
-
                 else
-                    response = new OCPIResponse<StartSessionCommand, CommandResponse>(null,
-                                                                                      default,
-                                                                                      -1,
-                                                                                      "No remote URL available!");
+                    response = OCPIResponse<StartSessionCommand, CommandResponse>.Error("No remote URL available!");
 
-
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<StartSessionCommand, CommandResponse>(null,
-                                                                                  default,
-                                                                                  -1,
-                                                                                  e.Message,
-                                                                                  e.StackTrace);
-
+                response = OCPIResponse<StartSessionCommand, CommandResponse>.Exception(e);
             }
 
 
@@ -4894,12 +4756,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<StopSessionCommand, CommandResponse> response;
 
             #region Send OnStopSessionRequest event
 
@@ -4940,6 +4800,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<StopSessionCommand, CommandResponse> response;
+
             try
             {
 
@@ -4973,8 +4835,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -5013,28 +4875,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                                             json));
 
                 }
-
                 else
-                    response = new OCPIResponse<StopSessionCommand, CommandResponse>(null,
-                                                                                     default,
-                                                                                     -1,
-                                                                                     "No remote URL available!");
+                    response = OCPIResponse<StopSessionCommand, CommandResponse>.Error("No remote URL available!");
 
-
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<StopSessionCommand, CommandResponse>(null,
-                                                                                 default,
-                                                                                 -1,
-                                                                                 e.Message,
-                                                                                 e.StackTrace);
-
+                response = OCPIResponse<StopSessionCommand, CommandResponse>.Exception(e);
             }
 
 
@@ -5111,12 +4961,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                             DateTime?           Timestamp           = null,
                             CancellationToken?  CancellationToken   = null,
-                            EventTracking_Id    EventTrackingId     = null,
+                            EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<UnlockConnectorCommand, CommandResponse> response;
 
             #region Send OnUnlockConnectorRequest event
 
@@ -5157,6 +5005,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             #endregion
 
 
+            OCPIResponse<UnlockConnectorCommand, CommandResponse> response;
+
             try
             {
 
@@ -5192,8 +5042,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null,
-                                                             null,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -5232,28 +5082,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                                                                 json));
 
                 }
-
                 else
-                    response = new OCPIResponse<UnlockConnectorCommand, CommandResponse>(null,
-                                                                                         default,
-                                                                                         -1,
-                                                                                         "No remote URL available!");
+                    response = OCPIResponse<UnlockConnectorCommand, CommandResponse>.Error("No remote URL available!");
 
-
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
-
             catch (Exception e)
             {
-
-                response = new OCPIResponse<UnlockConnectorCommand, CommandResponse>(null,
-                                                                                     default,
-                                                                                     -1,
-                                                                                     e.Message,
-                                                                                     e.StackTrace);
-
+                response = OCPIResponse<UnlockConnectorCommand, CommandResponse>.Exception(e);
             }
 
 

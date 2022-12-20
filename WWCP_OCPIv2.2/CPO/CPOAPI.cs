@@ -3944,8 +3944,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             return ocpiResponse;
 
                                         if (!StopSessionCommand.TryParse(stopSessionJSON,
-                                                                          out var stopSessionCommand,
-                                                                          out var errorResponse))
+                                                                         out var stopSessionCommand,
+                                                                         out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
