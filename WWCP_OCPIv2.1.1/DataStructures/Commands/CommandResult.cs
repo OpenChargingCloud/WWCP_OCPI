@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -67,7 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             this.Result   = Result;
-            this.Message  = Message?.Distinct() ?? new DisplayText[0];
+            this.Message  = Message?.Distinct() ?? Array.Empty<DisplayText>();
 
         }
 
@@ -81,44 +77,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCommandResultParser">A delegate to parse custom command result JSON objects.</param>
-        public static CommandResult Parse(JObject                                     JSON,
-                                          CustomJObjectParserDelegate<CommandResult>  CustomCommandResultParser   = null)
+        public static CommandResult Parse(JObject                                      JSON,
+                                          CustomJObjectParserDelegate<CommandResult>?  CustomCommandResultParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CommandResult  commandResult,
-                         out String         ErrorResponse,
+                         out var commandResult,
+                         out var errorResponse,
                          CustomCommandResultParser))
             {
                 return commandResult;
             }
 
-            throw new ArgumentException("The given JSON representation of a command result is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCommandResultParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a command result.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCommandResultParser">A delegate to parse custom command result JSON objects.</param>
-        public static CommandResult Parse(String                                      Text,
-                                          CustomJObjectParserDelegate<CommandResult>  CustomCommandResultParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CommandResult  commandResult,
-                         out String         ErrorResponse,
-                         CustomCommandResultParser))
-            {
-                return commandResult;
-            }
-
-            throw new ArgumentException("The given text representation of a command result is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a command result is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -131,38 +103,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCommandResultParser">A delegate to parse custom command result JSON objects.</param>
-        public static CommandResult? TryParse(JObject                                     JSON,
-                                              CustomJObjectParserDelegate<CommandResult>  CustomCommandResultParser   = null)
+        public static CommandResult? TryParse(JObject                                      JSON,
+                                              CustomJObjectParserDelegate<CommandResult>?  CustomCommandResultParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CommandResult  commandResult,
-                         out String         ErrorResponse,
-                         CustomCommandResultParser))
-            {
-                return commandResult;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomCommandResultParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a command result.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomCommandResultParser">A delegate to parse custom command result JSON objects.</param>
-        public static CommandResult? TryParse(String                                      Text,
-                                              CustomJObjectParserDelegate<CommandResult>  CustomCommandResultParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CommandResult  commandResult,
-                         out String         ErrorResponse,
+                         out var commandResult,
+                         out var errorResponse,
                          CustomCommandResultParser))
             {
                 return commandResult;
@@ -186,7 +133,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject            JSON,
                                        out CommandResult  CommandResult,
-                                       out String         ErrorResponse)
+                                       out String?        ErrorResponse)
 
             => TryParse(JSON,
                         out CommandResult,
@@ -201,10 +148,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CommandResult">The parsed command result.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCommandResultParser">A delegate to parse custom command result JSON objects.</param>
-        public static Boolean TryParse(JObject                                     JSON,
-                                       out CommandResult                           CommandResult,
-                                       out String                                  ErrorResponse,
-                                       CustomJObjectParserDelegate<CommandResult>  CustomCommandResultParser   = null)
+        public static Boolean TryParse(JObject                                      JSON,
+                                       out CommandResult                            CommandResult,
+                                       out String?                                  ErrorResponse,
+                                       CustomJObjectParserDelegate<CommandResult>?  CustomCommandResultParser   = null)
         {
 
             try
@@ -266,41 +213,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region (static) TryParse(Text, out CommandResult, out ErrorResponse, CustomCommandResultParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a command result.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CommandResult">The parsed commandResult.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCommandResultParser">A delegate to parse custom command result JSON objects.</param>
-        public static Boolean TryParse(String                                      Text,
-                                       out CommandResult                           CommandResult,
-                                       out String                                  ErrorResponse,
-                                       CustomJObjectParserDelegate<CommandResult>  CustomCommandResultParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CommandResult,
-                                out ErrorResponse,
-                                CustomCommandResultParser);
-
-            }
-            catch (Exception e)
-            {
-                CommandResult  = default;
-                ErrorResponse  = "The given text representation of a command result is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCommandResultSerializer = null, CustomDisplayTextSerializer = null)
 
         /// <summary>
@@ -308,16 +220,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="CustomCommandResultSerializer">A delegate to serialize custom command result JSON objects.</param>
         /// <param name="CustomDisplayTextSerializer">A delegate to serialize custom multi-language text JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CommandResult>  CustomCommandResultSerializer   = null,
-                              CustomJObjectSerializerDelegate<DisplayText>    CustomDisplayTextSerializer     = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CommandResult>?  CustomCommandResultSerializer   = null,
+                              CustomJObjectSerializerDelegate<DisplayText>?    CustomDisplayTextSerializer     = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("result",  Result.ToString()),
+                                 new JProperty("result",   Result.ToString()),
 
                            Message.SafeAny()
-                               ? new JProperty("message",  new JArray(Message.Select(message => message.ToJSON(CustomDisplayTextSerializer))))
+                               ? new JProperty("message",  new JArray(Message.Select(displayText => displayText.ToJSON(CustomDisplayTextSerializer))))
                                : null
 
                        );
@@ -359,7 +271,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator != (CommandResult CommandResult1,
                                            CommandResult CommandResult2)
 
-            => !(CommandResult1 == CommandResult2);
+            => !CommandResult1.Equals(CommandResult2);
 
         #endregion
 
@@ -389,7 +301,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator <= (CommandResult CommandResult1,
                                            CommandResult CommandResult2)
 
-            => !(CommandResult1 > CommandResult2);
+            => CommandResult1.CompareTo(CommandResult2) <= 0;
 
         #endregion
 
@@ -419,7 +331,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean operator >= (CommandResult CommandResult1,
                                            CommandResult CommandResult2)
 
-            => !(CommandResult1 < CommandResult2);
+            => CommandResult1.CompareTo(CommandResult2) >= 0;
 
         #endregion
 
@@ -430,10 +342,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two command results.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A command result to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is CommandResult commandResult
                    ? CompareTo(commandResult)
@@ -445,9 +357,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region CompareTo(CommandResult)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two command results.
         /// </summary>
-        /// <param name="CommandResult">An object to compare with.</param>
+        /// <param name="CommandResult">A command result to compare with.</param>
         public Int32 CompareTo(CommandResult CommandResult)
 
             => Result.CompareTo(CommandResult.Result);
@@ -461,11 +373,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two command results for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A command result to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CommandResult commandResult &&
                    Equals(commandResult);
@@ -478,7 +389,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two command results for equality.
         /// </summary>
         /// <param name="CommandResult">A command result to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(CommandResult CommandResult)
 
             => Result.Equals(CommandResult.Result) &&
@@ -502,7 +412,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             {
 
                 return Result. GetHashCode() * 3 ^
-                       Message.GetHashCode();
+                       Message.CalcHashCode();
 
             }
         }
@@ -516,8 +426,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Result, " => ",
-                             Message.AggregateWith(", "));
+            => String.Concat(
+
+                   Result,
+                   " => ",
+                   Message.AggregateWith(", ")
+
+               );
 
         #endregion
 

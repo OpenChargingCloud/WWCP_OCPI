@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -41,7 +39,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Session identification of the charging session that is requested to be stopped.
         /// </summary>
         [Mandatory]
-        public Session_Id  SessionId      { get; }
+        public Session_Id  SessionId    { get; }
 
         #endregion
 
@@ -81,94 +79,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
-        public static StopSessionCommand Parse(JObject                                          JSON,
-                                               CustomJObjectParserDelegate<StopSessionCommand>  CustomStopSessionCommandParser   = null)
+        public static StopSessionCommand Parse(JObject                                           JSON,
+                                               CustomJObjectParserDelegate<StopSessionCommand>?  CustomStopSessionCommandParser   = null)
         {
 
             if (TryParse(JSON,
-                         out StopSessionCommand  stopSessionCommand,
-                         out String              ErrorResponse,
+                         out var stopSessionCommand,
+                         out var errorResponse,
                          CustomStopSessionCommandParser))
             {
-                return stopSessionCommand;
+                return stopSessionCommand!;
             }
 
-            throw new ArgumentException("The given JSON representation of a 'stop session' command is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomStopSessionCommandParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a 'stop session' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
-        public static StopSessionCommand Parse(String                                           Text,
-                                               CustomJObjectParserDelegate<StopSessionCommand>  CustomStopSessionCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out StopSessionCommand  stopSessionCommand,
-                         out String              ErrorResponse,
-                         CustomStopSessionCommandParser))
-            {
-                return stopSessionCommand;
-            }
-
-            throw new ArgumentException("The given text representation of a 'stop session' command is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(JSON, CustomStopSessionCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'stop session' command.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
-        public static StopSessionCommand? TryParse(JObject                                          JSON,
-                                                   CustomJObjectParserDelegate<StopSessionCommand>  CustomStopSessionCommandParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out StopSessionCommand  stopSessionCommand,
-                         out String              ErrorResponse,
-                         CustomStopSessionCommandParser))
-            {
-                return stopSessionCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomStopSessionCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'stop session' command.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
-        public static StopSessionCommand? TryParse(String                                           Text,
-                                                   CustomJObjectParserDelegate<StopSessionCommand>  CustomStopSessionCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out StopSessionCommand  stopSessionCommand,
-                         out String              ErrorResponse,
-                         CustomStopSessionCommandParser))
-            {
-                return stopSessionCommand;
-            }
-
-            return default;
+            throw new ArgumentException("The given JSON representation of a 'stop session' command is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -184,9 +108,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="StopSessionCommand">The parsed 'stop session' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                 JSON,
-                                       out StopSessionCommand  StopSessionCommand,
-                                       out String              ErrorResponse)
+        public static Boolean TryParse(JObject                  JSON,
+                                       out StopSessionCommand?  StopSessionCommand,
+                                       out String?              ErrorResponse)
 
             => TryParse(JSON,
                         out StopSessionCommand,
@@ -201,10 +125,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="StopSessionCommand">The parsed 'stop session' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
-        public static Boolean TryParse(JObject                                          JSON,
-                                       out StopSessionCommand                           StopSessionCommand,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<StopSessionCommand>  CustomStopSessionCommandParser   = null)
+        public static Boolean TryParse(JObject                                           JSON,
+                                       out StopSessionCommand?                           StopSessionCommand,
+                                       out String?                                       ErrorResponse,
+                                       CustomJObjectParserDelegate<StopSessionCommand>?  CustomStopSessionCommandParser   = null)
         {
 
             try
@@ -266,48 +190,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out StopSessionCommand, out ErrorResponse, CustomStopSessionCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a 'stop session' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="StopSessionCommand">The parsed stopSessionCommand.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomStopSessionCommandParser">A delegate to parse custom 'stop session' command JSON objects.</param>
-        public static Boolean TryParse(String                                           Text,
-                                       out StopSessionCommand                           StopSessionCommand,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<StopSessionCommand>  CustomStopSessionCommandParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out StopSessionCommand,
-                                out ErrorResponse,
-                                CustomStopSessionCommandParser);
-
-            }
-            catch (Exception e)
-            {
-                StopSessionCommand  = default;
-                ErrorResponse       = "The given text representation of a 'stop session' command is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomStopSessionCommandSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomStopSessionCommandSerializer">A delegate to serialize custom 'stop session' command JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<StopSessionCommand> CustomStopSessionCommandSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<StopSessionCommand>? CustomStopSessionCommandSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -331,7 +220,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StopSessionCommand1">An 'stop session' command.</param>
+        /// <param name="StopSessionCommand1">A 'stop session' command.</param>
         /// <param name="StopSessionCommand2">Another 'stop session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (StopSessionCommand StopSessionCommand1,
@@ -355,7 +244,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StopSessionCommand1">An 'stop session' command.</param>
+        /// <param name="StopSessionCommand1">A 'stop session' command.</param>
         /// <param name="StopSessionCommand2">Another 'stop session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (StopSessionCommand StopSessionCommand1,
@@ -370,7 +259,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StopSessionCommand1">An 'stop session' command.</param>
+        /// <param name="StopSessionCommand1">A 'stop session' command.</param>
         /// <param name="StopSessionCommand2">Another 'stop session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (StopSessionCommand StopSessionCommand1,
@@ -387,7 +276,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StopSessionCommand1">An 'stop session' command.</param>
+        /// <param name="StopSessionCommand1">A 'stop session' command.</param>
         /// <param name="StopSessionCommand2">Another 'stop session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (StopSessionCommand StopSessionCommand1,
@@ -402,7 +291,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StopSessionCommand1">An 'stop session' command.</param>
+        /// <param name="StopSessionCommand1">A 'stop session' command.</param>
         /// <param name="StopSessionCommand2">Another 'stop session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (StopSessionCommand StopSessionCommand1,
@@ -419,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StopSessionCommand1">An 'stop session' command.</param>
+        /// <param name="StopSessionCommand1">A 'stop session' command.</param>
         /// <param name="StopSessionCommand2">Another 'stop session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (StopSessionCommand StopSessionCommand1,
@@ -436,10 +325,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'stop session' commands.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public override Int32 CompareTo(Object Object)
+        /// <param name="StopSessionCommand">A 'stop session' command to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
             => Object is StopSessionCommand stopSessionCommand
                    ? CompareTo(stopSessionCommand)
@@ -451,10 +340,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(StopSessionCommand)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'stop session' commands.
         /// </summary>
-        /// <param name="StopSessionCommand">An object to compare with.</param>
-        public override Int32 CompareTo(StopSessionCommand StopSessionCommand)
+        /// <param name="StopSessionCommand">A 'stop session' command to compare with.</param>
+        public override Int32 CompareTo(StopSessionCommand? StopSessionCommand)
         {
 
             if (StopSessionCommand is null)
@@ -478,11 +367,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'stop session' commands for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="StopSessionCommand">A 'stop session' command to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is StopSessionCommand stopSessionCommand &&
                    Equals(stopSessionCommand);
@@ -494,18 +382,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two 'stop session' commands for equality.
         /// </summary>
-        /// <param name="StopSessionCommand">An 'stop session' command to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public override Boolean Equals(StopSessionCommand StopSessionCommand)
-        {
+        /// <param name="StopSessionCommand">A 'stop session' command to compare with.</param>
+        public override Boolean Equals(StopSessionCommand? StopSessionCommand)
 
-            if (StopSessionCommand is null)
-                throw new ArgumentNullException(nameof(StopSessionCommand), "The given 'stop session' command must not be null!");
+            => StopSessionCommand is not null &&
 
-            return SessionId.  Equals(StopSessionCommand.SessionId) &&
-                   ResponseURL.Equals(StopSessionCommand.ResponseURL);
-
-        }
+               SessionId.  Equals(StopSessionCommand.SessionId) &&
+               ResponseURL.Equals(StopSessionCommand.ResponseURL);
 
         #endregion
 
@@ -537,8 +420,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(SessionId, " => ",
-                             ResponseURL);
+            => String.Concat(
+
+                   SessionId,
+                   " => ",
+                   ResponseURL
+
+               );
 
         #endregion
 

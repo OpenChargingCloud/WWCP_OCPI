@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -115,7 +113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                          out var errorResponse,
                          CustomCredentialsRoleParser))
             {
-                return credentialsRole;
+                return credentialsRole!;
             }
 
             throw new ArgumentException("The given JSON representation of a credentials role is invalid: " + errorResponse, nameof(JSON));
@@ -407,10 +405,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials roles.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A credentials role to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is CredentialsRole credentialsRole
                    ? CompareTo(credentialsRole)
@@ -422,22 +420,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(CredentialsRole)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials roles.
         /// </summary>
-        /// <param name="CredentialsRole">An object to compare with.</param>
-        public Int32 CompareTo(CredentialsRole CredentialsRole)
+        /// <param name="CredentialsRole">A credentials role to compare with.</param>
+        public Int32 CompareTo(CredentialsRole? CredentialsRole)
         {
 
-            if (CredentialsRole == null)
+            if (CredentialsRole is null)
                 throw new ArgumentNullException(nameof(CredentialsRole), "The given credentials role must not be null!");
 
             var c = CountryCode.CompareTo(CredentialsRole.CountryCode);
 
             if (c == 0)
-                c = PartyId.CompareTo(CredentialsRole.PartyId);
+                c = PartyId.    CompareTo(CredentialsRole.PartyId);
 
             if (c == 0)
-                c = Role.CompareTo(CredentialsRole.Role);
+                c = Role.       CompareTo(CredentialsRole.Role);
 
             return c;
 
@@ -452,11 +450,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two credentials roles for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A credentials role to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is CredentialsRole CredentialsRole &&
                    Equals(CredentialsRole);
@@ -466,13 +463,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(CredentialsRole)
 
         /// <summary>
-        /// Compares two CredentialsRoles for equality.
+        /// Compares two credentials roles for equality.
         /// </summary>
-        /// <param name="CredentialsRole">A CredentialsRole to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public Boolean Equals(CredentialsRole CredentialsRole)
+        /// <param name="CredentialsRole">A credentials role to compare with.</param>
+        public Boolean Equals(CredentialsRole? CredentialsRole)
 
-            => !(CredentialsRole is null) &&
+            => CredentialsRole is not null &&
 
                Role.           Equals(CredentialsRole.Role)            &&
                BusinessDetails.Equals(CredentialsRole.BusinessDetails) &&
@@ -511,9 +507,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(CountryCode, "*", PartyId,
-                             " ", Role, " ",
-                             " => '", BusinessDetails.Name, "'");
+            => String.Concat(
+
+                   CountryCode,
+                   "*",
+                   PartyId,
+                   " ",
+                   Role,
+
+                   " => '",
+                   BusinessDetails.Name,
+                   "'"
+
+               );
 
         #endregion
 

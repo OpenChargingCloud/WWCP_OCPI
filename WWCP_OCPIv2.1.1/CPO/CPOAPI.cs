@@ -3515,6 +3515,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
+
             // Commands
 
             #region ~/commands/RESERVE_NOW
@@ -3571,20 +3572,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse ReserveNow command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject ReserveNowJSON, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var reserveNowJSON, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!ReserveNowCommand.TryParse(ReserveNowJSON,
-                                                                        out ReserveNowCommand  reserveNowCommand,
-                                                                        out String             ErrorResponse
-                                                                        //CountryCode,
-                                                                        //PartyId
-                                                                        ))
+                                        if (!ReserveNowCommand.TryParse(reserveNowJSON,
+                                                                        out var reserveNowCommand,
+                                                                        out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'RESERVE_NOW' command JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'RESERVE_NOW' command JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -3597,8 +3595,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
+                                        // ToDo: RESERVE_NOW!
 
-                                        // ToDo: ReserveNow!
+
                                         var commandResponse  = new CommandResponse(
                                                                    reserveNowCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
@@ -3680,15 +3679,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse CancelReservation command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject CancelReservationJSON, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var cancelReservationJSON, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CancelReservationCommand.TryParse(CancelReservationJSON,
-                                                                               out CancelReservationCommand  cancelReservationCommand,
-                                                                               out String                    ErrorResponse
-                                                                               //CountryCode,
-                                                                               //PartyId
-                                                                               ))
+                                        if (!CancelReservationCommand.TryParse(cancelReservationJSON,
+                                                                               out var cancelReservationCommand,
+                                                                               out var ErrorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3706,7 +3702,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: ReserveNow!
+                                        // ToDo: CANCEL_RESERVATION!
+
+
                                         var commandResponse  = new CommandResponse(
                                                                    cancelReservationCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
@@ -3788,20 +3786,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse StartSession command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject startSessionJSON, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var startSessionJSON, out var ocpiResponse))
+                                            return ocpiResponse;
 
                                         if (!StartSessionCommand.TryParse(startSessionJSON,
-                                                                          out StartSessionCommand  startSessionCommand,
-                                                                          out String               ErrorResponse
-                                                                          //CountryCode,
-                                                                          //PartyId
-                                                                          ))
+                                                                          out var startSessionCommand,
+                                                                          out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'START_SESSION' command JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'START_SESSION' command JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -3814,7 +3809,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: ReserveNow!
+                                        // ToDo: START_SESSION!
+
+
                                         var commandResponse  = new CommandResponse(
                                                                    startSessionCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
@@ -3896,20 +3893,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse StopSession command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject stopSessionJSON, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var stopSessionJSON, out var ocpiResponse))
+                                            return ocpiResponse;
 
                                         if (!StopSessionCommand.TryParse(stopSessionJSON,
-                                                                          out StopSessionCommand  stopSessionCommand,
-                                                                          out String              ErrorResponse
-                                                                          //CountryCode,
-                                                                          //PartyId
-                                                                          ))
+                                                                          out var stopSessionCommand,
+                                                                          out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'STOP_SESSION' command JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'STOP_SESSION' command JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -3922,7 +3916,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: ReserveNow!
+                                        // ToDo: STOP_SESSION!
+
+
                                         var commandResponse  = new CommandResponse(
                                                                    stopSessionCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,
@@ -4004,17 +4000,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse UnlockConnector command JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject unlockConnectorJSON, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var unlockConnectorJSON, out var ocpiResponse))
+                                            return ocpiResponse;
 
                                         if (!UnlockConnectorCommand.TryParse(unlockConnectorJSON,
-                                                                             out UnlockConnectorCommand  unlockConnectorCommand,
-                                                                             out String                  ErrorResponse))
+                                                                             out var unlockConnectorCommand,
+                                                                             out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'UNLOCK_CONNECTOR' command JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'UNLOCK_CONNECTOR' command JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -4027,7 +4023,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        // ToDo: ReserveNow!
+                                        // ToDo: UNLOCK_CONNECTOR!
+
+
                                         var commandResponse  = new CommandResponse(
                                                                    unlockConnectorCommand,
                                                                    CommandResponseTypes.NOT_SUPPORTED,

@@ -4186,7 +4186,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                        Reservation_Id           ReservationId,
                        Location_Id              LocationId,
                        EVSE_UId?                EVSEUId                  = null,
-                       AuthorizationReference?  AuthorizationReference   = null,
 
                        Command_Id?              CommandId                = null,
                        Request_Id?              RequestId                = null,
@@ -4258,7 +4257,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
                                                            EVSEUId,
-                                                           AuthorizationReference,
                                                            requestId,
                                                            correlationId);
 
@@ -4620,7 +4618,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             StartSession(Token                    Token,
                          Location_Id              LocationId,
                          EVSE_UId?                EVSEUId                  = null,
-                         AuthorizationReference?  AuthorizationReference   = null,
 
                          Command_Id?              CommandId                = null,
                          Request_Id?              RequestId                = null,
@@ -4690,7 +4687,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              MyCommonAPI.GetModuleURL(Module_Id.Commands,
                                                                                       SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
                                                              EVSEUId,
-                                                             AuthorizationReference,
                                                              requestId,
                                                              correlationId);
 
@@ -4751,26 +4747,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<StartSessionCommand, CommandResponse>(null,
-                                                                                      default,
-                                                                                      -1,
-                                                                                      "No remote URL available!");
+                    response = OCPIResponse<StartSessionCommand, CommandResponse>.Error("No remote URL available!");
 
 
-                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out CommandValues commandValues))
+                if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
 
             }
 
             catch (Exception e)
             {
-
-                response = new OCPIResponse<StartSessionCommand, CommandResponse>(null,
-                                                                                  default,
-                                                                                  -1,
-                                                                                  e.Message,
-                                                                                  e.StackTrace);
-
+                response = OCPIResponse<StartSessionCommand, CommandResponse>.Exception(e);
             }
 
 

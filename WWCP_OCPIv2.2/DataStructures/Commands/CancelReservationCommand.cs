@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -83,94 +81,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
-        public static CancelReservationCommand Parse(JObject                                                JSON,
-                                                     CustomJObjectParserDelegate<CancelReservationCommand>  CustomCancelReservationCommandParser   = null)
+        public static CancelReservationCommand Parse(JObject                                                 JSON,
+                                                     CustomJObjectParserDelegate<CancelReservationCommand>?  CustomCancelReservationCommandParser   = null)
         {
 
             if (TryParse(JSON,
-                         out CancelReservationCommand  stopReservationCommand,
-                         out String                    ErrorResponse,
+                         out var cancelReservationCommand,
+                         out var errorResponse,
                          CustomCancelReservationCommandParser))
             {
-                return stopReservationCommand;
+                return cancelReservationCommand!;
             }
 
-            throw new ArgumentException("The given JSON representation of a 'cancel reservation' command is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomCancelReservationCommandParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a 'cancel reservation' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
-        public static CancelReservationCommand Parse(String                                                 Text,
-                                                     CustomJObjectParserDelegate<CancelReservationCommand>  CustomCancelReservationCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CancelReservationCommand  stopReservationCommand,
-                         out String                    ErrorResponse,
-                         CustomCancelReservationCommandParser))
-            {
-                return stopReservationCommand;
-            }
-
-            throw new ArgumentException("The given text representation of a 'cancel reservation' command is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(JSON, CustomCancelReservationCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'cancel reservation' command.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
-        public static CancelReservationCommand? TryParse(JObject                                                JSON,
-                                                         CustomJObjectParserDelegate<CancelReservationCommand>  CustomCancelReservationCommandParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out CancelReservationCommand  stopReservationCommand,
-                         out String                    ErrorResponse,
-                         CustomCancelReservationCommandParser))
-            {
-                return stopReservationCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomCancelReservationCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'cancel reservation' command.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
-        public static CancelReservationCommand? TryParse(String                                                 Text,
-                                                         CustomJObjectParserDelegate<CancelReservationCommand>  CustomCancelReservationCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out CancelReservationCommand  stopReservationCommand,
-                         out String                    ErrorResponse,
-                         CustomCancelReservationCommandParser))
-            {
-                return stopReservationCommand;
-            }
-
-            return default;
+            throw new ArgumentException("The given JSON representation of a 'cancel reservation' command is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -186,9 +110,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CancelReservationCommand">The parsed 'cancel reservation' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                       JSON,
-                                       out CancelReservationCommand  CancelReservationCommand,
-                                       out String                    ErrorResponse)
+        public static Boolean TryParse(JObject                        JSON,
+                                       out CancelReservationCommand?  CancelReservationCommand,
+                                       out String?                    ErrorResponse)
 
             => TryParse(JSON,
                         out CancelReservationCommand,
@@ -203,10 +127,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CancelReservationCommand">The parsed 'cancel reservation' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
-        public static Boolean TryParse(JObject                                                JSON,
-                                       out CancelReservationCommand                           CancelReservationCommand,
-                                       out String                                             ErrorResponse,
-                                       CustomJObjectParserDelegate<CancelReservationCommand>  CustomCancelReservationCommandParser   = null)
+        public static Boolean TryParse(JObject                                                 JSON,
+                                       out CancelReservationCommand?                           CancelReservationCommand,
+                                       out String?                                             ErrorResponse,
+                                       CustomJObjectParserDelegate<CancelReservationCommand>?  CustomCancelReservationCommandParser   = null)
         {
 
             try
@@ -268,48 +192,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out CancelReservationCommand, out ErrorResponse, CustomCancelReservationCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a 'cancel reservation' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CancelReservationCommand">The parsed stopReservationCommand.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomCancelReservationCommandParser">A delegate to parse custom 'cancel reservation' command JSON objects.</param>
-        public static Boolean TryParse(String                                                 Text,
-                                       out CancelReservationCommand                           CancelReservationCommand,
-                                       out String                                             ErrorResponse,
-                                       CustomJObjectParserDelegate<CancelReservationCommand>  CustomCancelReservationCommandParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out CancelReservationCommand,
-                                out ErrorResponse,
-                                CustomCancelReservationCommandParser);
-
-            }
-            catch (Exception e)
-            {
-                CancelReservationCommand  = default;
-                ErrorResponse             = "The given text representation of a 'cancel reservation' command is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomCancelReservationCommandSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomCancelReservationCommandSerializer">A delegate to serialize custom 'cancel reservation' command JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CancelReservationCommand> CustomCancelReservationCommandSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<CancelReservationCommand>? CustomCancelReservationCommandSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -333,7 +222,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CancelReservationCommand1">An 'cancel reservation' command.</param>
+        /// <param name="CancelReservationCommand1">A 'cancel reservation' command.</param>
         /// <param name="CancelReservationCommand2">Another 'cancel reservation' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (CancelReservationCommand CancelReservationCommand1,
@@ -357,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CancelReservationCommand1">An 'cancel reservation' command.</param>
+        /// <param name="CancelReservationCommand1">A 'cancel reservation' command.</param>
         /// <param name="CancelReservationCommand2">Another 'cancel reservation' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (CancelReservationCommand CancelReservationCommand1,
@@ -372,7 +261,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CancelReservationCommand1">An 'cancel reservation' command.</param>
+        /// <param name="CancelReservationCommand1">A 'cancel reservation' command.</param>
         /// <param name="CancelReservationCommand2">Another 'cancel reservation' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (CancelReservationCommand CancelReservationCommand1,
@@ -389,7 +278,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CancelReservationCommand1">An 'cancel reservation' command.</param>
+        /// <param name="CancelReservationCommand1">A 'cancel reservation' command.</param>
         /// <param name="CancelReservationCommand2">Another 'cancel reservation' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (CancelReservationCommand CancelReservationCommand1,
@@ -404,7 +293,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CancelReservationCommand1">An 'cancel reservation' command.</param>
+        /// <param name="CancelReservationCommand1">A 'cancel reservation' command.</param>
         /// <param name="CancelReservationCommand2">Another 'cancel reservation' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (CancelReservationCommand CancelReservationCommand1,
@@ -421,7 +310,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="CancelReservationCommand1">An 'cancel reservation' command.</param>
+        /// <param name="CancelReservationCommand1">A 'cancel reservation' command.</param>
         /// <param name="CancelReservationCommand2">Another 'cancel reservation' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (CancelReservationCommand CancelReservationCommand1,
@@ -438,13 +327,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'cancel reservation' commands.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public override Int32 CompareTo(Object Object)
+        /// <param name="Object">A 'cancel reservation' command to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
-            => Object is CancelReservationCommand stopReservationCommand
-                   ? CompareTo(stopReservationCommand)
+            => Object is CancelReservationCommand cancelReservationCommand
+                   ? CompareTo(cancelReservationCommand)
                    : throw new ArgumentException("The given object is not a 'cancel reservation' command!",
                                                  nameof(Object));
 
@@ -453,10 +342,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(CancelReservationCommand)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'cancel reservation' commands.
         /// </summary>
-        /// <param name="CancelReservationCommand">An object to compare with.</param>
-        public override Int32 CompareTo(CancelReservationCommand CancelReservationCommand)
+        /// <param name="CancelReservationCommand">A 'cancel reservation' command to compare with.</param>
+        public override Int32 CompareTo(CancelReservationCommand? CancelReservationCommand)
         {
 
             if (CancelReservationCommand is null)
@@ -480,14 +369,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'cancel reservation' commands for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A 'cancel reservation' command to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is CancelReservationCommand stopReservationCommand &&
-                   Equals(stopReservationCommand);
+            => Object is CancelReservationCommand cancelReservationCommand &&
+                   Equals(cancelReservationCommand);
 
         #endregion
 
@@ -496,18 +384,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two 'cancel reservation' commands for equality.
         /// </summary>
-        /// <param name="CancelReservationCommand">An 'cancel reservation' command to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public override Boolean Equals(CancelReservationCommand CancelReservationCommand)
-        {
+        /// <param name="CancelReservationCommand">A 'cancel reservation' command to compare with.</param>
+        public override Boolean Equals(CancelReservationCommand? CancelReservationCommand)
 
-            if (CancelReservationCommand is null)
-                throw new ArgumentNullException(nameof(CancelReservationCommand), "The given 'cancel reservation' command must not be null!");
+            => CancelReservationCommand is not null &&
 
-            return ReservationId.Equals(CancelReservationCommand.ReservationId) &&
-                   ResponseURL.  Equals(CancelReservationCommand.ResponseURL);
-
-        }
+               ReservationId.Equals(CancelReservationCommand.ReservationId) &&
+               ResponseURL.  Equals(CancelReservationCommand.ResponseURL);
 
         #endregion
 
@@ -539,8 +422,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(ReservationId, " => ",
-                             ResponseURL);
+            => String.Concat(
+
+                   ReservationId,
+                   " => ",
+                   ResponseURL
+
+               );
 
         #endregion
 

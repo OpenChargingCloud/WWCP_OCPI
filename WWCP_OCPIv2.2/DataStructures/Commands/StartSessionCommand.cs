@@ -138,31 +138,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(JSON, CustomStartSessionCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'start session' command.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomStartSessionCommandParser">A delegate to parse custom 'start session' command JSON objects.</param>
-        public static StartSessionCommand? TryParse(JObject                                            JSON,
-                                                    CustomJObjectParserDelegate<StartSessionCommand>?  CustomStartSessionCommandParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out var startSessionCommand,
-                         out var errorResponse,
-                         CustomStartSessionCommandParser))
-            {
-                return startSessionCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
         #region (static) TryParse(JSON, out StartSessionCommand, out ErrorResponse, CustomStartSessionCommandParser = null)
 
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
@@ -369,7 +344,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StartSessionCommand1">An 'start session' command.</param>
+        /// <param name="StartSessionCommand1">A 'start session' command.</param>
         /// <param name="StartSessionCommand2">Another 'start session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (StartSessionCommand StartSessionCommand1,
@@ -393,7 +368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StartSessionCommand1">An 'start session' command.</param>
+        /// <param name="StartSessionCommand1">A 'start session' command.</param>
         /// <param name="StartSessionCommand2">Another 'start session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (StartSessionCommand StartSessionCommand1,
@@ -408,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StartSessionCommand1">An 'start session' command.</param>
+        /// <param name="StartSessionCommand1">A 'start session' command.</param>
         /// <param name="StartSessionCommand2">Another 'start session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (StartSessionCommand StartSessionCommand1,
@@ -425,7 +400,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StartSessionCommand1">An 'start session' command.</param>
+        /// <param name="StartSessionCommand1">A 'start session' command.</param>
         /// <param name="StartSessionCommand2">Another 'start session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (StartSessionCommand StartSessionCommand1,
@@ -440,7 +415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StartSessionCommand1">An 'start session' command.</param>
+        /// <param name="StartSessionCommand1">A 'start session' command.</param>
         /// <param name="StartSessionCommand2">Another 'start session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (StartSessionCommand StartSessionCommand1,
@@ -457,7 +432,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="StartSessionCommand1">An 'start session' command.</param>
+        /// <param name="StartSessionCommand1">A 'start session' command.</param>
         /// <param name="StartSessionCommand2">Another 'start session' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (StartSessionCommand StartSessionCommand1,
@@ -578,14 +553,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Token.                   GetHashCode()       * 23 ^
-                       LocationId.              GetHashCode()       * 19 ^
-                       RequestId.               GetHashCode()       * 13 ^
-                       CorrelationId.           GetHashCode()       * 11 ^
-                       ResponseURL.             GetHashCode()       *  7 ^
-                       (EVSEUId?.               GetHashCode() ?? 0) *  5 ^
-                       (ConnectorId?.           GetHashCode() ?? 0) *  3 ^
-                        AuthorizationReference?.GetHashCode() ?? 0;
+                return Token.                  GetHashCode()       * 23 ^
+                       LocationId.             GetHashCode()       * 19 ^
+                       RequestId.              GetHashCode()       * 13 ^
+                       CorrelationId.          GetHashCode()       * 11 ^
+                       ResponseURL.            GetHashCode()       *  7 ^
+                      (EVSEUId?.               GetHashCode() ?? 0) *  5 ^
+                      (ConnectorId?.           GetHashCode() ?? 0) *  3 ^
+                       AuthorizationReference?.GetHashCode() ?? 0;
 
             }
         }

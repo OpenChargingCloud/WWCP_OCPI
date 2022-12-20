@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -42,7 +40,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// The EVSE will indicate if it was able to process the new/updated charging profile.
         /// </summary>
         [Mandatory]
-        public ChargingProfileResultTypes  Result     { get; }
+        public ChargingProfileResultTypes  Result    { get; }
 
         #endregion
 
@@ -55,7 +53,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public ChargingProfileResult(ChargingProfileResultTypes  Result)
         {
 
-            this.Result  = Result;
+            this.Result = Result;
  
         }
 
@@ -69,44 +67,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingProfileResultParser">A delegate to parse custom  charging profile result JSON objects.</param>
-        public static ChargingProfileResult Parse(JObject                                             JSON,
-                                                  CustomJObjectParserDelegate<ChargingProfileResult>  CustomChargingProfileResultParser   = null)
+        public static ChargingProfileResult Parse(JObject                                              JSON,
+                                                  CustomJObjectParserDelegate<ChargingProfileResult>?  CustomChargingProfileResultParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingProfileResult  ChargingProfileResult,
-                         out String                 ErrorResponse,
+                         out var ChargingProfileResult,
+                         out var errorResponse,
                          CustomChargingProfileResultParser))
             {
                 return ChargingProfileResult;
             }
 
-            throw new ArgumentException("The given JSON representation of a charging profile result is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomChargingProfileResultParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a charging profile result.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomChargingProfileResultParser">A delegate to parse custom  charging profile result JSON objects.</param>
-        public static ChargingProfileResult Parse(String                                              Text,
-                                                  CustomJObjectParserDelegate<ChargingProfileResult>  CustomChargingProfileResultParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingProfileResult  ChargingProfileResult,
-                         out String                 ErrorResponse,
-                         CustomChargingProfileResultParser))
-            {
-                return ChargingProfileResult;
-            }
-
-            throw new ArgumentException("The given text representation of a charging profile result is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a charging profile result is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -119,38 +93,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingProfileResultParser">A delegate to parse custom  charging profile result JSON objects.</param>
-        public static ChargingProfileResult? TryParse(JObject                                             JSON,
-                                                      CustomJObjectParserDelegate<ChargingProfileResult>  CustomChargingProfileResultParser   = null)
+        public static ChargingProfileResult? TryParse(JObject                                              JSON,
+                                                      CustomJObjectParserDelegate<ChargingProfileResult>?  CustomChargingProfileResultParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingProfileResult  ChargingProfileResult,
-                         out String                 ErrorResponse,
-                         CustomChargingProfileResultParser))
-            {
-                return ChargingProfileResult;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomChargingProfileResultParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charging profile result.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomChargingProfileResultParser">A delegate to parse custom  charging profile result JSON objects.</param>
-        public static ChargingProfileResult? TryParse(String                                              Text,
-                                                      CustomJObjectParserDelegate<ChargingProfileResult>  CustomChargingProfileResultParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingProfileResult  ChargingProfileResult,
-                         out String                 ErrorResponse,
+                         out var ChargingProfileResult,
+                         out var errorResponse,
                          CustomChargingProfileResultParser))
             {
                 return ChargingProfileResult;
@@ -174,7 +123,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                    JSON,
                                        out ChargingProfileResult  ChargingProfileResult,
-                                       out String                 ErrorResponse)
+                                       out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out ChargingProfileResult,
@@ -189,10 +138,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ChargingProfileResult">The parsed  charging profile result.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomChargingProfileResultParser">A delegate to parse custom  charging profile result JSON objects.</param>
-        public static Boolean TryParse(JObject                                             JSON,
-                                       out ChargingProfileResult                           ChargingProfileResult,
-                                       out String                                          ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingProfileResult>  CustomChargingProfileResultParser   = null)
+        public static Boolean TryParse(JObject                                              JSON,
+                                       out ChargingProfileResult                            ChargingProfileResult,
+                                       out String?                                          ErrorResponse,
+                                       CustomJObjectParserDelegate<ChargingProfileResult>?  CustomChargingProfileResultParser   = null)
         {
 
             try
@@ -206,7 +155,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Result      [mandatory]
+                #region Parse Result    [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("result",
                                              "charging profile result",
@@ -239,48 +188,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out ChargingProfileResult, out ErrorResponse, CustomChargingProfileResultParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a charging profile result.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ChargingProfileResult">The parsed charging profileResponse.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomChargingProfileResultParser">A delegate to parse custom  charging profile result JSON objects.</param>
-        public static Boolean TryParse(String                                              Text,
-                                       out ChargingProfileResult                           ChargingProfileResult,
-                                       out String                                          ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingProfileResult>  CustomChargingProfileResultParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ChargingProfileResult,
-                                out ErrorResponse,
-                                CustomChargingProfileResultParser);
-
-            }
-            catch (Exception e)
-            {
-                ChargingProfileResult  = default;
-                ErrorResponse          = "The given text representation of a charging profile result is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomChargingProfileResultSerializer = null, CustomChargingProfileSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomChargingProfileResultSerializer">A delegate to serialize custom  charging profile result JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfileResult> CustomChargingProfileResultSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfileResult>? CustomChargingProfileResultSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -324,7 +238,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (ChargingProfileResult ChargingProfileResult1,
                                            ChargingProfileResult ChargingProfileResult2)
 
-            => !(ChargingProfileResult1 == ChargingProfileResult2);
+            => !ChargingProfileResult1.Equals(ChargingProfileResult2);
 
         #endregion
 
@@ -354,7 +268,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (ChargingProfileResult ChargingProfileResult1,
                                            ChargingProfileResult ChargingProfileResult2)
 
-            => !(ChargingProfileResult1 > ChargingProfileResult2);
+            => ChargingProfileResult1.CompareTo(ChargingProfileResult2) <= 0;
 
         #endregion
 
@@ -384,7 +298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (ChargingProfileResult ChargingProfileResult1,
                                            ChargingProfileResult ChargingProfileResult2)
 
-            => !(ChargingProfileResult1 < ChargingProfileResult2);
+            => ChargingProfileResult1.CompareTo(ChargingProfileResult2) >= 0;
 
         #endregion
 
@@ -395,10 +309,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'charging profile' results.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A 'charging profile' result to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ChargingProfileResult chargingProfileResult
                    ? CompareTo(chargingProfileResult)
@@ -410,9 +324,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(ChargingProfileResult)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'charging profile' results.
         /// </summary>
-        /// <param name="ChargingProfileResult">An object to compare with.</param>
+        /// <param name="ChargingProfileResult">A 'charging profile' result to compare with.</param>
         public Int32 CompareTo(ChargingProfileResult ChargingProfileResult)
 
             => Result.CompareTo(ChargingProfileResult.Result);
@@ -426,11 +340,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'charging profile' results for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="ChargingProfileResult">A 'charging profile' result to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ChargingProfileResult chargingProfileResult &&
                    Equals(chargingProfileResult);
@@ -440,10 +353,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(ChargingProfileResult)
 
         /// <summary>
-        /// Compares two  charging profile results for equality.
+        /// Compares two 'charging profile' results for equality.
         /// </summary>
-        /// <param name="ChargingProfileResult">A charging profile result to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="ChargingProfileResult">A 'charging profile' result to compare with.</param>
         public Boolean Equals(ChargingProfileResult ChargingProfileResult)
 
             => Result.Equals(ChargingProfileResult.Result);

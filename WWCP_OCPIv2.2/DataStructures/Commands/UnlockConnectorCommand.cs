@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -100,94 +98,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
-        public static UnlockConnectorCommand Parse(JObject                                              JSON,
-                                                   CustomJObjectParserDelegate<UnlockConnectorCommand>  CustomUnlockConnectorCommandParser   = null)
+        public static UnlockConnectorCommand Parse(JObject                                               JSON,
+                                                   CustomJObjectParserDelegate<UnlockConnectorCommand>?  CustomUnlockConnectorCommandParser   = null)
         {
 
             if (TryParse(JSON,
-                         out UnlockConnectorCommand  unlockConnectorCommand,
-                         out String                  ErrorResponse,
+                         out var unlockConnectorCommand,
+                         out var errorResponse,
                          CustomUnlockConnectorCommandParser))
             {
-                return unlockConnectorCommand;
+                return unlockConnectorCommand!;
             }
 
-            throw new ArgumentException("The given JSON representation of an 'unlock connector' command is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomUnlockConnectorCommandParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an 'unlock connector' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
-        public static UnlockConnectorCommand Parse(String                                               Text,
-                                                   CustomJObjectParserDelegate<UnlockConnectorCommand>  CustomUnlockConnectorCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out UnlockConnectorCommand  unlockConnectorCommand,
-                         out String                  ErrorResponse,
-                         CustomUnlockConnectorCommandParser))
-            {
-                return unlockConnectorCommand;
-            }
-
-            throw new ArgumentException("The given text representation of an 'unlock connector' command is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(JSON, CustomUnlockConnectorCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'unlock connector' command.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
-        public static UnlockConnectorCommand? TryParse(JObject                                              JSON,
-                                                       CustomJObjectParserDelegate<UnlockConnectorCommand>  CustomUnlockConnectorCommandParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out UnlockConnectorCommand  unlockConnectorCommand,
-                         out String                  ErrorResponse,
-                         CustomUnlockConnectorCommandParser))
-            {
-                return unlockConnectorCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomUnlockConnectorCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'unlock connector' command.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
-        public static UnlockConnectorCommand? TryParse(String                                               Text,
-                                                       CustomJObjectParserDelegate<UnlockConnectorCommand>  CustomUnlockConnectorCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out UnlockConnectorCommand  unlockConnectorCommand,
-                         out String                  ErrorResponse,
-                         CustomUnlockConnectorCommandParser))
-            {
-                return unlockConnectorCommand;
-            }
-
-            return default;
+            throw new ArgumentException("The given JSON representation of an 'unlock connector' command is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -203,9 +127,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="UnlockConnectorCommand">The parsed 'unlock connector' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                     JSON,
-                                       out UnlockConnectorCommand  UnlockConnectorCommand,
-                                       out String                  ErrorResponse)
+        public static Boolean TryParse(JObject                      JSON,
+                                       out UnlockConnectorCommand?  UnlockConnectorCommand,
+                                       out String?                  ErrorResponse)
 
             => TryParse(JSON,
                         out UnlockConnectorCommand,
@@ -220,10 +144,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="UnlockConnectorCommand">The parsed 'unlock connector' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
-        public static Boolean TryParse(JObject                                              JSON,
-                                       out UnlockConnectorCommand                           UnlockConnectorCommand,
-                                       out String                                           ErrorResponse,
-                                       CustomJObjectParserDelegate<UnlockConnectorCommand>  CustomUnlockConnectorCommandParser   = null)
+        public static Boolean TryParse(JObject                                               JSON,
+                                       out UnlockConnectorCommand?                           UnlockConnectorCommand,
+                                       out String?                                           ErrorResponse,
+                                       CustomJObjectParserDelegate<UnlockConnectorCommand>?  CustomUnlockConnectorCommandParser   = null)
         {
 
             try
@@ -237,7 +161,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse LocationId        [mandatory]
+                #region Parse LocationId     [mandatory]
 
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
@@ -250,7 +174,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse EVSEUId           [mandatory]
+                #region Parse EVSEUId        [mandatory]
 
                 if (!JSON.ParseMandatory("evse_uid",
                                          "EVSE identification",
@@ -263,7 +187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ConnectorId       [mandatory]
+                #region Parse ConnectorId    [mandatory]
 
                 if (!JSON.ParseMandatory("connector_id",
                                          "connector identification",
@@ -276,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ResponseURL       [mandatory]
+                #region Parse ResponseURL    [mandatory]
 
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
@@ -313,48 +237,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out UnlockConnectorCommand, out ErrorResponse, CustomUnlockConnectorCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an 'unlock connector' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="UnlockConnectorCommand">The parsed unlockConnectorCommand.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomUnlockConnectorCommandParser">A delegate to parse custom 'unlock connector' command JSON objects.</param>
-        public static Boolean TryParse(String                                               Text,
-                                       out UnlockConnectorCommand                           UnlockConnectorCommand,
-                                       out String                                           ErrorResponse,
-                                       CustomJObjectParserDelegate<UnlockConnectorCommand>  CustomUnlockConnectorCommandParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out UnlockConnectorCommand,
-                                out ErrorResponse,
-                                CustomUnlockConnectorCommandParser);
-
-            }
-            catch (Exception e)
-            {
-                UnlockConnectorCommand  = default;
-                ErrorResponse           = "The given text representation of an 'unlock connector' command is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomUnlockConnectorCommandSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomUnlockConnectorCommandSerializer">A delegate to serialize custom 'unlock connector' command JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<UnlockConnectorCommand> CustomUnlockConnectorCommandSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<UnlockConnectorCommand>? CustomUnlockConnectorCommandSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -485,10 +374,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'unlock connector' commands.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public override Int32 CompareTo(Object Object)
+        /// <param name="Object">An 'unlock connector' command to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
             => Object is UnlockConnectorCommand unlockConnectorCommand
                    ? CompareTo(unlockConnectorCommand)
@@ -500,10 +389,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(UnlockConnectorCommand)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'unlock connector' commands.
         /// </summary>
-        /// <param name="UnlockConnectorCommand">An object to compare with.</param>
-        public override Int32 CompareTo(UnlockConnectorCommand UnlockConnectorCommand)
+        /// <param name="UnlockConnectorCommand">An 'unlock connector' command to compare with.</param>
+        public override Int32 CompareTo(UnlockConnectorCommand? UnlockConnectorCommand)
         {
 
             if (UnlockConnectorCommand is null)
@@ -533,11 +422,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'unlock connector' commands for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">An 'unlock connector' command to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is UnlockConnectorCommand unlockConnectorCommand &&
                    Equals(unlockConnectorCommand);
@@ -550,19 +438,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two 'unlock connector' commands for equality.
         /// </summary>
         /// <param name="UnlockConnectorCommand">An 'unlock connector' command to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public override Boolean Equals(UnlockConnectorCommand UnlockConnectorCommand)
-        {
+        public override Boolean Equals(UnlockConnectorCommand? UnlockConnectorCommand)
 
-            if (UnlockConnectorCommand is null)
-                throw new ArgumentNullException(nameof(UnlockConnectorCommand), "The given 'unlock connector' command must not be null!");
+            => UnlockConnectorCommand is not null &&
 
-            return LocationId. Equals(UnlockConnectorCommand.LocationId)  &&
-                   EVSEUId.    Equals(UnlockConnectorCommand.EVSEUId)     &&
-                   ConnectorId.Equals(UnlockConnectorCommand.ConnectorId) &&
-                   ResponseURL.Equals(UnlockConnectorCommand.ResponseURL);
-
-        }
+               LocationId. Equals(UnlockConnectorCommand.LocationId)  &&
+               EVSEUId.    Equals(UnlockConnectorCommand.EVSEUId)     &&
+               ConnectorId.Equals(UnlockConnectorCommand.ConnectorId) &&
+               ResponseURL.Equals(UnlockConnectorCommand.ResponseURL);
 
         #endregion
 
@@ -596,10 +479,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(LocationId,  " / ",
-                             EVSEUId,     " / ",
-                             ConnectorId, " => ",
-                             ResponseURL);
+            => String.Concat(
+
+                   LocationId,
+                   " / ",
+                   EVSEUId,
+                   " / ",
+                   ConnectorId,
+                   " => ",
+                   ResponseURL
+
+               );
 
         #endregion
 

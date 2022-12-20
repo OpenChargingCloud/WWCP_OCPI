@@ -1412,35 +1412,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #endregion
 
-                                             #region Parse AuthorizationReference    [optional]
-
-                                             if (JSON.ParseOptional("authorizationReference",
-                                                                    "authorization reference",
-                                                                    OCPIv2_1_1.AuthorizationReference.TryParse,
-                                                                    out AuthorizationReference? AuthorizationReference,
-                                                                    out                         ErrorResponse))
-                                             {
-
-                                                 if (ErrorResponse != null)
-                                                     return new HTTPResponse.Builder(Request) {
-                                                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                                Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = Timestamp.Now,
-                                                                AccessControlAllowOrigin   = "*",
-                                                                AccessControlAllowMethods  = "GET, SET",
-                                                                AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
-                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                               ErrorResponse).
-                                                                                                        ToJSON().
-                                                                                                        ToUTF8Bytes(),
-                                                                Connection                 = "close"
-                                                            }.AsImmutable;
-
-                                             }
-
-                                             #endregion
-
                                              #endregion
 
                                              #region Get EMSP client
@@ -1470,8 +1441,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                                 ExpirationTimestamp,
                                                                                                 ReservationId,
                                                                                                 LocationId,
-                                                                                                EVSEUId,
-                                                                                                AuthorizationReference);
+                                                                                                EVSEUId);
 
                                              return 
                                                         //HTTPOrganizations.Contains(RemoteParty.Owner) ||
@@ -2170,35 +2140,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              #endregion
 
-                                             #region Parse AuthorizationReference    [optional]
-
-                                             if (JSON.ParseOptional("authorizationReference",
-                                                                    "authorization reference",
-                                                                    OCPIv2_1_1.AuthorizationReference.TryParse,
-                                                                    out AuthorizationReference? AuthorizationReference,
-                                                                    out                         ErrorResponse))
-                                             {
-
-                                                 if (ErrorResponse != null)
-                                                     return new HTTPResponse.Builder(Request) {
-                                                                HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                                                                Server                     = HTTPServer.DefaultServerName,
-                                                                Date                       = Timestamp.Now,
-                                                                AccessControlAllowOrigin   = "*",
-                                                                AccessControlAllowMethods  = "GET, SET",
-                                                                AccessControlAllowHeaders  = "Content-Type, Accept, Authorization",
-                                                                ContentType                = HTTPContentType.JSON_UTF8,
-                                                                Content                    = I18NString.Create(org.GraphDefined.Vanaheimr.Illias.Languages.en,
-                                                                                                               ErrorResponse).
-                                                                                                        ToJSON().
-                                                                                                        ToUTF8Bytes(),
-                                                                Connection                 = "close"
-                                                            }.AsImmutable;
-
-                                             }
-
-                                             #endregion
-
                                              #endregion
 
                                              #region Get EMSP client
@@ -2226,8 +2167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
                                              var startSessionResult = await emspClient.StartSession(Token,
                                                                                                     LocationId,
-                                                                                                    EVSEUId,
-                                                                                                    AuthorizationReference);
+                                                                                                    EVSEUId);
 
                                              return 
                                                         //HTTPOrganizations.Contains(RemoteParty.Owner) ||

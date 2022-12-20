@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -81,94 +79,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomSetChargingProfileParserCommand">A delegate to parse custom 'set charging profile' command JSON objects.</param>
-        public static SetChargingProfileCommand Parse(JObject                                          JSON,
-                                               CustomJObjectParserDelegate<SetChargingProfileCommand>  CustomSetChargingProfileParserCommand   = null)
+        public static SetChargingProfileCommand Parse(JObject                                           JSON,
+                                               CustomJObjectParserDelegate<SetChargingProfileCommand>?  CustomSetChargingProfileParserCommand   = null)
         {
 
             if (TryParse(JSON,
-                         out SetChargingProfileCommand  setChargingProfileCommand,
-                         out String                     ErrorResponse,
+                         out var setChargingProfileCommandCommand,
+                         out var errorResponse,
                          CustomSetChargingProfileParserCommand))
             {
-                return setChargingProfileCommand;
+                return setChargingProfileCommandCommand;
             }
 
-            throw new ArgumentException("The given JSON representation of a 'set charging profile' command is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomSetChargingProfileParserCommand = null)
-
-        /// <summary>
-        /// Parse the given text representation of a 'set charging profile' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomSetChargingProfileParserCommand">A delegate to parse custom 'set charging profile' command JSON objects.</param>
-        public static SetChargingProfileCommand Parse(String                                                  Text,
-                                                      CustomJObjectParserDelegate<SetChargingProfileCommand>  CustomSetChargingProfileParserCommand   = null)
-        {
-
-            if (TryParse(Text,
-                         out SetChargingProfileCommand  setChargingProfileCommand,
-                         out String                     ErrorResponse,
-                         CustomSetChargingProfileParserCommand))
-            {
-                return setChargingProfileCommand;
-            }
-
-            throw new ArgumentException("The given text representation of a 'set charging profile' command is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(JSON, CustomSetChargingProfileParserCommand = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'set charging profile' command.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomSetChargingProfileParserCommand">A delegate to parse custom 'set charging profile' command JSON objects.</param>
-        public static SetChargingProfileCommand? TryParse(JObject                                          JSON,
-                                                   CustomJObjectParserDelegate<SetChargingProfileCommand>  CustomSetChargingProfileParserCommand   = null)
-        {
-
-            if (TryParse(JSON,
-                         out SetChargingProfileCommand  setChargingProfileCommand,
-                         out String                     ErrorResponse,
-                         CustomSetChargingProfileParserCommand))
-            {
-                return setChargingProfileCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomSetChargingProfileParserCommand = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'set charging profile' command.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomSetChargingProfileParserCommand">A delegate to parse custom 'set charging profile' command JSON objects.</param>
-        public static SetChargingProfileCommand? TryParse(String                                           Text,
-                                                   CustomJObjectParserDelegate<SetChargingProfileCommand>  CustomSetChargingProfileParserCommand   = null)
-        {
-
-            if (TryParse(Text,
-                         out SetChargingProfileCommand  setChargingProfileCommand,
-                         out String                     ErrorResponse,
-                         CustomSetChargingProfileParserCommand))
-            {
-                return setChargingProfileCommand;
-            }
-
-            return default;
+            throw new ArgumentException("The given JSON representation of a 'set charging profile' command is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -184,9 +108,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="SetChargingProfileCommand">The parsed 'set charging profile' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                        JSON,
-                                       out SetChargingProfileCommand  SetChargingProfileCommand,
-                                       out String                     ErrorResponse)
+        public static Boolean TryParse(JObject                         JSON,
+                                       out SetChargingProfileCommand?  SetChargingProfileCommand,
+                                       out String?                     ErrorResponse)
 
             => TryParse(JSON,
                         out SetChargingProfileCommand,
@@ -201,10 +125,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="SetChargingProfileCommand">The parsed 'set charging profile' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomSetChargingProfileParserCommand">A delegate to parse custom 'set charging profile' command JSON objects.</param>
-        public static Boolean TryParse(JObject                                                 JSON,
-                                       out SetChargingProfileCommand                           SetChargingProfileCommand,
-                                       out String                                              ErrorResponse,
-                                       CustomJObjectParserDelegate<SetChargingProfileCommand>  CustomSetChargingProfileParserCommand   = null)
+        public static Boolean TryParse(JObject                                                  JSON,
+                                       out SetChargingProfileCommand?                           SetChargingProfileCommand,
+                                       out String?                                              ErrorResponse,
+                                       CustomJObjectParserDelegate<SetChargingProfileCommand>?  CustomSetChargingProfileParserCommand   = null)
         {
 
             try
@@ -220,14 +144,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse ChargingProfile   [mandatory]
 
-                if (!JSON.ParseMandatory("charging_profile",
-                                         "charging profile",
-                                         OCPIv2_2.ChargingProfile.TryParse,
-                                         out ChargingProfile ChargingProfile,
-                                         out ErrorResponse))
+                if (!JSON.ParseMandatoryJSON("charging_profile",
+                                             "charging profile",
+                                             OCPIv2_2.ChargingProfile.TryParse,
+                                             out ChargingProfile? ChargingProfile,
+                                             out ErrorResponse))
                 {
                     return false;
                 }
+
+                if (ChargingProfile is null)
+                    return false;
 
                 #endregion
 
@@ -266,41 +193,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out SetChargingProfileCommand, out ErrorResponse, CustomSetChargingProfileParserCommand = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a 'set charging profile' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="SetChargingProfileCommand">The parsed setChargingProfile.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomSetChargingProfileParserCommand">A delegate to parse custom 'set charging profile' command JSON objects.</param>
-        public static Boolean TryParse(String                                                  Text,
-                                       out SetChargingProfileCommand                           SetChargingProfileCommand,
-                                       out String                                              ErrorResponse,
-                                       CustomJObjectParserDelegate<SetChargingProfileCommand>  CustomSetChargingProfileParserCommand   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out SetChargingProfileCommand,
-                                out ErrorResponse,
-                                CustomSetChargingProfileParserCommand);
-
-            }
-            catch (Exception e)
-            {
-                SetChargingProfileCommand  = default;
-                ErrorResponse              = "The given text representation of a 'set charging profile' command is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomSetChargingProfileSerializer = null)
 
         /// <summary>
@@ -309,15 +201,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomSetChargingProfileSerializer">A delegate to serialize custom 'set charging profile' command JSON objects.</param>
         /// <param name="CustomChargingProfileSerializer">A delegate to serialize custom charging profile JSON objects.</param>
         /// <param name="CustomChargingProfilePeriodSerializer">A delegate to serialize custom charging profile period JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<SetChargingProfileCommand>  CustomSetChargingProfileSerializer      = null,
-                              CustomJObjectSerializerDelegate<ChargingProfile>            CustomChargingProfileSerializer         = null,
-                              CustomJObjectSerializerDelegate<ChargingProfilePeriod>      CustomChargingProfilePeriodSerializer   = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<SetChargingProfileCommand>?  CustomSetChargingProfileSerializer      = null,
+                              CustomJObjectSerializerDelegate<ChargingProfile>?            CustomChargingProfileSerializer         = null,
+                              CustomJObjectSerializerDelegate<ChargingProfilePeriod>?      CustomChargingProfilePeriodSerializer   = null)
         {
 
             var JSON = JSONObject.Create(
+
                            new JProperty("charging_profile",  ChargingProfile.ToJSON(CustomChargingProfileSerializer,
                                                                                      CustomChargingProfilePeriodSerializer)),
+
                            new JProperty("response_url",      ResponseURL.    ToString())
+
                        );
 
             return CustomSetChargingProfileSerializer is not null
@@ -336,7 +231,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="SetChargingProfile1">An 'set charging profile' command.</param>
+        /// <param name="SetChargingProfile1">A 'set charging profile' command.</param>
         /// <param name="SetChargingProfile2">Another 'set charging profile' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (SetChargingProfileCommand SetChargingProfile1,
@@ -360,7 +255,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="SetChargingProfile1">An 'set charging profile' command.</param>
+        /// <param name="SetChargingProfile1">A 'set charging profile' command.</param>
         /// <param name="SetChargingProfile2">Another 'set charging profile' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (SetChargingProfileCommand SetChargingProfile1,
@@ -375,7 +270,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="SetChargingProfile1">An 'set charging profile' command.</param>
+        /// <param name="SetChargingProfile1">A 'set charging profile' command.</param>
         /// <param name="SetChargingProfile2">Another 'set charging profile' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (SetChargingProfileCommand SetChargingProfile1,
@@ -392,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="SetChargingProfile1">An 'set charging profile' command.</param>
+        /// <param name="SetChargingProfile1">A 'set charging profile' command.</param>
         /// <param name="SetChargingProfile2">Another 'set charging profile' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (SetChargingProfileCommand SetChargingProfile1,
@@ -407,7 +302,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="SetChargingProfile1">An 'set charging profile' command.</param>
+        /// <param name="SetChargingProfile1">A 'set charging profile' command.</param>
         /// <param name="SetChargingProfile2">Another 'set charging profile' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (SetChargingProfileCommand SetChargingProfile1,
@@ -424,7 +319,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="SetChargingProfile1">An 'set charging profile' command.</param>
+        /// <param name="SetChargingProfile1">A 'set charging profile' command.</param>
         /// <param name="SetChargingProfile2">Another 'set charging profile' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (SetChargingProfileCommand SetChargingProfile1,
@@ -441,13 +336,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'set charging profile' commands.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public override Int32 CompareTo(Object Object)
+        /// <param name="Object">A 'set charging profile' command to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
-            => Object is SetChargingProfileCommand setChargingProfile
-                   ? CompareTo(setChargingProfile)
+            => Object is SetChargingProfileCommand setChargingProfileCommand
+                   ? CompareTo(setChargingProfileCommand)
                    : throw new ArgumentException("The given object is not a 'set charging profile' command!",
                                                  nameof(Object));
 
@@ -456,10 +351,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(SetChargingProfileCommand)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'set charging profile' commands.
         /// </summary>
-        /// <param name="SetChargingProfileCommand">An object to compare with.</param>
-        public override Int32 CompareTo(SetChargingProfileCommand SetChargingProfileCommand)
+        /// <param name="SetChargingProfileCommand">A 'set charging profile' command to compare with.</param>
+        public override Int32 CompareTo(SetChargingProfileCommand? SetChargingProfileCommand)
         {
 
             if (SetChargingProfileCommand is null)
@@ -483,14 +378,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'set charging profile' commands for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A 'set charging profile' command to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is SetChargingProfileCommand setChargingProfile &&
-                   Equals(setChargingProfile);
+            => Object is SetChargingProfileCommand setChargingProfileCommand &&
+                   Equals(setChargingProfileCommand);
 
         #endregion
 
@@ -499,18 +393,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two 'set charging profile' commands for equality.
         /// </summary>
-        /// <param name="SetChargingProfileCommand">An 'set charging profile' command to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public override Boolean Equals(SetChargingProfileCommand SetChargingProfileCommand)
-        {
+        /// <param name="SetChargingProfileCommand">A 'set charging profile' command to compare with.</param>
+        public override Boolean Equals(SetChargingProfileCommand? SetChargingProfileCommand)
 
-            if (SetChargingProfileCommand is null)
-                throw new ArgumentNullException(nameof(SetChargingProfileCommand), "The given 'set charging profile' command must not be null!");
+            => SetChargingProfileCommand is not null &&
 
-            return ChargingProfile.Equals(SetChargingProfileCommand.ChargingProfile) &&
-                   ResponseURL.    Equals(SetChargingProfileCommand.ResponseURL);
-
-        }
+               ChargingProfile.Equals(SetChargingProfileCommand.ChargingProfile) &&
+               ResponseURL.    Equals(SetChargingProfileCommand.ResponseURL);
 
         #endregion
 
@@ -542,8 +431,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(ChargingProfile.ToString(), " => ",
-                             ResponseURL);
+            => String.Concat(
+
+                   ChargingProfile,
+                   " => ",
+                   ResponseURL
+
+               );
 
         #endregion
 

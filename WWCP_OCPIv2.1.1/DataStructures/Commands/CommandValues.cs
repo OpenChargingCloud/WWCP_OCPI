@@ -29,22 +29,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// The command.
         /// </summary>
-        public IOCPICommand     Command            { get; }
+        public IOCPICommand      Command            { get; }
 
         /// <summary>
         /// The optional received upstream command.
         /// </summary>
-        public IOCPICommand     UpstreamCommand    { get; }
+        public IOCPICommand?     UpstreamCommand    { get; }
 
         /// <summary>
         /// The command response.
         /// </summary>
-        public CommandResponse  Response           { get; internal set; }
+        public CommandResponse?  Response           { get; internal set; }
 
         /// <summary>
         /// The (later async) command result.
         /// </summary>
-        public CommandResult?   Result             { get; internal set; }
+        public CommandResult?    Result             { get; internal set; }
 
         #endregion
 
@@ -57,10 +57,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="UpstreamCommand">The optional received upstream command.</param>
         /// <param name="Response">The command response.</param>
         /// <param name="Result">The (later async) command result.</param>
-        private CommandValues(IOCPICommand     Command,
-                              IOCPICommand     UpstreamCommand,
-                              CommandResponse  Response          = null,
-                              CommandResult?   Result            = null)
+        private CommandValues(IOCPICommand      Command,
+                              IOCPICommand?     UpstreamCommand,
+                              CommandResponse?  Response   = null,
+                              CommandResult?    Result     = null)
         {
 
             this.Command          = Command;
@@ -72,16 +72,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
+
         #region FromCommand(Command)
 
         /// <summary>
         /// Create new command values.
         /// </summary>
         /// <param name="Command">The command.</param>
-        public static CommandValues FromCommand(IOCPICommand  Command)
+        public static CommandValues FromCommand(IOCPICommand Command)
 
-            => new CommandValues(Command,
-                                 null);
+            => new (Command,
+                    null);
 
         #endregion
 
@@ -91,10 +92,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create new command values.
         /// </summary>
         /// <param name="UpstreamCommand">The received upstream command.</param>
-        public static CommandValues FromUpstreamCommand(IOCPICommand  UpstreamCommand)
+        public static CommandValues FromUpstreamCommand(IOCPICommand UpstreamCommand)
 
-            => new CommandValues(null,
-                                 UpstreamCommand);
+            => new (null,
+                    UpstreamCommand);
 
         #endregion
 
@@ -108,8 +109,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static CommandValues FromUpstreamCommand(IOCPICommand  Command,
                                                         IOCPICommand  UpstreamCommand)
 
-            => new CommandValues(Command,
-                                 UpstreamCommand);
+            => new (Command,
+                    UpstreamCommand);
 
         #endregion
 

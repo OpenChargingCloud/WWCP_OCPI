@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -43,7 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// It contains the result of the DELETE (ClearProfile) request send by the eMSP.
         /// </summary>
         [Mandatory]
-        public ChargingProfileResultTypes  Result     { get; }
+        public ChargingProfileResultTypes  Result    { get; }
 
         #endregion
 
@@ -56,7 +54,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public ClearProfileResult(ChargingProfileResultTypes Result)
         {
 
-            this.Result  = Result;
+            this.Result = Result;
  
         }
 
@@ -70,44 +68,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomClearProfileResultParser">A delegate to parse custom  clear profile result JSON objects.</param>
-        public static ClearProfileResult Parse(JObject                                          JSON,
-                                               CustomJObjectParserDelegate<ClearProfileResult>  CustomClearProfileResultParser   = null)
+        public static ClearProfileResult Parse(JObject                                           JSON,
+                                               CustomJObjectParserDelegate<ClearProfileResult>?  CustomClearProfileResultParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ClearProfileResult  ClearProfileResult,
-                         out String              ErrorResponse,
+                         out var ClearProfileResult,
+                         out var errorResponse,
                          CustomClearProfileResultParser))
             {
                 return ClearProfileResult;
             }
 
-            throw new ArgumentException("The given JSON representation of a clear profile result is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomClearProfileResultParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a clear profile result.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomClearProfileResultParser">A delegate to parse custom  clear profile result JSON objects.</param>
-        public static ClearProfileResult Parse(String                                           Text,
-                                               CustomJObjectParserDelegate<ClearProfileResult>  CustomClearProfileResultParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ClearProfileResult  ClearProfileResult,
-                         out String              ErrorResponse,
-                         CustomClearProfileResultParser))
-            {
-                return ClearProfileResult;
-            }
-
-            throw new ArgumentException("The given text representation of a clear profile result is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a clear profile result is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -120,38 +94,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomClearProfileResultParser">A delegate to parse custom  clear profile result JSON objects.</param>
-        public static ClearProfileResult? TryParse(JObject                                          JSON,
-                                                   CustomJObjectParserDelegate<ClearProfileResult>  CustomClearProfileResultParser   = null)
+        public static ClearProfileResult? TryParse(JObject                                           JSON,
+                                                   CustomJObjectParserDelegate<ClearProfileResult>?  CustomClearProfileResultParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ClearProfileResult  ClearProfileResult,
-                         out String              ErrorResponse,
-                         CustomClearProfileResultParser))
-            {
-                return ClearProfileResult;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomClearProfileResultParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a clear profile result.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomClearProfileResultParser">A delegate to parse custom  clear profile result JSON objects.</param>
-        public static ClearProfileResult? TryParse(String                                           Text,
-                                                   CustomJObjectParserDelegate<ClearProfileResult>  CustomClearProfileResultParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ClearProfileResult  ClearProfileResult,
-                         out String              ErrorResponse,
+                         out var ClearProfileResult,
+                         out var errorResponse,
                          CustomClearProfileResultParser))
             {
                 return ClearProfileResult;
@@ -175,7 +124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                 JSON,
                                        out ClearProfileResult  ClearProfileResult,
-                                       out String              ErrorResponse)
+                                       out String?             ErrorResponse)
 
             => TryParse(JSON,
                         out ClearProfileResult,
@@ -190,10 +139,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ClearProfileResult">The parsed  clear profile result.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomClearProfileResultParser">A delegate to parse custom  clear profile result JSON objects.</param>
-        public static Boolean TryParse(JObject                                          JSON,
-                                       out ClearProfileResult                           ClearProfileResult,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<ClearProfileResult>  CustomClearProfileResultParser   = null)
+        public static Boolean TryParse(JObject                                           JSON,
+                                       out ClearProfileResult                            ClearProfileResult,
+                                       out String?                                       ErrorResponse,
+                                       CustomJObjectParserDelegate<ClearProfileResult>?  CustomClearProfileResultParser   = null)
         {
 
             try
@@ -207,7 +156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse Result      [mandatory]
+                #region Parse Result    [mandatory]
 
                 if (!JSON.ParseMandatoryEnum("result",
                                              "clear profile result",
@@ -240,48 +189,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out ClearProfileResult, out ErrorResponse, CustomClearProfileResultParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a clear profile result.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ClearProfileResult">The parsed clear profileResponse.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomClearProfileResultParser">A delegate to parse custom  clear profile result JSON objects.</param>
-        public static Boolean TryParse(String                                           Text,
-                                       out ClearProfileResult                           ClearProfileResult,
-                                       out String                                       ErrorResponse,
-                                       CustomJObjectParserDelegate<ClearProfileResult>  CustomClearProfileResultParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ClearProfileResult,
-                                out ErrorResponse,
-                                CustomClearProfileResultParser);
-
-            }
-            catch (Exception e)
-            {
-                ClearProfileResult  = default;
-                ErrorResponse       = "The given text representation of a clear profile result is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomClearProfileResultSerializer = null, CustomChargingProfileSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomClearProfileResultSerializer">A delegate to serialize custom  clear profile result JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ClearProfileResult> CustomClearProfileResultSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ClearProfileResult>? CustomClearProfileResultSerializer = null)
         {
 
             var JSON = JSONObject.Create(
@@ -325,7 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (ClearProfileResult ClearProfileResult1,
                                            ClearProfileResult ClearProfileResult2)
 
-            => !(ClearProfileResult1 == ClearProfileResult2);
+            => !ClearProfileResult1.Equals(ClearProfileResult2);
 
         #endregion
 
@@ -355,7 +269,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (ClearProfileResult ClearProfileResult1,
                                            ClearProfileResult ClearProfileResult2)
 
-            => !(ClearProfileResult1 > ClearProfileResult2);
+            => ClearProfileResult1.CompareTo(ClearProfileResult2) <= 0;
 
         #endregion
 
@@ -385,7 +299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (ClearProfileResult ClearProfileResult1,
                                            ClearProfileResult ClearProfileResult2)
 
-            => !(ClearProfileResult1 < ClearProfileResult2);
+            => ClearProfileResult1.CompareTo(ClearProfileResult2) >= 0;
 
         #endregion
 
@@ -396,10 +310,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'clear profile' results.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A 'clear profile' result to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ClearProfileResult clearProfileResult
                    ? CompareTo(clearProfileResult)
@@ -411,9 +325,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(ClearProfileResult)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'clear profile' results.
         /// </summary>
-        /// <param name="ClearProfileResult">An object to compare with.</param>
+        /// <param name="ClearProfileResult">A 'clear profile' result to compare with.</param>
         public Int32 CompareTo(ClearProfileResult ClearProfileResult)
 
             => Result.CompareTo(ClearProfileResult.Result);
@@ -427,11 +341,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'clear profile' results for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A 'clear profile' result to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ClearProfileResult clearProfileResult &&
                    Equals(clearProfileResult);
@@ -441,10 +354,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(ClearProfileResult)
 
         /// <summary>
-        /// Compares two  clear profile results for equality.
+        /// Compares two 'clear profile' results for equality.
         /// </summary>
-        /// <param name="ClearProfileResult">A clear profile result to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
+        /// <param name="ClearProfileResult">A 'clear profile' result to compare with.</param>
         public Boolean Equals(ClearProfileResult ClearProfileResult)
 
             => Result.Equals(ClearProfileResult.Result);

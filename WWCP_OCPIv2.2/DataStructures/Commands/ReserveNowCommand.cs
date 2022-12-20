@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -128,98 +126,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region (static) Parse   (JSON, CustomReserveNowCommandParser = null)
 
         /// <summary>
-        /// Parse the given JSON representation of an 'reserve now' command.
+        /// Parse the given JSON representation of a 'reserve now' command.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
-        public static ReserveNowCommand Parse(JObject                                         JSON,
-                                              CustomJObjectParserDelegate<ReserveNowCommand>  CustomReserveNowCommandParser   = null)
+        public static ReserveNowCommand Parse(JObject                                          JSON,
+                                              CustomJObjectParserDelegate<ReserveNowCommand>?  CustomReserveNowCommandParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ReserveNowCommand  unlockConnectorCommand,
-                         out String             ErrorResponse,
+                         out var reserveNowCommand,
+                         out var errorResponse,
                          CustomReserveNowCommandParser))
             {
-                return unlockConnectorCommand;
+                return reserveNowCommand!;
             }
 
-            throw new ArgumentException("The given JSON representation of an 'reserve now' command is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomReserveNowCommandParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of an 'reserve now' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
-        public static ReserveNowCommand Parse(String                                          Text,
-                                              CustomJObjectParserDelegate<ReserveNowCommand>  CustomReserveNowCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ReserveNowCommand  unlockConnectorCommand,
-                         out String             ErrorResponse,
-                         CustomReserveNowCommandParser))
-            {
-                return unlockConnectorCommand;
-            }
-
-            throw new ArgumentException("The given text representation of an 'reserve now' command is invalid: " + ErrorResponse, nameof(Text));
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(JSON, CustomReserveNowCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'reserve now' command.
-        /// </summary>
-        /// <param name="JSON">The JSON to parse.</param>
-        /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
-        public static ReserveNowCommand? TryParse(JObject                                         JSON,
-                                                  CustomJObjectParserDelegate<ReserveNowCommand>  CustomReserveNowCommandParser   = null)
-        {
-
-            if (TryParse(JSON,
-                         out ReserveNowCommand  unlockConnectorCommand,
-                         out String             ErrorResponse,
-                         CustomReserveNowCommandParser))
-            {
-                return unlockConnectorCommand;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomReserveNowCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a 'reserve now' command.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
-        public static ReserveNowCommand? TryParse(String                                          Text,
-                                                  CustomJObjectParserDelegate<ReserveNowCommand>  CustomReserveNowCommandParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ReserveNowCommand  unlockConnectorCommand,
-                         out String             ErrorResponse,
-                         CustomReserveNowCommandParser))
-            {
-                return unlockConnectorCommand;
-            }
-
-            return default;
+            throw new ArgumentException("The given JSON representation of a 'reserve now' command is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -230,14 +154,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         // Note: The following is needed to satisfy pattern matching delegates! Do not refactor it!
 
         /// <summary>
-        /// Try to parse the given JSON representation of an 'reserve now' command.
+        /// Try to parse the given JSON representation of a 'reserve now' command.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ReserveNowCommand">The parsed 'reserve now' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        public static Boolean TryParse(JObject                JSON,
-                                       out ReserveNowCommand  ReserveNowCommand,
-                                       out String             ErrorResponse)
+        public static Boolean TryParse(JObject                 JSON,
+                                       out ReserveNowCommand?  ReserveNowCommand,
+                                       out String?             ErrorResponse)
 
             => TryParse(JSON,
                         out ReserveNowCommand,
@@ -246,16 +170,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
         /// <summary>
-        /// Try to parse the given JSON representation of an 'reserve now' command.
+        /// Try to parse the given JSON representation of a 'reserve now' command.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="ReserveNowCommand">The parsed 'reserve now' command.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
-        public static Boolean TryParse(JObject                                         JSON,
-                                       out ReserveNowCommand                           ReserveNowCommand,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<ReserveNowCommand>  CustomReserveNowCommandParser   = null)
+        public static Boolean TryParse(JObject                                          JSON,
+                                       out ReserveNowCommand?                           ReserveNowCommand,
+                                       out String?                                      ErrorResponse,
+                                       CustomJObjectParserDelegate<ReserveNowCommand>?  CustomReserveNowCommandParser   = null)
         {
 
             try
@@ -274,11 +198,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
                                              OCPIv2_2.Token.TryParse,
-                                             out Token Token,
+                                             out Token? Token,
                                              out ErrorResponse))
                 {
                     return false;
                 }
+
+                if (Token is null)
+                    return false;
 
                 #endregion
 
@@ -380,42 +307,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             catch (Exception e)
             {
                 ReserveNowCommand  = default;
-                ErrorResponse      = "The given JSON representation of an 'reserve now' command is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, out ReserveNowCommand, out ErrorResponse, CustomReserveNowCommandParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of an 'reserve now' command.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ReserveNowCommand">The parsed unlockConnectorCommand.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomReserveNowCommandParser">A delegate to parse custom 'reserve now' command JSON objects.</param>
-        public static Boolean TryParse(String                                          Text,
-                                       out ReserveNowCommand                           ReserveNowCommand,
-                                       out String                                      ErrorResponse,
-                                       CustomJObjectParserDelegate<ReserveNowCommand>  CustomReserveNowCommandParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ReserveNowCommand,
-                                out ErrorResponse,
-                                CustomReserveNowCommandParser);
-
-            }
-            catch (Exception e)
-            {
-                ReserveNowCommand  = default;
-                ErrorResponse      = "The given text representation of an 'reserve now' command is invalid: " + e.Message;
+                ErrorResponse      = "The given JSON representation of a 'reserve now' command is invalid: " + e.Message;
                 return false;
             }
 
@@ -431,9 +323,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomReserveNowCommandSerializer">A delegate to serialize custom 'reserve now' command JSON objects.</param>
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
         /// <param name="CustomEnergyContractSerializer">A delegate to serialize custom energy contract JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ReserveNowCommand>  CustomReserveNowCommandSerializer   = null,
-                              CustomJObjectSerializerDelegate<Token>              CustomTokenSerializer               = null,
-                              CustomJObjectSerializerDelegate<EnergyContract>     CustomEnergyContractSerializer      = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ReserveNowCommand>?  CustomReserveNowCommandSerializer   = null,
+                              CustomJObjectSerializerDelegate<Token>?              CustomTokenSerializer               = null,
+                              CustomJObjectSerializerDelegate<EnergyContract>?     CustomEnergyContractSerializer      = null)
         {
 
             var JSON = JSONObject.Create(
@@ -472,7 +364,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ReserveNowCommand1">An 'reserve now' command.</param>
+        /// <param name="ReserveNowCommand1">A 'reserve now' command.</param>
         /// <param name="ReserveNowCommand2">Another 'reserve now' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator == (ReserveNowCommand ReserveNowCommand1,
@@ -496,7 +388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ReserveNowCommand1">An 'reserve now' command.</param>
+        /// <param name="ReserveNowCommand1">A 'reserve now' command.</param>
         /// <param name="ReserveNowCommand2">Another 'reserve now' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator != (ReserveNowCommand ReserveNowCommand1,
@@ -511,7 +403,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ReserveNowCommand1">An 'reserve now' command.</param>
+        /// <param name="ReserveNowCommand1">A 'reserve now' command.</param>
         /// <param name="ReserveNowCommand2">Another 'reserve now' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator < (ReserveNowCommand ReserveNowCommand1,
@@ -528,7 +420,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ReserveNowCommand1">An 'reserve now' command.</param>
+        /// <param name="ReserveNowCommand1">A 'reserve now' command.</param>
         /// <param name="ReserveNowCommand2">Another 'reserve now' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator <= (ReserveNowCommand ReserveNowCommand1,
@@ -543,7 +435,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ReserveNowCommand1">An 'reserve now' command.</param>
+        /// <param name="ReserveNowCommand1">A 'reserve now' command.</param>
         /// <param name="ReserveNowCommand2">Another 'reserve now' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator > (ReserveNowCommand ReserveNowCommand1,
@@ -560,7 +452,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two instances of this object.
         /// </summary>
-        /// <param name="ReserveNowCommand1">An 'reserve now' command.</param>
+        /// <param name="ReserveNowCommand1">A 'reserve now' command.</param>
         /// <param name="ReserveNowCommand2">Another 'reserve now' command.</param>
         /// <returns>true|false</returns>
         public static Boolean operator >= (ReserveNowCommand ReserveNowCommand1,
@@ -577,14 +469,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'reserve now' commands.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public override Int32 CompareTo(Object Object)
+        /// <param name="Object">A 'reserve now' command to compare with.</param>
+        public override Int32 CompareTo(Object? Object)
 
-            => Object is ReserveNowCommand unlockConnectorCommand
-                   ? CompareTo(unlockConnectorCommand)
-                   : throw new ArgumentException("The given object is not an 'reserve now' command!",
+            => Object is ReserveNowCommand reserveNowCommand
+                   ? CompareTo(reserveNowCommand)
+                   : throw new ArgumentException("The given object is not a 'reserve now' command!",
                                                  nameof(Object));
 
         #endregion
@@ -592,10 +484,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(ReserveNowCommand)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'reserve now' commands.
         /// </summary>
-        /// <param name="ReserveNowCommand">An object to compare with.</param>
-        public override Int32 CompareTo(ReserveNowCommand ReserveNowCommand)
+        /// <param name="ReserveNowCommand">A 'reserve now' command to compare with.</param>
+        public override Int32 CompareTo(ReserveNowCommand? ReserveNowCommand)
         {
 
             if (ReserveNowCommand is null)
@@ -634,14 +526,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two 'reserve now' commands for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A 'reserve now' command to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
-            => Object is ReserveNowCommand unlockConnectorCommand &&
-                   Equals(unlockConnectorCommand);
+            => Object is ReserveNowCommand reserveNowCommand &&
+                   Equals(reserveNowCommand);
 
         #endregion
 
@@ -650,23 +541,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <summary>
         /// Compares two 'reserve now' commands for equality.
         /// </summary>
-        /// <param name="ReserveNowCommand">An 'reserve now' command to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
-        public override Boolean Equals(ReserveNowCommand ReserveNowCommand)
-        {
+        /// <param name="ReserveNowCommand">A 'reserve now' command to compare with.</param>
+        public override Boolean Equals(ReserveNowCommand? ReserveNowCommand)
 
-            if (ReserveNowCommand is null)
-                throw new ArgumentNullException(nameof(ReserveNowCommand), "The given 'reserve now' command must not be null!");
+            => ReserveNowCommand is not null &&
 
-            return Token.                 Equals(ReserveNowCommand.Token)                  &&
-                   ExpiryDate.            Equals(ReserveNowCommand.ExpiryDate)             &&
-                   ReservationId.         Equals(ReserveNowCommand.ReservationId)          &&
-                   LocationId.            Equals(ReserveNowCommand.LocationId)             &&
-                   EVSEUId.               Equals(ReserveNowCommand.EVSEUId)                &&
-                   AuthorizationReference.Equals(ReserveNowCommand.AuthorizationReference) &&
-                   ResponseURL.           Equals(ReserveNowCommand.ResponseURL);
-
-        }
+               Token.                 Equals(ReserveNowCommand.Token)                  &&
+               ExpiryDate.            Equals(ReserveNowCommand.ExpiryDate)             &&
+               ReservationId.         Equals(ReserveNowCommand.ReservationId)          &&
+               LocationId.            Equals(ReserveNowCommand.LocationId)             &&
+               EVSEUId.               Equals(ReserveNowCommand.EVSEUId)                &&
+               AuthorizationReference.Equals(ReserveNowCommand.AuthorizationReference) &&
+               ResponseURL.           Equals(ReserveNowCommand.ResponseURL);
 
         #endregion
 
@@ -683,20 +569,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return Token.        GetHashCode() * 17 ^
-                       ExpiryDate.   GetHashCode() * 13 ^
-                       ReservationId.GetHashCode() * 11 ^
-                       LocationId.   GetHashCode() *  7 ^
-
-                       (EVSEUId.HasValue
-                            ? EVSEUId.GetHashCode()
-                            : 0) * 5 ^
-
-                       (AuthorizationReference.HasValue
-                            ? AuthorizationReference.GetHashCode()
-                            : 0) * 3 ^
-
-                       ResponseURL.GetHashCode();
+                return Token.                  GetHashCode()       * 17 ^
+                       ExpiryDate.             GetHashCode()       * 13 ^
+                       ReservationId.          GetHashCode()       * 11 ^
+                       LocationId.             GetHashCode()       *  7 ^
+                      (EVSEUId?.               GetHashCode() ?? 0) *  5 ^
+                      (AuthorizationReference?.GetHashCode() ?? 0) *  3 ^
+                       ResponseURL.            GetHashCode();
 
             }
         }
@@ -710,11 +589,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(Token, " / ", ExpiryDate, " /", ReservationId, " / ", LocationId,
-                             EVSEUId.               HasValue ? " / " + EVSEUId : "",
-                             AuthorizationReference.HasValue ? " / " + AuthorizationReference : "",
-                             " => ",
-                             ResponseURL);
+            => String.Concat(
+
+                   Token, " / ", ExpiryDate, " /", ReservationId, " / ", LocationId,
+                   EVSEUId.               HasValue ? " / " + EVSEUId : "",
+                   AuthorizationReference.HasValue ? " / " + AuthorizationReference : "",
+                   " => ",
+                   ResponseURL
+
+               );
 
         #endregion
 

@@ -6846,7 +6846,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-            // Commands
+            // Command result callbacks
 
             #region ~/commands/RESERVE_NOW/{commandId}
 
@@ -6884,27 +6884,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
-                                                                    out Command_Id?           CommandId,
-                                                                    out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                    out var commandId,
+                                                                    out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder;
                                         }
 
                                         #endregion
 
                                         #region Parse command result JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var json, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CommandResult.TryParse(JSONCDR,
-                                                                    out CommandResult  commandResult,
-                                                                    out String         ErrorResponse))
+                                        if (!CommandResult.TryParse(json,
+                                                                    out var commandResult,
+                                                                    out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -6917,14 +6917,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        if (CommonAPI.CommandValueStore.TryGetValue(CommandId.Value, out CommandValues commandValues))
+                                        if (CommonAPI.CommandValueStore.TryGetValue(commandId.Value, out var commandValues))
                                         {
 
                                             commandValues.Result = commandResult;
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try
@@ -7039,20 +7039,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
-                                                                    out Command_Id?           CommandId,
-                                                                    out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                    out var commandId,
+                                                                    out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder;
                                         }
 
                                         #endregion
 
                                         #region Parse command result JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var json, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CommandResult.TryParse(JSONCDR,
+                                        if (!CommandResult.TryParse(json,
                                                                     out CommandResult  commandResult,
                                                                     out String         ErrorResponse))
                                         {
@@ -7072,14 +7072,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        if (CommonAPI.CommandValueStore.TryGetValue(CommandId.Value, out CommandValues commandValues))
+                                        if (CommonAPI.CommandValueStore.TryGetValue(commandId.Value, out var commandValues))
                                         {
 
                                             commandValues.Result = commandResult;
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try
@@ -7194,27 +7194,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
-                                                                    out Command_Id?           CommandId,
-                                                                    out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                    out var commandId,
+                                                                    out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder;
                                         }
 
                                         #endregion
 
                                         #region Parse command result JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var json, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CommandResult.TryParse(JSONCDR,
-                                                                    out CommandResult  commandResult,
-                                                                    out String         ErrorResponse))
+                                        if (!CommandResult.TryParse(json,
+                                                                    out var commandResult,
+                                                                    out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -7227,7 +7227,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        if (CommonAPI.CommandValueStore.TryGetValue(CommandId.Value, out CommandValues commandValues))
+                                        if (CommonAPI.CommandValueStore.TryGetValue(commandId.Value, out var commandValues))
                                         {
 
                                             commandValues.Result = commandResult;
@@ -7349,27 +7349,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
-                                                                    out Command_Id?           CommandId,
-                                                                    out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                    out var commandId,
+                                                                    out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder;
                                         }
 
                                         #endregion
 
                                         #region Parse command result JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var json, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CommandResult.TryParse(JSONCDR,
-                                                                    out CommandResult  commandResult,
-                                                                    out String         ErrorResponse))
+                                        if (!CommandResult.TryParse(json,
+                                                                    out var commandResult,
+                                                                    out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -7382,7 +7382,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        if (CommonAPI.CommandValueStore.TryGetValue(CommandId.Value, out CommandValues commandValues))
+                                        if (CommonAPI.CommandValueStore.TryGetValue(commandId.Value, out var commandValues))
                                         {
 
                                             commandValues.Result = commandResult;
@@ -7504,27 +7504,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check command identification
 
                                         if (!Request.ParseCommandId(this,
-                                                                    out Command_Id?           CommandId,
-                                                                    out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                    out var commandId,
+                                                                    out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder;
                                         }
 
                                         #endregion
 
                                         #region Parse command result JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse.Builder OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var json, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CommandResult.TryParse(JSONCDR,
-                                                                    out CommandResult  commandResult,
-                                                                    out String         ErrorResponse))
+                                        if (!CommandResult.TryParse(json,
+                                                                    out var commandResult,
+                                                                    out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given 'command result' JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, POST",
@@ -7537,14 +7537,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        if (CommonAPI.CommandValueStore.TryGetValue(CommandId.Value, out CommandValues commandValues))
+                                        if (CommonAPI.CommandValueStore.TryGetValue(commandId.Value, out var commandValues))
                                         {
 
                                             commandValues.Result = commandResult;
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try

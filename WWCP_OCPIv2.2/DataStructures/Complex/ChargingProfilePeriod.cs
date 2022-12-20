@@ -17,8 +17,6 @@
 
 #region Usings
 
-using System;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -39,16 +37,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Properties
 
         /// <summary>
-        /// Start of the period, in seconds from the start of profile. The value of StartPeriod also defines the stop time of the previous period.
+        /// Start of the period, in seconds from the start of profile.
+        /// The value of StartPeriod also defines the stop time of the previous period.
         /// </summary>
         [Mandatory]
-        public UInt32  StartPeriod    { get; }
+        public TimeSpan  StartPeriod    { get; }
 
         /// <summary>
-        /// Charging rate limit during the profile period, in the applicable chargingRateUnit, for example in Amperes (A) or Watts (W). Accepts at most one digit fraction (e.g. 8.1).
+        /// Charging rate limit during the profile period, in the applicable chargingRateUnit, for example in Amperes (A) or Watts (W).
+        /// Accepts at most one digit fraction (e.g. 8.1).
         /// </summary>
         [Mandatory]
-        public Single  Limit          { get; }
+        public Single    Limit          { get; }
 
         #endregion
 
@@ -59,8 +59,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="StartPeriod">Start of the period, in seconds from the start of profile. The value of StartPeriod also defines the stop time of the previous period.</param>
         /// <param name="Limit">Charging rate limit during the profile period, in the applicable chargingRateUnit, for example in Amperes (A) or Watts (W). Accepts at most one digit fraction (e.g. 8.1).</param>
-        public ChargingProfilePeriod(UInt32  StartPeriod,
-                                     Single  Limit)
+        public ChargingProfilePeriod(TimeSpan  StartPeriod,
+                                     Single    Limit)
         {
 
             this.StartPeriod  = StartPeriod;
@@ -78,44 +78,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingProfilePeriodParser">A delegate to parse custom charging profile period JSON objects.</param>
-        public static ChargingProfilePeriod Parse(JObject                                             JSON,
-                                                  CustomJObjectParserDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodParser   = null)
+        public static ChargingProfilePeriod Parse(JObject                                              JSON,
+                                                  CustomJObjectParserDelegate<ChargingProfilePeriod>?  CustomChargingProfilePeriodParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingProfilePeriod  chargingProfilePeriod,
-                         out String                 ErrorResponse,
+                         out var chargingProfilePeriod,
+                         out var errorResponse,
                          CustomChargingProfilePeriodParser))
             {
                 return chargingProfilePeriod;
             }
 
-            throw new ArgumentException("The given JSON representation of a charging profile period is invalid: " + ErrorResponse, nameof(JSON));
-
-        }
-
-        #endregion
-
-        #region (static) Parse   (Text, CustomChargingProfilePeriodParser = null)
-
-        /// <summary>
-        /// Parse the given text representation of a charging profile period.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="CustomChargingProfilePeriodParser">A delegate to parse custom charging profile period JSON objects.</param>
-        public static ChargingProfilePeriod Parse(String                                              Text,
-                                                  CustomJObjectParserDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingProfilePeriod  chargingProfilePeriod,
-                         out String                 ErrorResponse,
-                         CustomChargingProfilePeriodParser))
-            {
-                return chargingProfilePeriod;
-            }
-
-            throw new ArgumentException("The given text representation of a charging profile period is invalid: " + ErrorResponse, nameof(Text));
+            throw new ArgumentException("The given JSON representation of a charging profile period is invalid: " + errorResponse,
+                                        nameof(JSON));
 
         }
 
@@ -128,38 +104,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="CustomChargingProfilePeriodParser">A delegate to parse custom charging profile period JSON objects.</param>
-        public static ChargingProfilePeriod? TryParse(JObject                                             JSON,
-                                                      CustomJObjectParserDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodParser   = null)
+        public static ChargingProfilePeriod? TryParse(JObject                                              JSON,
+                                                      CustomJObjectParserDelegate<ChargingProfilePeriod>?  CustomChargingProfilePeriodParser   = null)
         {
 
             if (TryParse(JSON,
-                         out ChargingProfilePeriod  chargingProfilePeriod,
-                         out String                 ErrorResponse,
-                         CustomChargingProfilePeriodParser))
-            {
-                return chargingProfilePeriod;
-            }
-
-            return default;
-
-        }
-
-        #endregion
-
-        #region (static) TryParse(Text, CustomChargingProfilePeriodParser = null)
-
-        /// <summary>
-        /// Try to parse the given JSON representation of a charging profile period.
-        /// </summary>
-        /// <param name="Text">The JSON to parse.</param>
-        /// <param name="CustomChargingProfilePeriodParser">A delegate to parse custom charging profile period JSON objects.</param>
-        public static ChargingProfilePeriod? TryParse(String                                              Text,
-                                                      CustomJObjectParserDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodParser   = null)
-        {
-
-            if (TryParse(Text,
-                         out ChargingProfilePeriod  chargingProfilePeriod,
-                         out String                 ErrorResponse,
+                         out var chargingProfilePeriod,
+                         out var errorResponse,
                          CustomChargingProfilePeriodParser))
             {
                 return chargingProfilePeriod;
@@ -183,7 +134,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ErrorResponse">An optional error response.</param>
         public static Boolean TryParse(JObject                    JSON,
                                        out ChargingProfilePeriod  ChargingProfilePeriod,
-                                       out String                 ErrorResponse)
+                                       out String?                ErrorResponse)
 
             => TryParse(JSON,
                         out ChargingProfilePeriod,
@@ -198,10 +149,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ChargingProfilePeriod">The parsed charging profile period.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
         /// <param name="CustomChargingProfilePeriodParser">A delegate to parse custom charging profile period JSON objects.</param>
-        public static Boolean TryParse(JObject                                             JSON,
-                                       out ChargingProfilePeriod                           ChargingProfilePeriod,
-                                       out String                                          ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodParser   = null)
+        public static Boolean TryParse(JObject                                              JSON,
+                                       out ChargingProfilePeriod                            ChargingProfilePeriod,
+                                       out String?                                          ErrorResponse,
+                                       CustomJObjectParserDelegate<ChargingProfilePeriod>?  CustomChargingProfilePeriodParser   = null)
         {
 
             try
@@ -219,11 +170,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 if (!JSON.ParseMandatory("start_period",
                                          "start period",
-                                         out UInt32 StartPeriod,
+                                         out UInt32 startPeriod,
                                          out ErrorResponse))
                 {
                     return false;
                 }
+
+                var StartPeriod = TimeSpan.FromSeconds(startPeriod);
 
                 #endregion
 
@@ -261,53 +214,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #endregion
 
-        #region (static) TryParse(Text, out ChargingProfilePeriod, out ErrorResponse, CustomChargingProfilePeriodParser = null)
-
-        /// <summary>
-        /// Try to parse the given text representation of a charging profile period.
-        /// </summary>
-        /// <param name="Text">The text to parse.</param>
-        /// <param name="ChargingProfilePeriod">The parsed chargingProfilePeriod.</param>
-        /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CustomChargingProfilePeriodParser">A delegate to parse custom charging profile period JSON objects.</param>
-        public static Boolean TryParse(String                                              Text,
-                                       out ChargingProfilePeriod                           ChargingProfilePeriod,
-                                       out String                                          ErrorResponse,
-                                       CustomJObjectParserDelegate<ChargingProfilePeriod>  CustomChargingProfilePeriodParser   = null)
-        {
-
-            try
-            {
-
-                return TryParse(JObject.Parse(Text),
-                                out ChargingProfilePeriod,
-                                out ErrorResponse,
-                                CustomChargingProfilePeriodParser);
-
-            }
-            catch (Exception e)
-            {
-                ChargingProfilePeriod  = default;
-                ErrorResponse          = "The given text representation of a charging profile period is invalid: " + e.Message;
-                return false;
-            }
-
-        }
-
-        #endregion
-
         #region ToJSON(CustomChargingProfilePeriodSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
         /// <param name="CustomChargingProfilePeriodSerializer">A delegate to serialize custom charging profile period JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfilePeriod> CustomChargingProfilePeriodSerializer = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<ChargingProfilePeriod>? CustomChargingProfilePeriodSerializer = null)
         {
 
             var JSON = JSONObject.Create(
-                           new JProperty("start_period",  StartPeriod),
-                           new JProperty("Limit",         Math.Round(Limit, 1))
+                           new JProperty("start_period",  (UInt32) Math.Round(StartPeriod.TotalSeconds, 0)),
+                           new JProperty("limit",         Math.Round(Limit, 1))
                        );
 
             return CustomChargingProfilePeriodSerializer is not null
@@ -347,7 +265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator != (ChargingProfilePeriod ChargingProfilePeriod1,
                                            ChargingProfilePeriod ChargingProfilePeriod2)
 
-            => !(ChargingProfilePeriod1 == ChargingProfilePeriod2);
+            => !ChargingProfilePeriod1.Equals(ChargingProfilePeriod2);
 
         #endregion
 
@@ -377,7 +295,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator <= (ChargingProfilePeriod ChargingProfilePeriod1,
                                            ChargingProfilePeriod ChargingProfilePeriod2)
 
-            => !(ChargingProfilePeriod1 > ChargingProfilePeriod2);
+            => ChargingProfilePeriod1.CompareTo(ChargingProfilePeriod2) <= 0;
 
         #endregion
 
@@ -407,7 +325,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static Boolean operator >= (ChargingProfilePeriod ChargingProfilePeriod1,
                                            ChargingProfilePeriod ChargingProfilePeriod2)
 
-            => !(ChargingProfilePeriod1 < ChargingProfilePeriod2);
+            => ChargingProfilePeriod1.CompareTo(ChargingProfilePeriod2) >= 0;
 
         #endregion
 
@@ -418,10 +336,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging profile periods.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        /// <param name="Object">A charging profile period to compare with.</param>
+        public Int32 CompareTo(Object? Object)
 
             => Object is ChargingProfilePeriod chargingProfilePeriod
                    ? CompareTo(chargingProfilePeriod)
@@ -433,9 +351,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region CompareTo(ChargingProfilePeriod)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging profile periods.
         /// </summary>
-        /// <param name="ChargingProfilePeriod">An object to compare with.</param>
+        /// <param name="ChargingProfilePeriod">A charging profile period to compare with.</param>
         public Int32 CompareTo(ChargingProfilePeriod ChargingProfilePeriod)
         {
 
@@ -457,11 +375,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #region Equals(Object)
 
         /// <summary>
-        /// Compares two instances of this object.
+        /// Compares two charging profile periods for equality.
         /// </summary>
-        /// <param name="Object">An object to compare with.</param>
-        /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        /// <param name="Object">A charging profile period to compare with.</param>
+        public override Boolean Equals(Object? Object)
 
             => Object is ChargingProfilePeriod chargingProfilePeriod &&
                    Equals(chargingProfilePeriod);
@@ -474,7 +391,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two charging profile periods for equality.
         /// </summary>
         /// <param name="ChargingProfilePeriod">A charging profile period to compare with.</param>
-        /// <returns>True if both match; False otherwise.</returns>
         public Boolean Equals(ChargingProfilePeriod ChargingProfilePeriod)
 
             => StartPeriod.Equals(ChargingProfilePeriod.StartPeriod) &&
@@ -510,8 +426,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         public override String ToString()
 
-            => String.Concat(StartPeriod, ", ",
-                             Limit);
+            => String.Concat(
+
+                   StartPeriod,
+                   ", ",
+                   Limit
+
+               );
 
         #endregion
 
