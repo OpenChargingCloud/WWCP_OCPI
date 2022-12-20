@@ -331,6 +331,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
+        public static OCPIResponse<TResponse> Error(Int32            StatusCode,
+                                                    String           StatusMessage,
+                                                    String?          AdditionalInformation   = null,
+                                                    DateTime?        Timestamp               = null,
+
+                                                    HTTPResponse?    HTTPResponse            = null,
+                                                    Request_Id?      RequestId               = null,
+                                                    Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+
+
         public static JObject Create(TResponse                Data,
                                      Func<TResponse, JToken>  Serializer,
                                      Int32                    StatusCode,

@@ -302,6 +302,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
+        public static OCPIResponse<TResponse> Error(Int32            StatusCode,
+                                                    String           StatusMessage,
+                                                    String?          AdditionalInformation   = null,
+                                                    DateTime?        Timestamp               = null,
+
+                                                    HTTPResponse?    HTTPResponse            = null,
+                                                    Request_Id?      RequestId               = null,
+                                                    Correlation_Id?  CorrelationId           = null)
+
+            => new(null,
+                   StatusCode,
+                   StatusMessage,
+                   AdditionalInformation,
+                   Timestamp,
+
+                   HTTPResponse,
+                   RequestId,
+                   CorrelationId);
+
+
+
         public static JObject Create(TResponse                Data,
                                      Func<TResponse, JToken>  Serializer,
                                      Int32                    StatusCode,
@@ -328,6 +349,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         }
 
 
+
+
+
         //public HTTPResponse.Builder CreateHTTPResonse(HTTPRequest Request)
         //{
         //    return new HTTPResponse.Builder(Request);
@@ -335,7 +359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-        public JObject ToJSON(Func<TResponse, JToken> Serializer = null)
+        public JObject ToJSON(Func<TResponse, JToken>? Serializer = null)
 
         {
 
@@ -375,7 +399,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                                                   Func<JObject, TElements>  Parser)
         {
 
-            OCPIResponse<IEnumerable<TResponse>> result = default;
+            OCPIResponse<IEnumerable<TResponse>>? result = default;
 
             try
             {
@@ -499,7 +523,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                                            Func<JObject, TResponse>  Parser)
         {
 
-            OCPIResponse<TResponse> result = default;
+            OCPIResponse<TResponse>? result = default;
 
             try
             {

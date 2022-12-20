@@ -758,8 +758,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            OCPIResponse<Location> response;
-
             #region Send OnGetLocationRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -798,6 +796,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Location> response;
 
             try
             {
@@ -859,21 +859,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Location>("",
-                                                                  default,
-                                                                  -1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error(-1,
+                                                                    "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Location>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
+                response = OCPIResponse<String, Location>.Error(-1,
+                                                                e.Message,
+                                                                e.StackTrace);
 
             }
 
@@ -955,11 +951,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
-
-            OCPIResponse<Location> response;
-
             #region Send OnPutLocationRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -998,6 +989,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Location> response;
 
             try
             {
@@ -1061,21 +1054,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Location>("",
-                                                                  default,
-                                                                  -1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error(-1,
+                                                                    "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Location>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
+                response = OCPIResponse<String, Location>.Error(-1,
+                                                                e.Message,
+                                                                e.StackTrace);
 
             }
 
@@ -1158,10 +1147,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            if (LocationPatch is null)
-                throw new ArgumentNullException(nameof(LocationPatch), "The given location patch must not be null!");
+            #region Initial checks
 
-            OCPIResponse<Location> response;
+            if (!LocationPatch.HasValues)
+                return OCPIResponse<Location>.Error(-1,
+                                                    "The given location patch must not be empty!");
+
+            #endregion
 
             #region Send OnPatchLocationRequest event
 
@@ -1201,6 +1193,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Location> response;
 
             try
             {
@@ -1264,21 +1258,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Location>("",
-                                                                  default,
-                                                                  -1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error(-1,
+                                                                    "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Location>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
+                response = OCPIResponse<String, Location>.Error(-1,
+                                                                e.Message,
+                                                                e.StackTrace);
 
             }
 
@@ -1357,12 +1347,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Location> response;
 
             #region Send OnGetLocationRequest event
 
@@ -1402,6 +1390,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Location> response;
 
             try
             {
@@ -1464,21 +1454,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Location>("",
-                                                                  default,
-                                                                  -1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Location>.Error(-1,
+                                                                    "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Location>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
+                response = OCPIResponse<String, Location>.Error(-1,
+                                                                e.Message,
+                                                                e.StackTrace);
 
             }
 
@@ -1555,13 +1541,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
 
+            #region Initial checks
+
             if (EVSE.ParentLocation is null)
-                throw new ArgumentNullException(nameof(EVSE.ParentLocation), "The parent location of the given EVSE must not be null!");
+                return OCPIResponse<EVSE>.Error(-1,
+                                                "The parent location of the given EVSE must not be null!");
+
+            #endregion
 
             return await PutEVSE(EVSE,
                                  EVSE.ParentLocation.CountryCode,
@@ -1604,29 +1595,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
-        {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The location of the given EVSE must not be null!");
+            => await PutEVSE(EVSE,
+                             Location.CountryCode,
+                             Location.PartyId,
+                             Location.Id,
 
-            return await PutEVSE(EVSE,
-                                 Location.CountryCode,
-                                 Location.PartyId,
-                                 Location.Id,
+                             RequestId,
+                             CorrelationId,
+                             VersionId,
 
-                                 RequestId,
-                                 CorrelationId,
-                                 VersionId,
-
-                                 Timestamp,
-                                 CancellationToken,
-                                 EventTrackingId,
-                                 RequestTimeout);
-
-        }
+                             Timestamp,
+                             CancellationToken,
+                             EventTrackingId,
+                             RequestTimeout);
 
         #endregion
 
@@ -1657,15 +1642,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
-
-            if (EVSE is null)
-                throw new ArgumentNullException(nameof(EVSE), "The given EVSE must not be null!");
-
-            OCPIResponse<EVSE> response;
 
             #region Send OnPutEVSERequest event
 
@@ -1705,6 +1685,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<EVSE> response;
 
             try
             {
@@ -1769,21 +1751,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, EVSE>("",
-                                                              default,
-                                                              -1,
-                                                              "No remote URL available!");
+                    response = OCPIResponse<String, EVSE>.Error(-1,
+                                                                "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, EVSE>("",
-                                                          default,
-                                                          -1,
-                                                          e.Message,
-                                                          e.StackTrace);
+                response = OCPIResponse<String, EVSE>.Error(-1,
+                                                            e.Message,
+                                                            e.StackTrace);
 
             }
 
@@ -1862,15 +1840,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
-                      EventTracking_Id    EventTrackingId     = null,
+                      EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
         {
 
-            if (EVSEPatch is null)
-                throw new ArgumentNullException(nameof(EVSEPatch), "The given EVSE patch must not be null!");
+            #region Initial checks
 
-            OCPIResponse<EVSE> response;
+            if (!EVSEPatch.HasValues)
+                return OCPIResponse<EVSE>.Error(-1,
+                                                "The given EVSE patch must not be empty!");
+
+            #endregion
 
             #region Send OnPatchEVSERequest event
 
@@ -1910,6 +1891,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<EVSE> response;
 
             try
             {
@@ -1974,21 +1957,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, EVSE>("",
-                                                              default,
-                                                              -1,
-                                                              "No remote URL available!");
+                    response = OCPIResponse<EVSE>.Error(-1,
+                                                        "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, EVSE>("",
-                                                          default,
-                                                          -1,
-                                                          e.Message,
-                                                          e.StackTrace);
+                response = OCPIResponse<EVSE>.Error(-1,
+                                                    e.Message,
+                                                    e.StackTrace);
 
             }
 
@@ -2068,12 +2047,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Connector> response;
 
             #region Send OnGetConnectorRequest event
 
@@ -2113,6 +2090,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Connector> response;
 
             try
             {
@@ -2176,21 +2155,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Connector>("",
-                                                                  default,
-                                                                  -1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Connector>.Error(-1,
+                                                                     "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Connector>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
+                response = OCPIResponse<String, Connector>.Error(-1,
+                                                                 e.Message,
+                                                                 e.StackTrace);
 
             }
 
@@ -2272,10 +2247,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            if (Connector is null)
-                throw new ArgumentNullException(nameof(Connector), "The given connector must not be null!");
+            #region Initial checks
 
-            OCPIResponse<Connector> response;
+            if (Connector.ParentEVSE is null)
+                return OCPIResponse<String, Connector>.Error(-1,
+                                                             "The parent EVSE of the connector must not be null!");
+
+            if (Connector.ParentEVSE.ParentLocation is null)
+                return OCPIResponse<String, Connector>.Error(-1,
+                                                             "The parent location of the connector must not be null!");
+
+            #endregion
 
             #region Send OnPutConnectorRequest event
 
@@ -2315,6 +2297,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Connector> response;
 
             try
             {
@@ -2380,21 +2364,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Connector>("",
-                                                                  default,
-                                                                  -1,
-                                                                  "No remote URL available!");
+                    response = OCPIResponse<String, Connector>.Error(-1,
+                                                                     "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Connector>("",
-                                                              default,
-                                                              -1,
-                                                              e.Message,
-                                                              e.StackTrace);
+                response = OCPIResponse<String, Connector>.Error(-1,
+                                                                 e.Message,
+                                                                 e.StackTrace);
 
             }
 
@@ -2474,15 +2454,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                            DateTime?           Timestamp           = null,
                            CancellationToken?  CancellationToken   = null,
-                           EventTracking_Id    EventTrackingId     = null,
+                           EventTracking_Id?   EventTrackingId     = null,
                            TimeSpan?           RequestTimeout      = null)
 
         {
-
-            if (ConnectorPatch is null)
-                throw new ArgumentNullException(nameof(ConnectorPatch), "The given connector patch must not be null!");
-
-            OCPIResponse<Connector> response;
 
             #region Send OnPatchConnectorRequest event
 
@@ -2522,6 +2497,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Connector> response;
 
             try
             {
@@ -2587,21 +2564,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Connector>("",
-                                                                   default,
-                                                                   -1,
-                                                                   "No remote URL available!");
+                    response = OCPIResponse<String, Connector>.Error(-1,
+                                                                     "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Connector>("",
-                                                               default,
-                                                               -1,
-                                                               e.Message,
-                                                               e.StackTrace);
+                response = OCPIResponse<String, Connector>.Error(-1,
+                                                                 e.Message,
+                                                                 e.StackTrace);
 
             }
 
@@ -2680,12 +2653,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
-                      EventTracking_Id    EventTrackingId     = null,
+                      EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Tariff> response;
 
             #region Send OnGetTariffRequest event
 
@@ -2725,6 +2696,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Tariff> response;
 
             try
             {
@@ -2786,21 +2759,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Tariff>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error(-1,
+                                                                  "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Tariff>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Tariff>.Error(-1,
+                                                              e.Message,
+                                                              e.StackTrace);
 
             }
 
@@ -2877,15 +2846,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                       DateTime?           Timestamp           = null,
                       CancellationToken?  CancellationToken   = null,
-                      EventTracking_Id    EventTrackingId     = null,
+                      EventTracking_Id?   EventTrackingId     = null,
                       TimeSpan?           RequestTimeout      = null)
 
         {
-
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given charging tariff must not be null!");
-
-            OCPIResponse<Tariff> response;
 
             #region Send OnPutTariffRequest event
 
@@ -2925,6 +2889,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Tariff> response;
 
             try
             {
@@ -2988,21 +2954,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Tariff>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error(-1,
+                                                                  "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Tariff>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Tariff>.Error(-1,
+                                                              e.Message,
+                                                              e.StackTrace);
 
             }
 
@@ -3080,15 +3042,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
-                        EventTracking_Id    EventTrackingId     = null,
+                        EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
 
-            if (TariffPatch is null)
-                throw new ArgumentNullException(nameof(TariffPatch), "The given charging tariff patch must not be null!");
+            #region Initial checks
 
-            OCPIResponse<Tariff> response;
+            if (!TariffPatch.HasValues)
+                return OCPIResponse<Tariff>.Error(-1,
+                                                  "The given charging tariff patch must not be null!");
+
+            #endregion
 
             #region Send OnPatchTariffRequest event
 
@@ -3128,6 +3093,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Tariff> response;
 
             try
             {
@@ -3191,21 +3158,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Tariff>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error(-1,
+                                                                  "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Tariff>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Tariff>.Error(-1,
+                                                              e.Message,
+                                                              e.StackTrace);
 
             }
 
@@ -3282,12 +3245,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Tariff> response;
 
             #region Send OnDeleteTariffRequest event
 
@@ -3327,6 +3288,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Tariff> response;
 
             try
             {
@@ -3388,21 +3351,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Tariff>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Tariff>.Error(-1,
+                                                                  "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Tariff>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Tariff>.Error(-1,
+                                                              e.Message,
+                                                              e.StackTrace);
 
             }
 
@@ -3481,12 +3440,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                        DateTime?           Timestamp           = null,
                        CancellationToken?  CancellationToken   = null,
-                       EventTracking_Id    EventTrackingId     = null,
+                       EventTracking_Id?   EventTrackingId     = null,
                        TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Session> response;
 
             #region Send OnGetSessionRequest event
 
@@ -3526,6 +3483,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Session> response;
 
             try
             {
@@ -3587,21 +3546,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Session>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error(-1,
+                                                                   "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Session>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Session>.Error(-1,
+                                                               e.Message,
+                                                               e.StackTrace);
 
             }
 
@@ -3683,11 +3638,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!");
-
-            OCPIResponse<Session> response;
-
             #region Send OnPutSessionRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -3726,6 +3676,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Session> response;
 
             try
             {
@@ -3789,21 +3741,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Session>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error(-1,
+                                                                   "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Session>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Session>.Error(-1,
+                                                               e.Message,
+                                                               e.StackTrace);
 
             }
 
@@ -3881,15 +3829,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                          DateTime?           Timestamp           = null,
                          CancellationToken?  CancellationToken   = null,
-                         EventTracking_Id    EventTrackingId     = null,
+                         EventTracking_Id?   EventTrackingId     = null,
                          TimeSpan?           RequestTimeout      = null)
 
         {
 
-            if (SessionPatch is null)
-                throw new ArgumentNullException(nameof(SessionPatch), "The given charging session patch must not be null!");
+            #region Initial checks
 
-            OCPIResponse<Session> response;
+            if (!SessionPatch.HasValues)
+                return OCPIResponse<Session>.Error(-1,
+                                                   "The given charging session patch must not be null!");
+
+            #endregion
 
             #region Send OnPatchSessionRequest event
 
@@ -3929,6 +3880,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Session> response;
 
             try
             {
@@ -3992,21 +3945,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Session>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error(-1,
+                                                                   "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Session>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Session>.Error(-1,
+                                                               e.Message,
+                                                               e.StackTrace);
 
             }
 
@@ -4083,12 +4032,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                           DateTime?           Timestamp           = null,
                           CancellationToken?  CancellationToken   = null,
-                          EventTracking_Id    EventTrackingId     = null,
+                          EventTracking_Id?   EventTrackingId     = null,
                           TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<Session> response;
 
             #region Send OnDeleteSessionRequest event
 
@@ -4128,6 +4075,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Session> response;
 
             try
             {
@@ -4189,21 +4138,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Session>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, Session>.Error(-1,
+                                                                   "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Session>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, Session>.Error(-1,
+                                                               e.Message,
+                                                               e.StackTrace);
 
             }
 
@@ -4282,12 +4227,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                    DateTime?           Timestamp           = null,
                    CancellationToken?  CancellationToken   = null,
-                   EventTracking_Id    EventTrackingId     = null,
+                   EventTracking_Id?   EventTrackingId     = null,
                    TimeSpan?           RequestTimeout      = null)
 
         {
-
-            OCPIResponse<CDR> response;
 
             #region Send OnGetCDRRequest event
 
@@ -4327,6 +4270,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<CDR> response;
 
             try
             {
@@ -4388,21 +4333,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, CDR>("",
-                                                                default,
-                                                                -1,
-                                                                "No remote URL available!");
+                    response = OCPIResponse<String, CDR>.Error(-1,
+                                                               "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CDR>("",
-                                                            default,
-                                                            -1,
-                                                            e.Message,
-                                                            e.StackTrace);
+                response = OCPIResponse<String, CDR>.Error(-1,
+                                                           e.Message,
+                                                           e.StackTrace);
 
             }
 
@@ -4477,15 +4418,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     DateTime?           Timestamp           = null,
                     CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id    EventTrackingId     = null,
+                    EventTracking_Id?   EventTrackingId     = null,
                     TimeSpan?           RequestTimeout      = null)
 
         {
-
-            if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
-
-            OCPIResponse<CDR> response;
 
             #region Send OnPostCDRRequest event
 
@@ -4525,6 +4461,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<CDR> response;
 
             try
             {
@@ -4588,21 +4526,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, CDR>("",
-                                                             default,
-                                                             -1,
-                                                             "No remote URL available!");
+                    response = OCPIResponse<String, CDR>.Error(-1,
+                                                               "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, CDR>("",
-                                                         default,
-                                                         -1,
-                                                         e.Message,
-                                                         e.StackTrace);
+                response = OCPIResponse<String, CDR>.Error(-1,
+                                                           e.Message,
+                                                           e.StackTrace);
 
             }
 
@@ -4799,21 +4733,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, IEnumerable<Token>>("",
-                                                                            default,
-                                                                            -1,
-                                                                            "No remote URL available!");
+                    response = OCPIResponse<String, IEnumerable<Token>>.Error(-1,
+                                                                              "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, IEnumerable<Token>>("",
-                                                                        default,
-                                                                        -1,
-                                                                        e.Message,
-                                                                        e.StackTrace);
+                response = OCPIResponse<String, IEnumerable<Token>>.Error(-1,
+                                                                          e.Message,
+                                                                          e.StackTrace);
 
             }
 
@@ -4895,11 +4825,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
-
-            OCPIResponse<Token> response;
-
             #region Send OnPostTokenRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -4938,6 +4863,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<Token> response;
 
             try
             {
@@ -5008,21 +4935,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, Token>("",
-                                                               default,
-                                                               -1,
-                                                               "No remote URL available!");
+                    response = OCPIResponse<String, Token>.Error(-1,
+                                                                 "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, Token>("",
-                                                           default,
-                                                           -1,
-                                                           e.Message,
-                                                           e.StackTrace);
+                response = OCPIResponse<String, Token>.Error(-1,
+                                                             e.Message,
+                                                             e.StackTrace);
 
             }
 
@@ -5104,11 +5027,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         {
 
-            if (TokenId.IsNullOrEmpty)
-                throw new ArgumentNullException(nameof(Token), "The given token identification must not be null!");
-
-            OCPIResponse<AuthorizationInfo> response;
-
             #region Send OnPostTokenRequest event
 
             var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
@@ -5147,6 +5065,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            OCPIResponse<AuthorizationInfo> response;
 
             try
             {
@@ -5238,21 +5158,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 else
-                    response = new OCPIResponse<String, AuthorizationInfo>("",
-                                                                           default,
-                                                                           -1,
-                                                                           "No remote URL available!");
+                    response = OCPIResponse<String, AuthorizationInfo>.Error(-1,
+                                                                             "No remote URL available!");
 
             }
 
             catch (Exception e)
             {
 
-                response = new OCPIResponse<String, AuthorizationInfo>("",
-                                                                       default,
-                                                                       -1,
-                                                                       e.Message,
-                                                                       e.StackTrace);
+                response = OCPIResponse<String, AuthorizationInfo>.Error(-1,
+                                                                         e.Message,
+                                                                         e.StackTrace);
 
             }
 
