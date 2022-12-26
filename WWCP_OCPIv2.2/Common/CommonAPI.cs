@@ -919,17 +919,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                    if (Request.RemoteParty?.Role == Roles.EMSP)
                                    {
 
-                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/cdrs")).            Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                                         InterfaceRoles.SENDER,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/sessions")).        Replace("//", "/"))));
-
-
                                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
                                                                          InterfaceRoles.SENDER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
