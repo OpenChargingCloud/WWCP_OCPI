@@ -3593,8 +3593,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Tokens);
+                var remoteURL      = await GetRemoteURL(Module_Id.Tokens,
+                                                        VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -3777,8 +3777,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Tokens);
+                var remoteURL      = await GetRemoteURL(Module_Id.Tokens,
+                                                        VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -3962,8 +3962,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Tokens);
+                var remoteURL      = await GetRemoteURL(Module_Id.Tokens,
+                                                        VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -4158,8 +4158,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Commands);
+                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
+                                                        VersionId);
 
                 var command        = new ReserveNowCommand(Token,
                                                            ExpirationTimestamp,
@@ -4364,8 +4364,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Commands);
+                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
+                                                        VersionId);
 
                 var command        = new CancelReservationCommand(ReservationId,
                                                                   MyCommonAPI.GetModuleURL(Module_Id.Commands,
@@ -4568,8 +4568,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Commands);
+                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
+                                                        VersionId);
 
                 var command        = new StartSessionCommand(Token,
                                                              LocationId,
@@ -4771,8 +4771,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Commands);
+                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
+                                                        VersionId);
 
                 var command        = new StopSessionCommand(SessionId,
                                                             MyCommonAPI.GetModuleURL(Module_Id.Commands,
@@ -4975,8 +4975,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
 
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Commands);
+                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
+                                                        VersionId);
 
                 var command        = new UnlockConnectorCommand(LocationId,
                                                                 EVSEUId,

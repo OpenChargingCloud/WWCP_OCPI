@@ -981,34 +981,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestHandler: Request => {
 
-                                   if (Request.AccessInfo.HasValue &&
-                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   #region Check access token
+
+                                   if (Request.AccessInfo2.HasValue &&
+                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
                                            new OCPIResponse.Builder(Request) {
-                                               StatusCode           = 1000,
-                                               StatusMessage        = "Hello world!",
-                                               Data                 = Request.AccessInfo.Value.AsCredentials?.ToJSON(),
-                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                   AccessControlAllowHeaders  = "Authorization"
-                                               }
-                                           });
+                                              StatusCode           = 2000,
+                                              StatusMessage        = "Invalid or blocked access token!",
+                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowHeaders  = "Authorization"
+                                              }
+                                          });
 
                                    }
 
+                                   #endregion
+
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
-                                           StatusCode           = 2000,
-                                           StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                           StatusCode           = 1000,
+                                           StatusMessage        = "Hello world!",
+                                           Data                 = new Credentials(
+                                                                      Request.AccessInfo?.Token ?? AccessToken.Parse("<any>"),
+                                                                      OurVersionsURL,
+                                                                      OurBusinessDetails,
+                                                                      OurCountryCode,
+                                                                      OurPartyId
+                                                                  ).ToJSON(),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                               HTTPStatusCode             = HTTPStatusCode.OK,
                                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                AccessControlAllowHeaders  = "Authorization"
                                            }
                                        });
+
+
+                                   //return Task.FromResult(
+                                   //    new OCPIResponse.Builder(Request) {
+                                   //        StatusCode           = 2000,
+                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                   //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   //            HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                   //            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                   //            AccessControlAllowHeaders  = "Authorization"
+                                   //        }
+                                   //    });
 
                                });
 
@@ -1031,8 +1053,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
-                                   if (Request.RemoteParty != null  &&
-                                       Request.AccessInfo.HasValue &&
+                                   if (Request.RemoteParty is not null &&
+                                       Request.AccessInfo.HasValue     &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 

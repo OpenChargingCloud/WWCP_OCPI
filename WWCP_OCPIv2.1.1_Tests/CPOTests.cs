@@ -19,13 +19,7 @@
 
 using NUnit.Framework;
 
-using Newtonsoft.Json.Linq;
-
-using org.GraphDefined.Vanaheimr.Aegir;
 using org.GraphDefined.Vanaheimr.Illias;
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
-using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
 
@@ -409,6 +403,401 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 //Assert.AreEqual(Version_Id.Parse("2.1.1"), endpoints.Id);
                 //Assert.AreEqual(emspVersionsAPIURL + "2.1.1", endpoints.URL);
 
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region CPO_GetCredentials_Test()
+
+        /// <summary>
+        /// CPO Test 01.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_Test()
+        {
+
+            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+                                       CountryCode: CountryCode.Parse("DE"),
+                                       PartyId:     Party_Id.   Parse("GDF")
+                                   );
+
+            Assert.IsNotNull(graphDefinedEMSP);
+
+            if (graphDefinedEMSP is not null)
+            {
+
+                var response1 = await graphDefinedEMSP.GetVersions();
+                var response2 = await graphDefinedEMSP.GetCredentials();
+
+                // HTTP/1.1 200 OK
+                // Date:                          Mon, 26 Dec 2022 10:29:49 GMT
+                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:  Authorization
+                // Server:                        GraphDefined Hermod HTTP Server v1.0
+                // Access-Control-Allow-Origin:   *
+                // Connection:                    close
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                296
+                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
+                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
+                // 
+                // {
+                //    "data": {
+                //        "token":         "yyyyyy",
+                //        "url":           "http://127.0.0.1:7135/versions",
+                //        "business_details": {
+                //            "name":           "GraphDefined EMSP Services",
+                //            "website":        "https://www.graphdefined.com/emsp"
+                //        },
+                //        "country_code":  "DE",
+                //        "party_id":      "GDF"
+                //    },
+                //    "status_code":      1000,
+                //    "status_message":  "Hello world!",
+                //    "timestamp":       "2022-12-26T10:29:49.143Z"
+                //}
+
+                Assert.IsNotNull(response2);
+                Assert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,            response2.StatusCode);
+                Assert.AreEqual ("Hello world!",  response2.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
+
+                //Assert.IsNotNull(response.Request);
+
+                var credentials = response2.Data;
+                Assert.IsNotNull(credentials);
+                Assert.AreEqual("yyyyyy",                             credentials.    Token.      ToString());
+                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.    URL.        ToString());
+                Assert.AreEqual("DE",                                 credentials.    CountryCode.ToString());
+                Assert.AreEqual("GDF",                                credentials.    PartyId.    ToString());
+
+                var businessDetails = credentials.BusinessDetails;
+                Assert.IsNotNull(businessDetails);
+                Assert.AreEqual("GraphDefined EMSP Services",         businessDetails.Name);
+                Assert.AreEqual("https://www.graphdefined.com/emsp",  businessDetails.Website.    ToString());
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_UnknownToken_Test()
+
+        /// <summary>
+        /// CPO Test 01.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_UnknownToken_Test()
+        {
+
+            #region Change Access Token
+
+            cpoWebAPI.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+
+            var result = cpoWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:        CountryCode.Parse("DE"),
+                PartyId:            Party_Id.   Parse("GDF"),
+                Role:               Roles.      EMSP,
+                BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
+                AccessInfos:        new AccessInfo2[] {
+                                        new AccessInfo2(
+                                            AccessToken.Parse("aaaaaa"),
+                                            AccessStatus.ALLOWED
+                                        )
+                                    },
+                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                                        new RemoteAccessInfo(
+                                            AccessToken:        AccessToken.Parse("bbbbbb"),
+                                            VersionsURL:        emspVersionsAPIURL,
+                                            VersionIds:         new Version_Id[] {
+                                                                    Version_Id.Parse("2.1.1")
+                                                                },
+                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            Status:             RemoteAccessStatus.ONLINE
+                                        )
+                                    },
+                Status:             PartyStatus.ENABLED
+            );
+
+            #endregion
+
+            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+                                       CountryCode: CountryCode.Parse("DE"),
+                                       PartyId:     Party_Id.   Parse("GDF")
+                                   );
+
+            Assert.IsNotNull(graphDefinedEMSP);
+
+            if (graphDefinedEMSP is not null)
+            {
+
+                var response1 = await graphDefinedEMSP.GetVersions();
+                var response2 = await graphDefinedEMSP.GetCredentials();
+
+                // HTTP/1.1 200 OK
+                // Date:                          Mon, 26 Dec 2022 15:14:30 GMT
+                // Access-Control-Allow-Methods:  OPTIONS, GET, POST, PUT, DELETE
+                // Access-Control-Allow-Headers:  Authorization
+                // Server:                        GraphDefined Hermod HTTP Server v1.0
+                // Access-Control-Allow-Origin:   *
+                // Connection:                    close
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                296
+                // X-Request-ID:                  7AYph123pWAUt7j1Ad3n1jh1G279xG
+                // X-Correlation-ID:              jhz1GGj3j83SE7Wrf42p8hM82rM3A3
+                // 
+                // {
+                //    "data": {
+                //        "token":         "<any>",
+                //        "url":           "http://127.0.0.1:7135/versions",
+                //        "business_details": {
+                //            "name":           "GraphDefined EMSP Services",
+                //            "website":        "https://www.graphdefined.com/emsp"
+                //        },
+                //        "country_code":  "DE",
+                //        "party_id":      "GDF"
+                //    },
+                //    "status_code":      1000,
+                //    "status_message":  "Hello world!",
+                //    "timestamp":       "2022-12-26T15:14:30.143Z"
+                //}
+
+                Assert.IsNotNull(response2);
+                Assert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,            response2.StatusCode);
+                Assert.AreEqual ("Hello world!",  response2.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
+
+                //Assert.IsNotNull(response.Request);
+
+                var credentials = response2.Data;
+                Assert.IsNotNull(credentials);
+                Assert.AreEqual("<any>",                              credentials.    Token.      ToString());
+                Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.    URL.        ToString());
+                Assert.AreEqual("DE",                                 credentials.    CountryCode.ToString());
+                Assert.AreEqual("GDF",                                credentials.    PartyId.    ToString());
+
+                var businessDetails = credentials.BusinessDetails;
+                Assert.IsNotNull(businessDetails);
+                Assert.AreEqual("GraphDefined EMSP Services",         businessDetails.Name);
+                Assert.AreEqual("https://www.graphdefined.com/emsp",  businessDetails.Website.    ToString());
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_BlockedToken1_Test()
+
+        /// <summary>
+        /// CPO Test 01.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_BlockedToken1_Test()
+        {
+
+            #region Block Access Token
+
+            cpoWebAPI. CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            emspWebAPI.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+
+            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:        CountryCode.Parse("DE"),
+                PartyId:            Party_Id.   Parse("GDF"),
+                Role:               Roles.      EMSP,
+                BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
+                AccessInfos:        new AccessInfo2[] {
+                                        new AccessInfo2(
+                                            AccessToken.Parse("xxxxxx"),
+                                            AccessStatus.ALLOWED
+                                        )
+                                    },
+                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                                        new RemoteAccessInfo(
+                                            AccessToken:        AccessToken.Parse("yyyyyy"),
+                                            VersionsURL:        emspVersionsAPIURL,
+                                            VersionIds:         new Version_Id[] {
+                                                                    Version_Id.Parse("2.1.1")
+                                                                },
+                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            Status:             RemoteAccessStatus.ONLINE
+                                        )
+                                    },
+                Status:             PartyStatus.ENABLED
+            );
+
+            Assert.IsTrue(addEMSPResult);
+
+
+            var addCPOResult = emspWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:        CountryCode.Parse("DE"),
+                PartyId:            Party_Id.   Parse("GEF"),
+                Role:               Roles.      CPO,
+                BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
+                AccessInfos:        new AccessInfo2[] {
+                                        new AccessInfo2(
+                                            AccessToken.Parse("yyyyyy"),
+                                            AccessStatus.BLOCKED
+                                        )
+                                    },
+                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                                        new RemoteAccessInfo(
+                                            AccessToken:        AccessToken.Parse("xxxxxx"),
+                                            VersionsURL:        emspVersionsAPIURL,
+                                            VersionIds:         new Version_Id[] {
+                                                                    Version_Id.Parse("2.1.1")
+                                                                },
+                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            Status:             RemoteAccessStatus.ONLINE
+                                        )
+                                    },
+                Status:             PartyStatus.ENABLED
+            );
+
+            Assert.IsTrue(addCPOResult);
+
+            #endregion
+
+            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+                                       CountryCode: CountryCode.Parse("DE"),
+                                       PartyId:     Party_Id.   Parse("GDF")
+                                   );
+
+            Assert.IsNotNull(graphDefinedEMSP);
+
+            if (graphDefinedEMSP is not null)
+            {
+
+                var response1 = await graphDefinedEMSP.GetVersions();
+                var response2 = await graphDefinedEMSP.GetCredentials();
+
+                Assert.IsNotNull(response2);
+                Assert.IsNull   (response2.HTTPResponse);
+                Assert.AreEqual (-1,                         response2.StatusCode);
+                Assert.AreEqual ("No versionId available!",  response2.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+
+                //Assert.IsNotNull(response.Request);
+
+                var credentials = response2.Data;
+                Assert.IsNull(credentials);
+                //Assert.AreEqual("<any>",                              credentials.    Token.      ToString());
+                //Assert.AreEqual("http://127.0.0.1:7135/versions",     credentials.    URL.        ToString());
+                //Assert.AreEqual("DE",                                 credentials.    CountryCode.ToString());
+                //Assert.AreEqual("GDF",                                credentials.    PartyId.    ToString());
+
+                //var businessDetails = credentials.BusinessDetails;
+                //Assert.IsNotNull(businessDetails);
+                //Assert.AreEqual("GraphDefined EMSP Services",         businessDetails.Name);
+                //Assert.AreEqual("https://www.graphdefined.com/emsp",  businessDetails.Website.    ToString());
+
+            }
+
+        }
+
+        #endregion
+
+        #region CPO_GetCredentials_BlockedToken2_Test()
+
+        /// <summary>
+        /// CPO Test 01.
+        /// </summary>
+        [Test]
+        public async Task CPO_GetCredentials_BlockedToken2_Test()
+        {
+
+            #region Block Access Token
+
+            cpoWebAPI. CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GDF"));
+            emspWebAPI.CommonAPI.RemoveRemoteParty(CountryCode.Parse("DE"), Party_Id.Parse("GEF"));
+
+            var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:        CountryCode.Parse("DE"),
+                PartyId:            Party_Id.   Parse("GDF"),
+                Role:               Roles.      EMSP,
+                BusinessDetails:    new BusinessDetails("GraphDefined EMSP Services"),
+                AccessInfos:        new AccessInfo2[] {
+                                        new AccessInfo2(
+                                            AccessToken.Parse("xxxxxx"),
+                                            AccessStatus.ALLOWED
+                                        )
+                                    },
+                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                                        new RemoteAccessInfo(
+                                            AccessToken:        AccessToken.Parse("yyyyyy"),
+                                            VersionsURL:        emspVersionsAPIURL,
+                                            VersionIds:         new Version_Id[] {
+                                                                    Version_Id.Parse("2.1.1")
+                                                                },
+                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            Status:             RemoteAccessStatus.ONLINE
+                                        )
+                                    },
+                Status:             PartyStatus.ENABLED
+            );
+
+            Assert.IsTrue(addEMSPResult);
+
+
+            var addCPOResult = emspWebAPI.CommonAPI.AddRemoteParty(
+                CountryCode:        CountryCode.Parse("DE"),
+                PartyId:            Party_Id.   Parse("GEF"),
+                Role:               Roles.      CPO,
+                BusinessDetails:    new BusinessDetails("GraphDefined CPO Services"),
+                AccessInfos:        new AccessInfo2[] {
+                                        new AccessInfo2(
+                                            AccessToken.Parse("yyyyyy"),
+                                            AccessStatus.BLOCKED
+                                        )
+                                    },
+                RemoteAccessInfos:  new RemoteAccessInfo[] {
+                                        new RemoteAccessInfo(
+                                            AccessToken:        AccessToken.Parse("xxxxxx"),
+                                            VersionsURL:        emspVersionsAPIURL,
+                                            VersionIds:         new Version_Id[] {
+                                                                    Version_Id.Parse("2.1.1")
+                                                                },
+                                            SelectedVersionId:  Version_Id.Parse("2.1.1"),
+                                            Status:             RemoteAccessStatus.ONLINE
+                                        )
+                                    },
+                Status:             PartyStatus.ENABLED
+            );
+
+            Assert.IsTrue(addCPOResult);
+
+            #endregion
+
+            var graphDefinedEMSP = cpoWebAPI?.GetCPOClient(
+                                       CountryCode: CountryCode.Parse("DE"),
+                                       PartyId:     Party_Id.   Parse("GDF")
+                                   );
+
+            Assert.IsNotNull(graphDefinedEMSP);
+
+            if (graphDefinedEMSP is not null)
+            {
+
+                var response1 = await graphDefinedEMSP.GetVersions();
+                var response2 = await graphDefinedEMSP.GetCredentials(Version_Id.Parse("2.1.1"));
+
+                Assert.IsNotNull(response2);
+                Assert.IsNull   (response2.HTTPResponse);
+                Assert.AreEqual (-1,                          response2.StatusCode);
+                Assert.AreEqual ("No remote URL available!",  response2.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+
+                //Assert.IsNotNull(response.Request);
+
+                var credentials = response2.Data;
+                Assert.IsNull(credentials);
 
             }
 

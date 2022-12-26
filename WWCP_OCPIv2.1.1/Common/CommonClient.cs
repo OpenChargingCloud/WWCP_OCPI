@@ -1247,10 +1247,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region GetRemoteURL(VersionId, ModuleId, InterfaceRole)
+        #region GetRemoteURL(ModuleId, VersionId = null)
 
-        public async Task<URL?> GetRemoteURL(Version_Id?  VersionId,
-                                             Module_Id    ModuleId)
+        public async Task<URL?> GetRemoteURL(Module_Id    ModuleId,
+                                             Version_Id?  VersionId   = null)
         {
 
             var versionId = VersionId ?? SelectedOCPIVersionId;
@@ -1368,8 +1368,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var versionId      = VersionId     ?? SelectedOCPIVersionId;
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(versionId,
-                                                        Module_Id.Credentials);
+                var remoteURL      = await GetRemoteURL(Module_Id.Credentials,
+                                                        versionId);
+
+                // Might be updated!
+                versionId ??= SelectedOCPIVersionId;
 
                 if (!versionId.HasValue)
                     response = OCPIResponse<Credentials>.Error("No versionId available!");
@@ -1559,8 +1562,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Credentials);
+                var remoteURL      = await GetRemoteURL(Module_Id.Credentials,
+                                                        VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -1749,8 +1752,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Credentials);
+                var remoteURL      = await GetRemoteURL(Module_Id.Credentials,
+                                                        VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -1962,8 +1965,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var requestId      = RequestId     ?? Request_Id.    NewRandom();
                 var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(VersionId,
-                                                        Module_Id.Credentials);
+                var remoteURL      = await GetRemoteURL(Module_Id.Credentials,
+                                                        VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -2171,8 +2174,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var versionId         = VersionId        ?? SelectedOCPIVersionId;
                 var credentialTokenB  = CredentialTokenB ?? AccessToken.NewRandom();
 
-                var remoteURL         = await GetRemoteURL(versionId,
-                                                           Module_Id.Credentials);
+                var remoteURL         = await GetRemoteURL(Module_Id.Credentials,
+                                                           versionId);
 
                 if      (!versionId.HasValue)
                     response = OCPIResponse<String, Credentials>.Error("No version identification available!");
