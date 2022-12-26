@@ -81,19 +81,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 // }
 
                 Assert.IsNotNull(response);
-                Assert.AreEqual(1000, response.StatusCode);
-                Assert.AreEqual("Hello world!", response.StatusMessage);
-                Assert.IsTrue(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,            response.StatusCode);
+                Assert.AreEqual ("Hello world!",  response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
                 //Assert.IsNotNull(response.Request);
 
                 var versions = response.Data;
                 Assert.IsNotNull(versions);
-                Assert.AreEqual(1, response.Data.Count());
+                Assert.AreEqual (1, response.Data.Count());
 
                 var version = versions.First();
-                Assert.AreEqual(Version_Id.Parse("2.1.1"),    version.Id);
-                Assert.AreEqual(emspVersionsAPIURL + "2.1.1", version.URL);
+                Assert.AreEqual (Version_Id.Parse("2.1.1"),    version.Id);
+                Assert.AreEqual (emspVersionsAPIURL + "2.1.1", version.URL);
 
             }
 
@@ -177,19 +178,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 // }
 
                 Assert.IsNotNull(response);
-                Assert.AreEqual(1000, response.StatusCode);
-                Assert.AreEqual("Hello world!", response.StatusMessage);
-                Assert.IsTrue(Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.AreEqual (200,             response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,            response.StatusCode);
+                Assert.AreEqual ("Hello world!",  response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response.Timestamp < TimeSpan.FromSeconds(10));
 
                 //Assert.IsNotNull(response.Request);
 
                 var versions = response.Data;
                 Assert.IsNotNull(versions);
-                Assert.AreEqual(1, response.Data.Count());
+                Assert.AreEqual (1, response.Data.Count());
 
                 var version = versions.First();
-                Assert.AreEqual(Version_Id.Parse("2.1.1"),    version.Id);
-                Assert.AreEqual(emspVersionsAPIURL + "2.1.1", version.URL);
+                Assert.AreEqual (Version_Id.Parse("2.1.1"),    version.Id);
+                Assert.AreEqual (emspVersionsAPIURL + "2.1.1", version.URL);
 
             }
 
@@ -299,16 +301,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 // }
 
                 Assert.IsNotNull(response);
-                Assert.AreEqual(403,                                 response.HTTPResponse?.HTTPStatusCode.Code);
-                Assert.AreEqual(2000,                                response.StatusCode);
-                Assert.AreEqual("Invalid or blocked access token!",  response.StatusMessage);
-                Assert.IsTrue  (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.AreEqual (403,                                 response.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (2000,                                response.StatusCode);
+                Assert.AreEqual ("Invalid or blocked access token!",  response.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now - response.Timestamp < TimeSpan.FromSeconds(10));
 
                 //Assert.IsNotNull(response.Request);
 
                 var versions = response.Data;
                 Assert.IsNotNull(versions);
-                Assert.AreEqual(0, versions.Count());
+                Assert.AreEqual (0, versions.Count());
 
             }
 
@@ -340,33 +342,70 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                 var response2 = await graphDefinedEMSP.GetVersionDetails(Version_Id.Parse("2.1.1"));
 
                 // HTTP/1.1 200 OK
-                // Content-Type:   application/json;charset=utf-8
-                // Content-Length: 224
-                // Connection:     keep-alive
-                // Date:           Wed, 14 Dec 2022 18:59:05 GMT
+                // Date:                          Mon, 26 Dec 2022 00:36:21 GMT
+                // Access-Control-Allow-Methods:  OPTIONS, GET
+                // Access-Control-Allow-Headers:  Authorization
+                // Vary:                          Accept
+                // Server:                        GraphDefined Hermod HTTP Server v1.0
+                // Access-Control-Allow-Origin:   *
+                // Connection:                    close
+                // Content-Type:                  application/json; charset=utf-8
+                // Content-Length:                653
+                // X-Request-ID:                  MpG9fA2Mjr89K16r82phMA18r83CS9
+                // X-Correlation-ID:              S1p1rKhhh96vEK8A8t84Sht382KE8f
                 // 
                 // {
-                //     "data": [{
-                //         "version":  "2.1.1",
-                //         "url":      "http://127.0.0.1:7135/versions/2.1.1"
-                //     }],
-                //     "timestamp":    "2022-12-14T18:59:05Z",
-                //     "status_code":   1000
+                //     "data": {
+                //         "version": "2.1.1",
+                //         "endpoints": [
+                //             {
+                //                 "identifier":  "credentials",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/credentials"
+                //             },
+                //             {
+                //                 "identifier":  "locations",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/locations"
+                //             },
+                //             {
+                //                 "identifier":  "tariffs",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/tariffs"
+                //             },
+                //             {
+                //                 "identifier":  "sessions",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/sessions"
+                //             },
+                //             {
+                //                 "identifier":  "cdrs",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/cdrs"
+                //             },
+                //             {
+                //                 "identifier":  "commands",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/commands"
+                //             },
+                //             {
+                //                 "identifier":  "tokens",
+                //                 "url":         "http://127.0.0.1:7135/2.1.1/emsp/tokens"
+                //             }
+                //         ]
+                //     },
+                //     "status_code":      1000,
+                //     "status_message":  "Hello world!",
+                //     "timestamp":       "2022-12-26T00:36:21.259Z"
                 // }
 
                 Assert.IsNotNull(response2);
-                Assert.AreEqual(1000, response2.StatusCode);
-                Assert.AreEqual("Hello world!", response2.StatusMessage);
-                Assert.IsTrue(Timestamp.Now - response2.Timestamp < TimeSpan.FromSeconds(10));
+                Assert.AreEqual (200,             response2.HTTPResponse?.HTTPStatusCode.Code);
+                Assert.AreEqual (1000,            response2.StatusCode);
+                Assert.AreEqual ("Hello world!",  response2.StatusMessage);
+                Assert.IsTrue   (Timestamp.Now -  response2.Timestamp < TimeSpan.FromSeconds(10));
 
                 //Assert.IsNotNull(response.Request);
-
 
                 var versionDetail = response2.Data;
                 Assert.IsNotNull(versionDetail);
 
                 var endpoints = versionDetail.Endpoints;
-                Assert.AreEqual(7, endpoints.Count());
+                Assert.AreEqual (7, endpoints.Count());
                 //Assert.AreEqual(Version_Id.Parse("2.1.1"), endpoints.Id);
                 //Assert.AreEqual(emspVersionsAPIURL + "2.1.1", endpoints.URL);
 
