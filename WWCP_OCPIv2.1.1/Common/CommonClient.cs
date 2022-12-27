@@ -2269,10 +2269,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                            PartyId:            response.Data.PartyId,
                                                            BusinessDetails:    response.Data.BusinessDetails,
 
-                                                           AccessToken:        credentialTokenB,
+                                                           AccessToken:        response.Data.Token, // credentialTokenB,
                                                            AccessStatus:       AccessStatus.ALLOWED,
 
-                                                           RemoteAccessToken:  response.Data.Token,
+                                                           RemoteAccessToken:  credentialTokenB,    // response.Data.Token,
                                                            RemoteVersionsURL:  response.Data.URL,
                                                            RemoteVersionIds:   new Version_Id[] { versionId.Value },
                                                            SelectedVersionId:  versionId.Value,

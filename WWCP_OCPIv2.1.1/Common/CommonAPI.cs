@@ -424,7 +424,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                          Func<EVSE, Boolean>?  KeepRemovedEVSEs          = null,
                          Boolean               LocationsAsOpenData       = true,
                          Boolean?              AllowDowngrades           = null,
-                         Boolean               Disable_RootServices      = true)
+                         Boolean               Disable_RootServices      = false)
 
             : base(HTTPServer,
                    HTTPHostname,
