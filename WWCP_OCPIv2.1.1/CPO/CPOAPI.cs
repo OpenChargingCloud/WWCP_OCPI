@@ -282,9 +282,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                                 CPOAPI.DefaultPartyId,
-                                                 LocationId.Value,
+            if (!CPOAPI.CommonAPI.TryGetLocation(LocationId.Value,
                                                  out Location)) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -499,9 +497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                                 CPOAPI.DefaultPartyId,
-                                                 LocationId.Value,
+            if (!CPOAPI.CommonAPI.TryGetLocation(LocationId.Value,
                                                  out Location))
             {
 
@@ -778,9 +774,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
-                                                 CPOAPI.DefaultPartyId,
-                                                 LocationId.Value,
+            if (!CPOAPI.CommonAPI.TryGetLocation(LocationId.Value,
                                                  out Location))
             {
 

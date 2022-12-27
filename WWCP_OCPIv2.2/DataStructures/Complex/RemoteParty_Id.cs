@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         #region Data
 
-        public static readonly Regex RemotePartyId_RegEx = new Regex("^([a-zA-Z0-9]{2,5})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
+        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2,5})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
 
         /// <summary>
         /// The internal identification.
@@ -96,7 +96,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static RemoteParty_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out RemoteParty_Id locationId))
+            if (TryParse(Text, out var locationId))
                 return locationId;
 
             if (Text.IsNullOrEmpty())
@@ -117,8 +117,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public static RemoteParty_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out RemoteParty_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var remotePartyId))
+                return remotePartyId;
 
             return null;
 
@@ -144,9 +144,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     var MatchCollection = RemotePartyId_RegEx.Matches(Text);
 
                     if (MatchCollection.Count == 1 &&
-                        CountryCode.TryParse(MatchCollection[0].Groups[1].Value, out CountryCode countryCode) &&
-                        Party_Id.   TryParse(MatchCollection[0].Groups[2].Value, out Party_Id    partyId) &&
-                        Enum.       TryParse(MatchCollection[0].Groups[3].Value, out Roles       role))
+                        CountryCode.    TryParse(MatchCollection[0].Groups[1].Value, out var countryCode) &&
+                        Party_Id.       TryParse(MatchCollection[0].Groups[2].Value, out var partyId)     &&
+                        RolesExtensions.TryParse(MatchCollection[0].Groups[3].Value, out var role))
                     {
 
                         RemotePartyId = new RemoteParty_Id(countryCode,
@@ -287,7 +287,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public Int32 CompareTo(Object? Object)
 
             => Object is RemoteParty_Id locationId
                    ? CompareTo(locationId)
@@ -321,7 +321,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        public override Boolean Equals(Object? Object)
 
             => Object is RemoteParty_Id locationId &&
                    Equals(locationId);

@@ -371,7 +371,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location) &&
+            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value,
+                                                  out Location) &&
                  FailOnMissingLocation)
             {
 
@@ -676,9 +677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetLocation(CountryCode.Value,
-                                                  PartyId.    Value,
-                                                  LocationId. Value, out Location))
+            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId. Value, out Location))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1048,7 +1047,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetLocation(CountryCode.Value, PartyId.Value, LocationId.Value, out Location))
+            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -6587,7 +6586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        AuthorizationInfo authorizationInfo = null;
+                                        AuthorizationInfo? authorizationInfo = null;
 
                                         var RFIDAuthTokenLocal = OnRFIDAuthToken;
                                         if (RFIDAuthTokenLocal != null)
@@ -6596,10 +6595,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             try
                                             {
 
-                                                var result = RFIDAuthTokenLocal(Request.FromCountryCode ?? DefaultCountryCode,
-                                                                                Request.FromPartyId     ?? DefaultPartyId,
-                                                                                Request.ToCountryCode   ?? DefaultCountryCode,
-                                                                                Request.ToPartyId       ?? DefaultPartyId,
+                                                var result = RFIDAuthTokenLocal(DefaultCountryCode, // Request.FromCountryCode ?? DefaultCountryCode,
+                                                                                DefaultPartyId,     // Request.FromPartyId     ?? DefaultPartyId,
+                                                                                DefaultCountryCode, // Request.ToCountryCode   ?? DefaultCountryCode,
+                                                                                DefaultPartyId,     // Request.ToPartyId       ?? DefaultPartyId,
                                                                                 TokenId.Value,
                                                                                 locationReference).Result;
 
@@ -6650,34 +6649,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             if (locationReference.HasValue)
                                             {
 
-                                                Location? validLocation = null;
-
-                                                if (Request.FromCountryCode.HasValue && Request.FromPartyId.HasValue)
+                                                if (!CommonAPI.TryGetLocation(locationReference.Value.LocationId,
+                                                                              out var validLocation))
                                                 {
 
-                                                    if (!CommonAPI.TryGetLocation(Request.FromCountryCode.Value,
-                                                                                  Request.FromPartyId.    Value,
-                                                                                  locationReference.Value.LocationId,
-                                                                                  out validLocation))
-                                                    {
-
-                                                        return new OCPIResponse.Builder(Request) {
-                                                            StatusCode           = 2001,
-                                                            StatusMessage        = "The given location is unknown!",
-                                                            Data                 = new AuthorizationInfo(
-                                                                                       AllowedType.NOT_ALLOWED,
-                                                                                       locationReference.Value,
-                                                                                       new DisplayText(Languages.en,
-                                                                                                       "The given location is unknown!")
-                                                                                   ).ToJSON(),
-                                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                                HTTPStatusCode             = HTTPStatusCode.NotFound,
-                                                                AccessControlAllowMethods  = "OPTIONS, GET, POST",
-                                                                AccessControlAllowHeaders  = "Authorization"
-                                                            }
-                                                        };
-
-                                                    }
+                                                    return new OCPIResponse.Builder(Request) {
+                                                        StatusCode           = 2001,
+                                                        StatusMessage        = "The given location is unknown!",
+                                                        Data                 = new AuthorizationInfo(
+                                                                                   AllowedType.NOT_ALLOWED,
+                                                                                   locationReference.Value,
+                                                                                   new DisplayText(Languages.en,
+                                                                                                   "The given location is unknown!")
+                                                                               ).ToJSON(),
+                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                            AccessControlAllowHeaders  = "Authorization"
+                                                        }
+                                                    };
 
                                                 }
 

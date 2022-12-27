@@ -1,4 +1,4 @@
-# WWCP OCPI v2.2 Implementation
+# WWCP OCPI v2.1.1 Implementation
 
 This software implements the [Open Charge Point Interface (OCPI)](https://github.com/ocpi/ocpi)
 in C# on .NET6.
@@ -25,17 +25,17 @@ and can also use only a limited set of HTTP requests. This will for example supp
 
 ### Location module
 
-#### GET ~/locations (Sender Interface / CPO)
+#### GET ~/locations (CPO)
 
 A CPO might want to expose his locations also to unauthenticated requests
 (e.g. no access token provided). This will for example support **Open Data** initiatives.
 
-#### GET ~/locations/country_code/party_id (Receiver Interface)
+#### GET ~/locations/country_code/party_id
 
 This HTTP request will allow CPOs to **request all locations** stored within an EMSP.
 This will simplify the validation of all stored data.
 
-#### DELETE ~/locations/country_code/party_id (Receiver Interface)
+#### DELETE ~/locations/country_code/party_id
 
 This HTTP request will allow CPOs to **delete all locations** stored within an EMSP.
 This will simplify debugging and validation of your software and infrastructure. As

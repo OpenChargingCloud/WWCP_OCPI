@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -160,17 +157,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
 
 
-        private readonly List<AccessInfo2> _AccessInfo;
+        private readonly List<AccessInfo2> accessInfo;
 
         public IEnumerable<AccessInfo2> AccessInfo
-            => _AccessInfo;
+            => accessInfo;
 
 
 
-        private readonly List<RemoteAccessInfo> _RemoteAccessInfos;
+        private readonly List<RemoteAccessInfo> remoteAccessInfos;
 
         public IEnumerable<RemoteAccessInfo> RemoteAccessInfos
-            => _RemoteAccessInfos;
+            => remoteAccessInfos;
 
         #endregion
 
@@ -306,22 +303,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         {
 
-            this.Id                  = RemoteParty_Id.Parse(
-                                           String.Concat(CountryCode.ToString(),
-                                                         "-",
-                                                         PartyId.    ToString(),
-                                                         "_",
-                                                         Role.       ToString()));
+            this.Id                 = RemoteParty_Id.Parse(
+                                          String.Concat(CountryCode.ToString(),
+                                                        "-",
+                                                        PartyId.    ToString(),
+                                                        "_",
+                                                        Role.       ToString()));
 
-            this.CountryCode         = CountryCode;
-            this.PartyId             = PartyId;
-            this.Role                = Role;
-            this.BusinessDetails     = BusinessDetails;
-            this.Status              = Status;
-            this.LastUpdated         = LastUpdated ?? Timestamp.Now;
+            this.CountryCode        = CountryCode;
+            this.PartyId            = PartyId;
+            this.Role               = Role;
+            this.BusinessDetails    = BusinessDetails;
+            this.Status             = Status;
+            this.LastUpdated        = LastUpdated ?? Timestamp.Now;
 
-            this._AccessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
-            this._RemoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
+            this.accessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
+            this.remoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
 
             CalcSHA256Hash();
 
@@ -360,16 +357,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                            new JProperty("role",                     Role.                ToString()),
                            new JProperty("partyStatus",              Status.         ToString()),
 
-                           BusinessDetails != null
+                           BusinessDetails is not null
                                ? new JProperty("businessDetails",    BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
-                           _AccessInfo.SafeAny()
-                               ? new JProperty("accessInfos",        new JArray(_AccessInfo.       SafeSelect(accessInfo       => accessInfo.      ToJSON())))
+                           accessInfo.Any()
+                               ? new JProperty("accessInfos",        new JArray(accessInfo.       SafeSelect(accessInfo       => accessInfo.      ToJSON())))
                                : null,
 
-                           _RemoteAccessInfos.SafeAny()
-                               ? new JProperty("remoteAccessInfos",  new JArray(_RemoteAccessInfos.SafeSelect(remoteAccessInfo => remoteAccessInfo.ToJSON())))
+                           remoteAccessInfos.Any()
+                               ? new JProperty("remoteAccessInfos",  new JArray(remoteAccessInfos.SafeSelect(remoteAccessInfo => remoteAccessInfo.ToJSON())))
                                : null,
 
                            new JProperty("last_updated",             LastUpdated.         ToIso8601()),

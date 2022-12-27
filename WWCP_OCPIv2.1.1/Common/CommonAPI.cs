@@ -659,55 +659,55 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // curl -v -H "Accept: application/json" http://127.0.0.1:2502/versions
             // ----------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
-                                HTTPMethod.GET,
-                                URLPathPrefix + "versions",
-                                HTTPContentType.JSON_UTF8,
-                                OCPIRequestHandler: Request => {
+                               HTTPMethod.GET,
+                               URLPathPrefix + "versions",
+                               HTTPContentType.JSON_UTF8,
+                               OCPIRequestHandler: Request => {
 
-                                    #region Check access token
+                                   #region Check access token
 
-                                    if (Request.AccessInfo2.HasValue &&
-                                        Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
-                                    {
+                                   if (Request.AccessInfo2.HasValue &&
+                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
+                                   {
 
-                                        return Task.FromResult(
-                                            new OCPIResponse.Builder(Request) {
-                                                StatusCode           = 2000,
-                                                StatusMessage        = "Invalid or blocked access token!",
-                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                    HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                    AccessControlAllowMethods  = "OPTIONS, GET",
-                                                    AccessControlAllowHeaders  = "Authorization"
-                                                }
-                                            });
+                                       return Task.FromResult(
+                                           new OCPIResponse.Builder(Request) {
+                                               StatusCode           = 2000,
+                                               StatusMessage        = "Invalid or blocked access token!",
+                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                   AccessControlAllowMethods  = "OPTIONS, GET",
+                                                   AccessControlAllowHeaders  = "Authorization"
+                                               }
+                                           });
 
-                                    }
+                                   }
 
-                                    #endregion
+                                   #endregion
 
-                                    return Task.FromResult(
-                                        new OCPIResponse.Builder(Request) {
-                                            StatusCode           = 1000,
-                                            StatusMessage        = "Hello world!",
-                                            Data                 = new JArray(
-                                                                        new VersionInformation[] {
-                                                                            new VersionInformation(
-                                                                                Version_Id.Parse("2.1.1"),
-                                                                                URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                        (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
-                                                                            )
-                                                                        }.Where (version => version is not null).
-                                                                        Select(version => version.ToJSON())
-                                                                    ),
-                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                HTTPStatusCode             = HTTPStatusCode.OK,
-                                                AccessControlAllowMethods  = "OPTIONS, GET",
-                                                AccessControlAllowHeaders  = "Authorization",
-                                                Vary                       = "Accept"
-                                            }
-                                        });
+                                   return Task.FromResult(
+                                       new OCPIResponse.Builder(Request) {
+                                           StatusCode           = 1000,
+                                           StatusMessage        = "Hello world!",
+                                           Data                 = new JArray(
+                                                                      new VersionInformation[] {
+                                                                          new VersionInformation(
+                                                                              Version_Id.Parse("2.1.1"),
+                                                                              URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + "/versions/2.1.1")).Replace("//", "/"))
+                                                                          )
+                                                                      }.Where (version => version is not null).
+                                                                      Select(version => version.ToJSON())
+                                                                  ),
+                                           HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                               HTTPStatusCode             = HTTPStatusCode.OK,
+                                               AccessControlAllowMethods  = "OPTIONS, GET",
+                                               AccessControlAllowHeaders  = "Authorization",
+                                               Vary                       = "Accept"
+                                           }
+                                       });
 
-                                });
+                               });
 
             #endregion
 
@@ -830,10 +830,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                                         new VersionEndpoint(Module_Id.Credentials,
                                                                             URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                      (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "credentials")).Replace("//", "/"))),
-
-                                                        new VersionEndpoint(Module_Id.Credentials,
-                                                                            URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                       (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "credentials")).Replace("//", "/")))
 
                                                     };
@@ -843,8 +839,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region The other side is a CPO...
 
-                                   //if (Request.RemoteParty?.Role == Roles.CPO)
-                                   //{
+                                   if (Request.RemoteParty?.Role == Roles.CPO)
+                                   {
 
                                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") + 
@@ -871,9 +867,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/tokens")).   Replace("//", "/"))));
 
-                                       // hubclientinfo
-
-                                   //}
+                                   }
 
                                    #endregion
 
@@ -892,17 +886,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    #region The other side is an EMP...
 
-                                   //if (Request.RemoteParty?.Role == Roles.EMSP)
-                                   //{
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/cdrs")).            Replace("//", "/"))));
-
-                                       endpoints.Add(new VersionEndpoint(Module_Id.Sessions,
-                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
-                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/sessions")).        Replace("//", "/"))));
-
+                                   if (Request.RemoteParty?.Role == Roles.EMSP)
+                                   {
 
                                        endpoints.Add(new VersionEndpoint(Module_Id.Locations,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
@@ -929,9 +914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/tokens")).          Replace("//", "/"))));
 
-                                       // hubclientinfo
-
-                                   //}
+                                   }
 
                                    #endregion
 
@@ -960,7 +943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region OPTIONS     ~/{versionId}/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.2/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/2.1.1/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
@@ -990,7 +973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region GET         ~/{versionId}/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
@@ -998,34 +981,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestHandler: Request => {
 
-                                   if (Request.AccessInfo.HasValue &&
-                                       Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
+                                   #region Check access token
+
+                                   if (Request.AccessInfo2.HasValue &&
+                                       Request.AccessInfo2.Value.Status != AccessStatus.ALLOWED)
                                    {
 
                                        return Task.FromResult(
                                            new OCPIResponse.Builder(Request) {
-                                               StatusCode           = 1000,
-                                               StatusMessage        = "Hello world!",
-                                               Data                 = Request.AccessInfo.Value.AsCredentials?.ToJSON(),
-                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                   HTTPStatusCode             = HTTPStatusCode.OK,
-                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                                                   AccessControlAllowHeaders  = "Authorization"
-                                               }
-                                           });
+                                              StatusCode           = 2000,
+                                              StatusMessage        = "Invalid or blocked access token!",
+                                              HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                  HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                  AccessControlAllowMethods  = "OPTIONS, GET",
+                                                  AccessControlAllowHeaders  = "Authorization"
+                                              }
+                                          });
 
                                    }
 
+                                   #endregion
+
                                    return Task.FromResult(
                                        new OCPIResponse.Builder(Request) {
-                                           StatusCode           = 2000,
-                                           StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                           StatusCode           = 1000,
+                                           StatusMessage        = "Hello world!",
+                                           Data                 = new Credentials(
+                                                                      Request.AccessInfo?.Token ?? AccessToken.Parse("<any>"),
+                                                                      OurVersionsURL,
+                                                                      OurBusinessDetails,
+                                                                      OurCountryCode,
+                                                                      OurPartyId
+                                                                  ).ToJSON(),
                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                               HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                               HTTPStatusCode             = HTTPStatusCode.OK,
                                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                AccessControlAllowHeaders  = "Authorization"
                                            }
                                        });
+
+
+                                   //return Task.FromResult(
+                                   //    new OCPIResponse.Builder(Request) {
+                                   //        StatusCode           = 2000,
+                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method!",
+                                   //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                   //            HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                   //            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                                   //            AccessControlAllowHeaders  = "Authorization"
+                                   //        }
+                                   //    });
 
                                });
 
@@ -1036,7 +1041,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.POST,
@@ -1048,8 +1053,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    var CREDENTIALS_TOKEN_A = Request.AccessToken;
 
-                                   if (Request.RemoteParty != null  &&
-                                       Request.AccessInfo.HasValue &&
+                                   if (Request.RemoteParty is not null &&
+                                       Request.AccessInfo.HasValue     &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
@@ -1072,7 +1077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1089,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.PUT,
@@ -1097,16 +1102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  PutCredentialsRequest,
                                OCPIResponseLogger: PutCredentialsResponse,
-                               OCPIRequestHandler:        async Request => {
+                               OCPIRequestHandler: async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
+                                       // The party is not yet fully registered!
                                        if (!Request.AccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!",
+                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1116,14 +1122,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                        return await POSTOrPUTCredentials(Request);
 
-
                                    }
 
                                    return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 2000,
-                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
@@ -1138,7 +1143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.DELETE,
@@ -1146,7 +1151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  DeleteCredentialsRequest,
                                OCPIResponseLogger: DeleteCredentialsResponse,
-                               OCPIRequestHandler:        async Request => {
+                               OCPIRequestHandler: async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
@@ -1186,7 +1191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1306,17 +1311,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            var version2_2              = Version_Id.Parse("2.2");
-            var justVersion2_2          = otherVersions.Data.Where(version => version.Id == version2_2).ToArray();
+            var version2_1_1            = Version_Id.Parse("2.1.1");
+            var justVersion2_1_1        = otherVersions.Data.Where(version => version.Id == version2_1_1).ToArray();
 
             #region ...or send error!
 
-            if (justVersion2_2.Length == 0)
+            if (justVersion2_1_1.Length == 0)
             {
 
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3003,
-                           StatusMessage        = "Could not find OCPI v2.2 at '" + receivedCredentials.URL + "'!",
+                           StatusMessage        = "Could not find OCPI v2.1.1 at '" + receivedCredentials.URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1328,16 +1333,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            var otherVersion2_2Details  = await commonClient.GetVersionDetails(version2_2);
+            var otherVersion2_1_1Details  = await commonClient.GetVersionDetails(version2_1_1);
 
             #region ...or send error!
 
-            if (otherVersion2_2Details.StatusCode != 1000)
+            if (otherVersion2_1_1Details.StatusCode != 1000)
             {
 
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3001,
-                           StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_2.First().URL + "'!",
+                           StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_1_1.First().URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1363,8 +1368,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    receivedCredentials.Token,
                                    receivedCredentials.URL,
                                    otherVersions.Data.Select(version => version.Id),
-                                   version2_2,
+                                   version2_1_1,
 
+                                   null, //receivedCredentials.Role,
                                    AccessStatus.      ALLOWED,
                                    RemoteAccessStatus.ONLINE,
                                    PartyStatus.       ENABLED);
@@ -1440,6 +1446,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddRemoteParty(CountryCode               CountryCode,
                                       Party_Id                  PartyId,
+                                      Roles                     Role,
                                       BusinessDetails           BusinessDetails,
 
                                       AccessToken               AccessToken,
@@ -1459,6 +1466,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1491,6 +1499,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddRemoteParty(CountryCode      CountryCode,
                                       Party_Id         PartyId,
+                                      Roles            Role,
                                       BusinessDetails  BusinessDetails,
 
                                       AccessToken      AccessToken,
@@ -1504,6 +1513,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1530,6 +1540,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddRemoteParty(CountryCode               CountryCode,
                                       Party_Id                  PartyId,
+                                      Roles                     Role,
                                       BusinessDetails           BusinessDetails,
 
                                       AccessToken               RemoteAccessToken,
@@ -1546,6 +1557,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role,
                                                      BusinessDetails,
 
                                                      RemoteAccessToken,
@@ -1575,6 +1587,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddRemoteParty(CountryCode                    CountryCode,
                                       Party_Id                       PartyId,
+                                      Roles                          Role,
                                       BusinessDetails                BusinessDetails,
 
                                       IEnumerable<AccessInfo2>       AccessInfos,
@@ -1589,6 +1602,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessInfos,
@@ -1626,6 +1640,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               IEnumerable<Version_Id>?  RemoteVersionIds    = null,
                                               Version_Id?               SelectedVersionId   = null,
 
+                                              Roles?                    Role                = null,
                                               AccessStatus              AccessStatus        = AccessStatus.      ALLOWED,
                                               RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
                                               PartyStatus               PartyStatus         = PartyStatus.       ENABLED)
@@ -1637,11 +1652,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 foreach (var remoteParty in remoteParties.Values.Where(party => party.CountryCode == CountryCode &&
                                                                                 party.PartyId     == PartyId))
                 {
+
+                    Role = remoteParty.Role;
+
                     remoteParties.Remove(remoteParty.Id);
+
                 }
+
+                if (!Role.HasValue)
+                    return false;
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role.Value,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1655,7 +1678,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                      RemoteStatus,
                                                      PartyStatus);
 
-                remoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                remoteParties.Add(newRemoteParty.Id,
+                                  newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1673,6 +1697,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddOrUpdateRemoteParty(CountryCode      CountryCode,
                                               Party_Id         PartyId,
+                                              Roles            Role,
                                               BusinessDetails  BusinessDetails,
 
                                               AccessToken      AccessToken,
@@ -1692,6 +1717,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role,
                                                      BusinessDetails,
 
                                                      AccessToken,
@@ -1717,6 +1743,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
                                               Party_Id                  PartyId,
+                                              Roles                     Role,
                                               BusinessDetails           BusinessDetails,
 
                                               AccessToken               RemoteAccessToken,
@@ -1739,6 +1766,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var newRemoteParty = new RemoteParty(CountryCode,
                                                      PartyId,
+                                                     Role,
                                                      BusinessDetails,
 
                                                      RemoteAccessToken,
@@ -2002,6 +2030,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         var newRemoteParty = new RemoteParty(
                                                  remoteParty.CountryCode,
                                                  remoteParty.PartyId,
+                                                 remoteParty.Role,
                                                  remoteParty.BusinessDetails,
                                                  remoteParty.AccessInfo.Where(accessInfo => accessInfo.Token != AccessToken),
                                                  remoteParty.RemoteAccessInfos,
@@ -2900,11 +2929,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region LocationExists(CountryCode, PartyId, LocationId)
+        #region LocationExists(LocationId)
 
-        public Boolean LocationExists(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Location_Id   LocationId)
+        public Boolean LocationExists(Location_Id LocationId)
         {
 
             lock (Locations)
@@ -2918,11 +2945,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region TryGetLocation(CountryCode, PartyId, LocationId, out Location)
+        #region TryGetLocation(LocationId, out Location)
 
-        public Boolean TryGetLocation(CountryCode    CountryCode,
-                                      Party_Id       PartyId,
-                                      Location_Id    LocationId,
+        public Boolean TryGetLocation(Location_Id    LocationId,
                                       out Location?  Location)
         {
 

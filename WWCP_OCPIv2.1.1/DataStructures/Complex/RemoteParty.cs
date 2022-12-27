@@ -17,10 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 
 using Newtonsoft.Json.Linq;
@@ -131,11 +128,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Mandatory]
         public Party_Id                 PartyId              { get; }
 
-        ///// <summary>
-        ///// The type of the role.
-        ///// </summary>
-        //[Mandatory]
-        //public Roles                    Role                 { get; }
+        /// <summary>
+        /// The type of the role.
+        /// </summary>
+        [Mandatory]
+        public Roles                    Role                 { get; }
 
         /// <summary>
         /// Business details of this party.
@@ -160,17 +157,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
 
 
-        private readonly List<AccessInfo2> _AccessInfo;
+        private readonly List<AccessInfo2> accessInfo;
 
         public IEnumerable<AccessInfo2> AccessInfo
-            => _AccessInfo;
+            => accessInfo;
 
 
 
-        private readonly List<RemoteAccessInfo> _RemoteAccessInfos;
+        private readonly List<RemoteAccessInfo> remoteAccessInfos;
 
         public IEnumerable<RemoteAccessInfo> RemoteAccessInfos
-            => _RemoteAccessInfos;
+            => remoteAccessInfos;
 
         #endregion
 
@@ -180,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public RemoteParty(CountryCode      CountryCode,
                            Party_Id         PartyId,
-                           //Roles            Role,
+                           Roles            Role,
                            BusinessDetails  BusinessDetails,
 
                            AccessToken      AccessToken,
@@ -191,7 +188,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             : this(CountryCode,
                    PartyId,
-                   //Role,
+                   Role,
                    BusinessDetails,
                    new AccessInfo2[] {
                        new AccessInfo2(
@@ -211,7 +208,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public RemoteParty(CountryCode               CountryCode,
                            Party_Id                  PartyId,
-                           //Roles                     Role,
+                           Roles                     Role,
                            BusinessDetails           BusinessDetails,
 
                            AccessToken               RemoteAccessToken,
@@ -226,7 +223,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             : this(CountryCode,
                    PartyId,
-                   //Role,
+                   Role,
                    BusinessDetails,
                    null,
                    new RemoteAccessInfo[] {
@@ -249,7 +246,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public RemoteParty(CountryCode               CountryCode,
                            Party_Id                  PartyId,
-                           //Roles                     Role,
+                           Roles                     Role,
                            BusinessDetails           BusinessDetails,
 
                            AccessToken               AccessToken,
@@ -267,7 +264,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             : this(CountryCode,
                    PartyId,
-                   //Role,
+                   Role,
                    BusinessDetails,
                    new AccessInfo2[] {
                        new AccessInfo2(
@@ -295,7 +292,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public RemoteParty(CountryCode                    CountryCode,
                            Party_Id                       PartyId,
-                           //Roles                          Role,
+                           Roles                          Role,
                            BusinessDetails                BusinessDetails,
 
                            IEnumerable<AccessInfo2>       AccessInfos,
@@ -306,22 +303,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
-            this.Id                  = RemoteParty_Id.Parse(
-                                           String.Concat(CountryCode.ToString(),
-                                                         "-",
-                                                         PartyId.    ToString()));
-                                                         //"_",
-                                                         //Role.       ToString()));
+            this.Id                 = RemoteParty_Id.Parse(
+                                          String.Concat(CountryCode.ToString(),
+                                                        "-",
+                                                        PartyId.    ToString(),
+                                                        "_",
+                                                        Role.       ToString()));
 
-            this.CountryCode         = CountryCode;
-            this.PartyId             = PartyId;
-            //this.Role                = Role;
-            this.BusinessDetails     = BusinessDetails;
-            this.Status              = Status;
-            this.LastUpdated         = LastUpdated ?? Timestamp.Now;
+            this.CountryCode        = CountryCode;
+            this.PartyId            = PartyId;
+            this.Role               = Role;
+            this.BusinessDetails    = BusinessDetails;
+            this.Status             = Status;
+            this.LastUpdated        = LastUpdated ?? Timestamp.Now;
 
-            this._AccessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
-            this._RemoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
+            this.accessInfo         = AccessInfos.      IsNeitherNullNorEmpty() ? new List<AccessInfo2>     (AccessInfos)       : new List<AccessInfo2>();
+            this.remoteAccessInfos  = RemoteAccessInfos.IsNeitherNullNorEmpty() ? new List<RemoteAccessInfo>(RemoteAccessInfos) : new List<RemoteAccessInfo>();
 
             CalcSHA256Hash();
 
@@ -357,18 +354,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                            new JProperty("countryCode",              CountryCode.         ToString()),
                            new JProperty("partyId",                  PartyId.             ToString()),
+                           new JProperty("role",                     Role.                ToString()),
                            new JProperty("partyStatus",              Status.              ToString()),
 
                            BusinessDetails is not null
                                ? new JProperty("businessDetails",    BusinessDetails.     ToJSON(CustomBusinessDetailsSerializer))
                                : null,
 
-                           _AccessInfo.SafeAny()
-                               ? new JProperty("accessInfos",        new JArray(_AccessInfo.       SafeSelect(accessInfo       => accessInfo.      ToJSON())))
+                           accessInfo.Any()
+                               ? new JProperty("accessInfos",        new JArray(accessInfo.       SafeSelect(accessInfo       => accessInfo.      ToJSON())))
                                : null,
 
-                           _RemoteAccessInfos.SafeAny()
-                               ? new JProperty("remoteAccessInfos",  new JArray(_RemoteAccessInfos.SafeSelect(remoteAccessInfo => remoteAccessInfo.ToJSON())))
+                           remoteAccessInfos.Any()
+                               ? new JProperty("remoteAccessInfos",  new JArray(remoteAccessInfos.SafeSelect(remoteAccessInfo => remoteAccessInfo.ToJSON())))
                                : null,
 
                            new JProperty("last_updated",             LastUpdated.         ToIso8601()),

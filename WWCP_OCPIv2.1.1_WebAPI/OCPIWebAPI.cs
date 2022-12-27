@@ -403,6 +403,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         public IEnumerable<EMSPClient>                      EMSPClients
             => emspClients;
 
+
+        /// <summary>
+        /// The default request timeout for new CPO/EMSP clients.
+        /// </summary>
+        public TimeSpan?                                    RequestTimeout     { get; set; }
+
         #endregion
 
         #region Events
@@ -446,7 +452,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                           HTTPPath?                                   BasePath         = null,
                           String                                      HTTPRealm        = DefaultHTTPRealm,
                           IEnumerable<KeyValuePair<String, String>>?  HTTPLogins       = null,
-                          String?                                     HTMLTemplate     = null)
+                          String?                                     HTMLTemplate     = null,
+
+                          TimeSpan?                                   RequestTimeout   = null)
 
             : base(HTTPServer,
                    null,
@@ -500,7 +508,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             RegisterURITemplates();
 
-            this.HTMLTemplate = HTMLTemplate ?? GetResourceString("template.html");
+            this.HTMLTemplate        = HTMLTemplate ?? GetResourceString("template.html");
+            this.RequestTimeout      = RequestTimeout;
 
         }
 
@@ -3011,11 +3020,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         #endregion
 
 
-        #region GetEMSPClient(CountryCode, PartyId, AccessTokenBase64Encoding = true)
+        #region GetEMSPClient(CountryCode, PartyId, AccessTokenBase64Encoding = false)
 
         public EMSPClient? GetEMSPClient(CountryCode  CountryCode,
                                          Party_Id     PartyId,
-                                         Boolean      AccessTokenBase64Encoding   = true)
+                                         Boolean      AccessTokenBase64Encoding   = false)
         {
 
             var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
@@ -3028,7 +3037,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                         remoteParty.RemoteAccessInfos.First().AccessToken,
                         CommonAPI,
                         RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding
+                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                        RequestTimeout:              RequestTimeout
                     ));
 
             return null;
@@ -3037,10 +3047,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-        #region GetEMSPClient(RemoteParty,   AccessTokenBase64Encoding = true)
+        #region GetEMSPClient(RemoteParty,   AccessTokenBase64Encoding = false)
 
         public EMSPClient? GetEMSPClient(RemoteParty  RemoteParty,
-                                         Boolean      AccessTokenBase64Encoding = true)
+                                         Boolean      AccessTokenBase64Encoding = false)
         {
 
             if (RemoteParty is null)
@@ -3058,7 +3068,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                                   RequestTimeout:              RequestTimeout));
 
             return null;
 
@@ -3066,10 +3077,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
-        #region GetEMSPClient(RemotePartyId, AccessTokenBase64Encoding = true)
+        #region GetEMSPClient(RemotePartyId, AccessTokenBase64Encoding = false)
 
         public EMSPClient? GetEMSPClient(RemoteParty_Id  RemotePartyId,
-                                         Boolean         AccessTokenBase64Encoding = true)
+                                         Boolean         AccessTokenBase64Encoding = false)
         {
 
             var remoteParty  = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == RemotePartyId.CountryCode &&
@@ -3089,7 +3100,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                    remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                                   RequestTimeout:              RequestTimeout));
 
             return null;
 
@@ -3098,11 +3110,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         #endregion
 
 
-        #region GetCPOClient (CountryCode, PartyId, AccessTokenBase64Encoding = true)
+        #region GetCPOClient (CountryCode, PartyId, AccessTokenBase64Encoding = false)
 
         public CPOClient? GetCPOClient(CountryCode  CountryCode,
                                        Party_Id     PartyId,
-                                       Boolean      AccessTokenBase64Encoding   = true)
+                                       Boolean      AccessTokenBase64Encoding   = false)
         {
 
             var remoteParty = CommonAPI.RemoteParties.FirstOrDefault(remoteparty => remoteparty.CountryCode == CountryCode &&
@@ -3115,7 +3127,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                         remoteParty.RemoteAccessInfos.First().AccessToken,
                         CommonAPI,
                         RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding
+                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                        RequestTimeout:              RequestTimeout
                     ));
 
             return null;

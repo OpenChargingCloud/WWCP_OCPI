@@ -35,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #region Data
 
-        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2,5})\\-([a-zA-Z0-9]{2,10})$");
+        public static readonly Regex RemotePartyId_RegEx = new ("^([a-zA-Z0-9]{2,5})\\-([a-zA-Z0-9]{2,10})_([a-zA-Z0-9]{2,10})$");
 
         /// <summary>
         /// The internal identification.
@@ -63,6 +63,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         public CountryCode  CountryCode    { get;}
         public Party_Id     PartyId        { get;}
+        public Roles        Role           { get;}
 
         #endregion
 
@@ -72,12 +73,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create a new remote party identification based on the given text.
         /// </summary>
         private RemoteParty_Id(CountryCode  CountryCode,
-                               Party_Id     PartyId)
+                               Party_Id     PartyId,
+                               Roles        Role)
         {
 
             this.CountryCode  = CountryCode;
             this.PartyId      = PartyId;
-            this.InternalId   = String.Concat(CountryCode, "-", PartyId);
+            this.Role         = Role;
+            this.InternalId   = String.Concat(CountryCode, "-", PartyId, "_", Role);
 
         }
 
@@ -93,8 +96,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static RemoteParty_Id Parse(String Text)
         {
 
-            if (TryParse(Text, out RemoteParty_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var remotePartyId))
+                return remotePartyId;
 
             if (Text.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Text), "The given text representation of a remote party identification must not be null or empty!");
@@ -114,8 +117,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static RemoteParty_Id? TryParse(String Text)
         {
 
-            if (TryParse(Text, out RemoteParty_Id locationId))
-                return locationId;
+            if (TryParse(Text, out var remotePartyId))
+                return remotePartyId;
 
             return null;
 
@@ -141,12 +144,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     var MatchCollection = RemotePartyId_RegEx.Matches(Text);
 
                     if (MatchCollection.Count == 1 &&
-                        CountryCode.TryParse(MatchCollection[0].Groups[1].Value, out var countryCode) &&
-                        Party_Id.   TryParse(MatchCollection[0].Groups[2].Value, out var partyId))
+                        CountryCode.    TryParse(MatchCollection[0].Groups[1].Value, out var countryCode) &&
+                        Party_Id.       TryParse(MatchCollection[0].Groups[2].Value, out var partyId)     &&
+                        RolesExtensions.TryParse(MatchCollection[0].Groups[3].Value, out var role))
                     {
 
                         RemotePartyId = new RemoteParty_Id(countryCode,
-                                                           partyId);
+                                                           partyId,
+                                                           role);
 
                         return true;
 
@@ -173,7 +178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => new (
                    CountryCode.Clone,
-                   PartyId.    Clone
+                   PartyId.    Clone,
+                   Role
                );
 
         #endregion
@@ -281,10 +287,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Compares two instances of this object.
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
-        public Int32 CompareTo(Object Object)
+        public Int32 CompareTo(Object? Object)
 
-            => Object is RemoteParty_Id locationId
-                   ? CompareTo(locationId)
+            => Object is RemoteParty_Id remotePartyId
+                   ? CompareTo(remotePartyId)
                    : throw new ArgumentException("The given object is not a remote party identification!",
                                                  nameof(Object));
 
@@ -315,10 +321,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// </summary>
         /// <param name="Object">An object to compare with.</param>
         /// <returns>true|false</returns>
-        public override Boolean Equals(Object Object)
+        public override Boolean Equals(Object? Object)
 
-            => Object is RemoteParty_Id locationId &&
-                   Equals(locationId);
+            => Object is RemoteParty_Id remotePartyId &&
+                   Equals(remotePartyId);
 
         #endregion
 

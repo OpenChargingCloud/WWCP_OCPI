@@ -99,8 +99,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             {
 
                                                 // When no OCPIRequestLogger was used!
-                                                if (httpRequest.SubprotocolRequest is null)
-                                                    httpRequest.SubprotocolRequest = OCPIRequest.Parse(httpRequest, CommonAPI);
+                                                httpRequest.SubprotocolRequest ??= OCPIRequest.Parse(httpRequest, CommonAPI);
 
                                                 var OCPIResponseBuilder = await OCPIRequestHandler(httpRequest.SubprotocolRequest as OCPIRequest);
                                                 var httpResponseBuilder = OCPIResponseBuilder.ToHTTPResponseBuilder();
@@ -189,10 +188,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public Request_Id?      RequestId           { get; }
         public Correlation_Id?  CorrelationId       { get; }
-        public CountryCode?     ToCountryCode       { get; }
-        public Party_Id?        ToPartyId           { get; }
-        public CountryCode?     FromCountryCode     { get; }
-        public Party_Id?        FromPartyId         { get; }
 
         public AccessToken?     AccessToken         { get; }
 
@@ -200,7 +195,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public AccessInfo2?     AccessInfo2         { get; }
 
-        public RemoteParty      RemoteParty         { get; }
+        public RemoteParty?     RemoteParty         { get; }
 
 
         /// <summary>
@@ -229,18 +224,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         {
 
             this.HTTPRequest      = Request ?? throw new ArgumentNullException(nameof(HTTPRequest), "The given HTTP request must not be null!");
+            this.CommonAPI        = CommonAPI;
 
-            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",           Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
-            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID",       Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
-            this.ToCountryCode    = Request.TryParseHeaderField<CountryCode>   ("OCPI-to-country-code",   CountryCode.   TryParse);
-            this.ToPartyId        = Request.TryParseHeaderField<Party_Id>      ("OCPI-to-party-id",       Party_Id.      TryParse);
-            this.FromCountryCode  = Request.TryParseHeaderField<CountryCode>   ("OCPI-from-country-code", CountryCode.   TryParse);
-            this.FromPartyId      = Request.TryParseHeaderField<Party_Id>      ("OCPI-from-party-id",     Party_Id.      TryParse);
-
+            this.RequestId        = Request.TryParseHeaderField<Request_Id>    ("X-Request-ID",     Request_Id.    TryParse) ?? Request_Id.    NewRandom(IsLocal: true);
+            this.CorrelationId    = Request.TryParseHeaderField<Correlation_Id>("X-Correlation-ID", Correlation_Id.TryParse) ?? Correlation_Id.NewRandom(IsLocal: true);
 
             if (Request.Authorization is HTTPTokenAuthentication TokenAuth &&
-                TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
-                OCPIv2_1_1.AccessToken.TryParse(DecodedToken, out AccessToken accessToken))
+               // TokenAuth.Token.TryBase64Decode_UTF8(out String DecodedToken)   &&
+                OCPIv2_1_1.AccessToken.TryParse(TokenAuth.Token, out var accessToken))
             {
                 this.AccessToken = accessToken;
             }
@@ -254,52 +245,52 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (this.AccessToken.HasValue)
             {
 
-                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out IEnumerable<RemoteParty> Parties))
+                if (CommonAPI.TryGetRemoteParties(AccessToken.Value, out var parties))
                 {
 
-                    if (Parties.Count() == 1)
+                    if (parties.Count() == 1)
                     {
 
                         this.AccessInfo   = new AccessInfo(
                                                 AccessToken.Value,
-                                                Parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
+                                                parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
                                                 null,
-                                                Parties.First().BusinessDetails,
-                                                Parties.First().CountryCode,
-                                                Parties.First().PartyId
+                                                parties.First().BusinessDetails,
+                                                parties.First().CountryCode,
+                                                parties.First().PartyId
                                             );
 
-                        this.AccessInfo2  = Parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                        this.AccessInfo2  = parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
 
-                        this.RemoteParty  = Parties.First();
-
-                    }
-
-                    else if (Parties.Count() > 1      &&
-                             FromCountryCode.HasValue &&
-                             FromPartyId.    HasValue)
-                    {
-
-                        var filteredParties = Parties.Where(party => party.CountryCode == FromCountryCode.Value &&
-                                                                     party.PartyId     == FromPartyId.    Value).ToArray();
-
-                        if (filteredParties.Count() == 1)
-                        {
-
-                            this.AccessInfo   = new AccessInfo(AccessToken.Value,
-                                                               filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
-                                                               null,
-                                                               Parties.First().BusinessDetails,
-                                                               Parties.First().CountryCode,
-                                                               Parties.First().PartyId);
-
-                            this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
-
-                            this.RemoteParty  = filteredParties.First();
-
-                        }
+                        this.RemoteParty  = parties.First();
 
                     }
+
+                    //else if (parties.Count() > 1      &&
+                    //         FromCountryCode.HasValue &&
+                    //         FromPartyId.    HasValue)
+                    //{
+
+                    //    var filteredParties = parties.Where(party => party.CountryCode == FromCountryCode.Value &&
+                    //                                                 party.PartyId     == FromPartyId.    Value).ToArray();
+
+                    //    if (filteredParties.Count() == 1)
+                    //    {
+
+                    //        this.AccessInfo   = new AccessInfo(AccessToken.Value,
+                    //                                           filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
+                    //                                           null,
+                    //                                           parties.First().BusinessDetails,
+                    //                                           parties.First().CountryCode,
+                    //                                           parties.First().PartyId);
+
+                    //        this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+
+                    //        this.RemoteParty  = filteredParties.First();
+
+                    //    }
+
+                    //}
 
                 }
 
@@ -337,10 +328,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public DateAndPaginationFilters GetDateAndPaginationFilters()
 
-            => new DateAndPaginationFilters(HTTPRequest.QueryString.GetDateTime("date_from"),
-                                            HTTPRequest.QueryString.GetDateTime("date_to"),
-                                            HTTPRequest.QueryString.GetUInt64  ("offset"),
-                                            HTTPRequest.QueryString.GetUInt64  ("limit"));
+            => new (HTTPRequest.QueryString.GetDateTime("date_from"),
+                    HTTPRequest.QueryString.GetDateTime("date_to"),
+                    HTTPRequest.QueryString.GetUInt64  ("offset"),
+                    HTTPRequest.QueryString.GetUInt64  ("limit"));
 
 
 
