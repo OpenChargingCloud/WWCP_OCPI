@@ -403,6 +403,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
         public IEnumerable<EMSPClient>                      EMSPClients
             => emspClients;
 
+
+        /// <summary>
+        /// The default request timeout for new CPO/EMSP clients.
+        /// </summary>
+        public TimeSpan?                                    RequestTimeout     { get; set; }
+
         #endregion
 
         #region Events
@@ -446,7 +452,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                           HTTPPath?                                   BasePath         = null,
                           String                                      HTTPRealm        = DefaultHTTPRealm,
                           IEnumerable<KeyValuePair<String, String>>?  HTTPLogins       = null,
-                          String?                                     HTMLTemplate     = null)
+                          String?                                     HTMLTemplate     = null,
+
+                          TimeSpan?                                   RequestTimeout   = null)
 
             : base(HTTPServer,
                    null,
@@ -500,7 +508,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
             RegisterURITemplates();
 
-            this.HTMLTemplate = HTMLTemplate ?? GetResourceString("template.html");
+            this.HTMLTemplate        = HTMLTemplate ?? GetResourceString("template.html");
+            this.RequestTimeout      = RequestTimeout;
 
         }
 
@@ -3028,7 +3037,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                         remoteParty.RemoteAccessInfos.First().AccessToken,
                         CommonAPI,
                         RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding
+                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                        RequestTimeout:              RequestTimeout
                     ));
 
             return null;
@@ -3058,7 +3068,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                    RemoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                                   RequestTimeout:              RequestTimeout));
 
             return null;
 
@@ -3089,7 +3100,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                    remoteParty.RemoteAccessInfos.First().AccessToken,
                                    CommonAPI,
                                    RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding));
+                                   AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                                   RequestTimeout:              RequestTimeout));
 
             return null;
 
@@ -3115,7 +3127,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                         remoteParty.RemoteAccessInfos.First().AccessToken,
                         CommonAPI,
                         RemoteCertificateValidator: (sender, certificate, chain, sslPolicyErrors) => true,
-                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding
+                        AccessTokenBase64Encoding:   AccessTokenBase64Encoding,
+                        RequestTimeout:              RequestTimeout
                     ));
 
             return null;

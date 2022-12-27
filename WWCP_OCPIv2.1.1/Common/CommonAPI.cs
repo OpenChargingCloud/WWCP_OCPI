@@ -943,7 +943,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region OPTIONS     ~/{versionId}/credentials
 
             // ----------------------------------------------------------
-            // curl -v -X OPTIONS http://127.0.0.1:2502/2.2/credentials
+            // curl -v -X OPTIONS http://127.0.0.1:2502/2.1.1/credentials
             // ----------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.OPTIONS,
@@ -973,7 +973,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #region GET         ~/{versionId}/credentials
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.GET,
@@ -1024,7 +1024,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    //return Task.FromResult(
                                    //    new OCPIResponse.Builder(Request) {
                                    //        StatusCode           = 2000,
-                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                    //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                    //            HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                    //            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1041,7 +1041,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // REGISTER new OCPI party!
 
             // -----------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // -----------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.POST,
@@ -1077,7 +1077,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1094,7 +1094,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // UPDATE the registration of an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.PUT,
@@ -1102,16 +1102,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  PutCredentialsRequest,
                                OCPIResponseLogger: PutCredentialsResponse,
-                               OCPIRequestHandler:        async Request => {
+                               OCPIRequestHandler: async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
                                    {
 
+                                       // The party is not yet fully registered!
                                        if (!Request.AccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!",
+                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1121,14 +1122,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                        return await POSTOrPUTCredentials(Request);
 
-
                                    }
 
                                    return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 2000,
-                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                      HTTPStatusCode             = HTTPStatusCode.OK,
                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
@@ -1143,7 +1143,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // UNREGISTER an existing OCPI party!
 
             // ---------------------------------------------------------------------------------
-            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.2/credentials
+            // curl -v -H "Accept: application/json" http://127.0.0.1:2502/2.1.1/credentials
             // ---------------------------------------------------------------------------------
             this.AddOCPIMethod(Hostname,
                                HTTPMethod.DELETE,
@@ -1151,7 +1151,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                HTTPContentType.JSON_UTF8,
                                OCPIRequestLogger:  DeleteCredentialsRequest,
                                OCPIResponseLogger: DeleteCredentialsResponse,
-                               OCPIRequestHandler:        async Request => {
+                               OCPIRequestHandler: async Request => {
 
                                    if (Request.AccessInfo.HasValue &&
                                        Request.AccessInfo.Value.Status == AccessStatus.ALLOWED)
@@ -1191,7 +1191,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1311,17 +1311,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            var version2_2              = Version_Id.Parse("2.2");
-            var justVersion2_2          = otherVersions.Data.Where(version => version.Id == version2_2).ToArray();
+            var version2_1_1            = Version_Id.Parse("2.1.1");
+            var justVersion2_1_1        = otherVersions.Data.Where(version => version.Id == version2_1_1).ToArray();
 
             #region ...or send error!
 
-            if (justVersion2_2.Length == 0)
+            if (justVersion2_1_1.Length == 0)
             {
 
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3003,
-                           StatusMessage        = "Could not find OCPI v2.2 at '" + receivedCredentials.URL + "'!",
+                           StatusMessage        = "Could not find OCPI v2.1.1 at '" + receivedCredentials.URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1333,16 +1333,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            var otherVersion2_2Details  = await commonClient.GetVersionDetails(version2_2);
+            var otherVersion2_1_1Details  = await commonClient.GetVersionDetails(version2_1_1);
 
             #region ...or send error!
 
-            if (otherVersion2_2Details.StatusCode != 1000)
+            if (otherVersion2_1_1Details.StatusCode != 1000)
             {
 
                 return new OCPIResponse.Builder(Request) {
                            StatusCode           = 3001,
-                           StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_2.First().URL + "'!",
+                           StatusMessage        = "Could not fetch v2.2 information from '" + justVersion2_1_1.First().URL + "'!",
                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1368,7 +1368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    receivedCredentials.Token,
                                    receivedCredentials.URL,
                                    otherVersions.Data.Select(version => version.Id),
-                                   version2_2,
+                                   version2_1_1,
 
                                    null, //receivedCredentials.Role,
                                    AccessStatus.      ALLOWED,

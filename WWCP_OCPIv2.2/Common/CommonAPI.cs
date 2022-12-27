@@ -1065,7 +1065,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                    //return Task.FromResult(
                                    //    new OCPIResponse.Builder(Request) {
                                    //        StatusCode           = 2000,
-                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                   //        StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                    //        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                    //            HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                    //            AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1118,7 +1118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1152,7 +1152,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                        if (!Request.AccessInfo.Value.VersionsURL.HasValue)
                                            return new OCPIResponse.Builder(Request) {
                                                       StatusCode           = 2000,
-                                                      StatusMessage        = "The given access token '" + Request.AccessToken.Value.ToString() + "' is not yet registered!",
+                                                      StatusMessage        = "The given access token '" + (Request.AccessToken?.ToString() ?? "") + "' is not yet registered!",
                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                           HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                           AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1167,9 +1167,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                                   StatusCode           = 2000,
-                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                                  StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                      HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                      HTTPStatusCode             = HTTPStatusCode.MethodNotAllowed,
                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                                                       AccessControlAllowHeaders  = "Authorization"
                                                   }
@@ -1232,7 +1232,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                    return new OCPIResponse.Builder(Request) {
                                               StatusCode           = 2000,
-                                              StatusMessage        = "You need to be registered before trying to invoke this protected method.",
+                                              StatusMessage        = "You need to be registered before trying to invoke this protected method!",
                                               HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                   HTTPStatusCode             = HTTPStatusCode.Forbidden,
                                                   AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",

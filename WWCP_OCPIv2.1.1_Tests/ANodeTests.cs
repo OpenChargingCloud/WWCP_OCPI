@@ -33,6 +33,57 @@ using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 {
 
+    public static class TestHelpers
+    {
+
+        public static async Task<HTTPResponse<JObject>> JSONRequest(URL         RemoteURL,
+                                                                    String      Token)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<JObject>(httpResponse,
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
+
+        }
+
+        public static async Task<HTTPResponse<JObject>> JSONRequest(HTTPMethod  Method,
+                                                                    URL         RemoteURL,
+                                                                    String      Token,
+                                                                    JObject     JSON)
+        {
+
+            var httpResponse  = await new HTTPClient(RemoteURL).
+                                              Execute(client => client.CreateRequest(Method,
+                                                                                     RemoteURL.Path,
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization  = new HTTPTokenAuthentication(Token);
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = JSON.ToUTF8Bytes();
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      "1234");
+                                                                                         requestbuilder.Set("X-Correlation-ID",  "5678");
+                                                                                     })).
+                                              ConfigureAwait(false);
+
+            return new HTTPResponse<JObject>(httpResponse,
+                                             JObject.Parse(httpResponse.HTTPBodyAsUTF8String));
+
+        }
+
+
+    }
+
+
     /// <summary>
     /// OCPI v2.1.1 Node test defaults.
     /// </summary>
@@ -124,7 +175,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       HTTPHostname.Any,
                                       Disable_RootServices: false
 
-                                  )
+                                  ),
+
+                                  RequestTimeout: TimeSpan.FromSeconds(10)
 
                               );
 
@@ -146,7 +199,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                       HTTPHostname.Any,
                                       Disable_RootServices: false
 
-                                  )
+                                  ),
+
+                                  RequestTimeout: TimeSpan.FromSeconds(10)
 
                               );
 

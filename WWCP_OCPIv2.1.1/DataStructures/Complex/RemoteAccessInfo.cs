@@ -50,6 +50,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         [Mandatory]
         public RemoteAccessStatus       Status               { get; set; }
 
+        [Mandatory]
+        public DateTime                 LastUpdate           { get; }
+
         #endregion
 
         #region Constructor(s)
@@ -74,6 +77,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.VersionIds         = VersionIds?.Distinct() ?? Array.Empty<Version_Id>();
             this.SelectedVersionId  = SelectedVersionId;
             this.Status             = Status ?? RemoteAccessStatus.ONLINE;
+            this.LastUpdate         = Timestamp.Now;
 
         }
 
@@ -102,7 +106,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                ? new JProperty("selectedVersionId",  SelectedVersionId.ToString())
                                : null,
 
-                           new JProperty("status",                   Status.           ToString())
+                           new JProperty("status",                   Status.           ToString()),
+                           new JProperty("lastUpdate",               LastUpdate.       ToIso8601())
 
                        );
 

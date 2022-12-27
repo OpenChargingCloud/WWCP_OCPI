@@ -1073,8 +1073,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1576,8 +1576,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1766,8 +1766,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -1979,8 +1979,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
@@ -2177,6 +2177,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 var remoteURL         = await GetRemoteURL(Module_Id.Credentials,
                                                            versionId);
 
+                // Might be updated!
+                versionId ??= SelectedOCPIVersionId;
+
                 if      (!versionId.HasValue)
                     response = OCPIResponse<String, Credentials>.Error("No version identification available!");
 
@@ -2202,8 +2205,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              RemoteCertificateValidator,
                                                              ClientCertificateSelector,
                                                              ClientCert,
-                                                             null, //TLSProtocol,
-                                                             null, //PreferIPv4,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
                                                              HTTPUserAgent,
                                                              RequestTimeout,
                                                              TransmissionRetryDelay,
