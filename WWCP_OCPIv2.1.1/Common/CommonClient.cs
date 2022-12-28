@@ -2267,7 +2267,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
 
                         SelectedOCPIVersionId = versionId;
-                        TokenAuth             = new HTTPTokenAuthentication(response.Data.Token.ToString().ToBase64());
+                        TokenAuth             = new HTTPTokenAuthentication(response.Data.Token.ToString());
 
                         //ToDo: Store the new access token on disc.
 

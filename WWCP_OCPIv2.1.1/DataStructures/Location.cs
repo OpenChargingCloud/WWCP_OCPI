@@ -362,8 +362,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Location Parse(JObject                                 JSON,
-                                     CountryCode?                            CountryCodeURL         = null,
-                                     Party_Id?                               PartyIdURL             = null,
                                      Location_Id?                            LocationIdURL          = null,
                                      CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {
@@ -371,8 +369,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(JSON,
                          out var location,
                          out var errorResponse,
-                         CountryCodeURL,
-                         PartyIdURL,
                          LocationIdURL,
                          CustomLocationParser))
             {
@@ -404,8 +400,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         out Location,
                         out ErrorResponse,
                         null,
-                        null,
-                        null,
                         null);
 
 
@@ -415,15 +409,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
-        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
-        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
                                        out Location?                           Location,
                                        out String?                             ErrorResponse,
-                                       CountryCode?                            CountryCodeURL         = null,
-                                       Party_Id?                               PartyIdURL             = null,
                                        Location_Id?                            LocationIdURL          = null,
                                        CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {

@@ -183,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse TransparencySoftware    [mandatory]
 
-                if (!JSON.ParseMandatoryJSON("transparencySoftware",
+                if (!JSON.ParseMandatoryJSON("transparency_software",
                                              "transparency software",
                                              OCPIv2_2.TransparencySoftware.TryParse,
                                              out TransparencySoftware? TransparencySoftware,
@@ -199,10 +199,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #region Parse LegalStatus             [mandatory]
 
-                if (!JSON.ParseMandatoryEnum("legal_status",
-                                             "legal status",
-                                             out LegalStatus LegalStatus,
-                                             out ErrorResponse))
+                if (!JSON.ParseMandatory("legal_status",
+                                         "legal status",
+                                         OCPIv2_2.LegalStatus.TryParse,
+                                         out LegalStatus LegalStatus,
+                                         out ErrorResponse))
                 {
                     return false;
                 }

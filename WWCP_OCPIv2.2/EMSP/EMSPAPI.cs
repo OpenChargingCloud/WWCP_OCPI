@@ -49,19 +49,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCountryCodeAndPartyId(this OCPIRequest          Request,
-                                                         EMSPAPI                   EMSPAPI,
-                                                         out CountryCode?          CountryCode,
-                                                         out Party_Id?             PartyId,
-                                                         out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCountryCodeAndPartyId(this OCPIRequest           Request,
+                                                         EMSPAPI                    EMSPAPI,
+                                                         out CountryCode?           CountryCode,
+                                                         out Party_Id?              PartyId,
+                                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -146,20 +146,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this OCPIRequest          Request,
-                                              EMSPAPI                   EMSPAPI,
-                                              out CountryCode?          CountryCode,
-                                              out Party_Id?             PartyId,
-                                              out Location_Id?          LocationId,
-                                              out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationId(this OCPIRequest           Request,
+                                              EMSPAPI                    EMSPAPI,
+                                              out CountryCode?           CountryCode,
+                                              out Party_Id?              PartyId,
+                                              out Location_Id?           LocationId,
+                                              out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -265,22 +265,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest          Request,
-                                            EMSPAPI                   EMSPAPI,
-                                            out CountryCode?          CountryCode,
-                                            out Party_Id?             PartyId,
-                                            out Location_Id?          LocationId,
-                                            out Location              Location,
-                                            out OCPIResponse.Builder  OCPIResponseBuilder,
-                                            Boolean                   FailOnMissingLocation = true)
+        public static Boolean ParseLocation(this OCPIRequest           Request,
+                                            EMSPAPI                    EMSPAPI,
+                                            out CountryCode?           CountryCode,
+                                            out Party_Id?              PartyId,
+                                            out Location_Id?           LocationId,
+                                            out Location?              Location,
+                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                    FailOnMissingLocation = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -406,21 +406,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this OCPIRequest          Request,
-                                                  EMSPAPI                   EMSPAPI,
-                                                  out CountryCode?          CountryCode,
-                                                  out Party_Id?             PartyId,
-                                                  out Location_Id?          LocationId,
-                                                  out EVSE_UId?             EVSEUId,
-                                                  out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationEVSEId(this OCPIRequest           Request,
+                                                  EMSPAPI                    EMSPAPI,
+                                                  out CountryCode?           CountryCode,
+                                                  out Party_Id?              PartyId,
+                                                  out Location_Id?           LocationId,
+                                                  out EVSE_UId?              EVSEUId,
+                                                  out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -548,24 +548,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingEVSE">Whether to fail when the location for the given EVSE identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this OCPIRequest          Request,
-                                                EMSPAPI                   EMSPAPI,
-                                                out CountryCode?          CountryCode,
-                                                out Party_Id?             PartyId,
-                                                out Location_Id?          LocationId,
-                                                out Location              Location,
-                                                out EVSE_UId?             EVSEUId,
-                                                out EVSE                  EVSE,
-                                                out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                Boolean                   FailOnMissingEVSE = true)
+        public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
+                                                EMSPAPI                    EMSPAPI,
+                                                out CountryCode?           CountryCode,
+                                                out Party_Id?              PartyId,
+                                                out Location_Id?           LocationId,
+                                                out Location?              Location,
+                                                out EVSE_UId?              EVSEUId,
+                                                out EVSE?                  EVSE,
+                                                out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                Boolean                    FailOnMissingEVSE = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -731,22 +731,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest          Request,
-                                                           EMSPAPI                   EMSPAPI,
-                                                           out CountryCode?          CountryCode,
-                                                           out Party_Id?             PartyId,
-                                                           out Location_Id?          LocationId,
-                                                           out EVSE_UId?             EVSEUId,
-                                                           out Connector_Id?         ConnectorId,
-                                                           out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest           Request,
+                                                           EMSPAPI                    EMSPAPI,
+                                                           out CountryCode?           CountryCode,
+                                                           out Party_Id?              PartyId,
+                                                           out Location_Id?           LocationId,
+                                                           out EVSE_UId?              EVSEUId,
+                                                           out Connector_Id?          ConnectorId,
+                                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -813,7 +813,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
 
             if (!LocationId.HasValue)
             {
@@ -832,7 +832,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
 
             if (!EVSEUId.HasValue)
             {
@@ -851,7 +851,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
+            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[4]);
 
             if (!EVSEUId.HasValue)
             {
@@ -896,26 +896,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingConnector">Whether to fail when the connector for the given connector identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest          Request,
-                                                         EMSPAPI                   EMSPAPI,
-                                                         out CountryCode?          CountryCode,
-                                                         out Party_Id?             PartyId,
-                                                         out Location_Id?          LocationId,
-                                                         out Location              Location,
-                                                         out EVSE_UId?             EVSEUId,
-                                                         out EVSE                  EVSE,
-                                                         out Connector_Id?         ConnectorId,
-                                                         out Connector             Connector,
-                                                         out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                         Boolean                   FailOnMissingConnector = true)
+        public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
+                                                         EMSPAPI                    EMSPAPI,
+                                                         out CountryCode?           CountryCode,
+                                                         out Party_Id?              PartyId,
+                                                         out Location_Id?           LocationId,
+                                                         out Location?              Location,
+                                                         out EVSE_UId?              EVSEUId,
+                                                         out EVSE?                  EVSE,
+                                                         out Connector_Id?          ConnectorId,
+                                                         out Connector?             Connector,
+                                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                         Boolean                    FailOnMissingConnector = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1117,20 +1117,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariffId(this OCPIRequest          Request,
-                                            EMSPAPI                   EMSPAPI,
-                                            out CountryCode?          CountryCode,
-                                            out Party_Id?             PartyId,
-                                            out Tariff_Id?            TariffId,
-                                            out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseTariffId(this OCPIRequest           Request,
+                                            EMSPAPI                    EMSPAPI,
+                                            out CountryCode?           CountryCode,
+                                            out Party_Id?              PartyId,
+                                            out Tariff_Id?             TariffId,
+                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1236,22 +1236,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariff(this OCPIRequest          Request,
-                                          EMSPAPI                   EMSPAPI,
-                                          out CountryCode?          CountryCode,
-                                          out Party_Id?             PartyId,
-                                          out Tariff_Id?            TariffId,
-                                          out Tariff                Tariff,
-                                          out OCPIResponse.Builder  OCPIResponseBuilder,
-                                          Boolean                   FailOnMissingTariff = true)
+        public static Boolean ParseTariff(this OCPIRequest           Request,
+                                          EMSPAPI                    EMSPAPI,
+                                          out CountryCode?           CountryCode,
+                                          out Party_Id?              PartyId,
+                                          out Tariff_Id?             TariffId,
+                                          out Tariff?                Tariff,
+                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                          Boolean                    FailOnMissingTariff = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1375,20 +1375,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="SessionId">The parsed unique session identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSessionId(this OCPIRequest          Request,
-                                             EMSPAPI                   EMSPAPI,
-                                             out CountryCode?          CountryCode,
-                                             out Party_Id?             PartyId,
-                                             out Session_Id?           SessionId,
-                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseSessionId(this OCPIRequest           Request,
+                                             EMSPAPI                    EMSPAPI,
+                                             out CountryCode?           CountryCode,
+                                             out Party_Id?              PartyId,
+                                             out Session_Id?            SessionId,
+                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1494,22 +1494,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest         Request,
-                                          EMSPAPI                   EMSPAPI,
-                                          out CountryCode?          CountryCode,
-                                          out Party_Id?             PartyId,
-                                          out Session_Id?           SessionId,
-                                          out Session               Session,
-                                          out OCPIResponse.Builder  OCPIResponseBuilder,
-                                          Boolean                   FailOnMissingSession = true)
+        public static Boolean ParseSession(this OCPIRequest          Request,
+                                          EMSPAPI                    EMSPAPI,
+                                          out CountryCode?           CountryCode,
+                                          out Party_Id?              PartyId,
+                                          out Session_Id?            SessionId,
+                                          out Session?               Session,
+                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                          Boolean                    FailOnMissingSession = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1632,20 +1632,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CDRId">The parsed unique charge detail record identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDRId(this OCPIRequest          Request,
-                                         EMSPAPI                   EMSPAPI,
-                                         out CountryCode?          CountryCode,
-                                         out Party_Id?             PartyId,
-                                         out CDR_Id?               CDRId,
-                                         out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCDRId(this OCPIRequest           Request,
+                                         EMSPAPI                    EMSPAPI,
+                                         out CountryCode?           CountryCode,
+                                         out Party_Id?              PartyId,
+                                         out CDR_Id?                CDRId,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1750,14 +1750,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingCDR">Whether to fail when the charge detail record for the given charge detail record identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDR(this OCPIRequest          Request,
-                                       EMSPAPI                   EMSPAPI,
-                                       out CountryCode?          CountryCode,
-                                       out Party_Id?             PartyId,
-                                       out CDR_Id?               CDRId,
-                                       out CDR                   CDR,
-                                       out OCPIResponse.Builder  OCPIResponseBuilder,
-                                       Boolean                   FailOnMissingCDR = true)
+        public static Boolean ParseCDR(this OCPIRequest           Request,
+                                       EMSPAPI                    EMSPAPI,
+                                       out CountryCode?           CountryCode,
+                                       out Party_Id?              PartyId,
+                                       out CDR_Id?                CDRId,
+                                       out CDR?                   CDR,
+                                       out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                       Boolean                    FailOnMissingCDR = true)
         {
 
             #region Initial checks
@@ -1888,18 +1888,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTokenId(this OCPIRequest          Request,
-                                           EMSPAPI                   EMSPAPI,
-                                           out Token_Id?             TokenId,
-                                           out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseTokenId(this OCPIRequest           Request,
+                                           EMSPAPI                    EMSPAPI,
+                                           out Token_Id?              TokenId,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1963,20 +1963,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseToken(this OCPIRequest          Request,
-                                         EMSPAPI                   EMSPAPI,
-                                         out Token_Id?             TokenId,
-                                         out TokenStatus           TokenStatus,
-                                         out OCPIResponse.Builder  OCPIResponseBuilder,
-                                         Boolean                   FailOnMissingToken = true)
+        public static Boolean ParseToken(this OCPIRequest           Request,
+                                         EMSPAPI                    EMSPAPI,
+                                         out Token_Id?              TokenId,
+                                         out TokenStatus            TokenStatus,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                         Boolean                    FailOnMissingToken = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -2063,18 +2063,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CommandId">The parsed unique command identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCommandId(this OCPIRequest          Request,
-                                             EMSPAPI                   EMSPAPI,
-                                             out Command_Id?           CommandId,
-                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCommandId(this OCPIRequest           Request,
+                                             EMSPAPI                    EMSPAPI,
+                                             out Command_Id?            CommandId,
+                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI  == null)
+            if (EMSPAPI  is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given CPO API must not be null!");
 
             #endregion
@@ -6957,7 +6957,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         }
 
-                                        if (authorizationInfo == null)
+                                        if (authorizationInfo is null)
                                             authorizationInfo = new AuthorizationInfo(
                                                                       AllowedType.BLOCKED,
                                                                       new Token(

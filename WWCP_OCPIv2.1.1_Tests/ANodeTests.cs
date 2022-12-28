@@ -177,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
                                   ),
 
-                                  RequestTimeout: TimeSpan.FromSeconds(10)
+                                  RequestTimeout: TimeSpan.FromSeconds(910)
 
                               );
 
@@ -207,6 +207,27 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             Assert.IsNotNull(cpoWebAPI);
             Assert.IsNotNull(emspWebAPI);
+
+
+
+            //var cpoAPI           = new CPOAPI(
+            //                           webAPI.CommonAPI,
+            //                           CountryCode.Parse("DE"),
+            //                           Party_Id.   Parse("GEF"),
+            //                           URLPathPrefix:    HTTPPath.Parse("2.1.1/cpo"),
+            //                           //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
+            //                           AllowDowngrades:  false
+            //                       );
+
+            var emspAPI          = new EMSPAPI(
+                                       emspWebAPI.CommonAPI,
+                                       CountryCode.Parse("DE"),
+                                       Party_Id.   Parse("GDF"),
+                                       URLPathPrefix:    HTTPPath.Parse("2.1.1/emsp"),
+                                       //LoggingPath:      Path.Combine(OpenChargingCloudAPIPath, "CPOAPI"),
+                                       AllowDowngrades:  false
+                                   );
+
 
 
             var addEMSPResult = cpoWebAPI.CommonAPI.AddRemoteParty(

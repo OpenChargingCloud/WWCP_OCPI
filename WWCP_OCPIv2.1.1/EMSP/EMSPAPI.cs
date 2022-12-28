@@ -41,7 +41,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     public static class EMSPAPIExtentions
     {
 
-        #region ParseCountryCodeAndPartyId(this Request, EMSPAPI, out CountryCode, out PartyId,                                                                                        out HTTPResponse)
+        #region ParseLocationId             (this Request, EMSPAPI, out LocationId,                                                                      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -50,136 +50,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCountryCodeAndPartyId(this OCPIRequest          Request,
-                                                         EMSPAPI                   EMSPAPI,
-                                                         out CountryCode?          CountryCode,
-                                                         out Party_Id?             PartyId,
-                                                         out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI == null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            CountryCode          = default;
-            PartyId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code and/or party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-
-        #region ParseLocationId             (this Request, EMSPAPI, out CountryCode, out PartyId, out LocationId,                                                                      out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this OCPIRequest          Request,
-                                              EMSPAPI                   EMSPAPI,
-                                              out CountryCode?          CountryCode,
-                                              out Party_Id?             PartyId,
-                                              out Location_Id?          LocationId,
-                                              out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationId(this OCPIRequest           Request,
+                                              EMSPAPI                    EMSPAPI,
+                                              out Location_Id?           LocationId,
+                                              out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
 
-            CountryCode          = default;
-            PartyId              = default;
             LocationId           = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
+            if (Request.ParsedURLParameters.Length < 1)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or location identification!",
+                    StatusMessage        = "Missing location identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -191,45 +89,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -254,7 +114,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region ParseLocation               (this Request, EMSPAPI, out CountryCode, out PartyId, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingLocation = true)
+        #region ParseLocation               (this Request, EMSPAPI, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingLocation = true)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -263,40 +123,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingLocation">Whether to fail when the location for the given location identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest          Request,
-                                            EMSPAPI                   EMSPAPI,
-                                            out CountryCode?          CountryCode,
-                                            out Party_Id?             PartyId,
-                                            out Location_Id?          LocationId,
-                                            out Location              Location,
-                                            out OCPIResponse.Builder  OCPIResponseBuilder,
-                                            Boolean                   FailOnMissingLocation = true)
+        public static Boolean ParseLocation(this OCPIRequest           Request,
+                                            EMSPAPI                    EMSPAPI,
+                                            out Location_Id?           LocationId,
+                                            out Location?              Location,
+                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                    FailOnMissingLocation = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
 
-            CountryCode          = default;
-            PartyId              = default;
             LocationId           = default;
             Location             = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 3)
+            if (Request.ParsedURLParameters.Length < 1)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -313,45 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue)
             {
@@ -397,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region ParseLocationEVSEId         (this Request, EMSPAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,                                           out OCPIResponseBuilder)
+        #region ParseLocationEVSEId         (this Request, EMSPAPI, out LocationId,               out EVSEUId,                                           out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -406,81 +222,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this OCPIRequest          Request,
-                                                  EMSPAPI                   EMSPAPI,
-                                                  out CountryCode?          CountryCode,
-                                                  out Party_Id?             PartyId,
-                                                  out Location_Id?          LocationId,
-                                                  out EVSE_UId?             EVSEUId,
-                                                  out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationEVSEId(this OCPIRequest           Request,
+                                                  EMSPAPI                    EMSPAPI,
+                                                  out Location_Id?           LocationId,
+                                                  out EVSE_UId?              EVSEUId,
+                                                  out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
 
-            CountryCode          = default;
-            PartyId              = default;
             LocationId           = default;
             EVSEUId              = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 4)
+            if (Request.ParsedURLParameters.Length < 2)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
+                    StatusMessage        = "Missing location identification and/or EVSE identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -536,7 +308,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region ParseLocationEVSE           (this Request, EMSPAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder, FailOnMissingEVSE = true)
+        #region ParseLocationEVSE           (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder, FailOnMissingEVSE = true)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -545,8 +317,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="EMSPAPI">The Users API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="Location">The resolved user.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
@@ -554,30 +324,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingEVSE">Whether to fail when the location for the given EVSE identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this OCPIRequest          Request,
-                                                EMSPAPI                   EMSPAPI,
-                                                out CountryCode?          CountryCode,
-                                                out Party_Id?             PartyId,
-                                                out Location_Id?          LocationId,
-                                                out Location              Location,
-                                                out EVSE_UId?             EVSEUId,
-                                                out EVSE                  EVSE,
-                                                out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                Boolean                   FailOnMissingEVSE = true)
+        public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
+                                                EMSPAPI                    EMSPAPI,
+                                                out Location_Id?           LocationId,
+                                                out Location?              Location,
+                                                out EVSE_UId?              EVSEUId,
+                                                out EVSE?                  EVSE,
+                                                out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                Boolean                    FailOnMissingEVSE = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
 
-            CountryCode          = default;
-            PartyId              = default;
             LocationId           = default;
             Location             = default;
             EVSEUId              = default;
@@ -601,45 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[2]);
+            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
 
             if (!LocationId.HasValue) {
 
@@ -657,7 +385,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[3]);
+            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
 
             if (!EVSEUId.HasValue)
             {
@@ -719,7 +447,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region ParseLocationEVSEConnectorId(this Request, EMSPAPI, out CountryCode, out PartyId, out LocationId,               out EVSEUId,           out ConnectorId,                out OCPIResponseBuilder)
+        #region ParseLocationEVSEConnectorId(this Request, EMSPAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -728,84 +456,40 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Request">A HTTP request.</param>
         /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="LocationId">The parsed unique location identification.</param>
         /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
         /// <param name="ConnectorId">The parsed unique connector identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest          Request,
-                                                           EMSPAPI                   EMSPAPI,
-                                                           out CountryCode?          CountryCode,
-                                                           out Party_Id?             PartyId,
-                                                           out Location_Id?          LocationId,
-                                                           out EVSE_UId?             EVSEUId,
-                                                           out Connector_Id?         ConnectorId,
-                                                           out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest           Request,
+                                                           EMSPAPI                    EMSPAPI,
+                                                           out Location_Id?           LocationId,
+                                                           out EVSE_UId?              EVSEUId,
+                                                           out Connector_Id?          ConnectorId,
+                                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
 
-            CountryCode          = default;
-            PartyId              = default;
             LocationId           = default;
             EVSEUId              = default;
             ConnectorId          = default;
             OCPIResponseBuilder  = default;
 
-            if (Request.ParsedURLParameters.Length < 5)
+            if (Request.ParsedURLParameters.Length < 3)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
                     StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPIv2_1_1.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -880,7 +564,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region ParseLocationEVSEConnector  (this Request, EMSPAPI, out CountryCode, out PartyId, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
+        #region ParseLocationEVSEConnector  (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -900,26 +584,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingConnector">Whether to fail when the connector for the given connector identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest          Request,
-                                                         EMSPAPI                   EMSPAPI,
-                                                         out CountryCode?          CountryCode,
-                                                         out Party_Id?             PartyId,
-                                                         out Location_Id?          LocationId,
-                                                         out Location              Location,
-                                                         out EVSE_UId?             EVSEUId,
-                                                         out EVSE                  EVSE,
-                                                         out Connector_Id?         ConnectorId,
-                                                         out Connector             Connector,
-                                                         out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                         Boolean                   FailOnMissingConnector = true)
+        public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
+                                                         EMSPAPI                    EMSPAPI,
+                                                         out CountryCode?           CountryCode,
+                                                         out Party_Id?              PartyId,
+                                                         out Location_Id?           LocationId,
+                                                         out Location?              Location,
+                                                         out EVSE_UId?              EVSEUId,
+                                                         out EVSE?                  EVSE,
+                                                         out Connector_Id?          ConnectorId,
+                                                         out Connector?             Connector,
+                                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                                         Boolean                    FailOnMissingConnector = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1121,20 +805,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="TariffId">The parsed unique tariff identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariffId(this OCPIRequest          Request,
-                                            EMSPAPI                   EMSPAPI,
-                                            out CountryCode?          CountryCode,
-                                            out Party_Id?             PartyId,
-                                            out Tariff_Id?            TariffId,
-                                            out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseTariffId(this OCPIRequest           Request,
+                                            EMSPAPI                    EMSPAPI,
+                                            out CountryCode?           CountryCode,
+                                            out Party_Id?              PartyId,
+                                            out Tariff_Id?             TariffId,
+                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1240,22 +924,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingTariff">Whether to fail when the tariff for the given tariff identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariff(this OCPIRequest          Request,
-                                          EMSPAPI                   EMSPAPI,
-                                          out CountryCode?          CountryCode,
-                                          out Party_Id?             PartyId,
-                                          out Tariff_Id?            TariffId,
-                                          out Tariff                Tariff,
-                                          out OCPIResponse.Builder  OCPIResponseBuilder,
-                                          Boolean                   FailOnMissingTariff = true)
+        public static Boolean ParseTariff(this OCPIRequest           Request,
+                                          EMSPAPI                    EMSPAPI,
+                                          out CountryCode?           CountryCode,
+                                          out Party_Id?              PartyId,
+                                          out Tariff_Id?             TariffId,
+                                          out Tariff?                Tariff,
+                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                          Boolean                    FailOnMissingTariff = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1379,20 +1063,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="SessionId">The parsed unique session identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSessionId(this OCPIRequest          Request,
-                                             EMSPAPI                   EMSPAPI,
-                                             out CountryCode?          CountryCode,
-                                             out Party_Id?             PartyId,
-                                             out Session_Id?           SessionId,
-                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseSessionId(this OCPIRequest           Request,
+                                             EMSPAPI                    EMSPAPI,
+                                             out CountryCode?           CountryCode,
+                                             out Party_Id?              PartyId,
+                                             out Session_Id?            SessionId,
+                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1498,22 +1182,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingSession">Whether to fail when the session for the given session identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest         Request,
-                                          EMSPAPI                   EMSPAPI,
-                                          out CountryCode?          CountryCode,
-                                          out Party_Id?             PartyId,
-                                          out Session_Id?           SessionId,
-                                          out Session               Session,
-                                          out OCPIResponse.Builder  OCPIResponseBuilder,
-                                          Boolean                   FailOnMissingSession = true)
+        public static Boolean ParseSession(this OCPIRequest          Request,
+                                          EMSPAPI                    EMSPAPI,
+                                          out CountryCode?           CountryCode,
+                                          out Party_Id?              PartyId,
+                                          out Session_Id?            SessionId,
+                                          out Session?               Session,
+                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                          Boolean                    FailOnMissingSession = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1636,20 +1320,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CDRId">The parsed unique charge detail record identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDRId(this OCPIRequest          Request,
-                                         EMSPAPI                   EMSPAPI,
-                                         out CountryCode?          CountryCode,
-                                         out Party_Id?             PartyId,
-                                         out CDR_Id?               CDRId,
-                                         out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCDRId(this OCPIRequest           Request,
+                                         EMSPAPI                    EMSPAPI,
+                                         out CountryCode?           CountryCode,
+                                         out Party_Id?              PartyId,
+                                         out CDR_Id?                CDRId,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1764,10 +1448,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1850,18 +1534,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="TokenId">The parsed unique token identification.</param>
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTokenId(this OCPIRequest          Request,
-                                           EMSPAPI                   EMSPAPI,
-                                           out Token_Id?             TokenId,
-                                           out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseTokenId(this OCPIRequest           Request,
+                                           EMSPAPI                    EMSPAPI,
+                                           out Token_Id?              TokenId,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -1925,20 +1609,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the token for the given token identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseToken(this OCPIRequest          Request,
-                                         EMSPAPI                   EMSPAPI,
-                                         out Token_Id?             TokenId,
-                                         out TokenStatus           TokenStatus,
-                                         out OCPIResponse.Builder  OCPIResponseBuilder,
-                                         Boolean                   FailOnMissingToken = true)
+        public static Boolean ParseToken(this OCPIRequest           Request,
+                                         EMSPAPI                    EMSPAPI,
+                                         out Token_Id?              TokenId,
+                                         out TokenStatus            TokenStatus,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                         Boolean                    FailOnMissingToken = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI == null)
+            if (EMSPAPI is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
 
             #endregion
@@ -2022,18 +1706,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <param name="CommandId">The parsed unique command identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCommandId(this OCPIRequest          Request,
-                                             EMSPAPI                   EMSPAPI,
-                                             out Command_Id?           CommandId,
-                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCommandId(this OCPIRequest           Request,
+                                             EMSPAPI                    EMSPAPI,
+                                             out Command_Id?            CommandId,
+                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (EMSPAPI  == null)
+            if (EMSPAPI  is null)
                 throw new ArgumentNullException(nameof(EMSPAPI),  "The given CPO API must not be null!");
 
             #endregion
@@ -3651,13 +3335,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             // Receiver Interface for eMSPs and NSPs
 
-            #region ~/locations/{country_code}/{party_id}                               [NonStandard]
+            #region ~/locations                               [NonStandard]
 
-            #region OPTIONS  ~/locations/{country_code}/{party_id}      [NonStandard]
+            #region OPTIONS  ~/locations      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}",
+                                    URLPathPrefix + "locations",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -3674,11 +3358,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/locations/{country_code}/{party_id}      [NonStandard]
+            #region GET      ~/locations      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}",
+                                    URLPathPrefix + "locations",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -3738,11 +3422,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/locations/{country_code}/{party_id}      [NonStandard]
+            #region DELETE   ~/locations      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}",
+                                    URLPathPrefix + "locations",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteLocationsRequest,
                                     OCPIResponseLogger:  DeleteLocationsResponse,
@@ -3788,13 +3472,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region ~/locations/{country_code}/{party_id}/{locationId}
+            #region ~/locations/{locationId}
 
-            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}      [NonStandard]
+            #region OPTIONS  ~/locations/{locationId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                                    URLPathPrefix + "locations/{locationId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -3821,11 +3505,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/locations/{country_code}/{party_id}/{locationId}
+            #region GET      ~/locations/{locationId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                                    URLPathPrefix + "locations/{locationId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -3852,29 +3536,28 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   out CountryCode?          CountryCode,
-                                                                   out Party_Id?             PartyId,
-                                                                   out Location_Id?          LocationId,
-                                                                   out Location              Location,
-                                                                   out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                   out var locationId,
+                                                                   out var existingLocation,
+                                                                   out var ocpiResponseBuilder,
                                                                    FailOnMissingLocation: true))
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(ocpiResponseBuilder);
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = Location.ToJSON(),
+                                                   Data                 = existingLocation!.ToJSON(),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = Location.LastUpdated.ToIso8601(),
-                                                       ETag                       = Location.ETag
+                                                       LastModified               = existingLocation.LastUpdated.ToIso8601(),
+                                                       ETag                       = existingLocation.ETag
                                                    }
                                             });
 
@@ -3882,19 +3565,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}
+            #region PUT      ~/locations/{locationId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PUT,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                                    URLPathPrefix + "locations/{locationId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutLocationRequest,
                                     OCPIResponseLogger:  PutLocationResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3902,7 +3585,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET",
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -3914,34 +3597,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing location
 
                                         if (!Request.ParseLocation(this,
-                                                                   out CountryCode?          CountryCode,
-                                                                   out Party_Id?             PartyId,
-                                                                   out Location_Id?          LocationId,
-                                                                   out Location              ExistingLocation,
-                                                                   out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                   out var locationId,
+                                                                   out var existingLocation,
+                                                                   out var ocpiResponseBuilder,
                                                                    FailOnMissingLocation: false))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
                                         #region Parse new or updated location JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject LocationJSON, out OCPIResponseBuilder))
-                                            return OCPIResponseBuilder;
+                                        if (!Request.TryParseJObjectRequestBody(out var locationJSON, out ocpiResponseBuilder))
+                                            return ocpiResponseBuilder;
 
-                                        if (!Location.TryParse(LocationJSON,
-                                                               out Location  newOrUpdatedLocation,
-                                                               out String    ErrorResponse,
-                                                               CountryCode,
-                                                               PartyId,
-                                                               LocationId))
+                                        if (!Location.TryParse(locationJSON,
+                                                               out var newOrUpdatedLocation,
+                                                               out var errorResponse,
+                                                               locationId) ||
+                                             newOrUpdatedLocation is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given location JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given location JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -3957,7 +3637,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         var addOrUpdateResult = await CommonAPI.AddOrUpdateLocation(newOrUpdatedLocation,
                                                                                                     AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
-                                        //throw new Exception("lala!");
                                         if (addOrUpdateResult.IsSuccess)
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
@@ -3989,11 +3668,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}
+            #region PATCH    ~/locations/{locationId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PATCH,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                                    URLPathPrefix + "locations/{locationId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchLocationRequest,
                                     OCPIResponseLogger:  PatchLocationResponse,
@@ -4021,8 +3700,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   out CountryCode?          CountryCode,
-                                                                   out Party_Id?             PartyId,
                                                                    out Location_Id?          LocationId,
                                                                    out Location              ExistingLocation,
                                                                    out OCPIResponse.Builder  OCPIResponseBuilder,
@@ -4076,11 +3753,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}      [NonStandard]
+            #region DELETE   ~/locations/{locationId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}",
+                                    URLPathPrefix + "locations/{locationId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteLocationRequest,
                                     OCPIResponseLogger:  DeleteLocationResponse,
@@ -4108,11 +3785,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing location
 
                                         if (!Request.ParseLocation(this,
-                                                                   out CountryCode?          CountryCode,
-                                                                   out Party_Id?             PartyId,
-                                                                   out Location_Id?          LocationId,
-                                                                   out Location              ExistingLocation,
-                                                                   out OCPIResponse.Builder  OCPIResponse))
+                                                                   out var LocationId,
+                                                                   out var ExistingLocation,
+                                                                   out var OCPIResponse))
                                         {
                                             return OCPIResponse;
                                         }
@@ -4142,13 +3817,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region ~/locations/{locationId}/{evseId}
 
-            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}      [NonStandard]
+            #region OPTIONS  ~/locations/{locationId}/{evseId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -4175,11 +3850,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region GET      ~/locations/{locationId}/{evseId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -4206,13 +3881,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       out CountryCode?          CountryCode,
-                                                                       out Party_Id?             PartyId,
-                                                                       out Location_Id?          LocationId,
-                                                                       out Location              Location,
-                                                                       out EVSE_UId?             EVSEUId,
-                                                                       out EVSE                  EVSE,
-                                                                       out OCPIResponse.Builder  OCPIResponse))
+                                                                       out var LocationId,
+                                                                       out var Location,
+                                                                       out var EVSEUId,
+                                                                       out var EVSE,
+                                                                       out var OCPIResponse))
                                         {
                                             return Task.FromResult(OCPIResponse);
                                         }
@@ -4237,11 +3910,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region PUT      ~/locations/{locationId}/{evseId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PUT,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutEVSERequest,
                                     OCPIResponseLogger:  PutEVSEResponse,
@@ -4269,13 +3942,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       out CountryCode?          CountryCode,
-                                                                       out Party_Id?             PartyId,
-                                                                       out Location_Id?          LocationId,
-                                                                       out Location              ExistingLocation,
-                                                                       out EVSE_UId?             EVSEUId,
-                                                                       out EVSE                  ExistingEVSE,
-                                                                       out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                       out var LocationId,
+                                                                       out var ExistingLocation,
+                                                                       out var EVSEUId,
+                                                                       out var ExistingEVSE,
+                                                                       out var OCPIResponseBuilder,
                                                                        FailOnMissingEVSE: false))
                                         {
                                             return OCPIResponseBuilder;
@@ -4345,11 +4016,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}
+            #region PATCH    ~/locations/{locationId}/{evseId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PATCH,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchEVSERequest,
                                     OCPIResponseLogger:  PatchEVSEResponse,
@@ -4377,13 +4048,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       out CountryCode?          CountryCode,
-                                                                       out Party_Id?             PartyId,
-                                                                       out Location_Id?          LocationId,
-                                                                       out Location              ExistingLocation,
-                                                                       out EVSE_UId?             EVSEUId,
-                                                                       out EVSE                  ExistingEVSE,
-                                                                       out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                       out var LocationId,
+                                                                       out var ExistingLocation,
+                                                                       out var EVSEUId,
+                                                                       out var ExistingEVSE,
+                                                                       out var OCPIResponseBuilder,
                                                                        FailOnMissingEVSE: true))
                                         {
                                             return OCPIResponseBuilder;
@@ -4432,11 +4101,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseId}      [NonStandard]
+            #region DELETE   ~/locations/{locationId}/{evseId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteEVSERequest,
                                     OCPIResponseLogger:  DeleteEVSEResponse,
@@ -4464,13 +4133,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing Location/EVSE(UId URI parameter)
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       out CountryCode?          CountryCode,
-                                                                       out Party_Id?             PartyId,
-                                                                       out Location_Id?          LocationId,
-                                                                       out Location              ExistingLocation,
-                                                                       out EVSE_UId?             EVSEUId,
-                                                                       out EVSE                  ExistingEVSE,
-                                                                       out OCPIResponse.Builder  OCPIResponse))
+                                                                       out var LocationId,
+                                                                       out var ExistingLocation,
+                                                                       out var EVSEUId,
+                                                                       out var ExistingEVSE,
+                                                                       out var OCPIResponse))
                                         {
                                             return OCPIResponse;
                                         }
@@ -4499,13 +4166,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region ~/locations/{locationId}/{evseId}/{connectorId}
 
-            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}      [NonStandard]
+            #region OPTIONS  ~/locations/{locationId}/{evseId}/{connectorId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -4534,11 +4201,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region GET      ~/locations/{locationId}/{evseId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -4598,11 +4265,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT      ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region PUT      ~/locations/{locationId}/{evseId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PUT,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutConnectorRequest,
                                     OCPIResponseLogger:  PutConnectorResponse,
@@ -4709,11 +4376,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PATCH    ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}
+            #region PATCH    ~/locations/{locationId}/{evseId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PATCH,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchConnectorRequest,
                                     OCPIResponseLogger:  PatchConnectorResponse,
@@ -4799,11 +4466,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}      [NonStandard]
+            #region DELETE   ~/locations/{locationId}/{evseId}/{connectorId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/{connectorId}",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteConnectorRequest,
                                     OCPIResponseLogger:  DeleteConnectorResponse,
@@ -4869,13 +4536,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            #region ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status  [NonStandard]
+            #region ~/locations/{locationId}/{evseId}/status  [NonStandard]
 
-            #region OPTIONS  ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status     [NonStandard]
+            #region OPTIONS  ~/locations/{locationId}/{evseId}/status     [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/status",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -4899,11 +4566,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region POST     ~/locations/{country_code}/{party_id}/{locationId}/{evseId}/status     [NonStandard]
+            #region POST     ~/locations/{locationId}/{evseId}/status     [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
-                                    URLPathPrefix + "locations/{country_code}/{party_id}/{locationId}/{evseId}/status",
+                                    URLPathPrefix + "locations/{locationId}/{evseId}/status",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutEVSERequest,
                                     OCPIResponseLogger:  PutEVSEResponse,
@@ -4931,13 +4598,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
-                                                                       out CountryCode?          CountryCode,
-                                                                       out Party_Id?             PartyId,
-                                                                       out Location_Id?          LocationId,
-                                                                       out Location              ExistingLocation,
-                                                                       out EVSE_UId?             EVSEUId,
-                                                                       out EVSE                  ExistingEVSE,
-                                                                       out OCPIResponse.Builder  OCPIResponseBuilder,
+                                                                       out var LocationId,
+                                                                       out var ExistingLocation,
+                                                                       out var EVSEUId,
+                                                                       out var ExistingEVSE,
+                                                                       out var OCPIResponseBuilder,
                                                                        FailOnMissingEVSE: false))
                                         {
                                             return OCPIResponseBuilder;
@@ -4991,13 +4656,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-            #region ~/tariffs/{country_code}/{party_id}                                 [NonStandard]
+            #region ~/tariffs                                 [NonStandard]
 
-            #region OPTIONS  ~/tariffs/{country_code}/{party_id}            [NonStandard]
+            #region OPTIONS  ~/tariffs            [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                     URLPathPrefix + "tariffs",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestHandler: Request => {
 
@@ -5014,11 +4679,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/tariffs/{country_code}/{party_id}            [NonStandard]
+            #region GET      ~/tariffs            [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                    URLPathPrefix + "tariffs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -5038,18 +4703,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     }
                                                 });
 
-                                        }
-
-                                        #endregion
-
-                                        #region Check country code and party identification
-
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return Task.FromResult(OCPIResponse);
                                         }
 
                                         #endregion
@@ -5090,11 +4743,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/tariffs/{country_code}/{party_id}            [NonStandard]
+            #region DELETE   ~/tariffs            [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}",
+                                    URLPathPrefix + "tariffs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteTariffsRequest,
                                     OCPIResponseLogger:  DeleteTariffsResponse,
@@ -5138,13 +4791,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region ~/tariffs/{country_code}/{party_id}/{tariffId}
+            #region ~/tariffs/{tariffId}
 
-            #region OPTIONS  ~/tariffs/{country_code}/{party_id}/{tariffId}
+            #region OPTIONS  ~/tariffs/{tariffId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                    URLPathPrefix + "tariffs/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -5170,11 +4823,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/tariffs/{country_code}/{party_id}/{tariffId}
+            #region GET      ~/tariffs/{tariffId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                    URLPathPrefix + "tariffs/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -5230,11 +4883,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT      ~/tariffs/{country_code}/{party_id}/{tariffId}
+            #region PUT      ~/tariffs/{tariffId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PUT,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                    URLPathPrefix + "tariffs/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutTariffRequest,
                                     OCPIResponseLogger:  PutTariffResponse,
@@ -5335,11 +4988,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PATCH    ~/tariffs/{country_code}/{party_id}/{tariffId}      [NonStandard]
+            #region PATCH    ~/tariffs/{tariffId}      [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PATCH,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                    URLPathPrefix + "tariffs/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchTariffRequest,
                                     OCPIResponseLogger:  PatchTariffResponse,
@@ -5431,11 +5084,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/tariffs/{country_code}/{party_id}/{tariffId}
+            #region DELETE   ~/tariffs/{tariffId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "tariffs/{country_code}/{party_id}/{tariffId}",
+                                    URLPathPrefix + "tariffs/{tariffId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteTariffRequest,
                                     OCPIResponseLogger:  DeleteTariffResponse,
@@ -5500,13 +5153,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-            #region ~/sessions/{country_code}/{party_id}                                [NonStandard]
+            #region ~/sessions                                [NonStandard]
 
-            #region OPTIONS  ~/sessions/{country_code}/{party_id}                [NonStandard]
+            #region OPTIONS  ~/sessions                [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "sessions/{country_code}/{party_id}",
+                                     URLPathPrefix + "sessions",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestHandler: Request => {
 
@@ -5523,11 +5176,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/sessions/{country_code}/{party_id}                [NonStandard]
+            #region GET      ~/sessions                [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}",
+                                    URLPathPrefix + "sessions",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -5547,18 +5200,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     }
                                                 });
 
-                                        }
-
-                                        #endregion
-
-                                        #region Check Session(Id URI parameter)
-
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return Task.FromResult(OCPIResponse);
                                         }
 
                                         #endregion
@@ -5648,13 +5289,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region ~/sessions/{sessionId}
 
-            #region OPTIONS  ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
+            #region OPTIONS  ~/sessions/{sessionId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
-                                     URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                                     URLPathPrefix + "sessions/{sessionId}",
                                      HTTPContentType.JSON_UTF8,
                                      OCPIRequestHandler: Request => {
 
@@ -5681,11 +5322,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region GET      ~/sessions/{sessionId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                                    URLPathPrefix + "sessions/{sessionId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -5742,11 +5383,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PUT      ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region PUT      ~/sessions/{sessionId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PUT,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                                    URLPathPrefix + "sessions/{sessionId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PutSessionRequest,
                                     OCPIResponseLogger:  PutSessionResponse,
@@ -5847,11 +5488,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region PATCH    ~/sessions/{country_code}/{party_id}/{sessionId}
+            #region PATCH    ~/sessions/{sessionId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.PATCH,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                                    URLPathPrefix + "sessions/{sessionId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PatchSessionRequest,
                                     OCPIResponseLogger:  PatchSessionResponse,
@@ -5931,11 +5572,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/sessions/{country_code}/{party_id}/{sessionId}    [NonStandard]
+            #region DELETE   ~/sessions/{sessionId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "sessions/{country_code}/{party_id}/{sessionId}",
+                                    URLPathPrefix + "sessions/{sessionId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteSessionRequest,
                                     OCPIResponseLogger:  DeleteSessionResponse,
@@ -6000,13 +5641,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
-            #region ~/cdrs/{country_code}/{party_id}                                    [NonStandard]
+            #region ~/cdrs                                    [NonStandard]
 
-            #region OPTIONS  ~/cdrs/{country_code}/{party_id}           [NonStandard]
+            #region OPTIONS  ~/cdrs           [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    URLPathPrefix + "cdrs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -6023,11 +5664,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/cdrs/{country_code}/{party_id}           [NonStandard]
+            #region GET      ~/cdrs           [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    URLPathPrefix + "cdrs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -6047,18 +5688,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     }
                                                 });
 
-                                        }
-
-                                        #endregion
-
-                                        #region Check CDR(Id URI parameter)
-
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return Task.FromResult(OCPIResponse);
                                         }
 
                                         #endregion
@@ -6103,11 +5732,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region POST     ~/cdrs/{country_code}/{party_id}       <= Unclear if this URL is correct!
+            #region POST     ~/cdrs       <= Unclear if this URL is correct!
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.POST,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    URLPathPrefix + "cdrs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PostCDRRequest,
                                     OCPIResponseLogger:  PostCDRResponse,
@@ -6132,28 +5761,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #endregion
 
-                                        #region Check CountryCode & PartyId URI parameter
-
-                                        if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
-                                        {
-                                            return OCPIResponse;
-                                        }
-
-                                        #endregion
-
                                         #region Parse newCDR JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out OCPIResponse))
+                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out var OCPIResponse))
                                             return OCPIResponse;
 
                                         if (!CDR.TryParse(JSONCDR,
-                                                          out CDR     newCDR,
-                                                          out String  ErrorResponse,
-                                                          CountryCode,
-                                                          PartyId))
+                                                          out var newCDR,
+                                                          out var ErrorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6251,13 +5866,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region ~/cdrs/{country_code}/{party_id}/{cdrId}
+            #region ~/cdrs/{cdrId}
 
-            #region OPTIONS  ~/cdrs/{country_code}/{party_id}/{cdrId}    [NonStandard]
+            #region OPTIONS  ~/cdrs/{cdrId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                                    URLPathPrefix + "cdrs/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -6282,11 +5897,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region GET      ~/cdrs/{country_code}/{party_id}/{cdrId}       // The concrete URL is not specified by OCPI! m(
+            #region GET      ~/cdrs/{cdrId}       // The concrete URL is not specified by OCPI! m(
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                                    URLPathPrefix + "cdrs/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
@@ -6341,11 +5956,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region DELETE   ~/cdrs/{country_code}/{party_id}/{cdrId}    [NonStandard]
+            #region DELETE   ~/cdrs/{cdrId}    [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
+                                    URLPathPrefix + "cdrs/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRRequest,
                                     OCPIResponseLogger:  DeleteCDRResponse,
