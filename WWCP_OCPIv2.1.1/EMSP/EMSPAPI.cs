@@ -3368,7 +3368,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3434,7 +3434,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3515,7 +3515,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3680,7 +3680,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3765,7 +3765,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3860,7 +3860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -3922,7 +3922,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4028,7 +4028,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4113,7 +4113,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4211,7 +4211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -4277,7 +4277,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4388,7 +4388,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4478,7 +4478,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4578,7 +4578,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4689,7 +4689,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -4755,7 +4755,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4833,7 +4833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -4895,7 +4895,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5000,7 +5000,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5096,7 +5096,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5186,7 +5186,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5252,7 +5252,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5332,7 +5332,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5395,7 +5395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if ( Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if ( Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5500,7 +5500,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5584,7 +5584,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5674,7 +5674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5744,7 +5744,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5752,7 +5752,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET",
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, POST, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -5763,17 +5763,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Parse newCDR JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out JObject JSONCDR, out var OCPIResponse))
-                                            return OCPIResponse;
+                                        if (!Request.TryParseJObjectRequestBody(out var jsonCDR, out var ocpiResponse))
+                                            return ocpiResponse;
 
-                                        if (!CDR.TryParse(JSONCDR,
+                                        if (!CDR.TryParse(jsonCDR,
                                                           out var newCDR,
-                                                          out var ErrorResponse))
+                                                          out var errorResponse))
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given charge detail record JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given charge detail record JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST, DELETE",
@@ -5806,7 +5806,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Created,
                                                            Location                   = URLPathPrefix + "cdrs" + newCDR.Id.ToString(),
-                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, POST, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization",
                                                            LastModified               = newCDR.LastUpdated.ToIso8601(),
                                                            ETag                       = newCDR.ETag
@@ -5829,7 +5829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5907,7 +5907,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -5968,7 +5968,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6066,7 +6066,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return Task.FromResult(
@@ -6138,7 +6138,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo.Value.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {

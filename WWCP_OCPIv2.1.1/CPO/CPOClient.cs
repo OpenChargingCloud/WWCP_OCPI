@@ -97,6 +97,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region Custom JSON parsers
+
+        #endregion
+
+        #region Custom JSON serializers
+
+        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        { get; set; }
+        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer   { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer              { get; set; }
+        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer          { get; set; }
+
+
+        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer           { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                  { get; set; }
+
+        #endregion
+
         #region Events
 
         #region OnGetLocationRequest/-Response
@@ -1011,7 +1046,21 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Location.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = Location.ToJSON(CustomLocationSerializer,
+                                                                                                                                        CustomAdditionalGeoLocationSerializer,
+                                                                                                                                        CustomEVSESerializer,
+                                                                                                                                        CustomStatusScheduleSerializer,
+                                                                                                                                        CustomConnectorSerializer,
+                                                                                                                                        CustomEnergyMeterSerializer,
+                                                                                                                                        CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                        CustomTransparencySoftwareSerializer,
+                                                                                                                                        CustomDisplayTextSerializer,
+                                                                                                                                        CustomBusinessDetailsSerializer,
+                                                                                                                                        CustomHoursSerializer,
+                                                                                                                                        CustomImageSerializer,
+                                                                                                                                        CustomEnergyMixSerializer,
+                                                                                                                                        CustomEnergySourceSerializer,
+                                                                                                                                        CustomEnvironmentalImpactSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1626,7 +1675,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = EVSE.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = EVSE.ToJSON(CustomEVSESerializer,
+                                                                                                                                    CustomStatusScheduleSerializer,
+                                                                                                                                    CustomConnectorSerializer,
+                                                                                                                                    CustomEnergyMeterSerializer,
+                                                                                                                                    CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                    CustomTransparencySoftwareSerializer,
+                                                                                                                                    CustomDisplayTextSerializer,
+                                                                                                                                    CustomImageSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -2206,7 +2262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Connector.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = Connector.ToJSON(CustomConnectorSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4271,11 +4327,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              DNSClient).
 
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                     remoteURL.Value.Path + CDR.Id.ToString(),
+                                                                                     remoteURL.Value.Path, // + CDR.Id.ToString(),
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = CDR.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Content       = CDR.ToJSON(CustomCDRSerializer,
+                                                                                                                                   CustomLocationSerializer,
+                                                                                                                                   CustomAdditionalGeoLocationSerializer,
+                                                                                                                                   CustomEVSESerializer,
+                                                                                                                                   CustomStatusScheduleSerializer,
+                                                                                                                                   CustomConnectorSerializer,
+                                                                                                                                   CustomEnergyMeterSerializer,
+                                                                                                                                   CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                   CustomTransparencySoftwareSerializer,
+                                                                                                                                   CustomDisplayTextSerializer,
+                                                                                                                                   CustomBusinessDetailsSerializer,
+                                                                                                                                   CustomHoursSerializer,
+                                                                                                                                   CustomImageSerializer,
+                                                                                                                                   CustomEnergyMixSerializer,
+                                                                                                                                   CustomEnergySourceSerializer,
+                                                                                                                                   CustomEnvironmentalImpactSerializer,
+                                                                                                                                   CustomTariffSerializer,
+                                                                                                                                   CustomTariffElementSerializer,
+                                                                                                                                   CustomPriceComponentSerializer,
+                                                                                                                                   CustomTariffRestrictionsSerializer,
+                                                                                                                                   CustomChargingPeriodSerializer,
+                                                                                                                                   CustomCDRDimensionSerializer,
+                                                                                                                                   CustomSignedDataSerializer,
+                                                                                                                                   CustomSignedValueSerializer).ToUTF8Bytes(JSONFormat);
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
