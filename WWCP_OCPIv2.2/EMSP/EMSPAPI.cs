@@ -2227,6 +2227,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
         public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
 
+
+        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
+
         #endregion
 
         #region Events
@@ -3701,6 +3707,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+
+
+        #region (protected internal) GetCDRRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET CDR request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetCDRRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDR request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetCDRRequest(DateTime     Timestamp,
+                                              HTTPAPI      API,
+                                              OCPIRequest  Request)
+
+            => OnGetCDRRequest?.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
+
+        #endregion
+
+        #region (protected internal) GetCDRResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET CDR response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetCDRResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDR response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetCDRResponse(DateTime      Timestamp,
+                                               HTTPAPI       API,
+                                               OCPIRequest   Request,
+                                               OCPIResponse  Response)
+
+            => OnGetCDRResponse?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
+
+        #endregion
 
 
         #region (protected internal) PostCDRRequest (Request)
@@ -6446,9 +6502,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         var filters                = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions            = CommonAPI.GetSessions().
-                                                                               Where(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
-                                                                                                                                           role.PartyId     == session.PartyId)).
+                                        var allSessions            = CommonAPI.GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
+                                                                                                                                                 role.PartyId     == session.PartyId)).
                                                                                ToArray();
 
                                         var allSessionsCount       = allSessions.Length;
@@ -7125,13 +7180,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region GET      ~/cdrs/{country_code}/{party_id}           [NonStandard]
+            #region GET      ~/cdrs                                     [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.GET,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    URLPathPrefix + "cdrs",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestLogger:   GetCDRsRequest,
+                                    OCPIResponseLogger:  GetCDRsResponse,
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check access token
 
@@ -7157,11 +7214,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #region Check CDR(Id URI parameter)
 
                                         if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
+                                                                                out var countryCode,
+                                                                                out var partyId,
+                                                                                out var ocpiResponseBuilder))
                                         {
-                                            return Task.FromResult(OCPIResponse);
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -7173,16 +7230,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
                                         // X-Limit          The maximum number of objects that the server WILL return.
 
-                                        var allCDRs            = CommonAPI.GetCDRs(CountryCode, PartyId).
+                                        var allCDRs            = CommonAPI.GetCDRs(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
+                                                                                                                                         role.PartyId     == session.PartyId)).
                                                                            ToArray();
 
                                         var allCDRsCount       = allCDRs.Length;
 
 
                                         var filteredCDRs       = CommonAPI.GetCDRs().
-                                                                          Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
-                                                                          Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
-                                                                          ToArray();
+                                                                           Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
+                                                                           Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
+                                                                           ToArray();
 
                                         var filteredCDRsCount  = filteredCDRs.Length;
 
@@ -7191,9 +7249,136 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = new JArray(filteredCDRs.SkipTakeFilter(filters.Offset,
-                                                                                                                 filters.Limit).
-                                                                                                  SafeSelect(cdr => cdr.ToJSON())),
+                                                   Data                 = new JArray(
+                                                                              filteredCDRs.
+                                                                                  SkipTakeFilter(filters.Offset,
+                                                                                                 filters.Limit).
+                                                                                  Select(cdr => cdr.ToJSON(CustomCDRSerializer,
+                                                                                                           CustomCDRTokenSerializer,
+                                                                                                           CustomCDRLocationSerializer,
+                                                                                                           CustomEnergyMeterSerializer,
+                                                                                                           CustomTransparencySoftwareSerializer,
+                                                                                                           CustomTariffSerializer,
+                                                                                                           CustomDisplayTextSerializer,
+                                                                                                           CustomPriceSerializer,
+                                                                                                           CustomTariffElementSerializer,
+                                                                                                           CustomPriceComponentSerializer,
+                                                                                                           CustomTariffRestrictionsSerializer,
+                                                                                                           CustomEnergyMixSerializer,
+                                                                                                           CustomEnergySourceSerializer,
+                                                                                                           CustomEnvironmentalImpactSerializer,
+                                                                                                           CustomChargingPeriodSerializer,
+                                                                                                           CustomCDRDimensionSerializer,
+                                                                                                           CustomSignedDataSerializer,
+                                                                                                           CustomSignedValueSerializer))
+                                                                          ),
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, DELETE",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                       //LastModified               = ?
+                                                   }.
+                                                   Set("X-Total-Count", filteredCDRsCount)
+                                                   // X-Limit               The maximum number of objects that the server WILL return.
+                                                   // Link                  Link to the 'next' page should be provided when this is NOT the last page.
+                                            });
+
+                                    });
+
+            #endregion
+
+            #region GET      ~/cdrs/{country_code}/{party_id}           [NonStandard]
+
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
+                                    HTTPMethod.GET,
+                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestLogger:   GetCDRsRequest,
+                                    OCPIResponseLogger:  GetCDRsResponse,
+                                    OCPIRequestHandler:  Request => {
+
+                                        #region Check access token
+
+                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
+                                            Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        {
+
+                                            return Task.FromResult(
+                                                new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Invalid or blocked access token!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
+
+                                        }
+
+                                        #endregion
+
+                                        #region Check CDR(Id URI parameter)
+
+                                        if (!Request.ParseCountryCodeAndPartyId(this,
+                                                                                out var countryCode,
+                                                                                out var partyId,
+                                                                                out var ocpiResponseBuilder))
+                                        {
+                                            return Task.FromResult(ocpiResponseBuilder!);
+                                        }
+
+                                        #endregion
+
+
+                                        var filters            = Request.GetDateAndPaginationFilters();
+
+                                        // Link             Link to the 'next' page should be provided when this is NOT the last page.
+                                        // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
+                                        // X-Limit          The maximum number of objects that the server WILL return.
+
+                                        var allCDRs            = CommonAPI.GetCDRs(countryCode,
+                                                                                   partyId).
+                                                                           ToArray();
+
+                                        var allCDRsCount       = allCDRs.Length;
+
+
+                                        var filteredCDRs       = CommonAPI.GetCDRs().
+                                                                           Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
+                                                                           Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
+                                                                           ToArray();
+
+                                        var filteredCDRsCount  = filteredCDRs.Length;
+
+
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   Data                 = new JArray(
+                                                                              filteredCDRs.
+                                                                                  SkipTakeFilter(filters.Offset,
+                                                                                                 filters.Limit).
+                                                                                  Select(cdr => cdr.ToJSON(CustomCDRSerializer,
+                                                                                                           CustomCDRTokenSerializer,
+                                                                                                           CustomCDRLocationSerializer,
+                                                                                                           CustomEnergyMeterSerializer,
+                                                                                                           CustomTransparencySoftwareSerializer,
+                                                                                                           CustomTariffSerializer,
+                                                                                                           CustomDisplayTextSerializer,
+                                                                                                           CustomPriceSerializer,
+                                                                                                           CustomTariffElementSerializer,
+                                                                                                           CustomPriceComponentSerializer,
+                                                                                                           CustomTariffRestrictionsSerializer,
+                                                                                                           CustomEnergyMixSerializer,
+                                                                                                           CustomEnergySourceSerializer,
+                                                                                                           CustomEnvironmentalImpactSerializer,
+                                                                                                           CustomChargingPeriodSerializer,
+                                                                                                           CustomCDRDimensionSerializer,
+                                                                                                           CustomSignedDataSerializer,
+                                                                                                           CustomSignedValueSerializer))
+                                                                          ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST, DELETE",
@@ -7230,7 +7415,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET",
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -7295,7 +7480,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = newCDR.ToJSON(),
+                                                       Data                 = newCDR.ToJSON(CustomCDRSerializer,
+                                                                                            CustomCDRTokenSerializer,
+                                                                                            CustomCDRLocationSerializer,
+                                                                                            CustomEnergyMeterSerializer,
+                                                                                            CustomTransparencySoftwareSerializer,
+                                                                                            CustomTariffSerializer,
+                                                                                            CustomDisplayTextSerializer,
+                                                                                            CustomPriceSerializer,
+                                                                                            CustomTariffElementSerializer,
+                                                                                            CustomPriceComponentSerializer,
+                                                                                            CustomTariffRestrictionsSerializer,
+                                                                                            CustomEnergyMixSerializer,
+                                                                                            CustomEnergySourceSerializer,
+                                                                                            CustomEnvironmentalImpactSerializer,
+                                                                                            CustomChargingPeriodSerializer,
+                                                                                            CustomCDRDimensionSerializer,
+                                                                                            CustomSignedDataSerializer,
+                                                                                            CustomSignedValueSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Created,
                                                            Location                   = URLPathPrefix + "cdrs" + newCDR.CountryCode.ToString() + newCDR.PartyId.ToString() + newCDR.Id.ToString(),
@@ -7310,15 +7512,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region DELETE   ~/cdrs/{country_code}/{party_id}           [NonStandard]
+            #region DELETE   ~/cdrs                                     [NonStandard]
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.DELETE,
-                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    URLPathPrefix + "cdrs",
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRsRequest,
                                     OCPIResponseLogger:  DeleteCDRsResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
@@ -7340,21 +7542,71 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #endregion
 
-                                        #region Check CountryCode & PartyId
+
+                                        foreach (var role in Request.AccessInfo.Value.Roles)
+                                            CommonAPI.RemoveAllCDRs(role.CountryCode,
+                                                                    role.PartyId);
+
+
+                                        return new OCPIResponse.Builder(Request) {
+                                                   StatusCode           = 1000,
+                                                   StatusMessage        = "Hello world!",
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST, DELETE",
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                               };
+
+                                    });
+
+            #endregion
+
+            #region DELETE   ~/cdrs/{country_code}/{party_id}           [NonStandard]
+
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
+                                    HTTPMethod.DELETE,
+                                    URLPathPrefix + "cdrs/{country_code}/{party_id}",
+                                    HTTPContentType.JSON_UTF8,
+                                    OCPIRequestLogger:   DeleteCDRsRequest,
+                                    OCPIResponseLogger:  DeleteCDRsResponse,
+                                    OCPIRequestHandler:  async Request => {
+
+                                        #region Check access token
+
+                                        if (Request.AccessInfo.IsNot(Roles.CPO) ||
+                                            Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        {
+
+                                            return new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Invalid or blocked access token!",
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                           AccessControlAllowMethods  = "OPTIONS, GET",
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                       }
+                                                   };
+
+                                        }
+
+                                        #endregion
+
+                                        #region Check country code and party identification
 
                                         if (!Request.ParseCountryCodeAndPartyId(this,
-                                                                                out CountryCode?          CountryCode,
-                                                                                out Party_Id?             PartyId,
-                                                                                out OCPIResponse.Builder  OCPIResponse))
+                                                                                out var countryCode,
+                                                                                out var partyId,
+                                                                                out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponse;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
 
-                                        CommonAPI.RemoveAllCDRs(CountryCode.Value,
-                                                                PartyId.    Value);
+                                        CommonAPI.RemoveAllCDRs(countryCode.Value,
+                                                                partyId.    Value);
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -7410,7 +7662,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{country_code}/{party_id}/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestLogger:   GetCDRRequest,
+                                    OCPIResponseLogger:  GetCDRResponse,
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check access token
 
@@ -7424,7 +7678,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -7436,29 +7690,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #region Check existing CDR
 
                                         if (!Request.ParseCDR(this,
-                                                              out CountryCode?          CountryCode,
-                                                              out Party_Id?             PartyId,
-                                                              out CDR_Id?               CDRId,
-                                                              out CDR                   CDR,
-                                                              out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                              FailOnMissingCDR: true))
+                                                              out var countryCode,
+                                                              out var partyId,
+                                                              out var cdrId,
+                                                              out var cdr,
+                                                              out var ocpiResponseBuilder,
+                                                              FailOnMissingCDR: true) ||
+                                             cdr is null)
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = CDR.ToJSON(),
+                                                   Data                 = cdr.ToJSON(CustomCDRSerializer,
+                                                                                     CustomCDRTokenSerializer,
+                                                                                     CustomCDRLocationSerializer,
+                                                                                     CustomEnergyMeterSerializer,
+                                                                                     CustomTransparencySoftwareSerializer,
+                                                                                     CustomTariffSerializer,
+                                                                                     CustomDisplayTextSerializer,
+                                                                                     CustomPriceSerializer,
+                                                                                     CustomTariffElementSerializer,
+                                                                                     CustomPriceComponentSerializer,
+                                                                                     CustomTariffRestrictionsSerializer,
+                                                                                     CustomEnergyMixSerializer,
+                                                                                     CustomEnergySourceSerializer,
+                                                                                     CustomEnvironmentalImpactSerializer,
+                                                                                     CustomChargingPeriodSerializer,
+                                                                                     CustomCDRDimensionSerializer,
+                                                                                     CustomSignedDataSerializer,
+                                                                                     CustomSignedValueSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = CDR.LastUpdated.ToIso8601(),
-                                                       ETag                       = CDR.ETag
+                                                       LastModified               = cdr.LastUpdated.ToIso8601(),
+                                                       ETag                       = cdr.ETag
                                                    }
                                             });
 
@@ -7474,7 +7747,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRRequest,
                                     OCPIResponseLogger:  DeleteCDRResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
@@ -7487,7 +7760,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        StatusMessage        = "Invalid or blocked access token!",
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                           AccessControlAllowMethods  = "OPTIONS, GET",
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
                                                            AccessControlAllowHeaders  = "Authorization"
                                                        }
                                                    };
@@ -7499,32 +7772,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #region Check existing CDR
 
                                         if (!Request.ParseCDR(this,
-                                                              out CountryCode?          CountryCode,
-                                                              out Party_Id?             PartyId,
-                                                              out CDR_Id?               CDRId,
-                                                              out CDR                   ExistingCDR,
-                                                              out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                              FailOnMissingCDR: true))
+                                                              out var countryCode,
+                                                              out var partyId,
+                                                              out var cdrId,
+                                                              out var existingCDR,
+                                                              out var ocpiResponseBuilder,
+                                                              FailOnMissingCDR: true) ||
+                                             existingCDR is null)
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
 
                                         //ToDo: await...
-                                        CommonAPI.RemoveCDR(ExistingCDR);
+                                        CommonAPI.RemoveCDR(existingCDR);
 
 
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = ExistingCDR.ToJSON(),
+                                                       Data                 = existingCDR.ToJSON(CustomCDRSerializer,
+                                                                                                 CustomCDRTokenSerializer,
+                                                                                                 CustomCDRLocationSerializer,
+                                                                                                 CustomEnergyMeterSerializer,
+                                                                                                 CustomTransparencySoftwareSerializer,
+                                                                                                 CustomTariffSerializer,
+                                                                                                 CustomDisplayTextSerializer,
+                                                                                                 CustomPriceSerializer,
+                                                                                                 CustomTariffElementSerializer,
+                                                                                                 CustomPriceComponentSerializer,
+                                                                                                 CustomTariffRestrictionsSerializer,
+                                                                                                 CustomEnergyMixSerializer,
+                                                                                                 CustomEnergySourceSerializer,
+                                                                                                 CustomEnvironmentalImpactSerializer,
+                                                                                                 CustomChargingPeriodSerializer,
+                                                                                                 CustomCDRDimensionSerializer,
+                                                                                                 CustomSignedDataSerializer,
+                                                                                                 CustomSignedValueSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, DELETE",
-                                                           AccessControlAllowHeaders  = "Authorization"
-                                                           //LastModified               = Timestamp.Now.ToIso8601()
+                                                           AccessControlAllowHeaders  = "Authorization",
+                                                           LastModified               = existingCDR.LastUpdated.ToIso8601(),
+                                                           ETag                       = existingCDR.ETag
                                                        }
                                                    };
 
@@ -7544,21 +7836,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tokens",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, POST",
+                                                       AccessControlAllowMethods  = "OPTIONS, GET",
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
-                                                                                        HTTPMethod.GET,
-                                                                                        HTTPMethod.POST
-                                                                                    },
-                                                       AcceptPatch                = new List<HTTPContentType> {
-                                                                                        HTTPContentType.JSONMergePatch_UTF8
+                                                                                        HTTPMethod.GET
                                                                                     },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
@@ -7637,6 +7924,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region ~/tokens/{token_id}/authorize
 
+            #region OPTIONS  ~/tokens/{token_id}/authorize
+
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "tokens/{token_id}/authorize",
+                                    OCPIRequestHandler: Request => {
+
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, POST",
+                                                       Allow                      = new List<HTTPMethod> {
+                                                                                        HTTPMethod.OPTIONS,
+                                                                                        HTTPMethod.POST
+                                                                                    },
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
+
+                                    });
+
+            #endregion
+
             #region POST     ~/tokens/{token_id}/authorize?type=RFID
 
             // A real-time authorization request
@@ -7648,7 +7959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   PostTokenRequest,
                                     OCPIResponseLogger:  PostTokenResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
@@ -7673,10 +7984,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #region Check TokenId URI parameter
 
                                         if (!Request.ParseTokenId(this,
-                                                                  out Token_Id?             TokenId,
-                                                                  out OCPIResponse.Builder  OCPIResponse))
+                                                                  out var tokenId,
+                                                                  out var ocpiResponseBuilder))
                                         {
-                                            return OCPIResponse;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
@@ -7687,19 +7998,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         LocationReference? locationReference = null;
 
-                                        if (Request.TryParseJObjectRequestBody(out JObject  LocationReferenceJSON,
-                                                                               out          OCPIResponse,
+                                        if (Request.TryParseJObjectRequestBody(out var locationReferenceJSON,
+                                                                               out ocpiResponseBuilder,
                                                                                AllowEmptyHTTPBody: true))
                                         {
 
-                                            if (!LocationReference.TryParse(LocationReferenceJSON,
-                                                                            out LocationReference  _locationReference,
-                                                                            out String             ErrorResponse))
+                                            if (!LocationReference.TryParse(locationReferenceJSON,
+                                                                            out var _locationReference,
+                                                                            out var errorResponse))
                                             {
 
                                                 return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 2001,
-                                                       StatusMessage        = "Could not parse the given location reference JSON: " + ErrorResponse,
+                                                       StatusMessage        = "Could not parse the given location reference JSON: " + errorResponse,
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, POST",
@@ -7716,10 +8027,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #endregion
 
 
-                                        AuthorizationInfo authorizationInfo = null;
+                                        AuthorizationInfo? authorizationInfo = null;
 
                                         var RFIDAuthTokenLocal = OnRFIDAuthToken;
-                                        if (RFIDAuthTokenLocal != null)
+                                        if (RFIDAuthTokenLocal is not null)
                                         {
 
                                             try
@@ -7729,7 +8040,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                 Request.FromPartyId     ?? DefaultPartyId,
                                                                                 Request.ToCountryCode   ?? DefaultCountryCode,
                                                                                 Request.ToPartyId       ?? DefaultPartyId,
-                                                                                TokenId.Value,
+                                                                                tokenId.Value,
                                                                                 locationReference).Result;
 
                                                 authorizationInfo = result;
@@ -7749,7 +8060,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                             if (!CommonAPI.TryGetToken(Request.ToCountryCode ?? DefaultCountryCode,
                                                                        Request.ToPartyId     ?? DefaultPartyId,
-                                                                       TokenId.Value,
+                                                                       tokenId.Value,
                                                                        out TokenStatus _tokenStatus) ||
                                                 (_tokenStatus.Token.Type != requestedTokenType))
                                             {
@@ -7784,7 +8095,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                             if (locationReference.HasValue)
                                             {
 
-                                                Location validLocation = null;
+                                                Location? validLocation = null;
 
                                                 if (Request.FromCountryCode.HasValue && Request.FromPartyId.HasValue)
                                                 {
@@ -7920,20 +8231,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         }
 
-                                        if (authorizationInfo is null)
-                                            authorizationInfo = new AuthorizationInfo(
-                                                                      AllowedType.BLOCKED,
-                                                                      new Token(
-                                                                          CountryCode.Parse("DE"),
-                                                                          Party_Id.Parse("XXX"),
-                                                                          TokenId.Value,
-                                                                          requestedTokenType,
-                                                                          Contract_Id.Parse("DE-XXX-" + TokenId.ToString()),
-                                                                          "Error!",
-                                                                          false,
-                                                                          WhitelistTypes.NEVER
-                                                                      )
-                                                                  );
+                                        authorizationInfo ??= new AuthorizationInfo(
+                                                                  AllowedType.BLOCKED,
+                                                                  new Token(
+                                                                      CountryCode.Parse("DE"),
+                                                                      Party_Id.Parse("XXX"),
+                                                                      tokenId.Value,
+                                                                      requestedTokenType,
+                                                                      Contract_Id.Parse("DE-XXX-" + tokenId.ToString()),
+                                                                      "Error!",
+                                                                      false,
+                                                                      WhitelistTypes.NEVER
+                                                                  )
+                                                              );
 
 
                                         // too little information like e.g. no LocationReferences provided:
@@ -8494,7 +8804,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try
@@ -8649,7 +8959,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try

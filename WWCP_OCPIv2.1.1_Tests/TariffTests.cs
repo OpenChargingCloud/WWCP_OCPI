@@ -46,6 +46,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         {
 
             var TariffA = new Tariff(
+                              CountryCode.Parse("DE"),
+                              Party_Id.   Parse("GEF"),
                               Tariff_Id.  Parse("TARIFF0001"),
                               Currency.EUR,
                               new TariffElement[] {

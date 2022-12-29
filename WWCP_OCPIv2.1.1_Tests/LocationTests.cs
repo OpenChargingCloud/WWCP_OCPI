@@ -49,7 +49,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -336,7 +338,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -599,7 +603,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -862,7 +868,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -1125,7 +1133,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -1391,7 +1401,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -1654,7 +1666,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -1920,7 +1934,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -2184,7 +2200,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -2447,7 +2465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -2710,7 +2730,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",
@@ -2973,7 +2995,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             #region Define Location1
 
             var Location1 = new Location(
-                                Location_Id.Parse("LOC0001"),
+                                CountryCode. Parse("DE"),
+                                Party_Id.    Parse("GEF"),
+                                Location_Id. Parse("LOC0001"),
                                 LocationType.PARKING_LOT,
                                 "Biberweg 18",
                                 "Jena",

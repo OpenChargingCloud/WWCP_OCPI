@@ -870,7 +870,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("end_date_time",             End.                         ToIso8601()),
                                  new JProperty("auth_id",                   AuthId.                      ToString()),
                                  new JProperty("auth_method",               AuthMethod.                  ToString()),
-                                 new JProperty("location",                  Location.                    ToJSON(CustomLocationSerializer,
+                                 new JProperty("location",                  Location.                    ToJSON(false,
+                                                                                                                CustomLocationSerializer,
                                                                                                                 CustomAdditionalGeoLocationSerializer,
                                                                                                                 CustomEVSESerializer,
                                                                                                                 CustomStatusScheduleSerializer,
@@ -906,7 +907,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("currency",                  Currency.                    ToString()),
 
                            Tariffs.Any()
-                               ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(CustomTariffSerializer,
+                               ? new JProperty("tariffs",                   new JArray(Tariffs.              Select(tariff               => tariff.              ToJSON(false,
+                                                                                                                                                                        CustomTariffSerializer,
                                                                                                                                                                         CustomDisplayTextSerializer,
                                                                                                                                                                         CustomTariffElementSerializer,
                                                                                                                                                                         CustomPriceComponentSerializer,

@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Parse   (JSON, SessionIdURL = null, CustomSessionParser = null)
+        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, SessionIdURL = null, CustomSessionParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a charging session.
@@ -620,11 +620,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomSessionSerializer = null, CustomCDRTokenSerializer = null, ...)
+        #region ToJSON(IncludeOwnerInformation = false, CustomSessionSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
         /// <param name="CustomSessionSerializer">A delegate to serialize custom session JSON objects.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
@@ -684,7 +685,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                  new JProperty("auth_id",                        AuthId.                ToString()),
                                  new JProperty("auth_method",                    AuthMethod.            ToString()),
 
-                                 new JProperty("location",                       Location.              ToJSON(CustomLocationSerializer,
+                                 new JProperty("location",                       Location.              ToJSON(false,
+                                                                                                               CustomLocationSerializer,
                                                                                                                CustomAdditionalGeoLocationSerializer,
                                                                                                                CustomEVSESerializer,
                                                                                                                CustomStatusScheduleSerializer,

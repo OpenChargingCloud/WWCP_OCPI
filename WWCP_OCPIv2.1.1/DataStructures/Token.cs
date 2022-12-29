@@ -47,6 +47,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this token.
+        /// </summary>
+        [Mandatory]
+        public CountryCode     CountryCode       { get; }
+
+        /// <summary>
+        /// The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id        PartyId           { get; }
+
+        /// <summary>
         /// The unique identification of the token.
         /// </summary>
         [Mandatory]
@@ -116,6 +128,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Create a new token describing the charging session and its costs,
         /// how these costs are composed, etc.
         /// </summary>
+        /// <param name="CountryCode">The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this token.</param>
+        /// <param name="PartyId">The party identification of the charge point operator that 'owns' this token (following the ISO-15118 standard).</param>
         /// <param name="Id">An unique identification of the token.</param>
         /// <param name="Type">The type of the token.</param>
         /// <param name="AuthId">An unique identification of the EV driver contract token within the eMSP’s platform.</param>
@@ -124,8 +138,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="WhitelistType">Indicates what type of white-listing is allowed.</param>
         /// <param name="VisualNumber">An optional visual readable number/identification as printed on the token/RFID card.</param>
         /// <param name="UILanguage">An optional ISO 639-1 language code of the token owner’s preferred interface language.</param>
+        /// 
         /// <param name="LastUpdated">The timestamp when this token was last updated (or created).</param>
-        public Token(Token_Id                                 Id,
+        /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
+        public Token(CountryCode                              CountryCode,
+                     Party_Id                                 PartyId,
+                     Token_Id                                 Id,
                      TokenType                                Type,
                      Auth_Id                                  AuthId,
                      String                                   Issuer,
@@ -140,6 +158,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (Issuer.IsNullOrEmpty())
                 throw new ArgumentNullException(nameof(Issuer), "The given issuer must not be null or empty!");
 
+            this.CountryCode    = CountryCode;
+            this.PartyId        = PartyId;
             this.Id             = Id;
             this.Type           = Type;
             this.AuthId         = AuthId;
@@ -148,23 +168,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             this.WhitelistType  = WhitelistType;
             this.VisualNumber   = VisualNumber;
             this.UILanguage     = UILanguage;
+
             this.LastUpdated    = LastUpdated ?? Timestamp.Now;
-            this.ETag           = SHA256.Create().ComputeHash(ToJSON(CustomTokenSerializer).ToUTF8Bytes()).ToBase64();
+
+            this.ETag           = SHA256.Create().ComputeHash(ToJSON(true,
+                                                                     CustomTokenSerializer).ToUTF8Bytes()).ToBase64();
 
         }
 
         #endregion
 
 
-        #region (static) Parse   (JSON, TokenIdURL = null, CustomTokenParser = null)
+        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, TokenIdURL = null, CustomTokenParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a token.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="TokenIdURL">An optional token identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomTokenParser">A delegate to parse custom token JSON objects.</param>
         public static Token Parse(JObject                              JSON,
+                                  CountryCode?                         CountryCodeURL      = null,
+                                  Party_Id?                            PartyIdURL          = null,
                                   Token_Id?                            TokenIdURL          = null,
                                   CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
@@ -172,6 +199,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(JSON,
                          out var token,
                          out var errorResponse,
+                         CountryCodeURL,
+                         PartyIdURL,
                          TokenIdURL,
                          CustomTokenParser))
             {
@@ -203,6 +232,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         out Token,
                         out ErrorResponse,
                         null,
+                        null,
+                        null,
                         null);
 
 
@@ -217,6 +248,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(JObject                              JSON,
                                        out Token?                           Token,
                                        out String?                          ErrorResponse,
+                                       CountryCode?                         CountryCodeURL      = null,
+                                       Party_Id?                            PartyIdURL          = null,
                                        Token_Id?                            TokenIdURL          = null,
                                        CustomJObjectParserDelegate<Token>?  CustomTokenParser   = null)
         {
@@ -231,6 +264,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
                 }
+
+                #region Parse CountryCode      [optional, internal]
+
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
+                {
+                    ErrorResponse = "The country code is missing!";
+                    return false;
+                }
+
+                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
+                {
+                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyIdURL       [optional, internal]
+
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
+                {
+                    ErrorResponse = "The party identification is missing!";
+                    return false;
+                }
+
+                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
+                {
+                    ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
 
                 #region Parse Id               [optional]
 
@@ -355,7 +440,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Token = new Token(TokenIdBody ?? TokenIdURL!.Value,
+                Token = new Token(CountryCodeBody ?? CountryCodeURL!.Value,
+                                  PartyIdBody     ?? PartyIdURL!.    Value,
+                                  TokenIdBody     ?? TokenIdURL!.    Value,
                                   Type,
                                   AuthId,
                                   Issuer,
@@ -384,35 +471,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomTokenSerializer = null)
+        #region ToJSON(IncludeOwnerInformation = false, CustomTokenSerializer = null)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
         /// <param name="CustomTokenSerializer">A delegate to serialize custom token JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Token>? CustomTokenSerializer = null)
+        public JObject ToJSON(Boolean                                  IncludeOwnerInformation   = false,
+                              CustomJObjectSerializerDelegate<Token>?  CustomTokenSerializer     = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("uid",                  Id.              ToString()),
-                           new JProperty("type",                 Type.            ToString()),
-                           new JProperty("auth_id",              AuthId.          ToString()),
+                           IncludeOwnerInformation
+                               ? new JProperty("country_code",    CountryCode.     ToString())
+                               : null,
+
+                           IncludeOwnerInformation
+                               ? new JProperty("party_id",        PartyId.         ToString())
+                               : null,
+
+                                 new JProperty("uid",             Id.              ToString()),
+                                 new JProperty("type",            Type.            ToString()),
+                                 new JProperty("auth_id",         AuthId.          ToString()),
 
                            VisualNumber.IsNotNullOrEmpty()
-                               ? new JProperty("visual_number",  VisualNumber)
+                               ? new JProperty("visual_number",   VisualNumber)
                                : null,
 
-                           new JProperty("issuer",               Issuer),
+                                 new JProperty("issuer",          Issuer),
 
-                           new JProperty("valid",                IsValid),
-                           new JProperty("whitelist",            WhitelistType.   AsText()),
+                                 new JProperty("valid",           IsValid),
+                                 new JProperty("whitelist",       WhitelistType.   AsText()),
 
                            UILanguage.HasValue
-                               ? new JProperty("language",       UILanguage.Value.ToString())
+                               ? new JProperty("language",        UILanguage.Value.ToString())
                                : null,
 
-                           new JProperty("last_updated",         LastUpdated.     ToIso8601())
+                                 new JProperty("last_updated",    LastUpdated.     ToIso8601())
 
                        );
 
@@ -678,7 +775,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            var c = Id.           CompareTo(Token.Id);
+            var c = CountryCode.  CompareTo(Token.CountryCode);
+
+            if (c == 0)
+                c = PartyId.      CompareTo(Token.PartyId);
+
+            if (c == 0)
+                c = Id.           CompareTo(Token.Id);
 
             if (c == 0)
                 c = Type.         CompareTo(Token.Type);
@@ -731,6 +834,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Token is not null &&
 
+               CountryCode.            Equals(Token.Id)                      &&
+               PartyId.                Equals(Token.Id)                      &&
                Id.                     Equals(Token.Id)                      &&
                Type.                   Equals(Token.Type)                    &&
                AuthId.                 Equals(Token.AuthId)                  &&
@@ -759,7 +864,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.           GetHashCode()       * 23 ^
+                return CountryCode.  GetHashCode()       * 31 ^
+                       PartyId.      GetHashCode()       * 29 ^
+                       Id.           GetHashCode()       * 23 ^
                        Type.         GetHashCode()       * 19 ^
                        AuthId.       GetHashCode()       * 17 ^
                        Issuer.       GetHashCode()       * 13 ^
@@ -783,10 +890,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
-                   Id,     " (",
-                   Type,   ", ",
-                   AuthId, ", ",
-                   Issuer, ", ",
+                   Id,          " (",
+                   CountryCode, "-",
+                   PartyId,     ", ",
+                   Type,        ", ",
+                   AuthId,      ", ",
+                   Issuer,      ", ",
 
                    IsValid
                        ? "valid"

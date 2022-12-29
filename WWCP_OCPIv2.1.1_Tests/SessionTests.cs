@@ -58,7 +58,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
                                AuthMethods.AUTH_REQUEST,
 
                                new Location(
-                                   Location_Id.Parse("LOC0001"),
+                                   CountryCode. Parse("DE"),
+                                   Party_Id.    Parse("GEF"),
+                                   Location_Id. Parse("LOC0001"),
                                    LocationType.UNDERGROUND_GARAGE,
                                    "Biberweg 18",
                                    "Jena",

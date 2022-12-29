@@ -396,12 +396,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         #endregion
 
 
-        #region (static) Parse   (JSON, LocationIdURL = null, CustomLocationParser = null)
+        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, LocationIdURL = null, CustomLocationParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of a charging location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional charging location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom charging location JSON objects.</param>
         public static Location Parse(JObject                                 JSON,
@@ -1656,9 +1658,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => Location is not null &&
 
-               Id.                     Equals(Location.Id)                      &&
                CountryCode.            Equals(Location.CountryCode)             &&
                PartyId.                Equals(Location.PartyId)                 &&
+               Id.                     Equals(Location.Id)                      &&
                Publish.                Equals(Location.Publish)                 &&
                Address.                Equals(Location.Address)                 &&
                City.                   Equals(Location.City)                    &&
@@ -1767,11 +1769,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
-                   CountryCode, "-",
-                   PartyId,     "-",
-                   Id,          ", ",
+                   Id,            " (",
+                   CountryCode,   "-",
+                   PartyId,       "), ",
 
-                   ", ",
                    EVSEs.Count(), " EVSE(s), ",
 
                    LastUpdated.ToIso8601()

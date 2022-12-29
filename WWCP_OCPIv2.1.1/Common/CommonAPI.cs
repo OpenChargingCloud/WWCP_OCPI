@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Collections.Generic;
 using System.Linq;
 
 #endregion
@@ -380,10 +381,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<Location_Id,    Location>();
-            this.Tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
-            this.Sessions                 = new Dictionary<Session_Id,     Session>();
-            this.Tokens                   = new Dictionary<Token_Id,       TokenStatus>();
-            this.ChargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
+            this.tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
+            this.chargingSessions                 = new Dictionary<Session_Id,     Session>();
+            this.tokens                   = new Dictionary<Token_Id,       TokenStatus>();
+            this.chargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
 
             if (!Disable_RootServices)
                 RegisterURLTemplates();
@@ -469,10 +470,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             this.remoteParties            = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<Location_Id,    Location>();
-            this.Tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
-            this.Sessions                 = new Dictionary<Session_Id,     Session>();
-            this.Tokens                   = new Dictionary<Token_Id,       TokenStatus>();
-            this.ChargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
+            this.tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
+            this.chargingSessions                 = new Dictionary<Session_Id,     Session>();
+            this.tokens                   = new Dictionary<Token_Id,       TokenStatus>();
+            this.chargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
 
             // Link HTTP events...
             HTTPServer.RequestLog        += (HTTPProcessor, ServerTimestamp, Request)                                 => RequestLog. WhenAll(HTTPProcessor, ServerTimestamp, Request);
@@ -2210,7 +2211,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
 
                         var OnLocationAddedLocal = OnLocationAdded;
-                        if (OnLocationAddedLocal != null)
+                        if (OnLocationAddedLocal is not null)
                         {
                             try
                             {
@@ -2259,7 +2260,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
 
                         var OnLocationAddedLocal = OnLocationAdded;
-                        if (OnLocationAddedLocal != null)
+                        if (OnLocationAddedLocal is not null)
                         {
                             try
                             {
@@ -2308,7 +2309,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 Locations[newOrUpdatedLocation.Id] = newOrUpdatedLocation;
 
                 var OnLocationChangedLocal = OnLocationChanged;
-                if (OnLocationChangedLocal != null)
+                if (OnLocationChangedLocal is not null)
                 {
                     try
                     {
@@ -2323,7 +2324,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 }
 
                 var OnEVSEChangedLocal = OnEVSEChanged;
-                if (OnEVSEChangedLocal != null)
+                if (OnEVSEChangedLocal is not null)
                 {
                     try
                     {
@@ -2346,7 +2347,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             Locations.Add(newOrUpdatedLocation.Id, newOrUpdatedLocation);
 
             var OnLocationAddedLocal = OnLocationAdded;
-            if (OnLocationAddedLocal != null)
+            if (OnLocationAddedLocal is not null)
             {
                 try
                 {
@@ -2403,7 +2404,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     Locations[Location.Id] = Location;
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
-                    if (OnEVSEChangedLocal != null)
+                    if (OnEVSEChangedLocal is not null)
                     {
                         try
                         {
@@ -2464,7 +2465,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         Locations[Location.Id] = patchResult.PatchedData;
 
                         var OnLocationChangedLocal = OnLocationChanged;
-                        if (OnLocationChangedLocal != null)
+                        if (OnLocationChangedLocal is not null)
                         {
                             try
                             {
@@ -2480,7 +2481,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         //ToDo: MayBe nothing changed here... perhaps test for changes before sending events!
                         var OnEVSEChangedLocal = OnEVSEChanged;
-                        if (OnEVSEChangedLocal != null)
+                        if (OnEVSEChangedLocal is not null)
                         {
                             try
                             {
@@ -2550,7 +2551,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             var EVSEExistedBefore = Location.TryGetEVSE(newOrUpdatedEVSE.UId, out EVSE existingEVSE);
 
-            if (existingEVSE != null)
+            if (existingEVSE is not null)
             {
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
@@ -2569,7 +2570,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             __addOrUpdateLocation(builder, (AllowDowngrades ?? this.AllowDowngrades) == false);
 
             var OnLocationChangedLocal = OnLocationChanged;
-            if (OnLocationChangedLocal != null)
+            if (OnLocationChangedLocal is not null)
             {
                 try
                 {
@@ -2591,7 +2592,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 {
 
                     var OnEVSEChangedLocal = OnEVSEChanged;
-                    if (OnEVSEChangedLocal != null)
+                    if (OnEVSEChangedLocal is not null)
                     {
                         try
                         {
@@ -2613,7 +2614,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         Location.RemoveEVSE(newOrUpdatedEVSE);
 
                     var OnEVSERemovedLocal = OnEVSERemoved;
-                    if (OnEVSERemovedLocal != null)
+                    if (OnEVSERemovedLocal is not null)
                     {
                         try
                         {
@@ -2632,7 +2633,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             else
             {
                 var OnEVSEAddedLocal = OnEVSEAdded;
-                if (OnEVSEAddedLocal != null)
+                if (OnEVSEAddedLocal is not null)
                 {
                     try
                     {
@@ -2733,7 +2734,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                             DebugX.Log("EVSE status change: " + EVSE.EVSEId + " => " + patchResult.PatchedData.Status);
 
                             var OnEVSEStatusChangedLocal = OnEVSEStatusChanged;
-                            if (OnEVSEStatusChangedLocal != null)
+                            if (OnEVSEStatusChangedLocal is not null)
                             {
                                 try
                                 {
@@ -2756,7 +2757,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         {
 
                             var OnEVSEChangedLocal = OnEVSEChanged;
-                            if (OnEVSEChangedLocal != null)
+                            if (OnEVSEChangedLocal is not null)
                             {
                                 try
                                 {
@@ -2777,7 +2778,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     {
 
                         var OnEVSERemovedLocal = OnEVSERemoved;
-                        if (OnEVSERemovedLocal != null)
+                        if (OnEVSERemovedLocal is not null)
                         {
                             try
                             {
@@ -2832,7 +2833,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out Connector existingConnector);
 
-                if (existingConnector != null)
+                if (existingConnector is not null)
                 {
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                         newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
@@ -2851,7 +2852,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
                 var OnLocationChangedLocal = OnLocationChanged;
-                if (OnLocationChangedLocal != null)
+                if (OnLocationChangedLocal is not null)
                 {
                     try
                     {
@@ -2967,15 +2968,36 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetLocations  ()
+        #region GetLocations  (IncludeLocation = null)
 
-        public IEnumerable<Location> GetLocations()
+        public IEnumerable<Location> GetLocations(Func<Location, Boolean>? IncludeLocation = null)
         {
 
             lock (Locations)
             {
 
-                return Locations.Values.ToArray();
+                return IncludeLocation is null
+                           ? Locations.Values.ToArray()
+                           : Locations.Values.Where(IncludeLocation).ToArray();
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetLocations  (CountryCode, PartyId)
+
+        public IEnumerable<Location> GetLocations(CountryCode  CountryCode,
+                                                  Party_Id     PartyId)
+        {
+
+            lock (Locations)
+            {
+
+                return Locations.Values.Where(location => location.CountryCode == CountryCode &&
+                                                          location.PartyId     == PartyId).
+                                               ToArray();
 
             }
 
@@ -2986,19 +3008,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region RemoveLocation    (Location)
 
-        public Location? RemoveLocation(Location Location)
+        public Boolean RemoveLocation(Location Location)
         {
-
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
             lock (Locations)
             {
 
-                if (Locations.Remove(Location.Id, out var location))
-                    return location;
-
-                return null;
+                return Locations.Remove(Location.Id);
 
             }
 
@@ -3006,17 +3022,74 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveAllLocations()
+        #region RemoveLocation    (LocationId)
 
-        /// <summary>
-        /// Remove all locations.
-        /// </summary>
-        public void RemoveAllLocations()
+        public Boolean RemoveLocation(Location_Id LocationId)
         {
 
             lock (Locations)
             {
-                Locations.Clear();
+
+                return Locations.Remove(LocationId);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllLocations(IncludeSessions = null)
+
+        /// <summary>
+        /// Remove all matching locations.
+        /// </summary>
+        /// <param name="IncludeLocations">An optional location filter.</param>
+        public void RemoveAllLocations(Func<Location, Boolean>? IncludeLocations = null)
+        {
+
+            lock (Locations)
+            {
+
+                if (IncludeLocations is null)
+                    Locations.Clear();
+
+                else
+                {
+
+                    var locationsToDelete = Locations.Values.Where(IncludeLocations).ToArray();
+
+                    foreach (var location in locationsToDelete)
+                        Locations.Remove(location.Id);
+
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllLocations(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all locations owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllLocations(CountryCode  CountryCode,
+                                       Party_Id     PartyId)
+        {
+
+            lock (Locations)
+            {
+
+                var locationsToDelete = Locations.Values.Where(location => CountryCode == location.CountryCode &&
+                                                                           PartyId     == location.PartyId).
+                                                               ToArray();
+
+                foreach (var location in locationsToDelete)
+                    Locations.Remove(location.Id);
+
             }
 
         }
@@ -3027,7 +3100,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Tariffs
 
-        private readonly Dictionary<Tariff_Id , Tariff> Tariffs;
+        private readonly Dictionary<Tariff_Id , Tariff> tariffs;
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -3048,16 +3121,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (!Tariffs.ContainsKey(Tariff.Id))
+                if (!tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    Tariffs.Add(Tariff.Id, Tariff);
+                    tariffs.Add(Tariff.Id, Tariff);
 
                     var OnTariffAddedLocal = OnTariffAdded;
-                    if (OnTariffAddedLocal != null)
+                    if (OnTariffAddedLocal is not null)
                     {
                         try
                         {
@@ -3091,16 +3164,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (!Tariffs.ContainsKey(Tariff.Id))
+                if (!tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    Tariffs.Add(Tariff.Id, Tariff);
+                    tariffs.Add(Tariff.Id, Tariff);
 
                     var OnTariffAddedLocal = OnTariffAdded;
-                    if (OnTariffAddedLocal != null)
+                    if (OnTariffAddedLocal is not null)
                     {
                         try
                         {
@@ -3133,10 +3206,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (newOrUpdatedTariff is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedTariff), "The given charging tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
+                if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3146,10 +3219,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                 "The 'lastUpdated' timestamp of the new charging tariff must be newer then the timestamp of the existing tariff!");
                     }
 
-                    Tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
+                    tariffs[newOrUpdatedTariff.Id] = newOrUpdatedTariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
-                    if (OnTariffChangedLocal != null)
+                    if (OnTariffChangedLocal is not null)
                     {
                         try
                         {
@@ -3168,10 +3241,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                Tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
+                tariffs.Add(newOrUpdatedTariff.Id, newOrUpdatedTariff);
 
                 var OnTariffAddedLocal = OnTariffAdded;
-                if (OnTariffAddedLocal != null)
+                if (OnTariffAddedLocal is not null)
                 {
                     try
                     {
@@ -3202,16 +3275,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.ContainsKey(Tariff.Id))
+                if (tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    Tariffs[Tariff.Id] = Tariff;
+                    tariffs[Tariff.Id] = Tariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
-                    if (OnTariffChangedLocal != null)
+                    if (OnTariffChangedLocal is not null)
                     {
                         try
                         {
@@ -3256,10 +3329,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.Id, out var tariff))
+                if (tariffs.TryGetValue(Tariff.Id, out var tariff))
                 {
 
                     var patchResult = tariff.TryPatch(TariffPatch,
@@ -3268,10 +3341,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        Tariffs[Tariff.Id] = patchResult.PatchedData;
+                        tariffs[Tariff.Id] = patchResult.PatchedData;
 
                         var OnTariffChangedLocal = OnTariffChanged;
-                        if (OnTariffChangedLocal != null)
+                        if (OnTariffChangedLocal is not null)
                         {
                             try
                             {
@@ -3308,9 +3381,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean TariffExists(Tariff_Id TariffId)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
-                return Tariffs.ContainsKey(TariffId);
+                return tariffs.ContainsKey(TariffId);
             }
 
         }
@@ -3323,10 +3396,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     out Tariff?  Tariff)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(TariffId, out Tariff))
+                if (tariffs.TryGetValue(TariffId, out Tariff))
                     return true;
 
                 Tariff = null;
@@ -3338,36 +3411,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetTariffs  ()
+        #region GetTariffs  (IncludeTariff = null)
 
-        public IEnumerable<Tariff> GetTariffs()
+        public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean>? IncludeTariff = null)
         {
 
-            lock (Tariffs)
-            {
-                return Tariffs.Values.ToArray();
-            }
-
-        }
-
-        #endregion
-
-
-        #region RemoveTariff(Tariff)
-
-        public Tariff? RemoveTariff(Tariff Tariff)
-        {
-
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
-
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.Remove(Tariff.Id, out var _tariff))
-                    return _tariff;
-
-                return null;
+                return IncludeTariff is null
+                           ? tariffs.Values.                     ToArray()
+                           : tariffs.Values.Where(IncludeTariff).ToArray();
 
             }
 
@@ -3375,17 +3429,110 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveAllTariffs()
+        #region GetTariffs  (CountryCode, PartyId)
+
+        public IEnumerable<Tariff> GetTariffs(CountryCode  CountryCode,
+                                              Party_Id     PartyId)
+        {
+
+            lock (tariffs)
+            {
+
+                return tariffs.Values.Where(tariff => tariff.CountryCode == CountryCode &&
+                                                      tariff.PartyId     == PartyId).
+                                      ToArray();
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RemoveTariff    (Tariff)
+
+        public Boolean RemoveTariff(Tariff Tariff)
+        {
+
+            lock (tariffs)
+            {
+
+                return tariffs.Remove(Tariff.Id);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveTariff    (TariffId)
+
+        public Boolean RemoveTariff(Tariff_Id TariffId)
+        {
+
+            lock (tariffs)
+            {
+
+                return tariffs.Remove(TariffId);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs(IncludeTariffs = null)
 
         /// <summary>
-        /// Remove all tariffs.
+        /// Remove all matching tariffs.
         /// </summary>
-        public void RemoveAllTariffs()
+        /// <param name="IncludeSessions">An optional charging session filter.</param>
+        public void RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
-                Tariffs.Clear();
+
+                if (IncludeTariffs is null)
+                    tariffs.Clear();
+
+                else
+                {
+
+                    var tariffsToDelete = tariffs.Values.Where(IncludeTariffs).ToArray();
+
+                    foreach (var tariff in tariffsToDelete)
+                        tariffs.Remove(tariff.Id);
+
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all charging tariffs owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllTariffs(CountryCode  CountryCode,
+                                     Party_Id     PartyId)
+        {
+
+            lock (tariffs)
+            {
+
+                var tariffsToDelete = tariffs.Values.Where  (tariffs => CountryCode == tariffs.CountryCode &&
+                                                                        PartyId     == tariffs.PartyId).
+                                                    ToArray();
+
+                foreach (var tariff in tariffsToDelete)
+                    tariffs.Remove(tariff.Id);
+
             }
 
         }
@@ -3396,7 +3543,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Sessions
 
-        private readonly Dictionary<Session_Id , Session> Sessions;
+        private readonly Dictionary<Session_Id , Session> chargingSessions;
 
 
         public delegate Task OnSessionCreatedDelegate(Session Session);
@@ -3416,16 +3563,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
-                if (!Sessions.ContainsKey(Session.Id))
+                if (!chargingSessions.ContainsKey(Session.Id))
                 {
 
-                    Sessions.Add(Session.Id, Session);
+                    chargingSessions.Add(Session.Id, Session);
 
                     var OnSessionCreatedLocal = OnSessionCreated;
-                    if (OnSessionCreatedLocal != null)
+                    if (OnSessionCreatedLocal is not null)
                     {
                         try
                         {
@@ -3459,16 +3606,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
-                if (!Sessions.ContainsKey(Session.Id))
+                if (!chargingSessions.ContainsKey(Session.Id))
                 {
 
-                    Sessions.Add(Session.Id, Session);
+                    chargingSessions.Add(Session.Id, Session);
 
                     var OnSessionCreatedLocal = OnSessionCreated;
-                    if (OnSessionCreatedLocal != null)
+                    if (OnSessionCreatedLocal is not null)
                     {
                         try
                         {
@@ -3501,10 +3648,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (newOrUpdatedSession is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedSession), "The given charging session must not be null!");
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
-                if (Sessions.TryGetValue(newOrUpdatedSession.Id, out Session existingSession))
+                if (chargingSessions.TryGetValue(newOrUpdatedSession.Id, out Session existingSession))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3514,10 +3661,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                  "The 'lastUpdated' timestamp of the new charging session must be newer then the timestamp of the existing session!");
                     }
 
-                    Sessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
+                    chargingSessions[newOrUpdatedSession.Id] = newOrUpdatedSession;
 
                     var OnSessionChangedLocal = OnSessionChanged;
-                    if (OnSessionChangedLocal != null)
+                    if (OnSessionChangedLocal is not null)
                     {
                         try
                         {
@@ -3536,10 +3683,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                Sessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
+                chargingSessions.Add(newOrUpdatedSession.Id, newOrUpdatedSession);
 
                 var OnSessionCreatedLocal = OnSessionCreated;
-                if (OnSessionCreatedLocal != null)
+                if (OnSessionCreatedLocal is not null)
                 {
                     try
                     {
@@ -3570,16 +3717,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
-                if (Sessions.ContainsKey(Session.Id))
+                if (chargingSessions.ContainsKey(Session.Id))
                 {
 
-                    Sessions[Session.Id] = Session;
+                    chargingSessions[Session.Id] = Session;
 
                     var OnSessionChangedLocal = OnSessionChanged;
-                    if (OnSessionChangedLocal != null)
+                    if (OnSessionChangedLocal is not null)
                     {
                         try
                         {
@@ -3624,10 +3771,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
-                if (Sessions.TryGetValue(Session.Id, out var session))
+                if (chargingSessions.TryGetValue(Session.Id, out var session))
                 {
 
                     var patchResult = session.TryPatch(SessionPatch,
@@ -3636,10 +3783,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        Sessions[Session.Id] = patchResult.PatchedData;
+                        chargingSessions[Session.Id] = patchResult.PatchedData;
 
                         var OnSessionChangedLocal = OnSessionChanged;
-                        if (OnSessionChangedLocal != null)
+                        if (OnSessionChangedLocal is not null)
                         {
                             try
                             {
@@ -3675,9 +3822,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean SessionExists(Session_Id SessionId)
         {
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
-                return Sessions.ContainsKey(SessionId);
+
+                return chargingSessions.ContainsKey(SessionId);
+
             }
 
         }
@@ -3690,9 +3839,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                      out Session?  Session)
         {
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
-                if (Sessions.TryGetValue(SessionId, out Session))
+                if (chargingSessions.TryGetValue(SessionId, out Session))
                     return true;
 
                 Session = null;
@@ -3704,14 +3853,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetSessions  ()
+        #region GetSessions  (IncludeSession = null)
 
-        public IEnumerable<Session> GetSessions()
+        public IEnumerable<Session> GetSessions(Func<Session, Boolean>? IncludeSession = null)
         {
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
-                return Sessions.Values.ToArray();
+
+                return IncludeSession is null
+                           ? chargingSessions.Values.                      ToArray()
+                           : chargingSessions.Values.Where(IncludeSession).ToArray();
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetSessions  (CountryCode, PartyId)
+
+        public IEnumerable<Session> GetSessions(CountryCode  CountryCode,
+                                                Party_Id     PartyId)
+        {
+
+            lock (chargingSessions)
+            {
+
+                return chargingSessions.Values.Where(session => session.CountryCode == CountryCode &&
+                                                                session.PartyId     == PartyId).
+                                               ToArray();
+
             }
 
         }
@@ -3719,21 +3891,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-        #region RemoveSession(Session)
+        #region RemoveSession    (Session)
 
-        public Session? RemoveSession(Session Session)
+        public Boolean RemoveSession(Session Session)
         {
 
-            if (Session is null)
-                throw new ArgumentNullException(nameof(Session), "The given session must not be null!");
-
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
-                if (Sessions.Remove(Session.Id, out var _session))
-                    return _session;
+                return chargingSessions.Remove(Session.Id);
 
-                return null;
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveSession    (SessionId)
+
+        public Boolean RemoveSession(Session_Id SessionId)
+        {
+
+            lock (chargingSessions)
+            {
+
+                return chargingSessions.Remove(SessionId);
 
             }
 
@@ -3744,27 +3926,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #region RemoveAllSessions(IncludeSessions = null)
 
         /// <summary>
-        /// Remove all sessions.
+        /// Remove all matching sessions.
         /// </summary>
         /// <param name="IncludeSessions">An optional charging session filter.</param>
         public void RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
         {
 
-            lock (Sessions)
+            lock (chargingSessions)
             {
 
                 if (IncludeSessions is null)
-                    Sessions.Clear();
+                    chargingSessions.Clear();
 
                 else
                 {
 
-                    var sessionsToDelete = Sessions.Values.Where(IncludeSessions).ToArray();
+                    var sessionsToDelete = chargingSessions.Values.Where(IncludeSessions).ToArray();
 
                     foreach (var session in sessionsToDelete)
-                        Sessions.Remove(session.Id);
+                        chargingSessions.Remove(session.Id);
 
                 }
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllSessions(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all charging sessions owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllSessions(CountryCode  CountryCode,
+                                      Party_Id     PartyId)
+        {
+
+            lock (chargingSessions)
+            {
+
+                var sessionsToDelete = chargingSessions.Values.Where  (session => CountryCode == session.CountryCode &&
+                                                                                  PartyId     == session.PartyId).
+                                                               ToArray();
+
+                foreach (var session in sessionsToDelete)
+                    chargingSessions.Remove(session.Id);
 
             }
 
@@ -3776,7 +3985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Tokens
 
-        private readonly Dictionary<Token_Id, TokenStatus> Tokens;
+        private readonly Dictionary<Token_Id, TokenStatus> tokens;
 
 
         public delegate Task OnTokenAddedDelegate(Token Token);
@@ -3802,16 +4011,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (!Tokens.ContainsKey(Token.Id))
+                if (!tokens.ContainsKey(Token.Id))
                 {
 
-                    Tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
+                    tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal != null)
+                    if (OnTokenAddedLocal is not null)
                     {
                         try
                         {
@@ -3845,16 +4054,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (!Tokens.ContainsKey(Token.Id))
+                if (!tokens.ContainsKey(Token.Id))
                 {
 
-                    Tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
+                    tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
-                    if (OnTokenAddedLocal != null)
+                    if (OnTokenAddedLocal is not null)
                     {
                         try
                         {
@@ -3890,10 +4099,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (newOrUpdatedToken is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedToken), "The given token must not be null!");
 
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (Tokens.TryGetValue(newOrUpdatedToken.Id, out TokenStatus existingTokenStatus))
+                if (tokens.TryGetValue(newOrUpdatedToken.Id, out TokenStatus existingTokenStatus))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3903,11 +4112,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
                     }
 
-                    Tokens[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
+                    tokens[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
                                                                    Status.Value);
 
                     var OnTokenChangedLocal = OnTokenChanged;
-                    if (OnTokenChangedLocal != null)
+                    if (OnTokenChangedLocal is not null)
                     {
                         try
                         {
@@ -3926,11 +4135,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                Tokens.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
+                tokens.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
                                                                  Status.Value));
 
                 var OnTokenAddedLocal = OnTokenAdded;
-                if (OnTokenAddedLocal != null)
+                if (OnTokenAddedLocal is not null)
                 {
                     try
                     {
@@ -3972,10 +4181,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (Tokens. TryGetValue(Token.Id, out var tokenStatus))
+                if (tokens. TryGetValue(Token.Id, out var tokenStatus))
                 {
 
                     var patchResult = tokenStatus.Token.TryPatch(TokenPatch,
@@ -3984,11 +4193,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        Tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,
+                        tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,
                                                            tokenStatus.Status);
 
                         var OnTokenChangedLocal = OnTokenChanged;
-                        if (OnTokenChangedLocal != null)
+                        if (OnTokenChangedLocal is not null)
                         {
                             try
                             {
@@ -4024,9 +4233,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean TokenExists(Token_Id TokenId)
         {
 
-            lock (Tokens)
+            lock (tokens)
             {
-                return Tokens.ContainsKey(TokenId);
+                return tokens.ContainsKey(TokenId);
             }
 
         }
@@ -4039,14 +4248,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    out TokenStatus  TokenWithStatus)
         {
 
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (Tokens.TryGetValue(TokenId, out TokenWithStatus))
+                if (tokens.TryGetValue(TokenId, out TokenWithStatus))
                     return true;
 
                 var VerifyTokenLocal = OnVerifyToken;
-                if (VerifyTokenLocal != null)
+                if (VerifyTokenLocal is not null)
                 {
 
                     try
@@ -4056,8 +4265,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         TokenWithStatus = result;
 
-                        if (TokenWithStatus != null)
-                            return true;
+                        return true;
 
                     } catch (Exception e)
                     {
@@ -4075,31 +4283,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetTokens  ()
+        #region GetTokens  (IncludeTokenStatus = null)
 
-        public IEnumerable<TokenStatus> GetTokens()
-        {
-            lock (Tokens)
-            {
-                return Tokens.Values.ToArray();
-            }
-        }
-
-        #endregion
-
-
-        #region RemoveToken(TokenId)
-
-        public Token? RemoveToken(Token_Id TokenId)
+        public IEnumerable<TokenStatus> GetTokens(Func<TokenStatus, Boolean>? IncludeTokenStatus = null)
         {
 
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (Tokens.Remove(TokenId, out var tokenStatus))
-                    return tokenStatus.Token;
-
-                return null;
+                return IncludeTokenStatus is null
+                           ? tokens.Values.                          ToArray()
+                           : tokens.Values.Where(IncludeTokenStatus).ToArray();
 
             }
 
@@ -4107,21 +4301,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveToken(Token)
+        #region GetTokens  (CountryCode, PartyId)
 
-        public Token? RemoveToken(Token Token)
+        public IEnumerable<TokenStatus> GetTokens(CountryCode  CountryCode,
+                                                  Party_Id     PartyId)
         {
 
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
-
-            lock (Tokens)
+            lock (tokens)
             {
 
-                if (Tokens.Remove(Token.Id))
-                    return Token;
-
-                return null;
+                return tokens.Values.Where  (tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
+                                                            tokenStatus.Token.PartyId     == PartyId).
+                                     ToArray();
 
             }
 
@@ -4129,17 +4320,74 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveAllTokens()
+
+        #region RemoveToken    (Token)
+
+        /// <summary>
+        /// Remove the given token.
+        /// </summary>
+        /// <param name="Token">A token.</param>
+        public Boolean RemoveToken(Token Token)
+        {
+
+            lock (tokens)
+            {
+
+                return tokens.Remove(Token.Id);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveToken    (TokenId)
+
+        /// <summary>
+        /// Remove the given token.
+        /// </summary>
+        /// <param name="TokenId">A unique identification of a token.</param>
+        public Boolean RemoveToken(Token_Id TokenId)
+        {
+
+            lock (tokens)
+            {
+
+                return tokens.Remove(TokenId);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(IncludeTokens = null)
 
         /// <summary>
         /// Remove all tokens.
         /// </summary>
-        public void RemoveAllTokens()
+        /// <param name="IncludeCDRs">An optional token filter.</param>
+        public void RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
         {
 
-            lock (Tokens)
+            lock (tokens)
             {
-                Tokens.Clear();
+
+                if (IncludeTokens is null)
+                    tokens.Clear();
+
+                else
+                {
+
+                    var tokensToDelete = tokens.Values.Where  (tokenStatus => IncludeTokens(tokenStatus.Token)).
+                                                       Select (tokenStatus => tokenStatus.Token).
+                                                       ToArray();
+
+                    foreach (var token in tokensToDelete)
+                        tokens.Remove(token.Id);
+
+                }
+
             }
 
         }
@@ -4150,7 +4398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region ChargeDetailRecords
 
-        private readonly Dictionary<CDR_Id, CDR> ChargeDetailRecords;
+        private readonly Dictionary<CDR_Id, CDR> chargeDetailRecords;
 
 
         public delegate Task OnChargeDetailRecordAddedDelegate(CDR CDR);
@@ -4171,16 +4419,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.ContainsKey(CDR.Id))
+                if (!chargeDetailRecords.ContainsKey(CDR.Id))
                 {
 
-                    ChargeDetailRecords.Add(CDR.Id, CDR);
+                    chargeDetailRecords.Add(CDR.Id, CDR);
 
                     var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                    if (OnChargeDetailRecordAddedLocal != null)
+                    if (OnChargeDetailRecordAddedLocal is not null)
                     {
                         try
                         {
@@ -4214,16 +4462,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.ContainsKey(CDR.Id))
+                if (!chargeDetailRecords.ContainsKey(CDR.Id))
                 {
 
-                    ChargeDetailRecords.Add(CDR.Id, CDR);
+                    chargeDetailRecords.Add(CDR.Id, CDR);
 
                     var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                    if (OnChargeDetailRecordAddedLocal != null)
+                    if (OnChargeDetailRecordAddedLocal is not null)
                     {
                         try
                         {
@@ -4256,10 +4504,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (newOrUpdatedCDR is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedCDR), "The given charge detail record must not be null!");
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(newOrUpdatedCDR.Id, out var existingCDR))
+                if (chargeDetailRecords.TryGetValue(newOrUpdatedCDR.Id, out var existingCDR))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -4269,10 +4517,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                              "The 'lastUpdated' timestamp of the new charge detail record must be newer then the timestamp of the existing charge detail record!");
                     }
 
-                    ChargeDetailRecords[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
+                    chargeDetailRecords[newOrUpdatedCDR.Id] = newOrUpdatedCDR;
 
                     var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal != null)
+                    if (OnChargeDetailRecordChangedLocal is not null)
                     {
                         try
                         {
@@ -4291,10 +4539,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                ChargeDetailRecords.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
+                chargeDetailRecords.Add(newOrUpdatedCDR.Id, newOrUpdatedCDR);
 
                 var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                if (OnChargeDetailRecordAddedLocal != null)
+                if (OnChargeDetailRecordAddedLocal is not null)
                 {
                     try
                     {
@@ -4325,16 +4573,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.ContainsKey(CDR.Id))
+                if (chargeDetailRecords.ContainsKey(CDR.Id))
                 {
 
-                    ChargeDetailRecords[CDR.Id] = CDR;
+                    chargeDetailRecords[CDR.Id] = CDR;
 
                     var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal != null)
+                    if (OnChargeDetailRecordChangedLocal is not null)
                     {
                         try
                         {
@@ -4366,9 +4614,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean CDRExists(CDR_Id CDRId)
         {
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
-                return ChargeDetailRecords.ContainsKey(CDRId);
+                return chargeDetailRecords.ContainsKey(CDRId);
             }
 
         }
@@ -4381,10 +4629,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                  out CDR?  CDR)
         {
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CDRId, out CDR))
+                if (chargeDetailRecords.TryGetValue(CDRId, out CDR))
                     return true;
 
                 CDR = null;
@@ -4396,54 +4644,145 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region GetCDRs  ()
-
-        public IEnumerable<CDR> GetCDRs()
-        {
-
-            lock (ChargeDetailRecords)
-            {
-                return ChargeDetailRecords.Values.ToArray();
-            }
-
-        }
-
-        #endregion
-
-
-        #region RemoveCDR(CDR)
-
-        public CDR? RemoveCDR(CDR CDR)
-        {
-
-            if (CDR is null)
-                throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
-
-            lock (ChargeDetailRecords)
-            {
-
-                if (ChargeDetailRecords.Remove(CDR.Id, out var _cdr))
-                    return _cdr;
-
-                return null;
-
-            }
-
-        }
-
-        #endregion
-
-        #region RemoveAllCDRs()
+        #region GetCDRs  (IncludeCDRs = null)
 
         /// <summary>
-        /// Remove all CDRs.
+        /// Return all matching charge detail records.
         /// </summary>
-        public void RemoveAllCDRs()
+        /// <param name="IncludeCDRs">An optional charge detail record filter.</param>
+        public IEnumerable<CDR> GetCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
         {
 
-            lock (ChargeDetailRecords)
+            lock (chargeDetailRecords)
             {
-                ChargeDetailRecords.Clear();
+
+                return IncludeCDRs is null
+                           ? chargeDetailRecords.Values.                   ToArray()
+                           : chargeDetailRecords.Values.Where(IncludeCDRs).ToArray();
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetCDRs  (CountryCode, PartyId)
+
+        /// <summary>
+        /// Return all charge detail records owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public IEnumerable<CDR> GetCDRs(CountryCode  CountryCode,
+                                        Party_Id     PartyId)
+        {
+
+            lock (chargeDetailRecords)
+            {
+
+                return chargeDetailRecords.Values.Where  (cdr => cdr.CountryCode == CountryCode &&
+                                                                 cdr.PartyId     == PartyId).
+                                                  ToArray();
+
+            }
+
+        }
+
+        #endregion
+
+
+        #region RemoveCDR    (CDR)
+
+        /// <summary>
+        /// Remove the given charge detail record.
+        /// </summary>
+        /// <param name="CDR">A charge detail record.</param>
+        public Boolean RemoveCDR(CDR CDR)
+        {
+
+            lock (chargeDetailRecords)
+            {
+
+                return chargeDetailRecords.Remove(CDR.Id);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveCDR    (CDRId)
+
+        /// <summary>
+        /// Remove the given charge detail record.
+        /// </summary>
+        /// <param name="CDRId">A unique identification of a charge detail record.</param>
+        public Boolean RemoveCDR(CDR_Id CDRId)
+        {
+
+            lock (chargeDetailRecords)
+            {
+
+                return chargeDetailRecords.Remove(CDRId);
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs(IncludeCDRs = null)
+
+        /// <summary>
+        /// Remove all matching charge detail records.
+        /// </summary>
+        /// <param name="IncludeCDRs">An optional charge detail record filter.</param>
+        public void RemoveAllCDRs(Func<CDR, Boolean>? IncludeCDRs = null)
+        {
+
+            lock (chargeDetailRecords)
+            {
+
+                if (IncludeCDRs is null)
+                    chargeDetailRecords.Clear();
+
+                else
+                {
+
+                    var cdrsToDelete = chargeDetailRecords.Values.Where(IncludeCDRs).ToArray();
+
+                    foreach (var cdr in cdrsToDelete)
+                        chargeDetailRecords.Remove(cdr.Id);
+
+                }
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllCDRs(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all charge detail records owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllCDRs(CountryCode  CountryCode,
+                                  Party_Id     PartyId)
+        {
+
+            lock (chargeDetailRecords)
+            {
+
+                var sessionsToDelete = chargingSessions.Values.Where  (cdr => CountryCode == cdr.CountryCode &&
+                                                                              PartyId     == cdr.PartyId).
+                                                               ToArray();
+
+                foreach (var session in sessionsToDelete)
+                    chargingSessions.Remove(session.Id);
+
             }
 
         }

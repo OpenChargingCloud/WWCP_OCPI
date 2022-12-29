@@ -1046,7 +1046,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Location.ToJSON(CustomLocationSerializer,
+                                                                                         requestbuilder.Content       = Location.ToJSON(false,
+                                                                                                                                        CustomLocationSerializer,
                                                                                                                                         CustomAdditionalGeoLocationSerializer,
                                                                                                                                         CustomEVSESerializer,
                                                                                                                                         CustomStatusScheduleSerializer,

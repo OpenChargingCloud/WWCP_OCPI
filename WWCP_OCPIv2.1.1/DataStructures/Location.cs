@@ -56,6 +56,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
+        /// </summary>
+        [Mandatory]
+        public CountryCode                         CountryCode              { get; }
+
+        /// <summary>
+        /// The identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id                            PartyId                  { get; }
+
+        /// <summary>
         /// The identification of the charging location within the CPOs platform (and suboperator platforms).
         /// This field can never be changed, modified or renamed.
         /// </summary>
@@ -224,6 +236,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charging location.
         /// </summary>
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.</param>
+        /// <param name="PartyId">An identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).</param>
         /// <param name="Id">An identification of the charging location within the CPOs platform (and suboperator platforms).</param>
         /// <param name="LocationType">An optional general type of parking at the charging location.</param>
         /// <param name="Address">The address of the charging location.</param>
@@ -262,7 +276,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomHoursSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomImageSerializer">A delegate to serialize custom image JSON objects.</param>
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
-        public Location(Location_Id                                                   Id,
+        public Location(CountryCode                                                   CountryCode,
+                        Party_Id                                                      PartyId,
+                        Location_Id                                                   Id,
                         LocationType                                                  LocationType,
                         String                                                        Address,
                         String                                                        City,
@@ -304,6 +320,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
+            this.CountryCode          = CountryCode;
+            this.PartyId              = PartyId;
             this.Id                   = Id;
             this.LocationType         = LocationType;
             this.Address              = Address;
@@ -353,15 +371,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region (static) Parse   (JSON, LocationIdURL = null, CustomLocationParser = null)
+        #region (static) Parse   (JSON, CountryCodeURL = null, PartyIdURL = null, LocationIdURL = null, CustomLocationParser = null)
 
         /// <summary>
         /// Parse the given JSON representation of an Location.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Location Parse(JObject                                 JSON,
+                                     CountryCode?                            CountryCodeURL         = null,
+                                     Party_Id?                               PartyIdURL             = null,
                                      Location_Id?                            LocationIdURL          = null,
                                      CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {
@@ -369,6 +391,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(JSON,
                          out var location,
                          out var errorResponse,
+                         CountryCodeURL,
+                         PartyIdURL,
                          LocationIdURL,
                          CustomLocationParser))
             {
@@ -409,11 +433,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="JSON">The JSON to parse.</param>
         /// <param name="Location">The parsed location.</param>
         /// <param name="ErrorResponse">An optional error response.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="LocationIdURL">An optional location identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomLocationParser">A delegate to parse custom location JSON objects.</param>
         public static Boolean TryParse(JObject                                 JSON,
                                        out Location?                           Location,
                                        out String?                             ErrorResponse,
+                                       CountryCode?                            CountryCodeURL         = null,
+                                       Party_Id?                               PartyIdURL             = null,
                                        Location_Id?                            LocationIdURL          = null,
                                        CustomJObjectParserDelegate<Location>?  CustomLocationParser   = null)
         {
@@ -428,6 +456,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
                 }
+
+                #region Parse CountryCode           [optional, internal]
+
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
+                {
+                    ErrorResponse = "The country code is missing!";
+                    return false;
+                }
+
+                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
+                {
+                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyIdURL            [optional, internal]
+
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
+                {
+                    ErrorResponse = "The party identification is missing!";
+                    return false;
+                }
+
+                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
+                {
+                    ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
 
                 #region Parse Id                    [optional]
 
@@ -725,7 +805,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Location = new Location(LocationIdBody  ?? LocationIdURL!. Value,
+                Location = new Location(CountryCodeBody ?? CountryCodeURL!.Value,
+                                        PartyIdBody     ?? PartyIdURL!.    Value,
+                                        LocationIdBody  ?? LocationIdURL!. Value,
                                         LocationType,
                                         Address,
                                         City,
@@ -769,11 +851,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         #endregion
 
-        #region ToJSON(CustomLocationSerializer = null, CustomPublishTokenSerializer = null, ...)
+        #region ToJSON(IncludeOwnerInformation = null, CustomLocationSerializer = null, ...)
 
         /// <summary>
         /// Return a JSON representation of this object.
         /// </summary>
+        /// <param name="IncludeOwnerInformation">Include optional owner information.</param>
         /// <param name="CustomLocationSerializer">A delegate to serialize custom location JSON objects.</param>
         /// <param name="CustomAdditionalGeoLocationSerializer">A delegate to serialize custom additional geo location JSON objects.</param>
         /// <param name="CustomEVSESerializer">A delegate to serialize custom EVSE JSON objects.</param>
@@ -789,7 +872,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnergyMixSerializer">A delegate to serialize custom hours JSON objects.</param>
         /// <param name="CustomEnergySourceSerializer">A delegate to serialize custom energy source JSON objects.</param>
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
+        public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
                               CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer               = null,
@@ -807,6 +891,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             var JSON = JSONObject.Create(
+
+                           IncludeOwnerInformation
+                               ? new JProperty("country_code",           CountryCode. ToString())
+                               : null,
+
+                           IncludeOwnerInformation
+                               ? new JProperty("party_id",               PartyId.     ToString())
+                               : null,
 
                                  new JProperty("id",                     Id.          ToString()),
 
@@ -1307,7 +1399,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                    = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomLocationSerializer,
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(true,
+                                                           CustomLocationSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
                                                            CustomEVSESerializer,
                                                            CustomStatusScheduleSerializer,
@@ -1464,7 +1557,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (Location is null)
                 throw new ArgumentNullException(nameof(Location), "The given connector must not be null!");
 
-            var c = Id.          CompareTo(Location.Id);
+            var c = CountryCode. CompareTo(Location.CountryCode);
+
+            if (c == 0)
+                c = PartyId.     CompareTo(Location.PartyId);
+
+            if (c == 0)
+                c = Id.          CompareTo(Location.Id);
 
             if (c == 0)
                 c = LocationType.CompareTo(Location.LocationType);
@@ -1508,6 +1607,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Location is not null &&
 
+               CountryCode.            Equals(Location.CountryCode)             &&
+               PartyId.                Equals(Location.PartyId)                 &&
                Id.                     Equals(Location.Id)                      &&
                LocationType.           Equals(Location.LocationType)            &&
                Address.                Equals(Location.Address)                 &&
@@ -1570,28 +1671,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.                 GetHashCode()       *  79 ^
-                       LocationType.       GetHashCode()       *  73 ^
-                       Address.            GetHashCode()       *  71 ^
-                       City.               GetHashCode()       *  67 ^
-                       PostalCode.         GetHashCode()       *  61 ^
-                       Country.            GetHashCode()       *  59 ^
-                       Coordinates.        GetHashCode()       *  53 ^
-                       LastUpdated.        GetHashCode()       *  47 ^
+                return CountryCode.        GetHashCode()       * 89 ^
+                       PartyId.            GetHashCode()       * 83 ^
+                       Id.                 GetHashCode()       * 79 ^
+                       LocationType.       GetHashCode()       * 73 ^
+                       Address.            GetHashCode()       * 71 ^
+                       City.               GetHashCode()       * 67 ^
+                       PostalCode.         GetHashCode()       * 61 ^
+                       Country.            GetHashCode()       * 59 ^
+                       Coordinates.        GetHashCode()       * 53 ^
+                       LastUpdated.        GetHashCode()       * 47 ^
 
-                      (Name?.              GetHashCode() ?? 0) *  43 ^
-                      (RelatedLocations?.  GetHashCode() ?? 0) *  41 ^
-                      (EVSEs?.             GetHashCode() ?? 0) *  37 ^
-                      (Directions?.        GetHashCode() ?? 0) *  31 ^
-                      (Operator?.          GetHashCode() ?? 0) *  29 ^
-                      (SubOperator?.       GetHashCode() ?? 0) *  23 ^
-                      (Owner?.             GetHashCode() ?? 0) *  19 ^
-                      (Facilities?.        GetHashCode() ?? 0) *  17 ^
-                      (Timezone?.          GetHashCode() ?? 0) *  13 ^
-                      (OpeningTimes?.      GetHashCode() ?? 0) *  11 ^
-                      (ChargingWhenClosed?.GetHashCode() ?? 0) *   7 ^
-                      (Images?.            GetHashCode() ?? 0) *   5 ^
-                      (EnergyMix?.         GetHashCode() ?? 0) *   3 ^
+                      (Name?.              GetHashCode() ?? 0) * 43 ^
+                      (RelatedLocations?.  GetHashCode() ?? 0) * 41 ^
+                      (EVSEs?.             GetHashCode() ?? 0) * 37 ^
+                      (Directions?.        GetHashCode() ?? 0) * 31 ^
+                      (Operator?.          GetHashCode() ?? 0) * 29 ^
+                      (SubOperator?.       GetHashCode() ?? 0) * 23 ^
+                      (Owner?.             GetHashCode() ?? 0) * 19 ^
+                      (Facilities?.        GetHashCode() ?? 0) * 17 ^
+                      (Timezone?.          GetHashCode() ?? 0) * 13 ^
+                      (OpeningTimes?.      GetHashCode() ?? 0) * 11 ^
+                      (ChargingWhenClosed?.GetHashCode() ?? 0) *  7 ^
+                      (Images?.            GetHashCode() ?? 0) *  5 ^
+                      (EnergyMix?.         GetHashCode() ?? 0) *  3 ^
 
                       (Publish?.           GetHashCode() ?? 0);
 
@@ -1609,9 +1712,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
-                   Id, ", ",
+                   Id,            " (",
+                   CountryCode,   "-",
+                   PartyId,       "), ",
 
-                   ", ",
                    EVSEs.Count(), " EVSE(s), ",
 
                    LastUpdated.ToIso8601()
@@ -1629,7 +1733,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="NewLocationId">An optional new location identification.</param>
         public Builder ToBuilder(Location_Id? NewLocationId = null)
 
-            => new (NewLocationId ?? Id,
+            => new (CountryCode,
+                    PartyId,
+                    NewLocationId ?? Id,
                     LocationType,
                     Address,
                     City,
@@ -1666,6 +1772,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             #region Properties
+
+            /// <summary>
+            /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.
+            /// </summary>
+            [Mandatory]
+            public CountryCode?                        CountryCode              { get; set; }
+
+            /// <summary>
+            /// The identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).
+            /// </summary>
+            [Mandatory]
+            public Party_Id?                           PartyId                  { get; set; }
 
             /// <summary>
             /// The identification of the charging location within the CPOs platform (and suboperator platforms).
@@ -1835,6 +1953,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <summary>
             /// Create a new charging location builder.
             /// </summary>
+            /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charging location.</param>
+            /// <param name="PartyId">An identification of the charge point operator that 'owns' this charging location (following the ISO-15118 standard).</param>
             /// <param name="Id">An identification of the charging location within the CPOs platform (and suboperator platforms).</param>
             /// <param name="LocationType">An optional general type of parking at the charging location.</param>
             /// <param name="Address">The address of the charging location.</param>
@@ -1843,10 +1963,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <param name="Coordinates">The geographical location of this charging location.</param>
             /// <param name="Timezone">One of IANA tzdata’s TZ-values representing the time zone of the charging location (http://www.iana.org/time-zones).</param>
             /// 
-            /// <param name="PublishAllowedTo">An optional enumeration of publish tokens. Only owners of tokens that match all the set fields of one publish token in the list are allowed to be shown this charging location.</param>
             /// <param name="Name">An optional display name of the charging location.</param>
             /// <param name="PostalCode">An optional postal code of the charging location.</param>
-            /// <param name="State">An optional state or province of the charging location.</param>
             /// <param name="RelatedLocations">An optional enumeration of additional geographical locations of related geo coordinates that might be relevant to the EV driver.</param>
             /// <param name="EVSEs">An optional enumeration of Electric Vehicle Supply Equipments (EVSE) at this charging location.</param>
             /// <param name="Directions">An optional enumeration of human-readable directions on how to reach the location.</param>
@@ -1860,7 +1978,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             /// <param name="EnergyMix">Optional details on the energy supplied at this charging location.</param>
             /// 
             /// <param name="Publish">Whether this charging location may be published on an website or app etc., or not.</param>
-            public Builder(Location_Id?                         Id                   = null,
+            public Builder(CountryCode                          CountryCode,
+                           Party_Id                             PartyId,
+                           Location_Id?                         Id                   = null,
                            LocationType?                        LocationType         = null,
                            String?                              Address              = null,
                            String?                              City                 = null,
@@ -1888,6 +2008,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             {
 
+                this.CountryCode         = CountryCode;
+                this.PartyId             = PartyId;
                 this.Id                  = Id;
                 this.LocationType        = LocationType;
                 this.Address             = Address;
@@ -1936,29 +2058,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 get
                 {
 
+                    if (!CountryCode. HasValue)
+                        throw new ArgumentNullException(nameof(CountryCode),  "The country code must not be null or empty!");
+
+                    if (!PartyId.     HasValue)
+                        throw new ArgumentNullException(nameof(PartyId),      "The party identification must not be null or empty!");
+
                     if (!Id.          HasValue)
-                        throw new ArgumentNullException(nameof(Id),            "The location identification must not be null or empty!");
+                        throw new ArgumentNullException(nameof(Id),           "The location identification must not be null or empty!");
 
                     if (!LocationType.HasValue)
-                        throw new ArgumentNullException(nameof(LocationType),  "The location type must not be null or empty!");
+                        throw new ArgumentNullException(nameof(LocationType), "The location type must not be null or empty!");
 
                     if (Address    is null || Address.   IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(Address),       "The address parameter must not be null or empty!");
+                        throw new ArgumentNullException(nameof(Address),      "The address parameter must not be null or empty!");
 
                     if (City       is null || City.      IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(City),          "The city parameter must not be null or empty!");
+                        throw new ArgumentNullException(nameof(City),         "The city parameter must not be null or empty!");
 
                     if (PostalCode is null || PostalCode.IsNullOrEmpty())
-                        throw new ArgumentNullException(nameof(PostalCode),    "The postal code must not be null or empty!");
+                        throw new ArgumentNullException(nameof(PostalCode),   "The postal code must not be null or empty!");
 
                     if (Country is null)
-                        throw new ArgumentNullException(nameof(Country),       "The country parameter must not be null or empty!");
+                        throw new ArgumentNullException(nameof(Country),      "The country parameter must not be null or empty!");
 
                     if (!Coordinates.HasValue)
-                        throw new ArgumentNullException(nameof(Coordinates),   "The geo coordinates must not be null or empty!");
+                        throw new ArgumentNullException(nameof(Coordinates),  "The geo coordinates must not be null or empty!");
 
 
-                    return new Location(Id.          Value,
+                    return new Location(CountryCode. Value,
+                                        PartyId.     Value,
+                                        Id.          Value,
                                         LocationType.Value,
                                         Address,
                                         City,

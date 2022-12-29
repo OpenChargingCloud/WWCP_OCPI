@@ -871,7 +871,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            var c = Id.           CompareTo(Token.Id);
+            var c = CountryCode.  CompareTo(Token.CountryCode);
+
+            if (c == 0)
+                c = PartyId.      CompareTo(Token.PartyId);
+
+            if (c == 0)
+                c = Id.           CompareTo(Token.Id);
 
             if (c == 0)
                 c = Type.         CompareTo(Token.Type);
@@ -992,10 +998,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
-                   Id,         " (",
-                   Type,       ", ",
-                   ContractId, ", ",
-                   Issuer,     ", ",
+                   Id,          " (",
+                   CountryCode, "-",
+                   PartyId,     ", ",
+                   Type,        ", ",
+                   ContractId,  ", ",
+                   Issuer,      ", ",
 
                    IsValid
                        ? "valid"

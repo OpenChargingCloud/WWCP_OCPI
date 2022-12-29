@@ -130,6 +130,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocation(this OCPIRequest           Request,
                                             EMSPAPI                    EMSPAPI,
+                                            CountryCode                CountryCode,
+                                            Party_Id                   PartyId,
                                             out Location_Id?           LocationId,
                                             out Location?              Location,
                                             out OCPIResponse.Builder?  OCPIResponseBuilder,
@@ -187,9 +189,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value,
-                                                  out Location) &&
-                 FailOnMissingLocation)
+            if (FailOnMissingLocation &&
+                (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
+                  Location is null                                                 ||
+                  Location.CountryCode != CountryCode                              ||
+                  Location.PartyId     != PartyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -326,6 +330,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
                                                 EMSPAPI                    EMSPAPI,
+                                                CountryCode                CountryCode,
+                                                Party_Id                   PartyId,
                                                 out Location_Id?           LocationId,
                                                 out Location?              Location,
                                                 out EVSE_UId?              EVSEUId,
@@ -405,7 +411,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId. Value, out Location))
+            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
+                 Location is null                                                 ||
+                 Location.CountryCode != CountryCode                              ||
+                 Location.PartyId     != PartyId)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -584,6 +593,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
                                                          EMSPAPI                    EMSPAPI,
+                                                         CountryCode                CountryCode,
+                                                         Party_Id                   PartyId,
                                                          out Location_Id?           LocationId,
                                                          out Location?              Location,
                                                          out EVSE_UId?              EVSEUId,
@@ -687,7 +698,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location))
+            if (!EMSPAPI.CommonAPI.TryGetLocation(LocationId.Value, out Location) ||
+                 Location is null                                                 ||
+                 Location.CountryCode != CountryCode                              ||
+                 Location.PartyId     != PartyId)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -836,6 +850,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseTariff(this OCPIRequest           Request,
                                           EMSPAPI                    EMSPAPI,
+                                          CountryCode                CountryCode,
+                                          Party_Id                   PartyId,
                                           out Tariff_Id?             TariffId,
                                           out Tariff?                Tariff,
                                           out OCPIResponse.Builder?  OCPIResponseBuilder,
@@ -892,8 +908,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetTariff(TariffId.Value, out Tariff) &&
-                 FailOnMissingTariff)
+            if (FailOnMissingTariff &&
+                (!EMSPAPI.CommonAPI.TryGetTariff(TariffId.Value, out Tariff) ||
+                  Tariff is null                                             ||
+                  Tariff.CountryCode != CountryCode                          ||
+                  Tariff.PartyId     != PartyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -1239,8 +1258,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             if (FailOnMissingCDR &&
                 (!EMSPAPI.CommonAPI.TryGetCDR(CDRId.Value, out CDR) ||
-                  CDR is null                    ||
-                  CDR.CountryCode != CountryCode ||
+                  CDR is null                                       ||
+                  CDR.CountryCode != CountryCode                    ||
                   CDR.PartyId     != PartyId))
             {
 
@@ -1355,6 +1374,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <returns>True, when user identification was found; false else.</returns>
         public static Boolean ParseToken(this OCPIRequest           Request,
                                          EMSPAPI                    EMSPAPI,
+                                         CountryCode                CountryCode,
+                                         Party_Id                   PartyId,
                                          out Token_Id?              TokenId,
                                          out TokenStatus            TokenStatus,
                                          out OCPIResponse.Builder?  OCPIResponseBuilder,
@@ -1412,8 +1433,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!EMSPAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) &&
-                FailOnMissingToken)
+            if (FailOnMissingToken &&
+                (!EMSPAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) ||
+                  TokenStatus.Token.CountryCode != CountryCode                  ||
+                  TokenStatus.Token.PartyId     != PartyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -3098,6 +3121,56 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
 
 
+        #region (protected internal) GetCDRRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET CDR request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetCDRRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDR request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetCDRRequest(DateTime     Timestamp,
+                                              HTTPAPI      API,
+                                              OCPIRequest  Request)
+
+            => OnGetCDRRequest?.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
+
+        #endregion
+
+        #region (protected internal) GetCDRResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET CDR response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetCDRResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDR response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetCDRResponse(DateTime      Timestamp,
+                                               HTTPAPI       API,
+                                               OCPIRequest   Request,
+                                               OCPIResponse  Response)
+
+            => OnGetCDRResponse?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
+
+        #endregion
+
+
         #region (protected internal) PostCDRRequest (Request)
 
         /// <summary>
@@ -3706,7 +3779,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               filteredLocations.
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
-                                                                                  Select(location => location.ToJSON(CustomLocationSerializer,
+                                                                                  Select(location => location.ToJSON(false,
+                                                                                                                     CustomLocationSerializer,
                                                                                                                      CustomAdditionalGeoLocationSerializer,
                                                                                                                      CustomEVSESerializer,
                                                                                                                      CustomStatusScheduleSerializer,
@@ -3853,6 +3927,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
+                                                                   Request.AccessInfo.Value.CountryCode,
+                                                                   Request.AccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder,
@@ -3869,7 +3945,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = location.ToJSON(CustomLocationSerializer,
+                                                   Data                 = location.ToJSON(false,
+                                                                                          CustomLocationSerializer,
                                                                                           CustomAdditionalGeoLocationSerializer,
                                                                                           CustomEVSESerializer,
                                                                                           CustomStatusScheduleSerializer,
@@ -3929,6 +4006,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing location
 
                                         if (!Request.ParseLocation(this,
+                                                                   Request.AccessInfo.Value.CountryCode,
+                                                                   Request.AccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var existingLocation,
                                                                    out var ocpiResponseBuilder,
@@ -3947,6 +4026,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         if (!Location.TryParse(locationJSON,
                                                                out var newOrUpdatedLocation,
                                                                out var errorResponse,
+                                                               Request.AccessInfo.Value.CountryCode,
+                                                               Request.AccessInfo.Value.PartyId,
                                                                locationId) ||
                                              newOrUpdatedLocation is null)
                                         {
@@ -3974,7 +4055,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = addOrUpdateResult.Data.ToJSON(CustomLocationSerializer,
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(false,
+                                                                                                            CustomLocationSerializer,
                                                                                                             CustomAdditionalGeoLocationSerializer,
                                                                                                             CustomEVSESerializer,
                                                                                                             CustomStatusScheduleSerializer,
@@ -4003,7 +4085,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedLocation.ToJSON(CustomLocationSerializer,
+                                                   Data                 = newOrUpdatedLocation.ToJSON(false,
+                                                                                                      CustomLocationSerializer,
                                                                                                       CustomAdditionalGeoLocationSerializer,
                                                                                                       CustomEVSESerializer,
                                                                                                       CustomStatusScheduleSerializer,
@@ -4063,6 +4146,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
+                                                                   Request.AccessInfo.Value.CountryCode,
+                                                                   Request.AccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder,
@@ -4093,7 +4178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                            StatusCode           = 1000,
                                                            StatusMessage        = "Hello world!",
-                                                           Data                 = patchedLocation.PatchedData.ToJSON(CustomLocationSerializer,
+                                                           Data                 = patchedLocation.PatchedData.ToJSON(false,
+                                                                                                                     CustomLocationSerializer,
                                                                                                                      CustomAdditionalGeoLocationSerializer,
                                                                                                                      CustomEVSESerializer,
                                                                                                                      CustomStatusScheduleSerializer,
@@ -4163,6 +4249,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing location
 
                                         if (!Request.ParseLocation(this,
+                                                                   Request.AccessInfo.Value.CountryCode,
+                                                                   Request.AccessInfo.Value.PartyId,
                                                                    out var locationId,
                                                                    out var location,
                                                                    out var ocpiResponseBuilder) ||
@@ -4181,21 +4269,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = location.ToJSON(CustomLocationSerializer,
-                                                                                                      CustomAdditionalGeoLocationSerializer,
-                                                                                                      CustomEVSESerializer,
-                                                                                                      CustomStatusScheduleSerializer,
-                                                                                                      CustomConnectorSerializer,
-                                                                                                      CustomEnergyMeterSerializer,
-                                                                                                      CustomTransparencySoftwareStatusSerializer,
-                                                                                                      CustomTransparencySoftwareSerializer,
-                                                                                                      CustomDisplayTextSerializer,
-                                                                                                      CustomBusinessDetailsSerializer,
-                                                                                                      CustomHoursSerializer,
-                                                                                                      CustomImageSerializer,
-                                                                                                      CustomEnergyMixSerializer,
-                                                                                                      CustomEnergySourceSerializer,
-                                                                                                      CustomEnvironmentalImpactSerializer),
+                                                       Data                 = location.ToJSON(false,
+                                                                                              CustomLocationSerializer,
+                                                                                              CustomAdditionalGeoLocationSerializer,
+                                                                                              CustomEVSESerializer,
+                                                                                              CustomStatusScheduleSerializer,
+                                                                                              CustomConnectorSerializer,
+                                                                                              CustomEnergyMeterSerializer,
+                                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                                              CustomTransparencySoftwareSerializer,
+                                                                                              CustomDisplayTextSerializer,
+                                                                                              CustomBusinessDetailsSerializer,
+                                                                                              CustomHoursSerializer,
+                                                                                              CustomImageSerializer,
+                                                                                              CustomEnergyMixSerializer,
+                                                                                              CustomEnergySourceSerializer,
+                                                                                              CustomEnvironmentalImpactSerializer),
                                                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = HTTPStatusCode.OK,
                                                            AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -4277,6 +4366,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
+                                                                       Request.AccessInfo.Value.CountryCode,
+                                                                       Request.AccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var location,
                                                                        out var evseUId,
@@ -4347,6 +4438,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
+                                                                       Request.AccessInfo.Value.CountryCode,
+                                                                       Request.AccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var evseUId,
@@ -4471,6 +4564,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
+                                                                       Request.AccessInfo.Value.CountryCode,
+                                                                       Request.AccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var eVSEUId,
@@ -4558,6 +4653,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing Location/EVSE(UId URI parameter)
 
                                         if (!Request.ParseLocationEVSE(this,
+                                                                       Request.AccessInfo.Value.CountryCode,
+                                                                       Request.AccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var eVSEUId,
@@ -4668,6 +4765,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
+                                                                                Request.AccessInfo.Value.CountryCode,
+                                                                                Request.AccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var location,
                                                                                 out var evseId,
@@ -4733,6 +4832,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
+                                                                                Request.AccessInfo.Value.CountryCode,
+                                                                                Request.AccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var existingLocation,
                                                                                 out var eVSEUId,
@@ -4847,6 +4948,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
+                                                                                Request.AccessInfo.Value.CountryCode,
+                                                                                Request.AccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var existingLocation,
                                                                                 out var eVSEUId,
@@ -4938,6 +5041,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing Location/EVSE/Connector(UId URI parameter)
 
                                         if (!Request.ParseLocationEVSEConnector(this,
+                                                                                Request.AccessInfo.Value.CountryCode,
+                                                                                Request.AccessInfo.Value.PartyId,
                                                                                 out var locationId,
                                                                                 out var existingLocation,
                                                                                 out var eVSEUId,
@@ -5038,6 +5143,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing EVSE
 
                                         if (!Request.ParseLocationEVSE(this,
+                                                                       Request.AccessInfo.Value.CountryCode,
+                                                                       Request.AccessInfo.Value.PartyId,
                                                                        out var locationId,
                                                                        out var existingLocation,
                                                                        out var eVSEUId,
@@ -5173,7 +5280,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               filteredTariffs.
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
-                                                                                  Select(tariff => tariff.ToJSON(CustomTariffSerializer,
+                                                                                  Select(tariff => tariff.ToJSON(false,
+                                                                                                                 CustomTariffSerializer,
                                                                                                                  CustomDisplayTextSerializer,
                                                                                                                  CustomTariffElementSerializer,
                                                                                                                  CustomPriceComponentSerializer,
@@ -5311,6 +5419,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check tariff
 
                                         if (!Request.ParseTariff(this,
+                                                                 Request.AccessInfo.Value.CountryCode,
+                                                                 Request.AccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var tariff,
                                                                  out var ocpiResponseBuilder) ||
@@ -5326,14 +5436,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = tariff.ToJSON(CustomTariffSerializer,
-                                                                                                   CustomDisplayTextSerializer,
-                                                                                                   CustomTariffElementSerializer,
-                                                                                                   CustomPriceComponentSerializer,
-                                                                                                   CustomTariffRestrictionsSerializer,
-                                                                                                   CustomEnergyMixSerializer,
-                                                                                                   CustomEnergySourceSerializer,
-                                                                                                   CustomEnvironmentalImpactSerializer),
+                                                   Data                 = tariff.ToJSON(false,
+                                                                                        CustomTariffSerializer,
+                                                                                        CustomDisplayTextSerializer,
+                                                                                        CustomTariffElementSerializer,
+                                                                                        CustomPriceComponentSerializer,
+                                                                                        CustomTariffRestrictionsSerializer,
+                                                                                        CustomEnergyMixSerializer,
+                                                                                        CustomEnergySourceSerializer,
+                                                                                        CustomEnvironmentalImpactSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
@@ -5379,6 +5490,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing tariff
 
                                         if (!Request.ParseTariff(this,
+                                                                 Request.AccessInfo.Value.CountryCode,
+                                                                 Request.AccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var existingTariff,
                                                                  out var ocpiResponseBuilder,
@@ -5397,6 +5510,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         if (!Tariff.TryParse(tariffJSON,
                                                              out var newOrUpdatedTariff,
                                                              out var errorResponse,
+                                                             Request.AccessInfo.Value.CountryCode,
+                                                             Request.AccessInfo.Value.PartyId,
                                                              tariffId) ||
                                              newOrUpdatedTariff is null)
                                         {
@@ -5439,7 +5554,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedTariff.ToJSON(CustomTariffSerializer,
+                                                   Data                 = newOrUpdatedTariff.ToJSON(false,
+                                                                                                    CustomTariffSerializer,
                                                                                                     CustomDisplayTextSerializer,
                                                                                                     CustomTariffElementSerializer,
                                                                                                     CustomPriceComponentSerializer,
@@ -5490,6 +5606,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check tariff
 
                                         if (!Request.ParseTariff(this,
+                                                                 Request.AccessInfo.Value.CountryCode,
+                                                                 Request.AccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var existingTariff,
                                                                  out var ocpiResponseBuilder,
@@ -5585,6 +5703,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check existing tariff
 
                                         if (!Request.ParseTariff(this,
+                                                                 Request.AccessInfo.Value.CountryCode,
+                                                                 Request.AccessInfo.Value.PartyId,
                                                                  out var tariffId,
                                                                  out var existingTariff,
                                                                  out var ocpiResponseBuilder,
@@ -5604,7 +5724,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = existingTariff.ToJSON(CustomTariffSerializer,
+                                                       Data                 = existingTariff.ToJSON(false,
+                                                                                                    CustomTariffSerializer,
                                                                                                     CustomDisplayTextSerializer,
                                                                                                     CustomTariffElementSerializer,
                                                                                                     CustomPriceComponentSerializer,
@@ -6455,7 +6576,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRsRequest,
                                     OCPIResponseLogger:  DeleteCDRsResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
@@ -6477,7 +6598,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #endregion
 
 
-                                        CommonAPI.RemoveAllCDRs();
+                                        CommonAPI.RemoveAllCDRs(Request.AccessInfo.Value.CountryCode,
+                                                                Request.AccessInfo.Value.PartyId);
 
 
                                         return new OCPIResponse.Builder(Request) {
@@ -6533,7 +6655,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "cdrs/{cdrId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestLogger:   GetCDRRequest,
+                                    OCPIResponseLogger:  GetCDRResponse,
+                                    OCPIRequestHandler:  Request => {
 
                                         #region Check access token
 
@@ -6622,7 +6746,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestLogger:   DeleteCDRRequest,
                                     OCPIResponseLogger:  DeleteCDRResponse,
-                                    OCPIRequestHandler:   async Request => {
+                                    OCPIRequestHandler:  async Request => {
 
                                         #region Check access token
 
@@ -6717,7 +6841,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tokens",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -6728,9 +6851,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                        Allow                      = new List<HTTPMethod> {
                                                                                         HTTPMethod.OPTIONS,
                                                                                         HTTPMethod.GET
-                                                                                    },
-                                                       AcceptPatch                = new List<HTTPContentType> {
-                                                                                        HTTPContentType.JSONMergePatch_UTF8
                                                                                     },
                                                        AccessControlAllowHeaders  = "Authorization"
                                                    }
@@ -6790,7 +6910,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                               filteredTokens.
                                                                                   SkipTakeFilter(filters.Offset,
                                                                                                  filters.Limit).
-                                                                                  Select(token => token.ToJSON(CustomTokenSerializer))
+                                                                                  Select(token => token.ToJSON(false,
+                                                                                                               CustomTokenSerializer))
                                                                           ),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
@@ -6810,6 +6931,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
             #region ~/tokens/{token_id}/authorize
+
+            #region OPTIONS  ~/tokens/{token_id}/authorize
+
+            CommonAPI.AddOCPIMethod(HTTPHostname.Any,
+                                    HTTPMethod.OPTIONS,
+                                    URLPathPrefix + "tokens/{token_id}/authorize",
+                                    OCPIRequestHandler: Request => {
+
+                                        return Task.FromResult(
+                                            new OCPIResponse.Builder(Request) {
+                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       HTTPStatusCode             = HTTPStatusCode.OK,
+                                                       AccessControlAllowMethods  = "OPTIONS, POST",
+                                                       Allow                      = new List<HTTPMethod> {
+                                                                                        HTTPMethod.OPTIONS,
+                                                                                        HTTPMethod.POST
+                                                                                    },
+                                                       AccessControlAllowHeaders  = "Authorization"
+                                                   }
+                                            });
+
+                                    });
+
+            #endregion
 
             #region POST     ~/tokens/{token_id}/authorize?type=RFID
 
@@ -6893,7 +7038,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         AuthorizationInfo? authorizationInfo = null;
 
                                         var rfidAuthTokenLocal = OnRFIDAuthToken;
-                                        if (rfidAuthTokenLocal != null)
+                                        if (rfidAuthTokenLocal is not null)
                                         {
 
                                             try
@@ -7077,10 +7222,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         }
 
-                                        if (authorizationInfo is null)
-                                            authorizationInfo = new AuthorizationInfo(
-                                                                    AllowedType.BLOCKED
-                                                                );
+                                        authorizationInfo ??= new AuthorizationInfo(
+                                                                  AllowedType.BLOCKED
+                                                              );
 
 
                                         // too little information like e.g. no LocationReferences provided:
@@ -7530,7 +7674,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try
@@ -7685,7 +7829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                             #region Sending upstream command response...
 
-                                            if (commandValues.UpstreamCommand != null)
+                                            if (commandValues.UpstreamCommand is not null)
                                             {
 
                                                 try

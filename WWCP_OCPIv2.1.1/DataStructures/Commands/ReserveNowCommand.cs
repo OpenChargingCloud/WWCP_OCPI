@@ -304,7 +304,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("token",           Token.        ToJSON(CustomTokenSerializer)),
+                           new JProperty("token",           Token.        ToJSON(false,
+                                                                                 CustomTokenSerializer)),
+
                            new JProperty("expiry_date",     ExpiryDate.   ToIso8601()),
                            new JProperty("reservation_id",  ReservationId.ToString()),
                            new JProperty("location_id",     LocationId.   ToString()),
