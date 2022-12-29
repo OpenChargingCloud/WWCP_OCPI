@@ -197,7 +197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public AccessInfo?      AccessInfo          { get; }
 
-        public AccessInfo2?     AccessInfo2         { get; }
+        public AccessInfoStatus?     AccessInfo2         { get; }
 
         public RemoteParty      RemoteParty         { get; }
 
@@ -262,7 +262,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         this.AccessInfo   = new AccessInfo(
                                                 AccessToken.Value,
-                                                parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
+                                                parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
                                                 null,
                                                 new CredentialsRole[] {
                                                     new CredentialsRole(
@@ -275,7 +275,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                 }
                                             );
 
-                        this.AccessInfo2  = parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                        this.AccessInfo2  = parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
 
                         this.RemoteParty  = parties.First();
 
@@ -293,9 +293,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                         {
 
                             this.AccessInfo   = new AccessInfo(AccessToken.Value,
-                                                               filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status);
+                                                               filteredParties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken).Status);
 
-                            this.AccessInfo2  = filteredParties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                            this.AccessInfo2  = filteredParties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
 
                             this.RemoteParty  = filteredParties.First();
 

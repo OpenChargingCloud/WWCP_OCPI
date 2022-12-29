@@ -193,7 +193,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         public AccessInfo?      AccessInfo          { get; }
 
-        public AccessInfo2?     AccessInfo2         { get; }
+        public AccessInfoStatus?     AccessInfo2         { get; }
 
         public RemoteParty?     RemoteParty         { get; }
 
@@ -253,14 +253,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                         this.AccessInfo   = new AccessInfo(
                                                 AccessToken.Value,
-                                                parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken).Status,
-                                                null,
-                                                parties.First().BusinessDetails,
+                                                parties.First().AccessInfoStatus.First(accessInfoStatus => accessInfoStatus.Token == AccessToken).Status,
                                                 parties.First().CountryCode,
-                                                parties.First().PartyId
+                                                parties.First().PartyId,
+                                                parties.First().Role,
+                                                null,
+                                                parties.First().BusinessDetails
                                             );
 
-                        this.AccessInfo2  = parties.First().AccessInfo.First(accessInfo2 => accessInfo2.Token == AccessToken);
+                        this.AccessInfo2  = parties.First().AccessInfoStatus.First(accessInfo2 => accessInfo2.Token == AccessToken);
 
                         this.RemoteParty  = parties.First();
 

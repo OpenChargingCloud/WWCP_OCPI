@@ -48,34 +48,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
     }
 
-    public readonly struct AccessInfo2
-    {
-
-        public AccessToken?  Token     { get; }
-        public AccessStatus  Status    { get; }
-
-
-        public AccessInfo2(AccessToken? Token,
-                           AccessStatus Status)
-        {
-
-            this.Token   = Token;
-            this.Status  = Status;
-
-        }
-
-        public JObject ToJSON()
-        {
-            return JSONObject.Create(
-                       new JProperty("token",   Token. ToString()),
-                       new JProperty("status",  Status.ToString())
-                   );
-        }
-
-    }
-
-
-
     public struct AccessInfo
     {
 
@@ -88,15 +60,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public AccessStatus                  Status         { get; set; }
 
 
-        public AccessInfo(AccessToken                   Token,
-                          AccessStatus                  Status,
-                          URL?                          VersionsURL   = null,
-                          IEnumerable<CredentialsRole>  Roles         = null)
+        public Boolean Is(Roles Role)
+            =>  Roles.Any(role => role.Role == Role);
+
+        public Boolean IsNot(Roles Role)
+            => !Roles.Any(role => role.Role == Role);
+
+
+        public AccessInfo(AccessToken                    Token,
+                          AccessStatus                   Status,
+                          URL?                           VersionsURL   = null,
+                          IEnumerable<CredentialsRole>?  Roles         = null)
         {
 
             this.Token        = Token;
             this.VersionsURL  = VersionsURL;
-            this.Roles        = Roles?.Distinct() ?? new CredentialsRole[0];
+            this.Roles        = Roles?.Distinct() ?? Array.Empty<CredentialsRole>();
             this.Status       = Status;
 
         }
@@ -123,11 +102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                                                         role.BusinessDetails)));
 
 
-        public Boolean Is(Roles Role)
-            => Roles.Any(role => role.Role == Role);
 
-        public Boolean IsNot(Roles Role)
-            => !Roles.Any(role => role.Role == Role);
 
     }
 

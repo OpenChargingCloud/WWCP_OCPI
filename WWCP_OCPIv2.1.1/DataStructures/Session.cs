@@ -46,6 +46,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.
+        /// </summary>
+        [Mandatory]
+        public CountryCode                         CountryCode                  { get; }
+
+        /// <summary>
+        /// The identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id                            PartyId                      { get; }
+
+        /// <summary>
         /// The unique identification of the session within the CPOs platform (and suboperator platforms).
         /// </summary>
         [Mandatory]
@@ -138,6 +150,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charging session.
         /// </summary>
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this session.</param>
+        /// <param name="PartyId">An identification of the charge point operator that 'owns' this session (following the ISO-15118 standard).</param>
         /// <param name="Id">An unique identification of the session within the CPOs platform (and suboperator platforms).</param>
         /// <param name="Start">A timestamp when the session became active.</param>
         /// <param name="kWh">An amount of kWhs that had been charged.</param>
@@ -168,7 +182,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        public Session(Session_Id                                                    Id,
+        public Session(CountryCode                                                   CountryCode,
+                       Party_Id                                                      PartyId,
+                       Session_Id                                                    Id,
                        DateTime                                                      Start,
                        Decimal                                                       kWh,
                        Auth_Id                                                       AuthId,
@@ -204,6 +220,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
         {
 
+            this.CountryCode      = CountryCode;
+            this.PartyId          = PartyId;
             this.Id               = Id;
             this.Start            = Start;
             this.kWh              = kWh;
@@ -250,9 +268,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Parse the given JSON representation of a charging session.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="SessionIdURL">An optional charging session identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomSessionParser">A delegate to parse custom session JSON objects.</param>
         public static Session Parse(JObject                                JSON,
+                                    CountryCode?                           CountryCodeURL        = null,
+                                    Party_Id?                              PartyIdURL            = null,
                                     Session_Id?                            SessionIdURL          = null,
                                     CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
@@ -260,6 +282,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (TryParse(JSON,
                          out var session,
                          out var errorResponse,
+                         CountryCodeURL,
+                         PartyIdURL,
                          SessionIdURL,
                          CustomSessionParser))
             {
@@ -291,6 +315,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                         out Session,
                         out ErrorResponse,
                         null,
+                        null,
+                        null,
                         null);
 
 
@@ -305,6 +331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public static Boolean TryParse(JObject                                JSON,
                                        out Session?                           Session,
                                        out String?                            ErrorResponse,
+                                       CountryCode?                           CountryCodeURL        = null,
+                                       Party_Id?                              PartyIdURL            = null,
                                        Session_Id?                            SessionIdURL          = null,
                                        CustomJObjectParserDelegate<Session>?  CustomSessionParser   = null)
         {
@@ -319,6 +347,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
                 }
+
+                #region Parse CountryCode              [optional, internal]
+
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
+                {
+                    ErrorResponse = "The country code is missing!";
+                    return false;
+                }
+
+                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
+                {
+                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyIdURL               [optional, internal]
+
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
+                {
+                    ErrorResponse = "The party identification is missing!";
+                    return false;
+                }
+
+                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
+                {
+                    ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
 
                 #region Parse Id                       [optional]
 
@@ -503,7 +583,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                Session = new Session(SessionIdBody ?? SessionIdURL!.Value,
+                Session = new Session(CountryCodeBody ?? CountryCodeURL!.Value,
+                                      PartyIdBody     ?? PartyIdURL!.    Value,
+                                      SessionIdBody   ?? SessionIdURL!.  Value,
                                       Start,
                                       KWh,
                                       AuthId,
@@ -558,7 +640,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomEnvironmentalImpactSerializer">A delegate to serialize custom environmental impact JSON objects.</param>
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
+        public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                      = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -580,54 +663,62 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("id",                             Id.                    ToString()),
+                           IncludeOwnerInformation
+                               ? new JProperty("country_code",                   CountryCode.           ToString())
+                               : null,
 
-                           new JProperty("start_date_time",                Start.                 ToIso8601()),
+                           IncludeOwnerInformation
+                               ? new JProperty("party_id",                       PartyId.               ToString())
+                               : null,
+
+                                 new JProperty("id",                             Id.                    ToString()),
+
+                                 new JProperty("start_date_time",                Start.                 ToIso8601()),
 
                            End.HasValue
-                               ? new JProperty("end_date_time",            End.             Value.ToIso8601())
+                               ? new JProperty("end_date_time",                  End.             Value.ToIso8601())
                                : null,
 
-                           new JProperty("kwh",                            kWh),
+                                 new JProperty("kwh",                            kWh),
 
-                           new JProperty("auth_id",                        AuthId.                ToString()),
-                           new JProperty("auth_method",                    AuthMethod.            ToString()),
+                                 new JProperty("auth_id",                        AuthId.                ToString()),
+                                 new JProperty("auth_method",                    AuthMethod.            ToString()),
 
-                           new JProperty("location",                       Location.              ToJSON(CustomLocationSerializer,
-                                                                                                         CustomAdditionalGeoLocationSerializer,
-                                                                                                         CustomEVSESerializer,
-                                                                                                         CustomStatusScheduleSerializer,
-                                                                                                         CustomConnectorSerializer,
-                                                                                                         CustomEnergyMeterSerializer,
-                                                                                                         CustomTransparencySoftwareStatusSerializer,
-                                                                                                         CustomTransparencySoftwareSerializer,
-                                                                                                         CustomDisplayTextSerializer,
-                                                                                                         CustomBusinessDetailsSerializer,
-                                                                                                         CustomHoursSerializer,
-                                                                                                         CustomImageSerializer,
-                                                                                                         CustomEnergyMixSerializer,
-                                                                                                         CustomEnergySourceSerializer,
-                                                                                                         CustomEnvironmentalImpactSerializer)),
+                                 new JProperty("location",                       Location.              ToJSON(CustomLocationSerializer,
+                                                                                                               CustomAdditionalGeoLocationSerializer,
+                                                                                                               CustomEVSESerializer,
+                                                                                                               CustomStatusScheduleSerializer,
+                                                                                                               CustomConnectorSerializer,
+                                                                                                               CustomEnergyMeterSerializer,
+                                                                                                               CustomTransparencySoftwareStatusSerializer,
+                                                                                                               CustomTransparencySoftwareSerializer,
+                                                                                                               CustomDisplayTextSerializer,
+                                                                                                               CustomBusinessDetailsSerializer,
+                                                                                                               CustomHoursSerializer,
+                                                                                                               CustomImageSerializer,
+                                                                                                               CustomEnergyMixSerializer,
+                                                                                                               CustomEnergySourceSerializer,
+                                                                                                               CustomEnvironmentalImpactSerializer)),
 
                            MeterId.HasValue
-                               ? new JProperty("meter_id",                 MeterId.               ToString())
+                               ? new JProperty("meter_id",                       MeterId.               ToString())
                                : null,
 
-                           new JProperty("currency",                       Currency.              ToString()),
+                                 new JProperty("currency",                       Currency.              ToString()),
 
                            ChargingPeriods.Any()
-                               ? new JProperty("charging_periods",         new JArray(ChargingPeriods.      Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                           CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",               new JArray(ChargingPeriods.      Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                                 CustomCDRDimensionSerializer))))
                                : null,
 
                            TotalCost.HasValue
-                               ? new JProperty("total_cost",               TotalCost.      Value)
+                               ? new JProperty("total_cost",                     TotalCost.      Value)
                                : null,
 
-                           new JProperty("status",                         Status.                ToString()),
+                                 new JProperty("status",                         Status.                ToString()),
 
 
-                           new JProperty("last_updated",                   LastUpdated.           ToIso8601())
+                                 new JProperty("last_updated",                   LastUpdated.           ToIso8601())
 
                        );
 
@@ -805,7 +896,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                                      CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                 = null)
         {
 
-            this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomSessionSerializer,
+            this.ETag = SHA256.Create().ComputeHash(ToJSON(true,
+                                                           CustomSessionSerializer,
                                                            CustomLocationSerializer,
                                                            CustomAdditionalGeoLocationSerializer,
                                                            CustomEVSESerializer,
@@ -967,7 +1059,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (Session is null)
                 throw new ArgumentNullException(nameof(Session), "The given charging session must not be null!");
 
-            var c = Id.         CompareTo(Session.Id);
+            var c = CountryCode.CompareTo(Session.CountryCode);
+
+            if (c == 0)
+                c = PartyId.    CompareTo(Session.PartyId);
+
+            if (c == 0)
+                c = Id.         CompareTo(Session.Id);
 
             if (c == 0)
                 c = Start.      CompareTo(Session.Start);
@@ -1032,6 +1130,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => Session is not null &&
 
+               CountryCode.            Equals(Session.CountryCode)             &&
+               PartyId.                Equals(Session.PartyId)                 &&
                Id.                     Equals(Session.Id)                      &&
                Start.                  Equals(Session.Start)                   &&
                kWh.                    Equals(Session.kWh)                     &&
@@ -1068,7 +1168,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.              GetHashCode()       * 47 ^
+                return CountryCode.     GetHashCode()       * 59 ^
+                       PartyId.         GetHashCode()       * 53 ^
+                       Id.              GetHashCode()       * 47 ^
                        Start.           GetHashCode()       * 43 ^
                        kWh.             GetHashCode()       * 41 ^
                        AuthId.          GetHashCode()       * 37 ^
@@ -1098,6 +1200,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             => String.Concat(
 
                    Id,                      " (",
+                   CountryCode,             "-",
+                   PartyId,                 ", ",
                    Status,                  "), ",
 
                    Start.ToIso8601(),

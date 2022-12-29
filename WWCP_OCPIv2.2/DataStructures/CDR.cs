@@ -1448,9 +1448,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => CDR is not null &&
 
-               Id.                     Equals(CDR.Id)                      &&
                CountryCode.            Equals(CDR.CountryCode)             &&
                PartyId.                Equals(CDR.PartyId)                 &&
+               Id.                     Equals(CDR.Id)                      &&
                Start.                  Equals(CDR.Start)                   &&
                End.                    Equals(CDR.End)                     &&
                CDRToken.               Equals(CDR.CDRToken)                &&
@@ -1582,9 +1582,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
-                   CountryCode.ToString(),   "-",
-                   PartyId.    ToString(),   "-",
-                   Id,                       ", ",
+                   Id,                       " (",
+                   CountryCode,              "-",
+                   PartyId,                  ") ",
                    Start.      ToIso8601(),  ", ",
                    End.        ToIso8601(),  ", ",
                    CDRToken.   ToString(),   ", ",

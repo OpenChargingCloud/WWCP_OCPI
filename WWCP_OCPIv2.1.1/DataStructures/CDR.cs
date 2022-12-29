@@ -42,6 +42,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #region Properties
 
         /// <summary>
+        /// The ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.
+        /// </summary>
+        [Mandatory]
+        public CountryCode                         CountryCode                 { get; }
+
+        /// <summary>
+        /// The identification of the charge point operator that 'owns' this charge detail record
+        /// (following the ISO-15118 standard).
+        /// </summary>
+        [Mandatory]
+        public Party_Id                            PartyId                     { get; }
+
+        /// <summary>
         /// The identification of the charge detail record within the charge point operator's platform
         /// (and suboperator platforms).
         /// CiString(39)
@@ -188,6 +201,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <summary>
         /// Create a new charge detail record.
         /// </summary>
+        /// <param name="CountryCode">An ISO-3166 alpha-2 country code of the charge point operator that 'owns' this charge detail record.</param>
+        /// <param name="PartyId">An identification of the charge point operator that 'owns' this charge detail record (following the ISO-15118 standard).</param>
         /// <param name="Id">An identification of the charge detail record within the charge point operator's platform (and suboperator platforms).</param>
         /// <param name="Start">The start timestamp of the charging session, or in-case of a reservation (before the start of a session) the start of the reservation.</param>
         /// <param name="End">The timestamp when the session was completed/finished. Charging might have finished before the session ends, for example: EV is full, but parking cost also has to be paid.</param>
@@ -233,7 +248,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        public CDR(CDR_Id                                                        Id,
+        public CDR(CountryCode                                                   CountryCode,
+                   Party_Id                                                      PartyId,
+                   CDR_Id                                                        Id,
                    DateTime                                                      Start,
                    DateTime                                                      End,
                    Auth_Id                                                       AuthId,
@@ -284,6 +301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (!ChargingPeriods.Any())
                 throw new ArgumentNullException(nameof(ChargingPeriods),  "The given enumeration of charging periods must not be null or empty!");
 
+            this.CountryCode              = CountryCode;
+            this.PartyId                  = PartyId;
             this.Id                       = Id;
             this.Start                    = Start;
             this.End                      = End;
@@ -306,7 +325,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             this.LastUpdated              = LastUpdated           ?? Timestamp.Now;
 
-            this.ETag                     = SHA256.Create().ComputeHash(ToJSON(CustomCDRSerializer,
+            this.ETag                     = SHA256.Create().ComputeHash(ToJSON(true,
+                                                                               CustomCDRSerializer,
                                                                                CustomLocationSerializer,
                                                                                CustomAdditionalGeoLocationSerializer,
                                                                                CustomEVSESerializer,
@@ -342,6 +362,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// Parse the given JSON representation of a CDR.
         /// </summary>
         /// <param name="JSON">The JSON to parse.</param>
+        /// <param name="CountryCodeURL">An optional country code, e.g. from the HTTP URL.</param>
+        /// <param name="PartyIdURL">An optional party identification, e.g. from the HTTP URL.</param>
         /// <param name="CDRIdURL">An optional charge detail record identification, e.g. from the HTTP URL.</param>
         /// <param name="CustomCDRParser">A delegate to parse custom charge detail record JSON objects.</param>
         public static CDR Parse(JObject                            JSON,
@@ -420,6 +442,58 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     ErrorResponse = "The given JSON object must not be null or empty!";
                     return false;
                 }
+
+                #region Parse CountryCode               [optional, internal]
+
+                if (JSON.ParseOptional("country_code",
+                                       "country code",
+                                       CountryCode.TryParse,
+                                       out CountryCode? CountryCodeBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!CountryCodeURL.HasValue && !CountryCodeBody.HasValue)
+                {
+                    ErrorResponse = "The country code is missing!";
+                    return false;
+                }
+
+                if (CountryCodeURL.HasValue && CountryCodeBody.HasValue && CountryCodeURL.Value != CountryCodeBody.Value)
+                {
+                    ErrorResponse = "The optional country code given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse PartyIdURL                [optional, internal]
+
+                if (JSON.ParseOptional("party_id",
+                                       "party identification",
+                                       Party_Id.TryParse,
+                                       out Party_Id? PartyIdBody,
+                                       out ErrorResponse))
+                {
+                    if (ErrorResponse is not null)
+                        return false;
+                }
+
+                if (!PartyIdURL.HasValue && !PartyIdBody.HasValue)
+                {
+                    ErrorResponse = "The party identification is missing!";
+                    return false;
+                }
+
+                if (PartyIdURL.HasValue && PartyIdBody.HasValue && PartyIdURL.Value != PartyIdBody.Value)
+                {
+                    ErrorResponse = "The optional party identification given within the JSON body does not match the one given in the URL!";
+                    return false;
+                }
+
+                #endregion
 
                 #region Parse Id                        [optional]
 
@@ -682,7 +756,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
-                CDR = new CDR(CDRIdBody ?? CDRIdURL!.Value,
+                CDR = new CDR(CountryCodeBody ?? CountryCodeURL!.Value,
+                              PartyIdBody     ?? PartyIdURL!.    Value,
+                              CDRIdBody       ?? CDRIdURL!.      Value,
                               Start,
                               End,
                               AuthId,
@@ -752,7 +828,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomSignedDataSerializer">A delegate to serialize custom signed data JSON objects.</param>
         /// <param name="CustomSignedValueSerializer">A delegate to serialize custom signed value JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
+        public JObject ToJSON(Boolean                                                       IncludeOwnerInformation                      = false,
+                              CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                          = null,
                               CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                     = null,
                               CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer        = null,
                               CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                         = null,
@@ -779,6 +856,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         {
 
             var JSON = JSONObject.Create(
+
+                           IncludeOwnerInformation
+                               ? new JProperty("country_code",              CountryCode.                 ToString())
+                               : null,
+
+                           IncludeOwnerInformation
+                               ? new JProperty("party_id",                  PartyId.                     ToString())
+                               : null,
 
                                  new JProperty("id",                        Id.                          ToString()),
                                  new JProperty("start_date_time",           Start.                       ToIso8601()),
@@ -997,7 +1082,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (CDR is null)
                 throw new ArgumentNullException(nameof(CDR), "The given charge detail record must not be null!");
 
-            var c = Id.         CompareTo(CDR.Id);
+            var c = CountryCode.CompareTo(CDR.CountryCode);
+
+            if (c == 0)
+                c = PartyId.    CompareTo(CDR.PartyId);
+
+            if (c == 0)
+                c = Id.         CompareTo(CDR.Id);
 
             if (c == 0)
                 c = Start.      CompareTo(CDR.Start);
@@ -1070,6 +1161,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => CDR is not null &&
 
+               CountryCode.            Equals(CDR.CountryCode)             &&
+               PartyId.                Equals(CDR.PartyId)                 &&
                Id.                     Equals(CDR.Id)                      &&
                Start.                  Equals(CDR.Start)                   &&
                End.                    Equals(CDR.End)                     &&
@@ -1120,7 +1213,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Id.                     GetHashCode()        * 67 ^
+                return CountryCode.            GetHashCode()        * 73 ^
+                       PartyId.                GetHashCode()        * 71 ^
+                       Id.                     GetHashCode()        * 67 ^
                        Start.                  GetHashCode()        * 61 ^
                        End.                    GetHashCode()        * 59 ^
                        AuthId.                 GetHashCode()        * 53 ^
@@ -1155,7 +1250,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
-                   Id,                       ", ",
+                   Id,                       " (",
+                   CountryCode,              "-",
+                   PartyId,                  ") ",
                    Start.      ToIso8601(),  ", ",
                    End.        ToIso8601(),  ", ",
                    AuthId.     ToString(),   ", ",

@@ -17,15 +17,8 @@
 
 #region Usings
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Net.Security;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Security.Authentication;
 
 using Newtonsoft.Json.Linq;
 
@@ -33,12 +26,8 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets.TCP;
-
-using social.OpenData.UsersAPI;
-using System.Threading;
-using org.GraphDefined.Vanaheimr.Hermod.Sockets;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
+using System.Linq;
 
 #endregion
 
@@ -378,7 +367,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
-            this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
+            this.remoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
@@ -473,7 +462,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.Disable_OCPIv2_1_1       = Disable_OCPIv2_1_1;
 
-            this._RemoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
+            this.remoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
             this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.Sessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
@@ -1456,10 +1445,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Data
 
-        private readonly Dictionary<RemoteParty_Id, RemoteParty> _RemoteParties;
+        private readonly Dictionary<RemoteParty_Id, RemoteParty> remoteParties;
 
         public IEnumerable<RemoteParty> RemoteParties
-            => _RemoteParties.Values;
+            => remoteParties.Values;
 
         #endregion
 
@@ -1487,23 +1476,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode              CountryCode,
-                                      Party_Id                 PartyId,
-                                      Roles                    Role,
-                                      BusinessDetails          BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode               CountryCode,
+                                      Party_Id                  PartyId,
+                                      Roles                     Role,
+                                      BusinessDetails           BusinessDetails,
 
-                                      AccessToken              AccessToken,
+                                      AccessToken               AccessToken,
 
-                                      AccessToken              RemoteAccessToken,
-                                      URL                      RemoteVersionsURL,
-                                      IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                      Version_Id?              SelectedVersionId   = null,
+                                      AccessToken               RemoteAccessToken,
+                                      URL                       RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                      Version_Id?               SelectedVersionId   = null,
 
-                                      AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
-                                      RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                      PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                      AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
+                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
+                                      PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
                 //var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
@@ -1530,7 +1519,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteStatus,
                                                      PartyStatus);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1555,7 +1544,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                       PartyStatus      PartyStatus    = PartyStatus.ENABLED)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
                 //var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
@@ -1576,7 +1565,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                      PartyStatus);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1591,20 +1580,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddRemoteParty(...)
 
-        public Boolean AddRemoteParty(CountryCode              CountryCode,
-                                      Party_Id                 PartyId,
-                                      Roles                    Role,
-                                      BusinessDetails          BusinessDetails,
+        public Boolean AddRemoteParty(CountryCode               CountryCode,
+                                      Party_Id                  PartyId,
+                                      Roles                     Role,
+                                      BusinessDetails           BusinessDetails,
 
-                                      AccessToken              RemoteAccessToken,
-                                      URL                      RemoteVersionsURL,
-                                      IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                      Version_Id?              SelectedVersionId   = null,
+                                      AccessToken               RemoteAccessToken,
+                                      URL                       RemoteVersionsURL,
+                                      IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                      Version_Id?               SelectedVersionId   = null,
 
-                                      RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                      PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                      RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
+                                      PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
                 //var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
@@ -1628,7 +1617,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteStatus,
                                                      PartyStatus);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1648,13 +1637,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                       Roles                          Role,
                                       BusinessDetails                BusinessDetails,
 
-                                      IEnumerable<AccessInfo2>       AccessInfos,
+                                      IEnumerable<AccessInfoStatus>       AccessInfos,
                                       IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
                                       PartyStatus                    Status        = PartyStatus.ENABLED,
                                       DateTime?                      LastUpdated   = null)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
                 var newRemoteParty = new RemoteParty(CountryCode,
@@ -1668,7 +1657,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      Status,
                                                      LastUpdated);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1684,31 +1673,31 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
-                                              Party_Id                 PartyId,
-                                              Roles                    Role,
-                                              BusinessDetails          BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
+                                              Party_Id                  PartyId,
+                                              Roles                     Role,
+                                              BusinessDetails           BusinessDetails,
 
-                                              AccessToken              AccessToken,
+                                              AccessToken               AccessToken,
 
-                                              AccessToken              RemoteAccessToken,
-                                              URL                      RemoteVersionsURL,
-                                              IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                              Version_Id?              SelectedVersionId   = null,
+                                              AccessToken               RemoteAccessToken,
+                                              URL                       RemoteVersionsURL,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                              Version_Id?               SelectedVersionId   = null,
 
-                                              AccessStatus             AccessStatus        = AccessStatus.ALLOWED,
-                                              RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.ONLINE,
-                                              PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                              AccessStatus              AccessStatus        = AccessStatus.ALLOWED,
+                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.ONLINE,
+                                              PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                var _remoteParties = remoteParties.Values.Where(party => party.CountryCode == CountryCode &&
                                                                          party.PartyId     == PartyId     &&
                                                                          party.Role        == Role).ToArray();
 
-                foreach (var remoteParty in remoteParties)
-                    _RemoteParties.Remove(remoteParty.Id);
+                foreach (var remoteParty in _remoteParties)
+                    this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
 
 
                 var newRemoteParty = new RemoteParty(CountryCode,
@@ -1727,7 +1716,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteStatus,
                                                      PartyStatus);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1752,15 +1741,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                               PartyStatus      PartyStatus    = PartyStatus.ENABLED)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                var _remoteParties = remoteParties.Values.Where(party => party.CountryCode == CountryCode &&
                                                                          party.PartyId     == PartyId     &&
                                                                          party.Role        == Role).ToArray();
 
-                foreach (var remoteParty in remoteParties)
-                    _RemoteParties.Remove(remoteParty.Id);
+                foreach (var remoteParty in _remoteParties)
+                    this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
 
 
                 var newRemoteParty = new RemoteParty(CountryCode,
@@ -1773,7 +1762,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                                      PartyStatus);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1788,28 +1777,28 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region AddOrUpdateRemoteParty(...)
 
-        public Boolean AddOrUpdateRemoteParty(CountryCode              CountryCode,
-                                              Party_Id                 PartyId,
-                                              Roles                    Role,
-                                              BusinessDetails          BusinessDetails,
+        public Boolean AddOrUpdateRemoteParty(CountryCode               CountryCode,
+                                              Party_Id                  PartyId,
+                                              Roles                     Role,
+                                              BusinessDetails           BusinessDetails,
 
-                                              AccessToken              RemoteAccessToken,
-                                              URL                      RemoteVersionsURL,
-                                              IEnumerable<Version_Id>  RemoteVersionIds    = null,
-                                              Version_Id?              SelectedVersionId   = null,
+                                              AccessToken               RemoteAccessToken,
+                                              URL                       RemoteVersionsURL,
+                                              IEnumerable<Version_Id>?  RemoteVersionIds    = null,
+                                              Version_Id?               SelectedVersionId   = null,
 
-                                              RemoteAccessStatus?      RemoteStatus        = RemoteAccessStatus.UNKNOWN,
-                                              PartyStatus              PartyStatus         = PartyStatus.ENABLED)
+                                              RemoteAccessStatus?       RemoteStatus        = RemoteAccessStatus.UNKNOWN,
+                                              PartyStatus               PartyStatus         = PartyStatus.ENABLED)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(party => party.CountryCode == CountryCode &&
+                var _remoteParties = remoteParties.Values.Where(party => party.CountryCode == CountryCode &&
                                                                          party.PartyId     == PartyId     &&
                                                                          party.Role        == Role).ToArray();
 
-                foreach (var remoteParty in remoteParties)
-                    _RemoteParties.Remove(remoteParty.Id);
+                foreach (var remoteParty in _remoteParties)
+                    this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
 
 
                 var newRemoteParty = new RemoteParty(CountryCode,
@@ -1825,7 +1814,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                      RemoteStatus,
                                                      PartyStatus);
 
-                _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                 File.AppendAllText(LogfileName,
                                    new JObject(new JProperty("addOrUpdateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -1853,7 +1842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 //RemotePartiesSemaphore.Wait();
 
-                return _RemoteParties.ContainsKey(RemotePartyId);
+                return remoteParties.ContainsKey(RemotePartyId);
 
             }
             finally
@@ -1871,7 +1860,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// Get the remote party having the given unique identification.
         /// </summary>
         /// <param name="RemotePartyId">The unique identification of the remote party.</param>
-        public async Task<RemoteParty> GetRemoteParty(RemoteParty_Id RemotePartyId)
+        public RemoteParty? GetRemoteParty(RemoteParty_Id RemotePartyId)
         {
 
             try
@@ -1879,7 +1868,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 //await RemotePartiesSemaphore.WaitAsync();
 
-                if (_RemoteParties.TryGetValue(RemotePartyId, out RemoteParty remoteParty))
+                if (remoteParties.TryGetValue(RemotePartyId, out var remoteParty))
                     return remoteParty;
 
                 return null;
@@ -1901,8 +1890,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// </summary>
         /// <param name="RemotePartyId">The unique identification of the remote party.</param>
         /// <param name="RemoteParty">The defibrillator.</param>
-        public Boolean TryGetRemoteParty(RemoteParty_Id   RemotePartyId,
-                                         out RemoteParty  RemoteParty)
+        public Boolean TryGetRemoteParty(RemoteParty_Id    RemotePartyId,
+                                         out RemoteParty?  RemoteParty)
         {
 
             try
@@ -1910,7 +1899,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 //RemotePartiesSemaphore.Wait();
 
-                if (_RemoteParties.TryGetValue(RemotePartyId, out RemoteParty))
+                if (remoteParties.TryGetValue(RemotePartyId, out RemoteParty))
                     return true;
 
                 RemoteParty = null;
@@ -1932,32 +1921,32 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public Boolean RemoveRemoteParty(RemoteParty RemoteParty)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
-                return _RemoteParties.Remove(RemoteParty.Id);
+                return remoteParties.Remove(RemoteParty.Id);
             }
         }
 
         public Boolean RemoveRemoteParty(RemoteParty_Id RemotePartyId)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
-                return _RemoteParties.Remove(RemotePartyId);
+                return remoteParties.Remove(RemotePartyId);
             }
         }
 
         public Boolean RemoveRemoteParty(CountryCode  CountryCode,
                                          Party_Id     PartyId)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
+                var _remoteParties = remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
                                                                                remoteParty.PartyId     == PartyId).ToArray();
 
-                foreach (var remoteParty in remoteParties)
+                foreach (var remoteParty in _remoteParties)
                 {
-                    _RemoteParties.Remove(remoteParty.Id);
+                    this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
                     File.AppendAllText(LogfileName,
                                        new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                        Encoding.UTF8);
@@ -1972,16 +1961,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          Party_Id     PartyId,
                                          Roles        Role)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
+                var _remoteParties = remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
                                                                                remoteParty.PartyId     == PartyId     &&
                                                                                remoteParty.Role        == Role).ToArray();
 
-                foreach (var remoteParty in remoteParties)
+                foreach (var remoteParty in _remoteParties)
                 {
-                    _RemoteParties.Remove(remoteParty.Id);
+                    remoteParties.Remove(remoteParty.Id);
                     File.AppendAllText(LogfileName,
                                        new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                        Encoding.UTF8);
@@ -1997,17 +1986,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                          Roles        Role,
                                          AccessToken  Token)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
+                var _remoteParties = remoteParties.Values.Where(remoteParty => remoteParty.CountryCode == CountryCode &&
                                                                                remoteParty.PartyId     == PartyId     &&
                                                                                remoteParty.Role        == Role        &&
                                                                                remoteParty.RemoteAccessInfos.Any(remoteAccessInfo => remoteAccessInfo.AccessToken == Token)).ToArray();
 
-                foreach (var remoteParty in remoteParties)
+                foreach (var remoteParty in _remoteParties)
                 {
-                    _RemoteParties.Remove(remoteParty.Id);
+                    remoteParties.Remove(remoteParty.Id);
                     File.AppendAllText(LogfileName,
                                        new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                        Encoding.UTF8);
@@ -2028,17 +2017,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public CommonAPI RemoveAccessToken(AccessToken AccessToken)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var remoteParties = _RemoteParties.Values.Where(party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).ToArray();
+                var _remoteParties = remoteParties.Values.Where(party => party.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).ToArray();
 
-                foreach (var remoteParty in remoteParties)
+                foreach (var remoteParty in _remoteParties)
                 {
 
-                    if (remoteParty.AccessInfo.Count() <= 1)
+                    if (remoteParty.AccessInfoStatus.Count() <= 1)
                     {
-                        _RemoteParties.Remove(remoteParty.Id);
+                        this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
                         File.AppendAllText(LogfileName,
                                            new JObject(new JProperty("removeRemoteParty", remoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
                                            Encoding.UTF8);
@@ -2047,19 +2036,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     else
                     {
 
-                        _RemoteParties.Remove(remoteParty.Id);
+                        this.remoteParties.Remove((RemoteParty_Id)remoteParty.Id);
 
                         var newRemoteParty = new RemoteParty(
                                                  remoteParty.CountryCode,
                                                  remoteParty.PartyId,
                                                  remoteParty.Role,
                                                  remoteParty.BusinessDetails,
-                                                 remoteParty.AccessInfo.Where(accessInfo => accessInfo.Token != AccessToken),
+                                                 remoteParty.AccessInfoStatus.Where(accessInfo => accessInfo.Token != AccessToken),
                                                  remoteParty.RemoteAccessInfos,
                                                  remoteParty.Status
                                              );
 
-                        _RemoteParties.Add(newRemoteParty.Id, newRemoteParty);
+                        this.remoteParties.Add(newRemoteParty.Id, newRemoteParty);
 
                         File.AppendAllText(LogfileName,
                                            new JObject(new JProperty("updateRemoteParty", newRemoteParty.ToJSON(true))).ToString(Newtonsoft.Json.Formatting.None) + Environment.NewLine,
@@ -2075,13 +2064,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         }
 
 
-        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfo2 AccessInfo)
+        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfoStatus AccessInfo)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                var accessInfos = _RemoteParties.Values.Where     (remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                                        SelectMany(remoteParty => remoteParty.AccessInfo).
+                var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                                        SelectMany(remoteParty => remoteParty.AccessInfoStatus).
                                                         ToArray();
 
                 if (accessInfos.Length == 1)
@@ -2096,27 +2085,27 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             }
         }
 
-        public IEnumerable<AccessInfo2> GetAccessInfos(AccessToken AccessToken)
+        public IEnumerable<AccessInfoStatus> GetAccessInfos(AccessToken AccessToken)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                return _RemoteParties.Values.Where     (remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                             SelectMany(remoteParty => remoteParty.AccessInfo).
+                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                             SelectMany(remoteParty => remoteParty.AccessInfoStatus).
                                              ToArray();
 
             }
         }
 
-        public IEnumerable<AccessInfo2> GetAccessInfos(AccessToken   AccessToken,
+        public IEnumerable<AccessInfoStatus> GetAccessInfos(AccessToken   AccessToken,
                                                        AccessStatus  AccessStatus)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                return _RemoteParties.Values.Where     (remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token  == AccessToken &&
+                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token  == AccessToken &&
                                                                                                                 accessInfo.Status == AccessStatus)).
-                                             SelectMany(remoteParty => remoteParty.AccessInfo).
+                                             SelectMany(remoteParty => remoteParty.AccessInfoStatus).
                                              ToArray();
 
             }
@@ -2126,10 +2115,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken AccessToken)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                return _RemoteParties.Values.Where(remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
                                              ToArray();
 
             }
@@ -2138,10 +2127,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public IEnumerable<RemoteParty> GetRemoteParties(AccessToken   AccessToken,
                                                          AccessStatus  AccessStatus)
         {
-            lock (_RemoteParties)
+            lock (remoteParties)
             {
 
-                return _RemoteParties.Values.Where(remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token  == AccessToken &&
+                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token  == AccessToken &&
                                                                                                            accessInfo.Status == AccessStatus)).
                                              ToArray();
 
@@ -2150,10 +2139,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public Boolean TryGetRemoteParties(AccessToken AccessToken, out IEnumerable<RemoteParty> remoteParties)
         {
-            lock (_RemoteParties)
+            lock (this.remoteParties)
             {
 
-                remoteParties = _RemoteParties.Values.Where(remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                remoteParties = this.remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
                                                       ToArray();
 
                 return remoteParties.Any();
@@ -2193,13 +2182,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (!Locations.TryGetValue(Location.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
                     Locations.Add(Location.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                if (!parties.TryGetValue(Location.PartyId, out var locations))
                 {
                     locations = new Dictionary<Location_Id, Location>();
                     parties.Add(Location.PartyId, locations);
@@ -2254,13 +2243,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (!Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (!Locations.TryGetValue(Location.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
                     Locations.Add(Location.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                if (!parties.TryGetValue(Location.PartyId, out var locations))
                 {
                     locations = new Dictionary<Location_Id, Location>();
                     parties.Add(Location.PartyId, locations);
@@ -2312,19 +2301,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                           "The given location must not be null!");
 
 
-            if (!Locations.TryGetValue(newOrUpdatedLocation.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+            if (!Locations.TryGetValue(newOrUpdatedLocation.CountryCode, out var parties))
             {
                 parties = new Dictionary<Party_Id, Dictionary<Location_Id, Location>>();
                 Locations.Add(newOrUpdatedLocation.CountryCode, parties);
             }
 
-            if (!parties.TryGetValue(newOrUpdatedLocation.PartyId, out Dictionary<Location_Id, Location> locations))
+            if (!parties.TryGetValue(newOrUpdatedLocation.PartyId, out var locations))
             {
                 locations = new Dictionary<Location_Id, Location>();
                 parties.Add(newOrUpdatedLocation.PartyId, locations);
             }
 
-            if (locations.TryGetValue(newOrUpdatedLocation.Id, out Location existingLocation))
+            if (locations.TryGetValue(newOrUpdatedLocation.Id, out var existingLocation))
             {
 
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -2417,7 +2406,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region UpdateLocation        (Location)
 
-        public Location UpdateLocation(Location Location)
+        public Location? UpdateLocation(Location Location)
         {
 
             if (Location is null)
@@ -2426,8 +2415,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
-                    parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
+                if (Locations.TryGetValue(Location.CountryCode, out var parties)   &&
+                    parties.  TryGetValue(Location.PartyId,     out var locations) &&
                     locations.ContainsKey(Location.Id))
                 {
 
@@ -2483,9 +2472,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties)   &&
-                    parties.  TryGetValue(Location.PartyId,     out                      Dictionary<Location_Id, Location>  locations) &&
-                    locations.TryGetValue(Location.Id,          out Location                                                existingLocation))
+                if (Locations.TryGetValue(Location.CountryCode, out var parties)   &&
+                    parties.  TryGetValue(Location.PartyId,     out var locations) &&
+                    locations.TryGetValue(Location.Id,          out var existingLocation))
                 {
 
                     var patchResult = existingLocation.TryPatch(LocationPatch,
@@ -2581,9 +2570,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                       "The given EVSE must not be null!");
 
 
-            var EVSEExistedBefore = Location.TryGetEVSE(newOrUpdatedEVSE.UId, out EVSE existingEVSE);
+            var EVSEExistedBefore = Location.TryGetEVSE(newOrUpdatedEVSE.UId, out var existingEVSE);
 
-            if (existingEVSE != null)
+            if (existingEVSE is not null)
             {
                 if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                     newOrUpdatedEVSE.LastUpdated < existingEVSE.LastUpdated)
@@ -2863,9 +2852,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out Connector existingConnector);
+                var ConnectorExistedBefore = EVSE.TryGetConnector(newOrUpdatedConnector.Id, out var existingConnector);
 
-                if (existingConnector != null)
+                if (existingConnector is not null)
                 {
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
                         newOrUpdatedConnector.LastUpdated < existingConnector.LastUpdated)
@@ -2973,9 +2962,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
+                    if (parties.TryGetValue(PartyId, out var locations))
                     {
                         return locations.ContainsKey(LocationId);
                     }
@@ -2991,18 +2980,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region TryGetLocation(CountryCode, PartyId, LocationId, out Location)
 
-        public Boolean TryGetLocation(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Location_Id   LocationId,
-                                      out Location  Location)
+        public Boolean TryGetLocation(CountryCode    CountryCode,
+                                      Party_Id       PartyId,
+                                      Location_Id    LocationId,
+                                      out Location?  Location)
         {
 
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
+                    if (parties.TryGetValue(PartyId, out var locations))
                     {
                         if (locations.TryGetValue(LocationId, out Location))
                             return true;
@@ -3020,8 +3009,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region GetLocations  (CountryCode = null, PartyId = null)
 
-        public IEnumerable<Location> GetLocations(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<Location> GetLocations(CountryCode? CountryCode   = null,
+                                                  Party_Id?    PartyId       = null)
         {
 
             lock (Locations)
@@ -3029,9 +3018,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                    if (Locations.TryGetValue(CountryCode.Value, out var parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
+                        if (parties.TryGetValue(PartyId.Value, out var locations))
                         {
                             return locations.Values.ToArray();
                         }
@@ -3045,7 +3034,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     foreach (var party in Locations.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Location_Id, Location> locations))
+                        if (party.TryGetValue(PartyId.Value, out var locations))
                         {
                             allLocations.AddRange(locations.Values);
                         }
@@ -3057,7 +3046,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Locations.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                    if (Locations.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allLocations = new List<Location>();
@@ -3089,7 +3078,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return new Location[0];
+                return Array.Empty<Location>();
 
             }
 
@@ -3109,10 +3098,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(Location.CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(Location.CountryCode, out var parties))
                 {
 
-                    if (parties.TryGetValue(Location.PartyId, out Dictionary<Location_Id, Location> locations))
+                    if (parties.TryGetValue(Location.PartyId, out var locations))
                     {
 
                         if (locations.ContainsKey(Location.Id))
@@ -3169,9 +3158,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Locations)
             {
 
-                if (Locations.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Location_Id, Location>> parties))
+                if (Locations.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Location_Id, Location> locations))
+                    if (parties.TryGetValue(PartyId, out var locations))
                     {
                         locations.Clear();
                     }
@@ -3211,13 +3200,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (!Tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
                     Tariffs.Add(Tariff.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
                 {
                     tariffs = new Dictionary<Tariff_Id, Tariff>();
                     parties.Add(Tariff.PartyId, tariffs);
@@ -3266,13 +3255,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (!Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (!Tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
                     Tariffs.Add(Tariff.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
                 {
                     tariffs = new Dictionary<Tariff_Id, Tariff>();
                     parties.Add(Tariff.PartyId, tariffs);
@@ -3320,19 +3309,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (!Tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (!Tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
                     Tariffs.Add(newOrUpdatedTariff.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(newOrUpdatedTariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                if (!parties.TryGetValue(newOrUpdatedTariff.PartyId, out var tariffs))
                 {
                     tariffs = new Dictionary<Tariff_Id, Tariff>();
                     parties.Add(newOrUpdatedTariff.PartyId, tariffs);
                 }
 
-                if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out Tariff existingTariff))
+                if (tariffs.TryGetValue(newOrUpdatedTariff.Id, out var existingTariff))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3392,7 +3381,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region UpdateTariff        (Tariff)
 
-        public Tariff UpdateTariff(Tariff Tariff)
+        public Tariff? UpdateTariff(Tariff Tariff)
         {
 
             if (Tariff is null)
@@ -3401,8 +3390,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
+                if (Tariffs.TryGetValue(Tariff.CountryCode, out var parties) &&
+                    parties.TryGetValue(Tariff.PartyId,     out var tariffs) &&
                     tariffs.ContainsKey(Tariff.Id))
                 {
 
@@ -3457,9 +3446,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out                      Dictionary<Tariff_Id, Tariff>  tariffs) &&
-                    tariffs.TryGetValue(Tariff.Id,          out Tariff                                              tariff))
+                if (Tariffs.TryGetValue(Tariff.CountryCode, out var parties) &&
+                    parties.TryGetValue(Tariff.PartyId,     out var tariffs) &&
+                    tariffs.TryGetValue(Tariff.Id,          out var tariff))
                 {
 
                     var patchResult = tariff.TryPatch(TariffPatch,
@@ -3513,9 +3502,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    if (parties.TryGetValue(PartyId, out var tariffs))
                     {
                         return tariffs.ContainsKey(TariffId);
                     }
@@ -3531,18 +3520,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region TryGetTariff(CountryCode, PartyId, TariffId, out Tariff)
 
-        public Boolean TryGetTariff(CountryCode   CountryCode,
-                                      Party_Id      PartyId,
-                                      Tariff_Id   TariffId,
-                                      out Tariff  Tariff)
+        public Boolean TryGetTariff(CountryCode  CountryCode,
+                                    Party_Id     PartyId,
+                                    Tariff_Id    TariffId,
+                                    out Tariff?  Tariff)
         {
 
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    if (parties.TryGetValue(PartyId, out var tariffs))
                     {
                         if (tariffs.TryGetValue(TariffId, out Tariff))
                             return true;
@@ -3561,7 +3550,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region GetTariffs  (CountryCode = null, PartyId = null)
 
         public IEnumerable<Tariff> GetTariffs(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+                                              Party_Id?    PartyId      = null)
         {
 
             lock (Tariffs)
@@ -3569,9 +3558,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                    if (Tariffs.TryGetValue(CountryCode.Value, out var parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
+                        if (parties.TryGetValue(PartyId.Value, out var tariffs))
                         {
                             return tariffs.Values.ToArray();
                         }
@@ -3585,7 +3574,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     foreach (var party in Tariffs.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Tariff_Id, Tariff> tariffs))
+                        if (party.TryGetValue(PartyId.Value, out var tariffs))
                         {
                             allTariffs.AddRange(tariffs.Values);
                         }
@@ -3597,7 +3586,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Tariffs.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                    if (Tariffs.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allTariffs = new List<Tariff>();
@@ -3629,7 +3618,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return new Tariff[0];
+                return Array.Empty<Tariff>();
 
             }
 
@@ -3649,10 +3638,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
 
-                    if (parties.TryGetValue(Tariff.PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    if (parties.TryGetValue(Tariff.PartyId, out var tariffs))
                     {
 
                         if (tariffs.ContainsKey(Tariff.Id))
@@ -3709,9 +3698,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>> parties))
+                if (Tariffs.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Tariff_Id, Tariff> tariffs))
+                    if (parties.TryGetValue(PartyId, out var tariffs))
                     {
                         tariffs.Clear();
                     }
@@ -3750,13 +3739,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (!Sessions.TryGetValue(Session.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
                     Sessions.Add(Session.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                if (!parties.TryGetValue(Session.PartyId, out var sessions))
                 {
                     sessions = new Dictionary<Session_Id, Session>();
                     parties.Add(Session.PartyId, sessions);
@@ -3805,13 +3794,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (!Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (!Sessions.TryGetValue(Session.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
                     Sessions.Add(Session.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                if (!parties.TryGetValue(Session.PartyId, out var sessions))
                 {
                     sessions = new Dictionary<Session_Id, Session>();
                     parties.Add(Session.PartyId, sessions);
@@ -3859,19 +3848,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (!Sessions.TryGetValue(newOrUpdatedSession.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (!Sessions.TryGetValue(newOrUpdatedSession.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Session_Id, Session>>();
                     Sessions.Add(newOrUpdatedSession.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(newOrUpdatedSession.PartyId, out Dictionary<Session_Id, Session> sessions))
+                if (!parties.TryGetValue(newOrUpdatedSession.PartyId, out var sessions))
                 {
                     sessions = new Dictionary<Session_Id, Session>();
                     parties.Add(newOrUpdatedSession.PartyId, sessions);
                 }
 
-                if (sessions.TryGetValue(newOrUpdatedSession.Id, out Session existingSession))
+                if (sessions.TryGetValue(newOrUpdatedSession.Id, out var existingSession))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -3931,7 +3920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region UpdateSession        (Session)
 
-        public Session UpdateSession(Session Session)
+        public Session? UpdateSession(Session Session)
         {
 
             if (Session is null)
@@ -3940,8 +3929,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
-                    parties.  TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
+                if (Sessions.TryGetValue(Session.CountryCode, out var parties)  &&
+                    parties. TryGetValue(Session.PartyId,     out var sessions) &&
                     sessions.ContainsKey(Session.Id))
                 {
 
@@ -3996,9 +3985,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties)  &&
-                    parties. TryGetValue(Session.PartyId,     out                      Dictionary<Session_Id, Session>  sessions) &&
-                    sessions.TryGetValue(Session.Id,          out Session                                               session))
+                if (Sessions.TryGetValue(Session.CountryCode, out var parties)  &&
+                    parties. TryGetValue(Session.PartyId,     out var sessions) &&
+                    sessions.TryGetValue(Session.Id,          out var session))
                 {
 
                     var patchResult = session.TryPatch(SessionPatch,
@@ -4051,9 +4040,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
+                    if (parties.TryGetValue(PartyId, out var sessions))
                     {
                         return sessions.ContainsKey(SessionId);
                     }
@@ -4069,18 +4058,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region TryGetSession(CountryCode, PartyId, SessionId, out Session)
 
-        public Boolean TryGetSession(CountryCode  CountryCode,
-                                     Party_Id     PartyId,
-                                     Session_Id   SessionId,
-                                     out Session  Session)
+        public Boolean TryGetSession(CountryCode   CountryCode,
+                                     Party_Id      PartyId,
+                                     Session_Id    SessionId,
+                                     out Session?  Session)
         {
 
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
+                    if (parties.TryGetValue(PartyId, out var sessions))
                     {
                         if (sessions.TryGetValue(SessionId, out Session))
                             return true;
@@ -4098,8 +4087,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region GetSessions  (CountryCode = null, PartyId = null)
 
-        public IEnumerable<Session> GetSessions(CountryCode? CountryCode  = null,
-                                                  Party_Id?    PartyId      = null)
+        public IEnumerable<Session> GetSessions(CountryCode? CountryCode   = null,
+                                                Party_Id?    PartyId       = null)
         {
 
             lock (Sessions)
@@ -4107,9 +4096,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                    if (Sessions.TryGetValue(CountryCode.Value, out var parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
+                        if (parties.TryGetValue(PartyId.Value, out var sessions))
                         {
                             return sessions.Values.ToArray();
                         }
@@ -4123,7 +4112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     foreach (var party in Sessions.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<Session_Id, Session> sessions))
+                        if (party.TryGetValue(PartyId.Value, out var sessions))
                         {
                             allSessions.AddRange(sessions.Values);
                         }
@@ -4135,7 +4124,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Sessions.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                    if (Sessions.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allSessions = new List<Session>();
@@ -4167,7 +4156,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return new Session[0];
+                return Array.Empty<Session>();
 
             }
 
@@ -4187,10 +4176,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(Session.CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(Session.CountryCode, out var parties))
                 {
 
-                    if (parties.TryGetValue(Session.PartyId, out Dictionary<Session_Id, Session> sessions))
+                    if (parties.TryGetValue(Session.PartyId, out var sessions))
                     {
 
                         if (sessions.ContainsKey(Session.Id))
@@ -4216,17 +4205,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region RemoveAllSessions()
+        #region RemoveAllSessions(IncludeSessions = null)
 
         /// <summary>
         /// Remove all sessions.
         /// </summary>
-        public void RemoveAllSessions()
+        /// <param name="IncludeSessions">An optional charging session filter.</param>
+        public void RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
         {
 
             lock (Sessions)
             {
-                Sessions.Clear();
+
+                if (IncludeSessions is null)
+                    Sessions.Clear();
+
+                else
+                {
+
+                    var sessionsToDelete = Sessions.Values.SelectMany(xx => xx.Values).
+                                                           SelectMany(yy => yy.Values).
+                                                           Where     (IncludeSessions).
+                                                           ToArray   ();
+
+                    foreach (var session in sessionsToDelete)
+                        Sessions[session.CountryCode][session.PartyId].Remove(session.Id);
+
+                }
+
             }
 
         }
@@ -4247,9 +4253,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (Sessions)
             {
 
-                if (Sessions.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<Session_Id, Session>> parties))
+                if (Sessions.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<Session_Id, Session> sessions))
+                    if (parties.TryGetValue(PartyId, out var sessions))
                     {
                         sessions.Clear();
                     }
@@ -4396,8 +4402,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #region AddOrUpdateToken   (newOrUpdatedToken, Status = AllowedTypes.ALLOWED, AllowDowngrades = false)
 
         public async Task<AddOrUpdateResult<Token>> AddOrUpdateToken(Token         newOrUpdatedToken,
-                                                                     AllowedType?  Status           = null,
-                                                                     Boolean?      AllowDowngrades  = false)
+                                                                     AllowedType?  Status            = null,
+                                                                     Boolean?      AllowDowngrades   = false)
         {
 
             Status ??= AllowedType.ALLOWED;
@@ -4595,7 +4601,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 }
 
                 var VerifyTokenLocal = OnVerifyToken;
-                if (VerifyTokenLocal != null)
+                if (VerifyTokenLocal is not null)
                 {
 
                     try
@@ -4607,8 +4613,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                         TokenWithStatus = result;
 
-                        if (TokenWithStatus != null)
-                            return true;
+                        return true;
 
                     } catch (Exception e)
                     {
@@ -4863,13 +4868,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (!ChargeDetailRecords.TryGetValue(CDR.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
                     ChargeDetailRecords.Add(CDR.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                if (!parties.TryGetValue(CDR.PartyId, out var partyCDRs))
                 {
                     partyCDRs = new Dictionary<CDR_Id, CDR>();
                     parties.Add(CDR.PartyId, partyCDRs);
@@ -4918,13 +4923,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (!ChargeDetailRecords.TryGetValue(CDR.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
                     ChargeDetailRecords.Add(CDR.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                if (!parties.TryGetValue(CDR.PartyId, out var partyCDRs))
                 {
                     partyCDRs = new Dictionary<CDR_Id, CDR>();
                     parties.Add(CDR.PartyId, partyCDRs);
@@ -4936,7 +4941,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     partyCDRs.Add(CDR.Id, CDR);
 
                     var OnChargeDetailRecordAddedLocal = OnChargeDetailRecordAdded;
-                    if (OnChargeDetailRecordAddedLocal != null)
+                    if (OnChargeDetailRecordAddedLocal is not null)
                     {
                         try
                         {
@@ -4972,19 +4977,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (!ChargeDetailRecords.TryGetValue(newOrUpdatedCDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (!ChargeDetailRecords.TryGetValue(newOrUpdatedCDR.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<CDR_Id, CDR>>();
                     ChargeDetailRecords.Add(newOrUpdatedCDR.CountryCode, parties);
                 }
 
-                if (!parties.TryGetValue(newOrUpdatedCDR.PartyId, out Dictionary<CDR_Id, CDR> CDRs))
+                if (!parties.TryGetValue(newOrUpdatedCDR.PartyId, out var CDRs))
                 {
                     CDRs = new Dictionary<CDR_Id, CDR>();
                     parties.Add(newOrUpdatedCDR.PartyId, CDRs);
                 }
 
-                if (CDRs.TryGetValue(newOrUpdatedCDR.Id, out CDR existingCDR))
+                if (CDRs.TryGetValue(newOrUpdatedCDR.Id, out var existingCDR))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -5044,7 +5049,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region UpdateCDR        (CDR)
 
-        public CDR UpdateCDR(CDR CDR)
+        public CDR? UpdateCDR(CDR CDR)
         {
 
             if (CDR is null)
@@ -5053,15 +5058,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties)   &&
-                    parties.            TryGetValue(CDR.PartyId,     out                      Dictionary<CDR_Id, CDR>  partyCDRs) &&
+                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out var parties)   &&
+                    parties.            TryGetValue(CDR.PartyId,     out var partyCDRs) &&
                     partyCDRs.          ContainsKey(CDR.Id))
                 {
 
                     partyCDRs[CDR.Id] = CDR;
 
                     var OnChargeDetailRecordChangedLocal = OnChargeDetailRecordChanged;
-                    if (OnChargeDetailRecordChangedLocal != null)
+                    if (OnChargeDetailRecordChangedLocal is not null)
                     {
                         try
                         {
@@ -5098,9 +5103,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (ChargeDetailRecords.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                    if (parties.TryGetValue(PartyId, out var partyCDRs))
                     {
                         return partyCDRs.ContainsKey(CDRId);
                     }
@@ -5119,15 +5124,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public Boolean TryGetCDR(CountryCode  CountryCode,
                                  Party_Id     PartyId,
                                  CDR_Id       CDRId,
-                                 out CDR      CDR)
+                                 out CDR?     CDR)
         {
 
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (ChargeDetailRecords.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                    if (parties.TryGetValue(PartyId, out var partyCDRs))
                     {
                         if (partyCDRs.TryGetValue(CDRId, out CDR))
                             return true;
@@ -5180,9 +5185,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (ChargeDetailRecords.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                    if (ChargeDetailRecords.TryGetValue(CountryCode.Value, out var parties))
                     {
-                        if (parties.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> partyCDRs))
+                        if (parties.TryGetValue(PartyId.Value, out var partyCDRs))
                         {
                             return partyCDRs.Values.ToArray();
                         }
@@ -5196,7 +5201,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     foreach (var party in ChargeDetailRecords.Values)
                     {
-                        if (party.TryGetValue(PartyId.Value, out Dictionary<CDR_Id, CDR> partyCDRs))
+                        if (party.TryGetValue(PartyId.Value, out var partyCDRs))
                         {
                             allCDRs.AddRange(partyCDRs.Values);
                         }
@@ -5208,7 +5213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (ChargeDetailRecords.TryGetValue(CountryCode.Value, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                    if (ChargeDetailRecords.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allCDRs = new List<CDR>();
@@ -5240,7 +5245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 }
 
-                return new CDR[0];
+                return Array.Empty<CDR>();
 
             }
 
@@ -5260,10 +5265,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (ChargeDetailRecords.TryGetValue(CDR.CountryCode, out var parties))
                 {
 
-                    if (parties.TryGetValue(CDR.PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                    if (parties.TryGetValue(CDR.PartyId, out var partyCDRs))
                     {
 
                         if (partyCDRs.ContainsKey(CDR.Id))
@@ -5320,9 +5325,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             lock (ChargeDetailRecords)
             {
 
-                if (ChargeDetailRecords.TryGetValue(CountryCode, out Dictionary<Party_Id, Dictionary<CDR_Id, CDR>> parties))
+                if (ChargeDetailRecords.TryGetValue(CountryCode, out var parties))
                 {
-                    if (parties.TryGetValue(PartyId, out Dictionary<CDR_Id, CDR> partyCDRs))
+                    if (parties.TryGetValue(PartyId, out var partyCDRs))
                         partyCDRs.Clear();
                 }
 

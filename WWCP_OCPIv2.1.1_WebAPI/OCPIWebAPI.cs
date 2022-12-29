@@ -411,6 +411,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
 
         #endregion
 
+        #region Custom JSON parsers
+
+        #endregion
+
+        #region Custom JSON serializers
+
+        public CustomJObjectSerializerDelegate<RemoteParty>?       CustomRemotePartySerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?   CustomBusinessDetailsSerializer     { get; set; }
+        public CustomJObjectSerializerDelegate<AccessInfoStatus>?  CustomAccessInfoStatusSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<RemoteAccessInfo>?  CustomRemoteAccessInfoSerializer    { get; set; }
+
+        #endregion
+
         #region Events
 
         #region Generic HTTP server logging
@@ -767,8 +780,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                                             false, //Embedded
                                                                                             null,
                                                                                             null,
-                                                                                            null,  //GetRemotePartySerializator(Request, HTTPUser),
-                                                                                            includeCryptoHash);
+                                                                                            null);  //GetRemotePartySerializator(Request, HTTPUser),
 
 
                                              return Task.FromResult(
@@ -929,16 +941,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  includeCryptoHash).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -1122,16 +1135,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  includeCryptoHash).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -1456,16 +1470,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  false).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -1572,16 +1587,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  includeCryptoHash).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -1790,16 +1806,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  false).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -1906,16 +1923,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  includeCryptoHash).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -2182,16 +2200,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  false).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -2298,16 +2317,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  includeCryptoHash).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -2516,7 +2536,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
@@ -2629,16 +2649,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,
                                                                                                //         false, //Embedded
                                                                                                //         includeCryptoHash).
                                                                                                RemoteParty.ToJSON(false,
-                                                                                                                  null,
-                                                                                                                  null,
-                                                                                                                  includeCryptoHash).
+                                                                                                                  CustomRemotePartySerializer,
+                                                                                                                  CustomBusinessDetailsSerializer,
+                                                                                                                  CustomAccessInfoStatusSerializer,
+                                                                                                                  CustomRemoteAccessInfoSerializer).
                                                                                                            ToUTF8Bytes(),
                                                                   Connection                 = "close",
                                                                   Vary                       = "Accept"
@@ -2905,7 +2926,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.WebAPI
                                                                   AccessControlAllowOrigin   = "*",
                                                                   AccessControlAllowMethods  = "GET, SET",
                                                                   AccessControlAllowHeaders  = "X-PINGOTHER, Content-Type, Accept, Authorization, X-App-Version",
-                                                                  ETag                       = RemoteParty.SHA256Hash,
+                                                                  ETag                       = RemoteParty.ETag,
                                                                   ContentType                = HTTPContentType.JSON_UTF8,
                                                                   Content                    = //GetRemotePartySerializator(Request, HTTPUser)
                                                                                                //        (RemoteParty,

@@ -202,7 +202,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                     HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
 
-                    if (HTTPResponseBuilder.Content == null)
+                    if (HTTPResponseBuilder.Content is null)
                         HTTPResponseBuilder.Content = JSONObject.Create(
 
                                                           Data != null

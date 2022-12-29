@@ -17,10 +17,6 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
@@ -42,11 +38,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public Int32            StatusCode                { get; }
         public String           StatusMessage             { get; }
-        public String           AdditionalInformation     { get; }
+        public String?          AdditionalInformation     { get; }
         public DateTime         Timestamp                 { get; }
 
 
-        public HTTPResponse     HTTPResponse              { get; }
+        public HTTPResponse?    HTTPResponse              { get; }
         public Request_Id?      RequestId                 { get; }
         public Correlation_Id?  CorrelationId             { get; }
         public Party_Id?        FromPartyId               { get; }
@@ -62,10 +58,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                             Int32            StatusCode,
                             String           StatusMessage,
-                            String           AdditionalInformation   = null,
+                            String?          AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
 
-                            HTTPResponse     HTTPResponse            = null,
+                            HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
                             Correlation_Id?  CorrelationId           = null,
                             Party_Id?        FromPartyId             = null,
@@ -94,10 +90,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
         public OCPIResponse(Int32            StatusCode,
                             String           StatusMessage,
-                            String           AdditionalInformation   = null,
+                            String?          AdditionalInformation   = null,
                             DateTime?        Timestamp               = null,
 
-                            HTTPResponse     HTTPResponse            = null,
+                            HTTPResponse?    HTTPResponse            = null,
                             Request_Id?      RequestId               = null,
                             Correlation_Id?  CorrelationId           = null,
                             Party_Id?        FromPartyId             = null,
@@ -163,13 +159,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             #region Properties
 
-            public OCPIRequest           Request                   { get; }
+            public OCPIRequest?          Request                   { get; }
 
-            public JToken                Data                      { get; set; }
+            public JToken?               Data                      { get; set; }
             public Int32?                StatusCode                { get; set; }
-            public String                StatusMessage             { get; set; }
+            public String?               StatusMessage             { get; set; }
 
-            public String                AdditionalInformation     { get; set; }
+            public String?               AdditionalInformation     { get; set; }
             public DateTime?             Timestamp                 { get; set; }
 
 
@@ -185,8 +181,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             public Builder(OCPIRequest      Request,
                            Int32?           StatusCode              = null,
-                           String           StatusMessage           = null,
-                           String           AdditionalInformation   = null,
+                           String?          StatusMessage           = null,
+                           String?          AdditionalInformation   = null,
                            DateTime?        Timestamp               = null,
 
                            Request_Id?      RequestId               = null,
@@ -210,8 +206,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             public HTTPResponse.Builder ToHTTPResponseBuilder()
             {
 
-                if (!Timestamp.HasValue)
-                    Timestamp = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+                Timestamp ??= org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
 
                 HTTPResponseBuilder.Server                    = Request.HTTPRequest.HTTPServer.DefaultServerName;
                 HTTPResponseBuilder.Date                      = Timestamp.Value;
@@ -223,7 +218,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                     HTTPResponseBuilder.ContentType = HTTPContentType.JSON_UTF8;
 
-                    if (HTTPResponseBuilder.Content == null)
+                    if (HTTPResponseBuilder.Content is null)
                         HTTPResponseBuilder.Content = JSONObject.Create(
 
                                                           Data != null
@@ -266,12 +261,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             public OCPIResponse ToImmutable
 
-                => new OCPIResponse(Request,
-                                    StatusCode ?? 3000,
-                                    StatusMessage,
-                                    AdditionalInformation,
-                                    Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
-                                    ToHTTPResponseBuilder().AsImmutable);
+                => new (Request,
+                        StatusCode ?? 3000,
+                        StatusMessage,
+                        AdditionalInformation,
+                        Timestamp ?? org.GraphDefined.Vanaheimr.Illias.Timestamp.Now,
+                        ToHTTPResponseBuilder().AsImmutable);
 
 
         }

@@ -46,9 +46,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
         public static void Session_SerializeDeserialize_Test01()
         {
 
-            #region Define Session1
+            #region Define session1
 
-            var Session1 = new Session(
+            var session1 = new Session(
+                               CountryCode.Parse("DE"),   // Note: The country code is just internal!
+                               Party_Id.   Parse("GEF"),  // Note: The party identification is just internal!
                                Session_Id. Parse("Session0001"),
                                DateTime.Parse("2020-08-21T00:00:00.000Z").ToUniversalTime(), // Start
                                1.11M, // KWh
@@ -100,44 +102,48 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
 
             #endregion
 
-            var JSON = Session1.ToJSON();
+            var json = session1.ToJSON();
 
-            Assert.AreEqual("Session0001",                     JSON["id"].                              Value<String>());
-            Assert.AreEqual("2020-08-21T00:00:00.000Z",        JSON["start_date_time"].                 Value<String>());
-            Assert.AreEqual("2020-08-22T00:00:00.000Z",        JSON["end_date_time"].                   Value<String>());
-            Assert.AreEqual(1.11,                              JSON["kwh"].                             Value<Decimal>());
-            Assert.AreEqual("1234",                            JSON["cdr_token"]["uid"].                Value<String>());
-            Assert.AreEqual("RFID",                            JSON["cdr_token"]["type"].               Value<String>());
-            Assert.AreEqual("Contract0815",                    JSON["cdr_token"]["contract_id"].        Value<String>());
-            Assert.AreEqual("AUTH_REQUEST",                    JSON["auth_method"].                     Value<String>());
-            Assert.AreEqual("Auth1234",                        JSON["authorization_reference"].         Value<String>());
-            Assert.AreEqual("LOC0001",                         JSON["location_id"].                     Value<String>());
-            Assert.AreEqual("EVSE0001",                        JSON["evse_uid"].                        Value<String>());
-            Assert.AreEqual("C1",                              JSON["connector_id"].                    Value<String>());
-            Assert.AreEqual("Meter0001",                       JSON["meter_id"].                        Value<String>());
-            Assert.AreEqual("EUR",                             JSON["currency"].                        Value<String>());
+            Assert.AreEqual("DE",                              json["country_code"].                    Value<String>());
+            Assert.AreEqual("GEF",                             json["party_id"].                        Value<String>());
+            Assert.AreEqual("Session0001",                     json["id"].                              Value<String>());
+            Assert.AreEqual("2020-08-21T00:00:00.000Z",        json["start_date_time"].                 Value<String>());
+            Assert.AreEqual("2020-08-22T00:00:00.000Z",        json["end_date_time"].                   Value<String>());
+            Assert.AreEqual(1.11,                              json["kwh"].                             Value<Decimal>());
+            Assert.AreEqual("1234",                            json["cdr_token"]["uid"].                Value<String>());
+            Assert.AreEqual("RFID",                            json["cdr_token"]["type"].               Value<String>());
+            Assert.AreEqual("Contract0815",                    json["cdr_token"]["contract_id"].        Value<String>());
+            Assert.AreEqual("AUTH_REQUEST",                    json["auth_method"].                     Value<String>());
+            Assert.AreEqual("Auth1234",                        json["authorization_reference"].         Value<String>());
+            Assert.AreEqual("LOC0001",                         json["location_id"].                     Value<String>());
+            Assert.AreEqual("EVSE0001",                        json["evse_uid"].                        Value<String>());
+            Assert.AreEqual("C1",                              json["connector_id"].                    Value<String>());
+            Assert.AreEqual("Meter0001",                       json["meter_id"].                        Value<String>());
+            Assert.AreEqual("EUR",                             json["currency"].                        Value<String>());
             //Assert.AreEqual("Stadtwerke Jena-Ost",             JSON["charging_periods"]["xxx"].Value<String>());
-            Assert.AreEqual(1.12,                              JSON["total_cost"]["excl_vat"].          Value<Decimal>());
-            Assert.AreEqual(2.24,                              JSON["total_cost"]["incl_vat"].          Value<Decimal>());
-            Assert.AreEqual("ACTIVE",                          JSON["status"].                          Value<String>());
-            Assert.AreEqual("2020-09-21T00:00:00.000Z",        JSON["last_updated"].                    Value<String>());
+            Assert.AreEqual(1.12,                              json["total_cost"]["excl_vat"].          Value<Decimal>());
+            Assert.AreEqual(2.24,                              json["total_cost"]["incl_vat"].          Value<Decimal>());
+            Assert.AreEqual("ACTIVE",                          json["status"].                          Value<String>());
+            Assert.AreEqual("2020-09-21T00:00:00.000Z",        json["last_updated"].                    Value<String>());
 
-            Assert.IsTrue(Session.TryParse(JSON, out var Session2, out var errorResponse));
+            Assert.IsTrue(Session.TryParse(json, out var session2, out var errorResponse));
             Assert.IsNull(errorResponse);
 
-            Assert.AreEqual(Session1.Id,                       Session2.Id);
-            Assert.AreEqual(Session1.Start.    ToIso8601(),    Session2.Start.    ToIso8601());
-            Assert.AreEqual(Session1.End.Value.ToIso8601(),    Session2.End.Value.ToIso8601());
-            Assert.AreEqual(Session1.kWh,                      Session2.kWh);
-            Assert.AreEqual(Session1.AuthId,                   Session2.AuthId);
-            Assert.AreEqual(Session1.AuthMethod,               Session2.AuthMethod);
-            Assert.AreEqual(Session1.Location,                 Session2.Location);
-            Assert.AreEqual(Session1.MeterId,                  Session2.MeterId);
-            Assert.AreEqual(Session1.Currency,                 Session2.Currency);
-            Assert.AreEqual(Session1.ChargingPeriods,          Session2.ChargingPeriods);
-            Assert.AreEqual(Session1.TotalCost,                Session2.TotalCost);
-            Assert.AreEqual(Session1.Status,                   Session2.Status);
-            Assert.AreEqual(Session1.LastUpdated.ToIso8601(),  Session2.LastUpdated.ToIso8601());
+            Assert.AreEqual(session1.CountryCode,              session2.CountryCode);
+            Assert.AreEqual(session1.PartyId,                  session2.PartyId);
+            Assert.AreEqual(session1.Id,                       session2.Id);
+            Assert.AreEqual(session1.Start.    ToIso8601(),    session2.Start.    ToIso8601());
+            Assert.AreEqual(session1.End.Value.ToIso8601(),    session2.End.Value.ToIso8601());
+            Assert.AreEqual(session1.kWh,                      session2.kWh);
+            Assert.AreEqual(session1.AuthId,                   session2.AuthId);
+            Assert.AreEqual(session1.AuthMethod,               session2.AuthMethod);
+            Assert.AreEqual(session1.Location,                 session2.Location);
+            Assert.AreEqual(session1.MeterId,                  session2.MeterId);
+            Assert.AreEqual(session1.Currency,                 session2.Currency);
+            Assert.AreEqual(session1.ChargingPeriods,          session2.ChargingPeriods);
+            Assert.AreEqual(session1.TotalCost,                session2.TotalCost);
+            Assert.AreEqual(session1.Status,                   session2.Status);
+            Assert.AreEqual(session1.LastUpdated.ToIso8601(),  session2.LastUpdated.ToIso8601());
 
         }
 
@@ -187,23 +193,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(errorResponse);
 
             Assert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
-            //Assert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
-            //Assert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
-            //Assert.AreEqual(Session1.kWh,                      parsedSession.kWh);
-            //Assert.AreEqual(Session1.CDRToken,                 parsedSession.CDRToken);
-            //Assert.AreEqual(Session1.AuthMethod,               parsedSession.AuthMethod);
-            //Assert.AreEqual(Session1.AuthorizationReference,   parsedSession.AuthorizationReference);
-            //Assert.AreEqual(Session1.LocationId,               parsedSession.LocationId);
-            //Assert.AreEqual(Session1.EVSEUId,                  parsedSession.EVSEUId);
-            //Assert.AreEqual(Session1.ConnectorId,              parsedSession.ConnectorId);
-            //Assert.AreEqual(Session1.MeterId,                  parsedSession.MeterId);
-            //Assert.AreEqual(Session1.EnergyMeter,              parsedSession.EnergyMeter);
-            //Assert.AreEqual(Session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
-            //Assert.AreEqual(Session1.Currency,                 parsedSession.Currency);
-            //Assert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
-            //Assert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
-            //Assert.AreEqual(Session1.Status,                   parsedSession.Status);
-            //Assert.AreEqual(Session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
+            //Assert.AreEqual(session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
+            //Assert.AreEqual(session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
+            //Assert.AreEqual(session1.kWh,                      parsedSession.kWh);
+            //Assert.AreEqual(session1.CDRToken,                 parsedSession.CDRToken);
+            //Assert.AreEqual(session1.AuthMethod,               parsedSession.AuthMethod);
+            //Assert.AreEqual(session1.AuthorizationReference,   parsedSession.AuthorizationReference);
+            //Assert.AreEqual(session1.LocationId,               parsedSession.LocationId);
+            //Assert.AreEqual(session1.EVSEUId,                  parsedSession.EVSEUId);
+            //Assert.AreEqual(session1.ConnectorId,              parsedSession.ConnectorId);
+            //Assert.AreEqual(session1.MeterId,                  parsedSession.MeterId);
+            //Assert.AreEqual(session1.EnergyMeter,              parsedSession.EnergyMeter);
+            //Assert.AreEqual(session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
+            //Assert.AreEqual(session1.Currency,                 parsedSession.Currency);
+            //Assert.AreEqual(session1.ChargingPeriods,          parsedSession.ChargingPeriods);
+            //Assert.AreEqual(session1.TotalCosts,               parsedSession.TotalCosts);
+            //Assert.AreEqual(session1.Status,                   parsedSession.Status);
+            //Assert.AreEqual(session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
 
         }
 
@@ -278,23 +284,23 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.UnitTests
             Assert.IsNull(errorResponse);
 
             Assert.AreEqual(Session_Id. Parse("101"),                  parsedSession.Id);
-            //Assert.AreEqual(Session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
-            //Assert.AreEqual(Session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
-            //Assert.AreEqual(Session1.kWh,                      parsedSession.kWh);
-            //Assert.AreEqual(Session1.CDRToken,                 parsedSession.CDRToken);
-            //Assert.AreEqual(Session1.AuthMethod,               parsedSession.AuthMethod);
-            //Assert.AreEqual(Session1.AuthorizationReference,   parsedSession.AuthorizationReference);
-            //Assert.AreEqual(Session1.LocationId,               parsedSession.LocationId);
-            //Assert.AreEqual(Session1.EVSEUId,                  parsedSession.EVSEUId);
-            //Assert.AreEqual(Session1.ConnectorId,              parsedSession.ConnectorId);
-            //Assert.AreEqual(Session1.MeterId,                  parsedSession.MeterId);
-            //Assert.AreEqual(Session1.EnergyMeter,              parsedSession.EnergyMeter);
-            //Assert.AreEqual(Session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
-            //Assert.AreEqual(Session1.Currency,                 parsedSession.Currency);
-            //Assert.AreEqual(Session1.ChargingPeriods,          parsedSession.ChargingPeriods);
-            //Assert.AreEqual(Session1.TotalCosts,               parsedSession.TotalCosts);
-            //Assert.AreEqual(Session1.Status,                   parsedSession.Status);
-            //Assert.AreEqual(Session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
+            //Assert.AreEqual(session1.Start.    ToIso8601(),    parsedSession.Start.    ToIso8601());
+            //Assert.AreEqual(session1.End.Value.ToIso8601(),    parsedSession.End.Value.ToIso8601());
+            //Assert.AreEqual(session1.kWh,                      parsedSession.kWh);
+            //Assert.AreEqual(session1.CDRToken,                 parsedSession.CDRToken);
+            //Assert.AreEqual(session1.AuthMethod,               parsedSession.AuthMethod);
+            //Assert.AreEqual(session1.AuthorizationReference,   parsedSession.AuthorizationReference);
+            //Assert.AreEqual(session1.LocationId,               parsedSession.LocationId);
+            //Assert.AreEqual(session1.EVSEUId,                  parsedSession.EVSEUId);
+            //Assert.AreEqual(session1.ConnectorId,              parsedSession.ConnectorId);
+            //Assert.AreEqual(session1.MeterId,                  parsedSession.MeterId);
+            //Assert.AreEqual(session1.EnergyMeter,              parsedSession.EnergyMeter);
+            //Assert.AreEqual(session1.TransparencySoftwares,    parsedSession.TransparencySoftwares);
+            //Assert.AreEqual(session1.Currency,                 parsedSession.Currency);
+            //Assert.AreEqual(session1.ChargingPeriods,          parsedSession.ChargingPeriods);
+            //Assert.AreEqual(session1.TotalCosts,               parsedSession.TotalCosts);
+            //Assert.AreEqual(session1.Status,                   parsedSession.Status);
+            //Assert.AreEqual(session1.LastUpdated.ToIso8601(),  parsedSession.LastUpdated.ToIso8601());
 
         }
 

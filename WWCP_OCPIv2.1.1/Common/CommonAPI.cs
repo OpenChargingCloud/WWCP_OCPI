@@ -26,6 +26,7 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using System.Linq;
 
 #endregion
 
@@ -1590,7 +1591,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                       Roles                          Role,
                                       BusinessDetails                BusinessDetails,
 
-                                      IEnumerable<AccessInfo2>       AccessInfos,
+                                      IEnumerable<AccessInfoStatus>       AccessInfos,
                                       IEnumerable<RemoteAccessInfo>  RemoteAccessInfos,
 
                                       PartyStatus                    Status        = PartyStatus.ENABLED,
@@ -2008,10 +2009,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (remoteParties)
             {
 
-                foreach (var remoteParty in remoteParties.Values.Where(party => party.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)))
+                foreach (var remoteParty in remoteParties.Values.Where(party => party.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)))
                 {
 
-                    if (remoteParty.AccessInfo.Count() <= 1)
+                    if (remoteParty.AccessInfoStatus.Count() <= 1)
                     {
 
                         remoteParties.Remove(remoteParty.Id);
@@ -2032,7 +2033,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                  remoteParty.PartyId,
                                                  remoteParty.Role,
                                                  remoteParty.BusinessDetails,
-                                                 remoteParty.AccessInfo.Where(accessInfo => accessInfo.Token != AccessToken),
+                                                 remoteParty.AccessInfoStatus.Where(accessInfo => accessInfo.Token != AccessToken),
                                                  remoteParty.RemoteAccessInfos,
                                                  remoteParty.Status
                                              );
@@ -2057,14 +2058,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region TryGetAccessInfo(AccessToken, out AccessInfo2)
 
-        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfo2 AccessInfo2)
+        public Boolean TryGetAccessInfo(AccessToken AccessToken, out AccessInfoStatus AccessInfo2)
         {
 
             lock (remoteParties)
             {
 
-                var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                                       SelectMany(remoteParty => remoteParty.AccessInfo).
+                var accessInfos = remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                                       SelectMany(remoteParty => remoteParty.AccessInfoStatus).
                                                        ToArray();
 
                 if (accessInfos.Length == 1)
@@ -2084,13 +2085,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region GetAccessInfos(AccessToken)
 
-        public IEnumerable<AccessInfo2> GetAccessInfos(AccessToken AccessToken)
+        public IEnumerable<AccessInfoStatus> GetAccessInfos(AccessToken AccessToken)
         {
             lock (remoteParties)
             {
 
-                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
-                                            SelectMany(remoteParty => remoteParty.AccessInfo).
+                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
+                                            SelectMany(remoteParty => remoteParty.AccessInfoStatus).
                                             ToArray();
 
             }
@@ -2100,15 +2101,15 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region GetAccessInfos(AccessToken, AccessStatus)
 
-        public IEnumerable<AccessInfo2> GetAccessInfos(AccessToken   AccessToken,
+        public IEnumerable<AccessInfoStatus> GetAccessInfos(AccessToken   AccessToken,
                                                        AccessStatus  AccessStatus)
         {
             lock (remoteParties)
             {
 
-                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token  == AccessToken &&
+                return remoteParties.Values.Where     (remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token  == AccessToken &&
                                                                                                                accessInfo.Status == AccessStatus)).
-                                            SelectMany(remoteParty => remoteParty.AccessInfo).
+                                            SelectMany(remoteParty => remoteParty.AccessInfoStatus).
                                             ToArray();
 
             }
@@ -2124,7 +2125,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (remoteParties)
             {
 
-                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
                                              ToArray();
 
             }
@@ -2140,7 +2141,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (remoteParties)
             {
 
-                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token  == AccessToken &&
+                return remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token  == AccessToken &&
                                                                                                            accessInfo.Status == AccessStatus)).
                                              ToArray();
 
@@ -2157,7 +2158,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             lock (remoteParties)
             {
 
-                RemoteParties = remoteParties.Values.Where(remoteParty => remoteParty.AccessInfo.Any(accessInfo => accessInfo.Token == AccessToken)).
+                RemoteParties = remoteParties.Values.Where(remoteParty => remoteParty.AccessInfoStatus.Any(accessInfo => accessInfo.Token == AccessToken)).
                                                      ToArray();
 
                 return RemoteParties.Any();
@@ -3740,17 +3741,31 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region RemoveAllSessions()
+        #region RemoveAllSessions(IncludeSessions = null)
 
         /// <summary>
         /// Remove all sessions.
         /// </summary>
-        public void RemoveAllSessions()
+        /// <param name="IncludeSessions">An optional charging session filter.</param>
+        public void RemoveAllSessions(Func<Session, Boolean>? IncludeSessions = null)
         {
 
             lock (Sessions)
             {
-                Sessions.Clear();
+
+                if (IncludeSessions is null)
+                    Sessions.Clear();
+
+                else
+                {
+
+                    var sessionsToDelete = Sessions.Values.Where(IncludeSessions).ToArray();
+
+                    foreach (var session in sessionsToDelete)
+                        Sessions.Remove(session.Id);
+
+                }
+
             }
 
         }

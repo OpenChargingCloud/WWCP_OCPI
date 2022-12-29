@@ -2081,9 +2081,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     #endregion
 
                     response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Connector.Parse(json));
+                                                                    requestId,
+                                                                    correlationId,
+                                                                    json => Connector.Parse(json));
 
                 }
 
@@ -2279,9 +2279,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     #endregion
 
                     response = OCPIResponse<Connector>.ParseJObject(HTTPResponse,
-                                                                   requestId,
-                                                                   correlationId,
-                                                                   json => Connector.Parse(json));
+                                                                    requestId,
+                                                                    correlationId,
+                                                                    json => Connector.Parse(json));
 
                 }
 
@@ -4331,7 +4331,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                                      requestbuilder => {
                                                                                          requestbuilder.Authorization = TokenAuth;
                                                                                          requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = CDR.ToJSON(CustomCDRSerializer,
+                                                                                         requestbuilder.Content       = CDR.ToJSON(false,
+                                                                                                                                   CustomCDRSerializer,
                                                                                                                                    CustomLocationSerializer,
                                                                                                                                    CustomAdditionalGeoLocationSerializer,
                                                                                                                                    CustomEVSESerializer,

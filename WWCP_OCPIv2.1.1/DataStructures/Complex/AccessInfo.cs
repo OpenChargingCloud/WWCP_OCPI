@@ -27,34 +27,6 @@ using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 namespace cloud.charging.open.protocols.OCPIv2_1_1
 {
 
-    public readonly struct AccessInfo2
-    {
-
-        public AccessToken?  Token     { get; }
-        public AccessStatus  Status    { get; }
-
-
-        public AccessInfo2(AccessToken? Token,
-                           AccessStatus Status)
-        {
-
-            this.Token   = Token;
-            this.Status  = Status;
-
-        }
-
-        public JObject ToJSON()
-        {
-            return JSONObject.Create(
-                       new JProperty("token",   Token. ToString()),
-                       new JProperty("status",  Status.ToString())
-                   );
-        }
-
-    }
-
-
-
     public struct AccessInfo
     {
 
@@ -62,25 +34,26 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         public AccessStatus      Status             { get; set; }
         public URL?              VersionsURL        { get; }
         public BusinessDetails?  BusinessDetails    { get; }
-        public CountryCode?      CountryCode        { get; }
-        public Party_Id?         PartyId            { get; }
-        
-
+        public CountryCode       CountryCode        { get; }
+        public Party_Id          PartyId            { get; }
+        public Roles             Role               { get; }
 
         public AccessInfo(AccessToken       Token,
                           AccessStatus      Status,
+                          CountryCode       CountryCode,
+                          Party_Id          PartyId,
+                          Roles             Role,
                           URL?              VersionsURL       = null,
-                          BusinessDetails?  BusinessDetails   = null,
-                          CountryCode?      CountryCode       = null,
-                          Party_Id?         PartyId           = null)
+                          BusinessDetails?  BusinessDetails   = null)
         {
 
             this.Token            = Token;
             this.Status           = Status;
-            this.VersionsURL      = VersionsURL;
-            this.BusinessDetails  = BusinessDetails;
             this.CountryCode      = CountryCode;
             this.PartyId          = PartyId;
+            this.Role             = Role;
+            this.VersionsURL      = VersionsURL;
+            this.BusinessDetails  = BusinessDetails;
 
         }
 
@@ -90,6 +63,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                          new JProperty("accesstoken",      Token.          ToString()),
                          new JProperty("status",           Status.         ToString()),
+                         new JProperty("countryCode",      CountryCode.    ToString()),
+                         new JProperty("partyId",          PartyId.        ToString()),
+                         new JProperty("role",             Role.           AsText  ()),
 
                    VersionsURL.HasValue
                        ? new JProperty("versionsURL",      VersionsURL.    ToString())
@@ -97,30 +73,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                    BusinessDetails is not null
                        ? new JProperty("businessDetails",  BusinessDetails.ToJSON())
-                       : null,
-
-                   CountryCode.HasValue
-                       ? new JProperty("countryCode",      CountryCode.    ToString())
-                       : null,
-
-                   PartyId.HasValue
-                       ? new JProperty("partyId",          PartyId.        ToString())
                        : null
 
                );
 
         public Credentials? AsCredentials
 
-            => VersionsURL.    HasValue    &&
-               BusinessDetails is not null &&
-               CountryCode.    HasValue    &&
-               PartyId.        HasValue
+            => VersionsURL.    HasValue &&
+               BusinessDetails is not null
 
                    ? new Credentials(Token,
                                      VersionsURL.Value,
                                      BusinessDetails,
-                                     CountryCode.Value,
-                                     PartyId.    Value)
+                                     CountryCode,
+                                     PartyId)
 
                    : null;
 

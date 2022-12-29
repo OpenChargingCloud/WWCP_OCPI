@@ -668,57 +668,57 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>?               CustomSessionSerializer                = null,
-                              CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
-                              CustomJObjectSerializerDelegate<ChargingPeriod>?        CustomChargingPeriodSerializer         = null,
-                              CustomJObjectSerializerDelegate<CDRDimension>?          CustomCDRDimensionSerializer           = null,
-                              CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null)
+        public JObject ToJSON(CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
+                              CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
+                              CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
+                              CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null,
+                              CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
         {
 
             var JSON = JSONObject.Create(
 
-                           new JProperty("country_code",                   CountryCode.           ToString()),
-                           new JProperty("party_id",                       PartyId.               ToString()),
-                           new JProperty("id",                             Id.                    ToString()),
+                                 new JProperty("country_code",              CountryCode.           ToString()),
+                                 new JProperty("party_id",                  PartyId.               ToString()),
+                                 new JProperty("id",                        Id.                    ToString()),
 
-                           new JProperty("start_date_time",                Start.                 ToIso8601()),
+                                 new JProperty("start_date_time",           Start.                 ToIso8601()),
 
                            End.HasValue
-                               ? new JProperty("end_date_time",            End.             Value.ToIso8601())
+                               ? new JProperty("end_date_time",             End.             Value.ToIso8601())
                                : null,
 
-                           new JProperty("kwh",                            kWh),
+                                 new JProperty("kwh",                       kWh),
 
-                           new JProperty("cdr_token",                      CDRToken.              ToJSON(CustomCDRTokenSerializer)),
-                           new JProperty("auth_method",                    AuthMethod.            ToString()),
+                                 new JProperty("cdr_token",                 CDRToken.              ToJSON(CustomCDRTokenSerializer)),
+                                 new JProperty("auth_method",               AuthMethod.            ToString()),
 
                            AuthorizationReference.HasValue
-                               ? new JProperty("authorization_reference",  AuthorizationReference.ToString())
+                               ? new JProperty("authorization_reference",   AuthorizationReference.ToString())
                                : null,
 
-                           new JProperty("location_id",                    LocationId.            ToString()),
-                           new JProperty("evse_uid",                       EVSEUId.               ToString()),
-                           new JProperty("connector_id",                   ConnectorId.           ToString()),
+                                 new JProperty("location_id",               LocationId.            ToString()),
+                                 new JProperty("evse_uid",                  EVSEUId.               ToString()),
+                                 new JProperty("connector_id",              ConnectorId.           ToString()),
 
                            MeterId.HasValue
-                               ? new JProperty("meter_id",                 MeterId.               ToString())
+                               ? new JProperty("meter_id",                  MeterId.               ToString())
                                : null,
 
-                           new JProperty("currency",                       Currency.              ToString()),
+                                 new JProperty("currency",                  Currency.              ToString()),
 
                            ChargingPeriods.SafeAny()
-                               ? new JProperty("charging_periods",         new JArray(ChargingPeriods.      Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
-                                                                                                                                                           CustomCDRDimensionSerializer))))
+                               ? new JProperty("charging_periods",          new JArray(ChargingPeriods.Select(chargingPeriod => chargingPeriod.ToJSON(CustomChargingPeriodSerializer,
+                                                                                                                                                      CustomCDRDimensionSerializer))))
                                : null,
 
                            TotalCosts.HasValue
-                               ? new JProperty("total_cost",               TotalCosts.      Value.ToJSON(CustomPriceSerializer))
+                               ? new JProperty("total_cost",                TotalCosts.      Value.ToJSON(CustomPriceSerializer))
                                : null,
 
-                           new JProperty("status",                         Status.                ToString()),
+                                 new JProperty("status",                    Status.                ToString()),
 
 
-                           new JProperty("last_updated",                   LastUpdated.           ToIso8601())
+                                 new JProperty("last_updated",              LastUpdated.           ToIso8601())
 
                        );
 
@@ -866,11 +866,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="CustomChargingPeriodSerializer">A delegate to serialize custom charging period JSON objects.</param>
         /// <param name="CustomCDRDimensionSerializer">A delegate to serialize custom charge detail record dimension JSON objects.</param>
         /// <param name="CustomPriceSerializer">A delegate to serialize custom price JSON objects.</param>
-        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>?               CustomSessionSerializer                = null,
-                                     CustomJObjectSerializerDelegate<CDRToken>?              CustomCDRTokenSerializer               = null,
-                                     CustomJObjectSerializerDelegate<ChargingPeriod>?        CustomChargingPeriodSerializer         = null,
-                                     CustomJObjectSerializerDelegate<CDRDimension>?          CustomCDRDimensionSerializer           = null,
-                                     CustomJObjectSerializerDelegate<Price>?                 CustomPriceSerializer                  = null)
+        public String CalcSHA256Hash(CustomJObjectSerializerDelegate<Session>?         CustomSessionSerializer          = null,
+                                     CustomJObjectSerializerDelegate<CDRToken>?        CustomCDRTokenSerializer         = null,
+                                     CustomJObjectSerializerDelegate<ChargingPeriod>?  CustomChargingPeriodSerializer   = null,
+                                     CustomJObjectSerializerDelegate<CDRDimension>?    CustomCDRDimensionSerializer     = null,
+                                     CustomJObjectSerializerDelegate<Price>?           CustomPriceSerializer            = null)
         {
 
             this.ETag = SHA256.Create().ComputeHash(ToJSON(CustomSessionSerializer,
@@ -1171,6 +1171,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => String.Concat(
 
                    Id,                      " (",
+                   CountryCode,             "-",
+                   PartyId,                 ", ",
                    Status,                  "), ",
 
                    Start.ToIso8601(),
