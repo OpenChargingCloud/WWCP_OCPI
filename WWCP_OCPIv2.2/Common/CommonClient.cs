@@ -365,13 +365,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public partial class CommonClient : AHTTPClient
     {
 
-        public class CommonCounters
+        public class CommonAPICounters
         {
 
             public APICounterValues  GetVersions    { get; }
             public APICounterValues  Register       { get; }
 
-            public CommonCounters(APICounterValues?  GetVersions   = null,
+            public CommonAPICounters(APICounterValues?  GetVersions   = null,
                                   APICounterValues?  Register      = null)
             {
 
@@ -379,7 +379,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 this.Register     = Register    ?? new APICounterValues();
             }
 
-            public JObject ToJSON()
+            public virtual JObject ToJSON()
 
                 => JSONObject.Create(
                        new JProperty("GetVersions",  GetVersions.ToJSON()),
@@ -440,7 +440,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public CommonCounters                       Counters                      { get; }
+        public CommonAPICounters                       Counters                      { get; }
 
         /// <summary>
         /// The attached HTTP client logger.
@@ -702,7 +702,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             this.RemoteVersionsURL  = RemoteVersionsURL;
             this.MyCommonAPI        = MyCommonAPI;
 
-            this.Counters           = new CommonCounters();
+            this.Counters           = new CommonAPICounters();
 
             base.HTTPLogger         = DisableLogging == false
                                           ? new Logger(this,

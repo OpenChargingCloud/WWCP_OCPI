@@ -17,8 +17,7 @@
 
 #region Usings
 
-using System;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 
@@ -32,44 +31,37 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// A delegate called whenever a get location request will be send.
     /// </summary>
-    public delegate Task OnGetLocationRequestDelegate(DateTime                                    LogTimestamp,
-                                                    DateTime                                    RequestTimestamp,
-                                                    CommonClient                                Sender,
-                                                    String                                      SenderId,
-                                                    EventTracking_Id                            EventTrackingId,
+    public delegate Task OnGetLocationRequestDelegate(DateTime                  LogTimestamp,
+                                                      CPOClient                 Sender,
+                                                      Request_Id                RequestId,
+                                                      Correlation_Id            CorrelationId,
 
-                                                    //Partner_Id                                  PartnerId,
-                                                    //Operator_Id                                 OperatorId,
-                                                    //ChargingPool_Id                             ChargingPoolId,
-                                                    //DateTime                                    StatusEventDate,
-                                                    //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                    //Transaction_Id?                             TransactionId,
-                                                    //DateTime?                                   AvailabilityStatusUntil,
-                                                    //String                                      AvailabilityStatusComment,
+                                                      CountryCode               CountryCode,
+                                                      Party_Id                  PartyId,
+                                                      Location_Id               LocationId,
 
-                                                    TimeSpan                                    RequestTimeout);
+                                                      CancellationToken?        CancellationToken,
+                                                      EventTracking_Id          EventTrackingId,
+                                                      TimeSpan                  RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a get location request had been received.
     /// </summary>
-    public delegate Task OnGetLocationResponseDelegate(DateTime                                    LogTimestamp,
-                                                     DateTime                                    RequestTimestamp,
-                                                     CommonClient                                Sender,
-                                                     String                                      SenderId,
-                                                     EventTracking_Id                            EventTrackingId,
+    public delegate Task OnGetLocationResponseDelegate(DateTime                 LogTimestamp,
+                                                       CPOClient                Sender,
+                                                       Request_Id               RequestId,
+                                                       Correlation_Id           CorrelationId,
 
-                                                     //Partner_Id                                  PartnerId,
-                                                     //Operator_Id                                 OperatorId,
-                                                     //ChargingPool_Id                             ChargingPoolId,
-                                                     //DateTime                                    StatusEventDate,
-                                                     //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                     //Transaction_Id?                             TransactionId,
-                                                     //DateTime?                                   AvailabilityStatusUntil,
-                                                     //String                                      AvailabilityStatusComment,
+                                                       CountryCode              CountryCode,
+                                                       Party_Id                 PartyId,
+                                                       Location_Id              LocationId,
 
-                                                     TimeSpan                                    RequestTimeout,
-                                                     //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                     TimeSpan                                    Duration);
+                                                       CancellationToken?       CancellationToken,
+                                                       EventTracking_Id         EventTrackingId,
+                                                       TimeSpan                 RequestTimeout,
+
+                                                       OCPIResponse<Location>   Response,
+                                                       TimeSpan                 Runtime);
 
     #endregion
 
@@ -78,44 +70,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// A delegate called whenever a put location request will be send.
     /// </summary>
-    public delegate Task OnPutLocationRequestDelegate(DateTime                                    LogTimestamp,
-                                                    DateTime                                    RequestTimestamp,
-                                                    CommonClient                                Sender,
-                                                    String                                      SenderId,
-                                                    EventTracking_Id                            EventTrackingId,
+    public delegate Task OnPutLocationRequestDelegate(DateTime                  LogTimestamp,
+                                                      CPOClient                 Sender,
+                                                      Request_Id                RequestId,
+                                                      Correlation_Id            CorrelationId,
 
-                                                    //Partner_Id                                  PartnerId,
-                                                    //Operator_Id                                 OperatorId,
-                                                    //ChargingPool_Id                             ChargingPoolId,
-                                                    //DateTime                                    StatusEventDate,
-                                                    //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                    //Transaction_Id?                             TransactionId,
-                                                    //DateTime?                                   AvailabilityStatusUntil,
-                                                    //String                                      AvailabilityStatusComment,
+                                                      Location                  Location,
 
-                                                    TimeSpan                                    RequestTimeout);
+                                                      CancellationToken?        CancellationToken,
+                                                      EventTracking_Id          EventTrackingId,
+                                                      TimeSpan                  RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a put location request had been received.
     /// </summary>
-    public delegate Task OnPutLocationResponseDelegate(DateTime                                    LogTimestamp,
-                                                     DateTime                                    RequestTimestamp,
-                                                     CommonClient                                Sender,
-                                                     String                                      SenderId,
-                                                     EventTracking_Id                            EventTrackingId,
+    public delegate Task OnPutLocationResponseDelegate(DateTime                 LogTimestamp,
+                                                       CPOClient                Sender,
+                                                       Request_Id               RequestId,
+                                                       Correlation_Id           CorrelationId,
 
-                                                     //Partner_Id                                  PartnerId,
-                                                     //Operator_Id                                 OperatorId,
-                                                     //ChargingPool_Id                             ChargingPoolId,
-                                                     //DateTime                                    StatusEventDate,
-                                                     //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                     //Transaction_Id?                             TransactionId,
-                                                     //DateTime?                                   AvailabilityStatusUntil,
-                                                     //String                                      AvailabilityStatusComment,
+                                                       Location                 Location,
 
-                                                     TimeSpan                                    RequestTimeout,
-                                                     //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                     TimeSpan                                    Duration);
+                                                       CancellationToken?       CancellationToken,
+                                                       EventTracking_Id         EventTrackingId,
+                                                       TimeSpan                 RequestTimeout,
+
+                                                       OCPIResponse<Location>   Response,
+                                                       TimeSpan                 Runtime);
 
     #endregion
 
@@ -124,44 +105,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     /// <summary>
     /// A delegate called whenever a patch location request will be send.
     /// </summary>
-    public delegate Task OnPatchLocationRequestDelegate(DateTime                                    LogTimestamp,
-                                                     DateTime                                    RequestTimestamp,
-                                                     CommonClient                                Sender,
-                                                     String                                      SenderId,
-                                                     EventTracking_Id                            EventTrackingId,
+    public delegate Task OnPatchLocationRequestDelegate(DateTime                 LogTimestamp,
+                                                        CPOClient                Sender,
+                                                        Request_Id               RequestId,
+                                                        Correlation_Id           CorrelationId,
 
-                                                     //Partner_Id                                  PartnerId,
-                                                     //Operator_Id                                 OperatorId,
-                                                     //ChargingPool_Id                             ChargingPoolId,
-                                                     //DateTime                                    StatusEventDate,
-                                                     //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                     //Transaction_Id?                             TransactionId,
-                                                     //DateTime?                                   AvailabilityStatusUntil,
-                                                     //String                                      AvailabilityStatusComment,
+                                                        Location_Id              LocationId,
+                                                        JObject                  LocationPatch,
 
-                                                     TimeSpan                                    RequestTimeout);
+                                                        CancellationToken?       CancellationToken,
+                                                        EventTracking_Id         EventTrackingId,
+                                                        TimeSpan                 RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a patch location request had been received.
     /// </summary>
-    public delegate Task OnPatchLocationResponseDelegate(DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      CommonClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnPatchLocationResponseDelegate(DateTime                 LogTimestamp,
+                                                         CPOClient                Sender,
+                                                         Request_Id               RequestId,
+                                                         Correlation_Id           CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                         Location_Id              LocationId,
+                                                         JObject                  LocationPatch,
 
-                                                      TimeSpan                                    RequestTimeout,
-                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                      TimeSpan                                    Duration);
+                                                         CancellationToken?       CancellationToken,
+                                                         EventTracking_Id         EventTrackingId,
+                                                         TimeSpan                 RequestTimeout,
+
+                                                         OCPIResponse<Location>   Response,
+                                                         TimeSpan                 Runtime);
 
     #endregion
 

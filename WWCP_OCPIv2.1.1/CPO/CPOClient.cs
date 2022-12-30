@@ -39,37 +39,158 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     public partial class CPOClient : CommonClient
     {
 
-        public class CPOCounters : CommonCounters
+        #region (class) APICounters
+
+        public class APICounters : CommonAPICounters
         {
 
-            public APICounterValues  GetTokens     { get; }
-            public APICounterValues  PostTokens    { get; }
+            #region Properties
 
-            public CPOCounters(APICounterValues?  GetVersions   = null,
-                               APICounterValues?  GetTokens     = null,
-                               APICounterValues?  PostTokens    = null)
+            public APICounterValues  GetLocation       { get; }
+            public APICounterValues  PutLocation       { get; }
+            public APICounterValues  PatchLocation     { get; }
 
-                : base(GetVersions)
+            public APICounterValues  GetEVSE           { get; }
+            public APICounterValues  PutEVSE           { get; }
+            public APICounterValues  PatchEVSE         { get; }
+
+            public APICounterValues  GetConnector      { get; }
+            public APICounterValues  PutConnector      { get; }
+            public APICounterValues  PatchConnector    { get; }
+
+            public APICounterValues  GetTariff         { get; }
+            public APICounterValues  PutTariff         { get; }
+            public APICounterValues  PatchTariff       { get; }
+            public APICounterValues  DeleteTariff      { get; }
+
+            public APICounterValues  GetSession        { get; }
+            public APICounterValues  PutSession        { get; }
+            public APICounterValues  PatchSession      { get; }
+            public APICounterValues  DeleteSession     { get; }
+
+            public APICounterValues  GetCDR            { get; }
+            public APICounterValues  PostCDR           { get; }
+
+            public APICounterValues  GetTokens         { get; }
+            public APICounterValues  PostTokens        { get; }
+
+            #endregion
+
+            #region Constructor(s)
+
+            public APICounters(APICounterValues?  GetVersions      = null,
+                               APICounterValues?  Register         = null,
+
+                               APICounterValues?  GetLocation      = null,
+                               APICounterValues?  PutLocation      = null,
+                               APICounterValues?  PatchLocation    = null,
+
+                               APICounterValues?  GetEVSE          = null,
+                               APICounterValues?  PutEVSE          = null,
+                               APICounterValues?  PatchEVSE        = null,
+
+                               APICounterValues?  GetConnector     = null,
+                               APICounterValues?  PutConnector     = null,
+                               APICounterValues?  PatchConnector   = null,
+
+                               APICounterValues?  GetTariff        = null,
+                               APICounterValues?  PutTariff        = null,
+                               APICounterValues?  PatchTariff      = null,
+                               APICounterValues?  DeleteTariff     = null,
+
+                               APICounterValues?  GetSession       = null,
+                               APICounterValues?  PutSession       = null,
+                               APICounterValues?  PatchSession     = null,
+                               APICounterValues?  DeleteSession    = null,
+
+                               APICounterValues?  GetCDR           = null,
+                               APICounterValues?  PostCDR          = null,
+
+                               APICounterValues?  GetTokens        = null,
+                               APICounterValues?  PostTokens       = null)
+
+                : base(GetVersions,
+                       Register)
 
             {
 
-                this.GetTokens   = GetTokens  ?? new APICounterValues();
-                this.PostTokens  = PostTokens ?? new APICounterValues();
+                this.GetLocation     = GetLocation     ?? new APICounterValues();
+                this.PutLocation     = PutLocation     ?? new APICounterValues();
+                this.PatchLocation   = PatchLocation   ?? new APICounterValues();
+
+                this.GetEVSE         = GetEVSE         ?? new APICounterValues();
+                this.PutEVSE         = PutEVSE         ?? new APICounterValues();
+                this.PatchEVSE       = PatchEVSE       ?? new APICounterValues();
+
+                this.GetConnector    = GetConnector    ?? new APICounterValues();
+                this.PutConnector    = PutConnector    ?? new APICounterValues();
+                this.PatchConnector  = PatchConnector  ?? new APICounterValues();
+
+                this.GetTariff       = GetTariff       ?? new APICounterValues();
+                this.PutTariff       = PutTariff       ?? new APICounterValues();
+                this.PatchTariff     = PatchTariff     ?? new APICounterValues();
+                this.DeleteTariff    = DeleteTariff    ?? new APICounterValues();
+
+                this.GetSession      = GetSession      ?? new APICounterValues();
+                this.PutSession      = PutSession      ?? new APICounterValues();
+                this.PatchSession    = PatchSession    ?? new APICounterValues();
+                this.DeleteSession   = DeleteSession   ?? new APICounterValues();
+
+                this.GetCDR          = GetCDR          ?? new APICounterValues();
+                this.PostCDR         = PostCDR         ?? new APICounterValues();
+
+                this.GetTokens       = GetTokens       ?? new APICounterValues();
+                this.PostTokens      = PostTokens      ?? new APICounterValues();
 
             }
 
-            public JObject ToJSON()
+            #endregion
 
-                => JSONObject.Create(
 
-                       new JProperty("GetVersions",  GetVersions.ToJSON()),
+            #region ToJSON()
 
-                       new JProperty("GetTokens",    GetTokens.  ToJSON()),
-                       new JProperty("PostTokens",   PostTokens. ToJSON())
+            public override JObject ToJSON()
+            {
 
-                   );
+                var json = base.ToJSON();
+
+                json.Add(new JProperty("getLocation",     GetLocation.   ToJSON()));
+                json.Add(new JProperty("putLocation",     PutLocation.   ToJSON()));
+                json.Add(new JProperty("patchLocation",   PatchLocation. ToJSON()));
+
+                json.Add(new JProperty("getEVSE",         GetEVSE.       ToJSON()));
+                json.Add(new JProperty("putEVSE",         PutEVSE.       ToJSON()));
+                json.Add(new JProperty("patchEVSE",       PatchEVSE.     ToJSON()));
+
+                json.Add(new JProperty("getConnector",    GetConnector.  ToJSON()));
+                json.Add(new JProperty("putConnector",    PutConnector.  ToJSON()));
+                json.Add(new JProperty("patchConnector",  PatchConnector.ToJSON()));
+
+                json.Add(new JProperty("getTariff",       GetTariff.     ToJSON()));
+                json.Add(new JProperty("putTariff",       PutTariff.     ToJSON()));
+                json.Add(new JProperty("patchTariff",     PatchTariff.   ToJSON()));
+                json.Add(new JProperty("deleteTariff",    DeleteTariff.  ToJSON()));
+
+                json.Add(new JProperty("getSession",      GetSession.    ToJSON()));
+                json.Add(new JProperty("putSession",      PutSession.    ToJSON()));
+                json.Add(new JProperty("patchSession",    PatchSession.  ToJSON()));
+                json.Add(new JProperty("deleteSession",   DeleteSession. ToJSON()));
+
+                json.Add(new JProperty("getCDR",          GetCDR.        ToJSON()));
+                json.Add(new JProperty("postCDR",         PostCDR.       ToJSON()));
+
+                json.Add(new JProperty("getTokens",       GetTokens.     ToJSON()));
+                json.Add(new JProperty("postTokens",      PostTokens.    ToJSON()));
+
+                return json;
+
+            }
+
+            #endregion
 
         }
+
+        #endregion
 
 
         #region Properties
@@ -77,7 +198,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// CPO client event counters.
         /// </summary>
-        public new CPOCounters  Counters    { get; }
+        public new APICounters  Counters    { get; }
 
 
         /// <summary>
@@ -746,7 +867,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         {
 
-            this.Counters = new CPOCounters();
+            this.Counters = new APICounters();
 
             base.HTTPLogger = DisableLogging == false
                                    ? new Logger(this,
@@ -768,7 +889,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Get the charging location specified by the given location identification from the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -780,42 +900,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
 
-            #region Send OnGetLocationRequest event
+            #region Init
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.GetLocation.IncRequests_OK();
+
+            OCPIResponse<Location> response;
+
+            #endregion
+
+            #region Send OnGetLocationRequest event
 
             try
             {
 
-                //Counters.GetLocation.IncRequests();
+                if (OnGetLocationRequest is not null)
+                    await Task.WhenAll(OnGetLocationRequest.GetInvocationList().
+                                       Cast<OnGetLocationRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnGetLocationRequest != null)
-                //    await Task.WhenAll(OnGetLocationRequest.GetInvocationList().
-                //                       Cast<OnGetLocationRequestDelegate>().
-                //                       Select(e => e(StartTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     LocationId,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -826,15 +949,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            OCPIResponse<Location> response;
-
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(Module_Id.Locations,
-                                                        VersionId);
+                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                                                   VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -860,7 +979,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.GET,
                                                                                      remoteURL.Value.Path + LocationId.ToString(),
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -869,8 +989,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                       RequestLogDelegate:   OnGetLocationHTTPRequest,
                                                       ResponseLogDelegate:  OnGetLocationHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -881,55 +1001,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    correlationId,
                                                                    json => Location.Parse(json));
 
+                    Counters.GetLocation.IncResponses_OK();
+
                 }
 
                 else
+                {
                     response = OCPIResponse<String, Location>.Error("No remote URL available!");
+                    Counters.GetLocation.IncResponses_Error();
+                }
 
             }
 
             catch (Exception e)
             {
                 response = OCPIResponse<String, Location>.Exception(e);
+                Counters.GetLocation.IncResponses_Error();
             }
 
 
             #region Send OnGetLocationResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnGetLocationResponse is not null)
+                    await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
+                                       Cast<OnGetLocationResponseDelegate>().
+                                       Select(e => e(endtime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     LocationId,
 
-                //if (OnGetLocationResponse != null)
-                //    await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
-                //                       Cast<OnGetLocationResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StartTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -952,7 +1066,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         /// <param name="Location">The charging location to store/put at/onto the remote API.</param>
         /// 
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -964,42 +1077,45 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
 
-            #region Send OnPutLocationRequest event
+            #region Init
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.PutLocation.IncRequests_OK();
+
+            OCPIResponse<Location> response;
+
+            #endregion
+
+            #region Send OnPutLocationRequest event
 
             try
             {
 
-                //Counters.PutLocation.IncRequests();
+                if (OnPutLocationRequest is not null)
+                    await Task.WhenAll(OnPutLocationRequest.GetInvocationList().
+                                       Cast<OnPutLocationRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnPutLocationRequest != null)
-                //    await Task.WhenAll(OnPutLocationRequest.GetInvocationList().
-                //                       Cast<OnPutLocationRequestDelegate>().
-                //                       Select(e => e(StartTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     Location,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -1010,15 +1126,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            OCPIResponse<Location> response;
-
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(Module_Id.Locations,
-                                                        VersionId);
+                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                                                   VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -1044,24 +1156,25 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.PUT,
                                                                                      remoteURL.Value.Path + Location.Id.ToString(),
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = Location.ToJSON(false,
-                                                                                                                                        CustomLocationSerializer,
-                                                                                                                                        CustomAdditionalGeoLocationSerializer,
-                                                                                                                                        CustomEVSESerializer,
-                                                                                                                                        CustomStatusScheduleSerializer,
-                                                                                                                                        CustomConnectorSerializer,
-                                                                                                                                        CustomEnergyMeterSerializer,
-                                                                                                                                        CustomTransparencySoftwareStatusSerializer,
-                                                                                                                                        CustomTransparencySoftwareSerializer,
-                                                                                                                                        CustomDisplayTextSerializer,
-                                                                                                                                        CustomBusinessDetailsSerializer,
-                                                                                                                                        CustomHoursSerializer,
-                                                                                                                                        CustomImageSerializer,
-                                                                                                                                        CustomEnergyMixSerializer,
-                                                                                                                                        CustomEnergySourceSerializer,
-                                                                                                                                        CustomEnvironmentalImpactSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = Location.ToJSON(false,
+                                                                                                                                         CustomLocationSerializer,
+                                                                                                                                         CustomAdditionalGeoLocationSerializer,
+                                                                                                                                         CustomEVSESerializer,
+                                                                                                                                         CustomStatusScheduleSerializer,
+                                                                                                                                         CustomConnectorSerializer,
+                                                                                                                                         CustomEnergyMeterSerializer,
+                                                                                                                                         CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                         CustomTransparencySoftwareSerializer,
+                                                                                                                                         CustomDisplayTextSerializer,
+                                                                                                                                         CustomBusinessDetailsSerializer,
+                                                                                                                                         CustomHoursSerializer,
+                                                                                                                                         CustomImageSerializer,
+                                                                                                                                         CustomEnergyMixSerializer,
+                                                                                                                                         CustomEnergySourceSerializer,
+                                                                                                                                         CustomEnvironmentalImpactSerializer).ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1070,8 +1183,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     RequestLogDelegate:   OnPutLocationHTTPRequest,
                                                     ResponseLogDelegate:  OnPutLocationHTTPResponse,
                                                     CancellationToken:    CancellationToken,
-                                                    EventTrackingId:      EventTrackingId,
-                                                    RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                    EventTrackingId:      eventTrackingId,
+                                                    RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -1082,55 +1195,49 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    correlationId,
                                                                    json => Location.Parse(json));
 
+                    Counters.PutLocation.IncResponses_OK();
+
                 }
 
                 else
+                {
                     response = OCPIResponse<String, Location>.Error("No remote URL available!");
+                    Counters.PutLocation.IncResponses_Error();
+                }
 
             }
 
             catch (Exception e)
             {
                 response = OCPIResponse<String, Location>.Exception(e);
+                Counters.PutLocation.IncResponses_Error();
             }
 
 
             #region Send OnPutLocationResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnPutLocationResponse is not null)
+                    await Task.WhenAll(OnPutLocationResponse.GetInvocationList().
+                                       Cast<OnPutLocationResponseDelegate>().
+                                       Select(e => e(endtime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     Location,
 
-                //if (OnPutLocationResponse != null)
-                //    await Task.WhenAll(OnPutLocationResponse.GetInvocationList().
-                //                       Cast<OnPutLocationResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StartTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -1151,7 +1258,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// Patch a location.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional location to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -1164,7 +1270,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                           Correlation_Id?     CorrelationId       = null,
                           Version_Id?         VersionId           = null,
 
-                          DateTime?           Timestamp           = null,
                           CancellationToken?  CancellationToken   = null,
                           EventTracking_Id?   EventTrackingId     = null,
                           TimeSpan?           RequestTimeout      = null)
@@ -1178,35 +1283,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             #endregion
 
-            #region Send OnPatchLocationRequest event
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            #region Init
+
+            var startTime        = Timestamp.Now;
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.PatchLocation.IncRequests_OK();
+
+            OCPIResponse<Location> response;
+
+            #endregion
+
+            #region Send OnPatchLocationRequest event
 
             try
             {
 
-                //Counters.PatchLocation.IncRequests();
+                if (OnPatchLocationRequest is not null)
+                    await Task.WhenAll(OnPatchLocationRequest.GetInvocationList().
+                                       Cast<OnPatchLocationRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnPatchLocationRequest != null)
-                //    await Task.WhenAll(OnPatchLocationRequest.GetInvocationList().
-                //                       Cast<OnPatchLocationRequestDelegate>().
-                //                       Select(e => e(StartTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     LocationId,
+                                                     LocationPatch,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -1217,15 +1328,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             #endregion
 
 
-            OCPIResponse<Location> response;
-
             try
             {
 
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-                var remoteURL      = await GetRemoteURL(Module_Id.Locations,
-                                                        VersionId);
+                var remoteURL = await GetRemoteURL(Module_Id.Locations,
+                                                   VersionId);
 
                 if (remoteURL.HasValue)
                 {
@@ -1251,9 +1358,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.PATCH,
                                                                                      remoteURL.Value.Path + LocationId.ToString(),
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = LocationPatch.ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = LocationPatch.ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -1262,8 +1370,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     RequestLogDelegate:   OnPatchLocationHTTPRequest,
                                                     ResponseLogDelegate:  OnPatchLocationHTTPResponse,
                                                     CancellationToken:    CancellationToken,
-                                                    EventTrackingId:      EventTrackingId,
-                                                    RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                    EventTrackingId:      eventTrackingId,
+                                                    RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -1274,55 +1382,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                    correlationId,
                                                                    json => Location.Parse(json));
 
+                    Counters.PatchLocation.IncResponses_OK();
+
                 }
 
                 else
+                {
                     response = OCPIResponse<String, Location>.Error("No remote URL available!");
+                    Counters.PatchLocation.IncResponses_Error();
+                }
 
             }
 
             catch (Exception e)
             {
                 response = OCPIResponse<String, Location>.Exception(e);
+                Counters.PatchLocation.IncResponses_Error();
             }
 
 
             #region Send OnPatchLocationResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnPatchLocationResponse is not null)
+                    await Task.WhenAll(OnPatchLocationResponse.GetInvocationList().
+                                       Cast<OnPatchLocationResponseDelegate>().
+                                       Select(e => e(endtime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     LocationId,
+                                                     LocationPatch,
 
-                //if (OnPatchLocationResponse != null)
-                //    await Task.WhenAll(OnPatchLocationResponse.GetInvocationList().
-                //                       Cast<OnPatchLocationResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StartTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -1373,7 +1476,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.GetLocation.IncRequests();
 
-                //if (OnGetLocationRequest != null)
+                //if (OnGetLocationRequest is not null)
                 //    await Task.WhenAll(OnGetLocationRequest.GetInvocationList().
                 //                       Cast<OnGetLocationRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -1486,7 +1589,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnGetLocationResponse != null)
+                //if (OnGetLocationResponse is not null)
                 //    await Task.WhenAll(OnGetLocationResponse.GetInvocationList().
                 //                       Cast<OnGetLocationResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -1609,7 +1712,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PutEVSE.IncRequests();
 
-                //if (OnPutEVSERequest != null)
+                //if (OnPutEVSERequest is not null)
                 //    await Task.WhenAll(OnPutEVSERequest.GetInvocationList().
                 //                       Cast<OnPutEVSERequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -1731,7 +1834,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPutEVSEResponse != null)
+                //if (OnPutEVSEResponse is not null)
                 //    await Task.WhenAll(OnPutEVSEResponse.GetInvocationList().
                 //                       Cast<OnPutEVSEResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -1811,7 +1914,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PatchEVSE.IncRequests();
 
-                //if (OnPatchEVSERequest != null)
+                //if (OnPatchEVSERequest is not null)
                 //    await Task.WhenAll(OnPatchEVSERequest.GetInvocationList().
                 //                       Cast<OnPatchEVSERequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -1926,7 +2029,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPatchEVSEResponse != null)
+                //if (OnPatchEVSEResponse is not null)
                 //    await Task.WhenAll(OnPatchEVSEResponse.GetInvocationList().
                 //                       Cast<OnPatchEVSEResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -1999,7 +2102,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.GetConnector.IncRequests();
 
-                //if (OnGetConnectorRequest != null)
+                //if (OnGetConnectorRequest is not null)
                 //    await Task.WhenAll(OnGetConnectorRequest.GetInvocationList().
                 //                       Cast<OnGetConnectorRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -2113,7 +2216,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnGetConnectorResponse != null)
+                //if (OnGetConnectorResponse is not null)
                 //    await Task.WhenAll(OnGetConnectorResponse.GetInvocationList().
                 //                       Cast<OnGetConnectorResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -2195,7 +2298,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PutConnector.IncRequests();
 
-                //if (OnPutConnectorRequest != null)
+                //if (OnPutConnectorRequest is not null)
                 //    await Task.WhenAll(OnPutConnectorRequest.GetInvocationList().
                 //                       Cast<OnPutConnectorRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -2311,7 +2414,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPutConnectorResponse != null)
+                //if (OnPutConnectorResponse is not null)
                 //    await Task.WhenAll(OnPutConnectorResponse.GetInvocationList().
                 //                       Cast<OnPutConnectorResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -2384,7 +2487,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PatchConnector.IncRequests();
 
-                //if (OnPatchConnectorRequest != null)
+                //if (OnPatchConnectorRequest is not null)
                 //    await Task.WhenAll(OnPatchConnectorRequest.GetInvocationList().
                 //                       Cast<OnPatchConnectorRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -2500,7 +2603,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPatchConnectorResponse != null)
+                //if (OnPatchConnectorResponse is not null)
                 //    await Task.WhenAll(OnPatchConnectorResponse.GetInvocationList().
                 //                       Cast<OnPatchConnectorResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -2574,7 +2677,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.GetTariff.IncRequests();
 
-                //if (OnGetTariffRequest != null)
+                //if (OnGetTariffRequest is not null)
                 //    await Task.WhenAll(OnGetTariffRequest.GetInvocationList().
                 //                       Cast<OnGetTariffRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -2688,7 +2791,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnGetTariffResponse != null)
+                //if (OnGetTariffResponse is not null)
                 //    await Task.WhenAll(OnGetTariffResponse.GetInvocationList().
                 //                       Cast<OnGetTariffResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -2760,7 +2863,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PutTariff.IncRequests();
 
-                //if (OnPutTariffRequest != null)
+                //if (OnPutTariffRequest is not null)
                 //    await Task.WhenAll(OnPutTariffRequest.GetInvocationList().
                 //                       Cast<OnPutTariffRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -2874,7 +2977,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPutTariffResponse != null)
+                //if (OnPutTariffResponse is not null)
                 //    await Task.WhenAll(OnPutTariffResponse.GetInvocationList().
                 //                       Cast<OnPutTariffResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -2954,7 +3057,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PatchTariff.IncRequests();
 
-                //if (OnPatchTariffRequest != null)
+                //if (OnPatchTariffRequest is not null)
                 //    await Task.WhenAll(OnPatchTariffRequest.GetInvocationList().
                 //                       Cast<OnPatchTariffRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -3070,7 +3173,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPatchTariffResponse != null)
+                //if (OnPatchTariffResponse is not null)
                 //    await Task.WhenAll(OnPatchTariffResponse.GetInvocationList().
                 //                       Cast<OnPatchTariffResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -3142,7 +3245,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.DeleteTariff.IncRequests();
 
-                //if (OnDeleteTariffRequest != null)
+                //if (OnDeleteTariffRequest is not null)
                 //    await Task.WhenAll(OnDeleteTariffRequest.DeleteInvocationList().
                 //                       Cast<OnDeleteTariffRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -3256,7 +3359,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnDeleteTariffResponse != null)
+                //if (OnDeleteTariffResponse is not null)
                 //    await Task.WhenAll(OnDeleteTariffResponse.DeleteInvocationList().
                 //                       Cast<OnDeleteTariffResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -3330,7 +3433,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.GetSession.IncRequests();
 
-                //if (OnGetSessionRequest != null)
+                //if (OnGetSessionRequest is not null)
                 //    await Task.WhenAll(OnGetSessionRequest.GetInvocationList().
                 //                       Cast<OnGetSessionRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -3444,7 +3547,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnGetSessionResponse != null)
+                //if (OnGetSessionResponse is not null)
                 //    await Task.WhenAll(OnGetSessionResponse.GetInvocationList().
                 //                       Cast<OnGetSessionResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -3516,7 +3619,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PutSession.IncRequests();
 
-                //if (OnPutSessionRequest != null)
+                //if (OnPutSessionRequest is not null)
                 //    await Task.WhenAll(OnPutSessionRequest.GetInvocationList().
                 //                       Cast<OnPutSessionRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -3630,7 +3733,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPutSessionResponse != null)
+                //if (OnPutSessionResponse is not null)
                 //    await Task.WhenAll(OnPutSessionResponse.GetInvocationList().
                 //                       Cast<OnPutSessionResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -3710,7 +3813,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PatchSession.IncRequests();
 
-                //if (OnPatchSessionRequest != null)
+                //if (OnPatchSessionRequest is not null)
                 //    await Task.WhenAll(OnPatchSessionRequest.GetInvocationList().
                 //                       Cast<OnPatchSessionRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -3826,7 +3929,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPatchSessionResponse != null)
+                //if (OnPatchSessionResponse is not null)
                 //    await Task.WhenAll(OnPatchSessionResponse.GetInvocationList().
                 //                       Cast<OnPatchSessionResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -3898,7 +4001,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.DeleteSession.IncRequests();
 
-                //if (OnDeleteSessionRequest != null)
+                //if (OnDeleteSessionRequest is not null)
                 //    await Task.WhenAll(OnDeleteSessionRequest.DeleteInvocationList().
                 //                       Cast<OnDeleteSessionRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -4012,7 +4115,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnDeleteSessionResponse != null)
+                //if (OnDeleteSessionResponse is not null)
                 //    await Task.WhenAll(OnDeleteSessionResponse.DeleteInvocationList().
                 //                       Cast<OnDeleteSessionResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -4084,7 +4187,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.GetCDR.IncRequests();
 
-                //if (OnGetCDRRequest != null)
+                //if (OnGetCDRRequest is not null)
                 //    await Task.WhenAll(OnGetCDRRequest.GetInvocationList().
                 //                       Cast<OnGetCDRRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -4196,7 +4299,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnGetCDRResponse != null)
+                //if (OnGetCDRResponse is not null)
                 //    await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
                 //                       Cast<OnGetCDRResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -4266,7 +4369,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PostCDR.IncRequests();
 
-                //if (OnPostCDRRequest != null)
+                //if (OnPostCDRRequest is not null)
                 //    await Task.WhenAll(OnPostCDRRequest.GetInvocationList().
                 //                       Cast<OnPostCDRRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -4404,7 +4507,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPostCDRResponse != null)
+                //if (OnPostCDRResponse is not null)
                 //    await Task.WhenAll(OnPostCDRResponse.GetInvocationList().
                 //                       Cast<OnPostCDRResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -4480,7 +4583,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 Counters.GetTokens.IncRequests_OK();
 
-                //if (OnGetTokensRequest != null)
+                //if (OnGetTokensRequest is not null)
                 //    await Task.WhenAll(OnGetTokensRequest.GetInvocationList().
                 //                       Cast<OnGetTokensRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -4604,7 +4707,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnGetTokensResponse != null)
+                //if (OnGetTokensResponse is not null)
                 //    await Task.WhenAll(OnGetTokensResponse.GetInvocationList().
                 //                       Cast<OnGetTokensResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -4676,7 +4779,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PostToken.IncRequests();
 
-                //if (OnPostTokenRequest != null)
+                //if (OnPostTokenRequest is not null)
                 //    await Task.WhenAll(OnPostTokenRequest.GetInvocationList().
                 //                       Cast<OnPostTokenRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -4799,7 +4902,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPostTokenResponse != null)
+                //if (OnPostTokenResponse is not null)
                 //    await Task.WhenAll(OnPostTokenResponse.GetInvocationList().
                 //                       Cast<OnPostTokenResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -4871,7 +4974,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 //Counters.PostToken.IncRequests();
 
-                //if (OnPostTokenRequest != null)
+                //if (OnPostTokenRequest is not null)
                 //    await Task.WhenAll(OnPostTokenRequest.GetInvocationList().
                 //                       Cast<OnPostTokenRequestDelegate>().
                 //                       Select(e => e(StartTime,
@@ -5015,7 +5118,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-                //if (OnPostTokenResponse != null)
+                //if (OnPostTokenResponse is not null)
                 //    await Task.WhenAll(OnPostTokenResponse.GetInvocationList().
                 //                       Cast<OnPostTokenResponseDelegate>().
                 //                       Select(e => e(Endtime,
@@ -5094,7 +5197,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         //        //Counters.SetChargingProfile.IncRequests();
 
-        //        //if (OnSetChargingProfileRequest != null)
+        //        //if (OnSetChargingProfileRequest is not null)
         //        //    await Task.WhenAll(OnSetChargingProfileRequest.GetInvocationList().
         //        //                       Cast<OnSetChargingProfileRequestDelegate>().
         //        //                       Select(e => e(StartTime,
@@ -5215,7 +5318,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         //        //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
 
 
-        //        //if (OnSetChargingProfileResponse != null)
+        //        //if (OnSetChargingProfileResponse is not null)
         //        //    await Task.WhenAll(OnSetChargingProfileResponse.GetInvocationList().
         //        //                       Cast<OnSetChargingProfileResponseDelegate>().
         //        //                       Select(e => e(Endtime,
