@@ -383,7 +383,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.Locations                = new Dictionary<Location_Id,    Location>();
             this.tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
             this.chargingSessions                 = new Dictionary<Session_Id,     Session>();
-            this.tokens                   = new Dictionary<Token_Id,       TokenStatus>();
+            this.tokenStatus                   = new Dictionary<Token_Id,       TokenStatus>();
             this.chargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
 
             if (!Disable_RootServices)
@@ -472,7 +472,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             this.Locations                = new Dictionary<Location_Id,    Location>();
             this.tariffs                  = new Dictionary<Tariff_Id,      Tariff>();
             this.chargingSessions                 = new Dictionary<Session_Id,     Session>();
-            this.tokens                   = new Dictionary<Token_Id,       TokenStatus>();
+            this.tokenStatus                   = new Dictionary<Token_Id,       TokenStatus>();
             this.chargeDetailRecords      = new Dictionary<CDR_Id,         CDR>();
 
             // Link HTTP events...
@@ -3985,7 +3985,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #region Tokens
 
-        private readonly Dictionary<Token_Id, TokenStatus> tokens;
+        private readonly Dictionary<Token_Id, TokenStatus> tokenStatus;
 
 
         public delegate Task OnTokenAddedDelegate(Token Token);
@@ -4011,13 +4011,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                if (!tokens.ContainsKey(Token.Id))
+                if (!tokenStatus.ContainsKey(Token.Id))
                 {
 
-                    tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
+                    tokenStatus.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
                     if (OnTokenAddedLocal is not null)
@@ -4054,13 +4054,13 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                if (!tokens.ContainsKey(Token.Id))
+                if (!tokenStatus.ContainsKey(Token.Id))
                 {
 
-                    tokens.Add(Token.Id, new TokenStatus(Token, Status.Value));
+                    tokenStatus.Add(Token.Id, new TokenStatus(Token, Status.Value));
 
                     var OnTokenAddedLocal = OnTokenAdded;
                     if (OnTokenAddedLocal is not null)
@@ -4099,10 +4099,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             if (newOrUpdatedToken is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedToken), "The given token must not be null!");
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                if (tokens.TryGetValue(newOrUpdatedToken.Id, out TokenStatus existingTokenStatus))
+                if (tokenStatus.TryGetValue(newOrUpdatedToken.Id, out TokenStatus existingTokenStatus))
                 {
 
                     if ((AllowDowngrades ?? this.AllowDowngrades) == false &&
@@ -4112,7 +4112,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                "The 'lastUpdated' timestamp of the new charging token must be newer then the timestamp of the existing token!");
                     }
 
-                    tokens[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
+                    tokenStatus[newOrUpdatedToken.Id] = new TokenStatus(newOrUpdatedToken,
                                                                    Status.Value);
 
                     var OnTokenChangedLocal = OnTokenChanged;
@@ -4135,7 +4135,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 }
 
-                tokens.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
+                tokenStatus.Add(newOrUpdatedToken.Id, new TokenStatus(newOrUpdatedToken,
                                                                  Status.Value));
 
                 var OnTokenAddedLocal = OnTokenAdded;
@@ -4181,20 +4181,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                if (tokens. TryGetValue(Token.Id, out var tokenStatus))
+                if (tokenStatus.TryGetValue(Token.Id, out var _tokenStatus))
                 {
 
-                    var patchResult = tokenStatus.Token.TryPatch(TokenPatch,
-                                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    var patchResult = _tokenStatus.Token.TryPatch(TokenPatch,
+                                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
                     {
 
-                        tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,
-                                                           tokenStatus.Status);
+                        tokenStatus[Token.Id] = new TokenStatus(patchResult.PatchedData,
+                                                                _tokenStatus.Status);
 
                         var OnTokenChangedLocal = OnTokenChanged;
                         if (OnTokenChangedLocal is not null)
@@ -4233,9 +4233,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean TokenExists(Token_Id TokenId)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
-                return tokens.ContainsKey(TokenId);
+                return tokenStatus.ContainsKey(TokenId);
             }
 
         }
@@ -4248,10 +4248,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                    out TokenStatus  TokenWithStatus)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                if (tokens.TryGetValue(TokenId, out TokenWithStatus))
+                if (tokenStatus.TryGetValue(TokenId, out TokenWithStatus))
                     return true;
 
                 var VerifyTokenLocal = OnVerifyToken;
@@ -4283,17 +4283,34 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
+        #region GetTokens  (IncludeToken)
+
+        public IEnumerable<TokenStatus> GetTokens(Func<Token, Boolean> IncludeToken)
+        {
+
+            lock (tokenStatus)
+            {
+
+                return tokenStatus.Values.Where  (tokenStatus => IncludeToken(tokenStatus.Token)).
+                                          ToArray();
+
+            }
+
+        }
+
+        #endregion
+
         #region GetTokens  (IncludeTokenStatus = null)
 
         public IEnumerable<TokenStatus> GetTokens(Func<TokenStatus, Boolean>? IncludeTokenStatus = null)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
                 return IncludeTokenStatus is null
-                           ? tokens.Values.                          ToArray()
-                           : tokens.Values.Where(IncludeTokenStatus).ToArray();
+                           ? tokenStatus.Values.                          ToArray()
+                           : tokenStatus.Values.Where(IncludeTokenStatus).ToArray();
 
             }
 
@@ -4307,12 +4324,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                   Party_Id     PartyId)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                return tokens.Values.Where  (tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
-                                                            tokenStatus.Token.PartyId     == PartyId).
-                                     ToArray();
+                return tokenStatus.Values.Where  (tokenStatus => tokenStatus.Token.CountryCode == CountryCode &&
+                                                                 tokenStatus.Token.PartyId     == PartyId).
+                                          ToArray();
 
             }
 
@@ -4330,10 +4347,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean RemoveToken(Token Token)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                return tokens.Remove(Token.Id);
+                return tokenStatus.Remove(Token.Id);
 
             }
 
@@ -4350,10 +4367,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Boolean RemoveToken(Token_Id TokenId)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
-                return tokens.Remove(TokenId);
+                return tokenStatus.Remove(TokenId);
 
             }
 
@@ -4370,23 +4387,51 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public void RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
         {
 
-            lock (tokens)
+            lock (tokenStatus)
             {
 
                 if (IncludeTokens is null)
-                    tokens.Clear();
+                    tokenStatus.Clear();
 
                 else
                 {
 
-                    var tokensToDelete = tokens.Values.Where  (tokenStatus => IncludeTokens(tokenStatus.Token)).
-                                                       Select (tokenStatus => tokenStatus.Token).
-                                                       ToArray();
+                    var tokensToDelete = tokenStatus.Values.Where  (tokenStatus => IncludeTokens(tokenStatus.Token)).
+                                                            Select (tokenStatus => tokenStatus.Token).
+                                                            ToArray();
 
                     foreach (var token in tokensToDelete)
-                        tokens.Remove(token.Id);
+                        tokenStatus.Remove(token.Id);
 
                 }
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTokens(CountryCode, PartyId)
+
+        /// <summary>
+        /// Remove all tokens owned by the given party.
+        /// </summary>
+        /// <param name="CountryCode">The country code of the party.</param>
+        /// <param name="PartyId">The identification of the party.</param>
+        public void RemoveAllTokens(CountryCode  CountryCode,
+                                    Party_Id     PartyId)
+        {
+
+            lock (tokenStatus)
+            {
+
+                var tokensToDelete = tokenStatus.Values.Where  (tokenStatus => CountryCode == tokenStatus.Token.CountryCode &&
+                                                                               PartyId     == tokenStatus.Token.PartyId).
+                                                        Select (tokenStatus => tokenStatus.Token).
+                                                        ToArray();
+
+                foreach (var token in tokensToDelete)
+                    tokenStatus.Remove(token.Id);
 
             }
 

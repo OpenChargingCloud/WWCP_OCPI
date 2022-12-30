@@ -370,9 +370,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.remoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.chargingSessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.tokenStatus                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             RegisterURLTemplates();
@@ -465,9 +465,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             this.remoteParties           = new Dictionary<RemoteParty_Id, RemoteParty>();
             this.Locations                = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Location_Id, Location>>>();
-            this.Tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
+            this.tariffs                  = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id,   Tariff>>>();
             this.chargingSessions                 = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Session_Id,  Session>>>();
-            this.Tokens                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
+            this.tokenStatus                   = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id,    TokenStatus>>>();
             this.ChargeDetailRecords      = new Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<CDR_Id,      CDR>>>();
 
             // Link HTTP events...
@@ -3207,7 +3207,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Tariffs
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> Tariffs;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Tariff_Id , Tariff>>> tariffs;
 
 
         public delegate Task OnTariffAddedDelegate(Tariff Tariff);
@@ -3228,13 +3228,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (!Tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    Tariffs.Add(Tariff.CountryCode, parties);
+                    this.tariffs.Add(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
@@ -3283,13 +3283,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (!Tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                if (!this.tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    Tariffs.Add(Tariff.CountryCode, parties);
+                    this.tariffs.Add(Tariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Tariff.PartyId, out var tariffs))
@@ -3337,13 +3337,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (newOrUpdatedTariff is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedTariff), "The given charging tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (!Tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out var parties))
+                if (!this.tariffs.TryGetValue(newOrUpdatedTariff.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Tariff_Id, Tariff>>();
-                    Tariffs.Add(newOrUpdatedTariff.CountryCode, parties);
+                    this.tariffs.Add(newOrUpdatedTariff.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(newOrUpdatedTariff.PartyId, out var tariffs))
@@ -3418,15 +3418,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Tariff is null)
                 throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out var parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out var tariffs) &&
-                    tariffs.ContainsKey(Tariff.Id))
+                if (tariffs.TryGetValue(Tariff.CountryCode, out var parties) &&
+                    parties.TryGetValue(Tariff.PartyId,     out var _tariffs) &&
+                    _tariffs.ContainsKey(Tariff.Id))
                 {
 
-                    tariffs[Tariff.Id] = Tariff;
+                    _tariffs[Tariff.Id] = Tariff;
 
                     var OnTariffChangedLocal = OnTariffChanged;
                     if (OnTariffChangedLocal is not null)
@@ -3474,12 +3474,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out var parties) &&
-                    parties.TryGetValue(Tariff.PartyId,     out var tariffs) &&
-                    tariffs.TryGetValue(Tariff.Id,          out var tariff))
+                if (tariffs. TryGetValue(Tariff.CountryCode, out var parties)  &&
+                    parties. TryGetValue(Tariff.PartyId,     out var _tariffs) &&
+                    _tariffs.TryGetValue(Tariff.Id,          out var tariff))
                 {
 
                     var patchResult = tariff.TryPatch(TariffPatch,
@@ -3488,7 +3488,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     if (patchResult.IsSuccess)
                     {
 
-                        tariffs[Tariff.Id] = patchResult.PatchedData;
+                        _tariffs[Tariff.Id] = patchResult.PatchedData;
 
                         var OnTariffChangedLocal = OnTariffChanged;
                         if (OnTariffChangedLocal is not null)
@@ -3530,10 +3530,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     Tariff_Id    TariffId)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out var parties))
+                if (tariffs.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var tariffs))
                     {
@@ -3557,10 +3557,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     out Tariff?  Tariff)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out var parties))
+                if (tariffs.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var tariffs))
                     {
@@ -3578,18 +3578,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region GetTariffs  (IncludeTariff)
+
+        public IEnumerable<Tariff> GetTariffs(Func<Tariff, Boolean> IncludeTariff)
+        {
+
+            lock (tariffs)
+            {
+
+                var allTariffs = new List<Tariff>();
+
+                foreach (var party in tariffs.Values)
+                {
+                    foreach (var partyTariffs in party.Values)
+                    {
+                        foreach (var tariff in partyTariffs.Values)
+                        {
+                            if (tariff is not null &&
+                                IncludeTariff(tariff))
+                            {
+                                allTariffs.Add(tariff);
+                            }
+                        }
+                    }
+                }
+
+                return allTariffs;
+
+            }
+
+        }
+
+        #endregion
+
         #region GetTariffs  (CountryCode = null, PartyId = null)
 
         public IEnumerable<Tariff> GetTariffs(CountryCode? CountryCode  = null,
                                               Party_Id?    PartyId      = null)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Tariffs.TryGetValue(CountryCode.Value, out var parties))
+                    if (tariffs.TryGetValue(CountryCode.Value, out var parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out var tariffs))
                         {
@@ -3603,7 +3636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTariffs = new List<Tariff>();
 
-                    foreach (var party in Tariffs.Values)
+                    foreach (var party in tariffs.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out var tariffs))
                         {
@@ -3617,7 +3650,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Tariffs.TryGetValue(CountryCode.Value, out var parties))
+                    if (tariffs.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allTariffs = new List<Tariff>();
@@ -3637,7 +3670,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTariffs = new List<Tariff>();
 
-                    foreach (var party in Tariffs.Values)
+                    foreach (var party in tariffs.Values)
                     {
                         foreach (var tariffs in party.Values)
                         {
@@ -3658,39 +3691,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region RemoveTariff(Tariff)
+        #region RemoveTariff    (Tariff)
 
-        public Tariff RemoveTariff(Tariff Tariff)
+        public Boolean RemoveTariff(Tariff Tariff)
         {
 
-            if (Tariff is null)
-                throw new ArgumentNullException(nameof(Tariff), "The given tariff must not be null!");
-
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(Tariff.CountryCode, out var parties))
+                var success = false;
+
+                if (tariffs.TryGetValue(Tariff.CountryCode, out var parties))
                 {
 
-                    if (parties.TryGetValue(Tariff.PartyId, out var tariffs))
+                    if (parties.TryGetValue(Tariff.PartyId, out var _tariffs))
                     {
 
-                        if (tariffs.ContainsKey(Tariff.Id))
+                        if (_tariffs.ContainsKey(Tariff.Id))
                         {
-                            tariffs.Remove(Tariff.Id);
+                            success = _tariffs.Remove(Tariff.Id);
                         }
 
-                        if (!tariffs.Any())
+                        if (!_tariffs.Any())
                             parties.Remove(Tariff.PartyId);
 
                     }
 
                     if (!parties.Any())
-                        Tariffs.Remove(Tariff.CountryCode);
+                        chargingSessions.Remove(Tariff.CountryCode);
 
                 }
 
-                return Tariff;
+                return success;
 
             }
 
@@ -3698,17 +3730,71 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region RemoveAllTariffs()
+        #region RemoveTariff    (TariffId)
 
-        /// <summary>
-        /// Remove all tariffs.
-        /// </summary>
-        public void RemoveAllTariffs()
+        public Boolean RemoveTariff(Tariff_Id TariffId)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
-                Tariffs.Clear();
+
+                CountryCode? countryCode   = default;
+                Party_Id?    partyId       = default;
+
+                foreach (var parties in tariffs.Values)
+                {
+                    foreach (var tariffs in parties.Values)
+                    {
+                        if (tariffs.TryGetValue(TariffId, out var tariff))
+                        {
+                            countryCode  = tariff.CountryCode;
+                            partyId      = tariff.PartyId;
+                        }
+                    }
+                }
+
+                if (countryCode.HasValue &&
+                    partyId.    HasValue)
+                {
+                    return tariffs[countryCode.Value][partyId.Value].Remove(TariffId);
+                }
+
+                return false;
+
+            }
+
+        }
+
+        #endregion
+
+        #region RemoveAllTariffs(IncludeTariffs = null)
+
+        /// <summary>
+        /// Remove all matching charging tariffs.
+        /// </summary>
+        /// <param name="IncludeSessions">An optional charging tariff filter.</param>
+        public void RemoveAllTariffs(Func<Tariff, Boolean>? IncludeTariffs = null)
+        {
+
+            lock (tariffs)
+            {
+
+                if (IncludeTariffs is null)
+                    tariffs.Clear();
+
+                else
+                {
+
+                    var tariffsToDelete = tariffs.Values.SelectMany(xx => xx.Values).
+                                                         SelectMany(yy => yy.Values).
+                                                         Where(IncludeTariffs).
+                                                         ToArray();
+
+                    foreach (var tariff in tariffsToDelete)
+                        tariffs[tariff.CountryCode][tariff.PartyId].Remove(tariff.Id);
+
+                }
+
             }
 
         }
@@ -3726,10 +3812,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                      Party_Id     PartyId)
         {
 
-            lock (Tariffs)
+            lock (tariffs)
             {
 
-                if (Tariffs.TryGetValue(CountryCode, out var parties))
+                if (tariffs.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var tariffs))
                     {
@@ -4371,7 +4457,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #region Tokens
 
-        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> Tokens;
+        private readonly Dictionary<CountryCode, Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>> tokenStatus;
 
 
         public delegate Task OnTokenAddedDelegate(Token Token);
@@ -4399,13 +4485,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (!Tokens.TryGetValue(Token.CountryCode, out var parties))
+                if (!tokenStatus.TryGetValue(Token.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
-                    Tokens.Add(Token.CountryCode, parties);
+                    tokenStatus.Add(Token.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Token.PartyId, out var tokens))
@@ -4454,13 +4540,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             Status ??= AllowedType.ALLOWED;
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (!Tokens.TryGetValue(Token.CountryCode, out var parties))
+                if (!tokenStatus.TryGetValue(Token.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
-                    Tokens.Add(Token.CountryCode, parties);
+                    tokenStatus.Add(Token.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(Token.PartyId, out var tokens))
@@ -4511,13 +4597,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (newOrUpdatedToken is null)
                 throw new ArgumentNullException(nameof(newOrUpdatedToken), "The given token must not be null!");
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (!Tokens.TryGetValue(newOrUpdatedToken.CountryCode, out var parties))
+                if (!tokenStatus.TryGetValue(newOrUpdatedToken.CountryCode, out var parties))
                 {
                     parties = new Dictionary<Party_Id, Dictionary<Token_Id, TokenStatus>>();
-                    Tokens.Add(newOrUpdatedToken.CountryCode, parties);
+                    tokenStatus.Add(newOrUpdatedToken.CountryCode, parties);
                 }
 
                 if (!parties.TryGetValue(newOrUpdatedToken.PartyId, out var _tokenStatus))
@@ -4605,22 +4691,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (Tokens. TryGetValue(Token.CountryCode, out var parties) &&
-                    parties.TryGetValue(Token.PartyId,     out var tokens) &&
-                    tokens. TryGetValue(Token.Id,          out var tokenStatus))
+                if (tokenStatus.TryGetValue(Token.CountryCode, out var parties) &&
+                    parties.    TryGetValue(Token.PartyId,     out var tokens)  &&
+                    tokens.     TryGetValue(Token.Id,          out var _tokenStatus))
                 {
 
-                    var patchResult = tokenStatus.Token.TryPatch(TokenPatch,
-                                                                 AllowDowngrades ?? this.AllowDowngrades ?? false);
+                    var patchResult = _tokenStatus.Token.TryPatch(TokenPatch,
+                                                                  AllowDowngrades ?? this.AllowDowngrades ?? false);
 
                     if (patchResult.IsSuccess)
                     {
 
                         tokens[Token.Id] = new TokenStatus(patchResult.PatchedData,
-                                                           tokenStatus.Status);
+                                                           _tokenStatus.Status);
 
                         var OnTokenChangedLocal = OnTokenChanged;
                         if (OnTokenChangedLocal is not null)
@@ -4661,10 +4747,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                    Token_Id     TokenId)
         {
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (Tokens.TryGetValue(CountryCode, out var parties))
+                if (tokenStatus.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var tokens))
                     {
@@ -4688,10 +4774,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                    out TokenStatus  TokenWithStatus)
         {
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (Tokens.TryGetValue(CountryCode, out var parties))
+                if (tokenStatus.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var tokens))
                     {
@@ -4731,18 +4817,82 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region GetTokens  (IncludeToken)
+
+        public IEnumerable<TokenStatus> GetTokens(Func<Token, Boolean> IncludeToken)
+        {
+
+            lock (tokenStatus)
+            {
+
+                var allTokenStatus = new List<TokenStatus>();
+
+                foreach (var party in tokenStatus.Values)
+                {
+                    foreach (var partyTokens in party.Values)
+                    {
+                        foreach (var tokenStatus in partyTokens.Values)
+                        {
+                            if (IncludeToken(tokenStatus.Token))
+                            {
+                                allTokenStatus.Add(tokenStatus);
+                            }
+                        }
+                    }
+                }
+
+                return allTokenStatus;
+
+            }
+
+        }
+
+        #endregion
+
+        #region GetTokens  (IncludeTokenStatus)
+
+        public IEnumerable<TokenStatus> GetTokens(Func<TokenStatus, Boolean> IncludeTokenStatus)
+        {
+
+            lock (tokenStatus)
+            {
+
+                var allTokenStatus = new List<TokenStatus>();
+
+                foreach (var party in tokenStatus.Values)
+                {
+                    foreach (var partyTokens in party.Values)
+                    {
+                        foreach (var tokenStatus in partyTokens.Values)
+                        {
+                            if (IncludeTokenStatus(tokenStatus))
+                            {
+                                allTokenStatus.Add(tokenStatus);
+                            }
+                        }
+                    }
+                }
+
+                return allTokenStatus;
+
+            }
+
+        }
+
+        #endregion
+
         #region GetTokens  (CountryCode = null, PartyId = null)
 
         public IEnumerable<TokenStatus> GetTokens(CountryCode?  CountryCode   = null,
                                                   Party_Id?     PartyId       = null)
         {
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
                 if (CountryCode.HasValue && PartyId.HasValue)
                 {
-                    if (Tokens.TryGetValue(CountryCode.Value, out var parties))
+                    if (tokenStatus.TryGetValue(CountryCode.Value, out var parties))
                     {
                         if (parties.TryGetValue(PartyId.Value, out var tokens))
                         {
@@ -4756,7 +4906,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTokens = new List<TokenStatus>();
 
-                    foreach (var party in Tokens.Values)
+                    foreach (var party in tokenStatus.Values)
                     {
                         if (party.TryGetValue(PartyId.Value, out var tokens))
                         {
@@ -4770,7 +4920,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                 else if (CountryCode.HasValue && !PartyId.HasValue)
                 {
-                    if (Tokens.TryGetValue(CountryCode.Value, out var parties))
+                    if (tokenStatus.TryGetValue(CountryCode.Value, out var parties))
                     {
 
                         var allTokens = new List<TokenStatus>();
@@ -4790,7 +4940,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                     var allTokens = new List<TokenStatus>();
 
-                    foreach (var party in Tokens.Values)
+                    foreach (var party in tokenStatus.Values)
                     {
                         foreach (var tokens in party.Values)
                         {
@@ -4816,12 +4966,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public Token? RemoveToken(Token_Id TokenId)
         {
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
                 Token? foundToken = null;
 
-                foreach (var parties in Tokens.Values)
+                foreach (var parties in tokenStatus.Values)
                 {
 
                     foreach (var tokens in parties.Values)
@@ -4856,10 +5006,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (Token is null)
                 throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (Tokens.TryGetValue(Token.CountryCode, out var parties))
+                if (tokenStatus.TryGetValue(Token.CountryCode, out var parties))
                 {
 
                     if (parties.TryGetValue(Token.PartyId, out var tokens))
@@ -4876,7 +5026,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                     }
 
                     if (!parties.Any())
-                        Tokens.Remove(Token.CountryCode);
+                        tokenStatus.Remove(Token.CountryCode);
 
                 }
 
@@ -4888,17 +5038,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region RemoveAllTokens()
+        #region RemoveAllTokens(IncludeTokens = null)
 
         /// <summary>
-        /// Remove all tokens.
+        /// Remove all matching tokens.
         /// </summary>
-        public void RemoveAllTokens()
+        /// <param name="IncludeSessions">An optional token filter.</param>
+        public void RemoveAllTokens(Func<Token, Boolean>? IncludeTokens = null)
         {
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
-                Tokens.Clear();
+
+                if (IncludeTokens is null)
+                    tokenStatus.Clear();
+
+                else
+                {
+
+                    var tokensToDelete = tokenStatus.Values.SelectMany(xx => xx.Values).
+                                                            SelectMany(yy => yy.Values).
+                                                            Where     (tokenStatus => IncludeTokens(tokenStatus.Token)).
+                                                            Select    (tokenStatus => tokenStatus.Token).
+                                                            ToArray   ();
+
+                    foreach (var token in tokensToDelete)
+                        tokenStatus[token.CountryCode][token.PartyId].Remove(token.Id);
+
+                }
+
             }
 
         }
@@ -4916,10 +5084,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     Party_Id     PartyId)
         {
 
-            lock (Tokens)
+            lock (tokenStatus)
             {
 
-                if (Tokens.TryGetValue(CountryCode, out var parties))
+                if (tokenStatus.TryGetValue(CountryCode, out var parties))
                 {
                     if (parties.TryGetValue(PartyId, out var tokens))
                     {

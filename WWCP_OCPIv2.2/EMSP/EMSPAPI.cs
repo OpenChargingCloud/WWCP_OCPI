@@ -1459,6 +1459,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
         public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
 
+
+        public CustomJObjectSerializerDelegate<Token>?                       CustomTokenSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyContract>?              CustomEnergyContractSerializer                { get; set; }
+
         #endregion
 
         #region Events
@@ -3591,20 +3595,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #endregion
 
 
-                                        var filters                 = Request.GetDateAndPaginationFilters();
+                                        var filters            = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations            = CommonAPI.GetLocations(countryCode, partyId).
-                                                                                ToArray();
+                                        var allLocations       = CommonAPI.GetLocations(countryCode, partyId).
+                                                                           ToArray();
 
-                                        var allLocationsCount       = allLocations.Length;
-
-
-                                        var filteredLocations       = CommonAPI.GetLocations().
-                                                                          Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
-                                                                          Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
-                                                                          ToArray();
-
-                                        var filteredLocationsCount  = filteredLocations.Length;
+                                        var filteredLocations  = allLocations.Where(location => !filters.From.HasValue || location.LastUpdated >  filters.From.Value).
+                                                                              Where(location => !filters.To.  HasValue || location.LastUpdated <= filters.To.  Value).
+                                                                              ToArray();
 
 
                                         return Task.FromResult(
@@ -3638,7 +3636,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredLocationsCount)
+                                                   Set("X-Total-Count", allLocations.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
@@ -5144,15 +5142,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                          partyId).
                                                                               ToArray();
 
-                                        var allTariffsCount       = allTariffs.Length;
-
-
-                                        var filteredTariffs       = CommonAPI.GetTariffs().
-                                                                          Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
-                                                                          Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
-                                                                          ToArray();
-
-                                        var filteredTariffsCount  = filteredTariffs.Length;
+                                        var filteredTariffs       = allTariffs.Where(tariff => !filters.From.HasValue || tariff.LastUpdated >  filters.From.Value).
+                                                                               Where(tariff => !filters.To.  HasValue || tariff.LastUpdated <= filters.To.  Value).
+                                                                               ToArray();
 
 
                                         return Task.FromResult(
@@ -5179,7 +5171,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredTariffsCount)
+                                                   Set("X-Total-Count", allTariffs.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
@@ -5718,21 +5710,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #endregion
 
 
-                                        var filters                = Request.GetDateAndPaginationFilters();
+                                        var filters           = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions            = CommonAPI.GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
-                                                                                                                                                 role.PartyId     == session.PartyId)).
-                                                                               ToArray();
-
-                                        var allSessionsCount       = allSessions.Length;
-
-
-                                        var filteredSessions       = CommonAPI.GetSessions().
-                                                                          Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
-                                                                          Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
+                                        var allSessions       = CommonAPI.GetSessions(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
+                                                                                                                                            role.PartyId     == session.PartyId)).
                                                                           ToArray();
 
-                                        var filteredSessionsCount  = filteredSessions.Length;
+                                        var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
+                                                                            Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
+                                                                            ToArray();
 
 
                                         return Task.FromResult(
@@ -5755,7 +5741,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredSessionsCount)
+                                                   Set("X-Total-Count", allSessions.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
@@ -5812,21 +5798,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #endregion
 
 
-                                        var filters                = Request.GetDateAndPaginationFilters();
+                                        var filters           = Request.GetDateAndPaginationFilters();
 
-                                        var allSessions            = CommonAPI.GetSessions(countryCode,
-                                                                                           partyId).
-                                                                               ToArray();
-
-                                        var allSessionsCount       = allSessions.Length;
-
-
-                                        var filteredSessions       = CommonAPI.GetSessions().
-                                                                          Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
-                                                                          Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
+                                        var allSessions       = CommonAPI.GetSessions(countryCode,
+                                                                                      partyId).
                                                                           ToArray();
 
-                                        var filteredSessionsCount  = filteredSessions.Length;
+                                        var filteredSessions  = allSessions.Where(session => !filters.From.HasValue || session.LastUpdated >  filters.From.Value).
+                                                                            Where(session => !filters.To.  HasValue || session.LastUpdated <= filters.To.  Value).
+                                                                            ToArray();
 
 
                                         return Task.FromResult(
@@ -5849,7 +5829,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredSessionsCount)
+                                                   Set("X-Total-Count", allSessions.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
@@ -6440,25 +6420,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #endregion
 
 
-                                        var filters            = Request.GetDateAndPaginationFilters();
+                                        var filters       = Request.GetDateAndPaginationFilters();
 
-                                        // Link             Link to the 'next' page should be provided when this is NOT the last page.
-                                        // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
-                                        // X-Limit          The maximum number of objects that the server WILL return.
+                                        var allCDRs       = CommonAPI.GetCDRs(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
+                                                                                                                                    role.PartyId     == session.PartyId)).
+                                                                      ToArray();
 
-                                        var allCDRs            = CommonAPI.GetCDRs(session => Request.AccessInfo.Value.Roles.Any(role => role.CountryCode == session.CountryCode &&
-                                                                                                                                         role.PartyId     == session.PartyId)).
-                                                                           ToArray();
-
-                                        var allCDRsCount       = allCDRs.Length;
-
-
-                                        var filteredCDRs       = CommonAPI.GetCDRs().
-                                                                           Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
-                                                                           Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
-                                                                           ToArray();
-
-                                        var filteredCDRsCount  = filteredCDRs.Length;
+                                        var filteredCDRs  = allCDRs.Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
+                                                                    Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
+                                                                    ToArray();
 
 
                                         return Task.FromResult(
@@ -6494,7 +6464,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredCDRsCount)
+                                                   Set("X-Total-Count", allCDRs.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
@@ -6547,25 +6517,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #endregion
 
 
-                                        var filters            = Request.GetDateAndPaginationFilters();
+                                        var filters       = Request.GetDateAndPaginationFilters();
 
-                                        // Link             Link to the 'next' page should be provided when this is NOT the last page.
-                                        // X-Total-Count    The total number of objects available in the server system that match the given query (including the given query parameters.
-                                        // X-Limit          The maximum number of objects that the server WILL return.
+                                        var allCDRs       = CommonAPI.GetCDRs(countryCode,
+                                                                              partyId).
+                                                                      ToArray();
 
-                                        var allCDRs            = CommonAPI.GetCDRs(countryCode,
-                                                                                   partyId).
-                                                                           ToArray();
-
-                                        var allCDRsCount       = allCDRs.Length;
-
-
-                                        var filteredCDRs       = CommonAPI.GetCDRs().
-                                                                           Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
-                                                                           Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
-                                                                           ToArray();
-
-                                        var filteredCDRsCount  = filteredCDRs.Length;
+                                        var filteredCDRs  = CommonAPI.GetCDRs().
+                                                                      Where(cdr => !filters.From.HasValue || cdr.LastUpdated >  filters.From.Value).
+                                                                      Where(cdr => !filters.To.  HasValue || cdr.LastUpdated <= filters.To.  Value).
+                                                                      ToArray();
 
 
                                         return Task.FromResult(
@@ -6601,7 +6562,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredCDRsCount)
+                                                   Set("X-Total-Count", allCDRs.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
@@ -7100,17 +7061,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #endregion
 
-                                        var filters              = Request.GetDateAndPaginationFilters();
 
-                                        var allTokens            = CommonAPI.GetTokens().
-                                                                             Select(tokenStatus => tokenStatus.Token).
-                                                                             ToArray();
-                                        var allTokensCount       = allTokens.Length;
+                                        var filters         = Request.GetDateAndPaginationFilters();
 
-                                        var filteredTokens       = allTokens.Where(token => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
-                                                                             Where(token => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
-                                                                             ToArray();
-                                        var filteredTokensCount  = filteredTokens.Length;
+                                        var allTokens       = CommonAPI.GetTokens().
+                                                                        Select(tokenStatus => tokenStatus.Token).
+                                                                        ToArray();
+
+                                        var filteredTokens  = allTokens.Where(token => !filters.From.HasValue || token.LastUpdated >  filters.From.Value).
+                                                                        Where(token => !filters.To.  HasValue || token.LastUpdated <= filters.To.  Value).
+                                                                        ToArray();
 
 
                                         return Task.FromResult(
@@ -7119,14 +7079,15 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(filteredTokens.SkipTakeFilter(filters.Offset,
                                                                                                                    filters.Limit).
-                                                                                                    SafeSelect(token => token.ToJSON())),
+                                                                                                    SafeSelect(token => token.ToJSON(CustomTokenSerializer,
+                                                                                                                                     CustomEnergyContractSerializer))),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, POST",
                                                        AccessControlAllowHeaders  = "Authorization"
                                                        //LastModified               = ?
                                                    }.
-                                                   Set("X-Total-Count", filteredTokensCount)
+                                                   Set("X-Total-Count", allTokens.Length)
                                                    // X-Limit               The maximum number of objects that the server WILL return.
                                                    // Link                  Link to the 'next' page should be provided when this is NOT the last page.
                                             });
