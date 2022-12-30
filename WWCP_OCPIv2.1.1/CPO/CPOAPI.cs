@@ -991,7 +991,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
+                    StatusMessage        = "Invalid token identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                         HTTPStatusCode             = HTTPStatusCode.BadRequest,
                         //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
@@ -1004,21 +1004,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             }
 
 
-            if (!CPOAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus) &&
-                FailOnMissingToken)
+            if (!CPOAPI.CommonAPI.TryGetToken(TokenId.Value, out TokenStatus))
+            {
+
+                if (FailOnMissingToken)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2004,
+                        StatusMessage        = "Unknown token identification!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                            //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                            AccessControlAllowHeaders  = "Authorization"
+                        }
+                    };
+
+                    return false;
+
+                }
+
+            }
+
+            if (TokenStatus.Token.CountryCode != CountryCode ||
+                TokenStatus.Token.PartyId     != PartyId)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2004,
-                    StatusMessage        = "Unknown tariff identification!",
+                    StatusMessage        = "Invalid token identification!",
                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.NotFound,
+                        HTTPStatusCode             = HTTPStatusCode.UnprocessableEntity,
                         //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
                         AccessControlAllowHeaders  = "Authorization"
                     }
                 };
-
-                return false;
 
             }
 
@@ -3745,7 +3765,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.EMSP)
                                         {
 
                                             return Task.FromResult(
@@ -3766,13 +3787,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check token
 
                                         if (!Request.ParseToken(this,
-                                                                out CountryCode?          CountryCode,
-                                                                out Party_Id?             PartyId,
-                                                                out Token_Id?             TokenId,
-                                                                out TokenStatus           TokenStatus,
-                                                                out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                out var countryCode,
+                                                                out var partyId,
+                                                                out var tokenId,
+                                                                out var tokenStatus,
+                                                                out var ocpiResponseBuilder) ||
+                                             tokenStatus.Token is null)
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
@@ -3786,12 +3808,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = TokenStatus.Token.ToJSON(),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                   Data                 = tokenStatus.Token.ToJSON(false,
+                                                                                                   CustomTokenSerializer),
+                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = TokenStatus.Token.LastUpdated.ToIso8601()
+                                                       LastModified               = tokenStatus.Token.LastUpdated.ToIso8601(),
+                                                       ETag                       = tokenStatus.Token.ETag
                                                    }
                                             });
 
@@ -3811,7 +3835,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.EMSP)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3831,29 +3856,30 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check token
 
                                         if (!Request.ParseToken(this,
-                                                                 out CountryCode?          CountryCode,
-                                                                 out Party_Id?             PartyId,
-                                                                 out Token_Id?             TokenId,
-                                                                 out TokenStatus           ExistingTokenStatus,
-                                                                 out OCPIResponse.Builder  OCPIResponseBuilder,
-                                                                 FailOnMissingToken: false))
+                                                                out var countryCode,
+                                                                out var partyId,
+                                                                out var tokenId,
+                                                                out var existingTokenStatus,
+                                                                out var ocpiResponseBuilder,
+                                                                FailOnMissingToken: false))
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
                                         #region Parse new or updated token JSON
 
-                                        if (!Request.TryParseJObjectRequestBody(out var TokenJSON, out OCPIResponseBuilder))
-                                            return OCPIResponseBuilder;
+                                        if (!Request.TryParseJObjectRequestBody(out var tokenJSON, out ocpiResponseBuilder))
+                                            return ocpiResponseBuilder;
 
-                                        if (!Token.TryParse(TokenJSON,
+                                        if (!Token.TryParse(tokenJSON,
                                                             out var newOrUpdatedToken,
                                                             out var errorResponse,
                                                             Request.AccessInfo.Value.CountryCode,
                                                             Request.AccessInfo.Value.PartyId,
-                                                            TokenId))
+                                                            tokenId) ||
+                                             newOrUpdatedToken is null)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3878,7 +3904,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         if (AllowDowngrades == false &&
                                             // ToDo: Check AccessToken
-                                            newOrUpdatedToken.LastUpdated < ExistingTokenStatus.Token.LastUpdated &&
+                                            newOrUpdatedToken.LastUpdated < existingTokenStatus.Token.LastUpdated &&
                                             !Request.QueryString.GetBoolean("forceDowngrade", false))
                                         {
 
@@ -3910,8 +3936,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                             return new OCPIResponse.Builder(Request) {
                                                        StatusCode           = 1000,
                                                        StatusMessage        = "Hello world!",
-                                                       Data                 = addOrUpdateResult.Data.ToJSON(),
-                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                       Data                 = addOrUpdateResult.Data.ToJSON(false,
+                                                                                                            CustomTokenSerializer),
+                                                HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                            HTTPStatusCode             = addOrUpdateResult.WasCreated == true
                                                                                             ? HTTPStatusCode.Created
                                                                                             : HTTPStatusCode.OK,
@@ -3925,11 +3952,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         return new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 2000,
                                                    StatusMessage        = addOrUpdateResult.ErrorResponse,
-                                                   Data                 = newOrUpdatedToken.ToJSON(),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                   Data                 = newOrUpdatedToken.ToJSON(false,
+                                                                                                   CustomTokenSerializer),
+                                            HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                       AccessControlAllowHeaders  = "Authorization"
+                                                       AccessControlAllowHeaders  = "Authorization",
+                                                       LastModified               = addOrUpdateResult.Data.LastUpdated.ToIso8601(),
+                                                       ETag                       = addOrUpdateResult.Data.ETag
                                                    }
                                                };
 
@@ -3949,7 +3979,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role != Roles.EMSP)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3969,33 +4000,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check token
 
                                         if (!Request.ParseToken(this,
-                                                                 out CountryCode?          CountryCode,
-                                                                 out Party_Id?             PartyId,
-                                                                 out Token_Id?             TokenId,
-                                                                 out TokenStatus           ExistingTokenStatus,
-                                                                 out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                 out var countryCode,
+                                                                 out var partyId,
+                                                                 out var tokenId,
+                                                                 out var existingTokenStatus,
+                                                                 out var ocpiResponseBuilder) ||
+                                             existingTokenStatus.Token is null)
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
-                                        //ToDo: What exactly to do with this information?
-                                        var tokenType = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
+                                        #region Parse token JSON patch
 
-                                        #region Parse and apply Token JSON patch
-
-                                        if (!Request.TryParseJObjectRequestBody(out JObject TokenPatch, out OCPIResponseBuilder))
-                                            return OCPIResponseBuilder;
+                                        if (!Request.TryParseJObjectRequestBody(out var tokenPatch, out ocpiResponseBuilder))
+                                            return ocpiResponseBuilder;
 
                                         #endregion
 
 
-                                        // Validation-Checks for PATCHes
-                                        // (E-Tag, Timestamp, ...)
+                                        //ToDo: What exactly to do with this information?
+                                        var tokenType = Request.QueryString.TryParseEnum<TokenType>("type") ?? TokenType.RFID;
 
-                                        var patchedToken = await CommonAPI.TryPatchToken(ExistingTokenStatus.Token,
-                                                                                         TokenPatch,
+
+                                        //ToDo: Validation-Checks for PATCHes (E-Tag, Timestamp, ...)
+                                        var patchedToken = await CommonAPI.TryPatchToken(existingTokenStatus.Token,
+                                                                                         tokenPatch,
                                                                                          AllowDowngrades ?? Request.QueryString.GetBoolean("forceDowngrade"));
 
 
@@ -4039,7 +4070,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.EMSP)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4059,35 +4091,50 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                         #region Check token
 
                                         if (!Request.ParseToken(this,
-                                                                out CountryCode?          CountryCode,
-                                                                out Party_Id?             PartyId,
-                                                                out Token_Id?             TokenId,
-                                                                out TokenStatus           ExistingTokenStatus,
-                                                                out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                out var countryCode,
+                                                                out var partyId,
+                                                                out var tokenId,
+                                                                out var existingTokenStatus,
+                                                                out var ocpiResponseBuilder) ||
+                                             existingTokenStatus.Token is null)
                                         {
-                                            return OCPIResponseBuilder;
+                                            return ocpiResponseBuilder!;
                                         }
 
                                         #endregion
 
 
                                         //ToDo: What exactly to do with this information?
-                                        var tokenType     = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
-
-                                        var RemovedToken  = CommonAPI.RemoveToken(ExistingTokenStatus.Token);
+                                        var tokenType = Request.QueryString.Map("type", TokenType.TryParse) ?? TokenType.RFID;
 
 
-                                        return new OCPIResponse.Builder(Request) {
-                                                   StatusCode           = 1000,
-                                                   StatusMessage        = "Hello world!",
-                                                   Data                 = ExistingTokenStatus.Token.ToJSON(),
-                                                   HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                                                       HTTPStatusCode             = HTTPStatusCode.OK,
-                                                       AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
-                                                       AccessControlAllowHeaders  = "Authorization"
-                                                       //LastModified               = Timestamp.Now.ToIso8601()
-                                                   }
-                                               };
+                                        if (CommonAPI.RemoveToken(existingTokenStatus.Token))
+                                            return new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 1000,
+                                                       StatusMessage        = "Hello world!",
+                                                       Data                 = existingTokenStatus.Token.ToJSON(false,
+                                                                                                               CustomTokenSerializer),
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
+                                                       }
+                                                   };
+
+                                        else
+                                            return new OCPIResponse.Builder(Request) {
+                                                       StatusCode           = 2000,
+                                                       StatusMessage        = "Hello world!",
+                                                       Data                 = existingTokenStatus.Token.ToJSON(false,
+                                                                                                               CustomTokenSerializer),
+                                                       HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                           HTTPStatusCode             = HTTPStatusCode.OK,
+                                                           AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
+                                                           AccessControlAllowHeaders  = "Authorization"
+                                                           //LastModified               = Timestamp.Now.ToIso8601()
+                                                       }
+                                                   };
 
                                     });
 

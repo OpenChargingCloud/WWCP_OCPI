@@ -4961,36 +4961,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region RemoveToken(TokenId)
+        #region RemoveToken    (Token)
 
-        public Token? RemoveToken(Token_Id TokenId)
+        public Boolean RemoveToken(Token Token)
         {
 
             lock (tokenStatus)
             {
 
-                Token? foundToken = null;
+                var success = false;
 
-                foreach (var parties in tokenStatus.Values)
+                if (tokenStatus.TryGetValue(Token.CountryCode, out var parties))
                 {
 
-                    foreach (var tokens in parties.Values)
+                    if (parties.TryGetValue(Token.PartyId, out var _tokenStatus))
                     {
-                        if (tokens.TryGetValue(TokenId, out var tokenStatus))
+
+                        if (_tokenStatus.ContainsKey(Token.Id))
                         {
-                            foundToken = tokenStatus.Token;
-                            break;
+                            success = _tokenStatus.Remove(Token.Id);
                         }
+
+                        if (!_tokenStatus.Any())
+                            parties.Remove(Token.PartyId);
+
                     }
 
-                    if (foundToken is not null)
-                        break;
+                    if (!parties.Any())
+                        chargingSessions.Remove(Token.CountryCode);
 
                 }
 
-                return foundToken is not null
-                           ? RemoveToken(foundToken)
-                           : null;
+                return success;
 
             }
 
@@ -4998,39 +5000,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region RemoveToken(Token)
+        #region RemoveToken    (TokenId)
 
-        public Token RemoveToken(Token Token)
+        public Boolean RemoveToken(Token_Id TokenId)
         {
-
-            if (Token is null)
-                throw new ArgumentNullException(nameof(Token), "The given token must not be null!");
 
             lock (tokenStatus)
             {
 
-                if (tokenStatus.TryGetValue(Token.CountryCode, out var parties))
+                CountryCode? countryCode  = default;
+                Party_Id?    partyId      = default;
+
+                foreach (var parties in tokenStatus.Values)
                 {
-
-                    if (parties.TryGetValue(Token.PartyId, out var tokens))
+                    foreach (var _tokenStatus in parties.Values)
                     {
-
-                        if (tokens.ContainsKey(Token.Id))
+                        if (_tokenStatus.TryGetValue(TokenId, out var __tokenStatus))
                         {
-                            tokens.Remove(Token.Id);
+                            countryCode = __tokenStatus.Token.CountryCode;
+                            partyId     = __tokenStatus.Token.PartyId;
                         }
-
-                        if (!tokens.Any())
-                            parties.Remove(Token.PartyId);
-
                     }
-
-                    if (!parties.Any())
-                        tokenStatus.Remove(Token.CountryCode);
-
                 }
 
-                return Token;
+                if (countryCode.HasValue &&
+                    partyId.    HasValue)
+                {
+                    return tokenStatus[countryCode.Value][partyId.Value].Remove(TokenId);
+                }
+
+                return false;
 
             }
 
