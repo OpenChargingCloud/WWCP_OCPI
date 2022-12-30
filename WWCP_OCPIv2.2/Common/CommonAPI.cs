@@ -3008,6 +3008,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region GetLocations  (IncludeLocation)
+
+        public IEnumerable<Location> GetLocations(Func<Location, Boolean> IncludeLocation)
+        {
+
+            lock (Locations)
+            {
+
+                var allLocations = new List<Location>();
+
+                foreach (var party in Locations.Values)
+                {
+                    foreach (var partyLocations in party.Values)
+                    {
+                        foreach (var location in partyLocations.Values)
+                        {
+                            if (location is not null &&
+                                IncludeLocation(location))
+                            {
+                                allLocations.Add(location);
+                            }
+                        }
+                    }
+                }
+
+                return allLocations;
+
+            }
+
+        }
+
+        #endregion
+
         #region GetLocations  (CountryCode = null, PartyId = null)
 
         public IEnumerable<Location> GetLocations(CountryCode? CountryCode   = null,
@@ -3092,9 +3125,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         public Location RemoveLocation(Location Location)
         {
-
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
 
             lock (Locations)
             {

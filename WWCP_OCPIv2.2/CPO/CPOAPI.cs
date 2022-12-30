@@ -17,18 +17,11 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-using System.Threading.Tasks;
-
-using social.OpenData.UsersAPI;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion
@@ -42,7 +35,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
     public static class CPOAPIExtensions
     {
 
-        #region ParseParseCountryCodePartyId(this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
+        #region ParseCountryCodeAndPartyId (this Request, CPOAPI, out CountryCode, out PartyId,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -55,19 +48,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="PartyId">The parsed party identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseParseCountryCodePartyId(this OCPIRequest          Request,
-                                                           CPOAPI                    CPOAPI,
-                                                           out CountryCode?          CountryCode,
-                                                           out Party_Id?             PartyId,
-                                                           out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCountryCodeAndPartyId(this OCPIRequest           Request,
+                                                         CPOAPI                     CPOAPI,
+                                                         out CountryCode?           CountryCode,
+                                                         out Party_Id?              PartyId,
+                                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -137,81 +130,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region ParseLocationId             (this Request, CPOAPI, out LocationId,                                                                      out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this OCPIRequest          Request,
-                                              CPOAPI                    CPOAPI,
-                                              out Location_Id?          LocationId,
-                                              out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocation               (this Request, CPOAPI, out LocationId, out Location,                                                        out HTTPResponse)
+        #region ParseLocation              (this Request, CPOAPI, out LocationId, out Location,                                                        out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -224,19 +143,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Location">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocation(this OCPIRequest          Request,
-                                            CPOAPI                    CPOAPI,
-                                            out Location_Id?          LocationId,
-                                            out Location              Location,
-                                            out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocation(this OCPIRequest           Request,
+                                            CPOAPI                     CPOAPI,
+                                            IEnumerable<String>        CountryCodeWithPartyId,
+                                            out Location_Id?           LocationId,
+                                            out Location?              Location,
+                                            out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                            Boolean                    FailOnMissingLocation = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -285,7 +206,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
                                                  CPOAPI.DefaultPartyId,
                                                  LocationId.Value,
-                                                 out Location)) {
+                                                 out Location) ||
+                 Location is null)
+            {
+
+                if (FailOnMissingLocation)
+                {
+
+                    OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
+                        StatusCode           = 2003,
+                        StatusMessage        = "Unknown location!",
+                        HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                            HTTPStatusCode             = HTTPStatusCode.NotFound,
+                            //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
+                            AccessControlAllowHeaders  = "Authorization"
+                        }
+                    };
+
+                    return false;
+
+                }
+
+                return true;
+
+            }
+
+            if (!CountryCodeWithPartyId.Contains(Location.CountryCode + "-" + Location.PartyId))
+            {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2003,
@@ -307,103 +254,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region ParseLocationEVSEId         (this Request, CPOAPI, out LocationId,               out EVSEUId,                                           out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this OCPIRequest          Request,
-                                                  CPOAPI                    CPOAPI,
-                                                  out Location_Id?          LocationId,
-                                                  out EVSE_UId?             EVSEUId,
-                                                  out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            EVSEUId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSE           (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
+        #region ParseLocationEVSE          (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -418,29 +269,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="EVSE">The resolved EVSE.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSE(this OCPIRequest          Request,
-                                                CPOAPI                    CPOAPI,
-                                                out Location_Id?          LocationId,
-                                                out Location              Location,
-                                                out EVSE_UId?             EVSEUId,
-                                                out EVSE                  EVSE,
-                                                out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationEVSE(this OCPIRequest           Request,
+                                                CPOAPI                     CPOAPI,
+                                                IEnumerable<String>        CountryCodeWithPartyId,
+                                                out Location_Id?           LocationId,
+                                                out Location?              Location,
+                                                out EVSE_UId?              EVSEUId,
+                                                out EVSE?                  EVSE,
+                                                out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
 
-            LocationId    = default;
-            Location      = default;
-            EVSEUId       = default;
-            EVSE          = default;
+            LocationId           = default;
+            Location             = default;
+            EVSEUId              = default;
+            EVSE                 = default;
             OCPIResponseBuilder  = default;
 
             if (Request.ParsedURLParameters.Length < 2)
@@ -502,7 +354,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
                                                  CPOAPI.DefaultPartyId,
                                                  LocationId.Value,
-                                                 out Location))
+                                                 out Location) ||
+                 Location is null                              ||
+                !CountryCodeWithPartyId.Contains(Location.CountryCode + "-" + Location.PartyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -541,125 +395,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region ParseLocationEVSEConnectorId(this Request, CPOAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest          Request,
-                                                           CPOAPI                    CPOAPI,
-                                                           out Location_Id?          LocationId,
-                                                           out EVSE_UId?             EVSEUId,
-                                                           out Connector_Id?         ConnectorId,
-                                                           out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            EVSEUId              = default;
-            ConnectorId          = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location, EVSE and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSEConnector  (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
+        #region ParseLocationEVSEConnector (this Request, CPOAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -676,23 +412,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Connector">The resolved connector.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnector(this OCPIRequest          Request,
-                                                         CPOAPI                    CPOAPI,
-                                                         out Location_Id?          LocationId,
-                                                         out Location              Location,
-                                                         out EVSE_UId?             EVSEUId,
-                                                         out EVSE                  EVSE,
-                                                         out Connector_Id?         ConnectorId,
-                                                         out Connector             Connector,
-                                                         out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseLocationEVSEConnector(this OCPIRequest           Request,
+                                                         CPOAPI                     CPOAPI,
+                                                         IEnumerable<String>        CountryCodeWithPartyId,
+                                                         out Location_Id?           LocationId,
+                                                         out Location?              Location,
+                                                         out EVSE_UId?              EVSEUId,
+                                                         out EVSE?                  EVSE,
+                                                         out Connector_Id?          ConnectorId,
+                                                         out Connector?             Connector,
+                                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -760,7 +497,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
 
-            if (!EVSEUId.HasValue)
+            if (!ConnectorId.HasValue)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -781,7 +518,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             if (!CPOAPI.CommonAPI.TryGetLocation(CPOAPI.DefaultCountryCode,
                                                  CPOAPI.DefaultPartyId,
                                                  LocationId.Value,
-                                                 out Location))
+                                                 out Location) ||
+                 Location is null                              ||
+                !CountryCodeWithPartyId.Contains(Location.CountryCode + "-" + Location.PartyId))
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -798,7 +537,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE)) {
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
+                 EVSE is null) {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
                     StatusCode           = 2001,
@@ -837,80 +577,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseTariffId               (this Request, CPOAPI, out TariffId,                                                                        out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="TariffId">The parsed unique tariff identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariffId(this OCPIRequest          Request,
-                                            CPOAPI                    CPOAPI,
-                                            out Tariff_Id?            TariffId,
-                                            out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            TariffId           = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TariffId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseTariff                 (this Request, CPOAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
+        #region ParseTariff                (this Request, CPOAPI, out TariffId, out Tariff,                                                            out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -923,19 +590,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Tariff">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariff(this OCPIRequest          Request,
-                                          CPOAPI                    CPOAPI,
-                                          out Tariff_Id?            TariffId,
-                                          out Tariff                Tariff,
-                                          out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseTariff(this OCPIRequest           Request,
+                                          CPOAPI                     CPOAPI,
+                                          out Tariff_Id?             TariffId,
+                                          out Tariff?                Tariff,
+                                          out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -1006,81 +673,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region ParseSessionId              (this Request, CPOAPI, out SessionId,                                                                       out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the session identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="SessionId">The parsed unique session identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSessionId(this OCPIRequest          Request,
-                                             CPOAPI                    CPOAPI,
-                                             out Session_Id?           SessionId,
-                                             out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            SessionId            = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!SessionId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseSession                (this Request, CPOAPI, out SessionId, out Session,                                                          out HTTPResponse)
+        #region ParseSession               (this Request, CPOAPI, out SessionId, out Session,                                                          out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1093,19 +686,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="Session">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSession(this OCPIRequest          Request,
-                                           CPOAPI                    CPOAPI,
-                                           out Session_Id?           SessionId,
-                                           out Session               Session,
-                                           out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseSession(this OCPIRequest           Request,
+                                           CPOAPI                     CPOAPI,
+                                           out Session_Id?            SessionId,
+                                           out Session?               Session,
+                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -1176,81 +769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region ParseCDRId                  (this Request, CPOAPI, out CDRId,                                                                           out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the CDR identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="CDRId">The parsed unique CDR identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDRId(this OCPIRequest          Request,
-                                         CPOAPI                    CPOAPI,
-                                         out CDR_Id?               CDRId,
-                                         out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CDRId                = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing CDR identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CDRId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid CDR identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseCDR                    (this Request, CPOAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
+        #region ParseCDR                   (this Request, CPOAPI, out CDRId, out CDR,                                                                  out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the CDR identification
@@ -1263,19 +782,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CDR">The resolved user.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDR(this OCPIRequest          Request,
-                                       CPOAPI                    CPOAPI,
-                                       out CDR_Id?               CDRId,
-                                       out CDR                   CDR,
-                                       out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCDR(this OCPIRequest           Request,
+                                       CPOAPI                     CPOAPI,
+                                       out CDR_Id?                CDRId,
+                                       out CDR?                   CDR,
+                                       out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -1346,125 +865,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-
-        #region ParseTokenId                (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId,                                           out HTTPResponse)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="CPOAPI">The CPO API.</param>
-        /// <param name="CountryCode">The parsed country code.</param>
-        /// <param name="PartyId">The parsed party identification.</param>
-        /// <param name="TokenId">The parsed unique tariff identification.</param>
-        /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTokenId(this OCPIRequest          Request,
-                                           CPOAPI                    CPOAPI,
-                                           out CountryCode?          CountryCode,
-                                           out Party_Id?             PartyId,
-                                           out Token_Id?             TokenId,
-                                           out OCPIResponse.Builder  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request == null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (CPOAPI  == null)
-                throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
-
-            #endregion
-
-            CountryCode          = default;
-            PartyId              = default;
-            TokenId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CountryCode = OCPIv2_2.CountryCode.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CountryCode.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid country code!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            PartyId = Party_Id.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!PartyId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid party identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            TokenId = Token_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!TokenId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseToken                  (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,                                out HTTPResponse)
+        #region ParseToken                 (this Request, CPOAPI, out CountryCode, out PartyId, out TokenId, out Token,                                out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -1480,22 +881,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <param name="FailOnMissingToken">Whether to fail when the tariff for the given tariff identification was not found.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseToken(this OCPIRequest          Request,
-                                         CPOAPI                    CPOAPI,
-                                         out CountryCode?          CountryCode,
-                                         out Party_Id?             PartyId,
-                                         out Token_Id?             TokenId,
-                                         out TokenStatus           TokenStatus,
-                                         out OCPIResponse.Builder  OCPIResponseBuilder,
-                                         Boolean                   FailOnMissingToken = true)
+        public static Boolean ParseToken(this OCPIRequest           Request,
+                                         CPOAPI                     CPOAPI,
+                                         out CountryCode?           CountryCode,
+                                         out Party_Id?              PartyId,
+                                         out Token_Id?              TokenId,
+                                         out TokenStatus            TokenStatus,
+                                         out OCPIResponse.Builder?  OCPIResponseBuilder,
+                                         Boolean                    FailOnMissingToken = true)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -1606,7 +1007,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         #endregion
 
 
-        #region ParseCommandId              (this Request, CPOAPI, out CommandId,                                                                       out HTTPResponse)
+        #region ParseCommandId             (this Request, CPOAPI, out CommandId,                                                                       out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the command identification
@@ -1618,18 +1019,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
         /// <param name="CommandId">The parsed unique command identification.</param>
         /// <param name="OCPIResponseBuilder">An OCPI response builder.</param>
         /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCommandId(this OCPIRequest          Request,
-                                             CPOAPI                    CPOAPI,
-                                             out Command_Id?           CommandId,
-                                             out OCPIResponse.Builder  OCPIResponseBuilder)
+        public static Boolean ParseCommandId(this OCPIRequest           Request,
+                                             CPOAPI                     CPOAPI,
+                                             out Command_Id?            CommandId,
+                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
         {
 
             #region Initial checks
 
-            if (Request == null)
+            if (Request is null)
                 throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
 
-            if (CPOAPI  == null)
+            if (CPOAPI  is null)
                 throw new ArgumentNullException(nameof(CPOAPI),   "The given CPO API must not be null!");
 
             #endregion
@@ -1738,7 +1139,621 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
+        #region Custom JSON parsers
+
+        #endregion
+
+        #region Custom JSON serializers
+
+        public CustomJObjectSerializerDelegate<Location>?                    CustomLocationSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<PublishToken>?                CustomPublishTokenSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<AdditionalGeoLocation>?       CustomAdditionalGeoLocationSerializer         { get; set; }
+        public CustomJObjectSerializerDelegate<EVSE>?                        CustomEVSESerializer                          { get; set; }
+        public CustomJObjectSerializerDelegate<StatusSchedule>?              CustomStatusScheduleSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<Connector>?                   CustomConnectorSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMeter>?                 CustomEnergyMeterSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftwareStatus>?  CustomTransparencySoftwareStatusSerializer    { get; set; }
+        public CustomJObjectSerializerDelegate<TransparencySoftware>?        CustomTransparencySoftwareSerializer          { get; set; }
+        public CustomJObjectSerializerDelegate<DisplayText>?                 CustomDisplayTextSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<BusinessDetails>?             CustomBusinessDetailsSerializer               { get; set; }
+        public CustomJObjectSerializerDelegate<Hours>?                       CustomHoursSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<Image>?                       CustomImageSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<EnergyMix>?                   CustomEnergyMixSerializer                     { get; set; }
+        public CustomJObjectSerializerDelegate<EnergySource>?                CustomEnergySourceSerializer                  { get; set; }
+        public CustomJObjectSerializerDelegate<EnvironmentalImpact>?         CustomEnvironmentalImpactSerializer           { get; set; }
+
+
+        public CustomJObjectSerializerDelegate<Tariff>?                      CustomTariffSerializer                        { get; set; }
+        public CustomJObjectSerializerDelegate<Price>?                       CustomPriceSerializer                         { get; set; }
+        public CustomJObjectSerializerDelegate<TariffElement>?               CustomTariffElementSerializer                 { get; set; }
+        public CustomJObjectSerializerDelegate<PriceComponent>?              CustomPriceComponentSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<TariffRestrictions>?          CustomTariffRestrictionsSerializer            { get; set; }
+
+
+        public CustomJObjectSerializerDelegate<Session>?                     CustomSessionSerializer                       { get; set; }
+        public CustomJObjectSerializerDelegate<CDRToken>?                    CustomCDRTokenSerializer                      { get; set; }
+        public CustomJObjectSerializerDelegate<ChargingPeriod>?              CustomChargingPeriodSerializer                { get; set; }
+        public CustomJObjectSerializerDelegate<CDRDimension>?                CustomCDRDimensionSerializer                  { get; set; }
+
+
+        public CustomJObjectSerializerDelegate<CDR>?                         CustomCDRSerializer                           { get; set; }
+        public CustomJObjectSerializerDelegate<CDRLocation>?                 CustomCDRLocationSerializer                   { get; set; }
+        public CustomJObjectSerializerDelegate<SignedData>?                  CustomSignedDataSerializer                    { get; set; }
+        public CustomJObjectSerializerDelegate<SignedValue>?                 CustomSignedValueSerializer                   { get; set; }
+
+        #endregion
+
         #region Events
+
+        #region Locations
+
+        #region (protected internal) GetLocationsRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET locations request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetLocationsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET locations request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetLocationsRequest(DateTime     Timestamp,
+                                                    HTTPAPI      API,
+                                                    OCPIRequest  Request)
+
+            => OnGetLocationsRequest?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
+
+        #endregion
+
+        #region (protected internal) GetLocationsResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET locations response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetLocationsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET locations response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetLocationsResponse(DateTime      Timestamp,
+                                                     HTTPAPI       API,
+                                                     OCPIRequest   Request,
+                                                     OCPIResponse  Response)
+
+            => OnGetLocationsResponse?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
+
+        #endregion
+
+
+        #region (protected internal) GetLocationRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET location request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetLocationRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET location request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetLocationRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnGetLocationRequest?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
+
+        #endregion
+
+        #region (protected internal) GetLocationResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET location response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetLocationResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET location response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetLocationResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
+
+            => OnGetLocationResponse?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
+
+        #endregion
+
+        #endregion
+
+        #region EVSEs
+
+        #region (protected internal) GetEVSERequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET EVSE request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetEVSERequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET EVSE request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetEVSERequest(DateTime     Timestamp,
+                                               HTTPAPI      API,
+                                               OCPIRequest  Request)
+
+            => OnGetEVSERequest?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request);
+
+        #endregion
+
+        #region (protected internal) GetEVSEResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET EVSE response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetEVSEResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET EVSE response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetEVSEResponse(DateTime      Timestamp,
+                                                HTTPAPI       API,
+                                                OCPIRequest   Request,
+                                                OCPIResponse  Response)
+
+            => OnGetEVSEResponse?.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request,
+                                          Response);
+
+        #endregion
+
+        #endregion
+
+        #region Connectors
+
+        #region (protected internal) GetConnectorRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET connector request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetConnectorRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET connector request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetConnectorRequest(DateTime     Timestamp,
+                                                    HTTPAPI      API,
+                                                    OCPIRequest  Request)
+
+            => OnGetConnectorRequest?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request);
+
+        #endregion
+
+        #region (protected internal) GetConnectorResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET connector response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetConnectorResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET connector response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetConnectorResponse(DateTime      Timestamp,
+                                                     HTTPAPI       API,
+                                                     OCPIRequest   Request,
+                                                     OCPIResponse  Response)
+
+            => OnGetConnectorResponse?.WhenAll(Timestamp,
+                                               API ?? this,
+                                               Request,
+                                               Response);
+
+        #endregion
+
+        #endregion
+
+        #region Tariffs
+
+        #region (protected internal) GetTariffsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET tariffs request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetTariffsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET tariffs request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetTariffsRequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnGetTariffsRequest?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) GetTariffsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET tariffs response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetTariffsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET tariffs response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetTariffsResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   OCPIResponse  Response)
+
+            => OnGetTariffsResponse?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+
+        #region (protected internal) GetTariffRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET tariff request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetTariffRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET tariff request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetTariffRequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnGetTariffRequest?.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) GetTariffResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET tariff response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetTariffResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET tariff response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetTariffResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  OCPIResponse  Response)
+
+            => OnGetTariffResponse?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
+        #endregion
+
+        #region Sessions
+
+        #region (protected internal) GetSessionsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET sessions request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetSessionsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET sessions request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetSessionsRequest(DateTime     Timestamp,
+                                                   HTTPAPI      API,
+                                                   OCPIRequest  Request)
+
+            => OnGetSessionsRequest?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request);
+
+        #endregion
+
+        #region (protected internal) GetSessionsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET sessions response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetSessionsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET sessions response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetSessionsResponse(DateTime      Timestamp,
+                                                    HTTPAPI       API,
+                                                    OCPIRequest   Request,
+                                                    OCPIResponse  Response)
+
+            => OnGetSessionsResponse?.WhenAll(Timestamp,
+                                              API ?? this,
+                                              Request,
+                                              Response);
+
+        #endregion
+
+
+        #region (protected internal) GetSessionRequest    (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET session request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetSessionRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET session request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetSessionRequest(DateTime     Timestamp,
+                                                  HTTPAPI      API,
+                                                  OCPIRequest  Request)
+
+            => OnGetSessionRequest?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request);
+
+        #endregion
+
+        #region (protected internal) GetSessionResponse   (Response)
+
+        /// <summary>
+        /// An event sent whenever a GET session response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetSessionResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET session response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetSessionResponse(DateTime      Timestamp,
+                                                   HTTPAPI       API,
+                                                   OCPIRequest   Request,
+                                                   OCPIResponse  Response)
+
+            => OnGetSessionResponse?.WhenAll(Timestamp,
+                                             API ?? this,
+                                             Request,
+                                             Response);
+
+        #endregion
+
+        #endregion
+
+        #region CDRs
+
+        #region (protected internal) GetCDRsRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET CDRs request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetCDRsRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDRs request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetCDRsRequest(DateTime     Timestamp,
+                                               HTTPAPI      API,
+                                               OCPIRequest  Request)
+
+            => OnGetCDRsRequest?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request);
+
+        #endregion
+
+        #region (protected internal) GetCDRsResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET CDRs response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetCDRsResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDRs response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetCDRsResponse(DateTime      Timestamp,
+                                                HTTPAPI       API,
+                                                OCPIRequest   Request,
+                                                OCPIResponse  Response)
+
+            => OnGetCDRsResponse?.WhenAll(Timestamp,
+                                          API ?? this,
+                                          Request,
+                                          Response);
+
+        #endregion
+
+
+        #region (protected internal) GetCDRRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a GET CDR request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnGetCDRRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDR request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task GetCDRRequest(DateTime     Timestamp,
+                                              HTTPAPI      API,
+                                              OCPIRequest  Request)
+
+            => OnGetCDRRequest?.WhenAll(Timestamp,
+                                        API ?? this,
+                                        Request);
+
+        #endregion
+
+        #region (protected internal) GetCDRResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a GET CDR response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnGetCDRResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a GET CDR response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task GetCDRResponse(DateTime      Timestamp,
+                                               HTTPAPI       API,
+                                               OCPIRequest   Request,
+                                               OCPIResponse  Response)
+
+            => OnGetCDRResponse?.WhenAll(Timestamp,
+                                         API ?? this,
+                                         Request,
+                                         Response);
+
+        #endregion
+
+        #endregion
+
+        #region Tokens
+
+        #region (protected internal) PostTokenRequest (Request)
+
+        /// <summary>
+        /// An event sent whenever a POST token request was received.
+        /// </summary>
+        public OCPIRequestLogEvent OnPostTokenRequest = new ();
+
+        /// <summary>
+        /// An event sent whenever a POST token request was received.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the request.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        protected internal Task PostTokenRequest(DateTime     Timestamp,
+                                                 HTTPAPI      API,
+                                                 OCPIRequest  Request)
+
+            => OnPostTokenRequest?.WhenAll(Timestamp,
+                                           API ?? this,
+                                           Request);
+
+        #endregion
+
+        #region (protected internal) PostTokenResponse(Response)
+
+        /// <summary>
+        /// An event sent whenever a POST token response was sent.
+        /// </summary>
+        public OCPIResponseLogEvent OnPostTokenResponse = new ();
+
+        /// <summary>
+        /// An event sent whenever a POST token response was sent.
+        /// </summary>
+        /// <param name="Timestamp">The timestamp of the response.</param>
+        /// <param name="API">The EMSP API.</param>
+        /// <param name="Request">An OCPI request.</param>
+        /// <param name="Response">An OCPI response.</param>
+        protected internal Task PostTokenResponse(DateTime      Timestamp,
+                                                  HTTPAPI       API,
+                                                  OCPIRequest   Request,
+                                                  OCPIResponse  Response)
+
+            => OnPostTokenResponse?.WhenAll(Timestamp,
+                                            API ?? this,
+                                            Request,
+                                            Response);
+
+        #endregion
+
 
         #region (protected internal) PutTokenRequest    (Request)
 
@@ -1886,6 +1901,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                               API ?? this,
                                               Request,
                                               Response);
+
+        #endregion
 
         #endregion
 
@@ -2263,7 +2280,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2286,12 +2302,35 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestLogger:   GetLocationsRequest,
+                                    OCPIResponseLogger:  GetLocationsResponse,
+                                    OCPIRequestHandler:  Request => {
 
+                                        #region Check access token
+
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo.IsNot(Roles.EMSP))
+                                        {
+
+                                            return Task.FromResult(
+                                                new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Invalid or blocked access token!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
+
+                                        }
+
+                                        #endregion
+
+                                        var allRoles                = Request.AccessInfo?.Roles.Select(role => role.CountryCode + "-" + role.PartyId).ToArray() ?? Array.Empty<String>();
                                         var filters                 = Request.GetDateAndPaginationFilters();
 
-                                        var allLocations            = CommonAPI.   GetLocations(DefaultCountryCode,
-                                                                                                DefaultPartyId).
+                                        var allLocations            = CommonAPI.   GetLocations(location => allRoles.Contains(location.CountryCode + "-" + location.PartyId)).
                                                                                    ToArray();
 
                                         var allLocationsCount       = allLocations.Length;
@@ -2310,7 +2349,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                    StatusMessage        = "Hello world!",
                                                    Data                 = new JArray(filteredLocations.SkipTakeFilter(filters.Offset,
                                                                                                                       filters.Limit).
-                                                                                                       SafeSelect(location => location.ToJSON())),
+                                                                                                       SafeSelect(location => location.ToJSON(CustomLocationSerializer,
+                                                                                                                                              CustomPublishTokenSerializer,
+                                                                                                                                              CustomAdditionalGeoLocationSerializer,
+                                                                                                                                              CustomEVSESerializer,
+                                                                                                                                              CustomStatusScheduleSerializer,
+                                                                                                                                              CustomConnectorSerializer,
+                                                                                                                                              CustomEnergyMeterSerializer,
+                                                                                                                                              CustomTransparencySoftwareStatusSerializer,
+                                                                                                                                              CustomTransparencySoftwareSerializer,
+                                                                                                                                              CustomDisplayTextSerializer,
+                                                                                                                                              CustomBusinessDetailsSerializer,
+                                                                                                                                              CustomHoursSerializer,
+                                                                                                                                              CustomImageSerializer,
+                                                                                                                                              CustomEnergyMixSerializer,
+                                                                                                                                              CustomEnergySourceSerializer,
+                                                                                                                                              CustomEnvironmentalImpactSerializer))),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
@@ -2335,7 +2389,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2357,30 +2410,73 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPMethod.GET,
                                     URLPathPrefix + "locations/{locationId}",
                                     HTTPContentType.JSON_UTF8,
-                                    OCPIRequestHandler: Request => {
+                                    OCPIRequestLogger:   GetLocationRequest,
+                                    OCPIResponseLogger:  GetLocationResponse,
+                                    OCPIRequestHandler:  Request => {
+
+                                        #region Check access token
+
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo.IsNot(Roles.EMSP))
+                                        {
+
+                                            return Task.FromResult(
+                                                new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Invalid or blocked access token!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
+
+                                        }
+
+                                        #endregion
 
                                         #region Check location
 
                                         if (!Request.ParseLocation(this,
-                                                                   out Location_Id?          LocationId,
-                                                                   out Location              Location,
-                                                                   out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                   Request.AccessInfo?.Roles.Select(role => role.CountryCode + "-" + role.PartyId) ?? Array.Empty<String>(),
+                                                                   out var locationId,
+                                                                   out var location,
+                                                                   out var ocpiResponseBuilder,
+                                                                   FailOnMissingLocation: true) ||
+                                             location is null)
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = Location.ToJSON(),
+                                                   Data                 = location.ToJSON(CustomLocationSerializer,
+                                                                                          CustomPublishTokenSerializer,
+                                                                                          CustomAdditionalGeoLocationSerializer,
+                                                                                          CustomEVSESerializer,
+                                                                                          CustomStatusScheduleSerializer,
+                                                                                          CustomConnectorSerializer,
+                                                                                          CustomEnergyMeterSerializer,
+                                                                                          CustomTransparencySoftwareStatusSerializer,
+                                                                                          CustomTransparencySoftwareSerializer,
+                                                                                          CustomDisplayTextSerializer,
+                                                                                          CustomBusinessDetailsSerializer,
+                                                                                          CustomHoursSerializer,
+                                                                                          CustomImageSerializer,
+                                                                                          CustomEnergyMixSerializer,
+                                                                                          CustomEnergySourceSerializer,
+                                                                                          CustomEnvironmentalImpactSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = Location.LastUpdated.ToIso8601()
+                                                       LastModified               = location.LastUpdated.ToIso8601(),
+                                                       ETag                       = location.ETag
                                                    }
                                             });
 
@@ -2397,7 +2493,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}/{evseId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2421,30 +2516,62 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                     HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
-                                        #region Check EVSE
+                                        #region Check access token
 
-                                        if (!Request.ParseLocationEVSE(this,
-                                                                       out Location_Id?          LocationId,
-                                                                       out Location              Location,
-                                                                       out EVSE_UId?             EVSEId,
-                                                                       out EVSE                  EVSE,
-                                                                       out OCPIResponse.Builder  OCPIResponseBuilder))
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo.IsNot(Roles.EMSP))
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+
+                                            return Task.FromResult(
+                                                new OCPIResponse.Builder(Request) {
+                                                    StatusCode           = 2000,
+                                                    StatusMessage        = "Invalid or blocked access token!",
+                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
+                                                        HTTPStatusCode             = HTTPStatusCode.Forbidden,
+                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowHeaders  = "Authorization"
+                                                    }
+                                                });
+
                                         }
 
                                         #endregion
+
+                                        #region Check EVSE
+
+                                        if (!Request.ParseLocationEVSE(this,
+                                                                       Request.AccessInfo?.Roles.Select(role => role.CountryCode + "-" + role.PartyId) ?? Array.Empty<String>(),
+                                                                       out var locationId,
+                                                                       out var location,
+                                                                       out var evseId,
+                                                                       out var evse,
+                                                                       out var ocpiResponseBuilder) ||
+                                             evse is null)
+                                        {
+                                            return Task.FromResult(ocpiResponseBuilder!);
+                                        }
+
+                                        #endregion
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = EVSE.ToJSON(),
+                                                   Data                 = evse.ToJSON(CustomEVSESerializer,
+                                                                                      CustomStatusScheduleSerializer,
+                                                                                      CustomConnectorSerializer,
+                                                                                      CustomEnergyMeterSerializer,
+                                                                                      CustomTransparencySoftwareStatusSerializer,
+                                                                                      CustomTransparencySoftwareSerializer,
+                                                                                      CustomDisplayTextSerializer,
+                                                                                      CustomImageSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = EVSE.LastUpdated.ToIso8601()
+                                                       LastModified               = evse.LastUpdated.ToIso8601(),
+                                                       ETag                       = evse.ETag
                                                    }
                                             });
 
@@ -2454,14 +2581,13 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region ~/locations/{locationId}/{evseId}/{connectorId}
+            #region ~/locations/{locationId}/{evseId}/{connectorId}t
 
             #region OPTIONS  ~/locations/{locationId}/{evseId}/{connectorId}
 
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2488,29 +2614,33 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                         #region Check connector
 
                                         if (!Request.ParseLocationEVSEConnector(this,
-                                                                                out Location_Id?          LocationId,
-                                                                                out Location              Location,
-                                                                                out EVSE_UId?             EVSEId,
-                                                                                out EVSE                  EVSE,
-                                                                                out Connector_Id?         ConnectorId,
-                                                                                out Connector             Connector,
-                                                                                out OCPIResponse.Builder  OCPIResponseBuilder))
+                                                                                Request.AccessInfo?.Roles.Select(role => role.CountryCode + "-" + role.PartyId) ?? Array.Empty<String>(),
+                                                                                out var locationId,
+                                                                                out var location,
+                                                                                out var evseId,
+                                                                                out var evse,
+                                                                                out var connectorId,
+                                                                                out var connector,
+                                                                                out var ocpiResponseBuilder) ||
+                                             connector is null)
                                         {
-                                            return Task.FromResult(OCPIResponseBuilder);
+                                            return Task.FromResult(ocpiResponseBuilder!);
                                         }
 
                                         #endregion
+
 
                                         return Task.FromResult(
                                             new OCPIResponse.Builder(Request) {
                                                    StatusCode           = 1000,
                                                    StatusMessage        = "Hello world!",
-                                                   Data                 = Connector.ToJSON(),
+                                                   Data                 = connector.ToJSON(CustomConnectorSerializer),
                                                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                        HTTPStatusCode             = HTTPStatusCode.OK,
                                                        AccessControlAllowMethods  = "OPTIONS, GET",
                                                        AccessControlAllowHeaders  = "Authorization",
-                                                       LastModified               = Connector.LastUpdated.ToIso8601()
+                                                       LastModified               = connector.LastUpdated.ToIso8601(),
+                                                       ETag                       = connector.ETag
                                                    }
                                             });
 
@@ -2529,7 +2659,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tariffs",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2601,7 +2730,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tariffs/{tariffId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2665,7 +2793,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "sessions",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2759,7 +2886,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "sessions/{sessionId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2837,6 +2963,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #region ~/sessions/{session_id}/charging_preferences <= Yet to do!
 
+            //ToDo: Implement ~/sessions/{session_id}/charging_preferences!
+
             #region PUT     ~/sessions/{session_id}/charging_preferences
 
             // https://example.com/ocpi/2.2/cpo/sessions/12454/charging_preferences
@@ -2854,7 +2982,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "CDRs",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -2948,7 +3075,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "cdrs/{CDRId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3032,7 +3158,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tokens/{country_code}/{party_id}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3079,7 +3204,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Check country code and party identification
 
-                                        if (!Request.ParseParseCountryCodePartyId(this,
+                                        if (!Request.ParseCountryCodeAndPartyId(this,
                                                                                   out CountryCode?          CountryCode,
                                                                                   out Party_Id?             PartyId,
                                                                                   out OCPIResponse.Builder  OCPIResponseBuilder))
@@ -3158,7 +3283,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
                                         #region Check country code and party identification
 
-                                        if (!Request.ParseParseCountryCodePartyId(this,
+                                        if (!Request.ParseCountryCodeAndPartyId(this,
                                                                                   out CountryCode?          CountryCode,
                                                                                   out Party_Id?             PartyId,
                                                                                   out OCPIResponse.Builder  OCPIResponseBuilder))
@@ -3568,7 +3693,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/RESERVE_NOW",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3676,7 +3800,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3784,7 +3907,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3892,7 +4014,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/STOP_SESSION",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -4000,7 +4121,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(

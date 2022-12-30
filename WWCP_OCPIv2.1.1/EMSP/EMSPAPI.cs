@@ -17,18 +17,11 @@
 
 #region Usings
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
 using Newtonsoft.Json.Linq;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
-
-//using social.OpenData.UsersAPI;
 
 #endregion
 
@@ -41,80 +34,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
     public static class EMSPAPIExtentions
     {
 
-        #region ParseLocationId             (this Request, EMSPAPI, out LocationId,                                                                      out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationId(this OCPIRequest           Request,
-                                              EMSPAPI                    EMSPAPI,
-                                              out Location_Id?           LocationId,
-                                              out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocation               (this Request, EMSPAPI, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingLocation = true)
+        #region ParseLocation              (this Request, EMSPAPI, out LocationId, out Location,                                                        out OCPIResponseBuilder, FailOnMissingLocation = true)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -216,103 +136,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region ParseLocationEVSEId         (this Request, EMSPAPI, out LocationId,               out EVSEUId,                                           out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEId(this OCPIRequest           Request,
-                                                  EMSPAPI                    EMSPAPI,
-                                                  out Location_Id?           LocationId,
-                                                  out EVSE_UId?              EVSEUId,
-                                                  out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            EVSEUId              = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 2)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing location identification and/or EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSE           (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder, FailOnMissingEVSE = true)
+        #region ParseLocationEVSE          (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE,                                 out OCPIResponseBuilder, FailOnMissingEVSE = true)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -455,125 +279,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region ParseLocationEVSEConnectorId(this Request, EMSPAPI, out LocationId,               out EVSEUId,           out ConnectorId,                out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the location identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="LocationId">The parsed unique location identification.</param>
-        /// <param name="EVSEUId">The parsed unique EVSE identification.</param>
-        /// <param name="ConnectorId">The parsed unique connector identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseLocationEVSEConnectorId(this OCPIRequest           Request,
-                                                           EMSPAPI                    EMSPAPI,
-                                                           out Location_Id?           LocationId,
-                                                           out EVSE_UId?              EVSEUId,
-                                                           out Connector_Id?          ConnectorId,
-                                                           out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            LocationId           = default;
-            EVSEUId              = default;
-            ConnectorId          = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 3)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification, location identification, EVSE identification and/or connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            LocationId = Location_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!LocationId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid location identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            EVSEUId = EVSE_UId.TryParse(Request.ParsedURLParameters[1]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid EVSE identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
-
-            if (!EVSEUId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid connector identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseLocationEVSEConnector  (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
+        #region ParseLocationEVSEConnector (this Request, EMSPAPI, out LocationId, out Location, out EVSEUId, out EVSE, out ConnectorId, out Connector, out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the location identification
@@ -680,7 +386,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             ConnectorId = Connector_Id.TryParse(Request.ParsedURLParameters[2]);
 
-            if (!EVSEUId.HasValue)
+            if (!ConnectorId.HasValue)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -718,7 +424,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
             }
 
-            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE))
+            if (!Location.TryGetEVSE(EVSEUId.Value, out EVSE) ||
+                 EVSE is null)
             {
 
                 OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
@@ -760,81 +467,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-
-        #region ParseTariffId               (this Request, EMSPAPI, out TariffId,                out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the tariff identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="TariffId">The parsed unique tariff identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseTariffId(this OCPIRequest           Request,
-                                            EMSPAPI                    EMSPAPI,
-                                            out Tariff_Id?             TariffId,
-                                            out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            TariffId             = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            TariffId = Tariff_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!TariffId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid tariff identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseTariff                 (this Request, EMSPAPI, out TariffId,  out Tariff,   out OCPIResponseBuilder)
+        #region ParseTariff                (this Request, EMSPAPI, out TariffId,  out Tariff,   out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the tariff identification
@@ -935,81 +568,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region ParseSessionId              (this Request, EMSPAPI, out SessionId,               out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the session identification
-        /// for the given HTTP hostname and HTTP query parameter
-        /// or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="SessionId">The parsed unique session identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseSessionId(this OCPIRequest           Request,
-                                             EMSPAPI                    EMSPAPI,
-                                             out Session_Id?            SessionId,
-                                             out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            SessionId            = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            SessionId = Session_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!SessionId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid session identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseSession                (this Request, EMSPAPI, out SessionId, out Session,  out OCPIResponseBuilder)
+        #region ParseSession               (this Request, EMSPAPI, out SessionId, out Session,  out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the session identification
@@ -1110,80 +669,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-        #region ParseCDRId                  (this Request, EMSPAPI, out CDRId,                   out OCPIResponseBuilder)
-
-        /// <summary>
-        /// Parse the given HTTP request and return the charge detail record identification
-        /// for the given HTTP hostname and HTTP query parameter or an HTTP error response.
-        /// </summary>
-        /// <param name="Request">A HTTP request.</param>
-        /// <param name="EMSPAPI">The EMSP API.</param>
-        /// <param name="CDRId">The parsed unique charge detail record identification.</param>
-        /// <param name="OCPIResponseBuilder">An OICP response builder.</param>
-        /// <returns>True, when user identification was found; false else.</returns>
-        public static Boolean ParseCDRId(this OCPIRequest           Request,
-                                         EMSPAPI                    EMSPAPI,
-                                         out CDR_Id?                CDRId,
-                                         out OCPIResponse.Builder?  OCPIResponseBuilder)
-        {
-
-            #region Initial checks
-
-            if (Request is null)
-                throw new ArgumentNullException(nameof(Request),  "The given HTTP request must not be null!");
-
-            if (EMSPAPI is null)
-                throw new ArgumentNullException(nameof(EMSPAPI),  "The given EMSP API must not be null!");
-
-            #endregion
-
-            CDRId                = default;
-            OCPIResponseBuilder  = default;
-
-            if (Request.ParsedURLParameters.Length < 1)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Missing country code, party identification and/or charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            CDRId = CDR_Id.TryParse(Request.ParsedURLParameters[0]);
-
-            if (!CDRId.HasValue)
-            {
-
-                OCPIResponseBuilder = new OCPIResponse.Builder(Request) {
-                    StatusCode           = 2001,
-                    StatusMessage        = "Invalid charge detail record identification!",
-                    HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
-                        HTTPStatusCode             = HTTPStatusCode.BadRequest,
-                        //AccessControlAllowMethods  = "OPTIONS, GET, POST, PUT, DELETE",
-                        AccessControlAllowHeaders  = "Authorization"
-                    }
-                };
-
-                return false;
-
-            }
-
-            return true;
-
-        }
-
-        #endregion
-
-        #region ParseCDR                    (this Request, EMSPAPI, out CDRId,     out CDR,      out OCPIResponseBuilder)
+        #region ParseCDR                   (this Request, EMSPAPI, out CDRId,     out CDR,      out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the charge detail record identification
@@ -1283,9 +769,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-
-
-        #region ParseTokenId                (this Request, EMSPAPI, out TokenId,                 out OCPIResponseBuilder)
+        #region ParseTokenId               (this Request, EMSPAPI, out TokenId,                 out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -1358,7 +842,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region ParseToken                  (this Request, EMSPAPI, out TokenId,   out Token,    out OCPIResponseBuilder)
+        #region ParseToken                 (this Request, EMSPAPI, out TokenId,   out Token,    out OCPIResponseBuilder)
 
         /// <summary>
         /// Parse the given HTTP request and return the token identification
@@ -1460,8 +944,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-
-        #region ParseCommandId              (this Request, EMSPAPI, out CommandId, out HTTPResponse)
+        #region ParseCommandId             (this Request, EMSPAPI, out CommandId, out HTTPResponse)
 
         /// <summary>
         /// Parse the given HTTP request and return the command identification
@@ -1533,7 +1016,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         }
 
         #endregion
-
 
     }
 
@@ -3706,7 +3188,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3739,7 +3220,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -3823,7 +3305,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -3868,7 +3351,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -3906,7 +3388,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -3915,7 +3398,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                     StatusMessage        = "Invalid or blocked access token!",
                                                     HTTPResponseBuilder  = new HTTPResponse.Builder(Request.HTTPRequest) {
                                                         HTTPStatusCode             = HTTPStatusCode.Forbidden,
-                                                        AccessControlAllowMethods  = "OPTIONS, GET",
+                                                        AccessControlAllowMethods  = "OPTIONS, GET, PUT, PATCH, DELETE",
                                                         AccessControlAllowHeaders  = "Authorization"
                                                     }
                                                 });
@@ -3986,7 +3469,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4126,7 +3610,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4229,7 +3714,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4307,7 +3793,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}/{evseId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -4345,7 +3830,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -4418,7 +3904,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4544,7 +4031,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4633,7 +4121,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4704,7 +4193,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}/{evseId}/{connectorId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -4744,7 +4232,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -4812,7 +4301,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -4928,7 +4418,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5021,7 +4512,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5088,7 +4580,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "locations/{locationId}/{evseId}/status",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -5123,7 +4614,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5212,7 +4704,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "tariffs",
-                                     HTTPContentType.JSON_UTF8,
                                      OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
@@ -5240,7 +4731,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -5317,7 +4809,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5361,7 +4854,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "tariffs/{tariffId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -5398,7 +4890,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -5470,7 +4963,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5586,7 +5080,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5683,7 +5178,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5757,7 +5253,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "sessions",
-                                     HTTPContentType.JSON_UTF8,
                                      OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
@@ -5785,7 +5280,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -5872,7 +5368,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -5917,7 +5414,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                      HTTPMethod.OPTIONS,
                                      URLPathPrefix + "sessions/{sessionId}",
-                                     HTTPContentType.JSON_UTF8,
                                      OCPIRequestHandler: Request => {
 
                                          return Task.FromResult(
@@ -5955,7 +5451,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6038,7 +5535,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6184,7 +5682,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6288,7 +5787,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6371,7 +5871,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "cdrs",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -6397,7 +5896,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6494,7 +5994,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6580,7 +6081,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6625,7 +6127,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "cdrs/{cdrId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -6661,7 +6162,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6750,7 +6252,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -6871,7 +6374,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return Task.FromResult(
@@ -6971,7 +6475,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
                                         #region Check access token
 
-                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED)
+                                        if (Request.AccessInfo?.Status != AccessStatus.ALLOWED ||
+                                            Request.AccessInfo?.Role   != Roles.CPO)
                                         {
 
                                             return new OCPIResponse.Builder(Request) {
@@ -7295,7 +6800,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/RESERVE_NOW/{commandId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -7450,7 +6954,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/CANCEL_RESERVATION/{commandId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -7605,7 +7108,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/START_SESSION/{commandId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -7760,7 +7262,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/STOP_SESSION/{commandId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
@@ -7915,7 +7416,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             CommonAPI.AddOCPIMethod(HTTPHostname.Any,
                                     HTTPMethod.OPTIONS,
                                     URLPathPrefix + "commands/UNLOCK_CONNECTOR/{commandId}",
-                                    HTTPContentType.JSON_UTF8,
                                     OCPIRequestHandler: Request => {
 
                                         return Task.FromResult(
