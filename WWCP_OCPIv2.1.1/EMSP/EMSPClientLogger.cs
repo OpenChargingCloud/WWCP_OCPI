@@ -21,9 +21,11 @@ using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
 {
 
     /// <summary>
@@ -174,47 +176,47 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     RegisterDefaultDiscLogTarget(this);
 
 
-                RegisterEvent("GetLocationByIdRequest",
-                              handler => EMSPClient.OnGetLocationByIdHTTPRequest += handler,
-                              handler => EMSPClient.OnGetLocationByIdHTTPRequest -= handler,
-                              "GetLocationById", "locations", "requests", "all").
+                RegisterEvent("GetLocationRequest",
+                              handler => EMSPClient.OnGetLocationHTTPRequest += handler,
+                              handler => EMSPClient.OnGetLocationHTTPRequest -= handler,
+                              "GetLocation", "locations", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                RegisterEvent("GetLocationByIdResponse",
-                              handler => EMSPClient.OnGetLocationByIdHTTPResponse += handler,
-                              handler => EMSPClient.OnGetLocationByIdHTTPResponse -= handler,
-                              "GetLocationById", "locations", "responses", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
-
-
-                RegisterEvent("GetEVSEByUIdRequest",
-                              handler => EMSPClient.OnGetEVSEByUIdHTTPRequest += handler,
-                              handler => EMSPClient.OnGetEVSEByUIdHTTPRequest -= handler,
-                              "GetEVSEByUId", "EVSEs", "locations", "requests", "all").
-                    RegisterDefaultConsoleLogTarget(this).
-                    RegisterDefaultDiscLogTarget(this);
-
-                RegisterEvent("GetEVSEByUIdResponse",
-                              handler => EMSPClient.OnGetEVSEByUIdHTTPResponse += handler,
-                              handler => EMSPClient.OnGetEVSEByUIdHTTPResponse -= handler,
-                              "GetEVSEByUId", "EVSEs", "locations", "responses", "all").
+                RegisterEvent("GetLocationResponse",
+                              handler => EMSPClient.OnGetLocationHTTPResponse += handler,
+                              handler => EMSPClient.OnGetLocationHTTPResponse -= handler,
+                              "GetLocation", "locations", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
 
-                RegisterEvent("GetConnectorByIdRequest",
-                              handler => EMSPClient.OnGetConnectorByIdHTTPRequest += handler,
-                              handler => EMSPClient.OnGetConnectorByIdHTTPRequest -= handler,
-                              "GetConnectorById", "connectors", "locations", "requests", "all").
+                RegisterEvent("GetEVSERequest",
+                              handler => EMSPClient.OnGetEVSEHTTPRequest += handler,
+                              handler => EMSPClient.OnGetEVSEHTTPRequest -= handler,
+                              "GetEVSE", "EVSEs", "locations", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                RegisterEvent("GetConnectorByIdResponse",
-                              handler => EMSPClient.OnGetConnectorByIdHTTPResponse += handler,
-                              handler => EMSPClient.OnGetConnectorByIdHTTPResponse -= handler,
-                              "GetConnectorById", "connectors", "locations", "responses", "all").
+                RegisterEvent("GetEVSEResponse",
+                              handler => EMSPClient.OnGetEVSEHTTPResponse += handler,
+                              handler => EMSPClient.OnGetEVSEHTTPResponse -= handler,
+                              "GetEVSE", "EVSEs", "locations", "responses", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+
+                RegisterEvent("GetConnectorRequest",
+                              handler => EMSPClient.OnGetConnectorHTTPRequest += handler,
+                              handler => EMSPClient.OnGetConnectorHTTPRequest -= handler,
+                              "GetConnector", "connectors", "locations", "requests", "all").
+                    RegisterDefaultConsoleLogTarget(this).
+                    RegisterDefaultDiscLogTarget(this);
+
+                RegisterEvent("GetConnectorResponse",
+                              handler => EMSPClient.OnGetConnectorHTTPResponse += handler,
+                              handler => EMSPClient.OnGetConnectorHTTPResponse -= handler,
+                              "GetConnector", "connectors", "locations", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -237,17 +239,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     RegisterDefaultDiscLogTarget(this);
 
 
-                RegisterEvent("GetTariffByIdRequest",
-                              handler => EMSPClient.OnGetTariffByIdHTTPRequest += handler,
-                              handler => EMSPClient.OnGetTariffByIdHTTPRequest -= handler,
-                              "GetTariffById", "tariffs", "requests", "all").
+                RegisterEvent("GetTariffRequest",
+                              handler => EMSPClient.OnGetTariffHTTPRequest += handler,
+                              handler => EMSPClient.OnGetTariffHTTPRequest -= handler,
+                              "GetTariff", "tariffs", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                RegisterEvent("GetTariffByIdResponse",
-                              handler => EMSPClient.OnGetTariffByIdHTTPResponse += handler,
-                              handler => EMSPClient.OnGetTariffByIdHTTPResponse -= handler,
-                              "GetTariffById", "tariffs", "responses", "all").
+                RegisterEvent("GetTariffResponse",
+                              handler => EMSPClient.OnGetTariffHTTPResponse += handler,
+                              handler => EMSPClient.OnGetTariffHTTPResponse -= handler,
+                              "GetTariff", "tariffs", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -270,17 +272,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     RegisterDefaultDiscLogTarget(this);
 
 
-                RegisterEvent("GetSessionByIdRequest",
-                              handler => EMSPClient.OnGetSessionByIdHTTPRequest += handler,
-                              handler => EMSPClient.OnGetSessionByIdHTTPRequest -= handler,
-                              "GetSessionById", "sessions", "requests", "all").
+                RegisterEvent("GetSessionRequest",
+                              handler => EMSPClient.OnGetSessionHTTPRequest += handler,
+                              handler => EMSPClient.OnGetSessionHTTPRequest -= handler,
+                              "GetSession", "sessions", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                RegisterEvent("GetSessionByIdResponse",
-                              handler => EMSPClient.OnGetSessionByIdHTTPResponse += handler,
-                              handler => EMSPClient.OnGetSessionByIdHTTPResponse -= handler,
-                              "GetSessionById", "sessions", "responses", "all").
+                RegisterEvent("GetSessionResponse",
+                              handler => EMSPClient.OnGetSessionHTTPResponse += handler,
+                              handler => EMSPClient.OnGetSessionHTTPResponse -= handler,
+                              "GetSession", "sessions", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
@@ -303,17 +305,17 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                     RegisterDefaultDiscLogTarget(this);
 
 
-                RegisterEvent("GetCDRByIdRequest",
-                              handler => EMSPClient.OnGetCDRByIdHTTPRequest += handler,
-                              handler => EMSPClient.OnGetCDRByIdHTTPRequest -= handler,
-                              "GetCDRById", "CDRs", "requests", "all").
+                RegisterEvent("GetCDRRequest",
+                              handler => EMSPClient.OnGetCDRHTTPRequest += handler,
+                              handler => EMSPClient.OnGetCDRHTTPRequest -= handler,
+                              "GetCDR", "CDRs", "requests", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 
-                RegisterEvent("GetCDRByIdResponse",
-                              handler => EMSPClient.OnGetCDRByIdHTTPResponse += handler,
-                              handler => EMSPClient.OnGetCDRByIdHTTPResponse -= handler,
-                              "GetCDRById", "CDRs", "responses", "all").
+                RegisterEvent("GetCDRResponse",
+                              handler => EMSPClient.OnGetCDRHTTPResponse += handler,
+                              handler => EMSPClient.OnGetCDRHTTPResponse -= handler,
+                              "GetCDR", "CDRs", "responses", "all").
                     RegisterDefaultConsoleLogTarget(this).
                     RegisterDefaultDiscLogTarget(this);
 

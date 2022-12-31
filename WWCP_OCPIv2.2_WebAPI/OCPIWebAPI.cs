@@ -26,6 +26,8 @@ using social.OpenData.UsersAPI;
 
 using cloud.charging.open.protocols.WWCP;
 using cloud.charging.open.protocols.OCPIv2_2.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP;
+using cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP;
 
 #endregion
 

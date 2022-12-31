@@ -2788,7 +2788,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
-            #region ~/locations/{locationId}/{evseId}/{connectorId}t
+            #region ~/locations/{locationId}/{evseId}/{connectorId}
 
             #region OPTIONS  ~/locations/{locationId}/{evseId}/{connectorId}
 

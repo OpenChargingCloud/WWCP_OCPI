@@ -28,9 +28,11 @@ using org.GraphDefined.Vanaheimr.Hermod.DNS;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
+
 #endregion
 
-namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
+namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
 {
 
     /// <summary>
@@ -200,11 +202,10 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// </summary>
         public new APICounters  Counters    { get; }
 
-
         /// <summary>
         /// The attached HTTP client logger.
         /// </summary>
-        public new Logger HTTPLogger
+        public new Logger       HTTPLogger
         {
             get
             {
@@ -260,22 +261,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting a location will be send.
         /// </summary>
-        public event OnGetLocationRequestDelegate   OnGetLocationRequest;
+        public event OnGetLocationRequestDelegate?   OnGetLocationRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a location will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetLocationHTTPRequest;
+        public event ClientRequestLogHandler?        OnGetLocationHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a location HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetLocationHTTPResponse;
+        public event ClientResponseLogHandler?       OnGetLocationHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a location request had been received.
         /// </summary>
-        public event OnGetLocationResponseDelegate  OnGetLocationResponse;
+        public event OnGetLocationResponseDelegate?  OnGetLocationResponse;
 
         #endregion
 
@@ -284,22 +285,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request putting a location will be send.
         /// </summary>
-        public event OnPutLocationRequestDelegate   OnPutLocationRequest;
+        public event OnPutLocationRequestDelegate?   OnPutLocationRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request putting a location will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnPutLocationHTTPRequest;
+        public event ClientRequestLogHandler?        OnPutLocationHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a putting a location HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnPutLocationHTTPResponse;
+        public event ClientResponseLogHandler?       OnPutLocationHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a putting a location request had been received.
         /// </summary>
-        public event OnPutLocationResponseDelegate  OnPutLocationResponse;
+        public event OnPutLocationResponseDelegate?  OnPutLocationResponse;
 
         #endregion
 
@@ -308,22 +309,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request patching a location will be send.
         /// </summary>
-        public event OnPatchLocationRequestDelegate   OnPatchLocationRequest;
+        public event OnPatchLocationRequestDelegate?   OnPatchLocationRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request patching a location will be send.
         /// </summary>
-        public event ClientRequestLogHandler          OnPatchLocationHTTPRequest;
+        public event ClientRequestLogHandler?          OnPatchLocationHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a patching a location HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler         OnPatchLocationHTTPResponse;
+        public event ClientResponseLogHandler?         OnPatchLocationHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a patching a location request had been received.
         /// </summary>
-        public event OnPatchLocationResponseDelegate  OnPatchLocationResponse;
+        public event OnPatchLocationResponseDelegate?  OnPatchLocationResponse;
 
         #endregion
 
@@ -333,22 +334,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting a EVSE will be send.
         /// </summary>
-        public event OnGetEVSERequestDelegate   OnGetEVSERequest;
+        public event OnGetEVSERequestDelegate?   OnGetEVSERequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a EVSE will be send.
         /// </summary>
-        public event ClientRequestLogHandler    OnGetEVSEHTTPRequest;
+        public event ClientRequestLogHandler?    OnGetEVSEHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a EVSE HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler   OnGetEVSEHTTPResponse;
+        public event ClientResponseLogHandler?   OnGetEVSEHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a EVSE request had been received.
         /// </summary>
-        public event OnGetEVSEResponseDelegate  OnGetEVSEResponse;
+        public event OnGetEVSEResponseDelegate?  OnGetEVSEResponse;
 
         #endregion
 
@@ -357,22 +358,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request putting a EVSE will be send.
         /// </summary>
-        public event OnPutEVSERequestDelegate   OnPutEVSERequest;
+        public event OnPutEVSERequestDelegate?   OnPutEVSERequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request putting a EVSE will be send.
         /// </summary>
-        public event ClientRequestLogHandler    OnPutEVSEHTTPRequest;
+        public event ClientRequestLogHandler?    OnPutEVSEHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a putting a EVSE HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler   OnPutEVSEHTTPResponse;
+        public event ClientResponseLogHandler?   OnPutEVSEHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a putting a EVSE request had been received.
         /// </summary>
-        public event OnPutEVSEResponseDelegate  OnPutEVSEResponse;
+        public event OnPutEVSEResponseDelegate?  OnPutEVSEResponse;
 
         #endregion
 
@@ -381,22 +382,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request patching a EVSE will be send.
         /// </summary>
-        public event OnPatchEVSERequestDelegate   OnPatchEVSERequest;
+        public event OnPatchEVSERequestDelegate?   OnPatchEVSERequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request patching a EVSE will be send.
         /// </summary>
-        public event ClientRequestLogHandler      OnPatchEVSEHTTPRequest;
+        public event ClientRequestLogHandler?      OnPatchEVSEHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a patching a EVSE HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler     OnPatchEVSEHTTPResponse;
+        public event ClientResponseLogHandler?     OnPatchEVSEHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a patching a EVSE request had been received.
         /// </summary>
-        public event OnPatchEVSEResponseDelegate  OnPatchEVSEResponse;
+        public event OnPatchEVSEResponseDelegate?  OnPatchEVSEResponse;
 
         #endregion
 
@@ -406,22 +407,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting a connector will be send.
         /// </summary>
-        public event OnGetConnectorRequestDelegate   OnGetConnectorRequest;
+        public event OnGetConnectorRequestDelegate?   OnGetConnectorRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a connector will be send.
         /// </summary>
-        public event ClientRequestLogHandler         OnGetConnectorHTTPRequest;
+        public event ClientRequestLogHandler?         OnGetConnectorHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a connector HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler        OnGetConnectorHTTPResponse;
+        public event ClientResponseLogHandler?        OnGetConnectorHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a connector request had been received.
         /// </summary>
-        public event OnGetConnectorResponseDelegate  OnGetConnectorResponse;
+        public event OnGetConnectorResponseDelegate?  OnGetConnectorResponse;
 
         #endregion
 
@@ -430,22 +431,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request putting a connector will be send.
         /// </summary>
-        public event OnPutConnectorRequestDelegate   OnPutConnectorRequest;
+        public event OnPutConnectorRequestDelegate?   OnPutConnectorRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request putting a connector will be send.
         /// </summary>
-        public event ClientRequestLogHandler         OnPutConnectorHTTPRequest;
+        public event ClientRequestLogHandler?         OnPutConnectorHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a putting a connector HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler        OnPutConnectorHTTPResponse;
+        public event ClientResponseLogHandler?        OnPutConnectorHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a putting a connector request had been received.
         /// </summary>
-        public event OnPutConnectorResponseDelegate  OnPutConnectorResponse;
+        public event OnPutConnectorResponseDelegate?  OnPutConnectorResponse;
 
         #endregion
 
@@ -454,22 +455,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request patching a connector will be send.
         /// </summary>
-        public event OnPatchConnectorRequestDelegate   OnPatchConnectorRequest;
+        public event OnPatchConnectorRequestDelegate?   OnPatchConnectorRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request patching a connector will be send.
         /// </summary>
-        public event ClientRequestLogHandler           OnPatchConnectorHTTPRequest;
+        public event ClientRequestLogHandler?           OnPatchConnectorHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a patching a connector HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler          OnPatchConnectorHTTPResponse;
+        public event ClientResponseLogHandler?          OnPatchConnectorHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a patching a connector request had been received.
         /// </summary>
-        public event OnPatchConnectorResponseDelegate  OnPatchConnectorResponse;
+        public event OnPatchConnectorResponseDelegate?  OnPatchConnectorResponse;
 
         #endregion
 
@@ -480,22 +481,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting a tariff will be send.
         /// </summary>
-        public event OnGetTariffRequestDelegate   OnGetTariffRequest;
+        public event OnGetTariffRequestDelegate?   OnGetTariffRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a tariff will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetTariffHTTPRequest;
+        public event ClientRequestLogHandler?      OnGetTariffHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a tariff HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetTariffHTTPResponse;
+        public event ClientResponseLogHandler?     OnGetTariffHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a tariff request had been received.
         /// </summary>
-        public event OnGetTariffResponseDelegate  OnGetTariffResponse;
+        public event OnGetTariffResponseDelegate?  OnGetTariffResponse;
 
         #endregion
 
@@ -504,22 +505,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request putting a tariff will be send.
         /// </summary>
-        public event OnPutTariffRequestDelegate   OnPutTariffRequest;
+        public event OnPutTariffRequestDelegate?   OnPutTariffRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request putting a tariff will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnPutTariffHTTPRequest;
+        public event ClientRequestLogHandler?      OnPutTariffHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a putting a tariff HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnPutTariffHTTPResponse;
+        public event ClientResponseLogHandler?     OnPutTariffHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a putting a tariff request had been received.
         /// </summary>
-        public event OnPutTariffResponseDelegate  OnPutTariffResponse;
+        public event OnPutTariffResponseDelegate?  OnPutTariffResponse;
 
         #endregion
 
@@ -528,22 +529,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request patching a tariff will be send.
         /// </summary>
-        public event OnPatchTariffRequestDelegate   OnPatchTariffRequest;
+        public event OnPatchTariffRequestDelegate?   OnPatchTariffRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request patching a tariff will be send.
         /// </summary>
-        public event ClientRequestLogHandler          OnPatchTariffHTTPRequest;
+        public event ClientRequestLogHandler?        OnPatchTariffHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a patching a tariff HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler         OnPatchTariffHTTPResponse;
+        public event ClientResponseLogHandler?       OnPatchTariffHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a patching a tariff request had been received.
         /// </summary>
-        public event OnPatchTariffResponseDelegate  OnPatchTariffResponse;
+        public event OnPatchTariffResponseDelegate?  OnPatchTariffResponse;
 
         #endregion
 
@@ -552,22 +553,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request deleting a tariff will be send.
         /// </summary>
-        public event OnDeleteTariffRequestDelegate   OnDeleteTariffRequest;
+        public event OnDeleteTariffRequestDelegate?   OnDeleteTariffRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request deleting a tariff will be send.
         /// </summary>
-        public event ClientRequestLogHandler         OnDeleteTariffHTTPRequest;
+        public event ClientRequestLogHandler?         OnDeleteTariffHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a deleting a tariff HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler        OnDeleteTariffHTTPResponse;
+        public event ClientResponseLogHandler?        OnDeleteTariffHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a deleting a tariff request had been received.
         /// </summary>
-        public event OnDeleteTariffResponseDelegate  OnDeleteTariffResponse;
+        public event OnDeleteTariffResponseDelegate?  OnDeleteTariffResponse;
 
         #endregion
 
@@ -578,22 +579,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting a session will be send.
         /// </summary>
-        public event OnGetSessionRequestDelegate   OnGetSessionRequest;
+        public event OnGetSessionRequestDelegate?   OnGetSessionRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a session will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnGetSessionHTTPRequest;
+        public event ClientRequestLogHandler?        OnGetSessionHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a session HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnGetSessionHTTPResponse;
+        public event ClientResponseLogHandler?       OnGetSessionHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a session request had been received.
         /// </summary>
-        public event OnGetSessionResponseDelegate  OnGetSessionResponse;
+        public event OnGetSessionResponseDelegate?  OnGetSessionResponse;
 
         #endregion
 
@@ -602,22 +603,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request putting a session will be send.
         /// </summary>
-        public event OnPutSessionRequestDelegate   OnPutSessionRequest;
+        public event OnPutSessionRequestDelegate?   OnPutSessionRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request putting a session will be send.
         /// </summary>
-        public event ClientRequestLogHandler        OnPutSessionHTTPRequest;
+        public event ClientRequestLogHandler?       OnPutSessionHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a putting a session HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler       OnPutSessionHTTPResponse;
+        public event ClientResponseLogHandler?      OnPutSessionHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a putting a session request had been received.
         /// </summary>
-        public event OnPutSessionResponseDelegate  OnPutSessionResponse;
+        public event OnPutSessionResponseDelegate?  OnPutSessionResponse;
 
         #endregion
 
@@ -626,22 +627,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request patching a session will be send.
         /// </summary>
-        public event OnPatchSessionRequestDelegate   OnPatchSessionRequest;
+        public event OnPatchSessionRequestDelegate?   OnPatchSessionRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request patching a session will be send.
         /// </summary>
-        public event ClientRequestLogHandler          OnPatchSessionHTTPRequest;
+        public event ClientRequestLogHandler?         OnPatchSessionHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a patching a session HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler         OnPatchSessionHTTPResponse;
+        public event ClientResponseLogHandler?        OnPatchSessionHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a patching a session request had been received.
         /// </summary>
-        public event OnPatchSessionResponseDelegate  OnPatchSessionResponse;
+        public event OnPatchSessionResponseDelegate?  OnPatchSessionResponse;
 
         #endregion
 
@@ -650,22 +651,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request deleting a session will be send.
         /// </summary>
-        public event OnDeleteSessionRequestDelegate   OnDeleteSessionRequest;
+        public event OnDeleteSessionRequestDelegate?   OnDeleteSessionRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request deleting a session will be send.
         /// </summary>
-        public event ClientRequestLogHandler         OnDeleteSessionHTTPRequest;
+        public event ClientRequestLogHandler?          OnDeleteSessionHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a deleting a session HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler        OnDeleteSessionHTTPResponse;
+        public event ClientResponseLogHandler?         OnDeleteSessionHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a deleting a session request had been received.
         /// </summary>
-        public event OnDeleteSessionResponseDelegate  OnDeleteSessionResponse;
+        public event OnDeleteSessionResponseDelegate?  OnDeleteSessionResponse;
 
         #endregion
 
@@ -676,22 +677,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting a charge detail record will be send.
         /// </summary>
-        public event OnGetCDRRequestDelegate   OnGetCDRRequest;
+        public event OnGetCDRRequestDelegate?   OnGetCDRRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting a charge detail record will be send.
         /// </summary>
-        public event ClientRequestLogHandler   OnGetCDRHTTPRequest;
+        public event ClientRequestLogHandler?   OnGetCDRHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting a charge detail record HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler  OnGetCDRHTTPResponse;
+        public event ClientResponseLogHandler?  OnGetCDRHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting a charge detail record request had been received.
         /// </summary>
-        public event OnGetCDRResponseDelegate  OnGetCDRResponse;
+        public event OnGetCDRResponseDelegate?  OnGetCDRResponse;
 
         #endregion
 
@@ -700,22 +701,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request posting a charge detail record will be send.
         /// </summary>
-        public event OnPostCDRRequestDelegate   OnPostCDRRequest;
+        public event OnPostCDRRequestDelegate?   OnPostCDRRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request posting a charge detail record will be send.
         /// </summary>
-        public event ClientRequestLogHandler    OnPostCDRHTTPRequest;
+        public event ClientRequestLogHandler?    OnPostCDRHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a posting a charge detail record HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler   OnPostCDRHTTPResponse;
+        public event ClientResponseLogHandler?   OnPostCDRHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a posting a charge detail record request had been received.
         /// </summary>
-        public event OnPostCDRResponseDelegate  OnPostCDRResponse;
+        public event OnPostCDRResponseDelegate?  OnPostCDRResponse;
 
         #endregion
 
@@ -726,22 +727,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request getting tokens will be send.
         /// </summary>
-        public event OnGetTokensRequestDelegate   OnGetTokensRequest;
+        public event OnGetTokensRequestDelegate?   OnGetTokensRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request getting tokens will be send.
         /// </summary>
-        public event ClientRequestLogHandler      OnGetTokensHTTPRequest;
+        public event ClientRequestLogHandler?      OnGetTokensHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a getting tokens HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler     OnGetTokensHTTPResponse;
+        public event ClientResponseLogHandler?     OnGetTokensHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a getting tokens request had been received.
         /// </summary>
-        public event OnGetTokensResponseDelegate  OnGetTokensResponse;
+        public event OnGetTokensResponseDelegate?  OnGetTokensResponse;
 
         #endregion
 
@@ -750,22 +751,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request posting a token will be send.
         /// </summary>
-        public event OnPostTokenRequestDelegate   OnPostTokenRequest;
+        public event OnPostTokenRequestDelegate?   OnPostTokenRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request posting a token will be send.
         /// </summary>
-        public event ClientRequestLogHandler      OnPostTokenHTTPRequest;
+        public event ClientRequestLogHandler?      OnPostTokenHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a posting a token HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler     OnPostTokenHTTPResponse;
+        public event ClientResponseLogHandler?     OnPostTokenHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a posting a token request had been received.
         /// </summary>
-        public event OnPostTokenResponseDelegate  OnPostTokenResponse;
+        public event OnPostTokenResponseDelegate?  OnPostTokenResponse;
 
         #endregion
 
@@ -775,22 +776,22 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         /// <summary>
         /// An event fired whenever a request setting a charging profile will be send.
         /// </summary>
-        public event OnSetChargingProfileRequestDelegate   OnSetChargingProfileRequest;
+        public event OnSetChargingProfileRequestDelegate?   OnSetChargingProfileRequest;
 
         /// <summary>
         /// An event fired whenever a HTTP request setting a charging profile will be send.
         /// </summary>
-        public event ClientRequestLogHandler               OnSetChargingProfileHTTPRequest;
+        public event ClientRequestLogHandler?               OnSetChargingProfileHTTPRequest;
 
         /// <summary>
         /// An event fired whenever a response to a set charging profile HTTP request had been received.
         /// </summary>
-        public event ClientResponseLogHandler              OnSetChargingProfileHTTPResponse;
+        public event ClientResponseLogHandler?              OnSetChargingProfileHTTPResponse;
 
         /// <summary>
         /// An event fired whenever a response to a set charging profile request had been received.
         /// </summary>
-        public event OnSetChargingProfileResponseDelegate  OnSetChargingProfileResponse;
+        public event OnSetChargingProfileResponseDelegate?  OnSetChargingProfileResponse;
 
         #endregion
 
