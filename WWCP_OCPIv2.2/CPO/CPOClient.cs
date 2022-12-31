@@ -68,8 +68,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
             public APICounterValues  PatchSession          { get; }
             public APICounterValues  DeleteSession         { get; }
 
-            public APICounterValues  GetCDR                { get; }
             public APICounterValues  PostCDR               { get; }
+            public APICounterValues  GetCDR                { get; }
 
             public APICounterValues  GetTokens             { get; }
             public APICounterValues  PostToken             { get; }
@@ -105,8 +105,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                APICounterValues?  PatchSession         = null,
                                APICounterValues?  DeleteSession        = null,
 
-                               APICounterValues?  GetCDR               = null,
                                APICounterValues?  PostCDR              = null,
+                               APICounterValues?  GetCDR               = null,
 
                                APICounterValues?  GetTokens            = null,
                                APICounterValues?  PostToken            = null,
@@ -140,8 +140,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 this.PatchSession        = PatchSession       ?? new APICounterValues();
                 this.DeleteSession       = DeleteSession      ?? new APICounterValues();
 
-                this.GetCDR              = GetCDR             ?? new APICounterValues();
                 this.PostCDR             = PostCDR            ?? new APICounterValues();
+                this.GetCDR              = GetCDR             ?? new APICounterValues();
 
                 this.GetTokens           = GetTokens          ?? new APICounterValues();
                 this.PostToken           = PostToken          ?? new APICounterValues();
@@ -182,8 +182,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                 json.Add(new JProperty("patchSession",        PatchSession.      ToJSON()));
                 json.Add(new JProperty("deleteSession",       DeleteSession.     ToJSON()));
 
-                json.Add(new JProperty("getCDR",              GetCDR.            ToJSON()));
                 json.Add(new JProperty("postCDR",             PostCDR.           ToJSON()));
+                json.Add(new JProperty("getCDR",              GetCDR.            ToJSON()));
 
                 json.Add(new JProperty("getTokens",           GetTokens.         ToJSON()));
                 json.Add(new JProperty("postToken",           PostToken.         ToJSON()));
@@ -3041,7 +3041,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PatchTariff    (CountryCode, PartyId, TariffId, TariffPatch, ...)
+        #region PatchTariff    (CountryCode, PartyId, TariffId, TariffPatch, ...)    [NonStandard]
 
         /// <summary>
         /// Patch a tariff.
@@ -3986,7 +3986,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region DeleteSession  (CountryCode, PartyId, SessionId, ...)
+        #region DeleteSession  (CountryCode, PartyId, SessionId, ...)    [NonStandard]
 
         /// <summary>
         /// Delete the charging session specified by the given session identification from the remote API.
@@ -4172,6 +4172,186 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
 
 
+        #region PostCDR        (CDR, ...)
+
+        /// <summary>
+        /// Post/store the given charge detail record on/within the remote API.
+        /// </summary>
+        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CDR>>
+
+            PostCDR(CDR                 CDR,
+
+                    Request_Id?         RequestId           = null,
+                    Correlation_Id?     CorrelationId       = null,
+                    Version_Id?         VersionId           = null,
+
+                    CancellationToken?  CancellationToken   = null,
+                    EventTracking_Id?   EventTrackingId     = null,
+                    TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            #region Init
+
+            var startTime        = Timestamp.Now;
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.PostCDR.IncRequests_OK();
+
+            OCPIResponse<CDR> response;
+
+            #endregion
+
+            #region Send OnPostCDRRequest event
+
+            try
+            {
+
+                if (OnPostCDRRequest is not null)
+                    await Task.WhenAll(OnPostCDRRequest.GetInvocationList().
+                                       Cast<OnPostCDRRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
+
+                                                     CDR,
+
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var remoteURL = await GetRemoteURL(Module_Id.CDRs,
+                                                   InterfaceRoles.RECEIVER,
+                                                   VersionId);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
+                                                                                     remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
+                                                                                                            CDR.PartyId.    ToString() +
+                                                                                                            CDR.Id.         ToString(),
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = CDR.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection     = "close";
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                    RequestLogDelegate:   OnPostCDRHTTPRequest,
+                                                    ResponseLogDelegate:  OnPostCDRHTTPResponse,
+                                                    CancellationToken:    CancellationToken,
+                                                    EventTrackingId:      eventTrackingId,
+                                                    RequestTimeout:       requestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
+                                                              requestId,
+                                                              correlationId,
+                                                              json => CDR.Parse(json));
+
+                    Counters.PostCDR.IncResponses_OK();
+
+                }
+
+                else
+                {
+                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
+                    Counters.PostCDR.IncRequests_Error();
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                response = OCPIResponse<String, CDR>.Exception(e);
+                Counters.PostCDR.IncResponses_Error();
+            }
+
+
+            #region Send OnPostCDRResponse event
+
+            var endtime = Timestamp.Now;
+
+            try
+            {
+
+                if (OnPostCDRResponse is not null)
+                    await Task.WhenAll(OnPostCDRResponse.GetInvocationList().
+                                       Cast<OnPostCDRResponseDelegate>().
+                                       Select(e => e(endtime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
+
+                                                     CDR,
+
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
+
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
         #region GetCDR         (CountryCode, PartyId, CDRId, ...)   // The concrete URL is not specified by OCPI! m(
 
         /// <summary>
@@ -4356,185 +4536,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
         #endregion
 
-        #region PostCDR        (CDR, ...)
-
-        /// <summary>
-        /// Post/store the given charge detail record on/within the remote API.
-        /// </summary>
-        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CDR>>
-
-            PostCDR(CDR                 CDR,
-
-                    Request_Id?         RequestId           = null,
-                    Correlation_Id?     CorrelationId       = null,
-                    Version_Id?         VersionId           = null,
-
-                    CancellationToken?  CancellationToken   = null,
-                    EventTracking_Id?   EventTrackingId     = null,
-                    TimeSpan?           RequestTimeout      = null)
-
-        {
-
-            #region Init
-
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
-
-            Counters.PostCDR.IncRequests_OK();
-
-            OCPIResponse<CDR> response;
-
-            #endregion
-
-            #region Send OnPostCDRRequest event
-
-            try
-            {
-
-                if (OnPostCDRRequest is not null)
-                    await Task.WhenAll(OnPostCDRRequest.GetInvocationList().
-                                       Cast<OnPostCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CDR,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRRequest));
-            }
-
-            #endregion
-
-
-            try
-            {
-
-                var remoteURL = await GetRemoteURL(Module_Id.CDRs,
-                                                   InterfaceRoles.RECEIVER,
-                                                   VersionId);
-
-                if (remoteURL.HasValue)
-                {
-
-                    #region Upstream HTTP request...
-
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
-                                                             VirtualHostname,
-                                                             Description,
-                                                             RemoteCertificateValidator,
-                                                             ClientCertificateSelector,
-                                                             ClientCert,
-                                                             TLSProtocol,
-                                                             PreferIPv4,
-                                                             HTTPUserAgent,
-                                                             RequestTimeout,
-                                                             TransmissionRetryDelay,
-                                                             MaxNumberOfRetries,
-                                                             UseHTTPPipelining,
-                                                             HTTPLogger,
-                                                             DNSClient).
-
-                                              Execute(client => client.CreateRequest(HTTPMethod.POST,
-                                                                                     remoteURL.Value.Path + CDR.CountryCode.ToString() +    // <= Unclear if this URL is correct!
-                                                                                                            CDR.PartyId.    ToString() +
-                                                                                                            CDR.Id.         ToString(),
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content        = CDR.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                     }),
-
-                                                    RequestLogDelegate:   OnPostCDRHTTPRequest,
-                                                    ResponseLogDelegate:  OnPostCDRHTTPResponse,
-                                                    CancellationToken:    CancellationToken,
-                                                    EventTrackingId:      eventTrackingId,
-                                                    RequestTimeout:       requestTimeout).
-
-                                              ConfigureAwait(false);
-
-                    #endregion
-
-                    response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
-                                                              requestId,
-                                                              correlationId,
-                                                              json => CDR.Parse(json));
-
-                    Counters.PostCDR.IncResponses_OK();
-
-                }
-
-                else
-                {
-                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
-                    Counters.PostCDR.IncRequests_Error();
-                }
-
-            }
-
-            catch (Exception e)
-            {
-                response = OCPIResponse<String, CDR>.Exception(e);
-                Counters.PostCDR.IncResponses_Error();
-            }
-
-
-            #region Send OnPostCDRResponse event
-
-            var endtime = Timestamp.Now;
-
-            try
-            {
-
-                if (OnPostCDRResponse is not null)
-                    await Task.WhenAll(OnPostCDRResponse.GetInvocationList().
-                                       Cast<OnPostCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CDR,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnPostCDRResponse));
-            }
-
-            #endregion
-
-            return response;
-
-        }
-
-        #endregion
 
 
         #region GetTokens      (Offset = null, Limit = null, ...)

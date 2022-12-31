@@ -68,8 +68,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             public APICounterValues  PatchSession      { get; }
             public APICounterValues  DeleteSession     { get; }
 
-            public APICounterValues  GetCDR            { get; }
             public APICounterValues  PostCDR           { get; }
+            public APICounterValues  GetCDR            { get; }
 
             public APICounterValues  GetTokens         { get; }
             public APICounterValues  PostToken         { get; }
@@ -103,8 +103,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                APICounterValues?  PatchSession     = null,
                                APICounterValues?  DeleteSession    = null,
 
-                               APICounterValues?  GetCDR           = null,
                                APICounterValues?  PostCDR          = null,
+                               APICounterValues?  GetCDR           = null,
 
                                APICounterValues?  GetTokens        = null,
                                APICounterValues?  PostToken        = null)
@@ -136,8 +136,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 this.PatchSession    = PatchSession    ?? new APICounterValues();
                 this.DeleteSession   = DeleteSession   ?? new APICounterValues();
 
-                this.GetCDR          = GetCDR          ?? new APICounterValues();
                 this.PostCDR         = PostCDR         ?? new APICounterValues();
+                this.GetCDR          = GetCDR          ?? new APICounterValues();
 
                 this.GetTokens       = GetTokens       ?? new APICounterValues();
                 this.PostToken       = PostToken       ?? new APICounterValues();
@@ -176,8 +176,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                 json.Add(new JProperty("patchSession",    PatchSession.  ToJSON()));
                 json.Add(new JProperty("deleteSession",   DeleteSession. ToJSON()));
 
-                json.Add(new JProperty("getCDR",          GetCDR.        ToJSON()));
                 json.Add(new JProperty("postCDR",         PostCDR.       ToJSON()));
+                json.Add(new JProperty("getCDR",          GetCDR.        ToJSON()));
 
                 json.Add(new JProperty("getTokens",       GetTokens.     ToJSON()));
                 json.Add(new JProperty("postToken",       PostToken.     ToJSON()));
@@ -2975,7 +2975,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region PatchTariff    (CountryCode, PartyId, TariffId, TariffPatch, ...)
+        #region PatchTariff    (CountryCode, PartyId, TariffId, TariffPatch, ...)    [NonStandard]
 
         /// <summary>
         /// Patch a tariff.
@@ -3912,7 +3912,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
 
         #endregion
 
-        #region DeleteSession  (CountryCode, PartyId, SessionId, ...)
+        #region DeleteSession  (CountryCode, PartyId, SessionId, ...)    [NonStandard]
 
         /// <summary>
         /// Delete the charging session specified by the given session identification from the remote API.
@@ -4096,181 +4096,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         #endregion
 
 
-
-        #region GetCDR         (CDRId, ...)   // The concrete URL is not specified by OCPI! m(
-
-        /// <summary>
-        /// Get the charge detail record specified by the given charge detail record identification from the remote API.
-        /// </summary>
-        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
-        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        /// <param name="RequestTimeout">An optional timeout for this request.</param>
-        public async Task<OCPIResponse<CDR>>
-
-            GetCDR(CDR_Id              CDRId,
-
-                   Request_Id?         RequestId           = null,
-                   Correlation_Id?     CorrelationId       = null,
-                   Version_Id?         VersionId           = null,
-
-                   CancellationToken?  CancellationToken   = null,
-                   EventTracking_Id?   EventTrackingId     = null,
-                   TimeSpan?           RequestTimeout      = null)
-
-        {
-
-            #region Init
-
-            var startTime        = Timestamp.Now;
-            var requestId        = RequestId       ?? Request_Id.    NewRandom();
-            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
-            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
-            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
-
-            Counters.GetCDR.IncRequests_OK();
-
-            OCPIResponse<CDR> response;
-
-            #endregion
-
-            #region Send OnGetCDRRequest event
-
-            try
-            {
-
-                if (OnGetCDRRequest is not null)
-                    await Task.WhenAll(OnGetCDRRequest.GetInvocationList().
-                                       Cast<OnGetCDRRequestDelegate>().
-                                       Select(e => e(startTime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CDRId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRRequest));
-            }
-
-            #endregion
-
-
-            try
-            {
-
-                var remoteURL = await GetRemoteURL(Module_Id.CDRs,
-                                                   VersionId);
-
-                if (remoteURL.HasValue)
-                {
-
-                    #region Upstream HTTP request...
-
-                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
-                                                             VirtualHostname,
-                                                             Description,
-                                                             RemoteCertificateValidator,
-                                                             ClientCertificateSelector,
-                                                             ClientCert,
-                                                             TLSProtocol,
-                                                             PreferIPv4,
-                                                             HTTPUserAgent,
-                                                             RequestTimeout,
-                                                             TransmissionRetryDelay,
-                                                             MaxNumberOfRetries,
-                                                             UseHTTPPipelining,
-                                                             HTTPLogger,
-                                                             DNSClient).
-
-                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
-                                                                                     remoteURL.Value.Path + CDRId.ToString(),
-                                                                                     requestbuilder => {
-                                                                                         requestbuilder.Authorization  = TokenAuth;
-                                                                                         requestbuilder.Connection     = "close";
-                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
-                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
-                                                                                     }),
-
-                                                      RequestLogDelegate:   OnGetCDRHTTPRequest,
-                                                      ResponseLogDelegate:  OnGetCDRHTTPResponse,
-                                                      CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      eventTrackingId,
-                                                      RequestTimeout:       requestTimeout).
-
-                                              ConfigureAwait(false);
-
-                    #endregion
-
-                    response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
-                                                                 requestId,
-                                                                 correlationId,
-                                                                 json => CDR.Parse(json));
-
-                    Counters.GetCDR.IncResponses_OK();
-
-                }
-
-                else
-                {
-                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
-                    Counters.GetCDR.IncRequests_Error();
-                }
-
-            }
-
-            catch (Exception e)
-            {
-                response = OCPIResponse<String, CDR>.Exception(e);
-                Counters.GetCDR.IncResponses_Error();
-            }
-
-
-            #region Send OnGetCDRResponse event
-
-            var endtime = Timestamp.Now;
-
-            try
-            {
-
-                if (OnGetCDRResponse is not null)
-                    await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
-                                       Cast<OnGetCDRResponseDelegate>().
-                                       Select(e => e(endtime,
-                                                     this,
-                                                     requestId,
-                                                     correlationId,
-
-                                                     CDRId,
-
-                                                     CancellationToken,
-                                                     eventTrackingId,
-                                                     requestTimeout,
-
-                                                     response,
-                                                     endtime - startTime))).
-                                       ConfigureAwait(false);
-
-            }
-            catch (Exception e)
-            {
-                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRResponse));
-            }
-
-            #endregion
-
-            return response;
-
-        }
-
-        #endregion
 
         #region PostCDR        (CDR, ...)
 
@@ -4472,6 +4297,182 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         }
 
         #endregion
+
+        #region GetCDR         (CDRId, ...)   // The concrete URL is not specified by OCPI! m(
+
+        /// <summary>
+        /// Get the charge detail record specified by the given charge detail record identification from the remote API.
+        /// </summary>
+        /// <param name="CancellationToken">An optional charge detail record to cancel this request.</param>
+        /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
+        /// <param name="RequestTimeout">An optional timeout for this request.</param>
+        public async Task<OCPIResponse<CDR>>
+
+            GetCDR(CDR_Id              CDRId,
+
+                   Request_Id?         RequestId           = null,
+                   Correlation_Id?     CorrelationId       = null,
+                   Version_Id?         VersionId           = null,
+
+                   CancellationToken?  CancellationToken   = null,
+                   EventTracking_Id?   EventTrackingId     = null,
+                   TimeSpan?           RequestTimeout      = null)
+
+        {
+
+            #region Init
+
+            var startTime        = Timestamp.Now;
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.GetCDR.IncRequests_OK();
+
+            OCPIResponse<CDR> response;
+
+            #endregion
+
+            #region Send OnGetCDRRequest event
+
+            try
+            {
+
+                if (OnGetCDRRequest is not null)
+                    await Task.WhenAll(OnGetCDRRequest.GetInvocationList().
+                                       Cast<OnGetCDRRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
+
+                                                     CDRId,
+
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRRequest));
+            }
+
+            #endregion
+
+
+            try
+            {
+
+                var remoteURL = await GetRemoteURL(Module_Id.CDRs,
+                                                   VersionId);
+
+                if (remoteURL.HasValue)
+                {
+
+                    #region Upstream HTTP request...
+
+                    var HTTPResponse = await new HTTPSClient(remoteURL.Value,
+                                                             VirtualHostname,
+                                                             Description,
+                                                             RemoteCertificateValidator,
+                                                             ClientCertificateSelector,
+                                                             ClientCert,
+                                                             TLSProtocol,
+                                                             PreferIPv4,
+                                                             HTTPUserAgent,
+                                                             RequestTimeout,
+                                                             TransmissionRetryDelay,
+                                                             MaxNumberOfRetries,
+                                                             UseHTTPPipelining,
+                                                             HTTPLogger,
+                                                             DNSClient).
+
+                                              Execute(client => client.CreateRequest(HTTPMethod.GET,
+                                                                                     remoteURL.Value.Path + CDRId.ToString(),
+                                                                                     requestbuilder => {
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.Connection     = "close";
+                                                                                         requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
+                                                                                         requestbuilder.Set("X-Request-ID",      requestId);
+                                                                                         requestbuilder.Set("X-Correlation-ID",  correlationId);
+                                                                                     }),
+
+                                                      RequestLogDelegate:   OnGetCDRHTTPRequest,
+                                                      ResponseLogDelegate:  OnGetCDRHTTPResponse,
+                                                      CancellationToken:    CancellationToken,
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
+
+                                              ConfigureAwait(false);
+
+                    #endregion
+
+                    response = OCPIResponse<CDR>.ParseJObject(HTTPResponse,
+                                                                 requestId,
+                                                                 correlationId,
+                                                                 json => CDR.Parse(json));
+
+                    Counters.GetCDR.IncResponses_OK();
+
+                }
+
+                else
+                {
+                    response = OCPIResponse<String, CDR>.Error("No remote URL available!");
+                    Counters.GetCDR.IncRequests_Error();
+                }
+
+            }
+
+            catch (Exception e)
+            {
+                response = OCPIResponse<String, CDR>.Exception(e);
+                Counters.GetCDR.IncResponses_Error();
+            }
+
+
+            #region Send OnGetCDRResponse event
+
+            var endtime = Timestamp.Now;
+
+            try
+            {
+
+                if (OnGetCDRResponse is not null)
+                    await Task.WhenAll(OnGetCDRResponse.GetInvocationList().
+                                       Cast<OnGetCDRResponseDelegate>().
+                                       Select(e => e(endtime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
+
+                                                     CDRId,
+
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
+
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
+
+            }
+            catch (Exception e)
+            {
+                DebugX.LogException(e, nameof(CPOClient) + "." + nameof(OnGetCDRResponse));
+            }
+
+            #endregion
+
+            return response;
+
+        }
+
+        #endregion
+
 
 
         #region GetTokens      (Offset = null, Limit = null, ...)
@@ -4884,206 +4885,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
             return response;
 
         }
-
-        #endregion
-
-
-        // Commands
-
-        #region SetChargingProfile(Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
-
-        ///// <summary>
-        ///// Put/store the given token on/within the remote API.
-        ///// </summary>
-        ///// <param name="Timestamp">The optional timestamp of the request.</param>
-        ///// <param name="CancellationToken">An optional token to cancel this request.</param>
-        ///// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
-        ///// <param name="RequestTimeout">An optional timeout for this request.</param>
-        //public async Task<OCPIResponse<ChargingProfileResponse?>>
-
-        //    SetChargingProfile(Session_Id          SessionId,
-        //                       ChargingProfile     ChargingProfile,
-
-        //                       Request_Id?         RequestId           = null,
-        //                       Correlation_Id?     CorrelationId       = null,
-        //                       Version_Id?         VersionId           = null,
-
-        //                       DateTime?           Timestamp           = null,
-        //                       CancellationToken?  CancellationToken   = null,
-        //                       EventTracking_Id?   EventTrackingId     = null,
-        //                       TimeSpan?           RequestTimeout      = null)
-
-        //{
-
-        //    OCPIResponse<ChargingProfileResponse> response;
-
-        //    var Command = new SetChargingProfileCommand(ChargingProfile,
-        //                                                MyCommonAPI.GetModuleURL(Module_Id.Commands) + "SET_CHARGING_PROFILE" + RandomExtensions.RandomString(50));
-
-        //    #region Send OnSetChargingProfileRequest event
-
-        //    var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-
-        //    try
-        //    {
-
-        //        //Counters.SetChargingProfile.IncRequests();
-
-        //        //if (OnSetChargingProfileRequest is not null)
-        //        //    await Task.WhenAll(OnSetChargingProfileRequest.GetInvocationList().
-        //        //                       Cast<OnSetChargingProfileRequestDelegate>().
-        //        //                       Select(e => e(StartTime,
-        //        //                                     Request.Timestamp.Value,
-        //        //                                     this,
-        //        //                                     ClientId,
-        //        //                                     Request.EventTrackingId,
-
-        //        //                                     Request.PartnerId,
-        //        //                                     Request.OperatorId,
-        //        //                                     Request.ChargingPoolId,
-        //        //                                     Request.StatusEventDate,
-        //        //                                     Request.AvailabilityStatus,
-        //        //                                     Request.TransactionId,
-        //        //                                     Request.AvailabilityStatusUntil,
-        //        //                                     Request.AvailabilityStatusComment,
-
-        //        //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-        //        //                       ConfigureAwait(false);
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnSetChargingProfileRequest));
-        //    }
-
-        //    #endregion
-
-
-        //    try
-        //    {
-
-        //        var requestId      = RequestId     ?? Request_Id.    NewRandom();
-        //        var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
-        //        var remoteURL      = await GetRemoteURL(VersionId,
-        //                                                Module_Id.ChargingProfiles);
-
-        //        if (remoteURL.HasValue)
-        //        {
-
-        //            #region Upstream HTTP request...
-
-        //            var HTTPResponse = await new HTTPSClient(remoteURL.Value,
-        //                                                     VirtualHostname,
-        //                                                     Description,
-        //                                                     RemoteCertificateValidator,
-        //                                                     ClientCertificateSelector,
-        //                                                     ClientCert,
-        //                                                     TLSProtocol,
-        //                                                     PreferIPv4,
-        //                                                     HTTPUserAgent,
-        //                                                     RequestTimeout,
-        //                                                     TransmissionRetryDelay,
-        //                                                     MaxNumberOfRetries,
-        //                                                     UseHTTPPipelining,
-        //                                                     HTTPLogger,
-        //                                                     DNSClient).
-
-        //                                      Execute(client => client.CreateRequest(HTTPMethod.PUT,
-        //                                                                             remoteURL.Value.Path + SessionId.ToString(),
-        //                                                                             requestbuilder => {
-        //                                                                                 requestbuilder.Authorization = TokenAuth;
-        //                                                                                 requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-        //                                                                                 requestbuilder.Content       = Command.ToJSON().ToUTF8Bytes(JSONFormat);
-        //                                                                                 requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
-        //                                                                                 requestbuilder.Set("X-Request-ID",      requestId);
-        //                                                                                 requestbuilder.Set("X-Correlation-ID",  correlationId);
-        //                                                                             }),
-
-        //                                              //RequestLogDelegate:   OnSetChargingProfileHTTPRequest,
-        //                                              //ResponseLogDelegate:  OnSetChargingProfileHTTPResponse,
-        //                                              CancellationToken:    CancellationToken,
-        //                                              EventTrackingId:      EventTrackingId,
-        //                                              RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
-
-        //                                      ConfigureAwait(false);
-
-        //            #endregion
-
-        //            response = OCPIResponse<ChargingProfileResponse>.ParseJObject(HTTPResponse,
-        //                                                                          requestId,
-        //                                                                          correlationId,
-        //                                                                          json => ChargingProfileResponse.Parse(json));
-
-        //        }
-
-        //        else
-        //            response = new OCPIResponse<String, ChargingProfileResponse>("",
-        //                                                                         default,
-        //                                                                         -1,
-        //                                                                         "No remote URL available!");
-
-        //    }
-
-        //    catch (Exception e)
-        //    {
-
-        //        response = new OCPIResponse<String, ChargingProfileResponse>("",
-        //                                                                     default,
-        //                                                                     -1,
-        //                                                                     e.Message,
-        //                                                                     e.StackTrace);
-
-        //    }
-
-
-        //    #region Send OnSetChargingProfileResponse event
-
-        //    var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
-
-        //    try
-        //    {
-
-        //        // Update counters
-        //        //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-        //        //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-        //        //else
-        //        //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
-
-
-        //        //if (OnSetChargingProfileResponse is not null)
-        //        //    await Task.WhenAll(OnSetChargingProfileResponse.GetInvocationList().
-        //        //                       Cast<OnSetChargingProfileResponseDelegate>().
-        //        //                       Select(e => e(Endtime,
-        //        //                                     Request.Timestamp.Value,
-        //        //                                     this,
-        //        //                                     ClientId,
-        //        //                                     Request.EventTrackingId,
-
-        //        //                                     Request.PartnerId,
-        //        //                                     Request.OperatorId,
-        //        //                                     Request.ChargingPoolId,
-        //        //                                     Request.StatusEventDate,
-        //        //                                     Request.AvailabilityStatus,
-        //        //                                     Request.TransactionId,
-        //        //                                     Request.AvailabilityStatusUntil,
-        //        //                                     Request.AvailabilityStatusComment,
-
-        //        //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-        //        //                                     result.Content,
-        //        //                                     Endtime - StartTime))).
-        //        //                       ConfigureAwait(false);
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        DebugX.LogException(e, nameof(EMSPClient) + "." + nameof(OnSetChargingProfileResponse));
-        //    }
-
-        //    #endregion
-
-        //    return response;
-
-        //}
 
         #endregion
 
