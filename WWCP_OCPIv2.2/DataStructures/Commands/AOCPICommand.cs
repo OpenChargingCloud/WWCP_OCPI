@@ -31,6 +31,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
     public interface IOCPICommand : IComparable
     {
 
+        Command_Id      Id               { get; }
+
         /// <summary>
         /// URL that the CommandResult POST should be sent to. This URL might contain an
         /// unique identification to be able to distinguish between 'reserve now' command requests.
@@ -79,12 +81,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         public URL             ResponseURL      { get; }
 
         /// <summary>
-        /// The request identification.
+        /// The unique identification of the command.
+        /// </summary>
+        public Command_Id      Id               { get; }
+
+        /// <summary>
+        /// The unique request identification.
         /// </summary>
         public Request_Id      RequestId        { get; }
 
         /// <summary>
-        /// The request correlation identification.
+        /// The unique request correlation identification.
         /// </summary>
         public Correlation_Id  CorrelationId    { get; }
 
@@ -96,14 +103,17 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create a new abstract OCPI command.
         /// </summary>
         /// <param name="ResponseURL">The response URL.</param>
-        /// <param name="RequestId">An optional request identification.</param>
-        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// <param name="Id">An optional unique identification of the command.</param>
+        /// <param name="RequestId">An optional unique request identification.</param>
+        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public AOCPICommand(URL              ResponseURL,
+                            Command_Id?      Id              = null,
                             Request_Id?      RequestId       = null,
                             Correlation_Id?  CorrelationId   = null)
         {
 
             this.ResponseURL    = ResponseURL;
+            this.Id             = Id            ?? Command_Id.    NewRandom();
             this.RequestId      = RequestId     ?? Request_Id.    NewRandom();
             this.CorrelationId  = CorrelationId ?? Correlation_Id.NewRandom();
 

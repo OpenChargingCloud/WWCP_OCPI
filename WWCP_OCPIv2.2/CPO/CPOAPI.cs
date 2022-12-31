@@ -3254,6 +3254,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            // For CPOs, but also for EMSPs, as SCSPs might talk to EMSPs!
+            #region ~/chargingprofiles/{session_id}
+
+            // https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
+
+            #region GET     ~/chargingprofiles/{session_id}?duration={duration}&response_url=https://client.com/12345/
+
+            // 1. GET will just return a ChargingProfileResponse (result=ACCEPTED).
+            // 2. The resposeURL will be called with a ActiveProfileResult object (result=ACCEPTED, ActiveChargingProfile).
+
+            // NOTE: This GET requests introduces state and thus is a VIOLATION of HTTP semantics!
+
+            #endregion
+
+            #region PUT     ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
+
+            // 1. PUT (with a resposeURL): SetChargingProfile object
+            // 2. The resposeURL will be called later, e.g. POST https://client.com/12345/ with a ChargingProfileResult object.
+
+            #endregion
+
+            #region DELETE  ~/chargingprofiles/{session_id}?response_url=https://client.com/12345/
+
+            // 1. DELETE will just return a ChargingProfileResponse (result=ACCEPTED).
+            // 2. The resposeURL will be called with a ClearProfileResult object (result=ACCEPTED).
+
+            #endregion
+
+            #endregion
+
+
             #region ~/sessions/{session_id}/charging_preferences <= Yet to do!
 
             //ToDo: Implement ~/sessions/{session_id}/charging_preferences!

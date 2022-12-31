@@ -491,44 +491,41 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever a reserve now command request will be send.
     /// </summary>
-    public delegate Task OnReserveNowRequestDelegate (DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnReserveNowRequestDelegate(DateTime                                            LogTimestamp,
+                                                     EMSPClient                                          Sender,
+                                                     Request_Id                                          RequestId,
+                                                     Correlation_Id                                      CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                     Token                                               Token,
+                                                     DateTime                                            ExpirationTimestamp,
+                                                     Reservation_Id                                      ReservationId,
+                                                     Location_Id                                         LocationId,
+                                                     EVSE_UId?                                           EVSEUId,
 
-                                                      TimeSpan                                    RequestTimeout);
+                                                     CancellationToken?                                  CancellationToken,
+                                                     EventTracking_Id                                    EventTrackingId,
+                                                     TimeSpan                                            RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a reserve now command request had been received.
     /// </summary>
-    public delegate Task OnReserveNowResponseDelegate(DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnReserveNowResponseDelegate(DateTime                                            LogTimestamp,
+                                                      EMSPClient                                          Sender,
+                                                      Request_Id                                          RequestId,
+                                                      Correlation_Id                                      CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                      Token                                               Token,
+                                                      DateTime                                            ExpirationTimestamp,
+                                                      Reservation_Id                                      ReservationId,
+                                                      Location_Id                                         LocationId,
+                                                      EVSE_UId?                                           EVSEUId,
 
-                                                      TimeSpan                                    RequestTimeout,
-                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                      TimeSpan                                    Duration);
+                                                      CancellationToken?                                  CancellationToken,
+                                                      EventTracking_Id                                    EventTrackingId,
+                                                      TimeSpan                                            RequestTimeout,
+
+                                                      OCPIResponse<ReserveNowCommand, CommandResponse>    Response,
+                                                      TimeSpan                                            Runtime);
 
     #endregion
 
@@ -537,44 +534,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever a cancel reservation command request will be send.
     /// </summary>
-    public delegate Task OnCancelReservationRequestDelegate (DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnCancelReservationRequestDelegate(DateTime                                                   LogTimestamp,
+                                                            EMSPClient                                                 Sender,
+                                                            Request_Id                                                 RequestId,
+                                                            Correlation_Id                                             CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                            Reservation_Id                                             ReservationId,
 
-                                                      TimeSpan                                    RequestTimeout);
+                                                            CancellationToken?                                         CancellationToken,
+                                                            EventTracking_Id                                           EventTrackingId,
+                                                            TimeSpan                                                   RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a cancel reservation command request had been received.
     /// </summary>
-    public delegate Task OnCancelReservationResponseDelegate(DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnCancelReservationResponseDelegate(DateTime                                                   LogTimestamp,
+                                                             EMSPClient                                                 Sender,
+                                                             Request_Id                                                 RequestId,
+                                                             Correlation_Id                                             CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                             Reservation_Id                                             ReservationId,
 
-                                                      TimeSpan                                    RequestTimeout,
-                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                      TimeSpan                                    Duration);
+                                                             CancellationToken?                                         CancellationToken,
+                                                             EventTracking_Id                                           EventTrackingId,
+                                                             TimeSpan                                                   RequestTimeout,
+
+                                                             OCPIResponse<CancelReservationCommand, CommandResponse>    Response,
+                                                             TimeSpan                                                   Runtime);
 
     #endregion
 
@@ -583,44 +569,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever a start session command request will be send.
     /// </summary>
-    public delegate Task OnStartSessionRequestDelegate (DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnStartSessionRequestDelegate(DateTime                                              LogTimestamp,
+                                                       EMSPClient                                            Sender,
+                                                       Request_Id                                            RequestId,
+                                                       Correlation_Id                                        CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                       Token                                                 Token,
+                                                       Location_Id                                           LocationId,
+                                                       EVSE_UId?                                             EVSEUId,
 
-                                                      TimeSpan                                    RequestTimeout);
+                                                       CancellationToken?                                    CancellationToken,
+                                                       EventTracking_Id                                      EventTrackingId,
+                                                       TimeSpan                                              RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a start session command request had been received.
     /// </summary>
-    public delegate Task OnStartSessionResponseDelegate(DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnStartSessionResponseDelegate(DateTime                                              LogTimestamp,
+                                                        EMSPClient                                            Sender,
+                                                        Request_Id                                            RequestId,
+                                                        Correlation_Id                                        CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                        Token                                                 Token,
+                                                        Location_Id                                           LocationId,
+                                                        EVSE_UId?                                             EVSEUId,
 
-                                                      TimeSpan                                    RequestTimeout,
-                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                      TimeSpan                                    Duration);
+                                                        CancellationToken?                                    CancellationToken,
+                                                        EventTracking_Id                                      EventTrackingId,
+                                                        TimeSpan                                              RequestTimeout,
+
+                                                        OCPIResponse<StartSessionCommand, CommandResponse>    Response,
+                                                        TimeSpan                                              Runtime);
 
     #endregion
 
@@ -629,44 +608,33 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever a stop session command request will be send.
     /// </summary>
-    public delegate Task OnStopSessionRequestDelegate (DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnStopSessionRequestDelegate(DateTime                                             LogTimestamp,
+                                                      EMSPClient                                           Sender,
+                                                      Request_Id                                           RequestId,
+                                                      Correlation_Id                                       CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                      Session_Id                                           SessionId,
 
-                                                      TimeSpan                                    RequestTimeout);
+                                                      CancellationToken?                                   CancellationToken,
+                                                      EventTracking_Id                                     EventTrackingId,
+                                                      TimeSpan                                             RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to a stop session command request had been received.
     /// </summary>
-    public delegate Task OnStopSessionResponseDelegate(DateTime                                    LogTimestamp,
-                                                      DateTime                                    RequestTimestamp,
-                                                      EMSPClient                                Sender,
-                                                      String                                      SenderId,
-                                                      EventTracking_Id                            EventTrackingId,
+    public delegate Task OnStopSessionResponseDelegate(DateTime                                             LogTimestamp,
+                                                       EMSPClient                                           Sender,
+                                                       Request_Id                                           RequestId,
+                                                       Correlation_Id                                       CorrelationId,
 
-                                                      //Partner_Id                                  PartnerId,
-                                                      //Operator_Id                                 OperatorId,
-                                                      //ChargingPool_Id                             ChargingPoolId,
-                                                      //DateTime                                    StatusEventDate,
-                                                      //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                      //Transaction_Id?                             TransactionId,
-                                                      //DateTime?                                   AvailabilityStatusUntil,
-                                                      //String                                      AvailabilityStatusComment,
+                                                       Session_Id                                           SessionId,
 
-                                                      TimeSpan                                    RequestTimeout,
-                                                      //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                      TimeSpan                                    Duration);
+                                                       CancellationToken?                                   CancellationToken,
+                                                       EventTracking_Id                                     EventTrackingId,
+                                                       TimeSpan                                             RequestTimeout,
+
+                                                       OCPIResponse<StopSessionCommand, CommandResponse>    Response,
+                                                       TimeSpan                                             Runtime);
 
     #endregion
 
@@ -675,44 +643,37 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.EMSP.HTTP
     /// <summary>
     /// A delegate called whenever an unlock connector command request will be send.
     /// </summary>
-    public delegate Task OnUnlockConnectorRequestDelegate (DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
-                                                           EMSPClient                                Sender,
-                                                           String                                      SenderId,
-                                                           EventTracking_Id                            EventTrackingId,
+    public delegate Task OnUnlockConnectorRequestDelegate(DateTime                                                 LogTimestamp,
+                                                          EMSPClient                                               Sender,
+                                                          Request_Id                                               RequestId,
+                                                          Correlation_Id                                           CorrelationId,
 
-                                                           //Partner_Id                                  PartnerId,
-                                                           //Operator_Id                                 OperatorId,
-                                                           //ChargingPool_Id                             ChargingPoolId,
-                                                           //DateTime                                    StatusEventDate,
-                                                           //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                           //Transaction_Id?                             TransactionId,
-                                                           //DateTime?                                   AvailabilityStatusUntil,
-                                                           //String                                      AvailabilityStatusComment,
+                                                          Location_Id                                              LocationId,
+                                                          EVSE_UId                                                 EVSEUId,
+                                                          Connector_Id                                             ConnectorId,
 
-                                                           TimeSpan                                    RequestTimeout);
+                                                          CancellationToken?                                       CancellationToken,
+                                                          EventTracking_Id                                         EventTrackingId,
+                                                          TimeSpan                                                 RequestTimeout);
 
     /// <summary>
     /// A delegate called whenever a response to an unlock connector command request had been received.
     /// </summary>
-    public delegate Task OnUnlockConnectorResponseDelegate(DateTime                                    LogTimestamp,
-                                                           DateTime                                    RequestTimestamp,
-                                                           EMSPClient                                Sender,
-                                                           String                                      SenderId,
-                                                           EventTracking_Id                            EventTrackingId,
+    public delegate Task OnUnlockConnectorResponseDelegate(DateTime                                                 LogTimestamp,
+                                                           EMSPClient                                               Sender,
+                                                           Request_Id                                               RequestId,
+                                                           Correlation_Id                                           CorrelationId,
 
-                                                           //Partner_Id                                  PartnerId,
-                                                           //Operator_Id                                 OperatorId,
-                                                           //ChargingPool_Id                             ChargingPoolId,
-                                                           //DateTime                                    StatusEventDate,
-                                                           //ChargingPoolAvailabilityStatusTypes         AvailabilityStatus,
-                                                           //Transaction_Id?                             TransactionId,
-                                                           //DateTime?                                   AvailabilityStatusUntil,
-                                                           //String                                      AvailabilityStatusComment,
+                                                           Location_Id                                              LocationId,
+                                                           EVSE_UId                                                 EVSEUId,
+                                                           Connector_Id                                             ConnectorId,
 
-                                                           TimeSpan                                    RequestTimeout,
-                                                           //SetChargingPoolAvailabilityStatusResponse   Result,
-                                                           TimeSpan                                    Duration);
+                                                           CancellationToken?                                       CancellationToken,
+                                                           EventTracking_Id                                         EventTrackingId,
+                                                           TimeSpan                                                 RequestTimeout,
+
+                                                           OCPIResponse<UnlockConnectorCommand, CommandResponse>    Response,
+                                                           TimeSpan                                                 Runtime);
 
     #endregion
 

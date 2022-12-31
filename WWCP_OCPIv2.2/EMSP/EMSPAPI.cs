@@ -8364,6 +8364,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
 
             #endregion
 
+
+            // For EMSPs and SCSPs
+            #region POST  ~/chargingprofiles/{session_id}
+
+            // https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
+
+
+            #region POST  ~/chargingprofiles/{session_id}/activeChargingProfile
+
+            // ActiveChargingProfileResult
+            // Result of the GET ActiveChargingProfile request, from the Charge Point.
+
+            #endregion
+
+            #region PUT   ~/chargingprofiles/{session_id}/activeChargingProfile
+
+            // ActiveChargingProfile update
+
+            #endregion
+
+
+            #region POST  ~/chargingprofiles/{session_id}/chargingProfile
+
+            // ChargingProfileResult
+            // Result of the PUT ChargingProfile request, from the Charge Point.
+
+            #endregion
+
+            #region POST  ~/chargingprofiles/{session_id}/clearProfile
+
+            // ClearProfileResult
+            // Result of the DELETE ChargingProfile request, from the Charge Point.
+
+            #endregion
+
+            #endregion
+
+
         }
 
         #endregion

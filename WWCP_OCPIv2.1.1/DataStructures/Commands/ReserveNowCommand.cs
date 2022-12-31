@@ -79,34 +79,35 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ReservationId">Reservation identification. If the receiver (typically a charge point operator) already has a reservation that matches this reservation identification for that location it will replace the reservation.</param>
         /// <param name="LocationId">Location identification of the location (belonging to the CPO this request is send to) for which to reserve an EVSE.</param>
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'reserve now' command requests.</param>
-        /// 
         /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
         /// 
-        /// <param name="RequestId">An optional request identification.</param>
-        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// <param name="Id">An optional unique identification of the command.</param>
+        /// <param name="RequestId">An optional unique request identification.</param>
+        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public ReserveNowCommand(Token            Token,
                                  DateTime         ExpiryDate,
                                  Reservation_Id   ReservationId,
                                  Location_Id      LocationId,
                                  URL              ResponseURL,
-
                                  EVSE_UId?        EVSEUId         = null,
 
+                                 Command_Id?      Id              = null,
                                  Request_Id?      RequestId       = null,
                                  Correlation_Id?  CorrelationId   = null)
 
             : base(ResponseURL,
+                   Id,
                    RequestId,
                    CorrelationId)
 
         {
 
-            this.Token                   = Token;
-            this.ExpiryDate              = ExpiryDate;
-            this.ReservationId           = ReservationId;
-            this.LocationId              = LocationId;
+            this.Token          = Token;
+            this.ExpiryDate     = ExpiryDate;
+            this.ReservationId  = ReservationId;
+            this.LocationId     = LocationId;
 
-            this.EVSEUId                 = EVSEUId;
+            this.EVSEUId        = EVSEUId;
 
         }
 
@@ -183,7 +184,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return false;
                 }
 
-                #region Parse Token                     [mandatory]
+                #region Parse Token            [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
@@ -199,7 +200,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse ExpiryDate                [mandatory]
+                #region Parse ExpiryDate       [mandatory]
 
                 if (!JSON.ParseMandatory("expiry_date",
                                          "expiry date",
@@ -212,7 +213,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse ReservationId             [mandatory]
+                #region Parse ReservationId    [mandatory]
 
                 if (!JSON.ParseMandatory("reservation_id",
                                          "reservation identification",
@@ -225,7 +226,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse LocationId                [mandatory]
+                #region Parse LocationId       [mandatory]
 
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
@@ -238,20 +239,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse ResponseURL               [mandatory]
-
-                if (!JSON.ParseMandatory("response_url",
-                                         "response URL",
-                                         URL.TryParse,
-                                         out URL ResponseURL,
-                                         out ErrorResponse))
-                {
-                    return false;
-                }
-
-                #endregion
-
-                #region Parse EVSEUId                   [optional]
+                #region Parse EVSEUId          [optional]
 
                 if (JSON.ParseOptional("evse_uid",
                                        "EVSE identification",
@@ -265,13 +253,69 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                 #endregion
 
 
+                #region Parse ResponseURL      [mandatory]
+
+                if (!JSON.ParseMandatory("response_url",
+                                         "response URL",
+                                         URL.TryParse,
+                                         out URL ResponseURL,
+                                         out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CommandId        [optional, internal]
+
+                if (JSON.ParseOptional("id",
+                                       "command identification",
+                                       Command_Id.TryParse,
+                                       out Command_Id? CommandId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse RequestId        [optional, internal]
+
+                if (JSON.ParseOptional("request_id",
+                                       "request identification",
+                                       Request_Id.TryParse,
+                                       out Request_Id? RequestId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CorrelationId    [optional, internal]
+
+                if (JSON.ParseOptional("correlation_Id",
+                                       "correlation identification",
+                                       Correlation_Id.TryParse,
+                                       out Correlation_Id? CorrelationId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
                 ReserveNowCommand = new ReserveNowCommand(Token,
                                                           ExpiryDate,
                                                           ReservationId,
                                                           LocationId,
                                                           ResponseURL,
+                                                          EVSEUId,
 
-                                                          EVSEUId);
+                                                          CommandId,
+                                                          RequestId,
+                                                          CorrelationId);
 
                 if (CustomReserveNowCommandParser is not null)
                     ReserveNowCommand = CustomReserveNowCommandParser(JSON,
@@ -478,8 +522,18 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (c == 0 && EVSEUId.HasValue && ReserveNowCommand.EVSEUId.HasValue)
                 c = EVSEUId.Value.CompareTo(ReserveNowCommand.EVSEUId.Value);
 
+
             if (c == 0)
                 c = ResponseURL.  CompareTo(ReserveNowCommand.ResponseURL);
+
+            if (c == 0)
+                c = Id.           CompareTo(ReserveNowCommand.Id);
+
+            if (c == 0)
+                c = RequestId.    CompareTo(ReserveNowCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.CompareTo(ReserveNowCommand.CorrelationId);
 
             return c;
 
@@ -519,7 +573,11 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                ReservationId.Equals(ReserveNowCommand.ReservationId) &&
                LocationId.   Equals(ReserveNowCommand.LocationId)    &&
                EVSEUId.      Equals(ReserveNowCommand.EVSEUId)       &&
-               ResponseURL.  Equals(ReserveNowCommand.ResponseURL);
+
+               ResponseURL.  Equals(ReserveNowCommand.ResponseURL)   &&
+               Id.           Equals(ReserveNowCommand.Id)            &&
+               RequestId.    Equals(ReserveNowCommand.RequestId)     &&
+               CorrelationId.Equals(ReserveNowCommand.CorrelationId);
 
         #endregion
 
@@ -536,12 +594,16 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Token.        GetHashCode()       * 17 ^
-                       ExpiryDate.   GetHashCode()       * 13 ^
-                       ReservationId.GetHashCode()       * 11 ^
-                       LocationId.   GetHashCode()       *  7 ^
-                      (EVSEUId?.     GetHashCode() ?? 0) *  5 ^
-                       ResponseURL.  GetHashCode();
+                return Token.        GetHashCode()       * 23 ^
+                       ExpiryDate.   GetHashCode()       * 19 ^
+                       ReservationId.GetHashCode()       * 17 ^
+                       LocationId.   GetHashCode()       * 13 ^
+                      (EVSEUId?.     GetHashCode() ?? 0) * 11  ^
+
+                       ResponseURL.  GetHashCode()       *  7 ^
+                       Id.           GetHashCode()       *  5 ^
+                       RequestId.    GetHashCode()       *  3 ^
+                       CorrelationId.GetHashCode();
 
             }
         }
@@ -557,6 +619,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
+                   Id, ": ",
                    Token, " / ", ExpiryDate, " /", ReservationId, " / ", LocationId,
                    EVSEUId.HasValue ? " / " + EVSEUId : "",
                    " => ",

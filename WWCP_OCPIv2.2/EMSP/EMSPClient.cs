@@ -48,27 +48,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
 
             #region Properties
 
-            public APICounterValues  GetLocations    { get; }
-            public APICounterValues  GetLocation     { get; }
-            public APICounterValues  GetEVSE         { get; }
-            public APICounterValues  GetConnector    { get; }
+            public APICounterValues  GetLocations          { get; }
+            public APICounterValues  GetLocation           { get; }
+            public APICounterValues  GetEVSE               { get; }
+            public APICounterValues  GetConnector          { get; }
 
 
-            public APICounterValues  GetTariffs      { get; }
-            public APICounterValues  GetTariff       { get; }
+            public APICounterValues  GetTariffs            { get; }
+            public APICounterValues  GetTariff             { get; }
 
 
-            public APICounterValues  GetSessions     { get; }
-            public APICounterValues  GetSession      { get; }
+            public APICounterValues  GetSessions           { get; }
+            public APICounterValues  GetSession            { get; }
 
 
-            public APICounterValues  GetCDRs         { get; }
-            public APICounterValues  GetCDR          { get; }
+            public APICounterValues  GetCDRs               { get; }
+            public APICounterValues  GetCDR                { get; }
 
 
-            public APICounterValues  GetToken        { get; }
-            public APICounterValues  PutToken        { get; }
-            public APICounterValues  PatchToken      { get; }
+            public APICounterValues  GetToken              { get; }
+            public APICounterValues  PutToken              { get; }
+            public APICounterValues  PatchToken            { get; }
+
+            public APICounterValues  ReserveNow            { get; }
+            public APICounterValues  CancelReservation     { get; }
+            public APICounterValues  StartSession          { get; }
+            public APICounterValues  StopSession           { get; }
+            public APICounterValues  UnlockConnector       { get; }
+            public APICounterValues  SetChargingProfile    { get; }
 
             #endregion
 
@@ -93,30 +100,44 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
 
                                APICounterValues?  GetToken             = null,
                                APICounterValues?  PutToken             = null,
-                               APICounterValues?  PatchToken           = null)
+                               APICounterValues?  PatchToken           = null,
+
+                               APICounterValues?  ReserveNow           = null,
+                               APICounterValues?  CancelReservation    = null,
+                               APICounterValues?  StartSession         = null,
+                               APICounterValues?  StopSession          = null,
+                               APICounterValues?  UnlockConnector      = null,
+                               APICounterValues?  SetChargingProfile   = null)
 
                 : base(GetVersions,
                        Register)
 
             {
 
-                this.GetLocations  = GetLocations ?? new APICounterValues();
-                this.GetLocation   = GetLocation  ?? new APICounterValues();
-                this.GetEVSE       = GetEVSE      ?? new APICounterValues();
-                this.GetConnector  = GetConnector ?? new APICounterValues();
+                this.GetLocations        = GetLocations       ?? new APICounterValues();
+                this.GetLocation         = GetLocation        ?? new APICounterValues();
+                this.GetEVSE             = GetEVSE            ?? new APICounterValues();
+                this.GetConnector        = GetConnector       ?? new APICounterValues();
 
-                this.GetTariffs    = GetTariffs   ?? new APICounterValues();
-                this.GetTariff     = GetTariff    ?? new APICounterValues();
+                this.GetTariffs          = GetTariffs         ?? new APICounterValues();
+                this.GetTariff           = GetTariff          ?? new APICounterValues();
 
-                this.GetSessions   = GetSessions  ?? new APICounterValues();
-                this.GetSession    = GetSession   ?? new APICounterValues();
+                this.GetSessions         = GetSessions        ?? new APICounterValues();
+                this.GetSession          = GetSession         ?? new APICounterValues();
 
-                this.GetCDRs       = GetCDRs      ?? new APICounterValues();
-                this.GetCDR        = GetCDR       ?? new APICounterValues();
+                this.GetCDRs             = GetCDRs            ?? new APICounterValues();
+                this.GetCDR              = GetCDR             ?? new APICounterValues();
 
-                this.GetToken      = GetToken     ?? new APICounterValues();
-                this.PutToken      = PutToken     ?? new APICounterValues();
-                this.PatchToken    = PatchToken   ?? new APICounterValues();
+                this.GetToken            = GetToken           ?? new APICounterValues();
+                this.PutToken            = PutToken           ?? new APICounterValues();
+                this.PatchToken          = PatchToken         ?? new APICounterValues();
+
+                this.ReserveNow          = ReserveNow         ?? new APICounterValues();
+                this.CancelReservation   = CancelReservation  ?? new APICounterValues();
+                this.StartSession        = StartSession       ?? new APICounterValues();
+                this.StopSession         = StopSession        ?? new APICounterValues();
+                this.UnlockConnector     = UnlockConnector    ?? new APICounterValues();
+                this.SetChargingProfile  = SetChargingProfile ?? new APICounterValues();
 
             }
 
@@ -130,23 +151,30 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
 
                 var json = base.ToJSON();
 
-                json.Add(new JProperty("GetLocations",  GetLocations.ToJSON()));
-                json.Add(new JProperty("GetLocation",   GetLocation. ToJSON()));
-                json.Add(new JProperty("GetEVSE",       GetEVSE.     ToJSON()));
-                json.Add(new JProperty("GetConnecto",   GetConnector.ToJSON()));
+                json.Add(new JProperty("getLocations",        GetLocations.      ToJSON()));
+                json.Add(new JProperty("getLocation",         GetLocation.       ToJSON()));
+                json.Add(new JProperty("getEVSE",             GetEVSE.           ToJSON()));
+                json.Add(new JProperty("getConnecto",         GetConnector.      ToJSON()));
 
-                json.Add(new JProperty("GetTariffs",    GetTariffs.  ToJSON()));
-                json.Add(new JProperty("GetTariff",     GetTariff.   ToJSON()));
+                json.Add(new JProperty("getTariffs",          GetTariffs.        ToJSON()));
+                json.Add(new JProperty("getTariff",           GetTariff.         ToJSON()));
 
-                json.Add(new JProperty("GetSessions",   GetSessions. ToJSON()));
-                json.Add(new JProperty("GetSession",    GetSession.  ToJSON()));
+                json.Add(new JProperty("getSessions",         GetSessions.       ToJSON()));
+                json.Add(new JProperty("getSession",          GetSession.        ToJSON()));
 
-                json.Add(new JProperty("GetCDRs",       GetCDRs.     ToJSON()));
-                json.Add(new JProperty("GetCDR",        GetCDR.      ToJSON()));
+                json.Add(new JProperty("getCDRs",             GetCDRs.           ToJSON()));
+                json.Add(new JProperty("getCDR",              GetCDR.            ToJSON()));
 
-                json.Add(new JProperty("GetToken",      GetToken.    ToJSON()));
-                json.Add(new JProperty("PutToken",      PutToken.    ToJSON()));
-                json.Add(new JProperty("PatchToken",    PatchToken.  ToJSON()));
+                json.Add(new JProperty("getToken",            GetToken.          ToJSON()));
+                json.Add(new JProperty("putToken",            PutToken.          ToJSON()));
+                json.Add(new JProperty("patchToken",          PatchToken.        ToJSON()));
+
+                json.Add(new JProperty("reserveNow",          ReserveNow.        ToJSON()));
+                json.Add(new JProperty("cancelReservation",   CancelReservation. ToJSON()));
+                json.Add(new JProperty("startSession",        StartSession.      ToJSON()));
+                json.Add(new JProperty("stopSession",         StopSession.       ToJSON()));
+                json.Add(new JProperty("unlockConnector",     UnlockConnector.   ToJSON()));
+                json.Add(new JProperty("setChargingProfile",  SetChargingProfile.ToJSON()));
 
                 return json;
 
@@ -3013,8 +3041,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                       RequestLogDelegate:   OnPatchTokenHTTPRequest,
                                                       ResponseLogDelegate:  OnPatchTokenHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -3094,7 +3122,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3112,42 +3139,51 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                        Correlation_Id?          CorrelationId            = null,
                        Version_Id?              VersionId                = null,
 
-                       DateTime?                Timestamp                = null,
                        CancellationToken?       CancellationToken        = null,
                        EventTracking_Id?        EventTrackingId          = null,
                        TimeSpan?                RequestTimeout           = null)
 
         {
 
-            #region Send OnReserveNowRequest event
+            #region Init
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var commandId        = CommandId       ?? Command_Id.    NewRandom();
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.ReserveNow.IncRequests_OK();
+
+            OCPIResponse<ReserveNowCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnReserveNowRequest event
 
             try
             {
 
-                //Counters.ReserveNow.IncRequests();
+                if (OnReserveNowRequest is not null)
+                    await Task.WhenAll(OnReserveNowRequest.GetInvocationList().
+                                       Cast<OnReserveNowRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnReserveNowRequest != null)
-                //    await Task.WhenAll(OnReserveNowRequest.GetInvocationList().
-                //                       Cast<OnReserveNowRequestDelegate>().
-                //                       Select(e => e(StartTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     Token,
+                                                     ExpirationTimestamp,
+                                                     ReservationId,
+                                                     LocationId,
+                                                     EVSEUId,
+                                                     AuthorizationReference,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3158,29 +3194,24 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             #endregion
 
 
-            OCPIResponse<ReserveNowCommand, CommandResponse> response;
-
             try
             {
 
-                var commandId      = CommandId     ?? Command_Id.    NewRandom();
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
+                var remoteURL  = await GetRemoteURL(Module_Id.Commands,
+                                                    InterfaceRoles.RECEIVER,
+                                                    VersionId);
 
-                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
-                                                        InterfaceRoles.RECEIVER,
-                                                        VersionId);
-
-                var command        = new ReserveNowCommand(Token,
-                                                           ExpirationTimestamp,
-                                                           ReservationId,
-                                                           LocationId,
-                                                           MyCommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                    SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
-                                                           EVSEUId,
-                                                           AuthorizationReference,
-                                                           requestId,
-                                                           correlationId);
+                var command    = new ReserveNowCommand(Token,
+                                                       ExpirationTimestamp,
+                                                       ReservationId,
+                                                       LocationId,
+                                                       MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                                                SelectedOCPIVersionId.ToString() + "/emsp") + "RESERVE_NOW" + commandId.ToString(),
+                                                       EVSEUId,
+                                                       AuthorizationReference,
+                                                       commandId,
+                                                       requestId,
+                                                       correlationId);
 
                 MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
@@ -3211,10 +3242,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "RESERVE_NOW",
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection    = "close";
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3223,8 +3254,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                       RequestLogDelegate:   OnReserveNowHTTPRequest,
                                                       ResponseLogDelegate:  OnReserveNowHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -3237,9 +3268,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                                                              json => CommandResponse.Parse(command,
                                                                                                                            json));
 
+                    Counters.ReserveNow.IncResponses_OK();
+
                 }
                 else
+                {
                     response = OCPIResponse<ReserveNowCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.ReserveNow.IncRequests_Error();
+                }
 
                 if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
@@ -3248,45 +3284,39 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             catch (Exception e)
             {
                 response = OCPIResponse<ReserveNowCommand, CommandResponse>.Exception(e);
+                Counters.ReserveNow.IncResponses_Error();
             }
 
 
             #region Send OnReserveNowResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnReserveNowResponse is not null)
+                    await Task.WhenAll(OnReserveNowResponse.GetInvocationList().
+                                       Cast<OnReserveNowResponseDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     Token,
+                                                     ExpirationTimestamp,
+                                                     ReservationId,
+                                                     LocationId,
+                                                     EVSEUId,
+                                                     AuthorizationReference,
 
-                //if (OnReserveNowResponse != null)
-                //    await Task.WhenAll(OnReserveNowResponse.GetInvocationList().
-                //                       Cast<OnReserveNowResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StartTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3307,7 +3337,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3320,42 +3349,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                               Correlation_Id?     CorrelationId       = null,
                               Version_Id?         VersionId           = null,
 
-                              DateTime?           Timestamp           = null,
                               CancellationToken?  CancellationToken   = null,
                               EventTracking_Id?   EventTrackingId     = null,
                               TimeSpan?           RequestTimeout      = null)
 
         {
 
-            #region Send OnCancelReservationRequest event
+            #region Init
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var commandId        = CommandId       ?? Command_Id.    NewRandom();
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.CancelReservation.IncRequests_OK();
+
+            OCPIResponse<CancelReservationCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnCancelReservationRequest event
 
             try
             {
 
-                //Counters.CancelReservation.IncRequests();
+                if (OnCancelReservationRequest is not null)
+                    await Task.WhenAll(OnCancelReservationRequest.GetInvocationList().
+                                       Cast<OnCancelReservationRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnCancelReservationRequest != null)
-                //    await Task.WhenAll(OnCancelReservationRequest.GetInvocationList().
-                //                       Cast<OnCancelReservationRequestDelegate>().
-                //                       Select(e => e(StartTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     ReservationId,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3365,25 +3398,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
 
             #endregion
 
-
-            OCPIResponse<CancelReservationCommand, CommandResponse> response;
-
             try
             {
 
-                var commandId      = CommandId     ?? Command_Id.    NewRandom();
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
+                var remoteURL  = await GetRemoteURL(Module_Id.Commands,
+                                                    InterfaceRoles.RECEIVER,
+                                                    VersionId);
 
-                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
-                                                        InterfaceRoles.RECEIVER,
-                                                        VersionId);
-
-                var command        = new CancelReservationCommand(ReservationId,
-                                                                  MyCommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                           SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
-                                                                  requestId,
-                                                                  correlationId);
+                var command    = new CancelReservationCommand(ReservationId,
+                                                              MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                                                       SelectedOCPIVersionId.ToString() + "/emsp") + "CANCEL_RESERVATION" + commandId.ToString(),
+                                                              commandId,
+                                                              requestId,
+                                                              correlationId);
 
                 MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
@@ -3414,10 +3441,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "CANCEL_RESERVATION",
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection    = "close";
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -3426,8 +3453,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                       RequestLogDelegate:   OnCancelReservationHTTPRequest,
                                                       ResponseLogDelegate:  OnCancelReservationHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -3440,9 +3467,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                                                                     json => CommandResponse.Parse(command,
                                                                                                                                   json));
 
+                    Counters.CancelReservation.IncResponses_OK();
+
                 }
                 else
+                {
                     response = OCPIResponse<CancelReservationCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.CancelReservation.IncRequests_Error();
+                }
 
                 if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
@@ -3451,45 +3483,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             catch (Exception e)
             {
                 response = OCPIResponse<CancelReservationCommand, CommandResponse>.Exception(e);
+                Counters.CancelReservation.IncResponses_Error();
             }
 
 
             #region Send OnCancelReservationResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnCancelReservationResponse is not null)
+                    await Task.WhenAll(OnCancelReservationResponse.GetInvocationList().
+                                       Cast<OnCancelReservationResponseDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     ReservationId,
 
-                //if (OnCancelReservationResponse != null)
-                //    await Task.WhenAll(OnCancelReservationResponse.GetInvocationList().
-                //                       Cast<OnCancelReservationResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StartTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3510,7 +3531,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3527,42 +3547,50 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                          Correlation_Id?          CorrelationId            = null,
                          Version_Id?              VersionId                = null,
 
-                         DateTime?                Timestamp                = null,
                          CancellationToken?       CancellationToken        = null,
                          EventTracking_Id?        EventTrackingId          = null,
                          TimeSpan?                RequestTimeout           = null)
 
         {
 
-            #region Send OnStartSessionRequest event
+            #region Init
 
-            var startTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var commandId        = CommandId       ?? Command_Id.    NewRandom();
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.StartSession.IncRequests_OK();
+
+            OCPIResponse<StartSessionCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnStartSessionRequest event
 
             try
             {
 
-                //Counters.StartSession.IncRequests();
+                if (OnStartSessionRequest is not null)
+                    await Task.WhenAll(OnStartSessionRequest.GetInvocationList().
+                                       Cast<OnStartSessionRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnStartSessionRequest != null)
-                //    await Task.WhenAll(OnStartSessionRequest.GetInvocationList().
-                //                       Cast<OnStartSessionRequestDelegate>().
-                //                       Select(e => e(StartTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     Token,
+                                                     LocationId,
+                                                     EVSEUId,
+                                                     ConnectorId,
+                                                     AuthorizationReference,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3573,28 +3601,23 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             #endregion
 
 
-            OCPIResponse<StartSessionCommand, CommandResponse> response;
-
             try
             {
 
-                var commandId      = CommandId     ?? Command_Id.    NewRandom();
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
+                var remoteURL  = await GetRemoteURL(Module_Id.Commands,
+                                                    InterfaceRoles.RECEIVER,
+                                                    VersionId);
 
-                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
-                                                        InterfaceRoles.RECEIVER,
-                                                        VersionId);
-
-                var command        = new StartSessionCommand(Token,
-                                                             LocationId,
-                                                             MyCommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                      SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
-                                                             EVSEUId,
-                                                             ConnectorId,
-                                                             AuthorizationReference,
-                                                             requestId,
-                                                             correlationId);
+                var command    = new StartSessionCommand(Token,
+                                                         LocationId,
+                                                         MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                                                  SelectedOCPIVersionId.ToString() + "/emsp") + "START_SESSION" + commandId.ToString(),
+                                                         EVSEUId,
+                                                         ConnectorId,
+                                                         AuthorizationReference,
+                                                         commandId,
+                                                         requestId,
+                                                         correlationId);
 
                 MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
@@ -3637,8 +3660,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                       RequestLogDelegate:   OnStartSessionHTTPRequest,
                                                       ResponseLogDelegate:  OnStartSessionHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -3651,9 +3674,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                                                                json => CommandResponse.Parse(command,
                                                                                                                              json));
 
+                    Counters.StartSession.IncResponses_OK();
+
                 }
                 else
+                {
                     response = OCPIResponse<StartSessionCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.StartSession.IncRequests_Error();
+                }
 
                 if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
@@ -3662,45 +3690,38 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             catch (Exception e)
             {
                 response = OCPIResponse<StartSessionCommand, CommandResponse>.Exception(e);
+                Counters.StartSession.IncResponses_Error();
             }
 
 
             #region Send OnStartSessionResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnStartSessionResponse is not null)
+                    await Task.WhenAll(OnStartSessionResponse.GetInvocationList().
+                                       Cast<OnStartSessionResponseDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     Token,
+                                                     LocationId,
+                                                     EVSEUId,
+                                                     ConnectorId,
+                                                     AuthorizationReference,
 
-                //if (OnStartSessionResponse != null)
-                //    await Task.WhenAll(OnStartSessionResponse.GetInvocationList().
-                //                       Cast<OnStartSessionResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StartTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3721,7 +3742,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3734,42 +3754,46 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                         Correlation_Id?     CorrelationId       = null,
                         Version_Id?         VersionId           = null,
 
-                        DateTime?           Timestamp           = null,
                         CancellationToken?  CancellationToken   = null,
                         EventTracking_Id?   EventTrackingId     = null,
                         TimeSpan?           RequestTimeout      = null)
 
         {
 
-            #region Send OnStopSessionRequest event
+            #region Init
 
-            var StopTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var commandId        = CommandId       ?? Command_Id.    NewRandom();
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.StopSession.IncRequests_OK();
+
+            OCPIResponse<StopSessionCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnStopSessionRequest event
 
             try
             {
 
-                //Counters.StopSession.IncRequests();
+                if (OnStopSessionRequest is not null)
+                    await Task.WhenAll(OnStopSessionRequest.GetInvocationList().
+                                       Cast<OnStopSessionRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnStopSessionRequest != null)
-                //    await Task.WhenAll(OnStopSessionRequest.GetInvocationList().
-                //                       Cast<OnStopSessionRequestDelegate>().
-                //                       Select(e => e(StopTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     SessionId,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3780,24 +3804,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             #endregion
 
 
-            OCPIResponse<StopSessionCommand, CommandResponse> response;
-
             try
             {
 
-                var commandId      = CommandId     ?? Command_Id.    NewRandom();
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
+                var remoteURL  = await GetRemoteURL(Module_Id.Commands,
+                                                    InterfaceRoles.RECEIVER,
+                                                    VersionId);
 
-                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
-                                                        InterfaceRoles.RECEIVER,
-                                                        VersionId);
-
-                var command        = new StopSessionCommand(SessionId,
-                                                            MyCommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
-                                                            requestId,
-                                                            correlationId);
+                var command    = new StopSessionCommand(SessionId,
+                                                        MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                                                 SelectedOCPIVersionId.ToString() + "/emsp") + "STOP_SESSION" + commandId.ToString(),
+                                                        commandId,
+                                                        requestId,
+                                                        correlationId);
 
                 MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
@@ -3840,8 +3859,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                       RequestLogDelegate:   OnStopSessionHTTPRequest,
                                                       ResponseLogDelegate:  OnStopSessionHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -3854,9 +3873,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                                                               json => CommandResponse.Parse(command,
                                                                                                                             json));
 
+                    Counters.StopSession.IncResponses_OK();
+
                 }
                 else
+                {
                     response = OCPIResponse<StopSessionCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.StopSession.IncRequests_Error();
+                }
 
                 if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
@@ -3865,45 +3889,34 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             catch (Exception e)
             {
                 response = OCPIResponse<StopSessionCommand, CommandResponse>.Exception(e);
+                Counters.StopSession.IncResponses_Error();
             }
 
 
             #region Send OnStopSessionResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnStopSessionResponse is not null)
+                    await Task.WhenAll(OnStopSessionResponse.GetInvocationList().
+                                       Cast<OnStopSessionResponseDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     SessionId,
 
-                //if (OnStopSessionResponse != null)
-                //    await Task.WhenAll(OnStopSessionResponse.GetInvocationList().
-                //                       Cast<OnStopSessionResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StopTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3924,7 +3937,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
         /// <summary>
         /// Put/store the given token on/within the remote API.
         /// </summary>
-        /// <param name="Timestamp">The optional timestamp of the request.</param>
         /// <param name="CancellationToken">An optional token to cancel this request.</param>
         /// <param name="EventTrackingId">An optional event tracking identification for correlating this request with other events.</param>
         /// <param name="RequestTimeout">An optional timeout for this request.</param>
@@ -3939,42 +3951,48 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                             Correlation_Id?     CorrelationId       = null,
                             Version_Id?         VersionId           = null,
 
-                            DateTime?           Timestamp           = null,
                             CancellationToken?  CancellationToken   = null,
                             EventTracking_Id?   EventTrackingId     = null,
                             TimeSpan?           RequestTimeout      = null)
 
         {
 
-            #region Send OnUnlockConnectorRequest event
+            #region Init
 
-            var StopTime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var startTime        = Timestamp.Now;
+            var commandId        = CommandId       ?? Command_Id.    NewRandom();
+            var requestId        = RequestId       ?? Request_Id.    NewRandom();
+            var correlationId    = CorrelationId   ?? Correlation_Id.NewRandom();
+            var eventTrackingId  = EventTrackingId ?? EventTracking_Id.New;
+            var requestTimeout   = RequestTimeout  ?? this.RequestTimeout;
+
+            Counters.UnlockConnector.IncRequests_OK();
+
+            OCPIResponse<UnlockConnectorCommand, CommandResponse> response;
+
+            #endregion
+
+            #region Send OnUnlockConnectorRequest event
 
             try
             {
 
-                //Counters.UnlockConnector.IncRequests();
+                if (OnUnlockConnectorRequest is not null)
+                    await Task.WhenAll(OnUnlockConnectorRequest.GetInvocationList().
+                                       Cast<OnUnlockConnectorRequestDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
-                //if (OnUnlockConnectorRequest != null)
-                //    await Task.WhenAll(OnUnlockConnectorRequest.GetInvocationList().
-                //                       Cast<OnUnlockConnectorRequestDelegate>().
-                //                       Select(e => e(StopTime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     LocationId,
+                                                     EVSEUId,
+                                                     ConnectorId,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value))).
-                //                       ConfigureAwait(false);
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -3985,26 +4003,21 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             #endregion
 
 
-            OCPIResponse<UnlockConnectorCommand, CommandResponse> response;
-
             try
             {
 
-                var commandId      = CommandId     ?? Command_Id.    NewRandom();
-                var requestId      = RequestId     ?? Request_Id.    NewRandom();
-                var correlationId  = CorrelationId ?? Correlation_Id.NewRandom();
+                var remoteURL  = await GetRemoteURL(Module_Id.Commands,
+                                                    InterfaceRoles.RECEIVER,
+                                                    VersionId);
 
-                var remoteURL      = await GetRemoteURL(Module_Id.Commands,
-                                                        InterfaceRoles.RECEIVER,
-                                                        VersionId);
-
-                var command        = new UnlockConnectorCommand(LocationId,
-                                                                EVSEUId,
-                                                                ConnectorId,
-                                                                MyCommonAPI.GetModuleURL(Module_Id.Commands,
-                                                                                         SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
-                                                                requestId,
-                                                                correlationId);
+                var command    = new UnlockConnectorCommand(LocationId,
+                                                            EVSEUId,
+                                                            ConnectorId,
+                                                            MyCommonAPI.GetModuleURL(Module_Id.Commands,
+                                                                                     SelectedOCPIVersionId.ToString() + "/emsp") + "UNLOCK_CONNECTOR" + commandId.ToString(),
+                                                            commandId,
+                                                            requestId,
+                                                            correlationId);
 
                 MyCommonAPI.CommandValueStore.AddOrUpdate(commandId,
                                                           (id)    => CommandValues.FromCommand(command),
@@ -4035,10 +4048,10 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                               Execute(client => client.CreateRequest(HTTPMethod.POST,
                                                                                      remoteURL.Value.Path + "UNLOCK_CONNECTOR",
                                                                                      requestbuilder => {
-                                                                                         requestbuilder.Authorization = TokenAuth;
-                                                                                         requestbuilder.ContentType   = HTTPContentType.JSON_UTF8;
-                                                                                         requestbuilder.Content       = command.ToJSON().ToUTF8Bytes(JSONFormat);
-                                                                                         requestbuilder.Connection    = "close";
+                                                                                         requestbuilder.Authorization  = TokenAuth;
+                                                                                         requestbuilder.ContentType    = HTTPContentType.JSON_UTF8;
+                                                                                         requestbuilder.Content        = command.ToJSON().ToUTF8Bytes(JSONFormat);
+                                                                                         requestbuilder.Connection     = "close";
                                                                                          requestbuilder.Accept.Add(HTTPContentType.JSON_UTF8);
                                                                                          requestbuilder.Set("X-Request-ID",      requestId);
                                                                                          requestbuilder.Set("X-Correlation-ID",  correlationId);
@@ -4047,8 +4060,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                       RequestLogDelegate:   OnUnlockConnectorHTTPRequest,
                                                       ResponseLogDelegate:  OnUnlockConnectorHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -4061,9 +4074,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
                                                                                                   json => CommandResponse.Parse(command,
                                                                                                                                 json));
 
+                    Counters.UnlockConnector.IncResponses_OK();
+
                 }
                 else
+                {
                     response = OCPIResponse<UnlockConnectorCommand, CommandResponse>.Error("No remote URL available!");
+                    Counters.UnlockConnector.IncRequests_Error();
+                }
 
                 if (MyCommonAPI.CommandValueStore.TryGetValue(commandId, out var commandValues))
                     commandValues.Response = response.Data;
@@ -4072,45 +4090,36 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
             catch (Exception e)
             {
                 response = OCPIResponse<UnlockConnectorCommand, CommandResponse>.Exception(e);
+                Counters.UnlockConnector.IncResponses_Error();
             }
 
 
             #region Send OnUnlockConnectorResponse event
 
-            var endtime = org.GraphDefined.Vanaheimr.Illias.Timestamp.Now;
+            var endtime = Timestamp.Now;
 
             try
             {
 
-                // Update counters
-                //if (response.HTTPStatusCode == HTTPStatusCode.OK && response.Content.RequestStatus.Code == 1)
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_OK();
-                //else
-                //    Counters.SetChargingPoolAvailabilityStatus.IncResponses_Error();
+                if (OnUnlockConnectorResponse is not null)
+                    await Task.WhenAll(OnUnlockConnectorResponse.GetInvocationList().
+                                       Cast<OnUnlockConnectorResponseDelegate>().
+                                       Select(e => e(startTime,
+                                                     this,
+                                                     requestId,
+                                                     correlationId,
 
+                                                     LocationId,
+                                                     EVSEUId,
+                                                     ConnectorId,
 
-                //if (OnUnlockConnectorResponse != null)
-                //    await Task.WhenAll(OnUnlockConnectorResponse.GetInvocationList().
-                //                       Cast<OnUnlockConnectorResponseDelegate>().
-                //                       Select(e => e(Endtime,
-                //                                     Request.Timestamp.Value,
-                //                                     this,
-                //                                     ClientId,
-                //                                     Request.EventTrackingId,
+                                                     CancellationToken,
+                                                     eventTrackingId,
+                                                     requestTimeout,
 
-                //                                     Request.PartnerId,
-                //                                     Request.OperatorId,
-                //                                     Request.ChargingPoolId,
-                //                                     Request.StatusEventDate,
-                //                                     Request.AvailabilityStatus,
-                //                                     Request.TransactionId,
-                //                                     Request.AvailabilityStatusUntil,
-                //                                     Request.AvailabilityStatusComment,
-
-                //                                     Request.RequestTimeout ?? RequestTimeout.Value,
-                //                                     result.Content,
-                //                                     Endtime - StopTime))).
-                //                       ConfigureAwait(false);
+                                                     response,
+                                                     endtime - startTime))).
+                                       ConfigureAwait(false);
 
             }
             catch (Exception e)
@@ -4125,6 +4134,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2.EMSP.HTTP
         }
 
         #endregion
+
+
+        //ToDo: Add smart charging commands!
 
 
         #region Dispose()

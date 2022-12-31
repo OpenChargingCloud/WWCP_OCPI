@@ -64,19 +64,22 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="LocationId">Location identification of the location (belonging to the CPO this request is send to) of which it is requested to unlock the connector.</param>
         /// <param name="EVSEUId">EVSE identification of the EVSE of this location of which it is requested to unlock the connector.</param>
         /// <param name="ConnectorId">Connector identification of the connector of this location of which it is requested to unlock.</param>
-        /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'unlock connector' command requests.</param>
         /// 
-        /// <param name="RequestId">An optional request identification.</param>
-        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'unlock connector' command requests.</param>
+        /// <param name="Id">An optional unique identification of the command.</param>
+        /// <param name="RequestId">An optional unique request identification.</param>
+        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public UnlockConnectorCommand(Location_Id      LocationId,
                                       EVSE_UId         EVSEUId,
                                       Connector_Id     ConnectorId,
-                                      URL              ResponseURL,
 
+                                      URL              ResponseURL,
+                                      Command_Id?      Id              = null,
                                       Request_Id?      RequestId       = null,
                                       Correlation_Id?  CorrelationId   = null)
 
             : base(ResponseURL,
+                   Id,
                    RequestId,
                    CorrelationId)
 
@@ -161,7 +164,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse LocationId     [mandatory]
+                #region Parse LocationId       [mandatory]
 
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
@@ -174,7 +177,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse EVSEUId        [mandatory]
+                #region Parse EVSEUId          [mandatory]
 
                 if (!JSON.ParseMandatory("evse_uid",
                                          "EVSE identification",
@@ -187,7 +190,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ConnectorId    [mandatory]
+                #region Parse ConnectorId      [mandatory]
 
                 if (!JSON.ParseMandatory("connector_id",
                                          "connector identification",
@@ -200,7 +203,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ResponseURL    [mandatory]
+
+                #region Parse ResponseURL      [mandatory]
 
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
@@ -213,11 +217,55 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse CommandId        [optional, internal]
+
+                if (JSON.ParseOptional("id",
+                                       "command identification",
+                                       Command_Id.TryParse,
+                                       out Command_Id? CommandId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse RequestId        [optional, internal]
+
+                if (JSON.ParseOptional("request_id",
+                                       "request identification",
+                                       Request_Id.TryParse,
+                                       out Request_Id? RequestId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CorrelationId    [optional, internal]
+
+                if (JSON.ParseOptional("correlation_Id",
+                                       "correlation identification",
+                                       Correlation_Id.TryParse,
+                                       out Correlation_Id? CorrelationId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+
 
                 UnlockConnectorCommand = new UnlockConnectorCommand(LocationId,
                                                                     EVSEUId,
                                                                     ConnectorId,
-                                                                    ResponseURL);
+
+                                                                    ResponseURL,
+                                                                    CommandId,
+                                                                    RequestId,
+                                                                    CorrelationId);
 
                 if (CustomUnlockConnectorCommandParser is not null)
                     UnlockConnectorCommand = CustomUnlockConnectorCommandParser(JSON,
@@ -398,16 +446,26 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (UnlockConnectorCommand is null)
                 throw new ArgumentNullException(nameof(UnlockConnectorCommand), "The given 'unlock connector' command must not be null!");
 
-            var c = LocationId. CompareTo(UnlockConnectorCommand.LocationId);
+            var c = LocationId.   CompareTo(UnlockConnectorCommand.LocationId);
 
             if (c == 0)
-                c = EVSEUId.    CompareTo(UnlockConnectorCommand.EVSEUId);
+                c = EVSEUId.      CompareTo(UnlockConnectorCommand.EVSEUId);
 
             if (c == 0)
-                c = ConnectorId.CompareTo(UnlockConnectorCommand.ConnectorId);
+                c = ConnectorId.  CompareTo(UnlockConnectorCommand.ConnectorId);
+
 
             if (c == 0)
-                c = ResponseURL.CompareTo(UnlockConnectorCommand.ResponseURL);
+                c = ResponseURL.  CompareTo(UnlockConnectorCommand.ResponseURL);
+
+            if (c == 0)
+                c = Id.           CompareTo(UnlockConnectorCommand.Id);
+
+            if (c == 0)
+                c = RequestId.    CompareTo(UnlockConnectorCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.CompareTo(UnlockConnectorCommand.CorrelationId);
 
             return c;
 
@@ -442,10 +500,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => UnlockConnectorCommand is not null &&
 
-               LocationId. Equals(UnlockConnectorCommand.LocationId)  &&
-               EVSEUId.    Equals(UnlockConnectorCommand.EVSEUId)     &&
-               ConnectorId.Equals(UnlockConnectorCommand.ConnectorId) &&
-               ResponseURL.Equals(UnlockConnectorCommand.ResponseURL);
+               LocationId.   Equals(UnlockConnectorCommand.LocationId)    &&
+               EVSEUId.      Equals(UnlockConnectorCommand.EVSEUId)       &&
+               ConnectorId.  Equals(UnlockConnectorCommand.ConnectorId)   &&
+
+               ResponseURL.  Equals(UnlockConnectorCommand.ResponseURL)   &&
+               Id.           Equals(UnlockConnectorCommand.Id)            &&
+               RequestId.    Equals(UnlockConnectorCommand.RequestId)     &&
+               CorrelationId.Equals(UnlockConnectorCommand.CorrelationId);
 
         #endregion
 
@@ -462,10 +524,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return LocationId. GetHashCode() * 7 ^
-                       EVSEUId.    GetHashCode() * 5 ^
-                       ConnectorId.GetHashCode() * 3 ^
-                       ResponseURL.GetHashCode();
+                return LocationId.   GetHashCode() * 17 ^
+                       EVSEUId.      GetHashCode() * 13 ^
+                       ConnectorId.  GetHashCode() * 11 ^
+
+                       ResponseURL.  GetHashCode() *  7 ^
+                       Id.           GetHashCode() *  5 ^
+                       RequestId.    GetHashCode() *  3 ^
+                       CorrelationId.GetHashCode();
 
             }
         }
@@ -481,6 +547,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
+                   Id,
+                   ": ",
                    LocationId,
                    " / ",
                    EVSEUId,

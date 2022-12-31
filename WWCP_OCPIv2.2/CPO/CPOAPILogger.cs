@@ -17,9 +17,6 @@
 
 #region Usings
 
-using System;
-
-using org.GraphDefined.Vanaheimr.Hermod.HTTP;
 using org.GraphDefined.Vanaheimr.Hermod.Logging;
 
 #endregion

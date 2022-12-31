@@ -866,6 +866,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
                                                                                    (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "emsp/sessions")). Replace("//", "/"))));
 
+                                       // When the EMSP acts as smart charging receiver so that a SCSP can talk to him!
+                                       endpoints.Add(new VersionEndpoint(Module_Id.ChargingProfiles,
+                                                                         InterfaceRoles.SENDER,
+                                                                         URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +
+                                                                                   (Request.Host + (URLPathPrefix + AdditionalURLPathPrefix + versionId.ToString() + "cpo/chargingprofiles")).Replace("//", "/"))));
+
                                        endpoints.Add(new VersionEndpoint(Module_Id.CDRs,
                                                                          InterfaceRoles.RECEIVER,
                                                                          URL.Parse((OurVersionsURL.Protocol == URLProtocols.https ? "https://" : "http://") +

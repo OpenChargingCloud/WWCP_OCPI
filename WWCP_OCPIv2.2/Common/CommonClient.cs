@@ -1093,11 +1093,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2.HTTP
                                                                                           requestbuilder.Set("X-Correlation-ID", correlationId);
                                                                                       }),
 
-                                                     RequestLogDelegate: OnGetVersionDetailsHTTPRequest,
-                                                     ResponseLogDelegate: OnGetVersionDetailsHTTPResponse,
-                                                     CancellationToken: CancellationToken,
-                                                     EventTrackingId: EventTrackingId,
-                                                     RequestTimeout: RequestTimeout ?? this.RequestTimeout).
+                                                     RequestLogDelegate:   OnGetVersionDetailsHTTPRequest,
+                                                     ResponseLogDelegate:  OnGetVersionDetailsHTTPResponse,
+                                                     CancellationToken:    CancellationToken,
+                                                     EventTrackingId:      EventTrackingId,
+                                                     RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
 
                                                ConfigureAwait(false);
 

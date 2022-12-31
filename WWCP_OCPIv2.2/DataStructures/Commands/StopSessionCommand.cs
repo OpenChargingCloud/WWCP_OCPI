@@ -49,17 +49,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create new 'stop session' command command.
         /// </summary>
         /// <param name="SessionId">Session identification of the charging session that is requested to be stopped.</param>
-        /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'stop session' command requests.</param>
         /// 
+        /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'stop session' command requests.</param>
         /// <param name="RequestId">An optional request identification.</param>
         /// <param name="CorrelationId">An optional request correlation identification.</param>
         public StopSessionCommand(Session_Id       SessionId,
-                                  URL              ResponseURL,
 
+                                  URL              ResponseURL,
+                                  Command_Id?      Id              = null,
                                   Request_Id?      RequestId       = null,
                                   Correlation_Id?  CorrelationId   = null)
 
             : base(ResponseURL,
+                   Id,
                    RequestId,
                    CorrelationId)
 
@@ -142,7 +144,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse SessionId      [mandatory]
+                #region Parse SessionId        [mandatory]
 
                 if (!JSON.ParseMandatory("session_id",
                                          "session identification",
@@ -155,7 +157,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ResponseURL    [mandatory]
+
+                #region Parse ResponseURL      [mandatory]
 
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
@@ -168,9 +171,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse CommandId        [optional, internal]
+
+                if (JSON.ParseOptional("id",
+                                       "command identification",
+                                       Command_Id.TryParse,
+                                       out Command_Id? CommandId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse RequestId        [optional, internal]
+
+                if (JSON.ParseOptional("request_id",
+                                       "request identification",
+                                       Request_Id.TryParse,
+                                       out Request_Id? RequestId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CorrelationId    [optional, internal]
+
+                if (JSON.ParseOptional("correlation_Id",
+                                       "correlation identification",
+                                       Correlation_Id.TryParse,
+                                       out Correlation_Id? CorrelationId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
 
                 StopSessionCommand = new StopSessionCommand(SessionId,
-                                                            ResponseURL);
+
+                                                            ResponseURL,
+                                                            CommandId,
+                                                            RequestId,
+                                                            CorrelationId);
 
                 if (CustomStopSessionCommandParser is not null)
                     StopSessionCommand = CustomStopSessionCommandParser(JSON,
@@ -349,10 +395,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (StopSessionCommand is null)
                 throw new ArgumentNullException(nameof(StopSessionCommand), "The given 'stop session' command must not be null!");
 
-            var c = SessionId.  CompareTo(StopSessionCommand.SessionId);
+            var c = SessionId.    CompareTo(StopSessionCommand.SessionId);
+
 
             if (c == 0)
-                c = ResponseURL.CompareTo(StopSessionCommand.ResponseURL);
+                c = ResponseURL.  CompareTo(StopSessionCommand.ResponseURL);
+
+            if (c == 0)
+                c = Id.           CompareTo(StopSessionCommand.Id);
+
+            if (c == 0)
+                c = RequestId.    CompareTo(StopSessionCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.CompareTo(StopSessionCommand.CorrelationId);
 
             return c;
 
@@ -387,8 +443,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => StopSessionCommand is not null &&
 
-               SessionId.  Equals(StopSessionCommand.SessionId) &&
-               ResponseURL.Equals(StopSessionCommand.ResponseURL);
+               SessionId.    Equals(StopSessionCommand.SessionId)     &&
+
+               ResponseURL.  Equals(StopSessionCommand.ResponseURL)   &&
+               Id.           Equals(StopSessionCommand.Id)            &&
+               RequestId.    Equals(StopSessionCommand.RequestId)     &&
+               CorrelationId.Equals(StopSessionCommand.CorrelationId);
 
         #endregion
 
@@ -405,8 +465,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return SessionId.  GetHashCode() * 3 ^
-                       ResponseURL.GetHashCode();
+                return SessionId.    GetHashCode() * 11 ^
+
+                       ResponseURL.  GetHashCode() *  7 ^
+                       Id.           GetHashCode() *  5 ^
+                       RequestId.    GetHashCode() *  3 ^
+                       CorrelationId.GetHashCode();
 
             }
         }
@@ -422,6 +486,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
+                   Id,
+                   ": ",
                    SessionId,
                    " => ",
                    ResponseURL

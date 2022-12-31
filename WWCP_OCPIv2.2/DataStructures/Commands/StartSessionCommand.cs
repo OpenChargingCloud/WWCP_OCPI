@@ -83,8 +83,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// <param name="ConnectorId">Optional connector identification of the connector of the EVSE on which a session is to be started. This field is required when the capability: START_SESSION_CONNECTOR_REQUIRED is set on the EVSE.</param>
         /// <param name="AuthorizationReference">Optional reference to the authorization given by the eMSP, when given, this reference will be provided in the relevant session and/or CDR.</param>
         /// 
-        /// <param name="RequestId">An optional request identification.</param>
-        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// <param name="Id">An optional unique identification of the command.</param>
+        /// <param name="RequestId">An optional unique request identification.</param>
+        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public StartSessionCommand(Token                    Token,
                                    Location_Id              LocationId,
                                    URL                      ResponseURL,
@@ -92,10 +93,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                                    Connector_Id?            ConnectorId              = null,
                                    AuthorizationReference?  AuthorizationReference   = null,
 
+                                   Command_Id?              Id                       = null,
                                    Request_Id?              RequestId                = null,
                                    Correlation_Id?          CorrelationId            = null)
 
             : base(ResponseURL,
+                   Id,
                    RequestId,
                    CorrelationId)
 
@@ -253,6 +256,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+
                 #region Parse ResponseURL               [mandatory]
 
                 if (!JSON.ParseMandatory("response_url",
@@ -266,13 +270,56 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse CommandId                 [optional, internal]
+
+                if (JSON.ParseOptional("id",
+                                       "command identification",
+                                       Command_Id.TryParse,
+                                       out Command_Id? CommandId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse RequestId                 [optional, internal]
+
+                if (JSON.ParseOptional("request_id",
+                                       "request identification",
+                                       Request_Id.TryParse,
+                                       out Request_Id? RequestId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CorrelationId             [optional, internal]
+
+                if (JSON.ParseOptional("correlation_Id",
+                                       "correlation identification",
+                                       Correlation_Id.TryParse,
+                                       out Correlation_Id? CorrelationId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
 
                 StartSessionCommand = new StartSessionCommand(Token,
                                                               LocationId,
                                                               ResponseURL,
                                                               EVSEUId,
                                                               ConnectorId,
-                                                              AuthorizationReference);
+                                                              AuthorizationReference,
+
+                                                              CommandId,
+                                                              RequestId,
+                                                              CorrelationId);
 
                 if (CustomStartSessionCommandParser is not null)
                     StartSessionCommand = CustomStartSessionCommandParser(JSON,
@@ -478,15 +525,6 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             if (c == 0)
                 c = LocationId.                  CompareTo(StartSessionCommand.LocationId);
 
-            if (c == 0)
-                c = RequestId.                   CompareTo(StartSessionCommand.RequestId);
-
-            if (c == 0)
-                c = CorrelationId.               CompareTo(StartSessionCommand.CorrelationId);
-
-            if (c == 0)
-                c = ResponseURL.                 CompareTo(StartSessionCommand.ResponseURL);
-
             if (c == 0 && EVSEUId.HasValue && StartSessionCommand.EVSEUId.HasValue)
                 c = EVSEUId.               Value.CompareTo(StartSessionCommand.EVSEUId.Value);
 
@@ -495,6 +533,19 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             if (c == 0 && AuthorizationReference.HasValue && StartSessionCommand.AuthorizationReference.HasValue)
                 c = AuthorizationReference.Value.CompareTo(StartSessionCommand.AuthorizationReference.Value);
+
+
+            if (c == 0)
+                c = ResponseURL.                 CompareTo(StartSessionCommand.ResponseURL);
+
+            if (c == 0)
+                c = Id.                          CompareTo(StartSessionCommand.Id);
+
+            if (c == 0)
+                c = RequestId.                   CompareTo(StartSessionCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.               CompareTo(StartSessionCommand.CorrelationId);
 
             return c;
 
@@ -529,14 +580,16 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => StartSessionCommand is not null &&
 
-               Token.                 Equals(StartSessionCommand.Token)         &&
-               LocationId.            Equals(StartSessionCommand.LocationId)    &&
-               RequestId.             Equals(StartSessionCommand.RequestId)     &&
-               CorrelationId.         Equals(StartSessionCommand.CorrelationId) &&
-               ResponseURL.           Equals(StartSessionCommand.ResponseURL)   &&
-               EVSEUId.               Equals(StartSessionCommand.EVSEUId)       &&
-               ConnectorId.           Equals(StartSessionCommand.ConnectorId)   &&
-               AuthorizationReference.Equals(StartSessionCommand.AuthorizationReference);
+               Token.                 Equals(StartSessionCommand.Token)                  &&
+               LocationId.            Equals(StartSessionCommand.LocationId)             &&
+               EVSEUId.               Equals(StartSessionCommand.EVSEUId)                &&
+               ConnectorId.           Equals(StartSessionCommand.ConnectorId)            &&
+               AuthorizationReference.Equals(StartSessionCommand.AuthorizationReference) &&
+
+               ResponseURL.           Equals(StartSessionCommand.ResponseURL)            &&
+               Id.                    Equals(StartSessionCommand.Id)                     &&
+               RequestId.             Equals(StartSessionCommand.RequestId)              &&
+               CorrelationId.         Equals(StartSessionCommand.CorrelationId);
 
         #endregion
 
@@ -555,12 +608,14 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 return Token.                  GetHashCode()       * 23 ^
                        LocationId.             GetHashCode()       * 19 ^
-                       RequestId.              GetHashCode()       * 13 ^
-                       CorrelationId.          GetHashCode()       * 11 ^
+                      (EVSEUId?.               GetHashCode() ?? 0) * 17 ^
+                      (ConnectorId?.           GetHashCode() ?? 0) * 13 ^
+                       AuthorizationReference?.GetHashCode() ?? 0  * 11 ^
+
                        ResponseURL.            GetHashCode()       *  7 ^
-                      (EVSEUId?.               GetHashCode() ?? 0) *  5 ^
-                      (ConnectorId?.           GetHashCode() ?? 0) *  3 ^
-                       AuthorizationReference?.GetHashCode() ?? 0;
+                       Id.                     GetHashCode()       *  5 ^
+                       RequestId.              GetHashCode()       *  3 ^
+                       CorrelationId.          GetHashCode();
 
             }
         }
@@ -576,6 +631,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
+                   Id,
+                   ": ",
                    Token,
                    " @ ",
                    LocationId,
@@ -593,7 +650,9 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                        : "",
 
                    " => ",
-                   ResponseURL);
+                   ResponseURL
+
+               );
 
         #endregion
 

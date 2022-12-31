@@ -3648,8 +3648,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.CPO.HTTP
                                                     RequestLogDelegate:   OnPutSessionHTTPRequest,
                                                     ResponseLogDelegate:  OnPutSessionHTTPResponse,
                                                     CancellationToken:    CancellationToken,
-                                                    EventTrackingId:      EventTrackingId,
-                                                    RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                    EventTrackingId:      eventTrackingId,
+                                                    RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 

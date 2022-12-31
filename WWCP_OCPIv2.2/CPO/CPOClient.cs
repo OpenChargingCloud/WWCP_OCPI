@@ -36,7 +36,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP
 {
 
     /// <summary>
-    /// The CPO client.
+    /// The CPO client is used by a CPO to talk to EMSPs (and SCSPs).
     /// </summary>
     public partial class CPOClient : CommonClient
     {
@@ -2407,8 +2407,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP
                                                     RequestLogDelegate:   OnPutConnectorHTTPRequest,
                                                     ResponseLogDelegate:  OnPutConnectorHTTPResponse,
                                                     CancellationToken:    CancellationToken,
-                                                    EventTrackingId:      EventTrackingId,
-                                                    RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                    EventTrackingId:      eventTrackingId,
+                                                    RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -2788,8 +2788,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP
                                                       RequestLogDelegate:   OnGetTariffHTTPRequest,
                                                       ResponseLogDelegate:  OnGetTariffHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -2972,8 +2972,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP
                                                     RequestLogDelegate:   OnPutTariffHTTPRequest,
                                                     ResponseLogDelegate:  OnPutTariffHTTPResponse,
                                                     CancellationToken:    CancellationToken,
-                                                    EventTrackingId:      EventTrackingId,
-                                                    RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                    EventTrackingId:      eventTrackingId,
+                                                    RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -3536,8 +3536,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP
                                                       RequestLogDelegate:   OnGetSessionHTTPRequest,
                                                       ResponseLogDelegate:  OnGetSessionHTTPResponse,
                                                       CancellationToken:    CancellationToken,
-                                                      EventTrackingId:      EventTrackingId,
-                                                      RequestTimeout:       RequestTimeout ?? this.RequestTimeout).
+                                                      EventTrackingId:      eventTrackingId,
+                                                      RequestTimeout:       requestTimeout).
 
                                               ConfigureAwait(false);
 
@@ -4956,6 +4956,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2.CPO.HTTP
 
 
         // Commands
+
+        // A CPO wants to send an update towards a EMSP or SCSP: https://github.com/ocpi/ocpi/blob/release-2.2.1-bugfixes/mod_charging_profiles.asciidoc
 
         #region SetChargingProfile(Token, ExpiryDate, ReservationId, LocationId, EVSEUId, AuthorizationReference, ...)
 

@@ -51,17 +51,20 @@ namespace cloud.charging.open.protocols.OCPIv2_2
         /// Create new 'cancel reservation' command command.
         /// </summary>
         /// <param name="ReservationId">Reservation identification unique for this reservation.</param>
-        /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'cancel reservation' command requests.</param>
         /// 
-        /// <param name="RequestId">An optional request identification.</param>
-        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'cancel reservation' command requests.</param>
+        /// <param name="Id">An optional unique identification of the command.</param>
+        /// <param name="RequestId">An optional unique request identification.</param>
+        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public CancelReservationCommand(Reservation_Id   ReservationId,
-                                        URL              ResponseURL,
 
+                                        URL              ResponseURL,
+                                        Command_Id?      Id              = null,
                                         Request_Id?      RequestId       = null,
                                         Correlation_Id?  CorrelationId   = null)
 
             : base(ResponseURL,
+                   Id,
                    RequestId,
                    CorrelationId)
 
@@ -144,7 +147,7 @@ namespace cloud.charging.open.protocols.OCPIv2_2
                     return false;
                 }
 
-                #region Parse ReservationId     [mandatory]
+                #region Parse ReservationId    [mandatory]
 
                 if (!JSON.ParseMandatory("reservation_id",
                                          "reservation identification",
@@ -157,7 +160,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
-                #region Parse ResponseURL       [mandatory]
+
+                #region Parse ResponseURL      [mandatory]
 
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
@@ -170,9 +174,52 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
                 #endregion
 
+                #region Parse CommandId        [optional, internal]
+
+                if (JSON.ParseOptional("id",
+                                       "command identification",
+                                       Command_Id.TryParse,
+                                       out Command_Id? CommandId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse RequestId        [optional, internal]
+
+                if (JSON.ParseOptional("request_id",
+                                       "request identification",
+                                       Request_Id.TryParse,
+                                       out Request_Id? RequestId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CorrelationId    [optional, internal]
+
+                if (JSON.ParseOptional("correlation_Id",
+                                       "correlation identification",
+                                       Correlation_Id.TryParse,
+                                       out Correlation_Id? CorrelationId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
 
                 CancelReservationCommand = new CancelReservationCommand(ReservationId,
-                                                                        ResponseURL);
+
+                                                                        ResponseURL,
+                                                                        CommandId,
+                                                                        RequestId,
+                                                                        CorrelationId);
 
                 if (CustomCancelReservationCommandParser is not null)
                     CancelReservationCommand = CustomCancelReservationCommandParser(JSON,
@@ -353,8 +400,18 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             var c = ReservationId.CompareTo(CancelReservationCommand.ReservationId);
 
+
             if (c == 0)
                 c = ResponseURL.  CompareTo(CancelReservationCommand.ResponseURL);
+
+            if (c == 0)
+                c = Id.           CompareTo(CancelReservationCommand.Id);
+
+            if (c == 0)
+                c = RequestId.    CompareTo(CancelReservationCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.CompareTo(CancelReservationCommand.CorrelationId);
 
             return c;
 
@@ -390,7 +447,11 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             => CancelReservationCommand is not null &&
 
                ReservationId.Equals(CancelReservationCommand.ReservationId) &&
-               ResponseURL.  Equals(CancelReservationCommand.ResponseURL);
+
+               ResponseURL.  Equals(CancelReservationCommand.ResponseURL)   &&
+               Id.           Equals(CancelReservationCommand.Id)            &&
+               RequestId.    Equals(CancelReservationCommand.RequestId)     &&
+               CorrelationId.Equals(CancelReservationCommand.CorrelationId);
 
         #endregion
 
@@ -407,8 +468,12 @@ namespace cloud.charging.open.protocols.OCPIv2_2
             unchecked
             {
 
-                return ReservationId.GetHashCode() * 3 ^
-                       ResponseURL.  GetHashCode();
+                return ReservationId.GetHashCode() * 11 ^
+
+                       ResponseURL.  GetHashCode() *  7 ^
+                       Id.           GetHashCode() *  5 ^
+                       RequestId.    GetHashCode() *  3 ^
+                       CorrelationId.GetHashCode();
 
             }
         }
@@ -424,6 +489,8 @@ namespace cloud.charging.open.protocols.OCPIv2_2
 
             => String.Concat(
 
+                   Id,
+                   ": ",
                    ReservationId,
                    " => ",
                    ResponseURL

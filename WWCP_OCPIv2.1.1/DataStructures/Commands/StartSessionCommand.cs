@@ -69,17 +69,20 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         /// <param name="ResponseURL">URL that the CommandResult POST should be sent to. This URL might contain an unique identification to be able to distinguish between 'start session' command requests.</param>
         /// <param name="EVSEUId">Optional EVSE identification of the EVSE of this location if a specific EVSE has to be reserved.</param>
         /// 
-        /// <param name="RequestId">An optional request identification.</param>
-        /// <param name="CorrelationId">An optional request correlation identification.</param>
+        /// <param name="Id">An optional unique identification of the command.</param>
+        /// <param name="RequestId">An optional unique request identification.</param>
+        /// <param name="CorrelationId">An optional unique request correlation identification.</param>
         public StartSessionCommand(Token            Token,
                                    Location_Id      LocationId,
                                    URL              ResponseURL,
                                    EVSE_UId?        EVSEUId         = null,
 
+                                   Command_Id?      Id              = null,
                                    Request_Id?      RequestId       = null,
                                    Correlation_Id?  CorrelationId   = null)
 
             : base(ResponseURL,
+                   Id,
                    RequestId,
                    CorrelationId)
 
@@ -164,7 +167,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                     return false;
                 }
 
-                #region Parse Token                     [mandatory]
+                #region Parse Token            [mandatory]
 
                 if (!JSON.ParseMandatoryJSON("token",
                                              "token",
@@ -180,7 +183,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse LocationId                [mandatory]
+                #region Parse LocationId       [mandatory]
 
                 if (!JSON.ParseMandatory("location_id",
                                          "location identification",
@@ -193,7 +196,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse EVSEUId                   [optional]
+                #region Parse EVSEUId          [optional]
 
                 if (JSON.ParseOptional("evse_uid",
                                        "EVSE identification",
@@ -207,7 +210,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
-                #region Parse ResponseURL               [mandatory]
+
+                #region Parse ResponseURL      [mandatory]
 
                 if (!JSON.ParseMandatory("response_url",
                                          "response URL",
@@ -220,11 +224,54 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                 #endregion
 
+                #region Parse CommandId        [optional, internal]
+
+                if (JSON.ParseOptional("id",
+                                       "command identification",
+                                       Command_Id.TryParse,
+                                       out Command_Id? CommandId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse RequestId        [optional, internal]
+
+                if (JSON.ParseOptional("request_id",
+                                       "request identification",
+                                       Request_Id.TryParse,
+                                       out Request_Id? RequestId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
+                #region Parse CorrelationId    [optional, internal]
+
+                if (JSON.ParseOptional("correlation_Id",
+                                       "correlation identification",
+                                       Correlation_Id.TryParse,
+                                       out Correlation_Id? CorrelationId,
+                                       out ErrorResponse))
+                {
+                    return false;
+                }
+
+                #endregion
+
 
                 StartSessionCommand = new StartSessionCommand(Token,
                                                               LocationId,
                                                               ResponseURL,
-                                                              EVSEUId);
+                                                              EVSEUId,
+
+                                                              CommandId,
+                                                              RequestId,
+                                                              CorrelationId);
 
                 if (CustomStartSessionCommandParser is not null)
                     StartSessionCommand = CustomStartSessionCommandParser(JSON,
@@ -432,6 +479,19 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             if (c == 0 && EVSEUId.HasValue && StartSessionCommand.EVSEUId.HasValue)
                 c = EVSEUId.Value.CompareTo(StartSessionCommand.EVSEUId.Value);
 
+
+            if (c == 0)
+                c = ResponseURL.  CompareTo(StartSessionCommand.ResponseURL);
+
+            if (c == 0)
+                c = Id.           CompareTo(StartSessionCommand.Id);
+
+            if (c == 0)
+                c = RequestId.    CompareTo(StartSessionCommand.RequestId);
+
+            if (c == 0)
+                c = CorrelationId.CompareTo(StartSessionCommand.CorrelationId);
+
             return c;
 
         }
@@ -467,10 +527,12 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
                Token.        Equals(StartSessionCommand.Token)         &&
                LocationId.   Equals(StartSessionCommand.LocationId)    &&
-               RequestId.    Equals(StartSessionCommand.RequestId)     &&
-               CorrelationId.Equals(StartSessionCommand.CorrelationId) &&
+               EVSEUId.      Equals(StartSessionCommand.EVSEUId)       &&
+
                ResponseURL.  Equals(StartSessionCommand.ResponseURL)   &&
-               EVSEUId.      Equals(StartSessionCommand.EVSEUId);
+               Id.           Equals(StartSessionCommand.Id)            &&
+               RequestId.    Equals(StartSessionCommand.RequestId)     &&
+               CorrelationId.Equals(StartSessionCommand.CorrelationId);
 
         #endregion
 
@@ -487,12 +549,14 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
             unchecked
             {
 
-                return Token.        GetHashCode() * 13 ^
-                       LocationId.   GetHashCode() * 11 ^
-                       RequestId.    GetHashCode() *  7 ^
-                       CorrelationId.GetHashCode() *  5 ^
-                       ResponseURL.  GetHashCode() *  3 ^
-                       EVSEUId?.     GetHashCode() ?? 0;
+                return Token.        GetHashCode()       * 17 ^
+                       LocationId.   GetHashCode()       * 13 ^
+                      (EVSEUId?.     GetHashCode() ?? 0) * 11 ^
+
+                       ResponseURL.  GetHashCode()       *  7 ^
+                       Id.           GetHashCode()       *  5 ^
+                       RequestId.    GetHashCode()       *  3 ^
+                       CorrelationId.GetHashCode();
 
             }
         }
@@ -508,6 +572,8 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
 
             => String.Concat(
 
+                   Id,
+                   ": ",
                    Token,
                    " @ ",
                    LocationId,
@@ -517,7 +583,9 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
                        : "",
 
                    " => ",
-                   ResponseURL);
+                   ResponseURL
+
+               );
 
         #endregion
 
