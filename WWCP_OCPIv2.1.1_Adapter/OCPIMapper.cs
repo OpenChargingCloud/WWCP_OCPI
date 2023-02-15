@@ -150,63 +150,218 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1
         #endregion
 
 
-        #region ToOCPI(this ChargingPools)
+        #region ToOCPI(this ChargingPool, out warnings)
 
-        public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools)
+        public static Location? ToOCPI(this WWCP.IChargingPool   ChargingPool,
+                                       out IEnumerable<Warning>  Warnings)
         {
 
-            var locations = new HashSet<Location>();
+            var warnings = new List<Warning>();
 
-            foreach (var pool in ChargingPools)
+            if (ChargingPool.Address is null)
             {
+                warnings.Add(Warning.Create(Languages.en, "Charging location must have a valid address!"));
+                Warnings = warnings;
+                return null;
+            }
+
+            if (ChargingPool.GeoLocation is null)
+            {
+                warnings.Add(Warning.Create(Languages.en, "Charging location must have a valid geo location!"));
+                Warnings = warnings;
+                return null;
+            }
+
+            try
+            {
+
+                Warnings = Array.Empty<Warning>();
+
+                return new Location(
+
+                           CountryCode:          CountryCode.Parse("DE"),
+                           PartyId:              Party_Id.   Parse("GEF"),
+                           Id:                   Location_Id.Parse("111"),
+                           LocationType:         LocationType.ON_STREET,
+                           Address:              "",
+                           City:                 "",
+                           PostalCode:           "",
+                           Country:              ChargingPool.Address.Country,
+                           Coordinates:          ChargingPool.GeoLocation.Value,
+
+                           Name:                 "",
+                           RelatedLocations:     Array.Empty<AdditionalGeoLocation>(),
+                           EVSEs:                Array.Empty<EVSE>(),
+                           Directions:           Array.Empty<DisplayText>(),
+                           Operator:             null,
+                           SubOperator:          null,
+                           Owner:                null,
+                           Facilities:           Array.Empty<Facilities>(),
+                           Timezone:             "",
+                           OpeningTimes:         null,
+                           ChargingWhenClosed:   null,
+                           Images:               Array.Empty<Image>(),
+                           EnergyMix:            null
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging pool '{ChargingPool.Id}' to OCPI: " + ex.Message));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this ChargingPools, out warnings)
+
+        public static IEnumerable<Location> ToOCPI(this IEnumerable<WWCP.ChargingPool>  ChargingPools,
+                                                   out IEnumerable<Warning>             Warnings)
+        {
+
+            var warnings   = new List<Warning>();
+            var locations  = new HashSet<Location>();
+
+            foreach (var chargingPool in ChargingPools)
+            {
+
                 try
                 {
 
-                    //locations.Add(new Location(
-                    //                  CountryCode.Parse("DE"),
-                    //                  Party_Id.   Parse("GEF"),
-                    //                  Location_Id.Parse("..."),
-                    //                  true,
-                    //                  pool.Address.Street + pool.Address.HouseNumber,
-                    //                  pool.Address.City.FirstText(),
-                    //                  pool.Address.Country,
-                    //                  pool.GeoLocation ?? default,
-                    //                  "timezone",
-                    //                  null,
-                    //                  "name",
-                    //                  pool.Address.PostalCode,
-                    //                  pool.Address.Country.CountryName.FirstText(),
-                    //                  null,
-                    //                  null,
-                    //                  Array.Empty<EVSE>(),
-                    //                  new DisplayText[] {
-                    //                      new DisplayText(Languages.en, "directions")
-                    //                  },
-                    //                  new BusinessDetails(
-                    //                      pool.Operator.Name.FirstText(),
-                    //                      URL.Parse(pool.Operator.Homepage),
-                    //                      null
-                    //                  ),
-                    //                  null,
-                    //                  null,
-                    //                  Array.Empty<Facilities>(),
-                    //                  null,
-                    //                  null,
-                    //                  null,
-                    //                  null,
-                    //                  Timestamp.Now)
-                    //              );
+                    var chargingPool2 = chargingPool.ToOCPI(out var warning);
+
+                    if (chargingPool2 is not null)
+                        locations.Add(chargingPool2);
+
+                    if (warning is not null && warning.Any())
+                        warnings.AddRange(warning);
 
                 }
-                catch (Exception)
-                { }
+                catch (Exception ex)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"Could not convert the given charging pool '{chargingPool.Id}' to OCPI: " + ex.Message));
+                }
+
             }
 
+            Warnings = warnings.ToArray();
             return locations;
 
         }
 
         #endregion
+
+
+        #region ToOCPI(this EVSE, out warnings)
+
+        public static EVSE? ToOCPI(this WWCP.IEVSE           EVSE,
+                                   out IEnumerable<Warning>  Warnings)
+        {
+
+            var warnings = new List<Warning>();
+
+            try
+            {
+
+                var evseUId = EVSE_UId.TryParse(EVSE.ToString());
+
+                if (!evseUId.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE Unique identification!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                var evseId  = EVSE_Id.TryParse(EVSE.ToString());
+
+                if (!evseId.HasValue)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"The given EVSE identificaton '{EVSE.Id}' could not be converted to an OCPI EVSE identification!"));
+                    Warnings = warnings;
+                    return null;
+                }
+
+
+                Warnings = Array.Empty<Warning>();
+
+                return new EVSE(
+
+                           UId:                   evseUId.Value,
+                           Status:                StatusType.AVAILABLE,
+                           Connectors:            Array.Empty<Connector>(),
+
+                           EVSEId:                evseId,
+                           StatusSchedule:        Array.Empty<StatusSchedule>(),
+                           Capabilities:          Array.Empty<Capability>(),
+                           EnergyMeter:           null,
+                           FloorLevel:            "",
+                           Coordinates:           null,
+                           PhysicalReference:     "",
+                           Directions:            Array.Empty<DisplayText>(),
+                           ParkingRestrictions:   Array.Empty<ParkingRestrictions>(),
+                           Images:                Array.Empty<Image>(),
+
+                           LastUpdated:           Timestamp.Now
+
+                       );
+
+            }
+            catch (Exception ex)
+            {
+                warnings.Add(Warning.Create(Languages.en, $"Could not convert the given EVSE '{EVSE.Id}' to OCPI: " + ex.Message));
+                Warnings = warnings;
+            }
+
+            return null;
+
+        }
+
+        #endregion
+
+        #region ToOCPI(this EVSEs)
+
+        public static IEnumerable<EVSE> ToOCPI(this IEnumerable<WWCP.IEVSE>  EVSEs,
+                                               out IEnumerable<Warning>      Warnings)
+        {
+
+            var warnings  = new List<Warning>();
+            var evses     = new HashSet<EVSE>();
+
+            foreach (var evse in EVSEs)
+            {
+
+                try
+                {
+
+                    var evse2 = evse.ToOCPI(out var warning);
+
+                    if (evse2 is not null)
+                        evses.Add(evse2);
+
+                    if (warning is not null && warning.Any())
+                        warnings.AddRange(warning);
+
+                }
+                catch (Exception ex)
+                {
+                    warnings.Add(Warning.Create(Languages.en, $"Could not convert the given EVSE '{evse.Id}' to OCPI: " + ex.Message));
+                }
+
+            }
+
+            Warnings = warnings.ToArray();
+            return evses;
+
+        }
+
+        #endregion
+
 
     }
 

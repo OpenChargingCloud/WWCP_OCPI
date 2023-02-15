@@ -2195,9 +2195,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                     Boolean   SkipNotifications   = false)
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
-
             lock (Locations)
             {
 
@@ -2245,9 +2242,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                Boolean   SkipNotifications   = false)
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
-
             lock (Locations)
             {
 
@@ -2291,10 +2285,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         private AddOrUpdateResult<Location> __addOrUpdateLocation(Location  newOrUpdatedLocation,
                                                                   Boolean?  AllowDowngrades = false)
         {
-
-            if (newOrUpdatedLocation is null)
-                return AddOrUpdateResult<Location>.Failed(newOrUpdatedLocation,
-                                                          "The given location must not be null!");
 
             if (Locations.TryGetValue(newOrUpdatedLocation.Id, out var existingLocation))
             {
@@ -2392,9 +2382,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
         public Location? UpdateLocation(Location Location)
         {
 
-            if (Location is null)
-                throw new ArgumentNullException(nameof(Location), "The given location must not be null!");
-
             lock (Locations)
             {
 
@@ -2439,11 +2426,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                   Boolean?  AllowDowngrades = false)
         {
 
-            if (Location is null)
-                return PatchResult<Location>.Failed(Location,
-                                                    "The given location must not be null!");
-
-            if (LocationPatch is null || !LocationPatch.HasValues)
+            if (!LocationPatch.HasValues)
                 return PatchResult<Location>.Failed(Location,
                                                     "The given location patch must not be null or empty!");
 
@@ -2539,15 +2522,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           EVSE      newOrUpdatedEVSE,
                                                           Boolean?  AllowDowngrades = false)
         {
-
-            if (Location is null)
-                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
-                                                      "The given location must not be null!");
-
-            if (newOrUpdatedEVSE is null)
-                return AddOrUpdateResult<EVSE>.Failed(newOrUpdatedEVSE,
-                                                      "The given EVSE must not be null!");
-
 
             var EVSEExistedBefore = Location.TryGetEVSE(newOrUpdatedEVSE.UId, out EVSE existingEVSE);
 
@@ -2688,15 +2662,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                           Boolean?  AllowDowngrades = false)
         {
 
-            if (Location is null)
-                return PatchResult<EVSE>.Failed(EVSE,
-                                                "The given location must not be null!");
-
-            if (EVSE is null)
-                return PatchResult<EVSE>.Failed(EVSE,
-                                                "The given EVSE must not be null!");
-
-            if (EVSEPatch is null || !EVSEPatch.HasValues)
+            if (!EVSEPatch.HasValues)
                 return PatchResult<EVSE>.Failed(EVSE,
                                                 "The given EVSE patch must not be null or empty!");
 
@@ -2813,18 +2779,6 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                              Boolean?   AllowDowngrades = false)
         {
 
-            if (Location is null)
-                return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
-                                                           "The given location must not be null!");
-
-            if (EVSE     is null)
-                return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
-                                                           "The given EVSE must not be null!");
-
-            if (newOrUpdatedConnector is null)
-                return AddOrUpdateResult<Connector>.Failed(newOrUpdatedConnector,
-                                                           "The given connector must not be null!");
-
             // ToDo: Remove me and add a proper 'lock' mechanism!
             await Task.Delay(1);
 
@@ -2885,19 +2839,7 @@ namespace cloud.charging.open.protocols.OCPIv2_1_1.HTTP
                                                                     Boolean?   AllowDowngrades = false)
         {
 
-            if (Location is null)
-                return PatchResult<Connector>.Failed(Connector,
-                                                     "The given location must not be null!");
-
-            if (EVSE is null)
-                return PatchResult<Connector>.Failed(Connector,
-                                                     "The given EVSE must not be null!");
-
-            if (Connector is null)
-                return PatchResult<Connector>.Failed(Connector,
-                                                     "The given connector must not be null!");
-
-            if (ConnectorPatch is null || !ConnectorPatch.HasValues)
+            if (!ConnectorPatch.HasValues)
                 return PatchResult<Connector>.Failed(Connector,
                                                      "The given connector patch must not be null or empty!");
 

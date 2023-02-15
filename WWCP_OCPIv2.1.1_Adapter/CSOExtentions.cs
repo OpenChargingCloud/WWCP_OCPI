@@ -21,6 +21,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 using org.GraphDefined.Vanaheimr.Illias;
 using org.GraphDefined.Vanaheimr.Hermod.HTTP;
+using cloud.charging.open.protocols.OCPIv2_1_1.HTTP;
 
 #endregion
 
@@ -65,8 +66,7 @@ namespace cloud.charging.open.protocols.WWCP
                                       I18NString                                               Name,
                                       I18NString                                               Description,
 
-                                      HTTPServer                                               HTTPServer,
-                                      HTTPPath                                                 HTTPPathPrefix,
+                                      CommonAPI                                                CommonAPI,
 
                                       OCPIv2_1_1.WWCPEVSEId_2_EVSEId_Delegate?                 CustomEVSEIdConverter                = null,
                                       OCPIv2_1_1.WWCPEVSE_2_EVSE_Delegate?                     CustomEVSEConverter                  = null,
@@ -78,6 +78,8 @@ namespace cloud.charging.open.protocols.WWCP
 
                                       IncludeEVSEIdDelegate?                                   IncludeEVSEIds                       = null,
                                       IncludeEVSEDelegate?                                     IncludeEVSEs                         = null,
+                                      IncludeChargingStationIdDelegate?                        IncludeChargingStationIds            = null,
+                                      IncludeChargingStationDelegate?                          IncludeChargingStations              = null,
                                       IncludeChargingPoolIdDelegate?                           IncludeChargingPoolIds               = null,
                                       IncludeChargingPoolDelegate?                             IncludeChargingPools                 = null,
                                       ChargeDetailRecordFilterDelegate?                        ChargeDetailRecordFilter             = null,
@@ -114,23 +116,24 @@ namespace cloud.charging.open.protocols.WWCP
                                          Description,
                                          RoamingNetwork,
 
-                                         HTTPServer,
-                                         HTTPPathPrefix,
+                                         CommonAPI,
 
                                          CustomEVSEIdConverter,
                                          CustomEVSEConverter,
                                          CustomEVSEStatusUpdateConverter,
                                          CustomChargeDetailRecordConverter,
 
-                                         IncludeEVSEIds,
-                                         IncludeEVSEs,
                                          IncludeChargingPoolIds,
                                          IncludeChargingPools,
+                                         IncludeChargingStationIds,
+                                         IncludeChargingStations,
+                                         IncludeEVSEIds,
+                                         IncludeEVSEs,
                                          ChargeDetailRecordFilter,
 
-                                         ServiceCheckEvery,
-                                         StatusCheckEvery,
-                                         CDRCheckEvery,
+                                         //ServiceCheckEvery,
+                                         //StatusCheckEvery,
+                                         //CDRCheckEvery,
 
                                          DisablePushData,
                                          DisablePushStatus,
